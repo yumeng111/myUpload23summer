@@ -1,1 +1,3 @@
 * text=auto !eol
+emu/doc/html/index.html -text
+emu/doc/html/overview.html -text

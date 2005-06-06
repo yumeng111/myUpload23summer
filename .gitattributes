@@ -152,6 +152,7 @@ emu/emuDCS/PeripheralCrate/test/common/alctmain.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/calibpulse.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/contrmain.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/loadALCT.cpp -text
+emu/emuDCS/PeripheralCrate/test/common/mpc2sp.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/parsemain.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/slicetestconfig.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/testbeamcontrol.cpp -text

@@ -1,4 +1,5 @@
 * text=auto !eol
+emu/Makefile -text
 emu/doc/html/index.html -text
 emu/doc/html/overview.html -text
 emu/emuDAQ/DDUReadout/Makefile -text

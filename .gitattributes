@@ -163,9 +163,11 @@ emu/emuDCS/e2p/include/DcsDimCommand.h -text
 emu/emuDCS/e2p/include/DcsDimService.h -text
 emu/emuDCS/e2p/include/DcsDimStructures.h -text
 emu/emuDCS/e2p/include/EmuDcs.h -text
+emu/emuDCS/e2p/include/Rc2Dcs.h -text
 emu/emuDCS/e2p/src/common/DcsDimCommand.cxx -text
 emu/emuDCS/e2p/src/common/DcsDimService.cxx -text
 emu/emuDCS/e2p/src/common/EmuDcs.cxx -text
+emu/emuDCS/e2p/src/common/Rc2Dcs.cxx -text
 emu/emuDCS/e2p/test/common/EmuDcs_main.cxx -text
 emu/emuDCS/e2p/test/common/main.cpp -text
 emu/extern/dim/Makefile -text

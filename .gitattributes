@@ -133,6 +133,7 @@ emu/emuDCS/PeripheralCrate/src/common/EmuPeripheralCrateSO.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuPeripheralCrateV.cc -text
 emu/emuDCS/PeripheralCrate/src/common/MPC.cc -text
 emu/emuDCS/PeripheralCrate/src/common/MPCParser.cc -text
+emu/emuDCS/PeripheralCrate/src/common/PCDriverI2oListener.cpp -text
 emu/emuDCS/PeripheralCrate/src/common/PeripheralCrateController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/PeripheralCrateParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMB.cc -text

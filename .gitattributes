@@ -39,6 +39,14 @@ emu/emuDAQ/GenericRUI/include/RUIDataRequest.h -text
 emu/emuDAQ/GenericRUI/include/RUIDataRequestListener.h -text
 emu/emuDAQ/GenericRUI/src/common/GenericRUI.cc -text
 emu/emuDAQ/Makefile -text
+emu/emuDAQ/TriggerAdapter/Makefile -text
+emu/emuDAQ/TriggerAdapter/include/TriggerAdapter.hh -text
+emu/emuDAQ/TriggerAdapter/include/TriggerAdapterSO.hh -text
+emu/emuDAQ/TriggerAdapter/include/TriggerAdapterV.hh -text
+emu/emuDAQ/TriggerAdapter/src/common/TriggerAdapter.cc -text
+emu/emuDAQ/TriggerAdapter/src/common/TriggerAdapterSO.cc -text
+emu/emuDAQ/TriggerAdapter/src/common/TriggerAdapterV.cc -text
+emu/emuDAQ/TriggerAdapter/xml/ta.xml -text
 emu/emuDCS/Makefile -text
 emu/emuDCS/PeripheralCore/include/ALCTController.h -text
 emu/emuDCS/PeripheralCore/include/AnodeChannel.h -text

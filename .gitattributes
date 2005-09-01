@@ -89,6 +89,9 @@ emu/emuDCS/FEDCrate/src/common/VMEController_jtag.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEModule.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEParser.cc -text
 emu/emuDCS/FEDCrate/src/common/elong.cc -text
+emu/emuDCS/FEDCrate/test/common/README -text
+emu/emuDCS/FEDCrate/test/common/configTest.xml -text
+emu/emuDCS/FEDCrate/test/common/ddutest.cpp -text
 emu/emuDCS/Makefile -text
 emu/emuDCS/PeripheralCore/include/ALCTController.h -text
 emu/emuDCS/PeripheralCore/include/AnodeChannel.h -text

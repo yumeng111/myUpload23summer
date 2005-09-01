@@ -47,6 +47,7 @@ emu/emuDAQ/TriggerAdapter/src/common/TriggerAdapter.cc -text
 emu/emuDAQ/TriggerAdapter/src/common/TriggerAdapterSO.cc -text
 emu/emuDAQ/TriggerAdapter/src/common/TriggerAdapterV.cc -text
 emu/emuDAQ/TriggerAdapter/xml/ta.xml -text
+emu/emuDCS/FEDCrate/Makefile -text
 emu/emuDCS/FEDCrate/include/Crate.h -text
 emu/emuDCS/FEDCrate/include/CrateSelector.h -text
 emu/emuDCS/FEDCrate/include/CrateSetup.h -text

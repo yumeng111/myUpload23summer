@@ -102,6 +102,7 @@ emu/emuDCS/PeripheralCore/include/Crate.h -text
 emu/emuDCS/PeripheralCore/include/CrateSelector.h -text
 emu/emuDCS/PeripheralCore/include/CrateSetup.h -text
 emu/emuDCS/PeripheralCore/include/DAQMB.h -text
+emu/emuDCS/PeripheralCore/include/DAQMBTest.h -text
 emu/emuDCS/PeripheralCore/include/DAQMBTester.h -text
 emu/emuDCS/PeripheralCore/include/EmuPeripheralCrate.h -text
 emu/emuDCS/PeripheralCore/include/GenDATA.h -text
@@ -140,6 +141,7 @@ emu/emuDCS/PeripheralCrate/include/CrateSelector.h -text
 emu/emuDCS/PeripheralCrate/include/CrateSetup.h -text
 emu/emuDCS/PeripheralCrate/include/DAQMB.h -text
 emu/emuDCS/PeripheralCrate/include/DAQMBParser.h -text
+emu/emuDCS/PeripheralCrate/include/DAQMBTest.h -text
 emu/emuDCS/PeripheralCrate/include/DAQMBTester.h -text
 emu/emuDCS/PeripheralCrate/include/DDU.h -text
 emu/emuDCS/PeripheralCrate/include/DDUParser.h -text

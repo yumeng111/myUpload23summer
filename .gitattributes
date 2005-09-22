@@ -47,6 +47,17 @@ emu/emuDAQ/TriggerAdapter/src/common/TriggerAdapter.cc -text
 emu/emuDAQ/TriggerAdapter/src/common/TriggerAdapterSO.cc -text
 emu/emuDAQ/TriggerAdapter/src/common/TriggerAdapterV.cc -text
 emu/emuDAQ/TriggerAdapter/xml/ta.xml -text
+emu/emuDAQ/drivers/Makefile -text
+emu/emuDAQ/drivers/bigphysarea_xxxx/Makefile -text
+emu/emuDAQ/drivers/bigphysarea_xxxx/bin/eth_reset_mm2 -text
+emu/emuDAQ/drivers/bigphysarea_xxxx/bin/ethdown -text
+emu/emuDAQ/drivers/bigphysarea_xxxx/bin/loadddu -text
+emu/emuDAQ/drivers/bigphysarea_xxxx/d550/Makefile -text
+emu/emuDAQ/drivers/bigphysarea_xxxx/d550/dl2k.c -text
+emu/emuDAQ/drivers/bigphysarea_xxxx/d550/dl2k.h -text
+emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_2/Makefile -text
+emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_2/eth_hook_2.c -text
+emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_2/schar.h -text
 emu/emuDCS/FEDCrate/Makefile -text
 emu/emuDCS/FEDCrate/include/Crate.h -text
 emu/emuDCS/FEDCrate/include/CrateSelector.h -text

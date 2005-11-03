@@ -22,6 +22,7 @@ emu/emuDAQ/DDUReadout/src/common/FileReaderDDU.cc -text
 emu/emuDAQ/DDUReadout/src/common/HardwareDDU.cc -text
 emu/emuDAQ/DDUReadout/test/common/DDUFileReader.cpp -text
 emu/emuDAQ/DDUReadout/test/common/HardwareDumper.cpp -text
+emu/emuDAQ/DDUReadout/test/common/HardwareMonitor.cpp -text
 emu/emuDAQ/EmuRUI/Makefile -text
 emu/emuDAQ/EmuRUI/include/EmuConfigRUI.h -text
 emu/emuDAQ/EmuRUI/include/EmuRUI.h -text

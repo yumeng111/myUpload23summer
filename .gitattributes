@@ -128,6 +128,7 @@ emu/emuDCS/PeripheralCore/include/TMB_constants.h -text
 emu/emuDCS/PeripheralCore/include/VMEController.h -text
 emu/emuDCS/PeripheralCore/include/VMEModule.h -text
 emu/emuDCS/PeripheralCore/include/geom.h -text
+emu/emuDCS/PeripheralCore/include/vme_cmd.h -text
 emu/emuDCS/PeripheralCore/src/common/ALCTController.cc -text
 emu/emuDCS/PeripheralCore/src/common/AnodeChannel.cc -text
 emu/emuDCS/PeripheralCore/src/common/CCB.cc -text
@@ -186,6 +187,7 @@ emu/emuDCS/PeripheralCrate/include/VMEParser.h -text
 emu/emuDCS/PeripheralCrate/include/alct_registers.h -text
 emu/emuDCS/PeripheralCrate/include/elong.h -text
 emu/emuDCS/PeripheralCrate/include/geom.h -text
+emu/emuDCS/PeripheralCrate/include/vme_cmd.h -text
 emu/emuDCS/PeripheralCrate/src/common/ALCTController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/AnodeChannel.cc -text
 emu/emuDCS/PeripheralCrate/src/common/CCB.cc -text

@@ -8,17 +8,11 @@ emu/emuDAQ/DDUReadout/include/BinaryEventStream.h -text
 emu/emuDAQ/DDUReadout/include/DDUFileReader.h -text
 emu/emuDAQ/DDUReadout/include/DDUReader.h -text
 emu/emuDAQ/DDUReadout/include/EventStream.h -text
-emu/emuDAQ/DDUReadout/include/FileReader.h -text
-emu/emuDAQ/DDUReadout/include/FileReaderDCC.h -text
-emu/emuDAQ/DDUReadout/include/FileReaderDDU.h -text
 emu/emuDAQ/DDUReadout/include/HardwareDDU.h -text
 emu/emuDAQ/DDUReadout/src/common/BinaryEventStream.cc -text
 emu/emuDAQ/DDUReadout/src/common/DDUFileReader.cc -text
 emu/emuDAQ/DDUReadout/src/common/DDUReader.cc -text
 emu/emuDAQ/DDUReadout/src/common/EventStream.cc -text
-emu/emuDAQ/DDUReadout/src/common/FileReader.cc -text
-emu/emuDAQ/DDUReadout/src/common/FileReaderDCC.cc -text
-emu/emuDAQ/DDUReadout/src/common/FileReaderDDU.cc -text
 emu/emuDAQ/DDUReadout/src/common/HardwareDDU.cc -text
 emu/emuDAQ/DDUReadout/test/common/DDUFileReader.cpp -text
 emu/emuDAQ/DDUReadout/test/common/HardwareDumper.cpp -text

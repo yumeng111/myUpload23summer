@@ -5,12 +5,16 @@ emu/doc/html/overview.html -text
 emu/emuDAQ/DDUReadout/Makefile -text
 emu/emuDAQ/DDUReadout/ORCA/Muon/METBRawFormat/interface/MuEndDDUHeader.h -text
 emu/emuDAQ/DDUReadout/include/BinaryEventStream.h -text
+emu/emuDAQ/DDUReadout/include/DDUHyperDAQ.h -text
 emu/emuDAQ/DDUReadout/include/DDUReader.h -text
+emu/emuDAQ/DDUReadout/include/DDUUtilities.h -text
 emu/emuDAQ/DDUReadout/include/EventStream.h -text
 emu/emuDAQ/DDUReadout/include/FileReaderDDU.h -text
 emu/emuDAQ/DDUReadout/include/HardwareDDU.h -text
 emu/emuDAQ/DDUReadout/src/common/BinaryEventStream.cc -text
+emu/emuDAQ/DDUReadout/src/common/DDUHyperDAQ.cc -text
 emu/emuDAQ/DDUReadout/src/common/DDUReader.cc -text
+emu/emuDAQ/DDUReadout/src/common/DDUUtilities.cc -text
 emu/emuDAQ/DDUReadout/src/common/EventStream.cc -text
 emu/emuDAQ/DDUReadout/src/common/FileReaderDDU.cc -text
 emu/emuDAQ/DDUReadout/src/common/HardwareDDU.cc -text

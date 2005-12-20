@@ -160,6 +160,7 @@ emu/emuDCS/PeripheralCrate/include/DAQMBTest.h -text
 emu/emuDCS/PeripheralCrate/include/DAQMBTester.h -text
 emu/emuDCS/PeripheralCrate/include/DDU.h -text
 emu/emuDCS/PeripheralCrate/include/DDUParser.h -text
+emu/emuDCS/PeripheralCrate/include/EmuCrateController.h -text
 emu/emuDCS/PeripheralCrate/include/EmuCrateHyperDAQ.h -text
 emu/emuDCS/PeripheralCrate/include/EmuCrateSOAP.h -text
 emu/emuDCS/PeripheralCrate/include/EmuParser.h -text
@@ -203,6 +204,7 @@ emu/emuDCS/PeripheralCrate/src/common/DAQMBTester.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMB_jtag.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DDU.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DDUParser.cc -text
+emu/emuDCS/PeripheralCrate/src/common/EmuCrateController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuCrateHyperDAQ.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuCrateSOAP.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuParser.cc -text

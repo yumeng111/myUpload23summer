@@ -153,7 +153,6 @@ emu/emuDCS/PeripheralCrate/include/CalibDAQ.h -text
 emu/emuDCS/PeripheralCrate/include/Crate.h -text
 emu/emuDCS/PeripheralCrate/include/CrateSelector.h -text
 emu/emuDCS/PeripheralCrate/include/CrateSetup.h -text
-emu/emuDCS/PeripheralCrate/include/CrateUtilities.h -text
 emu/emuDCS/PeripheralCrate/include/DAQMB.h -text
 emu/emuDCS/PeripheralCrate/include/DAQMBParser.h -text
 emu/emuDCS/PeripheralCrate/include/DAQMBTest.h -text
@@ -196,7 +195,6 @@ emu/emuDCS/PeripheralCrate/src/common/CalibDAQ.cc -text
 emu/emuDCS/PeripheralCrate/src/common/Crate.cc -text
 emu/emuDCS/PeripheralCrate/src/common/CrateSelector.cc -text
 emu/emuDCS/PeripheralCrate/src/common/CrateSetup.cc -text
-emu/emuDCS/PeripheralCrate/src/common/CrateUtilities.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMB.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMBParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMBTester.cc -text

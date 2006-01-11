@@ -150,6 +150,7 @@ emu/emuDCS/PeripheralCrate/include/CCB.h -text
 emu/emuDCS/PeripheralCrate/include/CCBParser.h -text
 emu/emuDCS/PeripheralCrate/include/CFEB.h -text
 emu/emuDCS/PeripheralCrate/include/CalibDAQ.h -text
+emu/emuDCS/PeripheralCrate/include/ChamberUtilities.h -text
 emu/emuDCS/PeripheralCrate/include/Crate.h -text
 emu/emuDCS/PeripheralCrate/include/CrateSelector.h -text
 emu/emuDCS/PeripheralCrate/include/CrateSetup.h -text

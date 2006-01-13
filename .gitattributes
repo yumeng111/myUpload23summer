@@ -122,6 +122,7 @@ emu/emuDCS/PeripheralCore/include/GenDATA.h -text
 emu/emuDCS/PeripheralCore/include/JTAG_constants.h -text
 emu/emuDCS/PeripheralCore/include/MPC.h -text
 emu/emuDCS/PeripheralCore/include/TMB.h -text
+emu/emuDCS/PeripheralCore/include/TMBTester.h -text
 emu/emuDCS/PeripheralCore/include/TMB_constants.h -text
 emu/emuDCS/PeripheralCore/include/VMEController.h -text
 emu/emuDCS/PeripheralCore/include/VMEModule.h -text
@@ -138,6 +139,7 @@ emu/emuDCS/PeripheralCore/src/common/DAQMB.cc -text
 emu/emuDCS/PeripheralCore/src/common/DAQMBTester.cc -text
 emu/emuDCS/PeripheralCore/src/common/MPC.cc -text
 emu/emuDCS/PeripheralCore/src/common/TMB.cc -text
+emu/emuDCS/PeripheralCore/src/common/TMBTester.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEController.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEController_jtag.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEModule.cc -text
@@ -179,6 +181,7 @@ emu/emuDCS/PeripheralCrate/include/PeripheralCrateParser.h -text
 emu/emuDCS/PeripheralCrate/include/Singleton.h -text
 emu/emuDCS/PeripheralCrate/include/TMB.h -text
 emu/emuDCS/PeripheralCrate/include/TMBParser.h -text
+emu/emuDCS/PeripheralCrate/include/TMBTester.h -text
 emu/emuDCS/PeripheralCrate/include/TMB_constants.h -text
 emu/emuDCS/PeripheralCrate/include/TestBeamCrateController.h -text
 emu/emuDCS/PeripheralCrate/include/VMEController.h -text
@@ -218,6 +221,7 @@ emu/emuDCS/PeripheralCrate/src/common/PeripheralCrateController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/PeripheralCrateParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMB.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMBParser.cc -text
+emu/emuDCS/PeripheralCrate/src/common/TMBTester.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMB_trgmode.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TestBeamCrateController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/VMEController.cc -text
@@ -234,6 +238,7 @@ emu/emuDCS/PeripheralCrate/test/common/mpc2sp.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/parsemain.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/slicetestconfig.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/testbeamcontrol.cpp -text
+emu/emuDCS/PeripheralCrate/test/common/testtmbmain.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/tmbtiming.cpp -text
 emu/emuDCS/PeripheralCrate/xml/configTestBeam2004.xml -text
 emu/emuDCS/PeripheralCrate/xml/readme -text

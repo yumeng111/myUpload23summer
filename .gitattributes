@@ -169,6 +169,7 @@ emu/emuDCS/PeripheralCrate/include/EmuParser.h -text
 emu/emuDCS/PeripheralCrate/include/EmuPeripheralCrate.h -text
 emu/emuDCS/PeripheralCrate/include/EmuPeripheralCrateSO.h -text
 emu/emuDCS/PeripheralCrate/include/EmuPeripheralCrateV.h -text
+emu/emuDCS/PeripheralCrate/include/EmuRunControlHyperDAQ.h -text
 emu/emuDCS/PeripheralCrate/include/GenDATA.h -text
 emu/emuDCS/PeripheralCrate/include/JTAG_constants.h -text
 emu/emuDCS/PeripheralCrate/include/MPC.h -text
@@ -214,6 +215,7 @@ emu/emuDCS/PeripheralCrate/src/common/EmuParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuPeripheralCrate.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuPeripheralCrateSO.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuPeripheralCrateV.cc -text
+emu/emuDCS/PeripheralCrate/src/common/EmuRunControlHyperDAQ.cc -text
 emu/emuDCS/PeripheralCrate/src/common/MPC.cc -text
 emu/emuDCS/PeripheralCrate/src/common/MPCParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/PCDriverI2oListener.cpp -text

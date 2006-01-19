@@ -177,6 +177,7 @@ emu/emuDCS/PeripheralCore/src/common/ALCTController.cc -text
 emu/emuDCS/PeripheralCore/src/common/AnodeChannel.cc -text
 emu/emuDCS/PeripheralCore/src/common/CCB.cc -text
 emu/emuDCS/PeripheralCore/src/common/CFEB.cc -text
+emu/emuDCS/PeripheralCore/src/common/Chamber.cc -text
 emu/emuDCS/PeripheralCore/src/common/Crate.cc -text
 emu/emuDCS/PeripheralCore/src/common/CrateSelector.cc -text
 emu/emuDCS/PeripheralCore/src/common/CrateSetup.cc -text
@@ -244,6 +245,7 @@ emu/emuDCS/PeripheralCrate/src/common/CCB.cc -text
 emu/emuDCS/PeripheralCrate/src/common/CCBParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/CFEB.cc -text
 emu/emuDCS/PeripheralCrate/src/common/CalibDAQ.cc -text
+emu/emuDCS/PeripheralCrate/src/common/Chamber.cc -text
 emu/emuDCS/PeripheralCrate/src/common/ChamberUtilities.cc -text
 emu/emuDCS/PeripheralCrate/src/common/Crate.cc -text
 emu/emuDCS/PeripheralCrate/src/common/CrateSelector.cc -text

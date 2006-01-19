@@ -155,6 +155,7 @@ emu/emuDCS/PeripheralCore/include/AnodeChannel.h -text
 emu/emuDCS/PeripheralCore/include/BuckeyeChip.h -text
 emu/emuDCS/PeripheralCore/include/CCB.h -text
 emu/emuDCS/PeripheralCore/include/CFEB.h -text
+emu/emuDCS/PeripheralCore/include/Chamber.h -text
 emu/emuDCS/PeripheralCore/include/Crate.h -text
 emu/emuDCS/PeripheralCore/include/CrateSelector.h -text
 emu/emuDCS/PeripheralCore/include/CrateSetup.h -text
@@ -196,6 +197,7 @@ emu/emuDCS/PeripheralCrate/include/CCB.h -text
 emu/emuDCS/PeripheralCrate/include/CCBParser.h -text
 emu/emuDCS/PeripheralCrate/include/CFEB.h -text
 emu/emuDCS/PeripheralCrate/include/CalibDAQ.h -text
+emu/emuDCS/PeripheralCrate/include/Chamber.h -text
 emu/emuDCS/PeripheralCrate/include/ChamberUtilities.h -text
 emu/emuDCS/PeripheralCrate/include/Crate.h -text
 emu/emuDCS/PeripheralCrate/include/CrateSelector.h -text

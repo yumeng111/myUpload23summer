@@ -105,6 +105,9 @@ emu/emuDAQ/emuTA/src/common/TriggerGenerator.cc -text
 emu/emuDAQ/emuUtil/include/FileWriter.h -text
 emu/emuDAQ/xml/EmuDAQ_with_ToyClient.xml -text
 emu/emuDCS/FEDCrate/Makefile -text
+emu/emuDCS/FEDCrate/include/CAENVMElib.h -text
+emu/emuDCS/FEDCrate/include/CAENVMEoslib.h -text
+emu/emuDCS/FEDCrate/include/CAENVMEtypes.h -text
 emu/emuDCS/FEDCrate/include/Crate.h -text
 emu/emuDCS/FEDCrate/include/CrateSelector.h -text
 emu/emuDCS/FEDCrate/include/CrateSetup.h -text
@@ -113,6 +116,14 @@ emu/emuDCS/FEDCrate/include/DCCParser.h -text
 emu/emuDCS/FEDCrate/include/DDU.h -text
 emu/emuDCS/FEDCrate/include/DDUParser.h -text
 emu/emuDCS/FEDCrate/include/DDUTester.h -text
+emu/emuDCS/FEDCrate/include/EmuFController.h -text
+emu/emuDCS/FEDCrate/include/EmuFCrateHyperDAQ.h -text
+emu/emuDCS/FEDCrate/include/EmuFCrateSOAP.h -text
+emu/emuDCS/FEDCrate/include/EmuFCrateSOAPirq.h -text
+emu/emuDCS/FEDCrate/include/EmuFEDCrate.h -text
+emu/emuDCS/FEDCrate/include/EmuFEDCrateSO.h -text
+emu/emuDCS/FEDCrate/include/EmuFEDCrateV.h -text
+emu/emuDCS/FEDCrate/include/EmuFRunControlHyperDAQ.h -text
 emu/emuDCS/FEDCrate/include/EmuParser.h -text
 emu/emuDCS/FEDCrate/include/FEDCrateController.h -text
 emu/emuDCS/FEDCrate/include/FEDCrateParser.h -text
@@ -120,6 +131,7 @@ emu/emuDCS/FEDCrate/include/GenDATA.h -text
 emu/emuDCS/FEDCrate/include/JTAG_constants.h -text
 emu/emuDCS/FEDCrate/include/OwnIt.h -text
 emu/emuDCS/FEDCrate/include/Singleton.h -text
+emu/emuDCS/FEDCrate/include/TestBeamCrateController.h -text
 emu/emuDCS/FEDCrate/include/VMEController.h -text
 emu/emuDCS/FEDCrate/include/VMEModule.h -text
 emu/emuDCS/FEDCrate/include/VMEParser.h -text
@@ -127,6 +139,7 @@ emu/emuDCS/FEDCrate/include/elong.h -text
 emu/emuDCS/FEDCrate/include/eth.h -text
 emu/emuDCS/FEDCrate/include/geom.h -text
 emu/emuDCS/FEDCrate/include/geom_def.h -text
+emu/emuDCS/FEDCrate/include/vmeIRQ.h -text
 emu/emuDCS/FEDCrate/include/vme_cmd.h -text
 emu/emuDCS/FEDCrate/src/common/Crate.cc -text
 emu/emuDCS/FEDCrate/src/common/CrateSelector.cc -text

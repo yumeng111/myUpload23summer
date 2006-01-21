@@ -138,9 +138,17 @@ emu/emuDCS/FEDCrate/src/common/DDU.cc -text
 emu/emuDCS/FEDCrate/src/common/DDUParser.cc -text
 emu/emuDCS/FEDCrate/src/common/DDUTester.cc -text
 emu/emuDCS/FEDCrate/src/common/DDU_old.cc -text
+emu/emuDCS/FEDCrate/src/common/EmuFController.cc -text
+emu/emuDCS/FEDCrate/src/common/EmuFCrateHyperDAQ.cc -text
+emu/emuDCS/FEDCrate/src/common/EmuFCrateSOAP.cc -text
+emu/emuDCS/FEDCrate/src/common/EmuFEDCrate.cc -text
+emu/emuDCS/FEDCrate/src/common/EmuFEDCrateSO.cc -text
+emu/emuDCS/FEDCrate/src/common/EmuFEDCrateV.cc -text
+emu/emuDCS/FEDCrate/src/common/EmuFRunControlHyperDAQ.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuParser.cc -text
 emu/emuDCS/FEDCrate/src/common/FEDCrateController.cc -text
 emu/emuDCS/FEDCrate/src/common/FEDCrateParser.cc -text
+emu/emuDCS/FEDCrate/src/common/TestBeamCrateController.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEController.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEController_jtag.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEModule.cc -text

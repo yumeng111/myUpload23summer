@@ -170,6 +170,10 @@ emu/emuDCS/FEDCrate/src/common/elong.cc -text
 emu/emuDCS/FEDCrate/test/common/README -text
 emu/emuDCS/FEDCrate/test/common/configTest.xml -text
 emu/emuDCS/FEDCrate/test/common/ddutest.cpp -text
+emu/emuDCS/FEDCrate/xml/EmuFCluster.xml -text
+emu/emuDCS/FEDCrate/xml/config.xml -text
+emu/emuDCS/FEDCrate/xml/config2.xml -text
+emu/emuDCS/FEDCrate/xml/xdaq_run -text
 emu/emuDCS/Makefile -text
 emu/emuDCS/PeripheralCore/include/ALCTController.h -text
 emu/emuDCS/PeripheralCore/include/AnodeChannel.h -text

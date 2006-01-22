@@ -120,9 +120,6 @@ emu/emuDCS/FEDCrate/include/EmuFController.h -text
 emu/emuDCS/FEDCrate/include/EmuFCrateHyperDAQ.h -text
 emu/emuDCS/FEDCrate/include/EmuFCrateSOAP.h -text
 emu/emuDCS/FEDCrate/include/EmuFCrateSOAPirq.h -text
-emu/emuDCS/FEDCrate/include/EmuFEDCrate.h -text
-emu/emuDCS/FEDCrate/include/EmuFEDCrateSO.h -text
-emu/emuDCS/FEDCrate/include/EmuFEDCrateV.h -text
 emu/emuDCS/FEDCrate/include/EmuFRunControlHyperDAQ.h -text
 emu/emuDCS/FEDCrate/include/EmuParser.h -text
 emu/emuDCS/FEDCrate/include/FEDCrateController.h -text
@@ -154,9 +151,6 @@ emu/emuDCS/FEDCrate/src/common/DDU_old.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFController.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrateHyperDAQ.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrateSOAP.cc -text
-emu/emuDCS/FEDCrate/src/common/EmuFEDCrate.cc -text
-emu/emuDCS/FEDCrate/src/common/EmuFEDCrateSO.cc -text
-emu/emuDCS/FEDCrate/src/common/EmuFEDCrateV.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFRunControlHyperDAQ.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuParser.cc -text
 emu/emuDCS/FEDCrate/src/common/FEDCrateController.cc -text
@@ -171,6 +165,7 @@ emu/emuDCS/FEDCrate/test/common/README -text
 emu/emuDCS/FEDCrate/test/common/configTest.xml -text
 emu/emuDCS/FEDCrate/test/common/ddutest.cpp -text
 emu/emuDCS/FEDCrate/xml/EmuFCluster.xml -text
+emu/emuDCS/FEDCrate/xml/README -text
 emu/emuDCS/FEDCrate/xml/config.xml -text
 emu/emuDCS/FEDCrate/xml/config2.xml -text
 emu/emuDCS/FEDCrate/xml/xdaq_run -text

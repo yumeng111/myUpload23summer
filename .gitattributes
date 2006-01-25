@@ -388,6 +388,12 @@ emu/emuDCS/e2p/test/common/main.cpp -text
 emu/emuDCS/e2p/test/common/test_rc2dcs.cpp -text
 emu/emuDCS/e2p/xml/DcsControlWebXdaq.xml -text
 emu/emuDCS/e2p/xml/DcsControlWebXdaq_1973.xml -text
+emu/emuDCS/svf/alct672.svf -text
+emu/emuDCS/svf/alctcrc384mirror.svf -text
+emu/emuDCS/svf/cfeb_v4_r2.svf -text
+emu/emuDCS/svf/dmb6cntl_v17_r2.svf -text
+emu/emuDCS/svf/feb_v6_r1_samp8.svf -text
+emu/emuDCS/svf/tmb2005e.svf -text
 emu/extern/dim/Makefile -text
 emu/extern/dim/dim_v15r8.zip -text svneol=unset#unset
 emu/extern/readme -text

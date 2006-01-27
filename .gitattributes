@@ -119,7 +119,6 @@ emu/emuDCS/FEDCrate/include/DDUTester.h -text
 emu/emuDCS/FEDCrate/include/EmuFController.h -text
 emu/emuDCS/FEDCrate/include/EmuFCrateHyperDAQ.h -text
 emu/emuDCS/FEDCrate/include/EmuFCrateSOAP.h -text
-emu/emuDCS/FEDCrate/include/EmuFCrateSOAPirq.h -text
 emu/emuDCS/FEDCrate/include/EmuFRunControlHyperDAQ.h -text
 emu/emuDCS/FEDCrate/include/EmuParser.h -text
 emu/emuDCS/FEDCrate/include/FEDCrateController.h -text

@@ -224,6 +224,8 @@ emu/emuDCS/PeripheralCrate/include/ChamberUtilities.h -text
 emu/emuDCS/PeripheralCrate/include/Crate.h -text
 emu/emuDCS/PeripheralCrate/include/CrateSelector.h -text
 emu/emuDCS/PeripheralCrate/include/CrateSetup.h -text
+emu/emuDCS/PeripheralCrate/include/CrateUtilities.h -text
+emu/emuDCS/PeripheralCrate/include/CrateUtils.h -text
 emu/emuDCS/PeripheralCrate/include/DAQMB.h -text
 emu/emuDCS/PeripheralCrate/include/DAQMBParser.h -text
 emu/emuDCS/PeripheralCrate/include/DAQMBTest.h -text

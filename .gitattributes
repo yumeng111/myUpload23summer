@@ -315,7 +315,6 @@ emu/emuDCS/PeripheralCrate/test/common/loadALCT.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/mpc2sp.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/parsemain.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/slicetestconfig.cpp -text
-emu/emuDCS/PeripheralCrate/test/common/testbeamcontrol.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/testtmbmain.cpp -text
 emu/emuDCS/PeripheralCrate/xml/EmuCluster.xml -text
 emu/emuDCS/PeripheralCrate/xml/configTestBeam2004.xml -text

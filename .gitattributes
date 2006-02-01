@@ -185,6 +185,7 @@ emu/emuDCS/PeripheralCore/include/EmuPeripheralCrate.h -text
 emu/emuDCS/PeripheralCore/include/GenDATA.h -text
 emu/emuDCS/PeripheralCore/include/JTAG_constants.h -text
 emu/emuDCS/PeripheralCore/include/MPC.h -text
+emu/emuDCS/PeripheralCore/include/RAT.h -text
 emu/emuDCS/PeripheralCore/include/TMB.h -text
 emu/emuDCS/PeripheralCore/include/TMBTester.h -text
 emu/emuDCS/PeripheralCore/include/TMB_constants.h -text
@@ -203,6 +204,7 @@ emu/emuDCS/PeripheralCore/src/common/CrateSetup.cc -text
 emu/emuDCS/PeripheralCore/src/common/DAQMB.cc -text
 emu/emuDCS/PeripheralCore/src/common/DAQMBTester.cc -text
 emu/emuDCS/PeripheralCore/src/common/MPC.cc -text
+emu/emuDCS/PeripheralCore/src/common/RAT.cc -text
 emu/emuDCS/PeripheralCore/src/common/TMB.cc -text
 emu/emuDCS/PeripheralCore/src/common/TMBTester.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEController.cc -text
@@ -245,6 +247,7 @@ emu/emuDCS/PeripheralCrate/include/PCDriverI2oListener.h -text
 emu/emuDCS/PeripheralCrate/include/PCI2oMsgs.h -text
 emu/emuDCS/PeripheralCrate/include/PeripheralCrateController.h -text
 emu/emuDCS/PeripheralCrate/include/PeripheralCrateParser.h -text
+emu/emuDCS/PeripheralCrate/include/RAT.h -text
 emu/emuDCS/PeripheralCrate/include/Singleton.h -text
 emu/emuDCS/PeripheralCrate/include/TMB.h -text
 emu/emuDCS/PeripheralCrate/include/TMBParser.h -text
@@ -270,6 +273,8 @@ emu/emuDCS/PeripheralCrate/src/common/ChamberUtilities.cc -text
 emu/emuDCS/PeripheralCrate/src/common/Crate.cc -text
 emu/emuDCS/PeripheralCrate/src/common/CrateSelector.cc -text
 emu/emuDCS/PeripheralCrate/src/common/CrateSetup.cc -text
+emu/emuDCS/PeripheralCrate/src/common/CrateUtilities.cc -text
+emu/emuDCS/PeripheralCrate/src/common/CrateUtils.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMB.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMBParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMBTester.cc -text
@@ -289,6 +294,7 @@ emu/emuDCS/PeripheralCrate/src/common/MPCParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/PCDriverI2oListener.cpp -text
 emu/emuDCS/PeripheralCrate/src/common/PeripheralCrateController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/PeripheralCrateParser.cc -text
+emu/emuDCS/PeripheralCrate/src/common/RAT.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMB.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMBParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMBTester.cc -text

@@ -405,6 +405,20 @@ emu/emuDCS/svf/in5ctrl_0.svf -text
 emu/emuDCS/svf/in5ctrl_1.svf -text
 emu/emuDCS/svf/tmb2005e.svf -text
 emu/emuDCS/svf/vme5ctrl.svf -text
+emu/emuDQM/Common/include/cgicc.h -text
+emu/emuDQM/Common/include/toolbox.h -text
+emu/emuDQM/Common/include/xdaq.h -text
+emu/emuDQM/Common/include/xdata.h -text
+emu/emuDQM/Common/include/xgi.h -text
+emu/emuDQM/Common/include/xoap.h -text
+emu/emuDQM/EmuDisplayServer/Makefile -text
+emu/emuDQM/EmuMonitor/Makefile -text
+emu/emuDQM/EmuROOTDisplayServer/Makefile -text
+emu/emuDQM/config/Makefile_root.rules -text
+emu/emuDQM/dduBinExaminer/Makefile -text
+emu/emuDQM/dduBinExaminer/include/dduBinExaminer.hh -text
+emu/emuDQM/dduBinExaminer/src/common/dduBinExaminer.cc -text
+emu/emuDQM/dduBinExaminer/test/common/dduBinExaminerTest.cpp -text
 emu/extern/dim/Makefile -text
 emu/extern/dim/dim_v15r8.zip -text svneol=unset#unset
 emu/extern/readme -text

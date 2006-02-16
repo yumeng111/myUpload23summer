@@ -500,6 +500,7 @@ emu/emuDQM/EmuROOTDisplayServer/src/common/Server.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/SocketUtils.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/TConsumerInfo.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/TConsumerInfoDict.cc -text
+emu/emuDQM/Makefile -text
 emu/emuDQM/config/Makefile_root.rules -text
 emu/emuDQM/dduBinExaminer/Makefile -text
 emu/emuDQM/dduBinExaminer/include/dduBinExaminer.hh -text

@@ -477,6 +477,10 @@ emu/emuDQM/EmuROOTDisplayServer/include/SocketUtils.hh -text
 emu/emuDQM/EmuROOTDisplayServer/include/TConsumerInfo.hh -text
 emu/emuDQM/EmuROOTDisplayServer/include/TConsumerInfoDict.h -text
 emu/emuDQM/EmuROOTDisplayServer/include/TConsumerInfo_linkdef.h -text
+emu/emuDQM/EmuROOTDisplayServer/res/cdfii_logo.xpm -text svneol=unset#application/octet-stream
+emu/emuDQM/EmuROOTDisplayServer/res/cms_logo.xpm -text svneol=unset#application/octet-stream
+emu/emuDQM/EmuROOTDisplayServer/res/photo.xpm -text svneol=unset#application/octet-stream
+emu/emuDQM/EmuROOTDisplayServer/res/ta.xpm -text svneol=unset#application/octet-stream
 emu/emuDQM/EmuROOTDisplayServer/src/common/CHistogram.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/CHistogramDict.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/CObject.cc -text

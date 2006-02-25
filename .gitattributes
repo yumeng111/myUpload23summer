@@ -322,7 +322,6 @@ emu/emuDCS/PeripheralCrate/xml/readme -text
 emu/emuDCS/PeripheralCrate/xml/test.xml -text
 emu/emuDCS/PeripheralCrate/xml/xdaqPeripheralCrate.xml -text
 emu/emuDCS/drivers/Makefile -text
-emu/emuDCS/drivers/OSUcc_and_DDU/Makefile -text
 emu/emuDCS/drivers/OSUcc_and_DDU/compile -text
 emu/emuDCS/drivers/OSUcc_and_DDU/dl2k.c -text
 emu/emuDCS/drivers/OSUcc_and_DDU/dl2k.c_old -text

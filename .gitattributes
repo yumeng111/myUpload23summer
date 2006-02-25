@@ -211,6 +211,7 @@ emu/emuDCS/PeripheralCore/src/common/VMEController.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEController_jtag.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEModule.cc -text
 emu/emuDCS/PeripheralCrate/Makefile -text
+emu/emuDCS/PeripheralCrate/MakefileV3 -text
 emu/emuDCS/PeripheralCrate/include/ALCTClasses.h -text
 emu/emuDCS/PeripheralCrate/include/ALCTController.h -text
 emu/emuDCS/PeripheralCrate/include/AnodeChannel.h -text

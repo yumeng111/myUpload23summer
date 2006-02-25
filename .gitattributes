@@ -393,23 +393,6 @@ emu/emuDCS/e2p/test/common/main.cpp -text
 emu/emuDCS/e2p/test/common/test_rc2dcs.cpp -text
 emu/emuDCS/e2p/xml/DcsControlWebXdaq.xml -text
 emu/emuDCS/e2p/xml/DcsControlWebXdaq_1973.xml -text
-emu/emuDCS/svf/alct384rl.svf -text
-emu/emuDCS/svf/alct384rl.svf.zip -text svneol=unset#unset
-emu/emuDCS/svf/alct672.svf -text
-emu/emuDCS/svf/alct672.svf.zip -text svneol=unset#unset
-emu/emuDCS/svf/alct672rl.svf -text
-emu/emuDCS/svf/alct672rl.svf.zip -text svneol=unset#unset
-emu/emuDCS/svf/alctcrc384mirror.svf -text
-emu/emuDCS/svf/alctcrc384mirror.svf.zip -text svneol=unset#unset
-emu/emuDCS/svf/cfeb_v4_r2.svf -text
-emu/emuDCS/svf/ddu5ctrl_0.svf -text
-emu/emuDCS/svf/ddu5ctrl_1.svf -text
-emu/emuDCS/svf/dmb6cntl_v17_r2.svf -text
-emu/emuDCS/svf/feb_v6_r1_samp8.svf -text
-emu/emuDCS/svf/in5ctrl_0.svf -text
-emu/emuDCS/svf/in5ctrl_1.svf -text
-emu/emuDCS/svf/tmb2005e.svf -text
-emu/emuDCS/svf/vme5ctrl.svf -text
 emu/emuDQM/Common/include/cgicc.h -text
 emu/emuDQM/Common/include/toolbox.h -text
 emu/emuDQM/Common/include/xdaq.h -text

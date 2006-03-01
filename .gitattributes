@@ -66,6 +66,7 @@ emu/emuDAQ/emuClient/include/EmuClientV.h -text
 emu/emuDAQ/emuClient/include/EmuSOAPClient.h -text
 emu/emuDAQ/emuClient/include/EmuSOAPClientV.h -text
 emu/emuDAQ/emuClient/include/i2oEmuClientMsg.h -text
+emu/emuDAQ/emuClient/script/emuDump -text
 emu/emuDAQ/emuClient/src/common/EmuClient.cc -text
 emu/emuDAQ/emuClient/src/common/EmuClientV.cc -text
 emu/emuDAQ/emuClient/src/common/EmuSOAPClient.cc -text

@@ -353,6 +353,17 @@ emu/emuDCS/PeripheralCrate/xml/configTestBeam2004.xml -text
 emu/emuDCS/PeripheralCrate/xml/readme -text
 emu/emuDCS/PeripheralCrate/xml/test.xml -text
 emu/emuDCS/PeripheralCrate/xml/xdaqPeripheralCrate.xml -text
+emu/emuDCS/drivers/3com/Makefile -text
+emu/emuDCS/drivers/3com/acenic.c -text
+emu/emuDCS/drivers/3com/acenic.h -text
+emu/emuDCS/drivers/3com/acenic_firmware.h -text
+emu/emuDCS/drivers/3com/compile -text
+emu/emuDCS/drivers/3com/eth_hook.c -text
+emu/emuDCS/drivers/3com/eth_hook.h -text
+emu/emuDCS/drivers/3com/eth_hook_2.c -text
+emu/emuDCS/drivers/3com/eth_hook_2.h -text
+emu/emuDCS/drivers/3com/ethreset -text
+emu/emuDCS/drivers/3com/ethreset1 -text
 emu/emuDCS/drivers/Makefile -text
 emu/emuDCS/drivers/OSUcc_and_DDU/Makefile -text
 emu/emuDCS/drivers/OSUcc_and_DDU/compile -text

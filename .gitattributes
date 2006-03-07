@@ -66,6 +66,7 @@ emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_2/eth_hook_2.c -text
 emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_2/eth_hook_2.h -text
 emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_2/schar.h -text
 emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_3/eth_hook_3.c -text
+emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_3/eth_hook_3.h -text
 emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_3/makefile -text
 emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_3/schar.h -text
 emu/emuDAQ/emuClient/Makefile -text

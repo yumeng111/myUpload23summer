@@ -16,10 +16,10 @@ emu/cscSV/test/EmuDAQ/src/common/EmuDAQManager.cc -text
 emu/cscSV/test/EmuDAQ/src/common/EmuDAQManagerV.cc -text
 emu/cscSV/test/EmuFED/Makefile -text
 emu/cscSV/test/EmuFED/Makefile.rules -text
-emu/cscSV/test/EmuFED/include/EmuFED.h -text
-emu/cscSV/test/EmuFED/include/EmuFEDV.h -text
-emu/cscSV/test/EmuFED/src/common/EmuFED.cc -text
-emu/cscSV/test/EmuFED/src/common/EmuFEDV.cc -text
+emu/cscSV/test/EmuFED/include/EmuFEDCrate.h -text
+emu/cscSV/test/EmuFED/include/EmuFEDCrateV.h -text
+emu/cscSV/test/EmuFED/src/common/EmuFEDCrate.cc -text
+emu/cscSV/test/EmuFED/src/common/EmuFEDCrateV.cc -text
 emu/cscSV/test/EmuPC/Makefile -text
 emu/cscSV/test/EmuPC/Makefile.rules -text
 emu/cscSV/test/EmuPC/include/EmuPeripheralCrate.h -text

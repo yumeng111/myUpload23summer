@@ -8,6 +8,12 @@ emu/cscSV/include/EmuApplication.h -text
 emu/cscSV/src/common/CSCSupervisor.cc -text
 emu/cscSV/src/common/CSCSupervisorV.cc -text
 emu/cscSV/src/common/EmuApplication.cc -text
+emu/cscSV/test/EmuFED/Makefile -text
+emu/cscSV/test/EmuFED/Makefile.rules -text
+emu/cscSV/test/EmuFED/include/EmuFED.h -text
+emu/cscSV/test/EmuFED/include/EmuFEDV.h -text
+emu/cscSV/test/EmuFED/src/common/EmuFED.cc -text
+emu/cscSV/test/EmuFED/src/common/EmuFEDV.cc -text
 emu/cscSV/test/EmuPC/Makefile -text
 emu/cscSV/test/EmuPC/Makefile.rules -text
 emu/cscSV/test/EmuPC/include/EmuPeripheralCrate.h -text

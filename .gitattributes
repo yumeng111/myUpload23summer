@@ -129,8 +129,6 @@ emu/emuDAQ/emuReadout/include/EmuFileReader.h -text
 emu/emuDAQ/emuReadout/include/EmuReader.h -text
 emu/emuDAQ/emuReadout/include/EmuSLinkReader.h -text
 emu/emuDAQ/emuReadout/include/EmuSpyReader.h -text
-emu/emuDAQ/emuReadout/include/eth_hook_2.h -text
-emu/emuDAQ/emuReadout/include/schar.h -text
 emu/emuDAQ/emuReadout/src/common/EmuFileReader.cc -text
 emu/emuDAQ/emuReadout/src/common/EmuReader.cc -text
 emu/emuDAQ/emuReadout/src/common/EmuSLinkReader.cc -text

@@ -1,6 +1,21 @@
 * text=auto !eol
 emu/Makefile -text
 emu/cscSV/Makefile -text
+emu/cscSV/Makefile.rules -text
+emu/cscSV/include/CSCSupervisor.h -text
+emu/cscSV/include/CSCSupervisorV.h -text
+emu/cscSV/include/EmuApplication.h -text
+emu/cscSV/src/common/CSCSupervisor.cc -text
+emu/cscSV/src/common/CSCSupervisorV.cc -text
+emu/cscSV/src/common/EmuApplication.cc -text
+emu/cscSV/test/EmuPC/Makefile -text
+emu/cscSV/test/EmuPC/Makefile.rules -text
+emu/cscSV/test/EmuPC/include/EmuPeripheralCrate.h -text
+emu/cscSV/test/EmuPC/include/EmuPeripheralCrateV.h -text
+emu/cscSV/test/EmuPC/src/common/EmuPeripheralCrate.cc -text
+emu/cscSV/test/EmuPC/src/common/EmuPeripheralCrateV.cc -text
+emu/cscSV/test/bootxdaq -text
+emu/cscSV/test/config.xml -text
 emu/doc/html/index.html -text
 emu/doc/html/overview.html -text
 emu/emuDAQ/DDUReadout/Makefile -text

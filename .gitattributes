@@ -8,6 +8,12 @@ emu/cscSV/include/EmuApplication.h -text
 emu/cscSV/src/common/CSCSupervisor.cc -text
 emu/cscSV/src/common/CSCSupervisorV.cc -text
 emu/cscSV/src/common/EmuApplication.cc -text
+emu/cscSV/test/EmuDAQ/Makefile -text
+emu/cscSV/test/EmuDAQ/Makefile.rules -text
+emu/cscSV/test/EmuDAQ/include/EmuDAQManager.h -text
+emu/cscSV/test/EmuDAQ/include/EmuDAQManagerV.h -text
+emu/cscSV/test/EmuDAQ/src/common/EmuDAQManager.cc -text
+emu/cscSV/test/EmuDAQ/src/common/EmuDAQManagerV.cc -text
 emu/cscSV/test/EmuFED/Makefile -text
 emu/cscSV/test/EmuFED/Makefile.rules -text
 emu/cscSV/test/EmuFED/include/EmuFED.h -text

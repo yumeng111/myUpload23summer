@@ -373,7 +373,6 @@ emu/emuDCS/PeripheralCrate/src/common/VMEController_jtag.cc -text
 emu/emuDCS/PeripheralCrate/src/common/VMEModule.cc -text
 emu/emuDCS/PeripheralCrate/src/common/VMEParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/elong.cc -text
-emu/emuDCS/PeripheralCrate/test/common/CrateScan.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/CrateTiming.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/EmuConfig.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/calibpulse.cpp -text

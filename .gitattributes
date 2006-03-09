@@ -509,6 +509,7 @@ emu/emuDQM/EmuMonitor/src/common/EmuFillChamber.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuFillCommon.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuLocalPlotter.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuMonitor.cc -text
+emu/emuDQM/EmuMonitor/src/common/EmuMonitorTest.cpp -text
 emu/emuDQM/EmuMonitor/src/common/EmuMonitorV.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuPlotter.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuSaveHistoFile.cc -text

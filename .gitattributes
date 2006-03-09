@@ -523,10 +523,8 @@ emu/emuDQM/EmuMonitor/test/common/MonitorTest_kotov.cpp -text
 emu/emuDQM/EmuMonitor/test/common/SPMonitorTest.cpp -text
 emu/emuDQM/EmuROOTDisplayServer/Makefile -text
 emu/emuDQM/EmuROOTDisplayServer/include/CHistogram.hh -text
-emu/emuDQM/EmuROOTDisplayServer/include/CHistogramDict.h -text
 emu/emuDQM/EmuROOTDisplayServer/include/CHistogram_linkdef.h -text
 emu/emuDQM/EmuROOTDisplayServer/include/CObject.hh -text
-emu/emuDQM/EmuROOTDisplayServer/include/CObjectDict.h -text
 emu/emuDQM/EmuROOTDisplayServer/include/CObject_linkdef.h -text
 emu/emuDQM/EmuROOTDisplayServer/include/ConsumerCanvas.hh -text
 emu/emuDQM/EmuROOTDisplayServer/include/ConsumerExport.hh -text
@@ -534,7 +532,6 @@ emu/emuDQM/EmuROOTDisplayServer/include/ConsumerList.hh -text
 emu/emuDQM/EmuROOTDisplayServer/include/ConsumerListBox.hh -text
 emu/emuDQM/EmuROOTDisplayServer/include/DisplayServer.hh -text
 emu/emuDQM/EmuROOTDisplayServer/include/HistoDisplay.hh -text
-emu/emuDQM/EmuROOTDisplayServer/include/HistoDisplayDict.h -text
 emu/emuDQM/EmuROOTDisplayServer/include/HistoDisplayHelpText.hh -text
 emu/emuDQM/EmuROOTDisplayServer/include/HistoDisplayPhoto.hh -text
 emu/emuDQM/EmuROOTDisplayServer/include/HistoDisplay_linkdef.h -text
@@ -542,23 +539,19 @@ emu/emuDQM/EmuROOTDisplayServer/include/MessageStorage.hh -text
 emu/emuDQM/EmuROOTDisplayServer/include/ServerProtocol.hh -text
 emu/emuDQM/EmuROOTDisplayServer/include/SocketUtils.hh -text
 emu/emuDQM/EmuROOTDisplayServer/include/TConsumerInfo.hh -text
-emu/emuDQM/EmuROOTDisplayServer/include/TConsumerInfoDict.h -text
 emu/emuDQM/EmuROOTDisplayServer/include/TConsumerInfo_linkdef.h -text
 emu/emuDQM/EmuROOTDisplayServer/res/cdfii_logo.xpm -text svneol=unset#application/octet-stream
 emu/emuDQM/EmuROOTDisplayServer/res/cms_logo.xpm -text svneol=unset#application/octet-stream
 emu/emuDQM/EmuROOTDisplayServer/res/photo.xpm -text svneol=unset#application/octet-stream
 emu/emuDQM/EmuROOTDisplayServer/res/ta.xpm -text svneol=unset#application/octet-stream
 emu/emuDQM/EmuROOTDisplayServer/src/common/CHistogram.cc -text
-emu/emuDQM/EmuROOTDisplayServer/src/common/CHistogramDict.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/CObject.cc -text
-emu/emuDQM/EmuROOTDisplayServer/src/common/CObjectDict.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/ConsumerCanvas.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/ConsumerExport.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/ConsumerList.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/ConsumerListBox.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/DisplayServer.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/HistoDisplay.cc -text
-emu/emuDQM/EmuROOTDisplayServer/src/common/HistoDisplayDict.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/HistoDisplayHelpText.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/HistoDisplayMain.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/MessageStorage.cc -text
@@ -566,7 +559,6 @@ emu/emuDQM/EmuROOTDisplayServer/src/common/Producer.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/Server.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/SocketUtils.cc -text
 emu/emuDQM/EmuROOTDisplayServer/src/common/TConsumerInfo.cc -text
-emu/emuDQM/EmuROOTDisplayServer/src/common/TConsumerInfoDict.cc -text
 emu/emuDQM/Makefile -text
 emu/emuDQM/config/Makefile_root.rules -text
 emu/emuDQM/dduBinExaminer/Makefile -text

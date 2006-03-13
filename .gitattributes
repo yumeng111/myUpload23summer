@@ -2,6 +2,7 @@
 emu/Makefile -text
 emu/cscSV/Makefile -text
 emu/cscSV/Makefile.rules -text
+emu/cscSV/README -text
 emu/cscSV/include/CSCSupervisor.h -text
 emu/cscSV/include/CSCSupervisorV.h -text
 emu/cscSV/include/EmuApplication.h -text

@@ -514,6 +514,7 @@ emu/emuDQM/EmuMonitor/src/common/EmuMonitorV.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuPlotter.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuSaveHistoFile.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuSaveHistoImages.cc -text
+emu/emuDQM/EmuMonitor/src/common/MonitorTest.cpp -text
 emu/emuDQM/EmuMonitor/test/common/xmlExample.cpp -text
 emu/emuDQM/EmuMonitor/xml/EmuDQMBooking.xml -text
 emu/emuDQM/EmuMonitor/xml/EmuMonitor.xml -text

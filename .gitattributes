@@ -302,7 +302,6 @@ emu/emuDCS/PeripheralCrate/include/DDUParser.h -text
 emu/emuDCS/PeripheralCrate/include/EmuController.h -text
 emu/emuDCS/PeripheralCrate/include/EmuParser.h -text
 emu/emuDCS/PeripheralCrate/include/EmuPeripheralCrate.h -text
-emu/emuDCS/PeripheralCrate/include/EmuPeripheralCrateSO.h -text
 emu/emuDCS/PeripheralCrate/include/EmuPeripheralCrateV.h -text
 emu/emuDCS/PeripheralCrate/include/EmuRunControlHyperDAQ.h -text
 emu/emuDCS/PeripheralCrate/include/GenDATA.h -text

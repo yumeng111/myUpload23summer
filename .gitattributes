@@ -109,6 +109,15 @@ emu/emuDAQ/emuClient/src/common/EmuClient.cc -text
 emu/emuDAQ/emuClient/src/common/EmuClientV.cc -text
 emu/emuDAQ/emuClient/src/common/EmuSOAPClient.cc -text
 emu/emuDAQ/emuClient/src/common/EmuSOAPClientV.cc -text
+emu/emuDAQ/emuDAQManager/Makefile -text
+emu/emuDAQ/emuDAQManager/images/EmuDAQManager64x64.gif -text
+emu/emuDAQ/emuDAQManager/images/ctrl32x32.gif -text
+emu/emuDAQ/emuDAQManager/images/ctrl64x64.gif -text
+emu/emuDAQ/emuDAQManager/include/EmuDAQManager.h -text
+emu/emuDAQ/emuDAQManager/include/EmuDAQManagerV.h -text
+emu/emuDAQ/emuDAQManager/include/emuDAQManager/exception/Exception.h -text
+emu/emuDAQ/emuDAQManager/src/common/EmuDAQManager.cc -text
+emu/emuDAQ/emuDAQManager/src/common/EmuDAQManagerV.cc -text
 emu/emuDAQ/emuDAQtester/Makefile -text
 emu/emuDAQ/emuDAQtester/images/ctrl32x32.gif -text
 emu/emuDAQ/emuDAQtester/images/ctrl64x64.gif -text

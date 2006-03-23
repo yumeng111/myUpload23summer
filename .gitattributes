@@ -153,11 +153,11 @@ emu/emuDAQ/emuRUI/include/emuRUI/exception/Exception.h -text
 emu/emuDAQ/emuRUI/src/common/EmuRUI.cc -text
 emu/emuDAQ/emuRUI/src/common/EmuRUIV.cc -text
 emu/emuDAQ/emuReadout/Makefile -text
-emu/emuDAQ/emuReadout/ORCA/Muon/METBRawFormat/interface/MuEndDDUHeader.h -text
 emu/emuDAQ/emuReadout/include/EmuFileReader.h -text
 emu/emuDAQ/emuReadout/include/EmuReader.h -text
 emu/emuDAQ/emuReadout/include/EmuSLinkReader.h -text
 emu/emuDAQ/emuReadout/include/EmuSpyReader.h -text
+emu/emuDAQ/emuReadout/include/MuEndDDUHeader.h -text
 emu/emuDAQ/emuReadout/src/common/EmuFileReader.cc -text
 emu/emuDAQ/emuReadout/src/common/EmuReader.cc -text
 emu/emuDAQ/emuReadout/src/common/EmuSLinkReader.cc -text

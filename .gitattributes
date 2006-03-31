@@ -182,6 +182,7 @@ emu/emuDAQ/emuUtil/include/FileWriter.h -text
 emu/emuDAQ/emuUtil/src/common/EmuI2OServer.cc -text
 emu/emuDAQ/emuUtil/src/common/EmuSOAPServer.cc -text
 emu/emuDAQ/emuUtil/src/common/EmuServer.cc -text
+emu/emuDAQ/xml/EmuDAQConfig.xsl -text
 emu/emuDAQ/xml/EmuDAQ_with_ToyClient.xml -text
 emu/emuDAQ/xml/EmuDAQ_with_a_SOAP_client.xml -text
 emu/emuDAQ/xml/EmuDAQ_with_an_I2O_client.xml -text

@@ -135,6 +135,7 @@ emu/emuDAQ/emuDAQtester/include/emuDAQtester/exception/Exception.h -text
 emu/emuDAQ/emuDAQtester/src/common/EmuDAQtester.cc -text
 emu/emuDAQ/emuDAQtester/src/common/EmuDAQtesterV.cc -text
 emu/emuDAQ/emuFU/Makefile -text
+emu/emuDAQ/emuFU/images/EmuFU64x64.gif -text
 emu/emuDAQ/emuFU/images/fu32x32.gif -text
 emu/emuDAQ/emuFU/images/fu64x64.gif -text
 emu/emuDAQ/emuFU/include/EmuFU.h -text
@@ -144,6 +145,7 @@ emu/emuDAQ/emuFU/include/emuFU/exception/Exception.h -text
 emu/emuDAQ/emuFU/src/common/EmuFU.cc -text
 emu/emuDAQ/emuFU/src/common/EmuFUV.cc -text
 emu/emuDAQ/emuRUI/Makefile -text
+emu/emuDAQ/emuRUI/images/EmuRUI64x64.gif -text
 emu/emuDAQ/emuRUI/images/rui32x32.gif -text
 emu/emuDAQ/emuRUI/images/rui64x64.gif -text
 emu/emuDAQ/emuRUI/include/EmuRUI.h -text
@@ -163,6 +165,7 @@ emu/emuDAQ/emuReadout/src/common/EmuReader.cc -text
 emu/emuDAQ/emuReadout/src/common/EmuSLinkReader.cc -text
 emu/emuDAQ/emuReadout/src/common/EmuSpyReader.cc -text
 emu/emuDAQ/emuTA/Makefile -text
+emu/emuDAQ/emuTA/images/EmuTA64x64.gif -text
 emu/emuDAQ/emuTA/images/ta32x32.gif -text
 emu/emuDAQ/emuTA/images/ta64x64.gif -text
 emu/emuDAQ/emuTA/include/EmuTA.h -text

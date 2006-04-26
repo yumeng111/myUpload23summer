@@ -432,6 +432,7 @@ emu/emuDCS/drivers/OSUcc_and_DDU/eth_hook_2.c -text
 emu/emuDCS/drivers/OSUcc_and_DDU/eth_hook_2.h -text
 emu/emuDCS/drivers/OSUcc_and_DDU/ethreset -text
 emu/emuDCS/drivers/OSUcc_and_DDU/ethreset1 -text
+emu/emuDCS/drivers/OSUcc_and_DDU/schar.h -text
 emu/emuDCS/drivers/modules1OSUcc/Makefile -text
 emu/emuDCS/drivers/modules1OSUcc/compile -text
 emu/emuDCS/drivers/modules1OSUcc/dl2k.c -text

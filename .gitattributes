@@ -183,6 +183,7 @@ emu/emuDAQ/emuUtil/include/EmuSOAPServer.h -text
 emu/emuDAQ/emuUtil/include/EmuServer.h -text
 emu/emuDAQ/emuUtil/include/EmuServer_old.h -text
 emu/emuDAQ/emuUtil/include/FileWriter.h -text
+emu/emuDAQ/emuUtil/script/emuFarmer -text
 emu/emuDAQ/emuUtil/src/common/EmuI2OServer.cc -text
 emu/emuDAQ/emuUtil/src/common/EmuSOAPServer.cc -text
 emu/emuDAQ/emuUtil/src/common/EmuServer.cc -text

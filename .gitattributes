@@ -87,6 +87,7 @@ emu/emuDAQ/TriggerAdapter/src/common/TriggerAdapterV.cc -text
 emu/emuDAQ/TriggerAdapter/xml/ta.xml -text
 emu/emuDAQ/drivers/Makefile -text
 emu/emuDAQ/drivers/bigphysarea_xxxx/Makefile -text
+emu/emuDAQ/drivers/bigphysarea_xxxx/bin/emuLoadDDUs -text
 emu/emuDAQ/drivers/bigphysarea_xxxx/bin/eth_reset_mm2 -text
 emu/emuDAQ/drivers/bigphysarea_xxxx/bin/eth_reset_mm3 -text
 emu/emuDAQ/drivers/bigphysarea_xxxx/bin/eth_reset_two -text

@@ -1,5 +1,10 @@
 * text=auto !eol
 emu/Makefile -text
+emu/cscFM/build.xml -text
+emu/cscFM/simple.duck -text
+emu/cscFM/src/rcms/fm/app/csc/CSCEventHandler.java -text
+emu/cscFM/src/rcms/fm/app/csc/CSCFunctionManager.java -text
+emu/cscFM/src/rcms/fm/app/csc/CSCStateMachineDefinition.java -text
 emu/cscSV/Makefile -text
 emu/cscSV/Makefile.rules -text
 emu/cscSV/README -text

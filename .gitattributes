@@ -42,6 +42,7 @@ emu/cscSV/test/LTC/src/common/LTCControl.cc -text
 emu/cscSV/test/LTC/src/common/LTCControlV.cc -text
 emu/cscSV/test/bootxdaq -text
 emu/cscSV/test/config.xml -text
+emu/cscSV/xml/config.xml -text
 emu/doc/html/index.html -text
 emu/doc/html/overview.html -text
 emu/emuDAQ/DDUReadout/Makefile -text

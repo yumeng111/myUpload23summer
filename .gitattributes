@@ -540,6 +540,7 @@ emu/emuDQM/EmuMonitor/src/common/ClusterLocalMax.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuBinCheck.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuBookChamber.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuBookCommon.cc -text
+emu/emuDQM/EmuMonitor/src/common/EmuBookDDU.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuFillChamber.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuFillCommon.cc -text
 emu/emuDQM/EmuMonitor/src/common/EmuLocalPlotter.cc -text

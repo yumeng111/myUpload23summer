@@ -508,6 +508,7 @@ emu/emuDCS/e2p/test/common/test_rc2dcs.cpp -text
 emu/emuDCS/e2p/xml/DcsControlWebXdaq.xml -text
 emu/emuDCS/e2p/xml/DcsControlWebXdaq_1973.xml -text
 emu/emuDQM/Common/include/cgicc.h -text
+emu/emuDQM/Common/include/coloredlayout.h -text
 emu/emuDQM/Common/include/toolbox.h -text
 emu/emuDQM/Common/include/xdaq.h -text
 emu/emuDQM/Common/include/xdata.h -text

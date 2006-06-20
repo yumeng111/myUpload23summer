@@ -44,6 +44,7 @@ emu/cscSV/test/bootxdaq -text
 emu/cscSV/test/config.xml -text
 emu/cscSV/test/dummy.xml -text
 emu/cscSV/xml/config.xml -text
+emu/cscSV/xml/default.xml -text
 emu/doc/html/index.html -text
 emu/doc/html/overview.html -text
 emu/emuDAQ/DDUReadout/Makefile -text

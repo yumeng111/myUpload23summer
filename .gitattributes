@@ -415,6 +415,7 @@ emu/emuDCS/PeripheralCrate/test/common/CrateTiming.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/EmuConfig.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/calibpulse.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/loadALCT.cpp -text
+emu/emuDCS/PeripheralCrate/test/common/loadMPC.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/loadTMB.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/mpc2sp.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/parsemain.cpp -text

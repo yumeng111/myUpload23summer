@@ -285,6 +285,7 @@ emu/emuDCS/PeripheralCore/include/EMU_JTAG_constants.h -text
 emu/emuDCS/PeripheralCore/include/EMUjtag.h -text
 emu/emuDCS/PeripheralCore/include/EmuModule.h -text
 emu/emuDCS/PeripheralCore/include/EmuPeripheralCrate.h -text
+emu/emuDCS/PeripheralCore/include/EmuSystem.h -text
 emu/emuDCS/PeripheralCore/include/GenDATA.h -text
 emu/emuDCS/PeripheralCore/include/JTAG_constants.h -text
 emu/emuDCS/PeripheralCore/include/MPC.h -text
@@ -308,6 +309,7 @@ emu/emuDCS/PeripheralCore/src/common/DAQMB.cc -text
 emu/emuDCS/PeripheralCore/src/common/DAQMBTester.cc -text
 emu/emuDCS/PeripheralCore/src/common/EMUjtag.cc -text
 emu/emuDCS/PeripheralCore/src/common/EmuModule.cc -text
+emu/emuDCS/PeripheralCore/src/common/EmuSystem.cc -text
 emu/emuDCS/PeripheralCore/src/common/MPC.cc -text
 emu/emuDCS/PeripheralCore/src/common/RAT.cc -text
 emu/emuDCS/PeripheralCore/src/common/TMB.cc -text
@@ -339,6 +341,7 @@ emu/emuDCS/PeripheralCrate/include/DAQMBTest.h -text
 emu/emuDCS/PeripheralCrate/include/DAQMBTester.h -text
 emu/emuDCS/PeripheralCrate/include/DDU.h -text
 emu/emuDCS/PeripheralCrate/include/DDUParser.h -text
+emu/emuDCS/PeripheralCrate/include/EMUParser.h -text
 emu/emuDCS/PeripheralCrate/include/EMU_JTAG_constants.h -text
 emu/emuDCS/PeripheralCrate/include/EMUjtag.h -text
 emu/emuDCS/PeripheralCrate/include/EmuController.h -text
@@ -346,6 +349,8 @@ emu/emuDCS/PeripheralCrate/include/EmuModule.h -text
 emu/emuDCS/PeripheralCrate/include/EmuParser.h -text
 emu/emuDCS/PeripheralCrate/include/EmuPeripheralCrate.h -text
 emu/emuDCS/PeripheralCrate/include/EmuRunControlHyperDAQ.h -text
+emu/emuDCS/PeripheralCrate/include/EmuSystem.h -text
+emu/emuDCS/PeripheralCrate/include/EmuSystemParser.h -text
 emu/emuDCS/PeripheralCrate/include/GenDATA.h -text
 emu/emuDCS/PeripheralCrate/include/JTAG_constants.h -text
 emu/emuDCS/PeripheralCrate/include/MPC.h -text
@@ -391,12 +396,15 @@ emu/emuDCS/PeripheralCrate/src/common/DAQMBTester.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMB_jtag.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DDU.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DDUParser.cc -text
+emu/emuDCS/PeripheralCrate/src/common/EMUParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EMUjtag.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuModule.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuPeripheralCrate.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuRunControlHyperDAQ.cc -text
+emu/emuDCS/PeripheralCrate/src/common/EmuSystem.cc -text
+emu/emuDCS/PeripheralCrate/src/common/EmuSystemParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/MPC.cc -text
 emu/emuDCS/PeripheralCrate/src/common/MPCParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/PCDriverI2oListener.cpp -text

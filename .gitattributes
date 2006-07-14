@@ -358,7 +358,6 @@ emu/emuDCS/PeripheralCrate/include/MPCParser.h -text
 emu/emuDCS/PeripheralCrate/include/OwnIt.h -text
 emu/emuDCS/PeripheralCrate/include/PCDriverI2oListener.h -text
 emu/emuDCS/PeripheralCrate/include/PCI2oMsgs.h -text
-emu/emuDCS/PeripheralCrate/include/PeripheralCrateController.h -text
 emu/emuDCS/PeripheralCrate/include/PeripheralCrateParser.h -text
 emu/emuDCS/PeripheralCrate/include/RAT.h -text
 emu/emuDCS/PeripheralCrate/include/Singleton.h -text
@@ -408,7 +407,6 @@ emu/emuDCS/PeripheralCrate/src/common/EmuSystemParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/MPC.cc -text
 emu/emuDCS/PeripheralCrate/src/common/MPCParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/PCDriverI2oListener.cpp -text
-emu/emuDCS/PeripheralCrate/src/common/PeripheralCrateController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/PeripheralCrateParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/RAT.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMB.cc -text

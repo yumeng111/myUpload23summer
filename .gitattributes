@@ -205,6 +205,7 @@ emu/emuDAQ/xml/EmuDAQ_with_a_SOAP_client.xml -text
 emu/emuDAQ/xml/EmuDAQ_with_an_I2O_client.xml -text
 emu/emuDAQ/xml/EmuDAQ_with_remote_I2O_client.xml -text
 emu/emuDCS/FEDCrate/Makefile -text
+emu/emuDCS/FEDCrate/bin/startFEDCrate.sh -text
 emu/emuDCS/FEDCrate/include/CAENVMElib.h -text
 emu/emuDCS/FEDCrate/include/CAENVMEoslib.h -text
 emu/emuDCS/FEDCrate/include/CAENVMEtypes.h -text
@@ -318,6 +319,8 @@ emu/emuDCS/PeripheralCore/src/common/VMEController.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEController_jtag.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEModule.cc -text
 emu/emuDCS/PeripheralCrate/Makefile -text
+emu/emuDCS/PeripheralCrate/bin/startLoggingServer.sh -text
+emu/emuDCS/PeripheralCrate/bin/startPeripheralCrate.sh -text
 emu/emuDCS/PeripheralCrate/include/ALCTClasses.h -text
 emu/emuDCS/PeripheralCrate/include/ALCTController.h -text
 emu/emuDCS/PeripheralCrate/include/ALCTnew.h -text

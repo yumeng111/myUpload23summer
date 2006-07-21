@@ -323,7 +323,6 @@ emu/emuDCS/PeripheralCrate/bin/startLoggingServer.sh -text
 emu/emuDCS/PeripheralCrate/bin/startPeripheralCrate.sh -text
 emu/emuDCS/PeripheralCrate/include/ALCTClasses.h -text
 emu/emuDCS/PeripheralCrate/include/ALCTController.h -text
-emu/emuDCS/PeripheralCrate/include/ALCTnew.h -text
 emu/emuDCS/PeripheralCrate/include/AnodeChannel.h -text
 emu/emuDCS/PeripheralCrate/include/BuckeyeChip.h -text
 emu/emuDCS/PeripheralCrate/include/CCB.h -text

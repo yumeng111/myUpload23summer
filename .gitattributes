@@ -393,7 +393,6 @@ emu/emuDCS/PeripheralCrate/src/common/DAQMB.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMBParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMBTester.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMB_jtag.cc -text
-emu/emuDCS/PeripheralCrate/src/common/DDU.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DDUParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EMUParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EMUjtag.cc -text

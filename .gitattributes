@@ -377,7 +377,6 @@ emu/emuDCS/PeripheralCrate/include/elong.h -text
 emu/emuDCS/PeripheralCrate/include/geom.h -text
 emu/emuDCS/PeripheralCrate/include/vme_cmd.h -text
 emu/emuDCS/PeripheralCrate/src/common/ALCTController.cc -text
-emu/emuDCS/PeripheralCrate/src/common/ALCTnew.cc -text
 emu/emuDCS/PeripheralCrate/src/common/AnodeChannel.cc -text
 emu/emuDCS/PeripheralCrate/src/common/CCB.cc -text
 emu/emuDCS/PeripheralCrate/src/common/CCBParser.cc -text

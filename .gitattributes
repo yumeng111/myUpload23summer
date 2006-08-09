@@ -365,7 +365,6 @@ emu/emuDCS/PeripheralCrate/include/Singleton.h -text
 emu/emuDCS/PeripheralCrate/include/TMB.h -text
 emu/emuDCS/PeripheralCrate/include/TMBParser.h -text
 emu/emuDCS/PeripheralCrate/include/TMBTester.h -text
-emu/emuDCS/PeripheralCrate/include/TMB_JTAG_constants.h -text
 emu/emuDCS/PeripheralCrate/include/TMB_constants.h -text
 emu/emuDCS/PeripheralCrate/include/VMEController.h -text
 emu/emuDCS/PeripheralCrate/include/VMEModule.h -text

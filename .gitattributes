@@ -409,7 +409,6 @@ emu/emuDCS/PeripheralCrate/src/common/RAT.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMB.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMBParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMBTester.cc -text
-emu/emuDCS/PeripheralCrate/src/common/TMB_trgmode.cc -text
 emu/emuDCS/PeripheralCrate/src/common/VMEController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/VMEController_jtag.cc -text
 emu/emuDCS/PeripheralCrate/src/common/VMEModule.cc -text

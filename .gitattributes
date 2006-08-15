@@ -432,6 +432,7 @@ emu/emuDCS/PeripheralCrate/xml/EmuCluster.xml -text
 emu/emuDCS/PeripheralCrate/xml/configTestBeam2004.xml -text
 emu/emuDCS/PeripheralCrate/xml/readme -text
 emu/emuDCS/PeripheralCrate/xml/test.xml -text
+emu/emuDCS/PeripheralCrate/xml/views.xml -text
 emu/emuDCS/PeripheralCrate/xml/xdaqPeripheralCrate.xml -text
 emu/emuDCS/drivers/3com/Makefile -text
 emu/emuDCS/drivers/3com/acenic.c -text

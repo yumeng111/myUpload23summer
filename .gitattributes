@@ -345,6 +345,7 @@ emu/emuDCS/PeripheralCrate/include/DDUParser.h -text
 emu/emuDCS/PeripheralCrate/include/EMUParser.h -text
 emu/emuDCS/PeripheralCrate/include/EMU_JTAG_constants.h -text
 emu/emuDCS/PeripheralCrate/include/EMUjtag.h -text
+emu/emuDCS/PeripheralCrate/include/EmuApplication.h -text
 emu/emuDCS/PeripheralCrate/include/EmuController.h -text
 emu/emuDCS/PeripheralCrate/include/EmuModule.h -text
 emu/emuDCS/PeripheralCrate/include/EmuParser.h -text
@@ -395,6 +396,7 @@ emu/emuDCS/PeripheralCrate/src/common/DAQMB_jtag.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DDUParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EMUParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EMUjtag.cc -text
+emu/emuDCS/PeripheralCrate/src/common/EmuApplication.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuModule.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuParser.cc -text

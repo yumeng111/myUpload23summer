@@ -319,6 +319,7 @@ emu/emuDCS/PeripheralCore/src/common/VMEController.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEController_jtag.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEModule.cc -text
 emu/emuDCS/PeripheralCrate/Makefile -text
+emu/emuDCS/PeripheralCrate/bin/setupORACLE.sh -text
 emu/emuDCS/PeripheralCrate/bin/startLoggingServer.sh -text
 emu/emuDCS/PeripheralCrate/bin/startPeripheralCrate.sh -text
 emu/emuDCS/PeripheralCrate/include/ALCTClasses.h -text
@@ -432,6 +433,7 @@ emu/emuDCS/PeripheralCrate/test/common/resetcc.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/scancrate.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/slicetestconfig.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/testtmbmain.cpp -text
+emu/emuDCS/PeripheralCrate/tnsnames.ora -text
 emu/emuDCS/PeripheralCrate/xml/EmuCluster.xml -text
 emu/emuDCS/PeripheralCrate/xml/configTestBeam2004.xml -text
 emu/emuDCS/PeripheralCrate/xml/configWinter2005ME1a.xml -text

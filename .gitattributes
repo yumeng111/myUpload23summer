@@ -193,6 +193,7 @@ emu/emuDAQ/emuUtil/include/EmuSOAPServer.h -text
 emu/emuDAQ/emuUtil/include/EmuServer.h -text
 emu/emuDAQ/emuUtil/include/EmuServer_old.h -text
 emu/emuDAQ/emuUtil/include/FileWriter.h -text
+emu/emuDAQ/emuUtil/include/pstream.h -text
 emu/emuDAQ/emuUtil/script/emuCuller -text
 emu/emuDAQ/emuUtil/script/emuFarmer -text
 emu/emuDAQ/emuUtil/script/emuParameterGet -text

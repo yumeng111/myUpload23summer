@@ -437,6 +437,10 @@ emu/emuDCS/PeripheralCrate/test/common/slicetestconfig.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/testtmbmain.cpp -text
 emu/emuDCS/PeripheralCrate/tnsnames.ora -text
 emu/emuDCS/PeripheralCrate/xml/EmuCluster.xml -text
+emu/emuDCS/PeripheralCrate/xml/configFall2006ME1a.xml -text
+emu/emuDCS/PeripheralCrate/xml/configFall2006ME1b.xml -text
+emu/emuDCS/PeripheralCrate/xml/configFall2006ME2.xml -text
+emu/emuDCS/PeripheralCrate/xml/configFall2006ME3.xml -text
 emu/emuDCS/PeripheralCrate/xml/configTestBeam2004.xml -text
 emu/emuDCS/PeripheralCrate/xml/configWinter2005ME1a.xml -text
 emu/emuDCS/PeripheralCrate/xml/configWinter2005ME1b.xml -text

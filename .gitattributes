@@ -325,6 +325,7 @@ emu/emuDCS/PeripheralCrate/Makefile -text
 emu/emuDCS/PeripheralCrate/bin/setupORACLE.sh -text
 emu/emuDCS/PeripheralCrate/bin/startLoggingServer.sh -text
 emu/emuDCS/PeripheralCrate/bin/startPeripheralCrate.sh -text
+emu/emuDCS/PeripheralCrate/bin/startTTC.sh -text
 emu/emuDCS/PeripheralCrate/include/ALCTClasses.h -text
 emu/emuDCS/PeripheralCrate/include/ALCTController.h -text
 emu/emuDCS/PeripheralCrate/include/AnodeChannel.h -text

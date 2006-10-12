@@ -352,6 +352,7 @@ emu/emuDCS/PeripheralCrate/include/EMU_JTAG_constants.h -text
 emu/emuDCS/PeripheralCrate/include/EMUjtag.h -text
 emu/emuDCS/PeripheralCrate/include/EmuApplication.h -text
 emu/emuDCS/PeripheralCrate/include/EmuController.h -text
+emu/emuDCS/PeripheralCrate/include/EmuELog.h -text
 emu/emuDCS/PeripheralCrate/include/EmuModule.h -text
 emu/emuDCS/PeripheralCrate/include/EmuParser.h -text
 emu/emuDCS/PeripheralCrate/include/EmuPeripheralCrate.h -text

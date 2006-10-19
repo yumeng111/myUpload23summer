@@ -533,6 +533,11 @@ emu/emuDCS/e2p/xml/DcsControlWebXdaq_1973.xml -text
 emu/emuDQM/CMSSWLibs/FWCore/MessageLogger/interface/MessageLogger.h -text
 emu/emuDQM/CMSSWLibs/Makefile -text
 emu/emuDQM/CMSSWLibs/README.txt -text
+emu/emuDQM/Common/Makefile -text
+emu/emuDQM/Common/include/EmuDQM_AppParameters.h -text
+emu/emuDQM/Common/include/EmuDQM_SOAPCommands.h -text
+emu/emuDQM/Common/include/EmuMonitoringCanvas.h -text
+emu/emuDQM/Common/include/EmuMonitoringObject.h -text
 emu/emuDQM/Common/include/cgicc.h -text
 emu/emuDQM/Common/include/coloredlayout.h -text
 emu/emuDQM/Common/include/toolbox.h -text
@@ -540,6 +545,10 @@ emu/emuDQM/Common/include/xdaq.h -text
 emu/emuDQM/Common/include/xdata.h -text
 emu/emuDQM/Common/include/xgi.h -text
 emu/emuDQM/Common/include/xoap.h -text
+emu/emuDQM/Common/src/common/EmuDQM_AppParameters.cc -text
+emu/emuDQM/Common/src/common/EmuDQM_SOAPCommands.cc -text
+emu/emuDQM/Common/src/common/EmuMonitoringCanvas.cc -text
+emu/emuDQM/Common/src/common/EmuMonitoringObject.cc -text
 emu/emuDQM/EmuDisplayServer/Makefile -text
 emu/emuDQM/EmuDisplayServer/include/EmuDisplayServer.h -text
 emu/emuDQM/EmuDisplayServer/include/EmuDisplayServerV.h -text

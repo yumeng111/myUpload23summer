@@ -646,6 +646,22 @@ emu/emuDQM/dduBinExaminer/Makefile -text
 emu/emuDQM/dduBinExaminer/include/dduBinExaminer.hh -text
 emu/emuDQM/dduBinExaminer/src/common/dduBinExaminer.cc -text
 emu/emuDQM/dduBinExaminer/test/common/dduBinExaminerTest.cpp -text
+emu/emuDQM/emuDisplayClient/Makefile -text
+emu/emuDQM/emuDisplayClient/include/EmuDisplayClient.h -text
+emu/emuDQM/emuDisplayClient/include/EmuDisplayClientV.h -text
+emu/emuDQM/emuDisplayClient/src/common/EmuBrowsing.cc -text
+emu/emuDQM/emuDisplayClient/src/common/EmuDisplayClient.cc -text
+emu/emuDQM/emuDisplayClient/src/common/EmuDisplayClientV.cc -text
+emu/emuDQM/emuDisplayClient/xml/EmuDisplayClient.xml -text
+emu/emuDQM/emuDisplayClient/xml/client.xml -text
+emu/emuDQM/emuDisplayClient/xml/local.xml -text
+emu/emuDQM/emuDisplayClient/xml/local1.xml -text
+emu/emuDQM/emuDisplayClient/xml/local2.xml -text
+emu/emuDQM/emuDisplayClient/xml/local3.xml -text
+emu/emuDQM/emuDisplayClient/xml/local4.xml -text
+emu/emuDQM/emuDisplayClient/xml/local4_1.xml -text
+emu/emuDQM/emuDisplayClient/xml/local4_2.xml -text
+emu/emuDQM/emuDisplayClient/xml/local_net.xml -text
 emu/extern/dim/Makefile -text
 emu/extern/dim/dim_v15r8.zip -text svneol=unset#unset
 emu/extern/readme -text

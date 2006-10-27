@@ -34,6 +34,12 @@ emu/cscSV/test/EmuPC/include/EmuPeripheralCrate.h -text
 emu/cscSV/test/EmuPC/include/EmuPeripheralCrateV.h -text
 emu/cscSV/test/EmuPC/src/common/EmuPeripheralCrate.cc -text
 emu/cscSV/test/EmuPC/src/common/EmuPeripheralCrateV.cc -text
+emu/cscSV/test/EmuTF/Makefile -text
+emu/cscSV/test/EmuTF/Makefile.rules -text
+emu/cscSV/test/EmuTF/include/TF_hyperDAQ.h -text
+emu/cscSV/test/EmuTF/include/TF_hyperDAQV.h -text
+emu/cscSV/test/EmuTF/src/common/TF_hyperDAQ.cc -text
+emu/cscSV/test/EmuTF/src/common/TF_hyperDAQV.cc -text
 emu/cscSV/test/LTC/Makefile -text
 emu/cscSV/test/LTC/Makefile.rules -text
 emu/cscSV/test/LTC/include/LTCControl.h -text

@@ -1,6 +1,7 @@
 * text=auto !eol
 emu/Makefile -text
 emu/cscFM/build.xml -text
+emu/cscFM/cscfm.properties -text
 emu/cscFM/simple.duck -text
 emu/cscFM/src/rcms/fm/app/csc/CSCEventHandler.java -text
 emu/cscFM/src/rcms/fm/app/csc/CSCFunctionManager.java -text

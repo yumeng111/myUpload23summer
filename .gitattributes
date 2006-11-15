@@ -387,12 +387,15 @@ emu/emuDCS/PeripheralCrate/include/TMB.h -text
 emu/emuDCS/PeripheralCrate/include/TMBParser.h -text
 emu/emuDCS/PeripheralCrate/include/TMBTester.h -text
 emu/emuDCS/PeripheralCrate/include/TMB_constants.h -text
+emu/emuDCS/PeripheralCrate/include/TStoreCCBParser.h -text
 emu/emuDCS/PeripheralCrate/include/TStoreCSCParser.h -text
 emu/emuDCS/PeripheralCrate/include/TStoreDMBParser.h -text
+emu/emuDCS/PeripheralCrate/include/TStoreMPCParser.h -text
 emu/emuDCS/PeripheralCrate/include/TStoreParser.h -text
 emu/emuDCS/PeripheralCrate/include/TStorePeriphParser.h -text
 emu/emuDCS/PeripheralCrate/include/TStoreTMBParser.h -text
 emu/emuDCS/PeripheralCrate/include/TStoreVMEParser.h -text
+emu/emuDCS/PeripheralCrate/include/TStore_constants.h -text
 emu/emuDCS/PeripheralCrate/include/VMEController.h -text
 emu/emuDCS/PeripheralCrate/include/VMEModule.h -text
 emu/emuDCS/PeripheralCrate/include/VMEParser.h -text

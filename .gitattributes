@@ -448,6 +448,7 @@ emu/emuDCS/PeripheralCrate/src/common/TStoreDMBParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TStoreMPCParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TStoreParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TStorePeriphParser.cc -text
+emu/emuDCS/PeripheralCrate/src/common/TStoreTMBParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TStoreVMEParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/VMEController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/VMEController_jtag.cc -text

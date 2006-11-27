@@ -387,6 +387,8 @@ emu/emuDCS/PeripheralCrate/include/TMB.h -text
 emu/emuDCS/PeripheralCrate/include/TMBParser.h -text
 emu/emuDCS/PeripheralCrate/include/TMBTester.h -text
 emu/emuDCS/PeripheralCrate/include/TMB_constants.h -text
+emu/emuDCS/PeripheralCrate/include/TStoreAFEBParser.h -text
+emu/emuDCS/PeripheralCrate/include/TStoreALCTParser.h -text
 emu/emuDCS/PeripheralCrate/include/TStoreCCBParser.h -text
 emu/emuDCS/PeripheralCrate/include/TStoreCSCParser.h -text
 emu/emuDCS/PeripheralCrate/include/TStoreDMBParser.h -text
@@ -442,6 +444,8 @@ emu/emuDCS/PeripheralCrate/src/common/RAT.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMB.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMBParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TMBTester.cc -text
+emu/emuDCS/PeripheralCrate/src/common/TStoreAFEBParser.cc -text
+emu/emuDCS/PeripheralCrate/src/common/TStoreALCTParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TStoreCCBParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TStoreCSCParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/TStoreDMBParser.cc -text

@@ -234,6 +234,7 @@ emu/emuDCS/FEDCrate/include/DDU.h -text
 emu/emuDCS/FEDCrate/include/DDUParser.h -text
 emu/emuDCS/FEDCrate/include/DDUTester.h -text
 emu/emuDCS/FEDCrate/include/EmuFController.h -text
+emu/emuDCS/FEDCrate/include/EmuFCrate.h -text
 emu/emuDCS/FEDCrate/include/EmuFCrateHyperDAQ.h -text
 emu/emuDCS/FEDCrate/include/EmuFCrateSOAP.h -text
 emu/emuDCS/FEDCrate/include/EmuFRunControlHyperDAQ.h -text
@@ -265,6 +266,7 @@ emu/emuDCS/FEDCrate/src/common/DDUParser.cc -text
 emu/emuDCS/FEDCrate/src/common/DDUTester.cc -text
 emu/emuDCS/FEDCrate/src/common/DDU_old.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFController.cc -text
+emu/emuDCS/FEDCrate/src/common/EmuFCrate.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrateHyperDAQ.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrateSOAP.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFRunControlHyperDAQ.cc -text

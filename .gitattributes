@@ -3,6 +3,7 @@ emu/Makefile -text
 emu/cscFM/build.xml -text
 emu/cscFM/duck/level1.xml -text
 emu/cscFM/duck/loader -text
+emu/cscFM/duck/sTTS.xml -text
 emu/cscFM/duck/simple.xml -text
 emu/cscFM/duck/withSV.xml -text
 emu/cscFM/src/rcms/fm/app/csc/CSCFunctionManager.java -text

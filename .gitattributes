@@ -412,7 +412,6 @@ emu/emuDCS/PeripheralCrate/include/VMEController.h -text
 emu/emuDCS/PeripheralCrate/include/VMEModule.h -text
 emu/emuDCS/PeripheralCrate/include/VMEParser.h -text
 emu/emuDCS/PeripheralCrate/include/alct_registers.h -text
-emu/emuDCS/PeripheralCrate/include/elong.h -text
 emu/emuDCS/PeripheralCrate/include/geom.h -text
 emu/emuDCS/PeripheralCrate/include/pstream.h -text
 emu/emuDCS/PeripheralCrate/include/vme_cmd.h -text
@@ -433,7 +432,6 @@ emu/emuDCS/PeripheralCrate/src/common/CrateUtils.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMB.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMBParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMBTester.cc -text
-emu/emuDCS/PeripheralCrate/src/common/DAQMB_jtag.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DDUParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EMUParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EMUjtag.cc -text
@@ -469,7 +467,6 @@ emu/emuDCS/PeripheralCrate/src/common/VMEController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/VMEController_jtag.cc -text
 emu/emuDCS/PeripheralCrate/src/common/VMEModule.cc -text
 emu/emuDCS/PeripheralCrate/src/common/VMEParser.cc -text
-emu/emuDCS/PeripheralCrate/src/common/elong.cc -text
 emu/emuDCS/PeripheralCrate/test/common/CrateTiming.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/EmuConfig.cpp -text
 emu/emuDCS/PeripheralCrate/test/common/ParserTester.cpp -text

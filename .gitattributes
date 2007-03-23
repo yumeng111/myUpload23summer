@@ -176,6 +176,7 @@ emu/emuDAQ/xml/EmuDAQ_with_an_I2O_client.xml -text
 emu/emuDAQ/xml/EmuDAQ_with_remote_I2O_client.xml -text
 emu/emuDCS/FEDCrate/Makefile -text
 emu/emuDCS/FEDCrate/bin/startFEDCrate.sh -text
+emu/emuDCS/FEDCrate/bin/startFEDCrateSV.sh -text
 emu/emuDCS/FEDCrate/include/CAENVMElib.h -text
 emu/emuDCS/FEDCrate/include/CAENVMEoslib.h -text
 emu/emuDCS/FEDCrate/include/CAENVMEtypes.h -text
@@ -188,8 +189,8 @@ emu/emuDCS/FEDCrate/include/DDU.h -text
 emu/emuDCS/FEDCrate/include/DDUParser.h -text
 emu/emuDCS/FEDCrate/include/DDUTester.h -text
 emu/emuDCS/FEDCrate/include/EmuFController.h -text
+emu/emuDCS/FEDCrate/include/EmuFCrate.h -text
 emu/emuDCS/FEDCrate/include/EmuFCrateHyperDAQ.h -text
-emu/emuDCS/FEDCrate/include/EmuFCrateSOAP.h -text
 emu/emuDCS/FEDCrate/include/EmuFRunControlHyperDAQ.h -text
 emu/emuDCS/FEDCrate/include/EmuParser.h -text
 emu/emuDCS/FEDCrate/include/FEDCrateController.h -text
@@ -235,9 +236,13 @@ emu/emuDCS/FEDCrate/test/common/README -text
 emu/emuDCS/FEDCrate/test/common/configTest.xml -text
 emu/emuDCS/FEDCrate/test/common/ddutest.cpp -text
 emu/emuDCS/FEDCrate/xml/EmuFCluster.xml -text
+emu/emuDCS/FEDCrate/xml/EmuFCluster_SV.xml -text
 emu/emuDCS/FEDCrate/xml/README -text
 emu/emuDCS/FEDCrate/xml/config.xml -text
 emu/emuDCS/FEDCrate/xml/config2.xml -text
+emu/emuDCS/FEDCrate/xml/config_c1.xml -text
+emu/emuDCS/FEDCrate/xml/config_c2.xml -text
+emu/emuDCS/FEDCrate/xml/config_sx5.xml -text
 emu/emuDCS/FEDCrate/xml/xdaq_run -text
 emu/emuDCS/Makefile -text
 emu/emuDCS/PeripheralCore/include/ALCTController.h -text

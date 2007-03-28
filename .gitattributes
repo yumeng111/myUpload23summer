@@ -336,12 +336,10 @@ emu/emuDCS/PeripheralCrate/include/GenDATA.h -text
 emu/emuDCS/PeripheralCrate/include/JTAG_constants.h -text
 emu/emuDCS/PeripheralCrate/include/MPC.h -text
 emu/emuDCS/PeripheralCrate/include/MPCParser.h -text
-emu/emuDCS/PeripheralCrate/include/OwnIt.h -text
 emu/emuDCS/PeripheralCrate/include/PCDriverI2oListener.h -text
 emu/emuDCS/PeripheralCrate/include/PCI2oMsgs.h -text
 emu/emuDCS/PeripheralCrate/include/PeripheralCrateParser.h -text
 emu/emuDCS/PeripheralCrate/include/RAT.h -text
-emu/emuDCS/PeripheralCrate/include/Singleton.h -text
 emu/emuDCS/PeripheralCrate/include/TMB.h -text
 emu/emuDCS/PeripheralCrate/include/TMBParser.h -text
 emu/emuDCS/PeripheralCrate/include/TMBTester.h -text

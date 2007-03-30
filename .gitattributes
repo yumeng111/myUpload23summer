@@ -764,6 +764,7 @@ emu/emuDQM/scripts/misc/tree_tpl.js -text
 emu/emuDQM/scripts/misc/view.html -text
 emu/emuDQM/scripts/misc/view.js -text
 emu/emuFarmer/Makefile -text
+emu/emuFarmer/README_BEFORE_COMPILING -text
 emu/emuFarmer/html/EmuFarmer.css -text
 emu/emuFarmer/html/EmuFarmer.js -text
 emu/emuFarmer/html/EmuFarmer_Manual.html -text

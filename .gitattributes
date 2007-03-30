@@ -220,6 +220,7 @@ emu/emuDCS/FEDCrate/src/common/DDUParser.cc -text
 emu/emuDCS/FEDCrate/src/common/DDUTester.cc -text
 emu/emuDCS/FEDCrate/src/common/DDU_old.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFController.cc -text
+emu/emuDCS/FEDCrate/src/common/EmuFCrate.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrateHyperDAQ.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrateSOAP.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFRunControlHyperDAQ.cc -text

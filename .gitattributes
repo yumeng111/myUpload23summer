@@ -663,6 +663,7 @@ emu/emuDQM/dduBinExaminer/Makefile -text
 emu/emuDQM/dduBinExaminer/include/dduBinExaminer.hh -text
 emu/emuDQM/dduBinExaminer/src/common/dduBinExaminer.cc -text
 emu/emuDQM/dduBinExaminer/test/common/dduBinExaminerTest.cpp -text
+emu/emuDQM/dduBinExaminer/test/common/dduEvtDump.cpp -text
 emu/emuDQM/emuDisplayClient/Makefile -text
 emu/emuDQM/emuDisplayClient/include/EmuDisplayClient.h -text
 emu/emuDQM/emuDisplayClient/include/EmuDisplayClientV.h -text

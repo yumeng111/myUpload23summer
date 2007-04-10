@@ -781,6 +781,7 @@ emu/emuFarmer/src/common/EmuProcessDescriptor.cc -text
 emu/emuFarmer/src/common/EmuXalanTransformerProblemListener.cc -text
 emu/emuFarmer/xml/EmuConfigList.xml -text
 emu/emuFarmer/xml/EmuConfigListXSLT.xml -text
+emu/emuFarmer/xml/EmuConfigMerger.xsl -text
 emu/emuFarmer/xml/EmuDAQConfig.xml -text
 emu/emuFarmer/xml/EmuFarmer.xml -text
 emu/extern/dim/Makefile -text

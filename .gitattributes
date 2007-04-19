@@ -15,6 +15,8 @@ emu/cscFM/src/rcms/fm/app/csc/Level1Parameters.java -text
 emu/cscFM/src/rcms/fm/app/csc/Level1StateMachineDefinition.java -text
 emu/cscFM/src/rcms/fm/app/csc/Level1States.java -text
 emu/cscFM/src/rcms/fm/app/csc/Level1TrailingActions.java -text
+emu/cscFM/xml/FEDconfig.duck -text
+emu/cscFM/xml/FEDconfig.xml -text
 emu/cscSV/Makefile -text
 emu/cscSV/Makefile.rules -text
 emu/cscSV/README -text

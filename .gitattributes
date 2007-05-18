@@ -43,8 +43,10 @@ emu/cscSV/test/EmuFED/src/common/EmuFCrateV.cc -text
 emu/cscSV/test/EmuPC/Makefile -text
 emu/cscSV/test/EmuPC/Makefile.rules -text
 emu/cscSV/test/EmuPC/include/EmuPeripheralCrate.h -text
+emu/cscSV/test/EmuPC/include/EmuPeripheralCrateManager.h -text
 emu/cscSV/test/EmuPC/include/EmuPeripheralCrateV.h -text
 emu/cscSV/test/EmuPC/src/common/EmuPeripheralCrate.cc -text
+emu/cscSV/test/EmuPC/src/common/EmuPeripheralCrateManager.cc -text
 emu/cscSV/test/EmuPC/src/common/EmuPeripheralCrateV.cc -text
 emu/cscSV/test/EmuTF/Makefile -text
 emu/cscSV/test/EmuTF/Makefile.rules -text

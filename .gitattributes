@@ -25,6 +25,9 @@ emu/cscSV/html/index.html -text
 emu/cscSV/include/CSCSupervisor.h -text
 emu/cscSV/include/CSCSupervisorV.h -text
 emu/cscSV/include/EmuApplication.h -text
+emu/cscSV/include/EmuELog.h -text
+emu/cscSV/include/EmuRunInfo.h -text
+emu/cscSV/include/pstream.h -text
 emu/cscSV/src/common/CSCSupervisor.cc -text
 emu/cscSV/src/common/CSCSupervisorV.cc -text
 emu/cscSV/src/common/EmuApplication.cc -text

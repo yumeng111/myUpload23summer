@@ -307,7 +307,6 @@ emu/emuDCS/PeripheralCrate/bin/setupORACLE.sh -text
 emu/emuDCS/PeripheralCrate/bin/startLoggingServer.sh -text
 emu/emuDCS/PeripheralCrate/bin/startPeripheralCrate.sh -text
 emu/emuDCS/PeripheralCrate/bin/startTTC.sh -text
-emu/emuDCS/PeripheralCrate/include/ALCTClasses.h -text
 emu/emuDCS/PeripheralCrate/include/ALCTController.h -text
 emu/emuDCS/PeripheralCrate/include/AnodeChannel.h -text
 emu/emuDCS/PeripheralCrate/include/BuckeyeChip.h -text
@@ -368,7 +367,6 @@ emu/emuDCS/PeripheralCrate/include/TStore_constants.h -text
 emu/emuDCS/PeripheralCrate/include/VMEController.h -text
 emu/emuDCS/PeripheralCrate/include/VMEModule.h -text
 emu/emuDCS/PeripheralCrate/include/VMEParser.h -text
-emu/emuDCS/PeripheralCrate/include/alct_registers.h -text
 emu/emuDCS/PeripheralCrate/include/geom.h -text
 emu/emuDCS/PeripheralCrate/include/pstream.h -text
 emu/emuDCS/PeripheralCrate/include/vme_cmd.h -text

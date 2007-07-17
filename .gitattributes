@@ -254,6 +254,7 @@ emu/emuDCS/FEDCrate/xml/config_c2.xml -text
 emu/emuDCS/FEDCrate/xml/config_sx5.xml -text
 emu/emuDCS/FEDCrate/xml/xdaq_run -text
 emu/emuDCS/Makefile -text
+emu/emuDCS/PeripheralCore/Makefile -text
 emu/emuDCS/PeripheralCore/include/ALCTController.h -text
 emu/emuDCS/PeripheralCore/include/AnodeChannel.h -text
 emu/emuDCS/PeripheralCore/include/BuckeyeChip.h -text

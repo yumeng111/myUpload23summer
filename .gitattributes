@@ -309,7 +309,6 @@ emu/emuDCS/PeripheralCrate/bin/startLoggingServer.sh -text
 emu/emuDCS/PeripheralCrate/bin/startPeripheralCrate.sh -text
 emu/emuDCS/PeripheralCrate/bin/startTTC.sh -text
 emu/emuDCS/PeripheralCrate/include/CCBParser.h -text
-emu/emuDCS/PeripheralCrate/include/CFEB.h -text
 emu/emuDCS/PeripheralCrate/include/CSCParser.h -text
 emu/emuDCS/PeripheralCrate/include/CalibDAQ.h -text
 emu/emuDCS/PeripheralCrate/include/ChamberUtilities.h -text

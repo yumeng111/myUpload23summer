@@ -185,6 +185,7 @@ emu/emuDAQ/xml/EmuDAQ_with_remote_I2O_client.xml -text
 emu/emuDCS/FEDCrate/Makefile -text
 emu/emuDCS/FEDCrate/bin/startFEDCrate.sh -text
 emu/emuDCS/FEDCrate/bin/startFEDCrateSV.sh -text
+emu/emuDCS/FEDCrate/bin/startLoggingServer.sh -text
 emu/emuDCS/FEDCrate/include/CAENVMElib.h -text
 emu/emuDCS/FEDCrate/include/CAENVMEoslib.h -text
 emu/emuDCS/FEDCrate/include/CAENVMEtypes.h -text

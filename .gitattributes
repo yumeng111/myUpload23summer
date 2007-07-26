@@ -323,7 +323,6 @@ emu/emuDCS/PeripheralCrate/include/CrateUtils.h -text
 emu/emuDCS/PeripheralCrate/include/DAQMBParser.h -text
 emu/emuDCS/PeripheralCrate/include/DDUParser.h -text
 emu/emuDCS/PeripheralCrate/include/EMUParser.h -text
-emu/emuDCS/PeripheralCrate/include/EmuApplication.h -text
 emu/emuDCS/PeripheralCrate/include/EmuController.h -text
 emu/emuDCS/PeripheralCrate/include/EmuELog.h -text
 emu/emuDCS/PeripheralCrate/include/EmuParser.h -text
@@ -359,7 +358,6 @@ emu/emuDCS/PeripheralCrate/src/common/CrateUtils.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DAQMBParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/DDUParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EMUParser.cc -text
-emu/emuDCS/PeripheralCrate/src/common/EmuApplication.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuPeripheralCrate.cc -text

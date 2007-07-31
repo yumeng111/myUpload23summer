@@ -124,7 +124,11 @@ emu/emuDAQ/drivers/e1000hook/eth_hook_2_nobigphysxxx/eth_hook_2.c -text
 emu/emuDAQ/drivers/e1000hook/eth_hook_2_nobigphysxxx/eth_hook_2.h -text
 emu/emuDAQ/drivers/e1000hook/eth_hook_2_nobigphysxxx/eth_hook_2.mod.c -text
 emu/emuDAQ/drivers/e1000hook/eth_hook_2_nobigphysxxx/schar.h -text
+emu/emuDAQ/drivers/e1000hook/eth_hook_3_nobigphysxxx/Makefile -text
 emu/emuDAQ/drivers/e1000hook/eth_hook_3_nobigphysxxx/eth_hook_3.c -text
+emu/emuDAQ/drivers/e1000hook/eth_hook_3_nobigphysxxx/eth_hook_3.h -text
+emu/emuDAQ/drivers/e1000hook/eth_hook_3_nobigphysxxx/eth_hook_3.mod.c -text
+emu/emuDAQ/drivers/e1000hook/eth_hook_3_nobigphysxxx/schar.h -text
 emu/emuDAQ/drivers/e1000hook/eth_replace -text
 emu/emuDAQ/drivers/e1000hook/eth_up -text
 emu/emuDAQ/emuClient/Makefile -text

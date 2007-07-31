@@ -98,6 +98,8 @@ emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_3/Makefile -text
 emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_3/eth_hook_3.c -text
 emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_3/eth_hook_3.h -text
 emu/emuDAQ/drivers/bigphysarea_xxxx/eth_hook_mmap_v0_3/schar.h -text
+emu/emuDAQ/drivers/e1000hook/eth_replace -text
+emu/emuDAQ/drivers/e1000hook/eth_up -text
 emu/emuDAQ/emuClient/Makefile -text
 emu/emuDAQ/emuClient/include/EmuClient.h -text
 emu/emuDAQ/emuClient/include/EmuClientV.h -text

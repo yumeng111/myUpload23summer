@@ -119,6 +119,11 @@ emu/emuDAQ/drivers/e1000hook/e1000-7.0.39/src/kcompat.c -text
 emu/emuDAQ/drivers/e1000hook/e1000-7.0.39/src/kcompat.h -text
 emu/emuDAQ/drivers/e1000hook/e1000-7.0.39/src/kcompat_ethtool.c -text
 emu/emuDAQ/drivers/e1000hook/e1000-7.0.39/src/main.c -text
+emu/emuDAQ/drivers/e1000hook/eth_hook_2_nobigphysxxx/Makefile -text
+emu/emuDAQ/drivers/e1000hook/eth_hook_2_nobigphysxxx/eth_hook_2.c -text
+emu/emuDAQ/drivers/e1000hook/eth_hook_2_nobigphysxxx/eth_hook_2.h -text
+emu/emuDAQ/drivers/e1000hook/eth_hook_2_nobigphysxxx/eth_hook_2.mod.c -text
+emu/emuDAQ/drivers/e1000hook/eth_hook_2_nobigphysxxx/schar.h -text
 emu/emuDAQ/drivers/e1000hook/eth_replace -text
 emu/emuDAQ/drivers/e1000hook/eth_up -text
 emu/emuDAQ/emuClient/Makefile -text

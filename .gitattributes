@@ -198,6 +198,7 @@ emu/emuDAQ/emuRUI/include/EmuRUI.h -text
 emu/emuDAQ/emuRUI/include/EmuRUIV.h -text
 emu/emuDAQ/emuRUI/include/emuRUI/Writer.h -text
 emu/emuDAQ/emuRUI/include/emuRUI/exception/Exception.h -text
+emu/emuDAQ/emuRUI/include/i2oEmuFirstEventNumberMsg.h -text
 emu/emuDAQ/emuRUI/src/common/EmuRUI.cc -text
 emu/emuDAQ/emuRUI/src/common/EmuRUIV.cc -text
 emu/emuDAQ/emuReadout/Makefile -text

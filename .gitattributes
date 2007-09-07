@@ -728,6 +728,7 @@ emu/emuDQM/emuMonitor/src/common/EmuMonitor_SOAP.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_bookCanvases.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_bookHistograms.cc -text
+emu/emuDQM/emuMonitor/src/common/EmuPlotter_loadFromROOTFile.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_loadXMLBookingInfo.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_loadXMLCanvasesInfo.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_processChamber.cc -text

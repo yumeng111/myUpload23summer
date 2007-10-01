@@ -40,8 +40,10 @@ emu/cscSV/test/EmuDAQ/src/common/EmuDAQManagerV.cc -text
 emu/cscSV/test/EmuFED/Makefile -text
 emu/cscSV/test/EmuFED/Makefile.rules -text
 emu/cscSV/test/EmuFED/include/EmuFCrate.h -text
+emu/cscSV/test/EmuFED/include/EmuFCrateManager.h -text
 emu/cscSV/test/EmuFED/include/EmuFCrateV.h -text
 emu/cscSV/test/EmuFED/src/common/EmuFCrate.cc -text
+emu/cscSV/test/EmuFED/src/common/EmuFCrateManager.cc -text
 emu/cscSV/test/EmuFED/src/common/EmuFCrateV.cc -text
 emu/cscSV/test/EmuPC/Makefile -text
 emu/cscSV/test/EmuPC/Makefile.rules -text

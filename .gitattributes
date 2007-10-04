@@ -249,6 +249,7 @@ emu/emuDAQ/xml/EmuDAQ_SliceTest_Complete.xml -text
 emu/emuDAQ/xml/EmuDAQ_with_a_SOAP_client.xml -text
 emu/emuDAQ/xml/EmuDAQ_with_an_I2O_client.xml -text
 emu/emuDAQ/xml/EmuDAQ_with_remote_I2O_client.xml -text
+emu/emuDAQ/xml/RUI-to-chamber_mapping.xml -text
 emu/emuDCS/FEDCrate/Makefile -text
 emu/emuDCS/FEDCrate/bgndcms.jpg -text svneol=unset#unset
 emu/emuDCS/FEDCrate/bin/startFEDCrate.sh -text

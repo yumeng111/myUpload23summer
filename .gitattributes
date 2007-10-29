@@ -393,6 +393,7 @@ emu/emuDCS/PeripheralCrate/include/EmuController.h -text
 emu/emuDCS/PeripheralCrate/include/EmuELog.h -text
 emu/emuDCS/PeripheralCrate/include/EmuParser.h -text
 emu/emuDCS/PeripheralCrate/include/EmuPeripheralCrate.h -text
+emu/emuDCS/PeripheralCrate/include/EmuPeripheralCrateBroadcast.h -text
 emu/emuDCS/PeripheralCrate/include/EmuPeripheralCrateManager.h -text
 emu/emuDCS/PeripheralCrate/include/EmuRunControlHyperDAQ.h -text
 emu/emuDCS/PeripheralCrate/include/EmuSystemParser.h -text

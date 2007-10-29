@@ -428,6 +428,7 @@ emu/emuDCS/PeripheralCrate/src/common/EMUParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuController.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuParser.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuPeripheralCrate.cc -text
+emu/emuDCS/PeripheralCrate/src/common/EmuPeripheralCrateBroadcast.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuPeripheralCrateManager.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuRunControlHyperDAQ.cc -text
 emu/emuDCS/PeripheralCrate/src/common/EmuSystemParser.cc -text

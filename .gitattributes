@@ -713,6 +713,7 @@ emu/emuDQM/emuDisplayClient/xml/local4_1.xml -text
 emu/emuDQM/emuDisplayClient/xml/local4_2.xml -text
 emu/emuDQM/emuDisplayClient/xml/local_net.xml -text
 emu/emuDQM/emuMonitor/Makefile -text
+emu/emuDQM/emuMonitor/gen_csc_map.awk -text
 emu/emuDQM/emuMonitor/include/CSCStripCluster.h -text
 emu/emuDQM/emuMonitor/include/CSCStripClusterFinder.h -text
 emu/emuDQM/emuMonitor/include/CSCStripClusterFitData.h -text

@@ -560,6 +560,7 @@ emu/emuDQM/CMSSWLibs/FWCore/MessageLogger/interface/MessageLogger.h -text
 emu/emuDQM/CMSSWLibs/Makefile -text
 emu/emuDQM/CMSSWLibs/README.txt -text
 emu/emuDQM/Common/Makefile -text
+emu/emuDQM/Common/include/CSCReadoutMappingFromFile.h -text
 emu/emuDQM/Common/include/EmuDQM_AppParameters.h -text
 emu/emuDQM/Common/include/EmuDQM_SOAPCommands.h -text
 emu/emuDQM/Common/include/EmuMonitoringCanvas.h -text
@@ -571,6 +572,7 @@ emu/emuDQM/Common/include/xdaq.h -text
 emu/emuDQM/Common/include/xdata.h -text
 emu/emuDQM/Common/include/xgi.h -text
 emu/emuDQM/Common/include/xoap.h -text
+emu/emuDQM/Common/src/common/CSCReadoutMappingFromFile.cc -text
 emu/emuDQM/Common/src/common/EmuDQM_AppParameters.cc -text
 emu/emuDQM/Common/src/common/EmuDQM_SOAPCommands.cc -text
 emu/emuDQM/Common/src/common/EmuMonitoringCanvas.cc -text
@@ -732,6 +734,7 @@ emu/emuDQM/emuMonitor/src/common/EmuMonitor_SOAP.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_bookCanvases.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_bookHistograms.cc -text
+emu/emuDQM/emuMonitor/src/common/EmuPlotter_generateLayout.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_loadFromROOTFile.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_loadXMLBookingInfo.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_loadXMLCanvasesInfo.cc -text

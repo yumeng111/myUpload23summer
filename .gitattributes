@@ -701,9 +701,11 @@ emu/emuDQM/dduBinExaminer/test/common/dduBinExaminerTest.cpp -text
 emu/emuDQM/emuDisplayClient/Makefile -text
 emu/emuDQM/emuDisplayClient/include/EmuDisplayClient.h -text
 emu/emuDQM/emuDisplayClient/include/EmuDisplayClientV.h -text
+emu/emuDQM/emuDisplayClient/include/version.h -text
 emu/emuDQM/emuDisplayClient/src/common/EmuBrowsing.cc -text
 emu/emuDQM/emuDisplayClient/src/common/EmuDisplayClient.cc -text
 emu/emuDQM/emuDisplayClient/src/common/EmuDisplayClientV.cc -text
+emu/emuDQM/emuDisplayClient/src/common/version.cc -text
 emu/emuDQM/emuDisplayClient/xml/EmuDisplayClient.xml -text
 emu/emuDQM/emuDisplayClient/xml/client.xml -text
 emu/emuDQM/emuDisplayClient/xml/local.xml -text

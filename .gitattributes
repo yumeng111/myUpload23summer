@@ -724,6 +724,7 @@ emu/emuDQM/emuMonitor/include/EmuMonitor.h -text
 emu/emuDQM/emuMonitor/include/EmuMonitorV.h -text
 emu/emuDQM/emuMonitor/include/EmuPlotter.h -text
 emu/emuDQM/emuMonitor/include/i2oEmuMonitorMsg.h -text
+emu/emuDQM/emuMonitor/include/version.h -text
 emu/emuDQM/emuMonitor/src/common/CSCStripCluster.cc -text
 emu/emuDQM/emuMonitor/src/common/CSCStripClusterFinder.cc -text
 emu/emuDQM/emuMonitor/src/common/CSCStripClusterFitData.cc -text
@@ -743,6 +744,7 @@ emu/emuDQM/emuMonitor/src/common/EmuPlotter_processEvent.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_saveImages.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_saveToROOTFile.cc -text
 emu/emuDQM/emuMonitor/src/common/emuMonitorTest.cpp -text
+emu/emuDQM/emuMonitor/src/common/version.cc -text
 emu/emuDQM/emuMonitor/test/common/xmlExample.cpp -text
 emu/emuDQM/emuMonitor/xml/CERN-EmuDAQ_with_EmuMonitor.xml -text
 emu/emuDQM/emuMonitor/xml/CERN-EmuDAQ_with_EmuMonitor_hardware.xml -text
@@ -759,6 +761,8 @@ emu/emuDQM/emuMonitor/xml/UF-DQM_3nodes.xml -text
 emu/emuDQM/emuMonitor/xml/UF-DQM_net.xml -text
 emu/emuDQM/emuMonitor/xml/UF-EmuMonitor_with_EmuDisplayServer.xml -text
 emu/emuDQM/emuMonitor/xml/configWinter2005ME1b.xml -text
+emu/emuDQM/emuMonitor/xml/csc_map.txt -text
+emu/emuDQM/emuMonitor/xml/csc_slice_test_map.txt -text
 emu/emuDQM/emuMonitor/xml/emuDQMBooking.xml -text
 emu/emuDQM/emuMonitor/xml/emuDQMCanvases.xml -text
 emu/emuDQM/emuMonitor/xml/local.xml -text

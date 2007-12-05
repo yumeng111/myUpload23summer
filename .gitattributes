@@ -781,31 +781,11 @@ emu/emuDQM/scripts/cron_job.pl -text
 emu/emuDQM/scripts/cron_job_tf.pl -text
 emu/emuDQM/scripts/drawAll.C -text
 emu/emuDQM/scripts/drawAllSP.C -text
-emu/emuDQM/scripts/drawAllSP_old.C -text
-emu/emuDQM/scripts/drawAllSP_old_old.C -text
-emu/emuDQM/scripts/misc/browse.html -text
 emu/emuDQM/scripts/misc/browser.html -text
 emu/emuDQM/scripts/misc/canvases.html -text
 emu/emuDQM/scripts/misc/cron_job.pl -text
 emu/emuDQM/scripts/misc/cron_script -text
-emu/emuDQM/scripts/misc/icons/base.gif -text svneol=unset#unset
-emu/emuDQM/scripts/misc/icons/empty.gif -text svneol=unset#unset
-emu/emuDQM/scripts/misc/icons/folder.gif -text svneol=unset#unset
-emu/emuDQM/scripts/misc/icons/folderopen.gif -text svneol=unset#unset
-emu/emuDQM/scripts/misc/icons/join.gif -text svneol=unset#unset
-emu/emuDQM/scripts/misc/icons/joinbottom.gif -text svneol=unset#unset
-emu/emuDQM/scripts/misc/icons/line.gif -text svneol=unset#unset
-emu/emuDQM/scripts/misc/icons/minus.gif -text svneol=unset#unset
-emu/emuDQM/scripts/misc/icons/minusbottom.gif -text svneol=unset#unset
-emu/emuDQM/scripts/misc/icons/page.gif -text svneol=unset#unset
-emu/emuDQM/scripts/misc/icons/plus.gif -text svneol=unset#unset
-emu/emuDQM/scripts/misc/icons/plusbottom.gif -text svneol=unset#unset
-emu/emuDQM/scripts/misc/make_list_tf.pl -text
-emu/emuDQM/scripts/misc/tree.html -text
-emu/emuDQM/scripts/misc/tree.js -text
 emu/emuDQM/scripts/misc/tree_runs.js -text
-emu/emuDQM/scripts/misc/tree_tf.html -text
-emu/emuDQM/scripts/misc/tree_tpl.js -text
 emu/emuDQM/scripts/misc/view.html -text
 emu/emuDQM/scripts/misc/view.js -text
 emu/emuFarmer/Makefile -text

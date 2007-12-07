@@ -559,6 +559,8 @@ emu/emuDCS/e2p/xml/DcsControlWebXdaq_1973.xml -text
 emu/emuDQM/CMSSWLibs/FWCore/MessageLogger/interface/MessageLogger.h -text
 emu/emuDQM/CMSSWLibs/Makefile -text
 emu/emuDQM/CMSSWLibs/README.txt -text
+emu/emuDQM/CMSSWLibs/lib/.stamp -text
+emu/emuDQM/CMSSWLibs/obj/.stamp -text
 emu/emuDQM/Common/Makefile -text
 emu/emuDQM/Common/include/CSCReadoutMappingFromFile.h -text
 emu/emuDQM/Common/include/EmuDQM_AppParameters.h -text

@@ -739,6 +739,7 @@ emu/emuDQM/emuMonitor/src/common/ClusterLocalMax.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuMonitor.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuMonitorV.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuMonitor_SOAP.cc -text
+emu/emuDQM/emuMonitor/src/common/EmuMonitor_WebInterface.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_bookCanvases.cc -text
 emu/emuDQM/emuMonitor/src/common/EmuPlotter_bookHistograms.cc -text

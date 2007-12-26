@@ -341,6 +341,7 @@ emu/emuDCS/PeripheralCore/include/DAQMBTest.h -text
 emu/emuDCS/PeripheralCore/include/DAQMBTester.h -text
 emu/emuDCS/PeripheralCore/include/EMU_JTAG_constants.h -text
 emu/emuDCS/PeripheralCore/include/EMUjtag.h -text
+emu/emuDCS/PeripheralCore/include/EmuEndcap.h -text
 emu/emuDCS/PeripheralCore/include/EmuModule.h -text
 emu/emuDCS/PeripheralCore/include/EmuPeripheralCrate.h -text
 emu/emuDCS/PeripheralCore/include/EmuSystem.h -text
@@ -366,6 +367,7 @@ emu/emuDCS/PeripheralCore/src/common/CrateSetup.cc -text
 emu/emuDCS/PeripheralCore/src/common/DAQMB.cc -text
 emu/emuDCS/PeripheralCore/src/common/DAQMBTester.cc -text
 emu/emuDCS/PeripheralCore/src/common/EMUjtag.cc -text
+emu/emuDCS/PeripheralCore/src/common/EmuEndcap.cc -text
 emu/emuDCS/PeripheralCore/src/common/EmuModule.cc -text
 emu/emuDCS/PeripheralCore/src/common/EmuSystem.cc -text
 emu/emuDCS/PeripheralCore/src/common/MPC.cc -text

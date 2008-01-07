@@ -357,6 +357,14 @@ emu/emuDCS/PeripheralApps/test/common/resetcc.cpp -text
 emu/emuDCS/PeripheralApps/test/common/scancrate.cpp -text
 emu/emuDCS/PeripheralApps/test/common/slicetestconfig.cpp -text
 emu/emuDCS/PeripheralApps/test/common/testtmbmain.cpp -text
+emu/emuDCS/PeripheralApps/xml/EmuCluster.xml -text
+emu/emuDCS/PeripheralApps/xml/insert_timing_parameters.pl -text
+emu/emuDCS/PeripheralApps/xml/peripheralCrateTemplate.xml -text
+emu/emuDCS/PeripheralApps/xml/readme -text
+emu/emuDCS/PeripheralApps/xml/test.xml -text
+emu/emuDCS/PeripheralApps/xml/update_xml_file.pl -text
+emu/emuDCS/PeripheralApps/xml/views.xml -text
+emu/emuDCS/PeripheralApps/xml/xdaqPeripheralCrate.xml -text
 emu/emuDCS/PeripheralCore/Makefile -text
 emu/emuDCS/PeripheralCore/include/ALCTController.h -text
 emu/emuDCS/PeripheralCore/include/AnodeChannel.h -text

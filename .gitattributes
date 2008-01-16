@@ -373,6 +373,7 @@ emu/emuDCS/PeripheralCore/include/CFEB.h -text
 emu/emuDCS/PeripheralCore/include/Chamber.h -text
 emu/emuDCS/PeripheralCore/include/Crate.h -text
 emu/emuDCS/PeripheralCore/include/DAQMB.h -text
+emu/emuDCS/PeripheralCore/include/EMU_CC_constants.h -text
 emu/emuDCS/PeripheralCore/include/EMU_JTAG_constants.h -text
 emu/emuDCS/PeripheralCore/include/EMUjtag.h -text
 emu/emuDCS/PeripheralCore/include/EmuEndcap.h -text

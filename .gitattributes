@@ -222,10 +222,8 @@ emu/emuDAQ/emuTA/src/common/EmuTA.cc -text
 emu/emuDAQ/emuTA/src/common/EmuTAV.cc -text
 emu/emuDAQ/emuTA/src/common/TriggerGenerator.cc -text
 emu/emuDAQ/emuUtil/Makefile -text
-emu/emuDAQ/emuUtil/include/EmuELog.h -text
 emu/emuDAQ/emuUtil/include/EmuFileWriter.h -text
 emu/emuDAQ/emuUtil/include/EmuI2OServer.h -text
-emu/emuDAQ/emuUtil/include/EmuRunInfo.h -text
 emu/emuDAQ/emuUtil/include/EmuSOAPServer.h -text
 emu/emuDAQ/emuUtil/include/EmuServer.h -text
 emu/emuDAQ/emuUtil/include/EmuServer_old.h -text

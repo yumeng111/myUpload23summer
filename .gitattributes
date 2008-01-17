@@ -240,6 +240,7 @@ emu/emuDAQ/emuUtil/src/common/EmuSOAPServer.cc -text
 emu/emuDAQ/emuUtil/src/common/EmuServer.cc -text
 emu/emuDAQ/xml/EmuDAQConfig.xsl -text
 emu/emuDAQ/xml/EmuDAQConfigGenerator.xsl -text
+emu/emuDAQ/xml/EmuDAQDUCKGenerator.xsl -text
 emu/emuDAQ/xml/EmuDAQ_SliceTest_Complete.xml -text
 emu/emuDAQ/xml/EmuDAQ_with_a_SOAP_client.xml -text
 emu/emuDAQ/xml/EmuDAQ_with_an_I2O_client.xml -text

@@ -739,9 +739,15 @@ emu/emuDQM/EmuTests/include/CFEBData.h -text
 emu/emuDQM/EmuTests/include/CFEBTestCanvas.h -text
 emu/emuDQM/EmuTests/include/EmuBaseTest.h -text
 emu/emuDQM/EmuTests/include/EmuTests.h -text
+emu/emuDQM/EmuTests/include/TestCanvas_1h.h -text
+emu/emuDQM/EmuTests/include/TestCanvas_6gr1h.h -text
+emu/emuDQM/EmuTests/include/TestData1D.h -text
+emu/emuDQM/EmuTests/include/TestData2D.h -text
 emu/emuDQM/EmuTests/include/Test_CFEB02.h -text
 emu/emuDQM/EmuTests/src/common/CFEBCanvas.cc -text
 emu/emuDQM/EmuTests/src/common/EmuTests.cc -text
+emu/emuDQM/EmuTests/src/common/TestCanvas_1h.cc -text
+emu/emuDQM/EmuTests/src/common/TestCanvas_6gr1h.cc -text
 emu/emuDQM/EmuTests/src/common/Test_CFEB02.cc -text
 emu/emuDQM/EmuTests/src/common/runEmuTests.cc -text
 emu/emuDQM/EmuTests/xml/emuChanMasks.xml -text

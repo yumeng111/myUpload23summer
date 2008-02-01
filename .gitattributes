@@ -256,6 +256,8 @@ emu/emuDCS/FEDCrate/ddudcc.gif -text svneol=unset#unset
 emu/emuDCS/FEDCrate/include/CAENVMElib.h -text
 emu/emuDCS/FEDCrate/include/CAENVMEoslib.h -text
 emu/emuDCS/FEDCrate/include/CAENVMEtypes.h -text
+emu/emuDCS/FEDCrate/include/Chamber.h -text
+emu/emuDCS/FEDCrate/include/ChamberParser.h -text
 emu/emuDCS/FEDCrate/include/Crate.h -text
 emu/emuDCS/FEDCrate/include/CrateSelector.h -text
 emu/emuDCS/FEDCrate/include/CrateSetup.h -text
@@ -287,6 +289,8 @@ emu/emuDCS/FEDCrate/include/geom.h -text
 emu/emuDCS/FEDCrate/include/geom_def.h -text
 emu/emuDCS/FEDCrate/include/vmeIRQ.h -text
 emu/emuDCS/FEDCrate/include/vme_cmd.h -text
+emu/emuDCS/FEDCrate/src/common/Chamber.cc -text
+emu/emuDCS/FEDCrate/src/common/ChamberParser.cc -text
 emu/emuDCS/FEDCrate/src/common/Crate.cc -text
 emu/emuDCS/FEDCrate/src/common/CrateSelector.cc -text
 emu/emuDCS/FEDCrate/src/common/CrateSetup.cc -text
@@ -319,6 +323,7 @@ emu/emuDCS/FEDCrate/test/common/ddutest.cpp -text
 emu/emuDCS/FEDCrate/xml/EmuFCluster.xml -text
 emu/emuDCS/FEDCrate/xml/EmuFCluster_SV.xml -text
 emu/emuDCS/FEDCrate/xml/README -text
+emu/emuDCS/FEDCrate/xml/RUI-to-chamber_mapping.xml -text
 emu/emuDCS/FEDCrate/xml/config.xml -text
 emu/emuDCS/FEDCrate/xml/config2.xml -text
 emu/emuDCS/FEDCrate/xml/config_2crates.xml -text

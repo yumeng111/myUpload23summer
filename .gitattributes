@@ -364,6 +364,7 @@ emu/emuDCS/PeripheralApps/test/common/scancrate.cpp -text
 emu/emuDCS/PeripheralApps/test/common/slicetestconfig.cpp -text
 emu/emuDCS/PeripheralApps/test/common/testtmbmain.cpp -text
 emu/emuDCS/PeripheralApps/xml/EmuCluster.xml -text
+emu/emuDCS/PeripheralApps/xml/EmuPC.rnc -text
 emu/emuDCS/PeripheralApps/xml/insert_timing_parameters.pl -text
 emu/emuDCS/PeripheralApps/xml/peripheralCrateTemplate.xml -text
 emu/emuDCS/PeripheralApps/xml/readme -text

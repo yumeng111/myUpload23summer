@@ -751,6 +751,8 @@ emu/emuDQM/EmuTests/include/TestData1D.h -text
 emu/emuDQM/EmuTests/include/TestData2D.h -text
 emu/emuDQM/EmuTests/include/Test_CFEB02.h -text
 emu/emuDQM/EmuTests/include/Test_Generic.h -text
+emu/emuDQM/EmuTests/scripts/genRunLists.sh -text
+emu/emuDQM/EmuTests/scripts/updateWeb.sh -text
 emu/emuDQM/EmuTests/src/common/CFEBCanvas.cc -text
 emu/emuDQM/EmuTests/src/common/EmuTests.cc -text
 emu/emuDQM/EmuTests/src/common/TestCanvas_1h.cc -text

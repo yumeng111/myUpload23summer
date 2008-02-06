@@ -332,6 +332,7 @@ emu/emuDCS/FEDCrate/xml/config_c2.xml -text
 emu/emuDCS/FEDCrate/xml/config_sx5.xml -text
 emu/emuDCS/FEDCrate/xml/xdaq_run -text
 emu/emuDCS/Makefile -text
+emu/emuDCS/OnlineDB/test/start_babel.sh -text
 emu/emuDCS/PeripheralApps/Makefile -text
 emu/emuDCS/PeripheralApps/include/CalibDAQ.h -text
 emu/emuDCS/PeripheralApps/include/ChamberUtilities.h -text

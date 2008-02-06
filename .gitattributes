@@ -332,7 +332,15 @@ emu/emuDCS/FEDCrate/xml/config_c2.xml -text
 emu/emuDCS/FEDCrate/xml/config_sx5.xml -text
 emu/emuDCS/FEDCrate/xml/xdaq_run -text
 emu/emuDCS/Makefile -text
+emu/emuDCS/OnlineDB/Makefile -text
+emu/emuDCS/OnlineDB/include/ConnectionsDB.h -text
+emu/emuDCS/OnlineDB/include/ConnectionsGUI.h -text
+emu/emuDCS/OnlineDB/src/common/ConnectionsDB.cc -text
+emu/emuDCS/OnlineDB/src/common/ConnectionsGUI.cc -text
 emu/emuDCS/OnlineDB/test/start_babel.sh -text
+emu/emuDCS/OnlineDB/xml/Babel_GUI.xml -text
+emu/emuDCS/OnlineDB/xml/RUI-to-chamber_mapping.xml -text
+emu/emuDCS/OnlineDB/xml/SwitchConnections.xml -text
 emu/emuDCS/PeripheralApps/Makefile -text
 emu/emuDCS/PeripheralApps/include/CalibDAQ.h -text
 emu/emuDCS/PeripheralApps/include/ChamberUtilities.h -text

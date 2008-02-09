@@ -335,6 +335,7 @@ emu/emuDCS/Makefile -text
 emu/emuDCS/OnlineDB/Makefile -text
 emu/emuDCS/OnlineDB/include/ConnectionsDB.h -text
 emu/emuDCS/OnlineDB/include/ConnectionsGUI.h -text
+emu/emuDCS/OnlineDB/src/common/BoardsDB.cc -text
 emu/emuDCS/OnlineDB/src/common/ConnectionsDB.cc -text
 emu/emuDCS/OnlineDB/src/common/ConnectionsGUI.cc -text
 emu/emuDCS/OnlineDB/test/start_babel.sh -text

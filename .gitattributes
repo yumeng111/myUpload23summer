@@ -333,6 +333,7 @@ emu/emuDCS/FEDCrate/xml/config_sx5.xml -text
 emu/emuDCS/FEDCrate/xml/xdaq_run -text
 emu/emuDCS/Makefile -text
 emu/emuDCS/OnlineDB/Makefile -text
+emu/emuDCS/OnlineDB/include/BoardsDB.h -text
 emu/emuDCS/OnlineDB/include/ConnectionsDB.h -text
 emu/emuDCS/OnlineDB/include/ConnectionsGUI.h -text
 emu/emuDCS/OnlineDB/src/common/BoardsDB.cc -text

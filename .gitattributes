@@ -355,6 +355,7 @@ emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateBroadcast.h -text
 emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateConfig.h -text
 emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateManager.h -text
 emu/emuDCS/PeripheralApps/include/XMLParser.h -text
+emu/emuDCS/PeripheralApps/src/common/AppsVersion.cc -text
 emu/emuDCS/PeripheralApps/src/common/CalibDAQ.cc -text
 emu/emuDCS/PeripheralApps/src/common/ChamberUtilities.cc -text
 emu/emuDCS/PeripheralApps/src/common/CrateUtilities.cc -text
@@ -413,6 +414,7 @@ emu/emuDCS/PeripheralCore/src/common/ALCTController.cc -text
 emu/emuDCS/PeripheralCore/src/common/CCB.cc -text
 emu/emuDCS/PeripheralCore/src/common/CFEB.cc -text
 emu/emuDCS/PeripheralCore/src/common/Chamber.cc -text
+emu/emuDCS/PeripheralCore/src/common/CoreVersion.cc -text
 emu/emuDCS/PeripheralCore/src/common/Crate.cc -text
 emu/emuDCS/PeripheralCore/src/common/DAQMB.cc -text
 emu/emuDCS/PeripheralCore/src/common/EMUjtag.cc -text

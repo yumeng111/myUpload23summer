@@ -612,6 +612,7 @@ emu/emuDCS/e2p/include/RunControlDummy.h -text
 emu/emuDCS/e2p/src/common/DcsControlWebXdaq.cc -text
 emu/emuDCS/e2p/src/common/DcsDimCommand.cxx -text
 emu/emuDCS/e2p/src/common/DcsDimService.cxx -text
+emu/emuDCS/e2p/src/common/DcsEmuController.cc -text
 emu/emuDCS/e2p/src/common/EmuDcs.cxx -text
 emu/emuDCS/e2p/src/common/Rc2Dcs.cxx -text
 emu/emuDCS/e2p/test/common/DcsEmuConfig.cpp -text

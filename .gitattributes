@@ -631,6 +631,7 @@ emu/emuDQM/Common/include/EmuDQM_AppParameters.h -text
 emu/emuDQM/Common/include/EmuDQM_SOAPCommands.h -text
 emu/emuDQM/Common/include/EmuMonitoringCanvas.h -text
 emu/emuDQM/Common/include/EmuMonitoringObject.h -text
+emu/emuDQM/Common/include/RateMeter.h -text
 emu/emuDQM/Common/include/cgicc.h -text
 emu/emuDQM/Common/include/coloredlayout.h -text
 emu/emuDQM/Common/include/toolbox.h -text

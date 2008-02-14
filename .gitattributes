@@ -671,6 +671,7 @@ emu/emuDQM/EmuMonitor/src/common/version.cc -text
 emu/emuDQM/EmuMonitor/test/common/runEmuMonitor.cc -text
 emu/emuDQM/EmuMonitor/test/common/xmlExample.cpp -text
 emu/emuDQM/EmuMonitor/xml/EmuDQM.xml -text
+emu/emuDQM/EmuMonitor/xml/csc_map.txt -text
 emu/emuDQM/EmuMonitor/xml/emuDQMBooking.xml -text
 emu/emuDQM/EmuMonitor/xml/emuDQMCanvases.xml -text
 emu/emuDQM/EmuPlotter/Makefile -text

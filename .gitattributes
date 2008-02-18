@@ -672,6 +672,7 @@ emu/emuDQM/EmuDisplayServer/src/common/EmuDisplayServer.cc -text
 emu/emuDQM/EmuDisplayServer/src/common/EmuDisplayServerV.cc -text
 emu/emuDQM/EmuDisplayServer/src/common/EmuMonitorV.cc -text
 emu/emuDQM/EmuDisplayServer/xml/EmuDisplayServer.xml -text
+emu/emuDQM/EmuMonitor/Makefile -text
 emu/emuDQM/EmuMonitor/include/EmuMonitor.h -text
 emu/emuDQM/EmuMonitor/include/i2oEmuMonitorMsg.h -text
 emu/emuDQM/EmuMonitor/include/version.h -text

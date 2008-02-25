@@ -926,3 +926,4 @@ emu/emuFarmer/xml/EmuFarmer.xml -text
 emu/extern/dim/Makefile -text
 emu/extern/dim/dim_v15r8.zip -text svneol=unset#unset
 emu/extern/readme -text
+emu/release -text

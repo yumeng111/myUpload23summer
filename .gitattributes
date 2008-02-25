@@ -801,6 +801,9 @@ emu/emuDQM/EmuTests/src/common/Test_CFEB04.cc -text
 emu/emuDQM/EmuTests/src/common/Test_Generic.cc -text
 emu/emuDQM/EmuTests/src/common/runEmuTests.cc -text
 emu/emuDQM/EmuTests/xml/emuChanMasks.xml -text
+emu/emuDQM/EmuTests/xml/emuTest_CFEB02.xml -text
+emu/emuDQM/EmuTests/xml/emuTest_CFEB03.xml -text
+emu/emuDQM/EmuTests/xml/emuTest_CFEB04.xml -text
 emu/emuDQM/EmuTests/xml/emuTests.xml -text
 emu/emuDQM/Makefile -text
 emu/emuDQM/config/Makefile_root.rules -text

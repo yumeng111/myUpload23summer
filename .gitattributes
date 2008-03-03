@@ -182,8 +182,10 @@ emu/emuDAQ/emuFU/images/fu32x32.gif -text
 emu/emuDAQ/emuFU/images/fu64x64.gif -text
 emu/emuDAQ/emuFU/include/EmuFU.h -text
 emu/emuDAQ/emuFU/include/EmuFUV.h -text
+emu/emuDAQ/emuFU/include/emuFU/EmuEventHeaderTrailer.h -text
 emu/emuDAQ/emuFU/include/emuFU/Writer.h -text
 emu/emuDAQ/emuFU/include/emuFU/exception/Exception.h -text
+emu/emuDAQ/emuFU/src/common/EmuEventHeaderTrailer.cc -text
 emu/emuDAQ/emuFU/src/common/EmuFU.cc -text
 emu/emuDAQ/emuFU/src/common/EmuFUV.cc -text
 emu/emuDAQ/emuRUI/Makefile -text

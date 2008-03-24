@@ -755,6 +755,7 @@ emu/emuDQM/EmuROOTDisplayServer/src/common/TConsumerInfo.cc -text
 emu/emuDQM/EmuTFMonitor/Makefile -text
 emu/emuDQM/EmuTFMonitor/include/EmuTFMonitor.h -text
 emu/emuDQM/EmuTFMonitor/include/EmuTFMonitorV.h -text
+emu/emuDQM/EmuTFMonitor/include/EmuTFPlotter.h -text
 emu/emuDQM/EmuTFMonitor/include/EmuTFbookkeeper.h -text
 emu/emuDQM/EmuTFMonitor/include/EmuTFfiller.h -text
 emu/emuDQM/EmuTFMonitor/include/EmuTFvalidator.h -text
@@ -762,6 +763,7 @@ emu/emuDQM/EmuTFMonitor/include/EmuTFxmlParsing.h -text
 emu/emuDQM/EmuTFMonitor/include/i2oEmuMonitorMsg.h -text
 emu/emuDQM/EmuTFMonitor/src/common/EmuTFMonitor.cc -text
 emu/emuDQM/EmuTFMonitor/src/common/EmuTFMonitorV.cc -text
+emu/emuDQM/EmuTFMonitor/src/common/EmuTFPlotter.cc -text
 emu/emuDQM/EmuTFMonitor/src/common/EmuTFbookkeeper.cc -text
 emu/emuDQM/EmuTFMonitor/src/common/EmuTFfiller.cc -text
 emu/emuDQM/EmuTFMonitor/src/common/EmuTFtiming.cc -text

@@ -18,6 +18,8 @@ emu/cscFM/src/rcms/fm/app/csc/Level1TrailingActions.java -text
 emu/cscFM/xml/FEDconfig.duck -text
 emu/cscFM/xml/FEDconfig.xml -text
 emu/cscLevelOneFM/build.xml -text
+emu/cscLevelOneFM/duck/levelOne.xml -text
+emu/cscLevelOneFM/installation/build.xml -text
 emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/MyErrorHandler.java -text
 emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/MyEventHandler.java -text
 emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/MyFunctionManager.java -text

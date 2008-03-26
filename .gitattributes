@@ -17,6 +17,7 @@ emu/cscFM/src/rcms/fm/app/csc/Level1States.java -text
 emu/cscFM/src/rcms/fm/app/csc/Level1TrailingActions.java -text
 emu/cscFM/xml/FEDconfig.duck -text
 emu/cscFM/xml/FEDconfig.xml -text
+emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/MyErrorHandler.java -text
 emu/cscSV/Makefile -text
 emu/cscSV/Makefile.testapp -text
 emu/cscSV/README -text

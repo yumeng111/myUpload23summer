@@ -726,6 +726,7 @@ emu/emuDQM/EmuPlotter/src/common/EmuPlotter_processEvent.cc -text
 emu/emuDQM/EmuPlotter/src/common/EmuPlotter_saveImages.cc -text
 emu/emuDQM/EmuPlotter/src/common/EmuPlotter_saveToROOTFile.cc -text
 emu/emuDQM/EmuPlotter/src/common/runEmuPlotter.cc -text
+emu/emuDQM/EmuPlotter/src/common/runEmuPlotter.v01.cc -text
 emu/emuDQM/EmuROOTDisplayServer/Makefile -text
 emu/emuDQM/EmuROOTDisplayServer/include/CHistogram.hh -text
 emu/emuDQM/EmuROOTDisplayServer/include/CHistogram_linkdef.h -text

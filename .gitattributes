@@ -366,8 +366,10 @@ emu/emuDCS/PeripheralApps/include/ChamberUtilities.h -text
 emu/emuDCS/PeripheralApps/include/CrateUtilities.h -text
 emu/emuDCS/PeripheralApps/include/EmuController.h -text
 emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateBroadcast.h -text
+emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateCommand.h -text
 emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateConfig.h -text
 emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateManager.h -text
+emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateMonitor.h -text
 emu/emuDCS/PeripheralApps/include/XMLParser.h -text
 emu/emuDCS/PeripheralApps/src/common/AppsVersion.cc -text
 emu/emuDCS/PeripheralApps/src/common/CalibDAQ.cc -text
@@ -375,8 +377,10 @@ emu/emuDCS/PeripheralApps/src/common/ChamberUtilities.cc -text
 emu/emuDCS/PeripheralApps/src/common/CrateUtilities.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuController.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateBroadcast.cc -text
+emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateCommand.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateConfig.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateManager.cc -text
+emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateMonitor.cc -text
 emu/emuDCS/PeripheralApps/src/common/XMLParser.cc -text
 emu/emuDCS/PeripheralApps/test/common/CrateTiming.cpp -text
 emu/emuDCS/PeripheralApps/test/common/EmuConfig.cpp -text

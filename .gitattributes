@@ -287,8 +287,11 @@ emu/emuDCS/FEDCrate/include/EmuParser.h -text
 emu/emuDCS/FEDCrate/include/FEDCrateController.h -text
 emu/emuDCS/FEDCrate/include/FEDCrateParser.h -text
 emu/emuDCS/FEDCrate/include/GenDATA.h -text
+emu/emuDCS/FEDCrate/include/IRQData.h -text
 emu/emuDCS/FEDCrate/include/IRQThread.h -text
+emu/emuDCS/FEDCrate/include/IRQThreadManager.h -text
 emu/emuDCS/FEDCrate/include/JTAG_constants.h -text
+emu/emuDCS/FEDCrate/include/LocalEmuApplication.h -text
 emu/emuDCS/FEDCrate/include/OwnIt.h -text
 emu/emuDCS/FEDCrate/include/Singleton.h -text
 emu/emuDCS/FEDCrate/include/TestBeamCrateController.h -text
@@ -323,6 +326,7 @@ emu/emuDCS/FEDCrate/src/common/EmuParser.cc -text
 emu/emuDCS/FEDCrate/src/common/FEDCrateController.cc -text
 emu/emuDCS/FEDCrate/src/common/FEDCrateParser.cc -text
 emu/emuDCS/FEDCrate/src/common/IRQThread.cc -text
+emu/emuDCS/FEDCrate/src/common/IRQThreadManager.cc -text
 emu/emuDCS/FEDCrate/src/common/TestBeamCrateController.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEController.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEController_jtag.cc -text

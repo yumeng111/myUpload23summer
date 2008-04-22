@@ -340,6 +340,7 @@ emu/emuDCS/FEDCrate/xml/config.xml -text
 emu/emuDCS/FEDCrate/xml/config2.xml -text
 emu/emuDCS/FEDCrate/xml/config_2crates.xml -text
 emu/emuDCS/FEDCrate/xml/config_c1.xml -text
+emu/emuDCS/FEDCrate/xml/config_c12.xml -text
 emu/emuDCS/FEDCrate/xml/config_c2.xml -text
 emu/emuDCS/FEDCrate/xml/config_sx5.xml -text
 emu/emuDCS/FEDCrate/xml/xdaq_run -text

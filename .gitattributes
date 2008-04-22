@@ -659,6 +659,13 @@ emu/emuDQM/Common/include/EmuMonitoringObject.h -text
 emu/emuDQM/Common/include/RateMeter.h -text
 emu/emuDQM/Common/include/cgicc.h -text
 emu/emuDQM/Common/include/coloredlayout.h -text
+emu/emuDQM/Common/include/functions/AbstractFunction.h -text
+emu/emuDQM/Common/include/functions/AddFunction.h -text
+emu/emuDQM/Common/include/functions/ChamberMapFunction.h -text
+emu/emuDQM/Common/include/functions/DivideFunction.h -text
+emu/emuDQM/Common/include/functions/DrawFunction.h -text
+emu/emuDQM/Common/include/functions/FunctionLauncher.h -text
+emu/emuDQM/Common/include/functions/SetFunction.h -text
 emu/emuDQM/Common/include/tclap/Arg.h -text
 emu/emuDQM/Common/include/tclap/ArgException.h -text
 emu/emuDQM/Common/include/tclap/CmdLine.h -text

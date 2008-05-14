@@ -18,6 +18,7 @@ emu/cscFM/src/rcms/fm/app/csc/Level1TrailingActions.java -text
 emu/cscFM/xml/FEDconfig.duck -text
 emu/cscFM/xml/FEDconfig.xml -text
 emu/cscLevelOneFM/build.xml -text
+emu/cscLevelOneFM/duck/duckLoader -text
 emu/cscLevelOneFM/duck/levelOne.xml -text
 emu/cscLevelOneFM/gui/css/myControlPanel.css -text
 emu/cscLevelOneFM/gui/js/ajaxRequest.js -text

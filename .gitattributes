@@ -770,6 +770,7 @@ emu/emuDQM/EmuMonitor/xml/emuDQMBooking.xml -text
 emu/emuDQM/EmuMonitor/xml/emuDQMCanvases.xml -text
 emu/emuDQM/EmuMonitor/xml/emuDocumentation.xsl -text
 emu/emuDQM/EmuMonitor/xml/emuMerge.xsl -text
+emu/emuDQM/EmuMonitor/xml/layout.sh -text
 emu/emuDQM/EmuPlotter/Makefile -text
 emu/emuDQM/EmuPlotter/include/CSCStripCluster.h -text
 emu/emuDQM/EmuPlotter/include/CSCStripClusterFinder.h -text

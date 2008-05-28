@@ -1017,3 +1017,15 @@ emu/extern/dim/Makefile -text
 emu/extern/dim/dim_v15r8.zip -text svneol=unset#unset
 emu/extern/readme -text
 emu/release -text
+emu/setup/emu/Makefile -text
+emu/setup/emu/conf/emu-jobcontrol.conf -text
+emu/setup/emu/conf/xdaqd.conf -text
+emu/setup/emu/etc/slp.HOSTNAME.conf -text
+emu/setup/emu/etc/slp.conf -text
+emu/setup/emu/etc/tnsnames.ora -text
+emu/setup/emu/etc/xdaq.zone -text
+emu/setup/emu/flash/emu-jobcontrol.flash -text
+emu/setup/emu/profile/default.profile -text
+emu/setup/emu/profile/emu-jobcontrol.profile -text
+emu/setup/emu/profile/pulser.profile -text
+emu/setup/emu/pulser/emu-jobcontrol.pulser -text

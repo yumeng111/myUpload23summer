@@ -1029,3 +1029,10 @@ emu/setup/emu/profile/default.profile -text
 emu/setup/emu/profile/emu-jobcontrol.profile -text
 emu/setup/emu/profile/pulser.profile -text
 emu/setup/emu/pulser/emu-jobcontrol.pulser -text
+emu/setup/emu/scripts/daq-software-upgrade-postprocess.sh -text
+emu/setup/emu/scripts/daq-software-upgrade-preprocess.sh -text
+emu/setup/emu/sensor/emu-jobcontrol.sensor -text
+emu/setup/emu/sensor/pulser.sensor -text
+emu/setup/emu/sensor/sensor.sensor -text
+emu/setup/emu/xdaqd -text
+emu/setup/emu/xplore/shortcuts.xml -text

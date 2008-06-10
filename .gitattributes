@@ -279,6 +279,7 @@ emu/emuDAQ/xml/RUI-to-chamber_mapping.xml -text
 emu/emuDAQ/xml/RUI-to-chamber_mapping_XSLT.xml -text
 emu/emuDAQ/xml/RUI-to-computer_mapping.xml -text
 emu/emuDAQ/xml/RUI-to-computer_mapping_XSLT.xml -text
+emu/emuDAQ/xml/generateConfigs.sh -text
 emu/emuDCS/FEDCrate/Makefile -text
 emu/emuDCS/FEDCrate/bgndcms.jpg -text svneol=unset#unset
 emu/emuDCS/FEDCrate/bin/startFEDCrate.sh -text

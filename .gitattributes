@@ -325,7 +325,6 @@ emu/emuDCS/FEDCrate/include/elong.h -text
 emu/emuDCS/FEDCrate/include/eth.h -text
 emu/emuDCS/FEDCrate/include/geom.h -text
 emu/emuDCS/FEDCrate/include/geom_def.h -text
-emu/emuDCS/FEDCrate/include/vmeIRQ.h -text
 emu/emuDCS/FEDCrate/include/vme_cmd.h -text
 emu/emuDCS/FEDCrate/src/common/Chamber.cc -text
 emu/emuDCS/FEDCrate/src/common/ChamberParser.cc -text

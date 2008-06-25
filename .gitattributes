@@ -326,6 +326,9 @@ emu/emuDCS/FEDCrate/include/eth.h -text
 emu/emuDCS/FEDCrate/include/geom.h -text
 emu/emuDCS/FEDCrate/include/geom_def.h -text
 emu/emuDCS/FEDCrate/include/vme_cmd.h -text
+emu/emuDCS/FEDCrate/osu_crate2.png -text svneol=unset#unset
+emu/emuDCS/FEDCrate/osu_emu2.png -text svneol=unset#unset
+emu/emuDCS/FEDCrate/osu_fed_background2.png -text svneol=unset#unset
 emu/emuDCS/FEDCrate/src/common/Chamber.cc -text
 emu/emuDCS/FEDCrate/src/common/ChamberParser.cc -text
 emu/emuDCS/FEDCrate/src/common/Crate.cc -text

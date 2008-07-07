@@ -683,6 +683,7 @@ emu/emuDQM/CMSSWLibs/README.txt -text
 emu/emuDQM/CMSSWLibs/lib/.stamp -text
 emu/emuDQM/CMSSWLibs/obj/.stamp -text
 emu/emuDQM/Common/Makefile -text
+emu/emuDQM/Common/include/CSCDrawMaps.h -text
 emu/emuDQM/Common/include/CSCMap.h -text
 emu/emuDQM/Common/include/CSCReadoutMappingFromFile.h -text
 emu/emuDQM/Common/include/ConsumerCanvas.hh -text
@@ -729,6 +730,8 @@ emu/emuDQM/Common/include/xdaq.h -text
 emu/emuDQM/Common/include/xdata.h -text
 emu/emuDQM/Common/include/xgi.h -text
 emu/emuDQM/Common/include/xoap.h -text
+emu/emuDQM/Common/src/common/CSCDrawChamberMap.cc -text
+emu/emuDQM/Common/src/common/CSCDrawSummaryMap.cc -text
 emu/emuDQM/Common/src/common/CSCReadoutMappingFromFile.cc -text
 emu/emuDQM/Common/src/common/ConsumerCanvas.cc -text
 emu/emuDQM/Common/src/common/EmuDQM_AppParameters.cc -text

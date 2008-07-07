@@ -796,6 +796,7 @@ emu/emuDQM/EmuPlotter/src/common/EmuPlotter_bookCanvases.cc -text
 emu/emuDQM/EmuPlotter/src/common/EmuPlotter_bookHistograms.cc -text
 emu/emuDQM/EmuPlotter/src/common/EmuPlotter_convertROOTToImages.cc -text
 emu/emuDQM/EmuPlotter/src/common/EmuPlotter_generateLayout.cc -text
+emu/emuDQM/EmuPlotter/src/common/EmuPlotter_generateReport.cc -text
 emu/emuDQM/EmuPlotter/src/common/EmuPlotter_loadFromROOTFile.cc -text
 emu/emuDQM/EmuPlotter/src/common/EmuPlotter_loadXMLBookingInfo.cc -text
 emu/emuDQM/EmuPlotter/src/common/EmuPlotter_loadXMLCanvasesInfo.cc -text

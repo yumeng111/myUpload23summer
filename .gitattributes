@@ -21,6 +21,7 @@ emu/cscLevelOneFM/build.xml -text
 emu/cscLevelOneFM/duck/duckLoader -text
 emu/cscLevelOneFM/duck/levelOne.xml -text
 emu/cscLevelOneFM/gui/css/myControlPanel.css -text
+emu/cscLevelOneFM/gui/img/YE1.gif -text svneol=unset#unset
 emu/cscLevelOneFM/gui/js/ajaxRequest.js -text
 emu/cscLevelOneFM/gui/js/myControl.js -text
 emu/cscLevelOneFM/gui/jsp/controlPanel.jsp -text

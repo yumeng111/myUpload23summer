@@ -297,6 +297,7 @@ emu/emuDCS/FEDCrate/include/Crate.h -text
 emu/emuDCS/FEDCrate/include/CrateSelector.h -text
 emu/emuDCS/FEDCrate/include/CrateSetup.h -text
 emu/emuDCS/FEDCrate/include/DCC.h -text
+emu/emuDCS/FEDCrate/include/DCCDebugger.h -text
 emu/emuDCS/FEDCrate/include/DCCParser.h -text
 emu/emuDCS/FEDCrate/include/DDU.h -text
 emu/emuDCS/FEDCrate/include/DDUDebugger.h -text
@@ -338,6 +339,7 @@ emu/emuDCS/FEDCrate/src/common/Crate.cc -text
 emu/emuDCS/FEDCrate/src/common/CrateSelector.cc -text
 emu/emuDCS/FEDCrate/src/common/CrateSetup.cc -text
 emu/emuDCS/FEDCrate/src/common/DCC.cc -text
+emu/emuDCS/FEDCrate/src/common/DCCDebugger.cc -text
 emu/emuDCS/FEDCrate/src/common/DCCParser.cc -text
 emu/emuDCS/FEDCrate/src/common/DCC_old.cc -text
 emu/emuDCS/FEDCrate/src/common/DDU.cc -text

@@ -877,6 +877,7 @@ emu/emuDQM/EmuTests/Makefile -text
 emu/emuDQM/EmuTests/include/CFEBCanvas.h -text
 emu/emuDQM/EmuTests/include/CFEBData.h -text
 emu/emuDQM/EmuTests/include/CFEBTestCanvas.h -text
+emu/emuDQM/EmuTests/include/CSCxTalk.h -text
 emu/emuDQM/EmuTests/include/EmuBaseTest.h -text
 emu/emuDQM/EmuTests/include/EmuTests.h -text
 emu/emuDQM/EmuTests/include/TestCanvas_1h.h -text

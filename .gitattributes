@@ -907,6 +907,7 @@ emu/emuDQM/EmuTests/xml/emuTest_CFEB02.xml -text
 emu/emuDQM/EmuTests/xml/emuTest_CFEB03.xml -text
 emu/emuDQM/EmuTests/xml/emuTest_CFEB04.xml -text
 emu/emuDQM/EmuTests/xml/emuTests.xml -text
+emu/emuDQM/EmuTests/xml/tests_list.js -text
 emu/emuDQM/Makefile -text
 emu/emuDQM/config/Makefile_root.rules -text
 emu/emuDQM/config/compdef.mk -text

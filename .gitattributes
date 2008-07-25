@@ -286,11 +286,9 @@ emu/emuDCS/FEDCrate/EmuFEDSeal.png -text svneol=unset#unset
 emu/emuDCS/FEDCrate/Makefile -text
 emu/emuDCS/FEDCrate/OSUBackground.gif -text svneol=unset#unset
 emu/emuDCS/FEDCrate/OSUCMS.png -text svneol=unset#unset
-emu/emuDCS/FEDCrate/bgndcms.jpg -text svneol=unset#unset
 emu/emuDCS/FEDCrate/bin/startFEDCrate.sh -text
 emu/emuDCS/FEDCrate/bin/startFEDCrateSV.sh -text
 emu/emuDCS/FEDCrate/bin/startLoggingServer.sh -text
-emu/emuDCS/FEDCrate/ddudcc.gif -text svneol=unset#unset
 emu/emuDCS/FEDCrate/include/CAENVMElib.h -text
 emu/emuDCS/FEDCrate/include/CAENVMEoslib.h -text
 emu/emuDCS/FEDCrate/include/CAENVMEtypes.h -text

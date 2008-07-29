@@ -44,9 +44,7 @@ emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/MyParameters.java -text
 emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/MySetParameterHandler.java -text
 emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/MyStateMachineDefinition.java -text
 emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/MyStates.java -text
-emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/gui/GuiCommandPanel.java -text
 emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/gui/GuiStatePanel.java -text
-emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/gui/GuiSubdetMsgPanel.java -text
 emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/gui/GuiSubdetPanel.java -text
 emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/util/MyUtil.java -text
 emu/cscSV/Makefile -text

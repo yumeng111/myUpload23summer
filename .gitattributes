@@ -393,6 +393,9 @@ emu/emuDCS/OnlineDB/xml/PCBoards.xml -text
 emu/emuDCS/OnlineDB/xml/RUI-to-chamber_mapping.xml -text
 emu/emuDCS/OnlineDB/xml/SwitchConnections.xml -text
 emu/emuDCS/PCSwitches/Makefile -text
+emu/emuDCS/PCSwitches/include/SwitchGUI.h -text
+emu/emuDCS/PCSwitches/include/expected_macs_minus.h -text
+emu/emuDCS/PCSwitches/include/expected_macs_plus.h -text
 emu/emuDCS/PeripheralApps/Makefile -text
 emu/emuDCS/PeripheralApps/include/CalibDAQ.h -text
 emu/emuDCS/PeripheralApps/include/ChamberUtilities.h -text

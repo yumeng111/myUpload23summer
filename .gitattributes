@@ -1052,8 +1052,6 @@ emu/extern/dim/dim_v15r8.zip -text svneol=unset#unset
 emu/extern/readme -text
 emu/release -text
 emu/setup/emu/Makefile -text
-emu/setup/emu/conf/emu-jobcontrol.conf -text
-emu/setup/emu/conf/xdaqd.conf -text
 emu/setup/emu/etc/slp.HOSTNAME.conf -text
 emu/setup/emu/etc/slp.conf -text
 emu/setup/emu/etc/tnsnames.ora -text

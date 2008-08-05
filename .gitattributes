@@ -1052,8 +1052,6 @@ emu/extern/dim/dim_v15r8.zip -text svneol=unset#unset
 emu/extern/readme -text
 emu/release -text
 emu/setup/emu/Makefile -text
-emu/setup/emu/scripts/daq-software-upgrade-postprocess.sh -text
-emu/setup/emu/scripts/daq-software-upgrade-preprocess.sh -text
 emu/setup/emu/sensor/emu-jobcontrol.sensor -text
 emu/setup/emu/sensor/pulser.sensor -text
 emu/setup/emu/sensor/sensor.sensor -text

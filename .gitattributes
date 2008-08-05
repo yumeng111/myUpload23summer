@@ -1052,9 +1052,6 @@ emu/extern/dim/dim_v15r8.zip -text svneol=unset#unset
 emu/extern/readme -text
 emu/release -text
 emu/setup/emu/Makefile -text
-emu/setup/emu/profile/default.profile -text
-emu/setup/emu/profile/emu-jobcontrol.profile -text
-emu/setup/emu/profile/pulser.profile -text
 emu/setup/emu/pulser/emu-jobcontrol.pulser -text
 emu/setup/emu/scripts/daq-software-upgrade-postprocess.sh -text
 emu/setup/emu/scripts/daq-software-upgrade-preprocess.sh -text

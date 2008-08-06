@@ -1052,4 +1052,5 @@ emu/extern/dim/dim_v15r8.zip -text svneol=unset#unset
 emu/extern/readme -text
 emu/release -text
 emu/setup/emu/Makefile -text
+emu/setup/emu/conf/da.conf.in -text
 emu/setup/emu/xdaqd -text

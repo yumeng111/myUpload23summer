@@ -471,6 +471,7 @@ emu/emuDCS/PeripheralCore/include/EMU_CC_constants.h -text
 emu/emuDCS/PeripheralCore/include/EMU_JTAG_constants.h -text
 emu/emuDCS/PeripheralCore/include/EMUjtag.h -text
 emu/emuDCS/PeripheralCore/include/EmuEndcap.h -text
+emu/emuDCS/PeripheralCore/include/EmuLogger.h -text
 emu/emuDCS/PeripheralCore/include/GenDATA.h -text
 emu/emuDCS/PeripheralCore/include/JTAG_constants.h -text
 emu/emuDCS/PeripheralCore/include/MPC.h -text
@@ -492,6 +493,7 @@ emu/emuDCS/PeripheralCore/src/common/Crate.cc -text
 emu/emuDCS/PeripheralCore/src/common/DAQMB.cc -text
 emu/emuDCS/PeripheralCore/src/common/EMUjtag.cc -text
 emu/emuDCS/PeripheralCore/src/common/EmuEndcap.cc -text
+emu/emuDCS/PeripheralCore/src/common/EmuLogger.cc -text
 emu/emuDCS/PeripheralCore/src/common/MPC.cc -text
 emu/emuDCS/PeripheralCore/src/common/RAT.cc -text
 emu/emuDCS/PeripheralCore/src/common/TMB.cc -text

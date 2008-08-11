@@ -311,16 +311,12 @@ emu/emuDCS/FEDCrate/include/EmuParser.h -text
 emu/emuDCS/FEDCrate/include/FEDCrateController.h -text
 emu/emuDCS/FEDCrate/include/FEDCrateParser.h -text
 emu/emuDCS/FEDCrate/include/FEDException.h -text
-emu/emuDCS/FEDCrate/include/GenDATA.h -text
 emu/emuDCS/FEDCrate/include/IRQData.h -text
 emu/emuDCS/FEDCrate/include/IRQThreadManager.h -text
 emu/emuDCS/FEDCrate/include/JTAG_constants.h -text
-emu/emuDCS/FEDCrate/include/OwnIt.h -text
-emu/emuDCS/FEDCrate/include/Singleton.h -text
 emu/emuDCS/FEDCrate/include/VMEController.h -text
 emu/emuDCS/FEDCrate/include/VMEModule.h -text
 emu/emuDCS/FEDCrate/include/VMEParser.h -text
-emu/emuDCS/FEDCrate/include/eth.h -text
 emu/emuDCS/FEDCrate/include/geom.h -text
 emu/emuDCS/FEDCrate/include/geom_def.h -text
 emu/emuDCS/FEDCrate/include/vme_cmd.h -text
@@ -350,9 +346,6 @@ emu/emuDCS/FEDCrate/src/common/VMEController.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEController_jtag.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEModule.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEParser.cc -text
-emu/emuDCS/FEDCrate/test/common/README -text
-emu/emuDCS/FEDCrate/test/common/configTest.xml -text
-emu/emuDCS/FEDCrate/test/common/ddutest.cpp -text
 emu/emuDCS/FEDCrate/xml/EmuFCluster.xml -text
 emu/emuDCS/FEDCrate/xml/EmuFCluster_SV.xml -text
 emu/emuDCS/FEDCrate/xml/README -text

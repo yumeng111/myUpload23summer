@@ -265,6 +265,7 @@ emu/emuDAQ/emuUtil/script/emuCuller -text
 emu/emuDAQ/emuUtil/script/emuFarmer -text
 emu/emuDAQ/emuUtil/script/emuParameterGet -text
 emu/emuDAQ/emuUtil/script/sendSOAP -text
+emu/emuDAQ/emuUtil/script/setVersion.sh -text
 emu/emuDAQ/emuUtil/src/common/EmuI2OServer.cc -text
 emu/emuDAQ/emuUtil/src/common/EmuSOAPServer.cc -text
 emu/emuDAQ/emuUtil/src/common/EmuServer.cc -text

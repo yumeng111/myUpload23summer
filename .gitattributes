@@ -289,9 +289,6 @@ emu/emuDCS/FEDCrate/OSUCMS.png -text svneol=unset#unset
 emu/emuDCS/FEDCrate/bin/startFEDCrate.sh -text
 emu/emuDCS/FEDCrate/bin/startFEDCrateSV.sh -text
 emu/emuDCS/FEDCrate/bin/startLoggingServer.sh -text
-emu/emuDCS/FEDCrate/include/CAENVMElib.h -text
-emu/emuDCS/FEDCrate/include/CAENVMEoslib.h -text
-emu/emuDCS/FEDCrate/include/CAENVMEtypes.h -text
 emu/emuDCS/FEDCrate/include/Chamber.h -text
 emu/emuDCS/FEDCrate/include/ChamberParser.h -text
 emu/emuDCS/FEDCrate/include/Crate.h -text

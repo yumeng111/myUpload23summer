@@ -291,7 +291,6 @@ emu/emuDCS/FEDCrate/bin/startFEDCrateSV.sh -text
 emu/emuDCS/FEDCrate/bin/startLoggingServer.sh -text
 emu/emuDCS/FEDCrate/include/Chamber.h -text
 emu/emuDCS/FEDCrate/include/ChamberParser.h -text
-emu/emuDCS/FEDCrate/include/Crate.h -text
 emu/emuDCS/FEDCrate/include/DCC.h -text
 emu/emuDCS/FEDCrate/include/DCCDebugger.h -text
 emu/emuDCS/FEDCrate/include/DCCParser.h -text
@@ -305,6 +304,7 @@ emu/emuDCS/FEDCrate/include/EmuFCrateManager.h -text
 emu/emuDCS/FEDCrate/include/EmuFEDApplication.h -text
 emu/emuDCS/FEDCrate/include/EmuFEDLoggable.h -text
 emu/emuDCS/FEDCrate/include/EmuParser.h -text
+emu/emuDCS/FEDCrate/include/FEDCrate.h -text
 emu/emuDCS/FEDCrate/include/FEDCrateParser.h -text
 emu/emuDCS/FEDCrate/include/FEDException.h -text
 emu/emuDCS/FEDCrate/include/IRQData.h -text
@@ -318,7 +318,6 @@ emu/emuDCS/FEDCrate/include/geom_def.h -text
 emu/emuDCS/FEDCrate/include/vme_cmd.h -text
 emu/emuDCS/FEDCrate/src/common/Chamber.cc -text
 emu/emuDCS/FEDCrate/src/common/ChamberParser.cc -text
-emu/emuDCS/FEDCrate/src/common/Crate.cc -text
 emu/emuDCS/FEDCrate/src/common/DCC.cc -text
 emu/emuDCS/FEDCrate/src/common/DCCDebugger.cc -text
 emu/emuDCS/FEDCrate/src/common/DCCParser.cc -text
@@ -330,6 +329,7 @@ emu/emuDCS/FEDCrate/src/common/EmuFCrateHyperDAQ.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrateManager.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFEDLoggable.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuParser.cc -text
+emu/emuDCS/FEDCrate/src/common/FEDCrate.cc -text
 emu/emuDCS/FEDCrate/src/common/FEDCrateParser.cc -text
 emu/emuDCS/FEDCrate/src/common/IRQThreadManager.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEController.cc -text

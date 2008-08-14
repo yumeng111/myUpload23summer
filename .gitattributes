@@ -357,6 +357,7 @@ emu/emuDCS/OnlineDB/include/SetKillFibersGUI.h -text
 emu/emuDCS/OnlineDB/src/common/BoardsDB.cc -text
 emu/emuDCS/OnlineDB/src/common/ConnectionsDB.cc -text
 emu/emuDCS/OnlineDB/src/common/ConnectionsGUI.cc -text
+emu/emuDCS/OnlineDB/src/common/OnlineDBVersion.cc -text
 emu/emuDCS/OnlineDB/src/common/SetKillFibersGUI.cc -text
 emu/emuDCS/OnlineDB/test/start_babel.sh -text
 emu/emuDCS/OnlineDB/xml/Babel_GUI.xml -text

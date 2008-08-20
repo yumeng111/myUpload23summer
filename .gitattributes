@@ -374,6 +374,15 @@ emu/emuDCS/PCSwitches/img/osulogo.jpg -text svneol=unset#unset
 emu/emuDCS/PCSwitches/include/SwitchGUI.h -text
 emu/emuDCS/PCSwitches/include/expected_macs_minus.h -text
 emu/emuDCS/PCSwitches/include/expected_macs_plus.h -text
+emu/emuDCS/PCSwitches/scr/macchange.scr -text
+emu/emuDCS/PCSwitches/scr/switch01_backup.scr -text
+emu/emuDCS/PCSwitches/scr/switch02_backup.scr -text
+emu/emuDCS/PCSwitches/scr/switch03_backup.scr -text
+emu/emuDCS/PCSwitches/scr/switch04_backup.scr -text
+emu/emuDCS/PCSwitches/scr/switch07_backup.scr -text
+emu/emuDCS/PCSwitches/scr/switch08_backup.scr -text
+emu/emuDCS/PCSwitches/scr/switch09_backup.scr -text
+emu/emuDCS/PCSwitches/scr/switch10_backup.scr -text
 emu/emuDCS/PCSwitches/src/common/SwitchGUI.cc -text
 emu/emuDCS/PCSwitches/test/common/README -text
 emu/emuDCS/PCSwitches/test/common/SwitchPerlChangeMacs.cpp -text

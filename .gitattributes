@@ -366,6 +366,7 @@ emu/emuDCS/OnlineDB/xml/RUI-to-chamber_mapping.xml -text
 emu/emuDCS/OnlineDB/xml/SwitchConnections.xml -text
 emu/emuDCS/PCSwitches/Makefile -text
 emu/emuDCS/PCSwitches/bin/StartSwitch.sh -text
+emu/emuDCS/PCSwitches/bin/switch_backup_minus -text
 emu/emuDCS/PCSwitches/bin/switch_telnet.pl -text
 emu/emuDCS/PCSwitches/img/mainemus.jpg -text svneol=unset#unset
 emu/emuDCS/PCSwitches/img/osulogo.jpg -text svneol=unset#unset

@@ -439,6 +439,7 @@ emu/emuDCS/PeripheralApps/test/common/testtmbmain.cpp -text
 emu/emuDCS/PeripheralApps/xml/EMUsystem.view -text
 emu/emuDCS/PeripheralApps/xml/EmuCluster.xml -text
 emu/emuDCS/PeripheralApps/xml/EmuPC.rnc -text
+emu/emuDCS/PeripheralApps/xml/delay_tests.cpp -text
 emu/emuDCS/PeripheralApps/xml/insert_timing_parameters.pl -text
 emu/emuDCS/PeripheralApps/xml/peripheralCrateTemplate.xml -text
 emu/emuDCS/PeripheralApps/xml/readme -text

@@ -325,6 +325,7 @@ emu/emuDCS/FEDCrate/src/common/DDUParser.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrate.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrateHyperDAQ.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrateManager.cc -text
+emu/emuDCS/FEDCrate/src/common/EmuFEDApplication.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFEDLoggable.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuParser.cc -text
 emu/emuDCS/FEDCrate/src/common/FEDCrate.cc -text

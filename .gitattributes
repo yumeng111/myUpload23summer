@@ -322,6 +322,7 @@ emu/emuDCS/FEDCrate/src/common/DCCParser.cc -text
 emu/emuDCS/FEDCrate/src/common/DDU.cc -text
 emu/emuDCS/FEDCrate/src/common/DDUDebugger.cc -text
 emu/emuDCS/FEDCrate/src/common/DDUParser.cc -text
+emu/emuDCS/FEDCrate/src/common/DataTable.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrate.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrateHyperDAQ.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrateManager.cc -text

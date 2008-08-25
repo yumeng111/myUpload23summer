@@ -329,6 +329,7 @@ emu/emuDCS/FEDCrate/src/common/EmuFEDLoggable.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuParser.cc -text
 emu/emuDCS/FEDCrate/src/common/FEDCrate.cc -text
 emu/emuDCS/FEDCrate/src/common/FEDCrateParser.cc -text
+emu/emuDCS/FEDCrate/src/common/FEDVersion.cc -text
 emu/emuDCS/FEDCrate/src/common/IRQThreadManager.cc -text
 emu/emuDCS/FEDCrate/src/common/JTAGDevice.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEController.cc -text

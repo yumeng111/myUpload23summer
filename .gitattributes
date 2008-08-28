@@ -607,6 +607,7 @@ emu/emuDQM/Common/include/CSCReadoutMappingFromFile.h -text
 emu/emuDQM/Common/include/ConsumerCanvas.hh -text
 emu/emuDQM/Common/include/EmuDQM/exception/Exception.h -text
 emu/emuDQM/Common/include/EmuDQM_AppParameters.h -text
+emu/emuDQM/Common/include/EmuDQM_Utils.h -text
 emu/emuDQM/Common/include/EmuMonitoringCanvas.h -text
 emu/emuDQM/Common/include/EmuMonitoringObject.h -text
 emu/emuDQM/Common/include/RateMeter.h -text
@@ -653,6 +654,7 @@ emu/emuDQM/Common/src/common/CSCDrawSummaryMap.cc -text
 emu/emuDQM/Common/src/common/CSCReadoutMappingFromFile.cc -text
 emu/emuDQM/Common/src/common/ConsumerCanvas.cc -text
 emu/emuDQM/Common/src/common/EmuDQM_AppParameters.cc -text
+emu/emuDQM/Common/src/common/EmuDQM_Utils.cc -text
 emu/emuDQM/Common/src/common/EmuMonitoringCanvas.cc -text
 emu/emuDQM/Common/src/common/EmuMonitoringObject.cc -text
 emu/emuDQM/EmuDisplayClient/Makefile -text

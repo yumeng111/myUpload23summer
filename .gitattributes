@@ -398,6 +398,7 @@ emu/emuDCS/PCSwitches/test/common/SwitchPerlScripts.cpp -text
 emu/emuDCS/PCSwitches/test/common/compile -text
 emu/emuDCS/PCSwitches/test/common/scr2pl.cpp -text
 emu/emuDCS/PCSwitches/test/common/telnet.h -text
+emu/emuDCS/PCSwitches/xml/Switch_GUI-emucom02.xml -text
 emu/emuDCS/PCSwitches/xml/Switch_GUI-pc1.xml -text
 emu/emuDCS/PCSwitches/xml/Switch_GUI-pc2.xml -text
 emu/emuDCS/PCSwitches/xml/Switch_GUI.xml -text

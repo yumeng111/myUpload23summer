@@ -921,6 +921,7 @@ emu/emuDQM/scripts/browser/index.html -text
 emu/emuDQM/scripts/browser/runs.html -text
 emu/emuDQM/scripts/cron_job.pl -text
 emu/emuDQM/scripts/cron_job_tf.pl -text
+emu/emuDQM/scripts/doWebUpdate.sh -text
 emu/emuDQM/scripts/drawAll.C -text
 emu/emuDQM/scripts/drawAllSP.C -text
 emu/emuDQM/scripts/misc/browser.html -text

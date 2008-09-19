@@ -311,6 +311,7 @@ emu/emuDCS/FEDCrate/include/FEDException.h -text
 emu/emuDCS/FEDCrate/include/IRQData.h -text
 emu/emuDCS/FEDCrate/include/IRQThreadManager.h -text
 emu/emuDCS/FEDCrate/include/JTAGDevice.h -text
+emu/emuDCS/FEDCrate/include/JTAGElement.h -text
 emu/emuDCS/FEDCrate/include/JTAG_constants.h -text
 emu/emuDCS/FEDCrate/include/VMEController.h -text
 emu/emuDCS/FEDCrate/include/VMEControllerParser.h -text

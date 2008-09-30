@@ -377,6 +377,7 @@ emu/emuDCS/PCSwitches/img/mainemus.jpg -text svneol=unset#unset
 emu/emuDCS/PCSwitches/img/osulogo.jpg -text svneol=unset#unset
 emu/emuDCS/PCSwitches/include/Switch.h -text
 emu/emuDCS/PCSwitches/include/SwitchGUI.h -text
+emu/emuDCS/PCSwitches/include/XMLParser.h -text
 emu/emuDCS/PCSwitches/include/crate_labels.h -text
 emu/emuDCS/PCSwitches/include/expected_macs_minus.h -text
 emu/emuDCS/PCSwitches/include/expected_macs_plus.h -text
@@ -391,6 +392,7 @@ emu/emuDCS/PCSwitches/scr/switch09_backup.scr -text
 emu/emuDCS/PCSwitches/scr/switch10_backup.scr -text
 emu/emuDCS/PCSwitches/src/common/Switch.cc -text
 emu/emuDCS/PCSwitches/src/common/SwitchGUI.cc -text
+emu/emuDCS/PCSwitches/src/common/XMLParser.cc -text
 emu/emuDCS/PCSwitches/test/common/README -text
 emu/emuDCS/PCSwitches/test/common/SwitchPerlChangeMacs.cpp -text
 emu/emuDCS/PCSwitches/test/common/SwitchPerlClearMacs.cpp -text
@@ -398,6 +400,8 @@ emu/emuDCS/PCSwitches/test/common/SwitchPerlScripts.cpp -text
 emu/emuDCS/PCSwitches/test/common/compile -text
 emu/emuDCS/PCSwitches/test/common/scr2pl.cpp -text
 emu/emuDCS/PCSwitches/test/common/telnet.h -text
+emu/emuDCS/PCSwitches/xml/MinusSwitches.xml -text
+emu/emuDCS/PCSwitches/xml/PlusSwitches.xml -text
 emu/emuDCS/PCSwitches/xml/Switch_GUI-emucom02.xml -text
 emu/emuDCS/PCSwitches/xml/Switch_GUI-pc1.xml -text
 emu/emuDCS/PCSwitches/xml/Switch_GUI-pc2.xml -text

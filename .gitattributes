@@ -400,6 +400,10 @@ emu/emuDCS/PCSwitches/test/common/telnet.h -text
 emu/emuDCS/PCSwitches/xml/MinusSwitches.xml -text
 emu/emuDCS/PCSwitches/xml/PlusSwitches.xml -text
 emu/emuDCS/PCSwitches/xml/Switch_GUI-emucom02.xml -text
+emu/emuDCS/PCSwitches/xml/pc1_cscdev.xml -text
+emu/emuDCS/PCSwitches/xml/pc1_cscpro.xml -text
+emu/emuDCS/PCSwitches/xml/pc2_cscdev.xml -text
+emu/emuDCS/PCSwitches/xml/pc2_cscpro.xml -text
 emu/emuDCS/PeripheralApps/Makefile -text
 emu/emuDCS/PeripheralApps/include/CalibDAQ.h -text
 emu/emuDCS/PeripheralApps/include/ChamberUtilities.h -text

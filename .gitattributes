@@ -282,14 +282,15 @@ emu/emuDAQ/xml/RUI-to-chamber_mapping_XSLT.xml -text
 emu/emuDAQ/xml/RUI-to-computer_mapping.xml -text
 emu/emuDAQ/xml/RUI-to-computer_mapping_XSLT.xml -text
 emu/emuDAQ/xml/generateConfigs.sh -text
-emu/emuDCS/FEDCrate/EmuFEDSeal.png -text svneol=unset#unset
 emu/emuDCS/FEDCrate/Makefile -text
-emu/emuDCS/FEDCrate/OSUBackground.gif -text svneol=unset#unset
-emu/emuDCS/FEDCrate/OSUCMS.png -text svneol=unset#unset
 emu/emuDCS/FEDCrate/bin/startFEDCrate.sh -text
 emu/emuDCS/FEDCrate/bin/startFEDCrateSV.sh -text
 emu/emuDCS/FEDCrate/bin/startLoggingServer.sh -text
+emu/emuDCS/FEDCrate/css/EmuFEDApplication.css -text
 emu/emuDCS/FEDCrate/doc/Doxyfile -text
+emu/emuDCS/FEDCrate/img/EmuFEDSeal.png -text svneol=unset#unset
+emu/emuDCS/FEDCrate/img/OSUBackground.gif -text svneol=unset#unset
+emu/emuDCS/FEDCrate/img/OSUCMS.png -text svneol=unset#unset
 emu/emuDCS/FEDCrate/include/Chamber.h -text
 emu/emuDCS/FEDCrate/include/ChamberParser.h -text
 emu/emuDCS/FEDCrate/include/DCC.h -text
@@ -315,6 +316,11 @@ emu/emuDCS/FEDCrate/include/JTAG_constants.h -text
 emu/emuDCS/FEDCrate/include/VMEController.h -text
 emu/emuDCS/FEDCrate/include/VMEControllerParser.h -text
 emu/emuDCS/FEDCrate/include/VMEModule.h -text
+emu/emuDCS/FEDCrate/js/bitFlipper.js -text
+emu/emuDCS/FEDCrate/js/errorFlasher.js -text
+emu/emuDCS/FEDCrate/js/formChecker.js -text
+emu/emuDCS/FEDCrate/js/reload.js -text
+emu/emuDCS/FEDCrate/js/tableToggler.js -text
 emu/emuDCS/FEDCrate/src/common/Chamber.cc -text
 emu/emuDCS/FEDCrate/src/common/ChamberParser.cc -text
 emu/emuDCS/FEDCrate/src/common/DCC.cc -text

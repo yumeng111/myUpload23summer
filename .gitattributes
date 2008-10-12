@@ -506,6 +506,15 @@ emu/emuDCS/PeripheralCore/src/common/VMECC.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEController.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEController_jtag.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEModule.cc -text
+emu/emuDCS/PeripheralXtop/Makefile -text
+emu/emuDCS/PeripheralXtop/include/Chamber.h -text
+emu/emuDCS/PeripheralXtop/include/DcsDimStructures.h -text
+emu/emuDCS/PeripheralXtop/include/EmuDim.h -text
+emu/emuDCS/PeripheralXtop/include/LOAD.h -text
+emu/emuDCS/PeripheralXtop/src/common/Chamber.cc -text
+emu/emuDCS/PeripheralXtop/src/common/EmuDim.cc -text
+emu/emuDCS/PeripheralXtop/src/common/LOAD.cc -text
+emu/emuDCS/PeripheralXtop/src/common/XtopVersion.cc -text
 emu/emuDCS/drivers/3com/Makefile -text
 emu/emuDCS/drivers/3com/acenic.c -text
 emu/emuDCS/drivers/3com/acenic.h -text

@@ -410,6 +410,7 @@ emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateCommand.h -text
 emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateConfig.h -text
 emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateManager.h -text
 emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateMonitor.h -text
+emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateTimer.h -text
 emu/emuDCS/PeripheralApps/include/EmuTStore.h -text
 emu/emuDCS/PeripheralApps/include/TStoreRequest.h -text
 emu/emuDCS/PeripheralApps/include/XMLParser.h -text
@@ -424,6 +425,7 @@ emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateCommand.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateConfig.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateManager.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateMonitor.cc -text
+emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateTimer.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuTStore.cc -text
 emu/emuDCS/PeripheralApps/src/common/TStoreRequest.cc -text
 emu/emuDCS/PeripheralApps/src/common/XMLParser.cc -text

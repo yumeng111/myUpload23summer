@@ -284,7 +284,6 @@ emu/emuDAQ/xml/RUI-to-computer_mapping_XSLT.xml -text
 emu/emuDAQ/xml/generateConfigs.sh -text
 emu/emuDCS/FEDCrate/Makefile -text
 emu/emuDCS/FEDCrate/bin/startFEDCrate.sh -text
-emu/emuDCS/FEDCrate/bin/startFEDCrateSV.sh -text
 emu/emuDCS/FEDCrate/bin/startLoggingServer.sh -text
 emu/emuDCS/FEDCrate/css/EmuFEDApplication.css -text
 emu/emuDCS/FEDCrate/doc/Doxyfile -text
@@ -343,18 +342,8 @@ emu/emuDCS/FEDCrate/src/common/IRQThreadManager.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEController.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEControllerParser.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEModule.cc -text
-emu/emuDCS/FEDCrate/xml/EmuFCluster.xml -text
 emu/emuDCS/FEDCrate/xml/EmuFCluster_SV.xml -text
-emu/emuDCS/FEDCrate/xml/README -text
-emu/emuDCS/FEDCrate/xml/RUI-to-chamber_mapping.xml -text
-emu/emuDCS/FEDCrate/xml/config.xml -text
-emu/emuDCS/FEDCrate/xml/config2.xml -text
-emu/emuDCS/FEDCrate/xml/config_2crates.xml -text
-emu/emuDCS/FEDCrate/xml/config_c1.xml -text
-emu/emuDCS/FEDCrate/xml/config_c12.xml -text
-emu/emuDCS/FEDCrate/xml/config_c2.xml -text
-emu/emuDCS/FEDCrate/xml/config_sx5.xml -text
-emu/emuDCS/FEDCrate/xml/xdaq_run -text
+emu/emuDCS/FEDCrate/xml/config_c34.xml -text
 emu/emuDCS/Makefile -text
 emu/emuDCS/OnlineDB/Makefile -text
 emu/emuDCS/OnlineDB/include/BoardsDB.h -text

@@ -297,8 +297,12 @@ emu/emuDCS/FEDCrate/bin/startFEDCrate.sh -text
 emu/emuDCS/FEDCrate/bin/startLoggingServer.sh -text
 emu/emuDCS/FEDCrate/css/EmuFEDApplication.css -text
 emu/emuDCS/FEDCrate/doc/Doxyfile -text
+emu/emuDCS/FEDCrate/img/Background-Default.png -text svneol=unset#unset
+emu/emuDCS/FEDCrate/img/Background-Manager.png -text svneol=unset#unset
+emu/emuDCS/FEDCrate/img/Background-Minus-Side.png -text svneol=unset#unset
+emu/emuDCS/FEDCrate/img/Background-Plus-Side.png -text svneol=unset#unset
+emu/emuDCS/FEDCrate/img/Background-Track-Finder.png -text svneol=unset#unset
 emu/emuDCS/FEDCrate/img/EmuFEDSeal.png -text svneol=unset#unset
-emu/emuDCS/FEDCrate/img/OSUBackground.gif -text svneol=unset#unset
 emu/emuDCS/FEDCrate/img/OSUCMS.png -text svneol=unset#unset
 emu/emuDCS/FEDCrate/include/Chamber.h -text
 emu/emuDCS/FEDCrate/include/ChamberParser.h -text

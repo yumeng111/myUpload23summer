@@ -332,6 +332,7 @@ emu/emuDCS/FEDCrate/include/VMEModule.h -text
 emu/emuDCS/FEDCrate/js/bitFlipper.js -text
 emu/emuDCS/FEDCrate/js/errorFlasher.js -text
 emu/emuDCS/FEDCrate/js/formChecker.js -text
+emu/emuDCS/FEDCrate/js/prototype.js -text
 emu/emuDCS/FEDCrate/js/reload.js -text
 emu/emuDCS/FEDCrate/js/tableToggler.js -text
 emu/emuDCS/FEDCrate/src/common/Chamber.cc -text

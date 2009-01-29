@@ -304,6 +304,7 @@ emu/emuDCS/FEDCrate/img/Background-Plus-Side.png -text svneol=unset#unset
 emu/emuDCS/FEDCrate/img/Background-Track-Finder.png -text svneol=unset#unset
 emu/emuDCS/FEDCrate/img/EmuFEDSeal.png -text svneol=unset#unset
 emu/emuDCS/FEDCrate/img/OSUCMS.png -text svneol=unset#unset
+emu/emuDCS/FEDCrate/include/Application.h -text
 emu/emuDCS/FEDCrate/include/Chamber.h -text
 emu/emuDCS/FEDCrate/include/ChamberParser.h -text
 emu/emuDCS/FEDCrate/include/DCC.h -text
@@ -316,9 +317,6 @@ emu/emuDCS/FEDCrate/include/DataTable.h -text
 emu/emuDCS/FEDCrate/include/EmuFCrate.h -text
 emu/emuDCS/FEDCrate/include/EmuFCrateHyperDAQ.h -text
 emu/emuDCS/FEDCrate/include/EmuFCrateManager.h -text
-emu/emuDCS/FEDCrate/include/EmuFEDApplication.h -text
-emu/emuDCS/FEDCrate/include/EmuFEDLoggable.h -text
-emu/emuDCS/FEDCrate/include/EmuParser.h -text
 emu/emuDCS/FEDCrate/include/FEDCrate.h -text
 emu/emuDCS/FEDCrate/include/FEDCrateParser.h -text
 emu/emuDCS/FEDCrate/include/FEDException.h -text
@@ -326,6 +324,7 @@ emu/emuDCS/FEDCrate/include/IRQData.h -text
 emu/emuDCS/FEDCrate/include/IRQThreadManager.h -text
 emu/emuDCS/FEDCrate/include/JTAGElement.h -text
 emu/emuDCS/FEDCrate/include/JTAG_constants.h -text
+emu/emuDCS/FEDCrate/include/Parser.h -text
 emu/emuDCS/FEDCrate/include/VMEController.h -text
 emu/emuDCS/FEDCrate/include/VMEControllerParser.h -text
 emu/emuDCS/FEDCrate/include/VMEModule.h -text
@@ -335,6 +334,7 @@ emu/emuDCS/FEDCrate/js/formChecker.js -text
 emu/emuDCS/FEDCrate/js/prototype.js -text
 emu/emuDCS/FEDCrate/js/reload.js -text
 emu/emuDCS/FEDCrate/js/tableToggler.js -text
+emu/emuDCS/FEDCrate/src/common/Application.cc -text
 emu/emuDCS/FEDCrate/src/common/Chamber.cc -text
 emu/emuDCS/FEDCrate/src/common/ChamberParser.cc -text
 emu/emuDCS/FEDCrate/src/common/DCC.cc -text
@@ -347,13 +347,11 @@ emu/emuDCS/FEDCrate/src/common/DataTable.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrate.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrateHyperDAQ.cc -text
 emu/emuDCS/FEDCrate/src/common/EmuFCrateManager.cc -text
-emu/emuDCS/FEDCrate/src/common/EmuFEDApplication.cc -text
-emu/emuDCS/FEDCrate/src/common/EmuFEDLoggable.cc -text
-emu/emuDCS/FEDCrate/src/common/EmuParser.cc -text
 emu/emuDCS/FEDCrate/src/common/FEDCrate.cc -text
 emu/emuDCS/FEDCrate/src/common/FEDCrateParser.cc -text
 emu/emuDCS/FEDCrate/src/common/FEDVersion.cc -text
 emu/emuDCS/FEDCrate/src/common/IRQThreadManager.cc -text
+emu/emuDCS/FEDCrate/src/common/Parser.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEController.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEControllerParser.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEModule.cc -text

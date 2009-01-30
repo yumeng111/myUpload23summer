@@ -114,6 +114,15 @@ emu/daq/fu/include/emu/daq/fu/version.h -text
 emu/daq/fu/src/common/Application.cc -text
 emu/daq/fu/src/common/EmuEventHeaderTrailer.cc -text
 emu/daq/fu/src/common/version.cc -text
+emu/daq/manager/Makefile -text
+emu/daq/manager/images/EmuDAQManager64x64.gif -text svneol=unset#unset
+emu/daq/manager/images/ctrl32x32.gif -text svneol=unset#unset
+emu/daq/manager/images/ctrl64x64.gif -text svneol=unset#unset
+emu/daq/manager/include/emu/daq/manager/Application.h -text
+emu/daq/manager/include/emu/daq/manager/exception/Exception.h -text
+emu/daq/manager/include/emu/daq/manager/version.h -text
+emu/daq/manager/src/common/Application.cc -text
+emu/daq/manager/src/common/version.cc -text
 emu/doc/html/index.html -text
 emu/doc/html/overview.html -text
 emu/emuDAQ/Makefile -text

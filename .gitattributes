@@ -436,7 +436,7 @@ emu/emuDCS/FEDCrate/src/common/Parser.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEController.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEControllerParser.cc -text
 emu/emuDCS/FEDCrate/src/common/VMEModule.cc -text
-emu/emuDCS/FEDCrate/xml/EmuFCluster_SV.xml -text
+emu/emuDCS/FEDCrate/xml/EmuFCluster.xml -text
 emu/emuDCS/FEDCrate/xml/config_c12.xml -text
 emu/emuDCS/FEDCrate/xml/config_c34.xml -text
 emu/emuDCS/FEDCrate/xml/default.profile -text

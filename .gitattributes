@@ -1001,3 +1001,12 @@ emu/setup/emu/scripts/slp_da.cron -text
 emu/setup/emu/scripts/slp_da.sh -text
 emu/setup/emu/xdaqd -text
 emu/setup/emu/xplore/shortcuts.xml -text
+emu/supervisor/Makefile -text
+emu/supervisor/html/emusupervisor.css -text
+emu/supervisor/include/emu/supervisor/Application.h -text
+emu/supervisor/include/emu/supervisor/ELog.h -text
+emu/supervisor/include/emu/supervisor/RunInfo.h -text
+emu/supervisor/include/emu/supervisor/version.h -text
+emu/supervisor/src/common/Application.cc -text
+emu/supervisor/src/common/version.cc -text
+emu/supervisor/xml/test_supervisor.xml -text

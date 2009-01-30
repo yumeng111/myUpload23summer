@@ -105,6 +105,15 @@ emu/cscSV/test/config.xml -text
 emu/cscSV/test/dummy.xml -text
 emu/cscSV/xml/config.xml -text
 emu/cscSV/xml/default.xml -text
+emu/daq/fu/Makefile -text
+emu/daq/fu/images/EmuFU64x64.gif -text svneol=unset#unset
+emu/daq/fu/include/emu/daq/fu/Application.h -text
+emu/daq/fu/include/emu/daq/fu/EmuEventHeaderTrailer.h -text
+emu/daq/fu/include/emu/daq/fu/exception/Exception.h -text
+emu/daq/fu/include/emu/daq/fu/version.h -text
+emu/daq/fu/src/common/Application.cc -text
+emu/daq/fu/src/common/EmuEventHeaderTrailer.cc -text
+emu/daq/fu/src/common/version.cc -text
 emu/doc/html/index.html -text
 emu/doc/html/overview.html -text
 emu/emuDAQ/Makefile -text

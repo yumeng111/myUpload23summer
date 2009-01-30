@@ -157,6 +157,16 @@ emu/daq/server/src/common/Base.cc -text
 emu/daq/server/src/common/I2O.cc -text
 emu/daq/server/src/common/SOAP.cc -text
 emu/daq/server/src/common/version.cc -text
+emu/daq/ta/Makefile -text
+emu/daq/ta/images/EmuTA64x64.gif -text svneol=unset#unset
+emu/daq/ta/include/emu/daq/ta/Application.h -text
+emu/daq/ta/include/emu/daq/ta/SliceTestTriggerChunk.h -text
+emu/daq/ta/include/emu/daq/ta/TriggerGenerator.h -text
+emu/daq/ta/include/emu/daq/ta/exception/Exception.h -text
+emu/daq/ta/include/emu/daq/ta/version.h -text
+emu/daq/ta/src/common/Application.cc -text
+emu/daq/ta/src/common/TriggerGenerator.cc -text
+emu/daq/ta/src/common/version.cc -text
 emu/doc/html/index.html -text
 emu/doc/html/overview.html -text
 emu/emuDAQ/Makefile -text

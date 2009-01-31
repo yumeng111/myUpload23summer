@@ -105,6 +105,7 @@ emu/cscSV/test/config.xml -text
 emu/cscSV/test/dummy.xml -text
 emu/cscSV/xml/config.xml -text
 emu/cscSV/xml/default.xml -text
+emu/daq/Makefile -text
 emu/daq/fu/Makefile -text
 emu/daq/fu/images/EmuFU64x64.gif -text svneol=unset#unset
 emu/daq/fu/include/emu/daq/fu/Application.h -text

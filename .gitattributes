@@ -704,6 +704,7 @@ emu/emuDCS/e2p/test/common/test_rc2dcs.cpp -text
 emu/emuDCS/e2p/test/common/testbeamcontrol.cpp -text
 emu/emuDCS/e2p/xml/DcsControlWebXdaq.xml -text
 emu/emuDCS/e2p/xml/DcsControlWebXdaq_1973.xml -text
+emu/emuDQM/CMSSWLibs/CMSSW_2_2_0_pre1.tgz -text
 emu/emuDQM/CMSSWLibs/FWCore/MessageLogger/interface/MessageLogger.h -text
 emu/emuDQM/CMSSWLibs/Makefile -text
 emu/emuDQM/CMSSWLibs/README.txt -text

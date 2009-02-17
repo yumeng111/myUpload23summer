@@ -714,6 +714,7 @@ emu/emuDQM/Common/Makefile -text
 emu/emuDQM/Common/include/CSCDrawMaps.h -text
 emu/emuDQM/Common/include/CSCMap.h -text
 emu/emuDQM/Common/include/CSCReadoutMappingFromFile.h -text
+emu/emuDQM/Common/include/CSCReport.h -text
 emu/emuDQM/Common/include/ConsumerCanvas.hh -text
 emu/emuDQM/Common/include/EmuDQM/exception/Exception.h -text
 emu/emuDQM/Common/include/EmuDQM_AppParameters.h -text

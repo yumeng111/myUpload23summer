@@ -376,6 +376,37 @@ emu/emuDAQ/xml/RUI-to-chamber_mapping_XSLT.xml -text
 emu/emuDAQ/xml/RUI-to-computer_mapping.xml -text
 emu/emuDAQ/xml/RUI-to-computer_mapping_XSLT.xml -text
 emu/emuDAQ/xml/generateConfigs.sh -text
+emu/emuDCS/FEDApps/Makefile -text
+emu/emuDCS/FEDApps/html/FEDApps.css -text
+emu/emuDCS/FEDApps/html/bitFlipper.js -text
+emu/emuDCS/FEDApps/html/errorFlasher.js -text
+emu/emuDCS/FEDApps/html/formChecker.js -text
+emu/emuDCS/FEDApps/html/monitor.js -text
+emu/emuDCS/FEDApps/html/prototype.js -text
+emu/emuDCS/FEDApps/html/reload.js -text
+emu/emuDCS/FEDApps/html/tableToggler.js -text
+emu/emuDCS/FEDApps/images/Background-Default.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/Background-Manager.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/Background-Minus-Side.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/Background-Plus-Side.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/Background-Track-Finder.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/EmuFEDSeal.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/OSUCMS.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/pausebars.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/playarrow.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/include/emu/fed/Application.h -text
+emu/emuDCS/FEDApps/include/emu/fed/AppsVersion.h -text
+emu/emuDCS/FEDApps/include/emu/fed/Communicator.h -text
+emu/emuDCS/FEDApps/include/emu/fed/EmuFCrateHyperDAQ.h -text
+emu/emuDCS/FEDApps/include/emu/fed/Manager.h -text
+emu/emuDCS/FEDApps/include/emu/fed/Monitor.h -text
+emu/emuDCS/FEDApps/spec.template -text
+emu/emuDCS/FEDApps/src/common/Application.cc -text
+emu/emuDCS/FEDApps/src/common/AppsVersion.cc -text
+emu/emuDCS/FEDApps/src/common/Communicator.cc -text
+emu/emuDCS/FEDApps/src/common/EmuFCrateHyperDAQ.cc -text
+emu/emuDCS/FEDApps/src/common/Manager.cc -text
+emu/emuDCS/FEDApps/src/common/Monitor.cc -text
 emu/emuDCS/FEDCore/Makefile -text
 emu/emuDCS/FEDCore/include/emu/fed/Chamber.h -text
 emu/emuDCS/FEDCore/include/emu/fed/CoreVersion.h -text

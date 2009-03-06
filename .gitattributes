@@ -170,6 +170,10 @@ emu/daq/ta/include/emu/daq/ta/version.h -text
 emu/daq/ta/src/common/Application.cc -text
 emu/daq/ta/src/common/TriggerGenerator.cc -text
 emu/daq/ta/src/common/version.cc -text
+emu/daq/util/script/emuParameterGet -text
+emu/daq/util/script/feedEmuToIguana -text
+emu/daq/util/script/sendSOAP -text
+emu/daq/util/script/setVersion -text
 emu/daq/writer/Makefile -text
 emu/daq/writer/include/emu/daq/writer/RawDataFile.h -text
 emu/daq/writer/include/emu/daq/writer/version.h -text

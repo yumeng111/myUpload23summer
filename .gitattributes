@@ -587,6 +587,7 @@ emu/emuDCS/PeripheralApps/include/ChamberUtilities.h -text
 emu/emuDCS/PeripheralApps/include/CrateUtilities.h -text
 emu/emuDCS/PeripheralApps/include/EmuController.h -text
 emu/emuDCS/PeripheralApps/include/EmuPCrateConfigTStore.h -text
+emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateBase.h -text
 emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateBroadcast.h -text
 emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateCommand.h -text
 emu/emuDCS/PeripheralApps/include/EmuPeripheralCrateConfig.h -text
@@ -602,6 +603,7 @@ emu/emuDCS/PeripheralApps/src/common/ChamberUtilities.cc -text
 emu/emuDCS/PeripheralApps/src/common/CrateUtilities.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuController.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPCrateConfigTStore.cc -text
+emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateBase.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateBroadcast.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateCommand.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateConfig.cc -text

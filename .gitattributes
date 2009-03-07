@@ -2,9 +2,11 @@
 emu/Makefile -text
 emu/base/Makefile -text
 emu/base/include/emu/base/Supervised.h -text
+emu/base/include/emu/base/WebReporter.h -text
 emu/base/include/emu/base/version.h -text
 emu/base/spec.template -text
 emu/base/src/common/Supervised.cc -text
+emu/base/src/common/WebReporter.cc -text
 emu/base/src/common/version.cc -text
 emu/cscFM/build.xml -text
 emu/cscFM/duck/level1.xml -text

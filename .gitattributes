@@ -892,6 +892,7 @@ emu/emuDQM/EmuMonitor/test/common/runEmuMonitor.cc -text
 emu/emuDQM/EmuMonitor/test/common/xmlExample.cpp -text
 emu/emuDQM/EmuMonitor/xml/EmuDQM.xml -text
 emu/emuDQM/EmuMonitor/xml/EmuDQM_xdaq7.xml -text
+emu/emuDQM/EmuMonitor/xml/csc_map.db -text
 emu/emuDQM/EmuMonitor/xml/csc_map.txt -text
 emu/emuDQM/EmuMonitor/xml/documentation.sh -text
 emu/emuDQM/EmuMonitor/xml/emuBooking2RenderPlugin.xsl -text

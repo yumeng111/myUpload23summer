@@ -858,6 +858,7 @@ emu/emuDQM/Common/src/common/EmuMonitoringObject.cc -text
 emu/emuDQM/EmuDisplayClient/Makefile -text
 emu/emuDQM/EmuDisplayClient/config/canvases_list.js -text
 emu/emuDQM/EmuDisplayClient/config/csc_map.js -text
+emu/emuDQM/EmuDisplayClient/config/ddu_csc_map.js -text
 emu/emuDQM/EmuDisplayClient/config/ddu_map.js -text
 emu/emuDQM/EmuDisplayClient/config/index.html -text
 emu/emuDQM/EmuDisplayClient/config/vme_pc_map.js -text

@@ -538,10 +538,10 @@ emu/emuDCS/FEDUtils/src/common/UtilsVersion.cc -text
 emu/emuDCS/FEDUtils/src/common/VMEControllerParser.cc -text
 emu/emuDCS/Makefile -text
 emu/emuDCS/OnlineDB/Makefile -text
-emu/emuDCS/OnlineDB/include/BoardsDB.h -text
-emu/emuDCS/OnlineDB/include/ConnectionsDB.h -text
-emu/emuDCS/OnlineDB/include/ConnectionsGUI.h -text
-emu/emuDCS/OnlineDB/include/SetKillFibersGUI.h -text
+emu/emuDCS/OnlineDB/include/emu/db/BoardsDB.h -text
+emu/emuDCS/OnlineDB/include/emu/db/ConnectionsDB.h -text
+emu/emuDCS/OnlineDB/include/emu/db/ConnectionsGUI.h -text
+emu/emuDCS/OnlineDB/include/emu/db/SetKillFibersGUI.h -text
 emu/emuDCS/OnlineDB/src/common/BoardsDB.cc -text
 emu/emuDCS/OnlineDB/src/common/ConnectionsDB.cc -text
 emu/emuDCS/OnlineDB/src/common/ConnectionsGUI.cc -text

@@ -412,6 +412,7 @@ emu/emuDCS/FEDApps/images/pausebars.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/playarrow.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/include/emu/fed/Application.h -text
 emu/emuDCS/FEDApps/include/emu/fed/AppsVersion.h -text
+emu/emuDCS/FEDApps/include/emu/fed/Commander.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Communicator.h -text
 emu/emuDCS/FEDApps/include/emu/fed/EmuFCrateHyperDAQ.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Manager.h -text
@@ -420,6 +421,7 @@ emu/emuDCS/FEDApps/include/emu/fed/Supervised.h -text
 emu/emuDCS/FEDApps/spec.template -text
 emu/emuDCS/FEDApps/src/common/Application.cc -text
 emu/emuDCS/FEDApps/src/common/AppsVersion.cc -text
+emu/emuDCS/FEDApps/src/common/Commander.cc -text
 emu/emuDCS/FEDApps/src/common/Communicator.cc -text
 emu/emuDCS/FEDApps/src/common/EmuFCrateHyperDAQ.cc -text
 emu/emuDCS/FEDApps/src/common/Manager.cc -text

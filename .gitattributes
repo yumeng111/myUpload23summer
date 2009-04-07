@@ -4,7 +4,6 @@ emu/base/Makefile -text
 emu/base/html/EmuPage1.css -text
 emu/base/html/EmuPage1.js -text
 emu/base/html/EmuPage1_XSL.xml -text
-emu/base/html/ForEmuPage1.xml -text
 emu/base/html/Page1.html -text
 emu/base/include/emu/base/Alarm.h -text
 emu/base/include/emu/base/Supervised.h -text

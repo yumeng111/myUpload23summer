@@ -562,6 +562,7 @@ emu/emuDCS/PCSwitches/bin/shutdown-port.pl -text
 emu/emuDCS/PCSwitches/bin/switch_backup_minus -text
 emu/emuDCS/PCSwitches/bin/switch_backup_plus -text
 emu/emuDCS/PCSwitches/bin/switch_telnet.pl -text
+emu/emuDCS/PCSwitches/bin/ups_telnet.pl -text
 emu/emuDCS/PCSwitches/img/mainemus.jpg -text svneol=unset#unset
 emu/emuDCS/PCSwitches/img/osulogo.jpg -text svneol=unset#unset
 emu/emuDCS/PCSwitches/include/Switch.h -text

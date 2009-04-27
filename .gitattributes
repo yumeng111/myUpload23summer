@@ -545,6 +545,7 @@ emu/emuDCS/OnlineDB/include/emu/db/BoardsDB.h -text
 emu/emuDCS/OnlineDB/include/emu/db/ConnectionsDB.h -text
 emu/emuDCS/OnlineDB/include/emu/db/ConnectionsGUI.h -text
 emu/emuDCS/OnlineDB/include/emu/db/SetKillFibersGUI.h -text
+emu/emuDCS/OnlineDB/spec.template -text
 emu/emuDCS/OnlineDB/src/common/BoardsDB.cc -text
 emu/emuDCS/OnlineDB/src/common/ConnectionsDB.cc -text
 emu/emuDCS/OnlineDB/src/common/ConnectionsGUI.cc -text
@@ -578,6 +579,7 @@ emu/emuDCS/PCSwitches/scr/switch07_backup.scr -text
 emu/emuDCS/PCSwitches/scr/switch08_backup.scr -text
 emu/emuDCS/PCSwitches/scr/switch09_backup.scr -text
 emu/emuDCS/PCSwitches/scr/switch10_backup.scr -text
+emu/emuDCS/PCSwitches/spec.template -text
 emu/emuDCS/PCSwitches/src/common/Switch.cc -text
 emu/emuDCS/PCSwitches/src/common/SwitchGUI.cc -text
 emu/emuDCS/PCSwitches/src/common/XMLParser.cc -text
@@ -612,6 +614,7 @@ emu/emuDCS/PeripheralApps/include/emu/pc/EmuPeripheralCrateTimer.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/EmuTStore.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/TStoreRequest.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/XMLParser.h -text
+emu/emuDCS/PeripheralApps/spec.template -text
 emu/emuDCS/PeripheralApps/src/common/AppsVersion.cc -text
 emu/emuDCS/PeripheralApps/src/common/CalibDAQ.cc -text
 emu/emuDCS/PeripheralApps/src/common/ChamberUtilities.cc -text
@@ -679,6 +682,7 @@ emu/emuDCS/PeripheralCore/include/emu/pc/VMEController.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/VMEModule.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/geom.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/vme_cmd.h -text
+emu/emuDCS/PeripheralCore/spec.template -text
 emu/emuDCS/PeripheralCore/src/common/ALCTController.cc -text
 emu/emuDCS/PeripheralCore/src/common/CCB.cc -text
 emu/emuDCS/PeripheralCore/src/common/CFEB.cc -text
@@ -702,6 +706,7 @@ emu/emuDCS/PeripheralXtop/include/emu/x2p/Chamber.h -text
 emu/emuDCS/PeripheralXtop/include/emu/x2p/DcsDimStructures.h -text
 emu/emuDCS/PeripheralXtop/include/emu/x2p/EmuDim.h -text
 emu/emuDCS/PeripheralXtop/include/emu/x2p/LOAD.h -text
+emu/emuDCS/PeripheralXtop/spec.template -text
 emu/emuDCS/PeripheralXtop/src/common/Chamber.cc -text
 emu/emuDCS/PeripheralXtop/src/common/EmuDim.cc -text
 emu/emuDCS/PeripheralXtop/src/common/LOAD.cc -text

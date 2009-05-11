@@ -1173,6 +1173,35 @@ emu/emuFarmer/xml/EmuFarmer.xml -text
 emu/extern/dim/Makefile -text
 emu/extern/dim/dim_v15r8.zip -text svneol=unset#unset
 emu/extern/readme -text
+emu/farmer/Makefile -text
+emu/farmer/html/Default.html -text
+emu/farmer/html/Dispatcher_XSLT.xml -text
+emu/farmer/html/EmuFarmer.jpg -text svneol=unset#unset
+emu/farmer/html/RUI-to-computer_mapping_Editor_XSLT.xml -text
+emu/farmer/html/RUI-to-computer_mapping_XSLT.xml -text
+emu/farmer/html/Selector_XSLT.xml -text
+emu/farmer/html/XDAQConfig_XSLT.xml -text
+emu/farmer/include/emu/farmer/Application.h -text
+emu/farmer/include/emu/farmer/ProcessDescriptor.h -text
+emu/farmer/include/emu/farmer/utils/Cgi.h -text
+emu/farmer/include/emu/farmer/utils/FileSystem.h -text
+emu/farmer/include/emu/farmer/utils/SOAP.h -text
+emu/farmer/include/emu/farmer/utils/Xalan.h -text
+emu/farmer/include/emu/farmer/version.h -text
+emu/farmer/src/common/Application.cc -text
+emu/farmer/src/common/Cgi.cc -text
+emu/farmer/src/common/FileSystem.cc -text
+emu/farmer/src/common/ProcessDescriptor.cc -text
+emu/farmer/src/common/SOAP.cc -text
+emu/farmer/src/common/Xalan.cc -text
+emu/farmer/src/common/version.cc -text
+emu/farmer/xml/EmuDAQConfigGenerator.xsl -text
+emu/farmer/xml/EmuDAQDUCKGenerator.xsl -text
+emu/farmer/xml/EmuFarmer.xml -text
+emu/farmer/xml/RUI-to-computer_mapping.xml -text
+emu/farmer/xml/generateConfigs.sh -text
+emu/farmer/xml/processingInstructionSetter.xsl -text
+emu/farmer/xml/statusInserter.xsl -text
 emu/release -text
 emu/setup/emu/Makefile -text
 emu/setup/emu/conf/da.conf.in -text

@@ -1252,6 +1252,7 @@ emu/setup/emu/sensor/las.las -text
 emu/setup/emu/sensor/sensor.sensor -text
 emu/setup/emu/sensor/sentinel.sensor -text
 emu/setup/emu/sensor/xrelay.sensor -text
+emu/setup/emu/spec.template -text
 emu/setup/emu/xdaqd -text
 emu/setup/emu/xplore/shortcuts.xml -text
 emu/supervisor/Makefile -text

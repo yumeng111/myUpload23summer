@@ -396,8 +396,11 @@ emu/emuDAQ/xml/generateConfigs.sh -text
 emu/emuDCS/FEDApps/Makefile -text
 emu/emuDCS/FEDApps/html/FEDApps.css -text
 emu/emuDCS/FEDApps/html/bitFlipper.js -text
+emu/emuDCS/FEDApps/html/common.js -text
+emu/emuDCS/FEDApps/html/communicator.js -text
 emu/emuDCS/FEDApps/html/errorFlasher.js -text
 emu/emuDCS/FEDApps/html/formChecker.js -text
+emu/emuDCS/FEDApps/html/manager.js -text
 emu/emuDCS/FEDApps/html/monitor.js -text
 emu/emuDCS/FEDApps/html/prototype.js -text
 emu/emuDCS/FEDApps/html/reload.js -text
@@ -409,8 +412,20 @@ emu/emuDCS/FEDApps/images/Background-Plus-Side.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/Background-Track-Finder.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/EmuFEDSeal.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/OSUCMS.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/ajax-loader.gif -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/dialog-error.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/dialog-information.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/dialog-ok-apply.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/dialog-warning.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/empty.gif -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/firmware.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/go-next.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/go-previous.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/missing.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/pausebars.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/playarrow.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/process-stop.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/view-refresh.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/include/emu/fed/Application.h -text
 emu/emuDCS/FEDApps/include/emu/fed/AppsVersion.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Commander.h -text
@@ -428,6 +443,7 @@ emu/emuDCS/FEDApps/src/common/EmuFCrateHyperDAQ.cc -text
 emu/emuDCS/FEDApps/src/common/Manager.cc -text
 emu/emuDCS/FEDApps/src/common/Monitor.cc -text
 emu/emuDCS/FEDApps/src/common/Supervised.cc -text
+emu/emuDCS/FEDApps/xml/TStoreConfiguration.xml -text
 emu/emuDCS/FEDCore/Makefile -text
 emu/emuDCS/FEDCore/include/emu/fed/Chamber.h -text
 emu/emuDCS/FEDCore/include/emu/fed/CoreVersion.h -text
@@ -515,30 +531,61 @@ emu/emuDCS/FEDCrate/xml/config_c12.xml -text
 emu/emuDCS/FEDCrate/xml/config_c34.xml -text
 emu/emuDCS/FEDCrate/xml/default.profile -text
 emu/emuDCS/FEDUtils/Makefile -text
+emu/emuDCS/FEDUtils/include/emu/fed/AutoConfigurator.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/ChamberParser.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/Configurator.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/CrateDBAgent.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/CrateParser.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/DBAgent.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/DBConfigurator.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/DCCDBAgent.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/DCCDebugger.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/DCCParser.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/DDUDBAgent.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/DDUDebugger.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/DDUParser.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/DataTable.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/FIFODBAgent.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/FiberDBAgent.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/IRQData.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/IRQThreadManager.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/JSONSpiritUtils.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/JSONSpiritValue.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/JSONSpiritWriter.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/Parser.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/SystemDBAgent.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/TStoreRequest.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/UtilsVersion.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/VMEControllerDBAgent.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/VMEControllerParser.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/VMEModuleDBAgent.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/XMLConfigurator.h -text
 emu/emuDCS/FEDUtils/spec.template -text
+emu/emuDCS/FEDUtils/src/common/AutoConfigurator.cc -text
 emu/emuDCS/FEDUtils/src/common/ChamberParser.cc -text
+emu/emuDCS/FEDUtils/src/common/CrateDBAgent.cc -text
 emu/emuDCS/FEDUtils/src/common/CrateParser.cc -text
+emu/emuDCS/FEDUtils/src/common/DBAgent.cc -text
+emu/emuDCS/FEDUtils/src/common/DBConfigurator.cc -text
+emu/emuDCS/FEDUtils/src/common/DCCDBAgent.cc -text
 emu/emuDCS/FEDUtils/src/common/DCCDebugger.cc -text
 emu/emuDCS/FEDUtils/src/common/DCCParser.cc -text
+emu/emuDCS/FEDUtils/src/common/DDUDBAgent.cc -text
 emu/emuDCS/FEDUtils/src/common/DDUDebugger.cc -text
 emu/emuDCS/FEDUtils/src/common/DDUParser.cc -text
 emu/emuDCS/FEDUtils/src/common/DataTable.cc -text
+emu/emuDCS/FEDUtils/src/common/FIFODBAgent.cc -text
+emu/emuDCS/FEDUtils/src/common/FiberDBAgent.cc -text
 emu/emuDCS/FEDUtils/src/common/IRQThreadManager.cc -text
+emu/emuDCS/FEDUtils/src/common/JSONSpiritWriter.cc -text
 emu/emuDCS/FEDUtils/src/common/Parser.cc -text
+emu/emuDCS/FEDUtils/src/common/SystemDBAgent.cc -text
+emu/emuDCS/FEDUtils/src/common/TStoreRequest.cc -text
 emu/emuDCS/FEDUtils/src/common/UtilsVersion.cc -text
+emu/emuDCS/FEDUtils/src/common/VMEControllerDBAgent.cc -text
 emu/emuDCS/FEDUtils/src/common/VMEControllerParser.cc -text
+emu/emuDCS/FEDUtils/src/common/VMEModuleDBAgent.cc -text
+emu/emuDCS/FEDUtils/src/common/XMLConfigurator.cc -text
 emu/emuDCS/Makefile -text
 emu/emuDCS/OnlineDB/Makefile -text
 emu/emuDCS/OnlineDB/include/emu/db/BoardsDB.h -text

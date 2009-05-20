@@ -421,9 +421,9 @@ emu/emuDCS/FEDApps/images/empty.gif -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/firmware.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/go-next.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/go-previous.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/media-playback-pause.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/media-playback-start.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/missing.png -text svneol=unset#unset
-emu/emuDCS/FEDApps/images/pausebars.png -text svneol=unset#unset
-emu/emuDCS/FEDApps/images/playarrow.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/process-stop.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/view-refresh.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/include/emu/fed/Application.h -text

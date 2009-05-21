@@ -532,7 +532,6 @@ emu/emuDCS/FEDCrate/xml/config_c34.xml -text
 emu/emuDCS/FEDCrate/xml/default.profile -text
 emu/emuDCS/FEDUtils/Makefile -text
 emu/emuDCS/FEDUtils/include/emu/fed/AutoConfigurator.h -text
-emu/emuDCS/FEDUtils/include/emu/fed/ChamberParser.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/Configurator.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/CrateDBAgent.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/CrateParser.h -text
@@ -546,7 +545,9 @@ emu/emuDCS/FEDUtils/include/emu/fed/DDUDebugger.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/DDUParser.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/DataTable.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/FIFODBAgent.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/FIFOParser.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/FiberDBAgent.h -text
+emu/emuDCS/FEDUtils/include/emu/fed/FiberParser.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/IRQData.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/IRQThreadManager.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/JSONSpiritUtils.h -text
@@ -562,7 +563,6 @@ emu/emuDCS/FEDUtils/include/emu/fed/VMEModuleDBAgent.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/XMLConfigurator.h -text
 emu/emuDCS/FEDUtils/spec.template -text
 emu/emuDCS/FEDUtils/src/common/AutoConfigurator.cc -text
-emu/emuDCS/FEDUtils/src/common/ChamberParser.cc -text
 emu/emuDCS/FEDUtils/src/common/CrateDBAgent.cc -text
 emu/emuDCS/FEDUtils/src/common/CrateParser.cc -text
 emu/emuDCS/FEDUtils/src/common/DBAgent.cc -text
@@ -575,7 +575,9 @@ emu/emuDCS/FEDUtils/src/common/DDUDebugger.cc -text
 emu/emuDCS/FEDUtils/src/common/DDUParser.cc -text
 emu/emuDCS/FEDUtils/src/common/DataTable.cc -text
 emu/emuDCS/FEDUtils/src/common/FIFODBAgent.cc -text
+emu/emuDCS/FEDUtils/src/common/FIFOParser.cc -text
 emu/emuDCS/FEDUtils/src/common/FiberDBAgent.cc -text
+emu/emuDCS/FEDUtils/src/common/FiberParser.cc -text
 emu/emuDCS/FEDUtils/src/common/IRQThreadManager.cc -text
 emu/emuDCS/FEDUtils/src/common/JSONSpiritWriter.cc -text
 emu/emuDCS/FEDUtils/src/common/Parser.cc -text

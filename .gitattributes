@@ -560,7 +560,6 @@ emu/emuDCS/FEDUtils/include/emu/fed/TStoreRequest.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/UtilsVersion.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/VMEControllerDBAgent.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/VMEControllerParser.h -text
-emu/emuDCS/FEDUtils/include/emu/fed/VMEModuleDBAgent.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/XMLConfigurator.h -text
 emu/emuDCS/FEDUtils/spec.template -text
 emu/emuDCS/FEDUtils/src/common/AutoConfigurator.cc -text
@@ -587,7 +586,6 @@ emu/emuDCS/FEDUtils/src/common/TStoreRequest.cc -text
 emu/emuDCS/FEDUtils/src/common/UtilsVersion.cc -text
 emu/emuDCS/FEDUtils/src/common/VMEControllerDBAgent.cc -text
 emu/emuDCS/FEDUtils/src/common/VMEControllerParser.cc -text
-emu/emuDCS/FEDUtils/src/common/VMEModuleDBAgent.cc -text
 emu/emuDCS/FEDUtils/src/common/XMLConfigurator.cc -text
 emu/emuDCS/FEDUtils/xml/TStoreConfiguration.xml -text
 emu/emuDCS/Makefile -text

@@ -443,7 +443,6 @@ emu/emuDCS/FEDApps/src/common/EmuFCrateHyperDAQ.cc -text
 emu/emuDCS/FEDApps/src/common/Manager.cc -text
 emu/emuDCS/FEDApps/src/common/Monitor.cc -text
 emu/emuDCS/FEDApps/src/common/Supervised.cc -text
-emu/emuDCS/FEDApps/xml/TStoreConfiguration.xml -text
 emu/emuDCS/FEDCore/Makefile -text
 emu/emuDCS/FEDCore/include/emu/fed/CoreVersion.h -text
 emu/emuDCS/FEDCore/include/emu/fed/Crate.h -text

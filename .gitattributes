@@ -1225,11 +1225,11 @@ emu/extern/readme -text
 emu/farmer/Makefile -text
 emu/farmer/html/Default.html -text
 emu/farmer/html/Dispatcher_XSLT.xml -text
-emu/farmer/html/EmuFarmer.jpg -text svneol=unset#unset
 emu/farmer/html/RUI-to-computer_mapping_Editor_XSLT.xml -text
 emu/farmer/html/RUI-to-computer_mapping_XSLT.xml -text
 emu/farmer/html/Selector_XSLT.xml -text
 emu/farmer/html/XDAQConfig_XSLT.xml -text
+emu/farmer/images/EmuFarmer.jpg -text svneol=unset#unset
 emu/farmer/include/emu/farmer/Application.h -text
 emu/farmer/include/emu/farmer/ProcessDescriptor.h -text
 emu/farmer/include/emu/farmer/utils/Cgi.h -text

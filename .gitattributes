@@ -3,6 +3,7 @@ emu/Makefile -text
 emu/base/Makefile -text
 emu/base/html/DAQ_Disks.html -text
 emu/base/html/DAQ_Disks.js -text
+emu/base/html/DAQ_Disks.xml -text
 emu/base/html/EmuPage1.css -text
 emu/base/html/EmuPage1.js -text
 emu/base/html/EmuPage1_XSL.xml -text

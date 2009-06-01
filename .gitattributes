@@ -1234,6 +1234,7 @@ emu/farmer/include/emu/farmer/utils/FileSystem.h -text
 emu/farmer/include/emu/farmer/utils/SOAP.h -text
 emu/farmer/include/emu/farmer/utils/Xalan.h -text
 emu/farmer/include/emu/farmer/version.h -text
+emu/farmer/spec.template -text
 emu/farmer/src/common/Application.cc -text
 emu/farmer/src/common/Cgi.cc -text
 emu/farmer/src/common/FileSystem.cc -text

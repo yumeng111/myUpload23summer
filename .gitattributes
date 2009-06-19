@@ -21,7 +21,6 @@ emu/base/src/common/Supervised.cc -text
 emu/base/src/common/WebReportItem.cc -text
 emu/base/src/common/WebReporter.cc -text
 emu/base/src/common/version.cc -text
-emu/cscFM/duck/loader -text
 emu/cscLevelOneFM/build.xml -text
 emu/cscLevelOneFM/duck/duckLoader -text
 emu/cscLevelOneFM/duck/levelOne.xml -text

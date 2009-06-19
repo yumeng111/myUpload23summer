@@ -133,16 +133,6 @@ emu/doc/html/index.html -text
 emu/doc/html/overview.html -text
 emu/emuDAQ/Makefile -text
 emu/emuDAQ/drivers/Makefile -text
-emu/emuDAQ/drivers/dl2khook/dl2k_driver/Makefile -text
-emu/emuDAQ/drivers/dl2khook/dl2k_driver/compile -text
-emu/emuDAQ/drivers/dl2khook/dl2k_driver/dl2k.c -text
-emu/emuDAQ/drivers/dl2khook/dl2k_driver/dl2k.h -text
-emu/emuDAQ/drivers/dl2khook/dl2k_driver/dl2k.mod.c -text
-emu/emuDAQ/drivers/dl2khook/eth_hook_2_nobigphysxxx/Makefile -text
-emu/emuDAQ/drivers/dl2khook/eth_hook_2_nobigphysxxx/eth_hook_2.c -text
-emu/emuDAQ/drivers/dl2khook/eth_hook_2_nobigphysxxx/eth_hook_2.h -text
-emu/emuDAQ/drivers/dl2khook/eth_hook_2_nobigphysxxx/eth_hook_2.mod.c -text
-emu/emuDAQ/drivers/dl2khook/eth_hook_2_nobigphysxxx/schar.h -text
 emu/emuDAQ/drivers/e1000hook/e1000-7.0.39/LICENSE -text
 emu/emuDAQ/drivers/e1000hook/e1000-7.0.39/README -text
 emu/emuDAQ/drivers/e1000hook/e1000-7.0.39/SUMS -text

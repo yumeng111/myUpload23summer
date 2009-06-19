@@ -857,25 +857,6 @@ emu/emuDQM/scripts/misc/cron_script -text
 emu/emuDQM/scripts/misc/tree_runs.js -text
 emu/emuDQM/scripts/misc/view.html -text
 emu/emuDQM/scripts/misc/view.js -text
-emu/emuFarmer/Makefile -text
-emu/emuFarmer/README_BEFORE_COMPILING -text
-emu/emuFarmer/html/EmuFarmer.css -text
-emu/emuFarmer/html/EmuFarmer.js -text
-emu/emuFarmer/html/EmuFarmer_Manual.html -text
-emu/emuFarmer/images/EmuFarmer.jpg -text svneol=unset#unset
-emu/emuFarmer/include/EmuFarmer.h -text
-emu/emuFarmer/include/EmuFarmerV.h -text
-emu/emuFarmer/include/EmuProcessDescriptor.h -text
-emu/emuFarmer/include/EmuXalanTransformerProblemListener.h -text
-emu/emuFarmer/src/common/EmuFarmer.cc -text
-emu/emuFarmer/src/common/EmuFarmerV.cc -text
-emu/emuFarmer/src/common/EmuProcessDescriptor.cc -text
-emu/emuFarmer/src/common/EmuXalanTransformerProblemListener.cc -text
-emu/emuFarmer/xml/EmuConfigList.xml -text
-emu/emuFarmer/xml/EmuConfigListXSLT.xml -text
-emu/emuFarmer/xml/EmuConfigMerger.xsl -text
-emu/emuFarmer/xml/EmuDAQConfig.xml -text
-emu/emuFarmer/xml/EmuFarmer.xml -text
 emu/extern/dim/Makefile -text
 emu/extern/dim/dim_v15r8.zip -text svneol=unset#unset
 emu/extern/readme -text

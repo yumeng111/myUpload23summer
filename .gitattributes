@@ -198,8 +198,10 @@ emu/emuDAQ/drivers/e1000onboard/src/kcompat_ethtool.c -text
 emu/emuDCS/FEDApps/Makefile -text
 emu/emuDCS/FEDApps/html/FEDApps.css -text
 emu/emuDCS/FEDApps/html/bitFlipper.js -text
+emu/emuDCS/FEDApps/html/commander.js -text
 emu/emuDCS/FEDApps/html/common.js -text
 emu/emuDCS/FEDApps/html/communicator.js -text
+emu/emuDCS/FEDApps/html/definitions.js -text
 emu/emuDCS/FEDApps/html/errorFlasher.js -text
 emu/emuDCS/FEDApps/html/formChecker.js -text
 emu/emuDCS/FEDApps/html/manager.js -text

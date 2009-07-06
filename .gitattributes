@@ -264,6 +264,7 @@ emu/emuDCS/FEDCore/include/emu/fed/Fiber.h -text
 emu/emuDCS/FEDCore/include/emu/fed/JTAGElement.h -text
 emu/emuDCS/FEDCore/include/emu/fed/JTAG_constants.h -text
 emu/emuDCS/FEDCore/include/emu/fed/VMEController.h -text
+emu/emuDCS/FEDCore/include/emu/fed/VMELock.h -text
 emu/emuDCS/FEDCore/include/emu/fed/VMEModule.h -text
 emu/emuDCS/FEDCore/spec.template -text
 emu/emuDCS/FEDCore/src/common/CoreVersion.cc -text
@@ -273,6 +274,7 @@ emu/emuDCS/FEDCore/src/common/DDU.cc -text
 emu/emuDCS/FEDCore/src/common/FIFO.cc -text
 emu/emuDCS/FEDCore/src/common/Fiber.cc -text
 emu/emuDCS/FEDCore/src/common/VMEController.cc -text
+emu/emuDCS/FEDCore/src/common/VMELock.cc -text
 emu/emuDCS/FEDCore/src/common/VMEModule.cc -text
 emu/emuDCS/FEDUtils/Makefile -text
 emu/emuDCS/FEDUtils/include/emu/fed/AutoConfigurator.h -text

@@ -239,6 +239,7 @@ emu/emuDCS/FEDApps/include/emu/fed/Communicator.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Configurable.h -text
 emu/emuDCS/FEDApps/include/emu/fed/EmuFCrateHyperDAQ.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Manager.h -text
+emu/emuDCS/FEDApps/include/emu/fed/MicroMonitor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Monitor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Supervised.h -text
 emu/emuDCS/FEDApps/spec.template -text
@@ -249,6 +250,7 @@ emu/emuDCS/FEDApps/src/common/Communicator.cc -text
 emu/emuDCS/FEDApps/src/common/Configurable.cc -text
 emu/emuDCS/FEDApps/src/common/EmuFCrateHyperDAQ.cc -text
 emu/emuDCS/FEDApps/src/common/Manager.cc -text
+emu/emuDCS/FEDApps/src/common/MicroMonitor.cc -text
 emu/emuDCS/FEDApps/src/common/Monitor.cc -text
 emu/emuDCS/FEDApps/src/common/Supervised.cc -text
 emu/emuDCS/FEDCore/Makefile -text

@@ -445,11 +445,17 @@ emu/emuDCS/PeripheralApps/test/common/testtmbmain.cpp -text
 emu/emuDCS/PeripheralApps/xml/EMUsystem.view -text
 emu/emuDCS/PeripheralApps/xml/EmuCluster.xml -text
 emu/emuDCS/PeripheralApps/xml/EmuPC.rnc -text
+emu/emuDCS/PeripheralApps/xml/RUI-to-chamber_mapping.xml -text
+emu/emuDCS/PeripheralApps/xml/counterMonitor.css -text
+emu/emuDCS/PeripheralApps/xml/counterMonitor.html -text
+emu/emuDCS/PeripheralApps/xml/counterMonitor.js -text
+emu/emuDCS/PeripheralApps/xml/counterMonitor_XSL.xml -text
 emu/emuDCS/PeripheralApps/xml/delay_tests.cpp -text
 emu/emuDCS/PeripheralApps/xml/insert_timing_parameters.pl -text
 emu/emuDCS/PeripheralApps/xml/peripheralCrateTemplate.xml -text
 emu/emuDCS/PeripheralApps/xml/readme -text
 emu/emuDCS/PeripheralApps/xml/test.xml -text
+emu/emuDCS/PeripheralApps/xml/tooltip.js -text
 emu/emuDCS/PeripheralApps/xml/update_xml_file.pl -text
 emu/emuDCS/PeripheralApps/xml/views.xml -text
 emu/emuDCS/PeripheralApps/xml/xdaqPeripheralCrate.xml -text

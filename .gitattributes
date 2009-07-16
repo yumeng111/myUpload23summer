@@ -134,6 +134,15 @@ emu/doc/html/overview.html -text
 emu/dqm/Makefile -text
 emu/dqm/spec.template -text
 emu/drivers/Makefile -text
+emu/drivers/dl2khook/dl2k_driver/Makefile -text
+emu/drivers/dl2khook/dl2k_driver/dl2k.c -text
+emu/drivers/dl2khook/dl2k_driver/dl2k.h -text
+emu/drivers/dl2khook/dl2k_driver/dl2k.mod.c -text
+emu/drivers/dl2khook/eth_hook_2_nobigphysxxx/Makefile -text
+emu/drivers/dl2khook/eth_hook_2_nobigphysxxx/eth_hook_2.c -text
+emu/drivers/dl2khook/eth_hook_2_nobigphysxxx/eth_hook_2.h -text
+emu/drivers/dl2khook/eth_hook_2_nobigphysxxx/eth_hook_2.mod.c -text
+emu/drivers/dl2khook/eth_hook_2_nobigphysxxx/schar.h -text
 emu/drivers/e1000hook/e1000-7.0.39/LICENSE -text
 emu/drivers/e1000hook/e1000-7.0.39/README -text
 emu/drivers/e1000hook/e1000-7.0.39/SUMS -text
@@ -176,6 +185,7 @@ emu/drivers/e1000hook/eth_hook_5_nobigphysxxx/eth_hook_5.h -text
 emu/drivers/e1000hook/eth_hook_5_nobigphysxxx/eth_hook_5.mod.c -text
 emu/drivers/e1000hook/eth_hook_5_nobigphysxxx/schar.h -text
 emu/drivers/e1000hook/eth_up_with_sudo -text
+emu/drivers/emu-daqdriver904.spec -text
 emu/drivers/emu-daqdrivers.spec -text
 emu/emuDAQ/Makefile -text
 emu/emuDAQ/drivers/Makefile -text

@@ -279,6 +279,12 @@ emu/dqm/html/tfdqm/canvases_list.js -text
 emu/dqm/html/tfdqm/index.html -text
 emu/dqm/html/tfdqm/tf_map.js -text
 emu/dqm/spec.template -text
+emu/dqm/utils/Makefile -text
+emu/dqm/utils/include/emu/dqm/utils/dduBinExaminer.h -text
+emu/dqm/utils/src/common/dduBinExaminer.cc -text
+emu/dqm/utils/src/common/dduEvtDump.cpp -text
+emu/dqm/utils/src/common/mergeCalibRootFiles.cpp -text
+emu/dqm/utils/src/common/mergeDQMRootFiles.cpp -text
 emu/dqm/xml/CSCTF_canvases.xml -text
 emu/dqm/xml/CSCTF_checks.xml -text
 emu/dqm/xml/CSCTF_histograms.xml -text

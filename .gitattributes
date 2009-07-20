@@ -250,6 +250,15 @@ emu/dqm/cscanalyzer/src/common/EmuPlotter_processEvent.cc -text
 emu/dqm/cscanalyzer/src/common/EmuPlotter_saveImages.cc -text
 emu/dqm/cscanalyzer/src/common/EmuPlotter_saveToROOTFile.cc -text
 emu/dqm/cscanalyzer/src/common/runEmuCSCAnalyzer.cc -text
+emu/dqm/cscdisplay/Makefile -text
+emu/dqm/cscdisplay/include/emu/dqm/cscdisplay/EmuDisplayClient.h -text
+emu/dqm/cscdisplay/include/emu/dqm/cscdisplay/version.h -text
+emu/dqm/cscdisplay/src/common/EmuDisplayClient.cc -text
+emu/dqm/cscdisplay/src/common/EmuDisplayClient_collections.cc -text
+emu/dqm/cscdisplay/src/common/EmuDisplayClient_generateReport.cc -text
+emu/dqm/cscdisplay/src/common/EmuDisplayClient_loadXMLBookingInfo.cc -text
+emu/dqm/cscdisplay/src/common/EmuDisplayClient_loadXMLCanvasesInfo.cc -text
+emu/dqm/cscdisplay/src/common/version.cc -text
 emu/dqm/html/cscdqm/canvases_list.js -text
 emu/dqm/html/cscdqm/csc_map.js -text
 emu/dqm/html/cscdqm/ddu_csc_map.js -text

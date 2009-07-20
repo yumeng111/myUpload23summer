@@ -159,6 +159,10 @@ emu/dqm/calibration/src/common/Test_CFEB03.cc -text
 emu/dqm/calibration/src/common/Test_CFEB04.cc -text
 emu/dqm/calibration/src/common/Test_Generic.cc -text
 emu/dqm/calibration/src/common/runEmuCalibAnalysis.cc -text
+emu/dqm/cmssw/Makefile -text
+emu/dqm/cmssw/README.txt -text
+emu/dqm/cmssw/include/emu/dqm/cmssw/FWCore/MessageLogger/interface/MessageLogger.h -text
+emu/dqm/cmssw/include/emu/dqm/cmssw/FWCore/MessageLogger/interface/coloredlayout.h -text
 emu/dqm/common/Makefile -text
 emu/dqm/common/include/emu/dqm/common/CSCDrawMaps.h -text
 emu/dqm/common/include/emu/dqm/common/CSCMap.h -text

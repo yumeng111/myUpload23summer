@@ -132,6 +132,16 @@ emu/daq/xml/test_daq.xml -text
 emu/doc/html/index.html -text
 emu/doc/html/overview.html -text
 emu/dqm/Makefile -text
+emu/dqm/html/cscdqm/canvases_list.js -text
+emu/dqm/html/cscdqm/csc_map.js -text
+emu/dqm/html/cscdqm/ddu_csc_map.js -text
+emu/dqm/html/cscdqm/index.html -text
+emu/dqm/html/cscdqm/runs_list.js -text
+emu/dqm/html/cscdqm/tests_map.js -text
+emu/dqm/html/cscdqm/vme_pc_map.js -text
+emu/dqm/html/tfdqm/canvases_list.js -text
+emu/dqm/html/tfdqm/index.html -text
+emu/dqm/html/tfdqm/tf_map.js -text
 emu/dqm/spec.template -text
 emu/drivers/Makefile -text
 emu/drivers/dl2khook/dl2k_driver/Makefile -text

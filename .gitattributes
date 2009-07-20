@@ -259,6 +259,15 @@ emu/dqm/cscdisplay/src/common/EmuDisplayClient_generateReport.cc -text
 emu/dqm/cscdisplay/src/common/EmuDisplayClient_loadXMLBookingInfo.cc -text
 emu/dqm/cscdisplay/src/common/EmuDisplayClient_loadXMLCanvasesInfo.cc -text
 emu/dqm/cscdisplay/src/common/version.cc -text
+emu/dqm/cscmonitor/Makefile -text
+emu/dqm/cscmonitor/include/emu/dqm/cscmonitor/EmuMonitor.h -text
+emu/dqm/cscmonitor/include/emu/dqm/cscmonitor/exception/Exception.h -text
+emu/dqm/cscmonitor/include/emu/dqm/cscmonitor/i2oEmuMonitorMsg.h -text
+emu/dqm/cscmonitor/include/emu/dqm/cscmonitor/version.h -text
+emu/dqm/cscmonitor/src/common/EmuMonitor.cc -text
+emu/dqm/cscmonitor/src/common/EmuMonitor_SOAP.cc -text
+emu/dqm/cscmonitor/src/common/EmuMonitor_WebInterface.cc -text
+emu/dqm/cscmonitor/src/common/version.cc -text
 emu/dqm/html/cscdqm/canvases_list.js -text
 emu/dqm/html/cscdqm/csc_map.js -text
 emu/dqm/html/cscdqm/ddu_csc_map.js -text

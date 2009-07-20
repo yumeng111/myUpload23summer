@@ -132,6 +132,7 @@ emu/daq/xml/test_daq.xml -text
 emu/doc/html/index.html -text
 emu/doc/html/overview.html -text
 emu/dqm/Makefile -text
+emu/dqm/calibration/Makefile -text
 emu/dqm/calibration/include/emu/dqm/calibration/CFEBCanvas.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/CFEBData.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/CFEBTestCanvas.h -text
@@ -147,6 +148,8 @@ emu/dqm/calibration/include/emu/dqm/calibration/Test_CFEB02.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/Test_CFEB03.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/Test_CFEB04.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/Test_Generic.h -text
+emu/dqm/calibration/scripts/genRunLists.sh -text
+emu/dqm/calibration/scripts/updateWeb.sh -text
 emu/dqm/calibration/src/common/CFEBCanvas.cc -text
 emu/dqm/calibration/src/common/TestCanvas_1h.cc -text
 emu/dqm/calibration/src/common/TestCanvas_6gr1h.cc -text

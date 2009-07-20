@@ -193,6 +193,7 @@ emu/dqm/common/include/emu/dqm/common/tclap/Constraint.h -text
 emu/dqm/common/include/emu/dqm/common/tclap/DocBookOutput.h -text
 emu/dqm/common/include/emu/dqm/common/tclap/HelpVisitor.h -text
 emu/dqm/common/include/emu/dqm/common/tclap/IgnoreRestVisitor.h -text
+emu/dqm/common/include/emu/dqm/common/tclap/Makefile -text
 emu/dqm/common/include/emu/dqm/common/tclap/Makefile.am -text
 emu/dqm/common/include/emu/dqm/common/tclap/Makefile.in -text
 emu/dqm/common/include/emu/dqm/common/tclap/MultiArg.h -text

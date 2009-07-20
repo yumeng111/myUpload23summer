@@ -220,6 +220,10 @@ emu/dqm/common/src/common/EmuDQM_AppParameters.cc -text
 emu/dqm/common/src/common/EmuDQM_Utils.cc -text
 emu/dqm/common/src/common/EmuMonitoringCanvas.cc -text
 emu/dqm/common/src/common/EmuMonitoringObject.cc -text
+emu/dqm/config/Makefile_root.rules -text
+emu/dqm/config/compdef.mk -text
+emu/dqm/config/site.mk -text
+emu/dqm/config/xdaq.mk -text
 emu/dqm/html/cscdqm/canvases_list.js -text
 emu/dqm/html/cscdqm/csc_map.js -text
 emu/dqm/html/cscdqm/ddu_csc_map.js -text

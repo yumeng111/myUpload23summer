@@ -279,6 +279,15 @@ emu/dqm/html/tfdqm/canvases_list.js -text
 emu/dqm/html/tfdqm/index.html -text
 emu/dqm/html/tfdqm/tf_map.js -text
 emu/dqm/spec.template -text
+emu/dqm/tfmonitor/Makefile -text
+emu/dqm/tfmonitor/include/emu/dqm/tfmonitor/EmuTFMonitor.h -text
+emu/dqm/tfmonitor/include/emu/dqm/tfmonitor/exception/Exception.h -text
+emu/dqm/tfmonitor/include/emu/dqm/tfmonitor/i2oEmuMonitorMsg.h -text
+emu/dqm/tfmonitor/include/emu/dqm/tfmonitor/version.h -text
+emu/dqm/tfmonitor/src/common/EmuTFMonitor.cc -text
+emu/dqm/tfmonitor/src/common/EmuTFMonitor_SOAP.cc -text
+emu/dqm/tfmonitor/src/common/EmuTFMonitor_WebInterface.cc -text
+emu/dqm/tfmonitor/src/common/version.cc -text
 emu/dqm/utils/Makefile -text
 emu/dqm/utils/include/emu/dqm/utils/dduBinExaminer.h -text
 emu/dqm/utils/src/common/dduBinExaminer.cc -text

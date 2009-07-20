@@ -559,11 +559,13 @@ emu/emuDCS/PeripheralCore/src/common/VMEController_jtag.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEModule.cc -text
 emu/emuDCS/PeripheralXtop/Makefile -text
 emu/emuDCS/PeripheralXtop/include/emu/x2p/Chamber.h -text
+emu/emuDCS/PeripheralXtop/include/emu/x2p/DDU.h -text
 emu/emuDCS/PeripheralXtop/include/emu/x2p/DcsDimStructures.h -text
 emu/emuDCS/PeripheralXtop/include/emu/x2p/EmuDim.h -text
 emu/emuDCS/PeripheralXtop/include/emu/x2p/LOAD.h -text
 emu/emuDCS/PeripheralXtop/spec.template -text
 emu/emuDCS/PeripheralXtop/src/common/Chamber.cc -text
+emu/emuDCS/PeripheralXtop/src/common/DDU.cc -text
 emu/emuDCS/PeripheralXtop/src/common/EmuDim.cc -text
 emu/emuDCS/PeripheralXtop/src/common/LOAD.cc -text
 emu/emuDCS/PeripheralXtop/src/common/XtopVersion.cc -text

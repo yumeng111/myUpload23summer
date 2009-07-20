@@ -143,6 +143,20 @@ emu/dqm/html/tfdqm/canvases_list.js -text
 emu/dqm/html/tfdqm/index.html -text
 emu/dqm/html/tfdqm/tf_map.js -text
 emu/dqm/spec.template -text
+emu/dqm/xml/CSCTF_canvases.xml -text
+emu/dqm/xml/CSCTF_checks.xml -text
+emu/dqm/xml/CSCTF_histograms.xml -text
+emu/dqm/xml/EmuCSCDQM.xml -text
+emu/dqm/xml/EmuDQM.xml -text
+emu/dqm/xml/EmuTFDQM.xml -text
+emu/dqm/xml/csc_map.db -text svneol=unset#unset
+emu/dqm/xml/csc_map.txt -text
+emu/dqm/xml/emuChanMasks.xml -text
+emu/dqm/xml/emuDQMBooking.xml -text
+emu/dqm/xml/emuDQMCanvases.xml -text
+emu/dqm/xml/emuTest_CFEB02.xml -text
+emu/dqm/xml/emuTest_CFEB03.xml -text
+emu/dqm/xml/emuTest_CFEB04.xml -text
 emu/drivers/Makefile -text
 emu/drivers/dl2khook/dl2k_driver/Makefile -text
 emu/drivers/dl2khook/dl2k_driver/dl2k.c -text

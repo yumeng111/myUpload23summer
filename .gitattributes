@@ -1186,6 +1186,7 @@ emu/setup/emu/conf/ws-eventing.conf -text
 emu/setup/emu/conf/xdaqd.conf -text
 emu/setup/emu/conf/xdaqd.conf.in -text
 emu/setup/emu/crossdomain.xml -text
+emu/setup/emu/emu-csctf.spec -text
 emu/setup/emu/etc/dummy.services -text
 emu/setup/emu/etc/xdaq.zone -text
 emu/setup/emu/flash/diskInfo.flash -text

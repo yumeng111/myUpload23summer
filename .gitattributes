@@ -508,7 +508,9 @@ emu/emuDCS/FEDApps/include/emu/fed/AppsVersion.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Commander.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Communicator.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Configurable.h -text
+emu/emuDCS/FEDApps/include/emu/fed/ConfigurationEditor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/EmuFCrateHyperDAQ.h -text
+emu/emuDCS/FEDApps/include/emu/fed/FEDConfigurationEditor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Manager.h -text
 emu/emuDCS/FEDApps/include/emu/fed/MicroMonitor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Monitor.h -text
@@ -519,7 +521,9 @@ emu/emuDCS/FEDApps/src/common/AppsVersion.cc -text
 emu/emuDCS/FEDApps/src/common/Commander.cc -text
 emu/emuDCS/FEDApps/src/common/Communicator.cc -text
 emu/emuDCS/FEDApps/src/common/Configurable.cc -text
+emu/emuDCS/FEDApps/src/common/ConfigurationEditor.cc -text
 emu/emuDCS/FEDApps/src/common/EmuFCrateHyperDAQ.cc -text
+emu/emuDCS/FEDApps/src/common/FEDConfigurationEditor.cc -text
 emu/emuDCS/FEDApps/src/common/Manager.cc -text
 emu/emuDCS/FEDApps/src/common/MicroMonitor.cc -text
 emu/emuDCS/FEDApps/src/common/Monitor.cc -text

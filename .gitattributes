@@ -1177,6 +1177,8 @@ emu/farmer/src/common/ProcessDescriptor.cc -text
 emu/farmer/src/common/SOAP.cc -text
 emu/farmer/src/common/Xalan.cc -text
 emu/farmer/src/common/version.cc -text
+emu/farmer/xml/EmuDAQ904ConfigGenerator.xsl -text
+emu/farmer/xml/EmuDAQ904DUCKGenerator.xsl -text
 emu/farmer/xml/EmuDAQConfigGenerator.xsl -text
 emu/farmer/xml/EmuDAQDUCKGenerator.xsl -text
 emu/farmer/xml/EmuFarmer.xml -text
@@ -1185,7 +1187,9 @@ emu/farmer/xml/RUI-to-chamber_mapping.xml -text
 emu/farmer/xml/RUI-to-chamber_mapping_XSLT.xml -text
 emu/farmer/xml/RUI-to-computer_mapping.xml -text
 emu/farmer/xml/RUI-to-computer_mapping_XSLT.xml -text
+emu/farmer/xml/RUI-to-computer_mapping_bdg904.xml -text
 emu/farmer/xml/generateConfigs.sh -text
+emu/farmer/xml/generateConfigsBdg904.sh -text
 emu/farmer/xml/processingInstructionSetter.xsl -text
 emu/farmer/xml/statusInserter.xsl -text
 emu/release -text

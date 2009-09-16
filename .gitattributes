@@ -1180,6 +1180,7 @@ emu/farmer/src/common/version.cc -text
 emu/farmer/xml/EmuDAQConfigGenerator.xsl -text
 emu/farmer/xml/EmuDAQDUCKGenerator.xsl -text
 emu/farmer/xml/EmuFarmer.xml -text
+emu/farmer/xml/EmuFarmer904.xml -text
 emu/farmer/xml/RUI-to-chamber_mapping.xml -text
 emu/farmer/xml/RUI-to-chamber_mapping_XSLT.xml -text
 emu/farmer/xml/RUI-to-computer_mapping.xml -text

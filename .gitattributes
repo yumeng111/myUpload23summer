@@ -13,12 +13,16 @@ emu/base/html/hotspot.xml -text
 emu/base/html/jquery-1.3.2.min.js -text
 emu/base/images/CSC.png -text svneol=unset#unset
 emu/base/include/emu/base/Alarm.h -text
+emu/base/include/emu/base/ConfigurationEditor.h -text
 emu/base/include/emu/base/Supervised.h -text
+emu/base/include/emu/base/TStoreRequest.h -text
 emu/base/include/emu/base/WebReportItem.h -text
 emu/base/include/emu/base/WebReporter.h -text
 emu/base/include/emu/base/version.h -text
 emu/base/spec.template -text
+emu/base/src/common/ConfigurationEditor.cc -text
 emu/base/src/common/Supervised.cc -text
+emu/base/src/common/TStoreRequest.cc -text
 emu/base/src/common/WebReportItem.cc -text
 emu/base/src/common/WebReporter.cc -text
 emu/base/src/common/version.cc -text
@@ -508,7 +512,6 @@ emu/emuDCS/FEDApps/include/emu/fed/AppsVersion.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Commander.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Communicator.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Configurable.h -text
-emu/emuDCS/FEDApps/include/emu/fed/ConfigurationEditor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/EmuFCrateHyperDAQ.h -text
 emu/emuDCS/FEDApps/include/emu/fed/FEDConfigurationEditor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Manager.h -text
@@ -521,7 +524,6 @@ emu/emuDCS/FEDApps/src/common/AppsVersion.cc -text
 emu/emuDCS/FEDApps/src/common/Commander.cc -text
 emu/emuDCS/FEDApps/src/common/Communicator.cc -text
 emu/emuDCS/FEDApps/src/common/Configurable.cc -text
-emu/emuDCS/FEDApps/src/common/ConfigurationEditor.cc -text
 emu/emuDCS/FEDApps/src/common/EmuFCrateHyperDAQ.cc -text
 emu/emuDCS/FEDApps/src/common/FEDConfigurationEditor.cc -text
 emu/emuDCS/FEDApps/src/common/Manager.cc -text
@@ -576,7 +578,6 @@ emu/emuDCS/FEDUtils/include/emu/fed/JSONSpiritValue.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/JSONSpiritWriter.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/Parser.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/SystemDBAgent.h -text
-emu/emuDCS/FEDUtils/include/emu/fed/TStoreRequest.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/UtilsVersion.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/VMEControllerDBAgent.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/VMEControllerParser.h -text
@@ -602,7 +603,6 @@ emu/emuDCS/FEDUtils/src/common/IRQThreadManager.cc -text
 emu/emuDCS/FEDUtils/src/common/JSONSpiritWriter.cc -text
 emu/emuDCS/FEDUtils/src/common/Parser.cc -text
 emu/emuDCS/FEDUtils/src/common/SystemDBAgent.cc -text
-emu/emuDCS/FEDUtils/src/common/TStoreRequest.cc -text
 emu/emuDCS/FEDUtils/src/common/UtilsVersion.cc -text
 emu/emuDCS/FEDUtils/src/common/VMEControllerDBAgent.cc -text
 emu/emuDCS/FEDUtils/src/common/VMEControllerParser.cc -text
@@ -681,7 +681,6 @@ emu/emuDCS/PeripheralApps/include/emu/pc/EmuPeripheralCrateMonitor.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/EmuPeripheralCrateService.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/EmuPeripheralCrateTimer.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/EmuTStore.h -text
-emu/emuDCS/PeripheralApps/include/emu/pc/TStoreRequest.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/XMLParser.h -text
 emu/emuDCS/PeripheralApps/spec.template -text
 emu/emuDCS/PeripheralApps/src/common/AppsVersion.cc -text
@@ -699,7 +698,6 @@ emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateMonitor.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateService.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateTimer.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuTStore.cc -text
-emu/emuDCS/PeripheralApps/src/common/TStoreRequest.cc -text
 emu/emuDCS/PeripheralApps/src/common/XMLParser.cc -text
 emu/emuDCS/PeripheralApps/test/common/CrateTiming.cpp -text
 emu/emuDCS/PeripheralApps/test/common/EmuConfig.cpp -text

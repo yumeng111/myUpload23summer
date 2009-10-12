@@ -1007,8 +1007,10 @@ emu/emuDQM/EmuTFMonitor/src/common/RegEx.h -text
 emu/emuDQM/EmuTFMonitor/test/common/EmuTFtest.cpp -text
 emu/emuDQM/EmuTFMonitor/test/common/test.cc -text
 emu/emuDQM/EmuTFMonitor/xml/CSCTF_canvases.xml -text
+emu/emuDQM/EmuTFMonitor/xml/CSCTF_canvases_quick.xml -text
 emu/emuDQM/EmuTFMonitor/xml/CSCTF_checks.xml -text
 emu/emuDQM/EmuTFMonitor/xml/CSCTF_histograms.xml -text
+emu/emuDQM/EmuTFMonitor/xml/CSCTF_histograms_quick.xml -text
 emu/emuDQM/EmuTFMonitor/xml/TFDQM.xml -text
 emu/emuDQM/EmuTests/Makefile -text
 emu/emuDQM/EmuTests/include/CFEBCanvas.h -text

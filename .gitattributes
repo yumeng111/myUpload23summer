@@ -475,6 +475,7 @@ emu/emuDCS/FEDApps/Makefile -text
 emu/emuDCS/FEDApps/html/FEDApps.css -text
 emu/emuDCS/FEDApps/html/bitFlipper.js -text
 emu/emuDCS/FEDApps/html/commander.js -text
+emu/emuDCS/FEDApps/html/commanderDisplay.js -text
 emu/emuDCS/FEDApps/html/common.js -text
 emu/emuDCS/FEDApps/html/communicator.js -text
 emu/emuDCS/FEDApps/html/definitions.js -text
@@ -484,6 +485,7 @@ emu/emuDCS/FEDApps/html/manager.js -text
 emu/emuDCS/FEDApps/html/monitor.js -text
 emu/emuDCS/FEDApps/html/prototype.js -text
 emu/emuDCS/FEDApps/html/reload.js -text
+emu/emuDCS/FEDApps/html/table.js -text
 emu/emuDCS/FEDApps/html/tableToggler.js -text
 emu/emuDCS/FEDApps/images/Background-Default.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/Background-Manager.png -text svneol=unset#unset

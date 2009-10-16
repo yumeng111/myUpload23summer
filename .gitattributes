@@ -582,10 +582,6 @@ emu/emuDCS/FEDUtils/include/emu/fed/JSONSpiritValue.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/JSONSpiritWriter.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/Parser.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/SystemDBAgent.h -text
-emu/emuDCS/FEDUtils/include/emu/fed/Table.h -text
-emu/emuDCS/FEDUtils/include/emu/fed/TableCell.h -text
-emu/emuDCS/FEDUtils/include/emu/fed/TableColumn.h -text
-emu/emuDCS/FEDUtils/include/emu/fed/TableRow.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/UtilsVersion.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/VMEControllerDBAgent.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/VMEControllerParser.h -text
@@ -612,10 +608,6 @@ emu/emuDCS/FEDUtils/src/common/IRQThreadManager.cc -text
 emu/emuDCS/FEDUtils/src/common/JSONSpiritWriter.cc -text
 emu/emuDCS/FEDUtils/src/common/Parser.cc -text
 emu/emuDCS/FEDUtils/src/common/SystemDBAgent.cc -text
-emu/emuDCS/FEDUtils/src/common/Table.cc -text
-emu/emuDCS/FEDUtils/src/common/TableCell.cc -text
-emu/emuDCS/FEDUtils/src/common/TableColumn.cc -text
-emu/emuDCS/FEDUtils/src/common/TableRow.cc -text
 emu/emuDCS/FEDUtils/src/common/UtilsVersion.cc -text
 emu/emuDCS/FEDUtils/src/common/VMEControllerDBAgent.cc -text
 emu/emuDCS/FEDUtils/src/common/VMEControllerParser.cc -text

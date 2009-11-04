@@ -1260,16 +1260,11 @@ emu/setup/emu904/conf/emufarmer.conf -text
 emu/setup/emu904/conf/jobcontrol.conf -text
 emu/setup/emu904/conf/las.conf -text
 emu/setup/emu904/conf/pulser.conf -text
-emu/setup/emu904/conf/slp.DA.conf -text
 emu/setup/emu904/conf/spotlight.conf -text
 emu/setup/emu904/conf/ws-eventing-exception.conf -text
 emu/setup/emu904/conf/ws-eventing.conf -text
 emu/setup/emu904/conf/xdaqd.conf -text
 emu/setup/emu904/conf/xdaqd.conf.in -text
-emu/setup/emu904/conf/xdaqd.emuslice02.cern.ch.conf -text
-emu/setup/emu904/conf/xdaqd.emuslice06.cern.ch.conf -text
-emu/setup/emu904/conf/xdaqd.emuslice12.cern.ch.conf -text
-emu/setup/emu904/conf/xdaqd.lxcmddemo1.cern.ch.conf -text
 emu/setup/emu904/crossdomain.xml -text
 emu/setup/emu904/etc/dummy.services -text
 emu/setup/emu904/etc/xdaq.zone -text

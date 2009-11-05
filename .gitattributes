@@ -1259,6 +1259,9 @@ emu/setup/emu904/conf/da.conf.in -text
 emu/setup/emu904/conf/emufarmer.conf -text
 emu/setup/emu904/conf/jobcontrol.conf -text
 emu/setup/emu904/conf/las.conf -text
+emu/setup/emu904/conf/pcmonitor.conf -text
+emu/setup/emu904/conf/pcservice.conf -text
+emu/setup/emu904/conf/pctimer.conf -text
 emu/setup/emu904/conf/pulser.conf -text
 emu/setup/emu904/conf/spotlight.conf -text
 emu/setup/emu904/conf/ws-eventing-exception.conf -text
@@ -1280,6 +1283,9 @@ emu/setup/emu904/profile/default.profile -text
 emu/setup/emu904/profile/emufarmer.profile -text
 emu/setup/emu904/profile/jobcontrol.profile -text
 emu/setup/emu904/profile/las.profile -text
+emu/setup/emu904/profile/pcmonitor.profile -text
+emu/setup/emu904/profile/pcservice.profile -text
+emu/setup/emu904/profile/pctimer.profile -text
 emu/setup/emu904/profile/pulser.profile -text
 emu/setup/emu904/profile/services.map -text
 emu/setup/emu904/profile/spotlight.profile -text

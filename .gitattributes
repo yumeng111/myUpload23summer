@@ -478,6 +478,7 @@ emu/emuDCS/FEDApps/html/commander.js -text
 emu/emuDCS/FEDApps/html/commanderDisplay.js -text
 emu/emuDCS/FEDApps/html/common.js -text
 emu/emuDCS/FEDApps/html/communicator.js -text
+emu/emuDCS/FEDApps/html/configurable.js -text
 emu/emuDCS/FEDApps/html/definitions.js -text
 emu/emuDCS/FEDApps/html/errorFlasher.js -text
 emu/emuDCS/FEDApps/html/formChecker.js -text
@@ -497,6 +498,8 @@ emu/emuDCS/FEDApps/images/CMS_EMU_Seal.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/EmuFEDSeal.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/OSUCMS.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/ajax-loader.gif -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/configure-toolbars.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/configure.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/dialog-error.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/dialog-information.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/dialog-ok-apply.png -text svneol=unset#unset

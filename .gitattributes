@@ -1208,6 +1208,12 @@ emu/setup/emu/conf/collector.conf -text
 emu/setup/emu/conf/da.conf.in -text
 emu/setup/emu/conf/jobcontrol.conf -text
 emu/setup/emu/conf/las.conf -text
+emu/setup/emu/conf/pcmonitor1.conf -text
+emu/setup/emu/conf/pcmonitor2.conf -text
+emu/setup/emu/conf/pcservice1.conf -text
+emu/setup/emu/conf/pcservice2.conf -text
+emu/setup/emu/conf/pctimer1.conf -text
+emu/setup/emu/conf/pctimer2.conf -text
 emu/setup/emu/conf/pulser.conf -text
 emu/setup/emu/conf/slp.DA.conf -text
 emu/setup/emu/conf/spotlight.conf -text
@@ -1255,6 +1261,8 @@ emu/setup/emu/sensor/sentinel.sensor -text
 emu/setup/emu/sensor/xrelay.sensor -text
 emu/setup/emu/spec.template -text
 emu/setup/emu/xdaqd -text
+emu/setup/emu/xml/xmas-dcs-pc1.xml -text
+emu/setup/emu/xml/xmas-dcs-pc2.xml -text
 emu/setup/emu/xplore/shortcuts.xml -text
 emu/setup/emu904/Makefile -text
 emu/setup/emu904/conf/collector.conf -text

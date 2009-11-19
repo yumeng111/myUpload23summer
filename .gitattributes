@@ -1206,6 +1206,9 @@ emu/release -text
 emu/setup/emu/Makefile -text
 emu/setup/emu/conf/collector.conf -text
 emu/setup/emu/conf/da.conf.in -text
+emu/setup/emu/conf/fedmicromon1.conf -text
+emu/setup/emu/conf/fedmicromon2.conf -text
+emu/setup/emu/conf/fedmicromontf.conf -text
 emu/setup/emu/conf/jobcontrol.conf -text
 emu/setup/emu/conf/las.conf -text
 emu/setup/emu/conf/pcmonitor1.conf -text
@@ -1261,6 +1264,7 @@ emu/setup/emu/sensor/sentinel.sensor -text
 emu/setup/emu/sensor/xrelay.sensor -text
 emu/setup/emu/spec.template -text
 emu/setup/emu/xdaqd -text
+emu/setup/emu/xml/fed-micromonitor.xml -text
 emu/setup/emu/xml/xmas-dcs-pc1.xml -text
 emu/setup/emu/xml/xmas-dcs-pc2.xml -text
 emu/setup/emu/xplore/shortcuts.xml -text

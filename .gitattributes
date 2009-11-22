@@ -479,6 +479,7 @@ emu/emuDCS/FEDApps/html/commanderDisplay.js -text
 emu/emuDCS/FEDApps/html/common.js -text
 emu/emuDCS/FEDApps/html/communicator.js -text
 emu/emuDCS/FEDApps/html/configurable.js -text
+emu/emuDCS/FEDApps/html/configurationEditor.js -text
 emu/emuDCS/FEDApps/html/definitions.js -text
 emu/emuDCS/FEDApps/html/errorFlasher.js -text
 emu/emuDCS/FEDApps/html/formChecker.js -text
@@ -508,9 +509,13 @@ emu/emuDCS/FEDApps/images/empty.gif -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/firmware.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/go-next.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/go-previous.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/list-add.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/list-remove.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/media-playback-pause.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/media-playback-start.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/minus.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/missing.png -text svneol=unset#unset
+emu/emuDCS/FEDApps/images/plus.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/process-stop.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/images/view-refresh.png -text svneol=unset#unset
 emu/emuDCS/FEDApps/include/emu/fed/Application.h -text
@@ -518,6 +523,7 @@ emu/emuDCS/FEDApps/include/emu/fed/AppsVersion.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Commander.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Communicator.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Configurable.h -text
+emu/emuDCS/FEDApps/include/emu/fed/ConfigurationEditor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/EmuFCrateHyperDAQ.h -text
 emu/emuDCS/FEDApps/include/emu/fed/FEDConfigurationEditor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Manager.h -text
@@ -530,6 +536,7 @@ emu/emuDCS/FEDApps/src/common/AppsVersion.cc -text
 emu/emuDCS/FEDApps/src/common/Commander.cc -text
 emu/emuDCS/FEDApps/src/common/Communicator.cc -text
 emu/emuDCS/FEDApps/src/common/Configurable.cc -text
+emu/emuDCS/FEDApps/src/common/ConfigurationEditor.cc -text
 emu/emuDCS/FEDApps/src/common/EmuFCrateHyperDAQ.cc -text
 emu/emuDCS/FEDApps/src/common/FEDConfigurationEditor.cc -text
 emu/emuDCS/FEDApps/src/common/Manager.cc -text

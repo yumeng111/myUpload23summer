@@ -1025,6 +1025,7 @@ emu/emuDQM/EmuTFMonitor/src/common/RegEx.h -text
 emu/emuDQM/EmuTFMonitor/src/common/_EmuTFfiller.cc -text
 emu/emuDQM/EmuTFMonitor/test/common/EmuTFtest.cpp -text
 emu/emuDQM/EmuTFMonitor/test/common/test.cc -text
+emu/emuDQM/EmuTFMonitor/test/common/vme2ddu.cpp -text
 emu/emuDQM/EmuTFMonitor/xml/CSCTF_canvases.xml -text
 emu/emuDQM/EmuTFMonitor/xml/CSCTF_canvases_quick.xml -text
 emu/emuDQM/EmuTFMonitor/xml/CSCTF_checks.xml -text

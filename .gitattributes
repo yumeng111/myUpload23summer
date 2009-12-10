@@ -550,7 +550,6 @@ emu/emuDCS/FEDCore/include/emu/fed/DCC.h -text
 emu/emuDCS/FEDCore/include/emu/fed/DDU.h -text
 emu/emuDCS/FEDCore/include/emu/fed/Exception.h -text
 emu/emuDCS/FEDCore/include/emu/fed/FIFO.h -text
-emu/emuDCS/FEDCore/include/emu/fed/FakeVMEModule.h -text
 emu/emuDCS/FEDCore/include/emu/fed/Fiber.h -text
 emu/emuDCS/FEDCore/include/emu/fed/JTAGElement.h -text
 emu/emuDCS/FEDCore/include/emu/fed/JTAG_constants.h -text
@@ -563,7 +562,6 @@ emu/emuDCS/FEDCore/src/common/Crate.cc -text
 emu/emuDCS/FEDCore/src/common/DCC.cc -text
 emu/emuDCS/FEDCore/src/common/DDU.cc -text
 emu/emuDCS/FEDCore/src/common/FIFO.cc -text
-emu/emuDCS/FEDCore/src/common/FakeVMEModule.cc -text
 emu/emuDCS/FEDCore/src/common/Fiber.cc -text
 emu/emuDCS/FEDCore/src/common/VMEController.cc -text
 emu/emuDCS/FEDCore/src/common/VMELock.cc -text

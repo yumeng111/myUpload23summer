@@ -1223,6 +1223,7 @@ emu/farmer/xml/RUI-to-chamber_mapping_XSLT.xml -text
 emu/farmer/xml/RUI-to-computer_mapping.xml -text
 emu/farmer/xml/RUI-to-computer_mapping_XSLT.xml -text
 emu/farmer/xml/RUI-to-computer_mapping_bdg904.xml -text
+emu/farmer/xml/RUI0-to-computer_mapping_bdg904.xml -text
 emu/farmer/xml/generateConfigs.sh -text
 emu/farmer/xml/generateConfigsBdg904.sh -text
 emu/farmer/xml/processingInstructionSetter.xsl -text

@@ -1357,6 +1357,7 @@ emu/supervisor/html/emusupervisor.css -text
 emu/supervisor/include/emu/supervisor/Application.h -text
 emu/supervisor/include/emu/supervisor/ELog.h -text
 emu/supervisor/include/emu/supervisor/RunInfo.h -text
+emu/supervisor/include/emu/supervisor/StopWatch.h -text
 emu/supervisor/include/emu/supervisor/alarm/Alarm.h -text
 emu/supervisor/include/emu/supervisor/exception/Exception.h -text
 emu/supervisor/include/emu/supervisor/version.h -text

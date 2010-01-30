@@ -1242,6 +1242,7 @@ emu/pt/http/include/pt/http/Utils.h -text
 emu/pt/http/include/pt/http/exception/CannotConnect.h -text
 emu/pt/http/include/pt/http/exception/Exception.h -text
 emu/pt/http/include/pt/http/version.h -text
+emu/pt/http/spec.template -text
 emu/pt/http/src/common/Address.cc -text
 emu/pt/http/src/common/Channel.cc -text
 emu/pt/http/src/common/ClientChannel.cc -text

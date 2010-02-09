@@ -1257,6 +1257,7 @@ emu/pt/http/src/common/SOAPMessenger.cc -text
 emu/pt/http/src/common/Utils.cc -text
 emu/pt/http/src/common/version.cc -text
 emu/release -text
+emu/rpm_version -text
 emu/setup/emu/Makefile -text
 emu/setup/emu/conf/collector.conf -text
 emu/setup/emu/conf/da.conf.in -text

@@ -415,6 +415,7 @@ emu/drivers/gbit-vme/eth_hook_jtag_simple/Makefile -text
 emu/drivers/gbit-vme/eth_hook_jtag_simple/compile -text
 emu/drivers/gbit-vme/eth_hook_jtag_simple/eth_hook.c -text
 emu/drivers/gbit-vme/eth_hook_jtag_simple/schar.h -text
+emu/drivers/script/K20cosmicdaq -text
 emu/drivers/script/create_char_devices.sh -text
 emu/drivers/script/load_daq_drivers.sh -text
 emu/drivers/script/pcratedriver -text

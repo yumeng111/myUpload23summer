@@ -1247,6 +1247,7 @@ emu/pt/appweb/include/pt/appweb/exception/Exception.h -text
 emu/pt/appweb/include/pt/appweb/version.h -text
 emu/pt/appweb/mime.types -text
 emu/pt/appweb/rom.files -text
+emu/pt/appweb/spec.template -text
 emu/pt/appweb/src/common/AccessHandler.cc -text
 emu/pt/appweb/src/common/Address.cc -text
 emu/pt/appweb/src/common/Application.cc -text

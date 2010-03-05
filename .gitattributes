@@ -1392,6 +1392,8 @@ emu/setup/emu904/profile/ws-eventing-exception.profile -text
 emu/setup/emu904/profile/ws-eventing.profile -text
 emu/setup/emu904/pulser/executive.pulser -text
 emu/setup/emu904/pulser/jobcontrol.pulser -text
+emu/setup/emu904/scripts/EmuServiceGuard.cron -text
+emu/setup/emu904/scripts/EmuServiceGuard.sh -text
 emu/setup/emu904/scripts/configureslp.sh -text
 emu/setup/emu904/scripts/daq-software-upgrade-postprocess.sh -text
 emu/setup/emu904/scripts/daq-software-upgrade-preprocess.sh -text
@@ -1408,6 +1410,7 @@ emu/setup/emu904/sensor/las.las -text
 emu/setup/emu904/sensor/sensor.sensor -text
 emu/setup/emu904/sensor/sentinel.sensor -text
 emu/setup/emu904/sensor/xrelay.sensor -text
+emu/setup/emu904/spec.template -text
 emu/setup/emu904/xdaqd -text
 emu/setup/emu904/xplore/shortcuts.xml -text
 emu/supervisor/Makefile -text

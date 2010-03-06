@@ -1330,6 +1330,8 @@ emu/setup/emu/profile/ws-eventing.profile -text
 emu/setup/emu/pulser/empty.pulser -text
 emu/setup/emu/pulser/executive.pulser -text
 emu/setup/emu/pulser/jobcontrol.pulser -text
+emu/setup/emu/scripts/EmuServiceGuard.cron -text
+emu/setup/emu/scripts/EmuServiceGuard.sh -text
 emu/setup/emu/scripts/configureslp.sh -text
 emu/setup/emu/scripts/daq-software-upgrade-postprocess.sh -text
 emu/setup/emu/scripts/daq-software-upgrade-preprocess.sh -text

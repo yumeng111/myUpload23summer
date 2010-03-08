@@ -488,6 +488,7 @@ emu/emuDCS/FEDApps/html/FEDApps.css -text
 emu/emuDCS/FEDApps/html/bitFlipper.js -text
 emu/emuDCS/FEDApps/html/commander.js -text
 emu/emuDCS/FEDApps/html/commanderDisplay.js -text
+emu/emuDCS/FEDApps/html/commanderFirmware.js -text
 emu/emuDCS/FEDApps/html/common.js -text
 emu/emuDCS/FEDApps/html/communicator.js -text
 emu/emuDCS/FEDApps/html/configurable.js -text

@@ -86,6 +86,7 @@ emu/daq/manager/images/EmuDAQManager64x64.gif -text svneol=unset#unset
 emu/daq/manager/images/ctrl32x32.gif -text svneol=unset#unset
 emu/daq/manager/images/ctrl64x64.gif -text svneol=unset#unset
 emu/daq/manager/include/emu/daq/manager/Application.h -text
+emu/daq/manager/include/emu/daq/manager/FactTypes.h -text
 emu/daq/manager/include/emu/daq/manager/alarm/Alarm.h -text
 emu/daq/manager/include/emu/daq/manager/exception/Exception.h -text
 emu/daq/manager/include/emu/daq/manager/version.h -text
@@ -108,6 +109,7 @@ emu/daq/reader/src/common/version.cc -text
 emu/daq/rui/Makefile -text
 emu/daq/rui/images/EmuRUI64x64.gif -text svneol=unset#unset
 emu/daq/rui/include/emu/daq/rui/Application.h -text
+emu/daq/rui/include/emu/daq/rui/FactTypes.h -text
 emu/daq/rui/include/emu/daq/rui/STEPEventCounter.h -text
 emu/daq/rui/include/emu/daq/rui/exception/Exception.h -text
 emu/daq/rui/include/emu/daq/rui/i2oFirstEventNumberMsg.h -text

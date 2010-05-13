@@ -152,6 +152,8 @@ emu/daq/writer/src/common/RateLimiter.cc -text
 emu/daq/writer/src/common/RawDataFile.cc -text
 emu/daq/writer/src/common/version.cc -text
 emu/daq/xml/test_daq.xml -text
+emu/database/Makefile -text
+emu/database/spec.template -text
 emu/doc/html/EmuFSM.xhtml -text
 emu/doc/html/index.html -text
 emu/doc/html/overview.html -text

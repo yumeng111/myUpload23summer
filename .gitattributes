@@ -13,6 +13,7 @@ emu/base/html/hotspot.xml -text
 emu/base/html/jquery-1.3.2.min.js -text
 emu/base/images/CSC.png -text svneol=unset#unset
 emu/base/include/emu/base/Alarm.h -text
+emu/base/include/emu/base/ApplicationStatusFact.h -text
 emu/base/include/emu/base/Component.h -text
 emu/base/include/emu/base/ConfigurationEditor.h -text
 emu/base/include/emu/base/Fact.h -text
@@ -28,6 +29,7 @@ emu/base/include/emu/base/version.h -text
 emu/base/script/testDataWarehouse.sh -text
 emu/base/script/testFactFinder.sh -text
 emu/base/spec.template -text
+emu/base/src/common/ApplicationStatusFact.cc -text
 emu/base/src/common/Component.cc -text
 emu/base/src/common/ConfigurationEditor.cc -text
 emu/base/src/common/Fact.cc -text

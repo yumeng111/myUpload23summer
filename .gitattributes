@@ -610,8 +610,6 @@ emu/emuDCS/FEDUtils/include/emu/fed/FIFODBAgent.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/FIFOParser.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/FiberDBAgent.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/FiberParser.h -text
-emu/emuDCS/FEDUtils/include/emu/fed/IRQData.h -text
-emu/emuDCS/FEDUtils/include/emu/fed/IRQThreadManager.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/JSONSpiritUtils.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/JSONSpiritValue.h -text
 emu/emuDCS/FEDUtils/include/emu/fed/JSONSpiritWriter.h -text
@@ -639,7 +637,6 @@ emu/emuDCS/FEDUtils/src/common/FIFODBAgent.cc -text
 emu/emuDCS/FEDUtils/src/common/FIFOParser.cc -text
 emu/emuDCS/FEDUtils/src/common/FiberDBAgent.cc -text
 emu/emuDCS/FEDUtils/src/common/FiberParser.cc -text
-emu/emuDCS/FEDUtils/src/common/IRQThreadManager.cc -text
 emu/emuDCS/FEDUtils/src/common/JSONSpiritWriter.cc -text
 emu/emuDCS/FEDUtils/src/common/Parser.cc -text
 emu/emuDCS/FEDUtils/src/common/SystemDBAgent.cc -text

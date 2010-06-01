@@ -95,6 +95,7 @@ emu/daq/manager/include/emu/daq/manager/exception/Exception.h -text
 emu/daq/manager/include/emu/daq/manager/version.h -text
 emu/daq/manager/src/common/AppStates.cc -text
 emu/daq/manager/src/common/Application.cc -text
+emu/daq/manager/src/common/FactTypes.cc -text
 emu/daq/manager/src/common/version.cc -text
 emu/daq/reader/Makefile -text
 emu/daq/reader/include/emu/daq/reader/Base.h -text
@@ -119,6 +120,7 @@ emu/daq/rui/include/emu/daq/rui/exception/Exception.h -text
 emu/daq/rui/include/emu/daq/rui/i2oFirstEventNumberMsg.h -text
 emu/daq/rui/include/emu/daq/rui/version.h -text
 emu/daq/rui/src/common/Application.cc -text
+emu/daq/rui/src/common/FactTypes.cc -text
 emu/daq/rui/src/common/STEPEventCounter.cc -text
 emu/daq/rui/src/common/version.cc -text
 emu/daq/server/Makefile -text

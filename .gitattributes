@@ -1445,11 +1445,13 @@ emu/soap/include/emu/soap/Attachment.h -text
 emu/soap/include/emu/soap/Attributes.h -text
 emu/soap/include/emu/soap/Messenger.h -text
 emu/soap/include/emu/soap/Parameters.h -text
+emu/soap/include/emu/soap/ToolBox.h -text
 emu/soap/include/emu/soap/version.h -text
 emu/soap/src/common/Attachment.cc -text
 emu/soap/src/common/Attributes.cc -text
 emu/soap/src/common/Messenger.cc -text
 emu/soap/src/common/Parameters.cc -text
+emu/soap/src/common/ToolBox.cc -text
 emu/soap/src/common/version.cc -text
 emu/supervisor/Makefile -text
 emu/supervisor/html/emusupervisor.css -text

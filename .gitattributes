@@ -555,11 +555,13 @@ emu/emuDCS/FEDApps/include/emu/fed/DDUFMMIRQFact.h -text
 emu/emuDCS/FEDApps/include/emu/fed/DDUFMMResetFact.h -text
 emu/emuDCS/FEDApps/include/emu/fed/EmuFCrateHyperDAQ.h -text
 emu/emuDCS/FEDApps/include/emu/fed/FEDConfigurationEditor.h -text
+emu/emuDCS/FEDApps/include/emu/fed/FEDFSMFact.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Fact.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Facts.h -text
 emu/emuDCS/FEDApps/include/emu/fed/IRQData.h -text
 emu/emuDCS/FEDApps/include/emu/fed/IRQThreadManager.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Manager.h -text
+emu/emuDCS/FEDApps/include/emu/fed/MicroCommander.h -text
 emu/emuDCS/FEDApps/include/emu/fed/MicroMonitor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Monitor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Supervised.h -text

@@ -749,6 +749,9 @@ emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateBase.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateBroadcast.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateCommand.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateConfig.cc -text
+emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateConfig_CCBMPC.cc -text
+emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateConfig_DMB.cc -text
+emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateConfig_VCC.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateManager.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateMonitor.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateService.cc -text

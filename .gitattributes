@@ -1471,5 +1471,6 @@ emu/supervisor/include/emu/supervisor/exception/Exception.h -text
 emu/supervisor/include/emu/supervisor/version.h -text
 emu/supervisor/spec.template -text
 emu/supervisor/src/common/Application.cc -text
+emu/supervisor/src/common/RunInfo.cc -text
 emu/supervisor/src/common/version.cc -text
 emu/supervisor/xml/test_supervisor.xml -text

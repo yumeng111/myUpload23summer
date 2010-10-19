@@ -117,6 +117,7 @@ emu/daq/rui/Makefile -text
 emu/daq/rui/images/EmuRUI64x64.gif -text svneol=unset#unset
 emu/daq/rui/include/emu/daq/rui/Application.h -text
 emu/daq/rui/include/emu/daq/rui/FactTypes.h -text
+emu/daq/rui/include/emu/daq/rui/Ring.h -text
 emu/daq/rui/include/emu/daq/rui/STEPEventCounter.h -text
 emu/daq/rui/include/emu/daq/rui/exception/Exception.h -text
 emu/daq/rui/include/emu/daq/rui/i2oFirstEventNumberMsg.h -text

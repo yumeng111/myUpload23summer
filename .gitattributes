@@ -116,6 +116,7 @@ emu/daq/reader/src/common/version.cc -text
 emu/daq/rui/Makefile -text
 emu/daq/rui/images/EmuRUI64x64.gif -text svneol=unset#unset
 emu/daq/rui/include/emu/daq/rui/Application.h -text
+emu/daq/rui/include/emu/daq/rui/EventBuffer.h -text
 emu/daq/rui/include/emu/daq/rui/FactTypes.h -text
 emu/daq/rui/include/emu/daq/rui/Ring.h -text
 emu/daq/rui/include/emu/daq/rui/STEPEventCounter.h -text
@@ -123,6 +124,7 @@ emu/daq/rui/include/emu/daq/rui/exception/Exception.h -text
 emu/daq/rui/include/emu/daq/rui/i2oFirstEventNumberMsg.h -text
 emu/daq/rui/include/emu/daq/rui/version.h -text
 emu/daq/rui/src/common/Application.cc -text
+emu/daq/rui/src/common/EventBuffer.cc -text
 emu/daq/rui/src/common/FactTypes.cc -text
 emu/daq/rui/src/common/STEPEventCounter.cc -text
 emu/daq/rui/src/common/version.cc -text

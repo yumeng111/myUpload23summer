@@ -1379,6 +1379,7 @@ emu/setup/emu/scripts/slp_da.cron -text
 emu/setup/emu/scripts/slp_da.sh -text
 emu/setup/emu/scripts/workflow-services.awk -text
 emu/setup/emu/scripts/xdaq.sh -text
+emu/setup/emu/scripts/xdaq_autorestart.sh -text
 emu/setup/emu/sensor/collector.sensor -text
 emu/setup/emu/sensor/emudaqmanager.sensor -text
 emu/setup/emu/sensor/executive.sensor -text

@@ -1446,6 +1446,7 @@ emu/setup/emu904/scripts/slp_da.cron -text
 emu/setup/emu904/scripts/slp_da.sh -text
 emu/setup/emu904/scripts/workflow-services.awk -text
 emu/setup/emu904/scripts/xdaq.sh -text
+emu/setup/emu904/scripts/xdaq_autorestart.sh -text
 emu/setup/emu904/sensor/emudaqmanager.sensor -text
 emu/setup/emu904/sensor/executive.sensor -text
 emu/setup/emu904/sensor/fedsupervisor.sensor -text

@@ -1298,6 +1298,7 @@ emu/pt/appweb/src/common/version.cc -text
 emu/pt/http/Makefile -text
 emu/pt/http/images/PeerTransportHTTP.gif -text svneol=unset#unset
 emu/pt/http/include/pt/http/Address.h -text
+emu/pt/http/include/pt/http/Alias.h -text
 emu/pt/http/include/pt/http/Channel.h -text
 emu/pt/http/include/pt/http/PeerTransportHTTP.h -text
 emu/pt/http/include/pt/http/PeerTransportReceiver.h -text

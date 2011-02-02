@@ -20,6 +20,7 @@ emu/base/include/emu/base/Fact.h -text
 emu/base/include/emu/base/FactCollection.h -text
 emu/base/include/emu/base/FactFinder.h -text
 emu/base/include/emu/base/FactRequest.h -text
+emu/base/include/emu/base/Stopwatch.h -text
 emu/base/include/emu/base/Supervised.h -text
 emu/base/include/emu/base/TStoreRequest.h -text
 emu/base/include/emu/base/TypedFact.h -text
@@ -36,6 +37,7 @@ emu/base/src/common/Fact.cc -text
 emu/base/src/common/FactCollection.cc -text
 emu/base/src/common/FactFinder.cc -text
 emu/base/src/common/FactRequest.cc -text
+emu/base/src/common/Stopwatch.cc -text
 emu/base/src/common/Supervised.cc -text
 emu/base/src/common/TStoreRequest.cc -text
 emu/base/src/common/WebReportItem.cc -text

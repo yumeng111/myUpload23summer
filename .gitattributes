@@ -1427,6 +1427,7 @@ emu/setup/emu904/profile/base.profile -text
 emu/setup/emu904/profile/collector.profile -text
 emu/setup/emu904/profile/default.profile -text
 emu/setup/emu904/profile/emu.profile -text
+emu/setup/emu904/profile/emu_longtimeout.profile -text
 emu/setup/emu904/profile/emufarmer.profile -text
 emu/setup/emu904/profile/jobcontrol.profile -text
 emu/setup/emu904/profile/las.profile -text

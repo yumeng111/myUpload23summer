@@ -201,6 +201,7 @@ emu/dqm/cmssw/README.txt -text
 emu/dqm/cmssw/include/emu/dqm/cmssw/FWCore/MessageLogger/interface/MessageLogger.h -text
 emu/dqm/cmssw/include/emu/dqm/cmssw/FWCore/MessageLogger/interface/coloredlayout.h -text
 emu/dqm/common/Makefile -text
+emu/dqm/common/include/emu/dqm/common/CSCDqmFact.h -text
 emu/dqm/common/include/emu/dqm/common/CSCDrawMaps.h -text
 emu/dqm/common/include/emu/dqm/common/CSCMap.h -text
 emu/dqm/common/include/emu/dqm/common/CSCReadoutMappingFromFile.h -text

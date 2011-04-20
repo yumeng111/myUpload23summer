@@ -1451,6 +1451,7 @@ emu/setup/emu904/scripts/configureslp.sh -text
 emu/setup/emu904/scripts/daq-software-upgrade-postprocess.sh -text
 emu/setup/emu904/scripts/daq-software-upgrade-preprocess.sh -text
 emu/setup/emu904/scripts/instantiateXML.awk -text
+emu/setup/emu904/scripts/killOrphanedXDAQ.sh -text
 emu/setup/emu904/scripts/slp_da.cron -text
 emu/setup/emu904/scripts/slp_da.sh -text
 emu/setup/emu904/scripts/workflow-services.awk -text

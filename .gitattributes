@@ -86,6 +86,8 @@ emu/daq/fu/src/common/Application.cc -text
 emu/daq/fu/src/common/EmuEventHeaderTrailer.cc -text
 emu/daq/fu/src/common/version.cc -text
 emu/daq/manager/Makefile -text
+emu/daq/manager/html/emudaqmanager.css -text
+emu/daq/manager/html/emudaqmanager.js -text
 emu/daq/manager/images/EmuDAQManager64x64.gif -text svneol=unset#unset
 emu/daq/manager/images/ctrl32x32.gif -text svneol=unset#unset
 emu/daq/manager/images/ctrl64x64.gif -text svneol=unset#unset

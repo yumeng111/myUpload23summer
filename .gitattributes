@@ -739,6 +739,7 @@ emu/emuDCS/PeripheralApps/Makefile -text
 emu/emuDCS/PeripheralApps/include/emu/pc/CalibDAQ.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/ChamberUtilities.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/CrateUtilities.h -text
+emu/emuDCS/PeripheralApps/include/emu/pc/EmuCompareMcsFiles.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/EmuController.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/EmuPCrateConfigTStore.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/EmuPeripheralCrateBase.h -text
@@ -756,6 +757,7 @@ emu/emuDCS/PeripheralApps/src/common/AppsVersion.cc -text
 emu/emuDCS/PeripheralApps/src/common/CalibDAQ.cc -text
 emu/emuDCS/PeripheralApps/src/common/ChamberUtilities.cc -text
 emu/emuDCS/PeripheralApps/src/common/CrateUtilities.cc -text
+emu/emuDCS/PeripheralApps/src/common/EmuCompareMcsFiles.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuController.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPCrateConfigTStore.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateBase.cc -text

@@ -1376,6 +1376,7 @@ emu/setup/emu/profile/default.profile -text
 emu/setup/emu/profile/default_emupthttp.profile -text
 emu/setup/emu/profile/default_emupthttp_longtimeout.profile -text
 emu/setup/emu/profile/default_logcollector_emupthttp.profile -text
+emu/setup/emu/profile/emufarmer.profile -text
 emu/setup/emu/profile/jobcontrol.profile -text
 emu/setup/emu/profile/las.profile -text
 emu/setup/emu/profile/pulser.profile -text

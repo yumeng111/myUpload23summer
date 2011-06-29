@@ -1429,6 +1429,7 @@ emu/setup/emu904/conf/ws-eventing.conf -text
 emu/setup/emu904/conf/xdaqd.conf -text
 emu/setup/emu904/conf/xdaqd.conf.in -text
 emu/setup/emu904/crossdomain.xml -text
+emu/setup/emu904/emu.logrotate -text
 emu/setup/emu904/etc/dummy.services -text
 emu/setup/emu904/etc/xdaq.zone -text
 emu/setup/emu904/flash/baselinemonitoring.flash -text

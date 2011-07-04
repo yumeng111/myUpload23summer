@@ -1342,6 +1342,7 @@ emu/rpm_version -text
 emu/setup/emu/Makefile -text
 emu/setup/emu/conf/collector.conf -text
 emu/setup/emu/conf/da.conf.in -text
+emu/setup/emu/conf/emufarmer.conf -text
 emu/setup/emu/conf/fedmicromon1.conf -text
 emu/setup/emu/conf/fedmicromon2.conf -text
 emu/setup/emu/conf/fedmicromontf.conf -text

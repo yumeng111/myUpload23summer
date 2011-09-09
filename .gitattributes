@@ -59,6 +59,7 @@ emu/base/src/common/WebReportItem.cc -text
 emu/base/src/common/WebReporter.cc -text
 emu/base/src/common/Xalan.cc -text
 emu/base/src/common/version.cc -text
+emu/base/test/common/testSystem.cc -text
 emu/base/xml/EmuChainsaw.xml -text
 emu/base/xml/EmuChainsawIntranet.xml -text
 emu/cscLevelOneFM/build.xml -text

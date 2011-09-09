@@ -15,14 +15,12 @@ emu/base/images/CSC.png -text svneol=unset#unset
 emu/base/include/emu/base/Alarm.h -text
 emu/base/include/emu/base/ApplicationStatusFact.h -text
 emu/base/include/emu/base/Component.h -text
-emu/base/include/emu/base/ConfigurationEditor.h -text
 emu/base/include/emu/base/Fact.h -text
 emu/base/include/emu/base/FactCollection.h -text
 emu/base/include/emu/base/FactFinder.h -text
 emu/base/include/emu/base/FactRequest.h -text
 emu/base/include/emu/base/Stopwatch.h -text
 emu/base/include/emu/base/Supervised.h -text
-emu/base/include/emu/base/TStoreRequest.h -text
 emu/base/include/emu/base/TypedFact.h -text
 emu/base/include/emu/base/WebReportItem.h -text
 emu/base/include/emu/base/WebReporter.h -text
@@ -42,7 +40,6 @@ emu/base/spec.template -text
 emu/base/src/common/ApplicationStatusFact.cc -text
 emu/base/src/common/Cgi.cc -text
 emu/base/src/common/Component.cc -text
-emu/base/src/common/ConfigurationEditor.cc -text
 emu/base/src/common/DOM.cc -text
 emu/base/src/common/Fact.cc -text
 emu/base/src/common/FactCollection.cc -text
@@ -54,7 +51,6 @@ emu/base/src/common/Stopwatch.cc -text
 emu/base/src/common/String.cc -text
 emu/base/src/common/Supervised.cc -text
 emu/base/src/common/System.cc -text
-emu/base/src/common/TStoreRequest.cc -text
 emu/base/src/common/WebReportItem.cc -text
 emu/base/src/common/WebReporter.cc -text
 emu/base/src/common/Xalan.cc -text

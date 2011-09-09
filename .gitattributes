@@ -27,6 +27,7 @@ emu/base/include/emu/base/TypedFact.h -text
 emu/base/include/emu/base/WebReportItem.h -text
 emu/base/include/emu/base/WebReporter.h -text
 emu/base/include/emu/base/version.h -text
+emu/base/include/emu/exception/Exception.h -text
 emu/base/script/testDataWarehouse.sh -text
 emu/base/script/testFactFinder.sh -text
 emu/base/spec.template -text

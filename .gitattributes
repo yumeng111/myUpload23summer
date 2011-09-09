@@ -710,6 +710,7 @@ emu/emuDCS/OnlineDB/test/start_babel.sh -text
 emu/emuDCS/OnlineDB/xml/Babel_GUI.xml -text
 emu/emuDCS/OnlineDB/xml/CFEBBoards.xml -text
 emu/emuDCS/OnlineDB/xml/CSCIDtoChamber.xml -text
+emu/emuDCS/OnlineDB/xml/EMUsystem.view -text
 emu/emuDCS/OnlineDB/xml/PCBoards.xml -text
 emu/emuDCS/OnlineDB/xml/RUI-to-chamber_mapping.xml -text
 emu/emuDCS/OnlineDB/xml/SwitchConnections.xml -text

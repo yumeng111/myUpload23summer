@@ -722,6 +722,10 @@ emu/emuDCS/OnlineDB/src/common/TStoreRequest.cc -text
 emu/emuDCS/OnlineDB/src/common/TableDefinitions.cc -text
 emu/emuDCS/OnlineDB/src/common/TranslatorKludgeXMLvsDB.cc -text
 emu/emuDCS/OnlineDB/src/common/XMLReadWriter.cc -text
+emu/emuDCS/OnlineDB/test/common/testConfigRow.cc -text
+emu/emuDCS/OnlineDB/test/common/testConfigTree.cc -text
+emu/emuDCS/OnlineDB/test/common/testPCConfigHierarchy.cc -text
+emu/emuDCS/OnlineDB/test/common/testTableDefinitions.cc -text
 emu/emuDCS/OnlineDB/test/start_babel.sh -text
 emu/emuDCS/OnlineDB/xml/Babel_GUI.xml -text
 emu/emuDCS/OnlineDB/xml/CFEBBoards.xml -text

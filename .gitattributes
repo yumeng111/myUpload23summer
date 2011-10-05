@@ -215,6 +215,7 @@ emu/dqm/calibration/src/common/Test_Generic.cc -text
 emu/dqm/calibration/src/common/runEmuCalibAnalysis.cc -text
 emu/dqm/cmssw/Makefile -text
 emu/dqm/cmssw/README.txt -text
+emu/dqm/cmssw/getCMSSW.sh -text
 emu/dqm/cmssw/include/emu/dqm/cmssw/FWCore/MessageLogger/interface/MessageLogger.h -text
 emu/dqm/cmssw/include/emu/dqm/cmssw/FWCore/MessageLogger/interface/coloredlayout.h -text
 emu/dqm/common/Makefile -text

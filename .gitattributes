@@ -198,6 +198,9 @@ emu/dqm/calibration/include/emu/dqm/calibration/TestCanvas_6gr1h.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/TestCanvas_userHisto.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/TestData1D.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/TestData2D.h -text
+emu/dqm/calibration/include/emu/dqm/calibration/Test_AFEB05.h -text
+emu/dqm/calibration/include/emu/dqm/calibration/Test_AFEB06.h -text
+emu/dqm/calibration/include/emu/dqm/calibration/Test_AFEB07.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/Test_CFEB02.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/Test_CFEB03.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/Test_CFEB04.h -text
@@ -208,6 +211,9 @@ emu/dqm/calibration/src/common/CFEBCanvas.cc -text
 emu/dqm/calibration/src/common/TestCanvas_1h.cc -text
 emu/dqm/calibration/src/common/TestCanvas_6gr1h.cc -text
 emu/dqm/calibration/src/common/TestCanvas_userHisto.cc -text
+emu/dqm/calibration/src/common/Test_AFEB05.cc -text
+emu/dqm/calibration/src/common/Test_AFEB06.cc -text
+emu/dqm/calibration/src/common/Test_AFEB07.cc -text
 emu/dqm/calibration/src/common/Test_CFEB02.cc -text
 emu/dqm/calibration/src/common/Test_CFEB03.cc -text
 emu/dqm/calibration/src/common/Test_CFEB04.cc -text

@@ -388,6 +388,9 @@ emu/dqm/xml/csc_map.txt -text
 emu/dqm/xml/emuChanMasks.xml -text
 emu/dqm/xml/emuDQMBooking.xml -text
 emu/dqm/xml/emuDQMCanvases.xml -text
+emu/dqm/xml/emuTest_AFEB05.xml -text
+emu/dqm/xml/emuTest_AFEB06.xml -text
+emu/dqm/xml/emuTest_AFEB07.xml -text
 emu/dqm/xml/emuTest_CFEB02.xml -text
 emu/dqm/xml/emuTest_CFEB03.xml -text
 emu/dqm/xml/emuTest_CFEB04.xml -text

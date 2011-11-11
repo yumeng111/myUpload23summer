@@ -710,7 +710,6 @@ emu/emuDCS/OnlineDB/include/emu/db/ConfigTree.h -text
 emu/emuDCS/OnlineDB/include/emu/db/ConfigurationEditor.h -text
 emu/emuDCS/OnlineDB/include/emu/db/ConnectionsDB.h -text
 emu/emuDCS/OnlineDB/include/emu/db/ConnectionsGUI.h -text
-emu/emuDCS/OnlineDB/include/emu/db/EmuEndcapConfigWrapper.h -text
 emu/emuDCS/OnlineDB/include/emu/db/PCConfigEditor.h -text
 emu/emuDCS/OnlineDB/include/emu/db/PCConfigHierarchy.h -text
 emu/emuDCS/OnlineDB/include/emu/db/SetKillFibersGUI.h -text
@@ -734,7 +733,6 @@ emu/emuDCS/OnlineDB/src/common/ConfigTree.cc -text
 emu/emuDCS/OnlineDB/src/common/ConfigurationEditor.cc -text
 emu/emuDCS/OnlineDB/src/common/ConnectionsDB.cc -text
 emu/emuDCS/OnlineDB/src/common/ConnectionsGUI.cc -text
-emu/emuDCS/OnlineDB/src/common/EmuEndcapConfigWrapper.cc -text
 emu/emuDCS/OnlineDB/src/common/OnlineDBVersion.cc -text
 emu/emuDCS/OnlineDB/src/common/PCConfigEditor.cc -text
 emu/emuDCS/OnlineDB/src/common/PCConfigHierarchy.cc -text
@@ -802,6 +800,7 @@ emu/emuDCS/PeripheralApps/include/emu/pc/ChamberUtilities.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/CrateUtilities.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/EmuCompareMcsFiles.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/EmuController.h -text
+emu/emuDCS/PeripheralApps/include/emu/pc/EmuEndcapConfigWrapper.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/EmuPCrateConfigTStore.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/EmuPeripheralCrateBase.h -text
 emu/emuDCS/PeripheralApps/include/emu/pc/EmuPeripheralCrateBroadcast.h -text
@@ -820,6 +819,7 @@ emu/emuDCS/PeripheralApps/src/common/ChamberUtilities.cc -text
 emu/emuDCS/PeripheralApps/src/common/CrateUtilities.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuCompareMcsFiles.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuController.cc -text
+emu/emuDCS/PeripheralApps/src/common/EmuEndcapConfigWrapper.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPCrateConfigTStore.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateBase.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateBroadcast.cc -text

@@ -467,6 +467,7 @@ emu/drivers/e1000hook/eth_up_with_sudo -text
 emu/drivers/emu-daqdriver.spec -text
 emu/drivers/emu-daqdriver904.spec -text
 emu/drivers/emu-daqpcvme.spec -text
+emu/drivers/emu-pcvme-slc5.spec -text
 emu/drivers/emu-pcvme.spec -text
 emu/drivers/gbit-vme-slc5/Makefile -text
 emu/drivers/gbit-vme-slc5/dl2k_driver/Makefile -text

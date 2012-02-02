@@ -458,6 +458,13 @@ emu/drivers/e1000hook/eth_hook_5_nobigphysxxx/Makefile -text
 emu/drivers/e1000hook/eth_hook_5_nobigphysxxx/eth_hook_5.c -text
 emu/drivers/e1000hook/eth_hook_5_nobigphysxxx/eth_hook_5.h -text
 emu/drivers/e1000hook/eth_hook_5_nobigphysxxx/schar.h -text
+emu/drivers/e1000hook/eth_hook_jtag_simple/Makefile -text
+emu/drivers/e1000hook/eth_hook_jtag_simple/eth_hook.c -text
+emu/drivers/e1000hook/eth_hook_jtag_simple/schar.h -text
+emu/drivers/e1000hook/mmaptest/Makefile -text
+emu/drivers/e1000hook/mmaptest/mmap.c -text
+emu/drivers/e1000hook/mmaptest2/Makefile -text
+emu/drivers/e1000hook/mmaptest2/mmap.c -text
 emu/drivers/emu-daqdriver.spec -text
 emu/drivers/emu-daqdriver904.spec -text
 emu/drivers/emu-daqpcvme.spec -text

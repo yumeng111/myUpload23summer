@@ -458,7 +458,6 @@ emu/drivers/e1000hook/eth_hook_5_nobigphysxxx/Makefile -text
 emu/drivers/e1000hook/eth_hook_5_nobigphysxxx/eth_hook_5.c -text
 emu/drivers/e1000hook/eth_hook_5_nobigphysxxx/eth_hook_5.h -text
 emu/drivers/e1000hook/eth_hook_5_nobigphysxxx/schar.h -text
-emu/drivers/e1000hook/eth_up_with_sudo -text
 emu/drivers/emu-daqdriver.spec -text
 emu/drivers/emu-daqdriver904.spec -text
 emu/drivers/emu-daqpcvme.spec -text

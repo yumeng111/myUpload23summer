@@ -1431,6 +1431,8 @@ emu/rpm_version -text
 emu/setup/emu/Makefile -text
 emu/setup/emu/conf/collector.conf -text
 emu/setup/emu/conf/da.conf.in -text
+emu/setup/emu/conf/emud.conf -text
+emu/setup/emu/conf/emud.conf.in -text
 emu/setup/emu/conf/emufarmer.conf -text
 emu/setup/emu/conf/fedmicromon1.conf -text
 emu/setup/emu/conf/fedmicromon2.conf -text
@@ -1448,11 +1450,10 @@ emu/setup/emu/conf/slp.DA.conf -text
 emu/setup/emu/conf/spotlight.conf -text
 emu/setup/emu/conf/ws-eventing-exception.conf -text
 emu/setup/emu/conf/ws-eventing.conf -text
-emu/setup/emu/conf/xdaqd.conf -text
-emu/setup/emu/conf/xdaqd.conf.in -text
 emu/setup/emu/crossdomain.xml -text
 emu/setup/emu/emu-trigger.spec -text
 emu/setup/emu/emu.logrotate -text
+emu/setup/emu/emud -text
 emu/setup/emu/etc/dummy.services -text
 emu/setup/emu/etc/xdaq.zone -text
 emu/setup/emu/flash/diskInfo.flash -text
@@ -1499,7 +1500,6 @@ emu/setup/emu/sensor/sensor.sensor -text
 emu/setup/emu/sensor/sentinel.sensor -text
 emu/setup/emu/sensor/xrelay.sensor -text
 emu/setup/emu/spec.template -text
-emu/setup/emu/xdaqd -text
 emu/setup/emu/xml/fed-micromonitor.xml -text
 emu/setup/emu/xml/xmas-dcs-pc1.xml -text
 emu/setup/emu/xml/xmas-dcs-pc2.xml -text

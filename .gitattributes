@@ -47,6 +47,13 @@ emu/base/src/common/Stopwatch.cc -text
 emu/base/src/common/Supervised.cc -text
 emu/base/src/common/WebReportItem.cc -text
 emu/base/src/common/WebReporter.cc -text
+emu/base/src/common/utils/Cgi.cc -text
+emu/base/src/common/utils/DOM.cc -text
+emu/base/src/common/utils/SerializableFactory.cc -text
+emu/base/src/common/utils/SimpleTimer.cc -text
+emu/base/src/common/utils/String.cc -text
+emu/base/src/common/utils/System.cc -text
+emu/base/src/common/utils/Xalan.cc -text
 emu/base/src/common/version.cc -text
 emu/base/test/common/testSystem.cc -text
 emu/base/xml/EmuChainsaw.xml -text

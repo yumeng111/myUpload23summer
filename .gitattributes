@@ -331,6 +331,11 @@ emu/dqm/cscmonitor/src/common/EmuMonitor.cc -text
 emu/dqm/cscmonitor/src/common/EmuMonitor_SOAP.cc -text
 emu/dqm/cscmonitor/src/common/EmuMonitor_WebInterface.cc -text
 emu/dqm/cscmonitor/src/common/version.cc -text
+emu/dqm/dbutils/Makefile -text
+emu/dqm/dbutils/include/emu/dqm/dbutils/cscmap1.h -text
+emu/dqm/dbutils/src/common/init_report_db.cc -text
+emu/dqm/dbutils/src/common/sqlite_read_mappings.cc -text
+emu/dqm/dbutils/src/common/sqlite_write_mappings.cc -text
 emu/dqm/html/cscdqm/canvases_list.js -text
 emu/dqm/html/cscdqm/csc_map.js -text
 emu/dqm/html/cscdqm/ddu_csc_map.js -text

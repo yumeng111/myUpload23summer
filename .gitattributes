@@ -731,6 +731,7 @@ emu/emuDCS/FEDUtils/src/common/XMLConfigurator.cc -text
 emu/emuDCS/FEDUtils/xml/TStoreConfiguration.view -text
 emu/emuDCS/Makefile -text
 emu/emuDCS/OnlineDB/Makefile -text
+emu/emuDCS/OnlineDB/html/pc_config_editor.js -text
 emu/emuDCS/OnlineDB/include/emu/db/BoardsDB.h -text
 emu/emuDCS/OnlineDB/include/emu/db/ConfigEditor.h -text
 emu/emuDCS/OnlineDB/include/emu/db/ConfigHierarchy.h -text

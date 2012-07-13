@@ -753,6 +753,7 @@ emu/emuDCS/OnlineDB/include/emu/db/TStoreRequest.h -text
 emu/emuDCS/OnlineDB/include/emu/db/TableDefinitions.h -text
 emu/emuDCS/OnlineDB/include/emu/db/TranslatorKludgeXMLvsDB.h -text
 emu/emuDCS/OnlineDB/include/emu/db/XMLReadWriter.h -text
+emu/emuDCS/OnlineDB/scripts/configDBDescriptionUtil.py -text
 emu/emuDCS/OnlineDB/scripts/diff2XMLs.py -text
 emu/emuDCS/OnlineDB/scripts/diffPCrateXMLs.sh -text
 emu/emuDCS/OnlineDB/scripts/start_babel.sh -text

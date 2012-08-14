@@ -622,6 +622,8 @@ emu/emuDCS/FEDApps/include/emu/fed/ConfigurationEditor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/ConfigurationFact.h -text
 emu/emuDCS/FEDApps/include/emu/fed/DDUFMMIRQFact.h -text
 emu/emuDCS/FEDApps/include/emu/fed/DDUFMMResetFact.h -text
+emu/emuDCS/FEDApps/include/emu/fed/DduFmmErrorFact.h -text
+emu/emuDCS/FEDApps/include/emu/fed/DduStuckInWarningFact.h -text
 emu/emuDCS/FEDApps/include/emu/fed/EmuFCrateHyperDAQ.h -text
 emu/emuDCS/FEDApps/include/emu/fed/FEDConfigurationEditor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/FEDFSMFact.h -text

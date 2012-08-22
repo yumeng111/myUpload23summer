@@ -276,6 +276,7 @@ emu/dqm/common/include/emu/dqm/common/xdaq.h -text
 emu/dqm/common/include/emu/dqm/common/xdata.h -text
 emu/dqm/common/include/emu/dqm/common/xgi.h -text
 emu/dqm/common/include/emu/dqm/common/xoap.h -text
+emu/dqm/common/src/common/CSCDqmFact.cc -text
 emu/dqm/common/src/common/CSCDrawChamberMap.cc -text
 emu/dqm/common/src/common/CSCDrawSummaryMap.cc -text
 emu/dqm/common/src/common/CSCReadoutMappingFromFile.cc -text

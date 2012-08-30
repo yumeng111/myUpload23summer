@@ -1729,6 +1729,8 @@ emu/step/xml/TestSpecificVME.xml -text
 emu/step/xml/VME_MINUS.xml -text
 emu/step/xml/VME_PLUS.xml -text
 emu/step/xml/configuration.xsl -text
+emu/step/xml/schemas.xml -text
+emu/step/xml/testParameters.xml -text
 emu/supervisor/Makefile -text
 emu/supervisor/html/emusupervisor.css -text
 emu/supervisor/include/emu/supervisor/Application.h -text

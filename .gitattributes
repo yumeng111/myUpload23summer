@@ -632,6 +632,7 @@ emu/emuDCS/FEDApps/include/emu/fed/FEDConfigurationEditor.h -text
 emu/emuDCS/FEDApps/include/emu/fed/FEDFSMFact.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Fact.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Facts.h -text
+emu/emuDCS/FEDApps/include/emu/fed/FedRepeatErrorFact.h -text
 emu/emuDCS/FEDApps/include/emu/fed/IRQData.h -text
 emu/emuDCS/FEDApps/include/emu/fed/IRQThreadManager.h -text
 emu/emuDCS/FEDApps/include/emu/fed/Manager.h -text

@@ -1,16 +1,18 @@
 * text=auto !eol
 emu/Makefile -text
 emu/base/Makefile -text
-emu/base/html/CSC_TF.xml -text
 emu/base/html/DAQ_Disks.html -text
 emu/base/html/DAQ_Disks.js -text
-emu/base/html/DAQ_Disks.xml -text
-emu/base/html/EmuPage1.css -text
-emu/base/html/EmuPage1.js -text
-emu/base/html/EmuPage1_XSL.xml -text
-emu/base/html/Page1.html -text
+emu/base/html/PageOne.css -text
+emu/base/html/PageOne.html -text
+emu/base/html/PageOne.js -text
+emu/base/html/RUI-to-chamber_mapping.xml -text
+emu/base/html/TMB.css -text
+emu/base/html/TMB.js -text
+emu/base/html/TMB_XSL.xml -text
 emu/base/html/hotspot.xml -text
-emu/base/html/jquery-1.3.2.min.js -text
+emu/base/html/jquery-1.8.2.min.js -text
+emu/base/html/tooltip.js -text
 emu/base/images/CSC.png -text svneol=unset#unset
 emu/base/include/emu/base/Alarm.h -text
 emu/base/include/emu/base/ApplicationStatusFact.h -text

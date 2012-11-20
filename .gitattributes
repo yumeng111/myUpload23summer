@@ -29,6 +29,7 @@ emu/base/include/emu/base/WebReporter.h -text
 emu/base/include/emu/base/version.h -text
 emu/base/include/emu/exception/Exception.h -text
 emu/base/include/emu/utils/Cgi.h -text
+emu/base/include/emu/utils/Chamber.h -text
 emu/base/include/emu/utils/DOM.h -text
 emu/base/include/emu/utils/IO.h -text
 emu/base/include/emu/utils/SerializableFactory.h -text
@@ -50,6 +51,7 @@ emu/base/src/common/Supervised.cc -text
 emu/base/src/common/WebReportItem.cc -text
 emu/base/src/common/WebReporter.cc -text
 emu/base/src/common/utils/Cgi.cc -text
+emu/base/src/common/utils/Chamber.cc -text
 emu/base/src/common/utils/DOM.cc -text
 emu/base/src/common/utils/SerializableFactory.cc -text
 emu/base/src/common/utils/SimpleTimer.cc -text

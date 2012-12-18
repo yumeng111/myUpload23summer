@@ -1421,6 +1421,15 @@ emu/farmer/xml/generateConfigs.sh -text
 emu/farmer/xml/generateConfigsBdg904.sh -text
 emu/farmer/xml/processingInstructionSetter.xsl -text
 emu/farmer/xml/statusInserter.xsl -text
+emu/me11dev/Makefile -text
+emu/me11dev/html/Manager.css -text
+emu/me11dev/include/emu/me11dev/Application.h -text
+emu/me11dev/include/emu/me11dev/version.h -text
+emu/me11dev/script/startME11Dev.sh -text
+emu/me11dev/src/common/Application.cc -text
+emu/me11dev/src/common/version.cc -text
+emu/me11dev/xml/EmuME11Dev.profile -text
+emu/me11dev/xml/EmuME11Dev.xml -text
 emu/pt/appweb/Makefile -text
 emu/pt/appweb/include/pt/appweb/AccessHandler.h -text
 emu/pt/appweb/include/pt/appweb/Address.h -text

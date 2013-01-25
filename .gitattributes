@@ -565,6 +565,7 @@ emu/drivers/script/K20cosmicdaq -text
 emu/drivers/script/create_char_devices.sh -text
 emu/drivers/script/load_daq_drivers.sh -text
 emu/drivers/script/load_daq_pcvme_drivers.sh -text
+emu/drivers/script/load_igb_emu.sh -text
 emu/drivers/script/pcratedriver -text
 emu/emuDAQ/Makefile -text
 emu/emuDAQ/drivers/Makefile -text

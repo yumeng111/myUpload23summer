@@ -1495,7 +1495,6 @@ emu/farmer/xml/statusInserter.xsl -text
 emu/me11dev/Makefile -text
 emu/me11dev/html/Manager.css -text
 emu/me11dev/include/emu/me11dev/Action.h -text
-emu/me11dev/include/emu/me11dev/ButtonAction.h -text
 emu/me11dev/include/emu/me11dev/Buttons.h -text
 emu/me11dev/include/emu/me11dev/LogAction.h -text
 emu/me11dev/include/emu/me11dev/LongTextBoxAction.h -text
@@ -1505,7 +1504,6 @@ emu/me11dev/include/emu/me11dev/version.h -text
 emu/me11dev/script/kill-run-and-tail -text
 emu/me11dev/script/startME11Dev.sh -text
 emu/me11dev/src/common/Action.cc -text
-emu/me11dev/src/common/ButtonAction.cc -text
 emu/me11dev/src/common/Buttons.cc -text
 emu/me11dev/src/common/LogAction.cc -text
 emu/me11dev/src/common/LongTextBoxAction.cc -text

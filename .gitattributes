@@ -1824,6 +1824,7 @@ emu/step/test/common/configTest.cc -text
 emu/step/xml/EmuSTEP.profile -text
 emu/step/xml/EmuSTEP.xml -text
 emu/step/xml/TestSpecificVME.xml -text
+emu/step/xml/TestSpecificVME_P5.xml -text
 emu/step/xml/VME_MINUS.xml -text
 emu/step/xml/VME_PLUS.xml -text
 emu/step/xml/configuration.xsl -text

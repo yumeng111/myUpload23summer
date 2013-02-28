@@ -1066,6 +1066,7 @@ emu/farmer/xml/statusInserter.xsl -text
 emu/me11dev/Makefile -text
 emu/me11dev/html/Manager.css -text
 emu/me11dev/include/emu/me11dev/Action.h -text
+emu/me11dev/include/emu/me11dev/ActionValue.h -text
 emu/me11dev/include/emu/me11dev/Buttons.h -text
 emu/me11dev/include/emu/me11dev/LogAction.h -text
 emu/me11dev/include/emu/me11dev/LongTextBoxAction.h -text

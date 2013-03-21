@@ -1075,6 +1075,7 @@ emu/me11dev/include/emu/me11dev/utils.h -text
 emu/me11dev/include/emu/me11dev/version.h -text
 emu/me11dev/script/kill-run-and-tail -text
 emu/me11dev/script/startME11Dev.sh -text
+emu/me11dev/spec.template -text
 emu/me11dev/src/common/Action.cc -text
 emu/me11dev/src/common/Buttons.cc -text
 emu/me11dev/src/common/LogAction.cc -text

@@ -1046,7 +1046,6 @@ emu/me11dev/include/emu/me11dev/Action.h -text
 emu/me11dev/include/emu/me11dev/ActionValue.h -text
 emu/me11dev/include/emu/me11dev/Buttons.h -text
 emu/me11dev/include/emu/me11dev/LogAction.h -text
-emu/me11dev/include/emu/me11dev/LongTextBoxAction.h -text
 emu/me11dev/include/emu/me11dev/Manager.h -text
 emu/me11dev/include/emu/me11dev/utils.h -text
 emu/me11dev/include/emu/me11dev/version.h -text
@@ -1056,7 +1055,6 @@ emu/me11dev/spec.template -text
 emu/me11dev/src/common/Action.cc -text
 emu/me11dev/src/common/Buttons.cc -text
 emu/me11dev/src/common/LogAction.cc -text
-emu/me11dev/src/common/LongTextBoxAction.cc -text
 emu/me11dev/src/common/Manager.cc -text
 emu/me11dev/src/common/utils.cc -text
 emu/me11dev/src/common/version.cc -text

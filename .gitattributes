@@ -1057,14 +1057,12 @@ emu/fast_daq/csc_display/src/unpack_data.cc -text
 emu/fast_daq/daq_common/Makefile -text
 emu/fast_daq/daq_common/README -text
 emu/fast_daq/daq_common/include/csc_event.h -text
-emu/fast_daq/daq_common/include/csc_event_cxx.h -text
 emu/fast_daq/daq_common/include/csc_parameters.h -text
 emu/fast_daq/daq_common/include/daq_conf.h -text
 emu/fast_daq/daq_common/include/daq_histo.h -text
 emu/fast_daq/daq_common/include/daq_ipc.h -text
 emu/fast_daq/daq_common/include/daq_ipc_cpp.h -text
 emu/fast_daq/daq_common/include/daq_module.h -text
-emu/fast_daq/daq_common/include/daq_module_mod.h -text
 emu/fast_daq/daq_common/include/daq_types.h -text
 emu/fast_daq/daq_common/include/j_common_data.h -text
 emu/fast_daq/daq_common/include/misc.h -text

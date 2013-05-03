@@ -1040,8 +1040,10 @@ emu/farmer/xml/generateConfigs.sh -text
 emu/farmer/xml/generateConfigsBdg904.sh -text
 emu/farmer/xml/processingInstructionSetter.xsl -text
 emu/farmer/xml/statusInserter.xsl -text
+emu/fast_daq/build.sh -text
 emu/fast_daq/csc_display/Makefile -text
 emu/fast_daq/csc_display/README -text
+emu/fast_daq/csc_display/csc_display.sh -text
 emu/fast_daq/csc_display/include/J_Display.h -text
 emu/fast_daq/csc_display/include/application.h -text
 emu/fast_daq/csc_display/include/csc_unpacker.h -text
@@ -1072,6 +1074,7 @@ emu/fast_daq/daq_common/src/daq_ipc.c -text
 emu/fast_daq/daq_common/src/get_next_event.c -text
 emu/fast_daq/daq_common/src/lex_cable_map.l -text
 emu/fast_daq/daq_common/version -text
+emu/fast_daq/emu-cscdisplay.spec -text
 emu/me11dev/Makefile -text
 emu/me11dev/html/Manager.css -text
 emu/me11dev/include/emu/me11dev/Action.h -text

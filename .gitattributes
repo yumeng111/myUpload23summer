@@ -1342,6 +1342,7 @@ emu/step/script/attributeValueLister.xsl -text
 emu/step/script/compareXMLs.awk -text
 emu/step/script/compareXMLs.sh -text
 emu/step/script/elementLister.xsl -text
+emu/step/script/runAnalysis.sh -text
 emu/step/script/startEmuSTEP.sh -text
 emu/step/spec.template -text
 emu/step/src/common/Application.cc -text

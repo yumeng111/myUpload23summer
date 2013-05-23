@@ -415,6 +415,7 @@ emu/dqm/xml/emuTest_AFEB07.xml -text
 emu/dqm/xml/emuTest_CFEB02.xml -text
 emu/dqm/xml/emuTest_CFEB03.xml -text
 emu/dqm/xml/emuTest_CFEB04.xml -text
+emu/dqm/xml/emuTest_GasGain.xml -text
 emu/drivers/Makefile -text
 emu/drivers/dl2khook/dl2k_driver/Makefile -text
 emu/drivers/dl2khook/dl2k_driver/dl2k.c -text

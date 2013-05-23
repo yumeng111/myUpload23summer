@@ -211,6 +211,7 @@ emu/dqm/calibration/include/emu/dqm/calibration/Test_AFEB07.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/Test_CFEB02.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/Test_CFEB03.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/Test_CFEB04.h -text
+emu/dqm/calibration/include/emu/dqm/calibration/Test_GasGain.h -text
 emu/dqm/calibration/include/emu/dqm/calibration/Test_Generic.h -text
 emu/dqm/calibration/scripts/genRunLists.sh -text
 emu/dqm/calibration/scripts/updateWeb.sh -text
@@ -224,6 +225,7 @@ emu/dqm/calibration/src/common/Test_AFEB07.cc -text
 emu/dqm/calibration/src/common/Test_CFEB02.cc -text
 emu/dqm/calibration/src/common/Test_CFEB03.cc -text
 emu/dqm/calibration/src/common/Test_CFEB04.cc -text
+emu/dqm/calibration/src/common/Test_GasGain.cc -text
 emu/dqm/calibration/src/common/Test_Generic.cc -text
 emu/dqm/calibration/src/common/runEmuCalibAnalysis.cc -text
 emu/dqm/cmssw/Makefile -text

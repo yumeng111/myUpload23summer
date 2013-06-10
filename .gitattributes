@@ -1348,6 +1348,7 @@ emu/step/script/elementLister.xsl -text
 emu/step/script/generateIndexHTML.sh -text
 emu/step/script/linkToChambers.sh -text
 emu/step/script/runAnalysis.sh -text
+emu/step/script/sortResults.sh -text
 emu/step/script/startEmuSTEP.sh -text
 emu/step/spec.template -text
 emu/step/src/common/Application.cc -text

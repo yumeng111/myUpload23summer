@@ -1340,6 +1340,8 @@ emu/step/include/emu/step/Test.h -text
 emu/step/include/emu/step/TestParameters.h -text
 emu/step/include/emu/step/Tester.h -text
 emu/step/include/emu/step/version.h -text
+emu/step/script/AFEBParameterInserter.sh -text
+emu/step/script/AFEBParameterInserter.xsl -text
 emu/step/script/attributeLister.xsl -text
 emu/step/script/attributeValueLister.xsl -text
 emu/step/script/compareXMLs.awk -text

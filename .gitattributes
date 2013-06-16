@@ -32,6 +32,7 @@ emu/base/include/emu/utils/Cgi.h -text
 emu/base/include/emu/utils/Chamber.h -text
 emu/base/include/emu/utils/DOM.h -text
 emu/base/include/emu/utils/IO.h -text
+emu/base/include/emu/utils/Progress.h -text
 emu/base/include/emu/utils/SerializableFactory.h -text
 emu/base/include/emu/utils/SimpleTimer.h -text
 emu/base/include/emu/utils/String.h -text
@@ -53,6 +54,7 @@ emu/base/src/common/WebReporter.cc -text
 emu/base/src/common/utils/Cgi.cc -text
 emu/base/src/common/utils/Chamber.cc -text
 emu/base/src/common/utils/DOM.cc -text
+emu/base/src/common/utils/Progress.cc -text
 emu/base/src/common/utils/SerializableFactory.cc -text
 emu/base/src/common/utils/SimpleTimer.cc -text
 emu/base/src/common/utils/String.cc -text

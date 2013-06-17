@@ -406,6 +406,20 @@ emu/dqm/xml/CSCTF_histograms.xml -text
 emu/dqm/xml/EmuCSCDQM.xml -text
 emu/dqm/xml/EmuDQM.xml -text
 emu/dqm/xml/EmuTFDQM.xml -text
+emu/dqm/xml/STEP/emuChanMasks.xml -text
+emu/dqm/xml/STEP/emuTest_11_AFEBNoise.xml -text
+emu/dqm/xml/STEP/emuTest_16_CFEBConnectivity.xml -text
+emu/dqm/xml/STEP/emuTest_19_CFEBComparators.xml -text
+emu/dqm/xml/STEP/emuTest_21_CFEBComparatorLogic.xml -text
+emu/dqm/xml/STEP/emuTest_25_ALCTTrigger.xml -text
+emu/dqm/xml/STEP/emuTest_30_PipelineDepth.xml -text
+emu/dqm/xml/STEP/emuTest_AFEB05.xml -text
+emu/dqm/xml/STEP/emuTest_AFEB06.xml -text
+emu/dqm/xml/STEP/emuTest_AFEB07.xml -text
+emu/dqm/xml/STEP/emuTest_CFEB02.xml -text
+emu/dqm/xml/STEP/emuTest_CFEB03.xml -text
+emu/dqm/xml/STEP/emuTest_CFEB04.xml -text
+emu/dqm/xml/STEP/emuTest_GasGain.xml -text
 emu/dqm/xml/csc_map.db -text svneol=unset#unset
 emu/dqm/xml/csc_map.txt -text
 emu/dqm/xml/emuChanMasks.xml -text

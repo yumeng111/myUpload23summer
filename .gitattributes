@@ -32,6 +32,7 @@ emu/base/include/emu/utils/Cgi.h -text
 emu/base/include/emu/utils/Chamber.h -text
 emu/base/include/emu/utils/DOM.h -text
 emu/base/include/emu/utils/IO.h -text
+emu/base/include/emu/utils/IO.i -text
 emu/base/include/emu/utils/Progress.h -text
 emu/base/include/emu/utils/SerializableFactory.h -text
 emu/base/include/emu/utils/SimpleTimer.h -text

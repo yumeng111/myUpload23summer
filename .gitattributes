@@ -37,6 +37,7 @@ emu/base/include/emu/utils/Progress.h -text
 emu/base/include/emu/utils/SerializableFactory.h -text
 emu/base/include/emu/utils/SimpleTimer.h -text
 emu/base/include/emu/utils/String.h -text
+emu/base/include/emu/utils/String.i -text
 emu/base/include/emu/utils/System.h -text
 emu/base/include/emu/utils/Xalan.h -text
 emu/base/script/testDataWarehouse.sh -text

@@ -182,6 +182,7 @@ emu/daq/ta/src/common/Application.cc -text
 emu/daq/ta/src/common/TriggerGenerator.cc -text
 emu/daq/ta/src/common/version.cc -text
 emu/daq/util/script/emuParameterGet -text
+emu/daq/util/script/emuRawBrowser -text
 emu/daq/util/script/feedEmuToIguana -text
 emu/daq/util/script/sendSOAP -text
 emu/daq/util/script/setVersion -text

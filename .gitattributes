@@ -538,6 +538,8 @@ emu/drivers/gbit-vme/eth_hook_jtag_simple/compile -text
 emu/drivers/gbit-vme/eth_hook_jtag_simple/eth_hook.c -text
 emu/drivers/gbit-vme/eth_hook_jtag_simple/schar.h -text
 emu/drivers/igb_emu/eth_hook_2_daq/Makefile -text
+emu/drivers/igb_emu/eth_hook_2_daq/ddu/Makefile -text
+emu/drivers/igb_emu/eth_hook_2_daq/dmb/Makefile -text
 emu/drivers/igb_emu/eth_hook_2_daq/eth_hook_2_daq.c -text
 emu/drivers/igb_emu/eth_hook_2_daq/eth_hook_2_daq.h -text
 emu/drivers/igb_emu/eth_hook_2_daq/schar.h -text
@@ -545,6 +547,8 @@ emu/drivers/igb_emu/eth_hook_2_vme/Makefile -text
 emu/drivers/igb_emu/eth_hook_2_vme/eth_hook_2_vme.c -text
 emu/drivers/igb_emu/eth_hook_2_vme/schar.h -text
 emu/drivers/igb_emu/eth_hook_3_daq/Makefile -text
+emu/drivers/igb_emu/eth_hook_3_daq/ddu/Makefile -text
+emu/drivers/igb_emu/eth_hook_3_daq/dmb/Makefile -text
 emu/drivers/igb_emu/eth_hook_3_daq/eth_hook_3_daq.c -text
 emu/drivers/igb_emu/eth_hook_3_daq/eth_hook_3_daq.h -text
 emu/drivers/igb_emu/eth_hook_3_daq/schar.h -text
@@ -552,6 +556,8 @@ emu/drivers/igb_emu/eth_hook_3_vme/Makefile -text
 emu/drivers/igb_emu/eth_hook_3_vme/eth_hook_3_vme.c -text
 emu/drivers/igb_emu/eth_hook_3_vme/schar.h -text
 emu/drivers/igb_emu/eth_hook_4_daq/Makefile -text
+emu/drivers/igb_emu/eth_hook_4_daq/ddu/Makefile -text
+emu/drivers/igb_emu/eth_hook_4_daq/dmb/Makefile -text
 emu/drivers/igb_emu/eth_hook_4_daq/eth_hook_4_daq.c -text
 emu/drivers/igb_emu/eth_hook_4_daq/eth_hook_4_daq.h -text
 emu/drivers/igb_emu/eth_hook_4_daq/schar.h -text
@@ -559,6 +565,8 @@ emu/drivers/igb_emu/eth_hook_4_vme/Makefile -text
 emu/drivers/igb_emu/eth_hook_4_vme/eth_hook_4_vme.c -text
 emu/drivers/igb_emu/eth_hook_4_vme/schar.h -text
 emu/drivers/igb_emu/eth_hook_5_daq/Makefile -text
+emu/drivers/igb_emu/eth_hook_5_daq/ddu/Makefile -text
+emu/drivers/igb_emu/eth_hook_5_daq/dmb/Makefile -text
 emu/drivers/igb_emu/eth_hook_5_daq/eth_hook_5_daq.c -text
 emu/drivers/igb_emu/eth_hook_5_daq/eth_hook_5_daq.h -text
 emu/drivers/igb_emu/eth_hook_5_daq/schar.h -text

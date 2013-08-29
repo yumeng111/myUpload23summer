@@ -538,6 +538,7 @@ emu/drivers/gbit-vme/eth_hook_jtag_simple/compile -text
 emu/drivers/gbit-vme/eth_hook_jtag_simple/eth_hook.c -text
 emu/drivers/gbit-vme/eth_hook_jtag_simple/schar.h -text
 emu/drivers/igb_emu/eth_hook_2_daq/Makefile -text
+emu/drivers/igb_emu/eth_hook_2_daq/clone.sh -text
 emu/drivers/igb_emu/eth_hook_2_daq/ddu/Makefile -text
 emu/drivers/igb_emu/eth_hook_2_daq/dmb/Makefile -text
 emu/drivers/igb_emu/eth_hook_2_daq/eth_hook_2_daq.c -text

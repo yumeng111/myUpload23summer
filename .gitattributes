@@ -196,7 +196,6 @@ emu/daq/writer/src/common/version.cc -text
 emu/daq/xml/test_daq.xml -text
 emu/doc/html/EmuFSM.xhtml -text
 emu/doc/html/index.html -text
-emu/doc/html/overview.html -text
 emu/dqm/Makefile -text
 emu/dqm/calibration/Makefile -text
 emu/dqm/calibration/include/emu/dqm/calibration/CFEBCanvas.h -text

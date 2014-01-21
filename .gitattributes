@@ -516,6 +516,7 @@ emu/drivers/e1000hook/mmaptest2/mmap.c -text
 emu/drivers/emu-daqdriver.spec -text
 emu/drivers/emu-daqdriver904.spec -text
 emu/drivers/emu-daqpcvme.spec -text
+emu/drivers/emu-e1000_emu.spec -text
 emu/drivers/emu-igb_emu.spec -text
 emu/drivers/emu-pcvme-slc5.spec -text
 emu/drivers/emu-pcvme.spec -text

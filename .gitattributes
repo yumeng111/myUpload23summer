@@ -129,6 +129,7 @@ emu/daq/reader/Makefile -text
 emu/daq/reader/include/emu/daq/reader/Base.h -text
 emu/daq/reader/include/emu/daq/reader/Clock.h -text
 emu/daq/reader/include/emu/daq/reader/DDUHeader.h -text
+emu/daq/reader/include/emu/daq/reader/DMBHeader.h -text
 emu/daq/reader/include/emu/daq/reader/RawDataFile.h -text
 emu/daq/reader/include/emu/daq/reader/SLink.h -text
 emu/daq/reader/include/emu/daq/reader/Spy.h -text

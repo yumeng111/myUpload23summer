@@ -1052,6 +1052,7 @@ emu/emuDCS/PeripheralCore/include/emu/pc/RAT.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/TMB.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/TMBTester.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/TMB_constants.h -text
+emu/emuDCS/PeripheralCore/include/emu/pc/Unpacker.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/VMECC.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/VMEController.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/VMEModule.h -text
@@ -1077,6 +1078,7 @@ emu/emuDCS/PeripheralCore/src/common/PROBLEM.cc -text
 emu/emuDCS/PeripheralCore/src/common/RAT.cc -text
 emu/emuDCS/PeripheralCore/src/common/TMB.cc -text
 emu/emuDCS/PeripheralCore/src/common/TMBTester.cc -text
+emu/emuDCS/PeripheralCore/src/common/Unpacker.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMECC.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEController.cc -text
 emu/emuDCS/PeripheralCore/src/common/VMEController_jtag.cc -text

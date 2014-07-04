@@ -363,6 +363,15 @@ emu/dqm/dbutils/include/emu/dqm/dbutils/cscmap1.h -text
 emu/dqm/dbutils/src/common/init_report_db.cc -text
 emu/dqm/dbutils/src/common/sqlite_read_mappings.cc -text
 emu/dqm/dbutils/src/common/sqlite_write_mappings.cc -text
+emu/dqm/dcfebpipeline/Makefile -text
+emu/dqm/dcfebpipeline/include/emu/dqm/dcfebpipeline/DCFEBSample.h -text
+emu/dqm/dcfebpipeline/include/emu/dqm/dcfebpipeline/PipelineAnalyzer.h -text
+emu/dqm/dcfebpipeline/include/emu/dqm/dcfebpipeline/PipelineDepthFinder.h -text
+emu/dqm/dcfebpipeline/include/emu/dqm/dcfebpipeline/STL_ROOT.h -text
+emu/dqm/dcfebpipeline/src/common/DCFEBSample.cc -text
+emu/dqm/dcfebpipeline/src/common/PipelineAnalyzer.cc -text
+emu/dqm/dcfebpipeline/src/common/PipelineDepthFinder.cc -text
+emu/dqm/dcfebpipeline/src/common/analyzePipelineDepthScan.cc -text
 emu/dqm/html/cscdqm/canvases_list.js -text
 emu/dqm/html/cscdqm/csc_map.js -text
 emu/dqm/html/cscdqm/ddu_csc_map.js -text

@@ -1257,6 +1257,7 @@ emu/farmer/html/XDAQConfig_XSLT.xml -text
 emu/farmer/images/EmuFarmer.jpg -text svneol=unset#unset
 emu/farmer/include/emu/farmer/Application.h -text
 emu/farmer/include/emu/farmer/ProcessDescriptor.h -text
+emu/farmer/include/emu/farmer/RunningExecutives.h -text
 emu/farmer/include/emu/farmer/utils/Cgi.h -text
 emu/farmer/include/emu/farmer/utils/FileSystem.h -text
 emu/farmer/include/emu/farmer/utils/SOAP.h -text
@@ -1267,6 +1268,7 @@ emu/farmer/src/common/Application.cc -text
 emu/farmer/src/common/Cgi.cc -text
 emu/farmer/src/common/FileSystem.cc -text
 emu/farmer/src/common/ProcessDescriptor.cc -text
+emu/farmer/src/common/RunningExecutives.cc -text
 emu/farmer/src/common/SOAP.cc -text
 emu/farmer/src/common/Xalan.cc -text
 emu/farmer/src/common/version.cc -text

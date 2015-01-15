@@ -409,6 +409,7 @@ emu/dqm/tfanalyzer/src/common/EmuTFvalidator.cc -text
 emu/dqm/tfanalyzer/src/common/EmuTFxmlParsing.cc -text
 emu/dqm/tfanalyzer/src/common/RegEx.cc -text
 emu/dqm/tfanalyzer/src/common/runEmuTFAnalyzer.cc -text
+emu/dqm/tfanalyzer/src/common/runEmuTFAnalyzerTest.cc -text
 emu/dqm/tfanalyzer/test/common/EmuTFtest.cpp -text
 emu/dqm/tfanalyzer/test/common/test.cc -text
 emu/dqm/tfanalyzer/xml/CSCTF_canvases.xml -text

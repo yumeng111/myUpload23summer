@@ -1813,7 +1813,6 @@ emu/emuDCS/PeripheralCore/include/emu/pc/EmuLogger.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/GenDATA.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/JTAG_constants.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/MPC.h -text
-emu/emuDCS/PeripheralCore/include/emu/pc/ODAQMB.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/PROBLEM.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/RAT.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/TMB.h -text
@@ -1840,7 +1839,6 @@ emu/emuDCS/PeripheralCore/src/common/EPROMBadBit_SVFFileFix.cc -text
 emu/emuDCS/PeripheralCore/src/common/EmuEndcap.cc -text
 emu/emuDCS/PeripheralCore/src/common/EmuLogger.cc -text
 emu/emuDCS/PeripheralCore/src/common/MPC.cc -text
-emu/emuDCS/PeripheralCore/src/common/ODAQMB.cc -text
 emu/emuDCS/PeripheralCore/src/common/PROBLEM.cc -text
 emu/emuDCS/PeripheralCore/src/common/RAT.cc -text
 emu/emuDCS/PeripheralCore/src/common/TMB.cc -text

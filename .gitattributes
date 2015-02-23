@@ -1756,7 +1756,6 @@ emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateManager.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateMonitor.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateService.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateTimer.cc -text
-emu/emuDCS/PeripheralApps/src/common/EmuTStore.cc -text
 emu/emuDCS/PeripheralApps/src/common/XMLParser.cc -text
 emu/emuDCS/PeripheralApps/test/common/CrateTiming.cpp -text
 emu/emuDCS/PeripheralApps/test/common/EmuConfig.cpp -text

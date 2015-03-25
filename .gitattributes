@@ -2265,6 +2265,7 @@ emu/supervisor/src/common/TCDSHardwareLease.cc -text
 emu/supervisor/src/common/version.cc -text
 emu/supervisor/test/common/testRegDump.txt -text
 emu/supervisor/test/common/testRegDumpPreprocessor.cc -text
+emu/supervisor/test/common/testSubstituteRegisters.txt -text
 emu/supervisor/xml/test_supervisor.xml -text
 emu/web_csc_display/Makefile -text
 emu/web_csc_display/include/csc_display/JSON.h -text

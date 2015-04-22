@@ -1094,6 +1094,7 @@ emu/drivers/e1000_emu/eth_hook_2_daq/eth_hook_2_daq.h -text
 emu/drivers/e1000_emu/eth_hook_2_daq/schar.h -text
 emu/drivers/e1000_emu/eth_hook_2_vme/Makefile -text
 emu/drivers/e1000_emu/eth_hook_2_vme/SLC_version.h -text
+emu/drivers/e1000_emu/eth_hook_2_vme/clone.sh -text
 emu/drivers/e1000_emu/eth_hook_2_vme/eth_hook_2_vme.c -text
 emu/drivers/e1000_emu/eth_hook_2_vme/schar.h -text
 emu/drivers/e1000_emu/eth_hook_3_daq/Makefile -text

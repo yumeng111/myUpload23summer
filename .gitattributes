@@ -80,12 +80,6 @@ emu/cscLevelOneFM/gui/jsp/controlPanel.jsp -text
 emu/cscLevelOneFM/gui/jsp/convert.jsp -text
 emu/cscLevelOneFM/gui/jsp/convert2Html.jsp -text
 emu/cscLevelOneFM/gui/jsp/tree.jsp -text
-emu/cscLevelOneFM/gui/tld/control.tld -text
-emu/cscLevelOneFM/gui/tld/cscLevelOneFMParameters.tld -text
-emu/cscLevelOneFM/gui/tld/globalParameter.tld -text
-emu/cscLevelOneFM/gui/tld/menu.tld -text
-emu/cscLevelOneFM/gui/tld/notification.tld -text
-emu/cscLevelOneFM/gui/tld/stateNotification.tld -text
 emu/cscLevelOneFM/installation/build.xml -text
 emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/MyErrorHandler.java -text
 emu/cscLevelOneFM/src/rcms/fm/app/cscLevelOne/MyEventHandler.java -text

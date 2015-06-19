@@ -335,6 +335,7 @@ emu/dqm/cscanalyzer/include/emu/dqm/cscanalyzer/CSCStripClusterFinder.h -text
 emu/dqm/cscanalyzer/include/emu/dqm/cscanalyzer/CSCStripClusterFitData.h -text
 emu/dqm/cscanalyzer/include/emu/dqm/cscanalyzer/ClusterLocalMax.h -text
 emu/dqm/cscanalyzer/include/emu/dqm/cscanalyzer/EmuPlotter.h -text
+emu/dqm/cscanalyzer/include/emu/dqm/cscanalyzer/version.h -text
 emu/dqm/cscanalyzer/src/common/CSCStripCluster.cc -text
 emu/dqm/cscanalyzer/src/common/CSCStripClusterFinder.cc -text
 emu/dqm/cscanalyzer/src/common/CSCStripClusterFitData.cc -text

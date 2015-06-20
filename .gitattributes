@@ -392,6 +392,7 @@ emu/dqm/dcfebpipeline/src/common/semantic.cache -text
 emu/dqm/dist/README.txt -text
 emu/dqm/dist/root.spec -text
 emu/dqm/dist/rpmmacros -text
+emu/dqm/html/README.txt -text
 emu/dqm/html/browser/canvases_list.js -text
 emu/dqm/html/browser/csc_map.js -text
 emu/dqm/html/browser/ddu_csc_map.js -text
@@ -412,6 +413,7 @@ emu/dqm/html/cscdqm/known_problems_preLS1.js -text
 emu/dqm/html/cscdqm/runs_list.js -text
 emu/dqm/html/cscdqm/tests_map.js -text
 emu/dqm/html/cscdqm/vme_pc_map.js -text
+emu/dqm/html/highcharts.tgz -text
 emu/dqm/html/tfdqm/canvases_list.js -text
 emu/dqm/html/tfdqm/index.html -text
 emu/dqm/html/tfdqm/tf_map.js -text

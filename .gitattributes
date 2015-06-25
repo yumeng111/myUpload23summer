@@ -403,6 +403,10 @@ emu/dqm/html/browser/known_problems_preLS1.js -text
 emu/dqm/html/browser/runs_list.js -text
 emu/dqm/html/browser/tests_map.js -text
 emu/dqm/html/browser/vme_pc_map.js -text
+emu/dqm/html/calib/csc_map.js -text
+emu/dqm/html/calib/genCalibRunLists.sh -text
+emu/dqm/html/calib/index.html -text
+emu/dqm/html/calib/tests_list.js -text
 emu/dqm/html/cscdqm/canvases_list.js -text
 emu/dqm/html/cscdqm/csc_map.js -text
 emu/dqm/html/cscdqm/ddu_csc_map.js -text

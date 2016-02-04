@@ -68,6 +68,16 @@ emu/base/test/common/testException.cc -text
 emu/base/test/common/testSystem.cc -text
 emu/base/xml/EmuChainsaw.xml -text
 emu/base/xml/EmuChainsawIntranet.xml -text
+emu/cscL1FM/.classpath -text
+emu/cscL1FM/duck/tryTCDS.duck -text
+emu/cscL1FM/installation/build.xml -text
+emu/cscL1FM/src/rcms/fm/app/cscL1FM/MyErrorHandler.java -text
+emu/cscL1FM/src/rcms/fm/app/cscL1FM/MyEventHandler.java -text
+emu/cscL1FM/src/rcms/fm/app/cscL1FM/MyFunctionManager.java -text
+emu/cscL1FM/src/rcms/fm/app/cscL1FM/MyInputs.java -text
+emu/cscL1FM/src/rcms/fm/app/cscL1FM/MyParameters.java -text
+emu/cscL1FM/src/rcms/fm/app/cscL1FM/MyStateMachineDefinition.java -text
+emu/cscL1FM/src/rcms/fm/app/cscL1FM/MyStates.java -text
 emu/cscLevelOneFM/build.xml -text
 emu/cscLevelOneFM/duck/duckLoader -text
 emu/cscLevelOneFM/duck/levelOne.xml -text

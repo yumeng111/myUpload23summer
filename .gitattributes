@@ -1816,7 +1816,6 @@ emu/emuDCS/PeripheralApps/test/common/resetcc.cpp -text
 emu/emuDCS/PeripheralApps/test/common/scancrate.cpp -text
 emu/emuDCS/PeripheralApps/test/common/slicetestconfig.cpp -text
 emu/emuDCS/PeripheralApps/test/common/testtmbmain.cpp -text
-emu/emuDCS/PeripheralApps/xml/EMUsystem.view -text
 emu/emuDCS/PeripheralApps/xml/EmuCluster.xml -text
 emu/emuDCS/PeripheralApps/xml/EmuPC.rnc -text
 emu/emuDCS/PeripheralApps/xml/RUI-to-chamber_mapping.xml -text

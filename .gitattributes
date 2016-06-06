@@ -1836,6 +1836,11 @@ emu/emuDCS/PeripheralApps/xml/tmb.vrf -text
 emu/emuDCS/PeripheralApps/xml/tooltip.js -text
 emu/emuDCS/PeripheralApps/xml/update_xml_file.pl -text
 emu/emuDCS/PeripheralApps/xml/views.xml -text
+emu/emuDCS/PeripheralApps/xml/virtex6_trailer.svf -text
+emu/emuDCS/PeripheralApps/xml/virtex6lx130_core.mcs -text
+emu/emuDCS/PeripheralApps/xml/virtex6lx130_header.svf -text
+emu/emuDCS/PeripheralApps/xml/virtex6lx240_core.mcs -text
+emu/emuDCS/PeripheralApps/xml/virtex6lx240_header.svf -text
 emu/emuDCS/PeripheralApps/xml/xdaqPeripheralCrate.xml -text
 emu/emuDCS/PeripheralCore/Makefile -text
 emu/emuDCS/PeripheralCore/include/emu/pc/ALCTController.h -text

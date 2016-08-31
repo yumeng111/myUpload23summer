@@ -2253,6 +2253,7 @@ emu/step/include/emu/step/Application.h -text
 emu/step/include/emu/step/ChamberMap.h -text
 emu/step/include/emu/step/Configuration.h -text
 emu/step/include/emu/step/Manager.h -text
+emu/step/include/emu/step/PeriodicDumper.h -text
 emu/step/include/emu/step/Test.h -text
 emu/step/include/emu/step/TestParameters.h -text
 emu/step/include/emu/step/Tester.h -text
@@ -2274,6 +2275,7 @@ emu/step/src/common/Application.cc -text
 emu/step/src/common/ChamberMap.cc -text
 emu/step/src/common/Configuration.cc -text
 emu/step/src/common/Manager.cc -text
+emu/step/src/common/PeriodicDumper.cc -text
 emu/step/src/common/Test.cc -text
 emu/step/src/common/TestParameters.cc -text
 emu/step/src/common/Tester.cc -text

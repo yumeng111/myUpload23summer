@@ -1829,6 +1829,8 @@ emu/emuDCS/PeripheralApps/xml/counterMonitor_XSL.xml -text
 emu/emuDCS/PeripheralApps/xml/delay_tests.cpp -text
 emu/emuDCS/PeripheralApps/xml/insert_timing_parameters.pl -text
 emu/emuDCS/PeripheralApps/xml/mpc.vrf -text
+emu/emuDCS/PeripheralApps/xml/mpc_0.vrf -text
+emu/emuDCS/PeripheralApps/xml/mpc_1.vrf -text
 emu/emuDCS/PeripheralApps/xml/peripheralCrateTemplate.xml -text
 emu/emuDCS/PeripheralApps/xml/readme -text
 emu/emuDCS/PeripheralApps/xml/test.xml -text

@@ -193,11 +193,14 @@ emu/daq/util/script/feedEmuToIguana -text
 emu/daq/util/script/sendSOAP -text
 emu/daq/util/script/setVersion -text
 emu/daq/writer/Makefile -text
+emu/daq/writer/include/emu/daq/writer/CheckSum.h -text
 emu/daq/writer/include/emu/daq/writer/RateLimiter.h -text
 emu/daq/writer/include/emu/daq/writer/RawDataFile.h -text
+emu/daq/writer/include/emu/daq/writer/TransferJSON.h -text
 emu/daq/writer/include/emu/daq/writer/version.h -text
 emu/daq/writer/src/common/RateLimiter.cc -text
 emu/daq/writer/src/common/RawDataFile.cc -text
+emu/daq/writer/src/common/TransferJSON.cc -text
 emu/daq/writer/src/common/version.cc -text
 emu/daq/xml/test_daq.xml -text
 emu/doc/html/EmuFSM.xhtml -text

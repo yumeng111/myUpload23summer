@@ -398,7 +398,7 @@ function TMBPanel( dataURLs ) {
 	var selectedSample = $('input:radio[name=sampleSelector]:checked').val();
 	//console.log( selectedUnit+' '+selectedSample );
 	$.each( this.xmlDoc, function(side,xml){
-	    console.log( 'Processing '+side );
+	    // console.log( 'Processing '+side );
 	    //if (xml) console.log( (new XMLSerializer()).serializeToString( xml ) );
 	    // var th_sum_endcap = document.getElementById( 'sum_endcap_'+side );
 	    // th_sum_endcap.innerHTML = 0;

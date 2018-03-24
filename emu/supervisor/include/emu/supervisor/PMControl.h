@@ -8,7 +8,7 @@ namespace emu{
     class PMControl : public TCDSControl{
     public:
       PMControl( xdaq::Application *parent, 
-		 xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
+		 const xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
 		 xdata::String partition );
       PMControl& setRunType( xdata::String & runType );
       PMControl& configure( xdata::String& hardwareConfigurationString );

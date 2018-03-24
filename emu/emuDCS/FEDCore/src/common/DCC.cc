@@ -6,7 +6,7 @@
 #include <vector>
 #include <sstream>
 //#include <cmath>
-#include <unistd.h>
+#include <unistd.h> // for usleep
 
 #include "emu/fed/JTAGElement.h"
 #include "emu/fed/FIFO.h"

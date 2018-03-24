@@ -104,7 +104,7 @@ namespace emu { namespace base {
     unsigned int                             maxQueueLength_; ///< Let at most this many fact requests or facts accumulate.
     deque<emu::base::FactRequestCollection>  factRequestCollections_; ///< The container of fact requests received.
     deque<emu::base::FactCollection>         factsToSend_; ///< The container of facts to send.
-    xdaq::ApplicationDescriptor             *targetDescriptor_;	///< The app descriptor of the expert system.
+    const xdaq::ApplicationDescriptor       *targetDescriptor_;	///< The app descriptor of the expert system.
     emu::base::Stopwatch                    *stopwatch_; ///< A stopwatch to time the moratirium on sending following a SOAP timeout.
     time_t                                   moratoriumAfterTimeout_; ///< The moratoriumin seconds on sending further facts following a SOAP timeout.
     bool                                     isDisabled_; ///< If TRUE, sending facts is disabled.

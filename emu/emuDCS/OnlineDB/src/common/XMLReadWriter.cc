@@ -151,7 +151,7 @@ throw (emu::exception::ConfigurationException)
   
   // key is column name, value is column type
   typedef std::map<std::string, std::string, xdata::Table::ci_less> DefinitionType;
-  DefinitionType &definition = datamap_[type].getTableDefinition();
+  DefinitionType definition( datamap_[type].getTableDefinition() );
   //datamap_[type].writeTo(std::cout); std::cout<<std::endl;
 
   // append new row

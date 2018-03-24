@@ -2041,10 +2041,10 @@ xoap::MessageReference ConfigEditor::sendSOAPMessage(xoap::MessageReference &mes
 
   try
   {
-    xdaq::ApplicationDescriptor * tstoreDescriptor =
+    const xdaq::ApplicationDescriptor * tstoreDescriptor =
         getApplicationContext()->getFirstApplication("tstore::TStore")->getApplicationDescriptor();
         //getApplicationContext()->getDefaultZone()->getApplicationDescriptor("tstore::TStore", 0);
-    xdaq::ApplicationDescriptor * tstoretestDescriptor = this->getApplicationDescriptor();
+    const xdaq::ApplicationDescriptor * tstoretestDescriptor = this->getApplicationDescriptor();
     reply = getApplicationContext()->postSOAP(message, *tstoretestDescriptor, *tstoreDescriptor);
   }
   catch (xdaq::exception::Exception& e)

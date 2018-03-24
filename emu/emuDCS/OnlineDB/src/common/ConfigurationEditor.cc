@@ -2158,9 +2158,9 @@ xoap::MessageReference ConfigurationEditor::sendSOAPMessage(xoap::MessageReferen
 
   try
   {
-    xdaq::ApplicationDescriptor * tstoreDescriptor =
+    const xdaq::ApplicationDescriptor * tstoreDescriptor =
         getApplicationContext()->getDefaultZone()->getApplicationDescriptor("tstore::TStore", 0);
-    xdaq::ApplicationDescriptor * tstoretestDescriptor = this->getApplicationDescriptor();
+    const xdaq::ApplicationDescriptor * tstoretestDescriptor = this->getApplicationDescriptor();
     reply = getApplicationContext()->postSOAP(message, *tstoretestDescriptor, *tstoreDescriptor);
   }
   catch (xdaq::exception::Exception& e)

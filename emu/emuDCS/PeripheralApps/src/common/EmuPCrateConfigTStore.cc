@@ -3022,7 +3022,7 @@ void EmuPCrateConfigTStore::diffCSC(
       new_emu_config_id, new_periph_config_id, results);
 
   std::vector<std::string> columns = results.getColumns();
-  std::map<std::string, std::string, xdata::Table::ci_less> &definition = results.getTableDefinition();
+  std::map<std::string, std::string, xdata::Table::ci_less> definition(results.getTableDefinition());
   xdata::Table thisRowOnly(definition);
   for (unsigned rowIndex = 0; rowIndex < results.getRowCount(); rowIndex++)
   {

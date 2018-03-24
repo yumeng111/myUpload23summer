@@ -4,15 +4,15 @@ using namespace XERCES_CPP_NAMESPACE;
 
 using namespace emu::dqm::utils;
 
-Test_CFEB03::Test_CFEB03(std::string dfile): Test_Generic(dfile)
+Test_CFEB03::Test_CFEB03(std::string dfile): Test_Generic(dfile, "CFEB03")
 {
-  testID = "CFEB03";
+  // testID = "CFEB03";
   nExpectedEvents = 4000;
   dduID=0;
   binCheckMask=0x1FFB7BF6;
   ltc_bug=2;
 
-  logger = Logger::getInstance(testID);
+  // logger = Logger::getInstance(testID);
 
   for (int i=0; i<64; i++)
     It[i] = conv.elec(i*6.25, 50.);

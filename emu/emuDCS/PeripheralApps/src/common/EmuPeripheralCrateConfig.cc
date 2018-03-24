@@ -8748,6 +8748,8 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
   *out << cgicc::br();
   //
   alct->ReadFastControlId();
+  alct->PrintFastControlId();
+  alct->PrintFastControlChipCode();
   //
   alct->RedirectOutput(out);
   //
@@ -8764,12 +8766,11 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
 	 << " "      << alct->GetExpectedFastControlYear()
 	 << ")";
   }
+  *out << cgicc::span() << cgicc::br();
+  alct->PrintFastControlChipCode();
   //
   alct->RedirectOutput(&std::cout);
-  //
-  *out << cgicc::span();
   *out << cgicc::fieldset();
-  //
   //
   //
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");

@@ -9,8 +9,8 @@ namespace dqm
 std::string getScalarParam
 (
   xdaq::ApplicationContext *appContext_,
-  xdaq::ApplicationDescriptor* appSrcDescriptor,
-  xdaq::ApplicationDescriptor* appDescriptor,
+  const xdaq::ApplicationDescriptor* appSrcDescriptor,
+  const xdaq::ApplicationDescriptor* appDescriptor,
   const std::string                 paramName,
   const std::string                 paramType
 )
@@ -63,8 +63,8 @@ throw (emu::dqm::exception::Exception)
 void setScalarParam
 (
   xdaq::ApplicationContext *appContext_,
-  xdaq::ApplicationDescriptor* appSrcDescriptor,
-  xdaq::ApplicationDescriptor* appDescriptor,
+  const xdaq::ApplicationDescriptor* appSrcDescriptor,
+  const xdaq::ApplicationDescriptor* appDescriptor,
   const std::string                 paramName,
   const std::string                 paramType,
   const std::string                 paramValue
@@ -318,16 +318,16 @@ throw (emu::dqm::exception::Exception)
 }
 
 
-std::vector< xdaq::ApplicationDescriptor* > getAppDescriptors
+std::vector<const xdaq::ApplicationDescriptor* > getAppDescriptors
 (
-  xdaq::Zone             *zone,
+  const xdaq::Zone             *zone,
   const std::string           appClass
 )
 throw (emu::dqm::exception::Exception)
 {
-  std::vector< xdaq::ApplicationDescriptor* > orderedDescriptors;
-  std::set< xdaq::ApplicationDescriptor* > descriptors;
-  int nbApps = 0;
+  std::vector< const xdaq::ApplicationDescriptor* > orderedDescriptors;
+  std::set< const xdaq::ApplicationDescriptor* > descriptors;
+  // int nbApps = 0;
 
   try
   {
@@ -342,15 +342,15 @@ throw (emu::dqm::exception::Exception)
     XCEPT_RETHROW(emu::dqm::exception::Exception, s, e);
   }
 
-  nbApps = descriptors.size();
+  // nbApps = descriptors.size();
 
   // Fill application descriptors in instance order allowing non-contiguous numbering
   while ( !descriptors.empty() )
   {
     // Find app with smallest instance number
     unsigned int minInstance = 99999;
-    std::set< xdaq::ApplicationDescriptor* >::iterator adOfSmallest;
-    std::set< xdaq::ApplicationDescriptor* >::iterator ad;
+    std::set< const xdaq::ApplicationDescriptor* >::iterator adOfSmallest;
+    std::set< const xdaq::ApplicationDescriptor* >::iterator ad;
     for ( ad=descriptors.begin(); ad!=descriptors.end(); ++ad )
       if ( (*ad)->getInstance() < minInstance )
       {
@@ -372,8 +372,8 @@ void sendFSMEventToApp
 (
   const std::string                 eventName,
   xdaq::ApplicationContext *appContext_,
-  xdaq::ApplicationDescriptor* appSrcDescriptor,
-  xdaq::ApplicationDescriptor* appDescriptor
+  const xdaq::ApplicationDescriptor* appSrcDescriptor,
+  const xdaq::ApplicationDescriptor* appDescriptor
 )
 throw (emu::dqm::exception::Exception)
 {

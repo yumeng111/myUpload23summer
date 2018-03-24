@@ -27,7 +27,9 @@
 
 #include "emu/db/ConnectionsDB.h"
 
-class ConnectionsGUI: public xdaq::Application
+#include "xgi/framework/Method.h"
+
+class ConnectionsGUI: public xdaq::Application, public xgi::framework::UIManager
 {
  public:
   XDAQ_INSTANTIATOR();
@@ -38,11 +40,11 @@ class ConnectionsGUI: public xdaq::Application
   std::string ToPrint1;
   std::string ToPrint2;
 
-ConnectionsGUI(xdaq::ApplicationStub * s)throw (xdaq::exception::Exception): xdaq::Application(s) 
+ConnectionsGUI(xdaq::ApplicationStub * s)throw (xdaq::exception::Exception): xdaq::Application(s), xgi::framework::UIManager(this)
 {	
-  xgi::bind(this,&ConnectionsGUI::Default, "Default");
-  xgi::bind(this,&ConnectionsGUI::MainPage, "MainPage");
-  xgi::bind(this,&ConnectionsGUI::CallBack, "CallBack");
+  xgi::framework::deferredbind(this,this,&ConnectionsGUI::Default, "Default");
+  xgi::framework::deferredbind(this,this,&ConnectionsGUI::MainPage, "MainPage");
+  xgi::framework::deferredbind(this,this,&ConnectionsGUI::CallBack, "CallBack");
  
   condb = new emu::db::ConnectionsDB();
 
@@ -139,7 +141,6 @@ void MyHeader(xgi::Input * in, xgi::Output * out, std::string title )
   //*out << "<a href=\"/\"><img border=\"0\" src=\"/daq/xgi/images/XDAQLogo.gif\" title=\"XDAQ\" alt=\"\" style=\"width: 145px; height: 89px;\"></a>" << std::endl;
   //
   std::string myUrn = getApplicationDescriptor()->getURN().c_str();
-  xgi::Utils::getPageHeader(out,title,myUrn,"","");
   //
 }
 

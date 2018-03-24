@@ -125,7 +125,7 @@ namespace emu {
 			throw (emu::fed::exception::SOAPException);
 
 			/** Send a SOAP message to the given application **/
-			xoap::MessageReference sendSOAPMessage(const xoap::MessageReference &message, xdaq::ApplicationDescriptor *app)
+			xoap::MessageReference sendSOAPMessage(const xoap::MessageReference &message, const xdaq::ApplicationDescriptor *app)
 			throw (emu::fed::exception::SOAPException);
 			
 			/// The application context from which to send the SOAP messages

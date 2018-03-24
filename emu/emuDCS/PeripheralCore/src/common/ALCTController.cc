@@ -1964,11 +1964,23 @@ void ALCTController::PrintFastControlId() {
   //(*MyOutput_) << std::hex << GetFastControlMonth();
   //(*MyOutput_) << std::hex << GetFastControlYear() << ")" << std::dec << std::endl; 
   //
-  //  (*MyOutput_) << " FPGA, PROM0, PROM1 ID = 0x" 
-  //	       << std::hex << GetFastControlFPGAIdCode() << ", "
-  //	       << std::hex << alct_prom0_idcode_ << ", "
-  //	       << std::hex << alct_prom1_idcode_ << std::endl;
+  return;
+}
+
+void ALCTController::PrintFastControlChipCode() {
   //
+  if(hardware_version_ <=1 ) {
+    char gg[70];
+    sprintf(gg, "Chip IDCODE: FPGA=%08X, PROM0=%08X, PROM1=%08X\n", GetFastControlFPGAIdCode(), alct_prom0_idcode_, alct_prom1_idcode_);
+    (*MyOutput_) << gg;
+  }
+/*
+    (*MyOutput_) << "FPGA, PROM0, PROM1 IDCODE = " 
+  	       << std::hex << GetFastControlFPGAIdCode() << ", "
+  	       << alct_prom0_idcode_ << ", "
+  	       << alct_prom1_idcode_ << std::dec << std::endl;
+  //
+*/
   return;
 }
 //

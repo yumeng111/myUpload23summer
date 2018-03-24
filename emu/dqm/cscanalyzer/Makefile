@@ -66,8 +66,8 @@ IncludeDirs = $(XdaqIncludeDirs) \
 	$(BUILD_HOME)/emu/dqm/cmssw/src/common \
 	$(BUILD_HOME)/emu/dqm/common/include \
 	$(BUILD_HOME)/emu/dqm/common/include/emu/dqm/common \
-	$(BUILD_HOME)/emu/daq/reader/include \
-	$(BUILD_HOME)/emu/daq/writer/include \
+	$(BUILD_HOME)/emu/ldaq/reader/include \
+	$(BUILD_HOME)/emu/ldaq/writer/include \
 	$(CMSSW) \
 	$(BOOST)
 
@@ -86,7 +86,7 @@ UserExecutableLinkFlags += $(ROOTGLIBS)
 # These libraries can be platform specific and
 # potentially need conditional processing
 #
-Libraries = $(XdaqLibraries) emudaqreader emudaqwriter
+Libraries = $(XdaqLibraries) xalanMsg xalan-c emubase emuldaqreader emuldaqwriter 
 
 #
 # Compile the source files and create a shared library

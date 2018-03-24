@@ -115,7 +115,7 @@ void emu::utils::headerXdaq(xgi::Output * out,
 {
   using std::endl;
 
-  xdaq::ApplicationDescriptor* d = app->getApplicationDescriptor();
+  const xdaq::ApplicationDescriptor* d = app->getApplicationDescriptor();
   std::string url = d->getContextDescriptor()->getURL();
   std::string urn = d->getURN();
 

@@ -179,8 +179,8 @@ function TMBPanel( dataURLs ) {
 		}
 		document.getElementById('focusedRUIBox').setAttribute('visibility','visible');
 		var t = document.getElementById('focusedRUIText');
-		// console.log(allChambers[i].parentNode.getAttribute('id').substr(7));
-		t.firstChild.nodeValue = 'RUI '+allChambers[i].parentNode.getAttribute('id').substr(7);
+		// console.log(allChambers[i].parentNode.getAttribute('id'));
+		t.firstChild.nodeValue = 'RUI '+allChambers[i].parentNode.getAttribute('id').substr(14) +' ('+allChambers[i].parentNode.getAttribute('id').substr(7,3)+')';
 		t.setAttribute('visibility','visible');		
 		break;
 	    }

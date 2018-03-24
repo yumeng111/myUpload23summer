@@ -731,11 +731,11 @@ void EmuTFMonitor::getDataServers(xdata::String className)
       dataservers_.clear();
       if (serverTIDs_.size() > 0)
         {
-          std::set<xdaq::ApplicationDescriptor*> tmpdataservers_;
+          std::set<const xdaq::ApplicationDescriptor*> tmpdataservers_;
           //	tmpdataservers_ = getApplicationContext()->getApplicationGroup()->getApplicationDescriptors(className.toString().c_str());
-          xdaq::ApplicationGroup *g = getApplicationContext()->getDefaultZone()->getApplicationGroup(daqGroup_);
+          const xdaq::ApplicationGroup *g = getApplicationContext()->getDefaultZone()->getApplicationGroup(daqGroup_);
           tmpdataservers_  = g->getApplicationDescriptors(className.toString().c_str());
-          std::set<xdaq::ApplicationDescriptor*>::iterator pos;
+          std::set<const xdaq::ApplicationDescriptor*>::iterator pos;
           for (pos=tmpdataservers_.begin(); pos!=tmpdataservers_.end(); ++pos)
             {
               for (uint32_t j = 0; j<serverTIDs_.size(); j++)
@@ -748,7 +748,7 @@ void EmuTFMonitor::getDataServers(xdata::String className)
         }
       else
         {
-          xdaq::ApplicationGroup *g = getApplicationContext()->getDefaultZone()->getApplicationGroup(daqGroup_);
+          const xdaq::ApplicationGroup *g = getApplicationContext()->getDefaultZone()->getApplicationGroup(daqGroup_);
           dataservers_  = g->getApplicationDescriptors(className.toString().c_str());
 
           //	dataservers_ = getApplicationContext()->getApplicationGroup()->getApplicationDescriptors(className.toString().c_str());
@@ -780,7 +780,7 @@ void EmuTFMonitor::getCollectors(xdata::String className)
     {
       collectors_.clear();
       // collectors_ = getApplicationContext()->getApplicationGroup()->getApplicationDescriptors(className.toString().c_str());
-      xdaq::ApplicationGroup *g = getApplicationContext()->getDefaultZone()->getApplicationGroup("dqm");
+      const xdaq::ApplicationGroup *g = getApplicationContext()->getDefaultZone()->getApplicationGroup("dqm");
       collectors_  =    g->getApplicationDescriptors(className.toString().c_str());
 
       //hasSet_serversClassName_ = true;
@@ -816,7 +816,7 @@ throw (emu::dqm::monitor::exception::Exception)
 
   // std::cout << "In emu::dqm::csc::monitor::Application::startATCP()" << std::endl;
 
-  vector < xdaq::ApplicationDescriptor* > atcpDescriptors;
+  vector <const xdaq::ApplicationDescriptor* > atcpDescriptors;
   try
     {
       atcpDescriptors = emu::dqm::getAppDescriptors(zone_, "pt::atcp::PeerTransportATCP");
@@ -830,7 +830,7 @@ throw (emu::dqm::monitor::exception::Exception)
 
   // std::cout << atcpDescriptors.size() << " atcpDescriptors" << std::endl;
 
-  vector < xdaq::ApplicationDescriptor* >::iterator atcpd;
+  vector <const xdaq::ApplicationDescriptor* >::iterator atcpd;
   for ( atcpd = atcpDescriptors.begin(); atcpd != atcpDescriptors.end(); ++atcpd )
     {
 
@@ -1160,11 +1160,11 @@ void EmuTFMonitor::emuDataMsg(toolbox::mem::Reference *bufRef)
   runNumber_ = msg->runNumber;
   runStartUTC_ = msg->runStartUTC;
 
-  if ( errorFlag==emu::daq::reader::RawDataFile::Type2 ) status |= 0x8000;
-  if ( errorFlag==emu::daq::reader::RawDataFile::Type3 ) status |= 0x4000;
-  if ( errorFlag==emu::daq::reader::RawDataFile::Type4 ) status |= 0x2000;
-  if ( errorFlag==emu::daq::reader::RawDataFile::Type5 ) status |= 0x1000;
-  if ( errorFlag==emu::daq::reader::RawDataFile::Type6 ) status |= 0x0800;
+  if ( errorFlag==emu::ldaq::reader::RawDataFile::Type2 ) status |= 0x8000;
+  if ( errorFlag==emu::ldaq::reader::RawDataFile::Type3 ) status |= 0x4000;
+  if ( errorFlag==emu::ldaq::reader::RawDataFile::Type4 ) status |= 0x2000;
+  if ( errorFlag==emu::ldaq::reader::RawDataFile::Type5 ) status |= 0x1000;
+  if ( errorFlag==emu::ldaq::reader::RawDataFile::Type6 ) status |= 0x0800;
 
   /*
     if (eventsReceived_%200 == 0) {
@@ -1208,7 +1208,7 @@ void EmuTFMonitor::emuDataMsg(toolbox::mem::Reference *bufRef)
 int EmuTFMonitor::sendDataRequest(uint32_t last)
 {
   //  creditMsgsSent += 1;
-  std::set<xdaq::ApplicationDescriptor*>::iterator pos;
+  std::set<const xdaq::ApplicationDescriptor*>::iterator pos;
   for (pos=dataservers_.begin(); pos!=dataservers_.end(); ++pos)
     {
       if (eventsReceived_ > xdata::UnsignedInteger(1000))
@@ -1345,8 +1345,8 @@ void EmuTFMonitor::createDeviceReader()
 
       // Create reader
       int inputDataFormatInt_ = -1;
-      if      ( inputDataFormat_ == "DDU" ) inputDataFormatInt_ = emu::daq::reader::Base::DDU;
-      else if ( inputDataFormat_ == "DCC" ) inputDataFormatInt_ = emu::daq::reader::Base::DCC;
+      if      ( inputDataFormat_ == "DDU" ) inputDataFormatInt_ = emu::ldaq::reader::Base::DDU;
+      else if ( inputDataFormat_ == "DCC" ) inputDataFormatInt_ = emu::ldaq::reader::Base::DCC;
       else     LOG4CPLUS_ERROR(getApplicationLogger(),
                                  "No such data format: " << inputDataFormat_.toString() <<
                                  "Use \"DDU\" or \"DCC\"");
@@ -1366,9 +1366,9 @@ void EmuTFMonitor::createDeviceReader()
           else
             {
               if      ( inputDeviceType_ == "spy"  )
-                deviceReader_ = new emu::daq::reader::Spy(  inputDeviceName_.toString(), inputDataFormatInt_ );
+                deviceReader_ = new emu::ldaq::reader::Spy(  inputDeviceName_.toString(), inputDataFormatInt_ );
               else if ( inputDeviceType_ == "file" )
-                deviceReader_ = new emu::daq::reader::RawDataFile( inputDeviceName_.toString(), inputDataFormatInt_ );
+                deviceReader_ = new emu::ldaq::reader::RawDataFile( inputDeviceName_.toString(), inputDataFormatInt_ );
               // TODO: slink
               else     LOG4CPLUS_ERROR(getApplicationLogger(),
                                          "Bad device type: " << inputDeviceType_.toString() <<
@@ -1448,11 +1448,11 @@ int EmuTFMonitor::svc()
             {
               uint32_t errorFlag = deviceReader_->getErrorFlag();
               uint32_t status=0;
-              if ( errorFlag==emu::daq::reader::RawDataFile::Type2 ) status |= 0x8000;
-              if ( errorFlag==emu::daq::reader::RawDataFile::Type3 ) status |= 0x4000;
-              if ( errorFlag==emu::daq::reader::RawDataFile::Type4 ) status |= 0x2000;
-              if ( errorFlag==emu::daq::reader::RawDataFile::Type5 ) status |= 0x1000;
-              if ( errorFlag==emu::daq::reader::RawDataFile::Type6 ) status |= 0x0800;
+              if ( errorFlag==emu::ldaq::reader::RawDataFile::Type2 ) status |= 0x8000;
+              if ( errorFlag==emu::ldaq::reader::RawDataFile::Type3 ) status |= 0x4000;
+              if ( errorFlag==emu::ldaq::reader::RawDataFile::Type4 ) status |= 0x2000;
+              if ( errorFlag==emu::ldaq::reader::RawDataFile::Type5 ) status |= 0x1000;
+              if ( errorFlag==emu::ldaq::reader::RawDataFile::Type6 ) status |= 0x0800;
               appBSem_.take();
               // std::cout << std::hex << errorFlag << " " << std::dec << deviceReader_->dataLength() << std::endl;
               // processEvent(deviceReader_->data(), deviceReader_->dataLength(), status, appTid_);

@@ -58,7 +58,7 @@ emu::fed::Application::~Application()
 
 
 
-xoap::MessageReference emu::fed::Application::getParameters(xdaq::ApplicationDescriptor *applicationDescriptor)
+xoap::MessageReference emu::fed::Application::getParameters(const xdaq::ApplicationDescriptor *applicationDescriptor)
 throw (emu::fed::exception::SOAPException)
 {
 
@@ -89,7 +89,7 @@ throw (emu::fed::exception::SOAPException)
 
 	xoap::MessageReference reply;
 
-	std::set<xdaq::ApplicationDescriptor *> apps;
+	std::set<const xdaq::ApplicationDescriptor *> apps;
 	try {
 		apps = getApplicationContext()->getDefaultZone()->getApplicationDescriptors(applicationName);
 	} catch (xdaq::exception::ApplicationDescriptorNotFound &e) {
@@ -98,7 +98,7 @@ throw (emu::fed::exception::SOAPException)
 		XCEPT_RETHROW(emu::fed::exception::SOAPException, error.str(), e);
 	}
 
-	std::set<xdaq::ApplicationDescriptor *>::const_iterator iAD;
+	std::set<const xdaq::ApplicationDescriptor *>::const_iterator iAD;
 	for (iAD = apps.begin(); iAD != apps.end(); iAD++) {
 		if ((*iAD)->getInstance() != instance) continue;
 		return getParameters(*iAD);
@@ -117,7 +117,7 @@ throw (emu::fed::exception::SOAPException)
 {
 
 	// find applications
-	std::set<xdaq::ApplicationDescriptor *> apps;
+	std::set<const xdaq::ApplicationDescriptor *> apps;
 	try {
 		apps = getApplicationContext()->getDefaultZone()->getApplicationDescriptors(applicationName);
 	} catch (xdaq::exception::ApplicationDescriptorNotFound &e) {
@@ -163,7 +163,7 @@ throw (emu::fed::exception::SOAPException)
 	xoap::MessageReference reply;
 
 	// send the message one-by-one
-	std::set<xdaq::ApplicationDescriptor *>::iterator iAD;
+	std::set<const xdaq::ApplicationDescriptor *>::iterator iAD;
 	for (iAD = apps.begin(); iAD != apps.end(); iAD++) {
 		if (instance < 0 || (int) (*iAD)->getInstance() == instance) {
 			try {
@@ -392,7 +392,7 @@ throw (emu::fed::exception::SOAPException)
 
 	// find applications
 	//LOG4CPLUS_DEBUG(getApplicationLogger(), "sendCommand with command=" << command << ", klass=" << klass << ", instance=" << instance);
-	std::set<xdaq::ApplicationDescriptor *> apps;
+	std::set<const xdaq::ApplicationDescriptor *> apps;
 	try {
 		if (instance < 0) {
 			apps = getApplicationContext()->getDefaultZone()->getApplicationDescriptors(klass);
@@ -411,7 +411,7 @@ throw (emu::fed::exception::SOAPException)
 
 	// send the message
 	// postSOAP() may throw an exception when failed.
-	for (std::set<xdaq::ApplicationDescriptor *>::iterator iApp = apps.begin(); iApp != apps.end(); iApp++) {
+	for (std::set<const xdaq::ApplicationDescriptor *>::iterator iApp = apps.begin(); iApp != apps.end(); iApp++) {
 		try {
 			getApplicationContext()->postSOAP(message, *getApplicationDescriptor(), *(*iApp));
 		} catch (xcept::Exception &e) {

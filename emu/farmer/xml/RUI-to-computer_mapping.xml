@@ -1,61 +1,58 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <?xml-stylesheet type="text/xml" href="RUI-to-computer_mapping_XSLT.xml"?>
-<RUI-to-computer_mapping date="2015-01-26">
-  <computer host="srv-c2d08-07-01.cms" alias="csc-daq10.cms">
-    <RUI instance="0" schar="4" status='in'/>
-  </computer>
+<RUI-to-computer_mapping date="2018-03-03">
   <computer host="srv-c2d08-08-01.cms" alias="csc-daq01.cms">
-    <RUI instance="1" schar="2" status='in'/>
-    <RUI instance="2" schar="3" status='in'/>
-    <RUI instance="3" schar="4" status='in'/>
-    <RUI instance="4" schar="5" status='in'/>
+    <RUI instance="1" fedId="841" schar="2" status='in'/>
+    <RUI instance="2" fedId="842" schar="3" status='in'/>
+    <RUI instance="3" fedId="843" schar="4" status='in'/>
+    <RUI instance="4" fedId="844" schar="5" status='in'/>
   </computer>
   <computer host="srv-c2d08-09-01.cms" alias="csc-daq02.cms">
-    <RUI instance="5" schar="2" status='in'/>
-    <RUI instance="6" schar="3" status='in'/>
-    <RUI instance="7" schar="4" status='in'/>
-    <RUI instance="8" schar="5" status='in'/>
+    <RUI instance="5" fedId="845" schar="2" status='in'/>
+    <RUI instance="6" fedId="846" schar="3" status='in'/>
+    <RUI instance="7" fedId="847" schar="4" status='in'/>
+    <RUI instance="8" fedId="848" schar="5" status='in'/>
   </computer>
   <computer host="srv-c2d08-10-01.cms" alias="csc-daq03.cms">
-    <RUI instance="9"  schar="2" status='in'/>
-    <RUI instance="10" schar="3" status='in'/>
-    <RUI instance="11" schar="4" status='in'/>
-    <RUI instance="12" schar="5" status='in'/>
+    <RUI instance="9"  fedId="849" schar="2" status='in'/>
+    <RUI instance="10" fedId="831" schar="3" status='in'/>
+    <RUI instance="11" fedId="832" schar="4" status='in'/>
+    <RUI instance="12" fedId="833" schar="5" status='in'/>
   </computer>
   <computer host="srv-c2d08-11-01.cms" alias="csc-daq04.cms">
-    <RUI instance="13" schar="2" status='in'/>
-    <RUI instance="14" schar="3" status='in'/>
-    <RUI instance="15" schar="4" status='in'/>
-    <RUI instance="16" schar="5" status='in'/>
+    <RUI instance="13" fedId="834" schar="2" status='in'/>
+    <RUI instance="14" fedId="835" schar="3" status='in'/>
+    <RUI instance="15" fedId="836" schar="4" status='in'/>
+    <RUI instance="16" fedId="837" schar="5" status='in'/>
   </computer>
   <computer host="srv-c2d08-12-01.cms" alias="csc-daq05.cms">
-    <RUI instance="17" schar="2" status='in'/>
-    <RUI instance="18" schar="3" status='in'/>
-    <RUI instance="19" schar="4" status='in'/>
-    <RUI instance="20" schar="5" status='in'/>
+    <RUI instance="17" fedId="838" schar="2" status='in'/>
+    <RUI instance="18" fedId="839" schar="3" status='in'/>
+    <RUI instance="19" fedId="861" schar="4" status='in'/>
+    <RUI instance="20" fedId="862" schar="5" status='in'/>
   </computer>
   <computer host="srv-c2d08-13-01.cms" alias="csc-daq06.cms">
-    <RUI instance="21" schar="2" status='in'/>
-    <RUI instance="22" schar="3" status='in'/>
-    <RUI instance="23" schar="4" status='in'/>
-    <RUI instance="24" schar="5" status='in'/>
+    <RUI instance="21" fedId="863" schar="2" status='in'/>
+    <RUI instance="22" fedId="864" schar="3" status='in'/>
+    <RUI instance="23" fedId="865" schar="4" status='in'/>
+    <RUI instance="24" fedId="866" schar="5" status='in'/>
   </computer>
   <computer host="srv-c2d08-14-01.cms" alias="csc-daq07.cms">
-    <RUI instance="25" schar="2" status='in'/>
-    <RUI instance="26" schar="3" status='in'/>
-    <RUI instance="27" schar="4" status='in'/>
-    <RUI instance="28" schar="5" status='in'/>
+    <RUI instance="25" fedId="867" schar="2" status='in'/>
+    <RUI instance="26" fedId="868" schar="3" status='in'/>
+    <RUI instance="27" fedId="869" schar="4" status='in'/>
+    <RUI instance="28" fedId="851" schar="5" status='in'/>
   </computer>
   <computer host="srv-c2d08-15-01.cms" alias="csc-daq08.cms">
-    <RUI instance="29" schar="2" status='in'/>
-    <RUI instance="30" schar="3" status='in'/>
-    <RUI instance="31" schar="4" status='in'/>
-    <RUI instance="32" schar="5" status='in'/>
+    <RUI instance="29" fedId="852" schar="2" status='in'/>
+    <RUI instance="30" fedId="853" schar="3" status='in'/>
+    <RUI instance="31" fedId="854" schar="4" status='in'/>
+    <RUI instance="32" fedId="855" schar="5" status='in'/>
   </computer>
   <computer host="srv-c2d08-16-01.cms" alias="csc-daq09.cms">
-    <RUI instance="33" schar="2" status='in'/>
-    <RUI instance="34" schar="3" status='in'/>
-    <RUI instance="35" schar="4" status='in'/>
-    <RUI instance="36" schar="5" status='in'/>
+    <RUI instance="33" fedId="856" schar="2" status='in'/>
+    <RUI instance="34" fedId="857" schar="3" status='in'/>
+    <RUI instance="35" fedId="858" schar="4" status='in'/>
+    <RUI instance="36" fedId="859" schar="5" status='in'/>
   </computer>
 </RUI-to-computer_mapping>

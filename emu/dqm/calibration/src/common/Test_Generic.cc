@@ -50,7 +50,7 @@ bool Test_Generic::isME11(std::string cscID)
   return ((cscID.find("ME+1.1") == 0) || (cscID.find("ME-1.1") == 0));
 }
 
-Test_Generic::Test_Generic(std::string dfile): dataFile(dfile), logger(Logger::getInstance("Generic"))
+Test_Generic::Test_Generic(std::string dfile, std::string testid): dataFile(dfile), testID(testid), logger(Logger::getInstance(testid))
 {
   binCheckMask=0xFFFFFFFF;
   cratemap = new CSCCrateMap();

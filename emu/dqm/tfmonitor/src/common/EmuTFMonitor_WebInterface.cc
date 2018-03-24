@@ -33,14 +33,6 @@ void EmuTFMonitor::showStatus (xgi::Input * in, xgi::Output * out)  throw (xgi::
   */
   *out << cgicc::html().set("lang", "en").set("dir","ltr") << std::endl;
 
-  xgi::Utils::getPageHeader
-  (out,
-   "EmuTFMonitor",
-   getApplicationDescriptor()->getContextDescriptor()->getURL(),
-   getApplicationDescriptor()->getURN(),
-   "/daq/xgi/images/Application.gif"
-  );
-
   std::string url = "/";
   url += getApplicationDescriptor()->getURN();
   url += "/dispatch";
@@ -89,8 +81,6 @@ void EmuTFMonitor::showStatus (xgi::Input * in, xgi::Output * out)  throw (xgi::
 
   printParametersTable(out);
 
-
-  xgi::Utils::getPageFooter(*out);
 }
 
 void EmuTFMonitor::InvalidWebAction(xgi::Input * in ) throw (xgi::exception::Exception)
@@ -174,14 +164,6 @@ void EmuTFMonitor::stateMachinePage( xgi::Output * out ) throw (xgi::exception::
   */
   *out << cgicc::html().set("lang", "en").set("dir","ltr") << std::endl;
 
-  xgi::Utils::getPageHeader
-  (out,
-   "EmuTFMonitor",
-   getApplicationDescriptor()->getContextDescriptor()->getURL(),
-   getApplicationDescriptor()->getURN(),
-   "/daq/xgi/images/Application.gif"
-  );
-
   std::string url = "/";
   url += getApplicationDescriptor()->getURN();
   url += "/dispatch";
@@ -229,8 +211,6 @@ void EmuTFMonitor::stateMachinePage( xgi::Output * out ) throw (xgi::exception::
 
   printParametersTable(out);
 
-
-  xgi::Utils::getPageFooter(*out);
 }
 
 
@@ -242,19 +222,10 @@ void EmuTFMonitor::failurePage(xgi::Output * out, xgi::exception::Exception & e)
   *out << cgicc::HTMLDoctype(cgicc::HTMLDoctype::eStrict) << std::endl;
   *out << cgicc::html().set("lang", "en").set("dir","ltr") << std::endl;
 
-  xgi::Utils::getPageHeader
-  (out,
-   "EmuTFMonitor Failure",
-   getApplicationDescriptor()->getContextDescriptor()->getURL(),
-   getApplicationDescriptor()->getURN(),
-   "/daq/xgi/images/Application.gif"
-  );
-
   *out << cgicc::br() << e.what() << cgicc::br() << std::endl;
   std::string url = "/";
   url += getApplicationDescriptor()->getURN();
 
   *out << cgicc::br() << "<a href=\"" << url << "\">" << "retry" << "</a>" << cgicc::br() << std::endl;
 
-  xgi::Utils::getPageFooter(*out);
 }

@@ -45,8 +45,8 @@ throw (emu::dqm::exception::Exception);
 std::string getScalarParam
 (
   xdaq::ApplicationContext *appContext_,
-  xdaq::ApplicationDescriptor* appSrcDescriptor,
-  xdaq::ApplicationDescriptor* appDescriptor,
+  const xdaq::ApplicationDescriptor* appSrcDescriptor,
+  const xdaq::ApplicationDescriptor* appDescriptor,
   const std::string                 paramName,
   const std::string                 paramType
 )
@@ -59,8 +59,8 @@ throw (emu::dqm::exception::Exception);
 void setScalarParam
 (
   xdaq::ApplicationContext *appContext_,
-  xdaq::ApplicationDescriptor* appSrcDescriptor,
-  xdaq::ApplicationDescriptor* appDescriptor,
+  const xdaq::ApplicationDescriptor* appSrcDescriptor,
+  const xdaq::ApplicationDescriptor* appDescriptor,
   const std::string                 paramName,
   const std::string                 paramType,
   const std::string                 paramValue
@@ -111,14 +111,14 @@ void sendFSMEventToApp
 (
   const std::string                 eventName,
   xdaq::ApplicationContext *appContext_,
-  xdaq::ApplicationDescriptor* appSrcDescriptor,
-  xdaq::ApplicationDescriptor* appDescriptor
+  const xdaq::ApplicationDescriptor* appSrcDescriptor,
+  const xdaq::ApplicationDescriptor* appDescriptor
 )
 throw (emu::dqm::exception::Exception);
 
-std::vector< xdaq::ApplicationDescriptor* > getAppDescriptors
+std::vector< const xdaq::ApplicationDescriptor* > getAppDescriptors
 (
-  xdaq::Zone             *zone,
+  const xdaq::Zone             *zone,
   const std::string           appClass
 )
 throw (emu::dqm::exception::Exception);

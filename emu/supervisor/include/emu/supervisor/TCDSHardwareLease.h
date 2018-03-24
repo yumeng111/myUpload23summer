@@ -16,7 +16,7 @@ namespace emu{
     class TCDSHardwareLease : public toolbox::task::TimerListener{
     public:
       TCDSHardwareLease( xdaq::Application *parent, 
-			 xdaq::ApplicationDescriptor* tcdsApplicationDescriptor,
+			 const xdaq::ApplicationDescriptor* tcdsApplicationDescriptor,
 			 const xdata::String& actionRequestorId,
 			 const toolbox::TimeInterval& interval );
       ~TCDSHardwareLease();
@@ -24,12 +24,12 @@ namespace emu{
       TCDSHardwareLease();
       void renew();
       void timeExpired( toolbox::task::TimerEvent& event );
-      xdaq::Application           *parentApplication_;
-      emu::soap::Messenger        *messenger_;
-      xdata::String                actionRequestorId_;
-      xdaq::ApplicationDescriptor *tcdsApplicationDescriptor_;
-      toolbox::TimeInterval        interval_;
-      toolbox::task::Timer        *timer_;
+      xdaq::Application                 *parentApplication_;
+      emu::soap::Messenger              *messenger_;
+      xdata::String                      actionRequestorId_;
+      const xdaq::ApplicationDescriptor *tcdsApplicationDescriptor_;
+      toolbox::TimeInterval              interval_;
+      toolbox::task::Timer              *timer_;
     };
   }
 }

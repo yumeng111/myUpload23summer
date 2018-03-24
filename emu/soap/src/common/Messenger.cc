@@ -28,8 +28,8 @@ emu::soap::Messenger::Messenger( xdaq::Application *parent ) :
   httpResponseTimeoutSec_( 0 )
 {}
 
-xdaq::ApplicationDescriptor* emu::soap::Messenger::getAppDescriptor( const std::string &className, const unsigned int instance ){
-  xdaq::ApplicationDescriptor* descriptor;
+const xdaq::ApplicationDescriptor* emu::soap::Messenger::getAppDescriptor( const std::string &className, const unsigned int instance ){
+  const xdaq::ApplicationDescriptor* descriptor;
 
   try{
     descriptor = application_->getApplicationContext()->getDefaultZone()->getApplicationDescriptor( className, instance );
@@ -44,7 +44,7 @@ xdaq::ApplicationDescriptor* emu::soap::Messenger::getAppDescriptor( const std::
 }
 
 void
-emu::soap::Messenger::setParameters( xdaq::ApplicationDescriptor *target, const emu::soap::Parameters &parameters ){
+emu::soap::Messenger::setParameters( const xdaq::ApplicationDescriptor *target, const emu::soap::Parameters &parameters ){
   try{
     string targetAppNamespaceURI = string( XDAQ_APP_URN_BASE ) + target->getClassName();
 
@@ -114,27 +114,27 @@ emu::soap::Messenger::setParameters( xdaq::ApplicationDescriptor *target, const 
 
 void
 emu::soap::Messenger::setParameters( const string &className, const unsigned int instance, const emu::soap::Parameters &parameters ){
-  xdaq::ApplicationDescriptor* target = getAppDescriptor( className, instance );
+  const xdaq::ApplicationDescriptor* target = getAppDescriptor( className, instance );
   setParameters( target, parameters );
 }
 
 void
 emu::soap::Messenger::setParameters( const string &className, const emu::soap::Parameters &parameters ){
-  std::set<xdaq::ApplicationDescriptor *> apps = application_->getApplicationContext()->getDefaultZone()->getApplicationDescriptors( className );
+  std::set<const xdaq::ApplicationDescriptor *> apps = application_->getApplicationContext()->getDefaultZone()->getApplicationDescriptors( className );
 
   if ( apps.size() == 0 ){
     LOG4CPLUS_WARN( application_->getApplicationLogger(), "Setting parameters " << parameters <<  " to " + className + " aborted: No descriptors found.");
     return;
   }
 
-  for ( std::set<xdaq::ApplicationDescriptor *>::iterator app = apps.begin(); app != apps.end(); ++app ) {
+  for ( std::set<const xdaq::ApplicationDescriptor *>::iterator app = apps.begin(); app != apps.end(); ++app ) {
     setParameters( *app, parameters );
   }
 }
 
 
 xoap::MessageReference
-emu::soap::Messenger::sendCommand( xdaq::ApplicationDescriptor *target,
+emu::soap::Messenger::sendCommand( const xdaq::ApplicationDescriptor *target,
 				   const emu::soap::QualifiedName &command,
 				   const emu::soap::Parameters &parameters,
 				   const emu::soap::Attributes &attributes,
@@ -198,7 +198,7 @@ emu::soap::Messenger::sendCommand( const string &className,
 				   const emu::soap::Parameters &parameters,
 				   const emu::soap::Attributes &attributes,
 				   const vector<emu::soap::Attachment> &attachments ){
-  xdaq::ApplicationDescriptor* target = getAppDescriptor( className, instance );
+  const xdaq::ApplicationDescriptor* target = getAppDescriptor( className, instance );
   return sendCommand( target, command, parameters, attributes, attachments );
 }
 
@@ -208,21 +208,21 @@ emu::soap::Messenger::sendCommand( const string &className,
 				   const emu::soap::Parameters &parameters,
 				   const emu::soap::Attributes &attributes,
 				   const vector<emu::soap::Attachment> &attachments ){
-  std::set<xdaq::ApplicationDescriptor *> apps = application_->getApplicationContext()->getDefaultZone()->getApplicationDescriptors( className );
+  std::set<const xdaq::ApplicationDescriptor *> apps = application_->getApplicationContext()->getDefaultZone()->getApplicationDescriptors( className );
 
   if ( apps.size() == 0 ){
     LOG4CPLUS_WARN( application_->getApplicationLogger(), "Sending command " << command <<  " to " + className + " aborted: No descriptors found.");
     return;
   }
 
-  for ( std::set<xdaq::ApplicationDescriptor *>::iterator app = apps.begin(); app != apps.end(); ++app ) {
+  for ( std::set<const xdaq::ApplicationDescriptor *>::iterator app = apps.begin(); app != apps.end(); ++app ) {
     sendCommand( *app, command, parameters, attributes, attachments );
   }
 }
 
 
 void
-emu::soap::Messenger::getParameters( xdaq::ApplicationDescriptor *target, emu::soap::Parameters &parameters ){
+emu::soap::Messenger::getParameters( const xdaq::ApplicationDescriptor *target, emu::soap::Parameters &parameters ){
   try{
     string targetAppNamespaceURI = string( XDAQ_APP_URN_BASE ) + target->getClassName();
 
@@ -299,7 +299,7 @@ emu::soap::Messenger::getParameters( xdaq::ApplicationDescriptor *target, emu::s
 
 void
 emu::soap::Messenger::getParameters( const string &className, const unsigned int instance, emu::soap::Parameters &parameters ){
-  xdaq::ApplicationDescriptor* target = getAppDescriptor( className, instance );
+  const xdaq::ApplicationDescriptor* target = getAppDescriptor( className, instance );
   getParameters( target, parameters );
 }
 

@@ -15,10 +15,10 @@ using namespace std;
  * @param dfile Events Data file name
  */
 Test_CFEB04::Test_CFEB04(std::string dfile):
-  Test_Generic(dfile)
+  Test_Generic(dfile, "CFEB04")
 {
 
-  testID = "CFEB04";
+  // testID = "CFEB04";
   nExpectedEvents = 8000; // Number of expected events for this test
   dduID=0;
   binCheckMask=0x1FFB7BF6; /// Examiner mask
@@ -28,7 +28,7 @@ Test_CFEB04::Test_CFEB04(std::string dfile):
   tpdata.clear();
   htree.clear();
 
-  logger = Logger::getInstance(testID);
+  // logger = Logger::getInstance(testID);
 
 }
 

@@ -41,7 +41,9 @@
 
 #include "Switch.h"
 
-class SwitchGUI: public xdaq::Application {
+#include "xgi/framework/Method.h"
+
+class SwitchGUI: public xdaq::Application, public xgi::framework::UIManager {
     public:
         XDAQ_INSTANTIATOR();
 

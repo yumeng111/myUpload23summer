@@ -256,7 +256,7 @@ typedef std::map<std::string, AFEBCalibParams>    cscAFEBCalibParams;
 class Test_Generic
 {
 public:
-  Test_Generic(std::string dfile);
+  Test_Generic(std::string dfile, std::string testid = "Generic");
   virtual ~Test_Generic();
   void init();
   virtual void analyze(const char * data, int32_t dataSize, uint32_t errorStat, int32_t nodeNumber = 0);

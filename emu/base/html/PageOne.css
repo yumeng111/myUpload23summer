@@ -13,7 +13,7 @@ td.Halted, td.halted { background-color:#7777FF; }
 td.halted_configure_configured, td.Configuring, td.configuring, td.Zeroing, td.Starting, td.starting, td.Stopping, td.stopping { background-color:#999933; }
 td.Ready, td.ready, td.Configured, td.configured { background-color:#dddd00; }
 td.suspended, td.paused, td.Pausing, td.Paused { background-color:#AACC77; }
-td.aligned, td.Aligned, td.Aligning, td.aligning, td.synchronize, td.synchronized, td.Synchronized, td.synchronizing { background-color: #9d7bd8 }
+td.aligned, td.Aligned, td.Aligning, td.aligning, td.synchronize, td.synchronized, td.Synchronized, td.synchronizing, td.engaged { background-color: #9d7bd8 }
 td.Enabling, td.enabling { background-color:#33aa33; }
 td.Enabled, td.enabled, td.running { background-color:#33cc33; }
 td.ON { background-color:#33cc33; }

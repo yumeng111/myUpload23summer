@@ -1,5 +1,17 @@
 #!/bin/zsh
 
+function interfaceNames(){
+    # Implicit (default) interface naming scheme
+    export __ETH0__=em1
+    export __ETH1__=em2
+    export __ETH2__=p1p1
+    export __ETH3__=p1p2
+    export __ETH4__=p2p1
+    export __ETH5__=p2p2
+    # If an explicit naming scheme is defined for the network interfaces, take that instead of the implicit one.
+    [[ -f ${0:h}/ifnames_igb_emu.sh ]] && source ${0:h}/ifnames_igb_emu.sh
+}
+
 function module_parameters(){
     # Print module parameters (same value for all ports) in a comma separated list ready to be passed to modprobe.
     #   argument 1: number of ports
@@ -47,12 +59,14 @@ function load_igb_emu(){
 
     # Copy the driver and the requested hooks
     echo "Copying the driver and the requested hooks"
-    rm -f /lib/modules/$(uname -r)/kernel/drivers/net/igb/igb_emu.ko
-    rm -f /lib/modules/$(uname -r)/kernel/drivers/net/igb/eth_hook_*.ko(N)
+    [[ -d /lib/modules/$(uname -r)/kernel/drivers/net/igb ]] && MODULES_DIR=/lib/modules/$(uname -r)/kernel/drivers/net/igb
+    [[ -d /lib/modules/$(uname -r)/kernel/drivers/net/ethernet/intel/igb ]] && MODULES_DIR=/lib/modules/$(uname -r)/kernel/drivers/net/ethernet/intel/igb
+    rm -f ${MODULES_DIR}/igb_emu.ko
+    rm -f ${MODULES_DIR}/eth_hook_*.ko(N)
     rm -f /lib/modules/$(uname -r)/kernel/drivers/net/eth_hook_*.ko(N)
-    cp ${DRIVERS_DIR}/igb_emu.ko /lib/modules/$(uname -r)/kernel/drivers/net/igb
+    cp ${DRIVERS_DIR}/igb_emu.ko ${MODULES_DIR}
     for HOOK in "$@"; do
-	cp ${DRIVERS_DIR}/${HOOK}.ko /lib/modules/$(uname -r)/kernel/drivers/net/igb
+	cp ${DRIVERS_DIR}/${HOOK}.ko ${MODULES_DIR}
     done    
 
     NPORTS=4
@@ -64,13 +78,22 @@ function load_igb_emu(){
 	[[ -f /etc/modprobe.conf ]] && (( NPORTS+=$(grep -c '^alias eth[01] igb' /etc/modprobe.conf) ))
     elif [[ $SLC_MAJOR -eq 6 ]]; then
 	echo "Updating /etc/modprobe.d"
-	sed -i.bak -e 's:^\(alias p[12]p[12] [^ ]\+\)$:# \1 # commented out by '${0}':g' -e 's:^alias \(e[12]\) \(igb[^ ]*\)$:# alias \1 \2 # commented out by '${0}'\nalias \1 igb_emu:g' /etc/modprobe.d/*.conf
+	sed -i.bak -e 's:^\(alias p[12]p[12] [^ ]\+\)$:# \1 # commented out by '${0}':g' -e 's:^alias \(em[12]\) \(igb[^ ]*\)$:# alias \1 \2 # commented out by '${0}'\nalias \1 igb_emu:g' /etc/modprobe.d/*.conf
 	rm -f /etc/modprobe.d/net-igb_emu.conf
 	for N in 2 3 4 5; do
 	    print "alias ${IF_NAME[$N]} igb_emu" >> /etc/modprobe.d/net-igb_emu.conf
 	done
         # Count the number of on-board ports to be served by igb_emu
 	(( NPORTS+=$( grep -c "^alias em[12] igb" =(cat /etc/modprobe.d/*.conf) ) ))
+    elif [[ $SLC_MAJOR -eq 7 ]]; then
+	echo "Updating /etc/modprobe.d"
+	sed -i.bak -e 's:^\(alias enp[0-9]s[0-9]f[0-9] [^ ]\+\)$:# \1 # commented out by '${0}':g' -e 's:^alias \(eno[12]\) \(igb[^ ]*\)$:# alias \1 \2 # commented out by '${0}'\nalias \1 igb_emu:g' /etc/modprobe.d/*.conf
+	rm -f /etc/modprobe.d/net-igb_emu.conf
+	for N in 2 3 4 5; do
+	    print "alias ${IF_NAME[$N]} igb_emu" >> /etc/modprobe.d/net-igb_emu.conf
+	done
+        # Count the number of on-board ports to be served by igb_emu
+	(( NPORTS+=$( grep -c "^alias eno[12] igb" =(cat /etc/modprobe.d/*.conf) ) ))
     fi
 	
     # Update module dependencies
@@ -101,7 +124,8 @@ function load_igb_emu(){
     # Restart the built-in interfaces, too, in case they're also Intel supported by igb.
     for N in 0 1; do
 	if [[ $SLC_MAJOR -eq 5 && -f /etc/modprobe.conf && $( grep -c "^alias ${IF_NAME[$N]} igb" /etc/modprobe.conf ) -gt 0 ]] || \
-	   [[ $SLC_MAJOR -eq 6 && $( grep -c "^alias ${IF_NAME[$N]} igb" =(cat /etc/modprobe.d/*.conf) ) -gt 0 ]]; then
+	   [[ $SLC_MAJOR -eq 6 && $( grep -c "^alias ${IF_NAME[$N]} igb" =(cat /etc/modprobe.d/*.conf) ) -gt 0 ]] || \
+	   [[ $SLC_MAJOR -eq 7 && $( grep -c "^alias ${IF_NAME[$N]} igb" =(cat /etc/modprobe.d/*.conf) ) -gt 0 ]]                     ; then
 	    sleep 2
 	    echo "Restarting the built-in interface ${IF_NAME[$N]}"
 	    /etc/sysconfig/network-scripts/ifdown ${IF_NAME[$N]}
@@ -132,7 +156,18 @@ DRIVERS_DIR=${0%/*}
 
 # Mapping from arbitrary old-fashioned eth<N> to consistent physical p<slot>p<port> interface name, if necessary
 typeset -A IF_NAME
-if [[ $(uname -r | grep -c '^2\.6\.32-') -gt 0 ]]; then
+if [[ $(uname -r | grep -c '^3\.10\.0-') -gt 0 ]]; then
+    interfaceNames
+    IF_NAME=(
+	0 ${__ETH0__}
+	1 ${__ETH1__}
+	2 ${__ETH2__}
+	3 ${__ETH3__}
+	4 ${__ETH4__}
+	5 ${__ETH5__}
+	)
+    SLC_MAJOR=7
+elif [[ $(uname -r | grep -c '^2\.6\.32-') -gt 0 ]]; then
     IF_NAME=(
 	0 em1
 	1 em2
@@ -159,15 +194,15 @@ fi
 print "Seems to be SLC${SLC_MAJOR}. Assuming interface names ${IF_NAME}."
 
 # Only load the drivers on hosts in this list of aliases:
-for ALIAS in emu42fastprod01 emu-me11-step{1,2,3,4} ctrl-s2g18-{15..18}-01 srv-c2d08-25-01; do
+for ALIAS in emu42fastprod01 emu-me11-step{1,2,3,4} ctrl-s2g18-{15..18}-01 srv-c2d08-25-01 vmepc-s2g18-20-01; do
     if [[ $(host $ALIAS | grep -i -c $(hostname -s)) -ge 1 ]]; then
 	load_igb_emu eth_hook_2_vme eth_hook_3_vme eth_hook_4_vme eth_hook_5_vme
 	exit 0
     fi
 done
-for ALIAS in vmepc-e1x07-26-01; do
+for ALIAS in vmepc-e1x07-21-01 vmepc-e1x07-26-01; do
     if [[ $(host $ALIAS | grep -i -c $(hostname -s)) -ge 1 ]]; then
-	load_igb_emu eth_hook_2_vme eth_hook_3_dmb eth_hook_4_vme eth_hook_5_vme
+	load_igb_emu eth_hook_2_ddu eth_hook_3_dmb eth_hook_4_vme eth_hook_5_vme
 	exit 0
     fi
 done

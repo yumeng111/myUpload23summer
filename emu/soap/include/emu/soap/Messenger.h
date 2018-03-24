@@ -76,7 +76,7 @@ namespace emu{
       ///
       /// @return Pointer to the application descriptor.
       ///
-      xdaq::ApplicationDescriptor* getAppDescriptor( const std::string &className, const unsigned int instance=0 );
+      const xdaq::ApplicationDescriptor* getAppDescriptor( const std::string &className, const unsigned int instance=0 );
 
       /// 
       /// Gets the specified parameters from the target application given by its descriptor.
@@ -96,7 +96,7 @@ namespace emu{
       ///        cout << ul.toString() << endl << s.toString() << endl << Vs.toString() << endl;
       /// \endcode
       ///
-      void getParameters( xdaq::ApplicationDescriptor *target, emu::soap::Parameters &parameters );
+      void getParameters( const xdaq::ApplicationDescriptor *target, emu::soap::Parameters &parameters );
 
       ///
       /// Gets the specified parameters from the target application given by its class name and instance.
@@ -139,7 +139,7 @@ namespace emu{
       ///                                                .add( "runTypes" , &Vs ) );
       /// \endcode
       ///
-      void setParameters( xdaq::ApplicationDescriptor *target, const emu::soap::Parameters &parameters );
+      void setParameters( const xdaq::ApplicationDescriptor *target, const emu::soap::Parameters &parameters );
 
       /// 
       /// Sets the specified parameters in the target application given by its class name and instance.
@@ -279,7 +279,7 @@ namespace emu{
       /// </soap-env:Envelope>
       /// \endcode
       ///
-      xoap::MessageReference sendCommand( xdaq::ApplicationDescriptor *target, 
+      xoap::MessageReference sendCommand( const xdaq::ApplicationDescriptor *target, 
 					  const emu::soap::QualifiedName &command,
                                           const emu::soap::Parameters &parameters = emu::soap::Parameters::none,
                                           const emu::soap::Attributes &attributes = emu::soap::Attributes::none,

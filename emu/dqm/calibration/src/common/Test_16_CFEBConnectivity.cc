@@ -6,14 +6,14 @@ using namespace emu::dqm::utils;
 
 
 Test_16_CFEBConnectivity::Test_16_CFEBConnectivity(std::string dfile):
-  Test_Generic(dfile)
+  Test_Generic(dfile, "16_CFEBConnectivity")
 {
-  testID = "16_CFEBConnectivity";
+  // testID = "16_CFEBConnectivity";
   //  binCheckMask=0x16CFF3F6;
   //  binCheckMask=0x1FEBF3F6;
   binCheckMask=0x16EBF7F6; // same value used in Lisa's test16
   //  binCheckMask=0xF7CB3BF6;
-  logger = Logger::getInstance(testID);
+  // logger = Logger::getInstance(testID);
   
   events_per_layer = 1000;
   nExpectedEvents = 3*events_per_layer;

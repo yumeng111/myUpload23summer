@@ -7,12 +7,12 @@ using namespace XERCES_CPP_NAMESPACE;
 using namespace emu::dqm::utils;
 using namespace boost::algorithm;
 
-Test_11_AFEBNoise::Test_11_AFEBNoise(std::string dfile): Test_Generic(dfile)
+Test_11_AFEBNoise::Test_11_AFEBNoise(std::string dfile): Test_Generic(dfile, "11_AFEBNoise")
 {
-  testID    = "11_AFEBNoise";
+  // testID    = "11_AFEBNoise";
   nExpectedEvents   = 10000;
   binCheckMask  = 0x1FEBF3F6;
-  logger = Logger::getInstance(testID);
+  // logger = Logger::getInstance(testID);
   
   duration_ms = 30000;
   

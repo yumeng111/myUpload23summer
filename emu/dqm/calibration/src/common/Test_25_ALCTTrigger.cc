@@ -7,13 +7,13 @@ using namespace XERCES_CPP_NAMESPACE;
 using namespace emu::dqm::utils;
 using namespace boost::algorithm;
 
-Test_25_ALCTTrigger::Test_25_ALCTTrigger(std::string dfile): Test_Generic(dfile)
+Test_25_ALCTTrigger::Test_25_ALCTTrigger(std::string dfile): Test_Generic(dfile, "25_ALCTTrigger")
 {
-  testID    = "25_ALCTTrigger";
+  // testID    = "25_ALCTTrigger";
   nExpectedEvents   = 15000;
   dduID     = 0;
   binCheckMask  = 0x1FEBF3F6;
-  logger = Logger::getInstance(testID);
+  // logger = Logger::getInstance(testID);
 
   dataFileName = dfile;
 

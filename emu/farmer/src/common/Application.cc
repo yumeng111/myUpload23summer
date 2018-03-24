@@ -73,11 +73,11 @@ void emu::farmer::Application::getEnv(){
 
 string emu::farmer::Application::generateLoggerName()
 {
-    xdaq::ApplicationDescriptor *appDescriptor = getApplicationDescriptor();
-    string                      appClass       = appDescriptor->getClassName();
-    unsigned int                appInstance    = appDescriptor->getInstance();
-    stringstream                ss;
-    string                      loggerName;
+    const xdaq::ApplicationDescriptor *appDescriptor = getApplicationDescriptor();
+    string                             appClass       = appDescriptor->getClassName();
+    unsigned int                       appInstance    = appDescriptor->getInstance();
+    stringstream                       ss;
+    string                             loggerName;
 
     ss << appClass << appInstance;
     loggerName = ss.str();

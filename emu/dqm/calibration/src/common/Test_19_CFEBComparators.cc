@@ -8,15 +8,15 @@ using namespace boost::algorithm;
 
 
 Test_19_CFEBComparators::Test_19_CFEBComparators(std::string dfile):
-    Test_Generic(dfile)
+    Test_Generic(dfile, "19_CFEBComparators")
 {
-    testID = "19_CFEBComparators";
+    // testID = "19_CFEBComparators";
     nExpectedEvents = 25200;
     dduID = 0;
     binCheckMask=0x16EBF7F6; // same value used in Lisa
 
     ltc_bug   = 2;
-    logger = Logger::getInstance(testID);
+    // logger = Logger::getInstance(testID);
 
 
     dmb_tpamps_per_strip = 3;

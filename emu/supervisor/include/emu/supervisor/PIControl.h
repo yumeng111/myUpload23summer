@@ -8,7 +8,7 @@ namespace emu{
     class PIControl : public TCDSControl{
     public:
       PIControl( xdaq::Application *parent, 
-		 xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
+		 const xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
 		 xdata::String partition );
       PIControl& setRunType( xdata::String & runType );
       PIControl& configure( xdata::String& hardwareConfigurationString, xdata::Boolean& usePrimaryTCDS );

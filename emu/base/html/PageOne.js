@@ -17,7 +17,7 @@ function onLoad() {
 	// TCDS:     "http://cmslas.cern.ch/tcdslas/urn:xdaq-application:lid=16/retrieveCollection",
 	TCDS:     "http://tcds-xaas.cms:9945/urn:xdaq-application:lid=16/retrieveCollection",
 	FED:      "http://csc-sv.cms:20101/urn:xdaq-application:lid=66/ForEmuPage1",
-	DAQ:      "http://csc-daq00.cms:20200/urn:xdaq-application:class=emu::daq::manager::Application,instance=0/ForEmuPage1",
+	DAQ:      "http://csc-daq00.cms:20200/urn:xdaq-application:class=emu::ldaq::manager::Application,instance=0/ForEmuPage1",
 	DQM:      "http://csc-dqm.cms:20550/urn:xdaq-application:lid=1450/ForEmuPage1"
     };
     var tmbURLs = {

@@ -161,7 +161,7 @@ throw (xdaq::exception::Exception)
 
 std::string EmuDisplayClient::generateLoggerName()
 {
-  xdaq::ApplicationDescriptor *appDescriptor = getApplicationDescriptor();
+  const xdaq::ApplicationDescriptor *appDescriptor = getApplicationDescriptor();
   string                      appClass       = appDescriptor->getClassName();
   unsigned long               appInstance    = appDescriptor->getInstance();
   stringstream                oss;
@@ -955,7 +955,7 @@ void EmuDisplayClient::controlDQM (xgi::Input * in, xgi::Output * out)  throw (x
 
   if (!monitors.empty())
     {
-      std::set<xdaq::ApplicationDescriptor*>::iterator mon;
+      std::set<const xdaq::ApplicationDescriptor*>::iterator mon;
 
       for (mon=monitors.begin(); mon!=monitors.end(); ++mon)
         {
@@ -1037,7 +1037,7 @@ void EmuDisplayClient::configureDQM (xgi::Input * in, xgi::Output * out)  throw 
 
   if (!monitors.empty())
     {
-      std::set<xdaq::ApplicationDescriptor*>::iterator mon;
+      std::set<const xdaq::ApplicationDescriptor*>::iterator mon;
 
       for (mon=monitors.begin(); mon!=monitors.end(); ++mon)
         {
@@ -1078,7 +1078,7 @@ void EmuDisplayClient::saveNodesResults()
   LOG4CPLUS_INFO (logger_, "Save Nodes Results at " << tstamp);
   if (!monitors.empty())
     {
-      std::set<xdaq::ApplicationDescriptor*>::iterator mon;
+      std::set<const xdaq::ApplicationDescriptor*>::iterator mon;
 
       for (mon=monitors.begin(); mon!=monitors.end(); ++mon)
         {
@@ -1130,7 +1130,7 @@ int EmuDisplayClient::syncNodesToCurrentRun()
 //  LOG4CPLUS_INFO (logger_, "Sync Nodes to current run " << curRunNumber);
   if (!monitors.empty())
     {
-      std::set<xdaq::ApplicationDescriptor*>::iterator mon;
+      std::set<const xdaq::ApplicationDescriptor*>::iterator mon;
 
 
       /* Initial scan to find most current Run number to sync Nodes to */
@@ -1865,7 +1865,7 @@ void EmuDisplayClient::getRefPlot (xgi::Input * in, xgi::Output * out)  throw (x
 }
 
 
-std::map<std::string, std::list<std::string> > EmuDisplayClient::requestObjectsList(xdaq::ApplicationDescriptor* monitor)
+std::map<std::string, std::list<std::string> > EmuDisplayClient::requestObjectsList(const xdaq::ApplicationDescriptor* monitor)
 {
 
   std::map<std::string, std::list<std::string> > bmap;
@@ -1978,7 +1978,7 @@ std::map<std::string, std::list<std::string> > EmuDisplayClient::requestObjectsL
   return bmap;
 }
 
-std::map<std::string, std::list<std::string> > EmuDisplayClient::requestCanvasesList(xdaq::ApplicationDescriptor* monitor)
+std::map<std::string, std::list<std::string> > EmuDisplayClient::requestCanvasesList(const xdaq::ApplicationDescriptor* monitor)
 {
 
   std::map<std::string, std::list<std::string> > bmap;
@@ -2106,7 +2106,7 @@ TMessage* EmuDisplayClient::requestObjects(xdata::Integer nodeaddr, std::string 
       xoap::SOAPElement objectElement = folderElement.addChildElement(objectName);
       objectElement.addTextNode(objname);
 
-      xdaq::ApplicationDescriptor* d = i2o::utils::getAddressMap()->getApplicationDescriptor(nodeaddr);
+      const xdaq::ApplicationDescriptor* d = i2o::utils::getAddressMap()->getApplicationDescriptor(nodeaddr);
       if (d==NULL) return buf;
       LOG4CPLUS_DEBUG (logger_, "Sending requestObjects to " << d->getClassName() << " ID" << d->getLocalId());
       xoap::MessageReference reply = getApplicationContext()->postSOAP(msg, *(this->getApplicationDescriptor()), *d);
@@ -2234,7 +2234,7 @@ TMessage* EmuDisplayClient::requestCanvas(xdata::Integer nodeaddr, std::string f
       objectElement.addAttribute(heightTag, xdata::Integer(height).toString());
 
 
-      xdaq::ApplicationDescriptor* d = i2o::utils::getAddressMap()->getApplicationDescriptor(nodeaddr);
+      const xdaq::ApplicationDescriptor* d = i2o::utils::getAddressMap()->getApplicationDescriptor(nodeaddr);
       if (d==NULL) return buf;
       LOG4CPLUS_DEBUG (logger_, "Sending requestCanvas: \"" << folder << "/" << objname << "\" to " << d->getClassName() << " ID" << d->getLocalId());
       xoap::MessageReference reply = getApplicationContext()->postSOAP(msg, *(this->getApplicationDescriptor()), *d);
@@ -2308,7 +2308,7 @@ FoldersMap EmuDisplayClient::updateFoldersMap()
 
 
           // LOG4CPLUS_INFO (logger_, "Start Monitoring Folders List updating");
-          std::set<xdaq::ApplicationDescriptor*>::iterator pos;
+          std::set<const xdaq::ApplicationDescriptor*>::iterator pos;
 
           for (pos=monitors.begin(); pos!=monitors.end(); ++pos)
             {
@@ -2336,7 +2336,7 @@ CSCCounters EmuDisplayClient::updateCSCCounters()
       if (!monitors.empty())
         {
 
-          std::set<xdaq::ApplicationDescriptor*>::iterator pos;
+          std::set<const xdaq::ApplicationDescriptor*>::iterator pos;
 
           for (pos=monitors.begin(); pos!=monitors.end(); ++pos)
             {
@@ -2371,7 +2371,7 @@ DQMNodesStatus EmuDisplayClient::updateNodesStatus()
     //      std::set<xdaq::ApplicationDescriptor*>  ruis = getAppsList("EmuRUI","default");
     if (!monitors.empty())
       {
-        std::set<xdaq::ApplicationDescriptor*>::iterator pos;
+        std::set<const xdaq::ApplicationDescriptor*>::iterator pos;
 
         // std::set<xdaq::ApplicationDescriptor*>::iterator rui_itr;
         // xdaq::ApplicationDescriptor* rui=NULL;
@@ -2513,7 +2513,7 @@ int EmuDisplayClient::syncMonitorsStates()
   if (!monitors.empty())
     {
       std::map<std::string, int> stateStats;
-      std::set<xdaq::ApplicationDescriptor*>::iterator mon;
+      std::set<const xdaq::ApplicationDescriptor*>::iterator mon;
       for (mon=monitors.begin(); mon!=monitors.end(); ++mon)
         {
           if ((*mon) == NULL) continue;
@@ -2581,7 +2581,7 @@ int EmuDisplayClient::syncMonitorsStates()
   return 0;
 }
 
-Counters EmuDisplayClient::requestCSCCounters(xdaq::ApplicationDescriptor* dest)
+Counters EmuDisplayClient::requestCSCCounters(const xdaq::ApplicationDescriptor* dest)
 {
 
   Counters clist;
@@ -2682,7 +2682,7 @@ Counters EmuDisplayClient::requestCSCCounters(xdaq::ApplicationDescriptor* dest)
   return clist;
 }
 
-std::set<std::string>  EmuDisplayClient::requestFoldersList(xdaq::ApplicationDescriptor* dest)
+std::set<std::string>  EmuDisplayClient::requestFoldersList(const xdaq::ApplicationDescriptor* dest)
 {
 
   std::set<std::string> flist;
@@ -2766,7 +2766,7 @@ std::set<std::string>  EmuDisplayClient::requestFoldersList(xdaq::ApplicationDes
   return flist;
 }
 
-DQMReport  EmuDisplayClient::requestReport(xdaq::ApplicationDescriptor* dest)
+DQMReport  EmuDisplayClient::requestReport(const xdaq::ApplicationDescriptor* dest)
 {
 
   DQMReport report;
@@ -2913,15 +2913,15 @@ DQMReport  EmuDisplayClient::requestReport(xdaq::ApplicationDescriptor* dest)
 }
 
 // == Get Application Descriptors for specified Data Server class name == //
-std::set<xdaq::ApplicationDescriptor*> EmuDisplayClient::getAppsList(xdata::String className, xdata::String group)
+std::set<const xdaq::ApplicationDescriptor*> EmuDisplayClient::getAppsList(xdata::String className, xdata::String group)
 {
 
-  std::set<xdaq::ApplicationDescriptor*> applist;
+  std::set<const xdaq::ApplicationDescriptor*> applist;
   try
     {
       applist.clear();
 
-      xdaq::ApplicationGroup *g = getApplicationContext()->getDefaultZone()->getApplicationGroup(group);
+      const xdaq::ApplicationGroup *g = getApplicationContext()->getDefaultZone()->getApplicationGroup(group);
       if (g) applist =  g->getApplicationDescriptors(className.toString());
       // sort(applist.begin(), applist.end(), Compare_ApplicationDescriptors());
     }
@@ -2948,7 +2948,7 @@ DQMReport EmuDisplayClient::updateNodesReports()
   if (!monitors.empty())
     {
       LOG4CPLUS_DEBUG (logger_, "Start Reports updating");
-      std::set<xdaq::ApplicationDescriptor*>::iterator pos;
+      std::set<const xdaq::ApplicationDescriptor*>::iterator pos;
 
       std::map<uint32_t,DQMReport> rep_lists;
       for (pos=monitors.begin(); pos!=monitors.end(); ++pos)
@@ -3165,7 +3165,7 @@ std::string EmuDisplayClient::getDQMQuality()
   return dqmQuality;
 }
 
-std::string EmuDisplayClient::getHref(xdaq::ApplicationDescriptor *appDescriptor)
+std::string EmuDisplayClient::getHref(const xdaq::ApplicationDescriptor *appDescriptor)
 {
   std::string href;
   href  = appDescriptor->getContextDescriptor()->getURL();

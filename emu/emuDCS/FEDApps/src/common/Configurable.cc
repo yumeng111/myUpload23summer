@@ -4,6 +4,7 @@
 #include "emu/fed/Configurable.h"
 #include "boost/filesystem/operations.hpp"
 #include "boost/algorithm/string/case_conv.hpp"
+#include <boost/version.hpp>
 
 #include "xgi/Method.h"
 #include "cgicc/HTMLClasses.h"
@@ -473,8 +474,6 @@ throw(emu::fed::exception::ConfigurationException)
 }
 
 std::vector<std::string> emu::fed::Configurable::getXMLFileNames(const boost::filesystem::path &configPath){
-  // For Boost version 1.41
-
   std::vector<std::string> xmlFiles;
 
   // Sanity check
@@ -486,7 +485,11 @@ std::vector<std::string> emu::fed::Configurable::getXMLFileNames(const boost::fi
   for ( boost::filesystem::directory_iterator di( configPath ); di != end; ++di ){
     try{
       if ( boost::filesystem::is_regular_file( di->status() ) ){
-	std::string name( di->path().file_string() );
+#if BOOST_VERSION > 104200
+	std::string name( di->path().native() ); // tested with boost 1.62
+#else
+	std::string name( di->path().file_string() ); // tested with boost 1.41
+#endif
 	const size_t extensionLength = 3;
 	if ( name.length() >= extensionLength ){
 	  std::string lastThree( name.substr( name.length() - extensionLength ) );

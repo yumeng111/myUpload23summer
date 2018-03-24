@@ -29,6 +29,9 @@ see:
 #  define MODULE
 #endif
 
+#include "SLC_version.h"
+#include "interfaceNames.h"
+
 // #include <linux/config.h>
 
 #include <linux/module.h>
@@ -50,7 +53,11 @@ see:
 
 #include <linux/spinlock.h>
 #include <linux/slab.h>
+#if SLC_VERSION < 7
 #include <linux/smp_lock.h>
+#else
+#include <linux/mutex.h>
+#endif
 #include <linux/vmalloc.h>
 
 #include <linux/netdevice.h>   
@@ -89,7 +96,11 @@ int ethinit_module(void);
 static int schar_mmap_2(struct file *filp, struct vm_area_struct *vma);
 
 static ssize_t schar_write_2(struct file *file, const char *buf, size_t count,loff_t *offset);
+#if SLC_VERSION < 7
 static int schar_ioctl_2(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg);
+#else
+static long schar_ioctl_2(struct file *file, unsigned int cmd, unsigned long arg);
+#endif
 static int schar_open_2(struct inode *inode, struct file *file);
 static int schar_release_2(struct inode *inode, struct file *file); 
 void schar_reset_2(void);
@@ -102,7 +113,11 @@ EXPORT_SYMBOL(netif_rx_hook_2);
 static struct file_operations schar_fops = {
       write: schar_write_2,
       mmap:  schar_mmap_2,
-      ioctl: schar_ioctl_2,
+#if SLC_VERSION < 7
+	ioctl: schar_ioctl_2,
+#else
+	unlocked_ioctl: schar_ioctl_2,
+#endif
       open: schar_open_2,
       release: schar_release_2,
 };
@@ -116,13 +131,16 @@ static struct ctl_table_header *schar_root_header_2 = NULL;
 #if   SLC_VERSION == 5
 static int schar_read_proc_2(ctl_table *ctl, int write, struct file *file,
 			   void *buffer, size_t *lenp, loff_t *ppos);
-#elif SLC_VERSION == 6
+#else
 static int schar_read_proc_2(struct ctl_table *ctl, int write,
 			     void __user *buffer, size_t *lenp, loff_t *ppos);
 #endif
 
 static ctl_table schar_sysctl_table_2[] = {
-	{ DEV_SCHAR_ENTRY,	/* binary id */
+	{ 
+#if SLC_VERSION < 7
+	DEV_SCHAR_ENTRY,	/* binary id */
+#endif
 	  "2",			/* name */
 	  &schar_proc_string_2,	/* data */
 	  SCHAR_MAX_SYSCTL,	/* max size of output */
@@ -136,7 +154,10 @@ static ctl_table schar_sysctl_table_2[] = {
 };
 
 static ctl_table schar_dir_2[] = {
-	{ DEV_SCHAR,		/* /proc/dev/schar */
+	{ 
+#if SLC_VERSION < 7
+	  DEV_SCHAR,		/* /proc/dev/schar */
+#endif
 	  "schar",		/* name */
 	  NULL,
 	  0,
@@ -146,7 +167,10 @@ static ctl_table schar_dir_2[] = {
 };
 
 static ctl_table schar_root_dir_2[] = {
-	{ CTL_DEV,		/* /proc/dev */
+	{ 
+#if SLC_VERSION < 7
+	  CTL_DEV,		/* /proc/dev */
+#endif
 	  "dev",		/* name */
 	  NULL,
 	  0,
@@ -192,6 +216,10 @@ static int flag_eevent_2={1};     // check for end of events
 static int flag_rate_2={1};       // turn on rate monitoring
 
 static spinlock_t eth_lock;
+
+#if SLC_VERSION == 7
+/* static struct mutex mutex_eth2; */
+#endif
 
 /* module parameters and descriptions */
 //MODULE_PARM(schar_name);
@@ -446,8 +474,13 @@ int netif_rx_hook_2(struct sk_buff *skb)
 */
 
 
+#if SLC_VERSION < 7
 static int schar_ioctl_2(struct inode *inode, struct file *file,
 		       unsigned int cmd, unsigned long arg)
+#else
+static long schar_ioctl_2(struct file *file,
+		       unsigned int cmd, unsigned long arg)
+#endif
 {
 unsigned long int pagsiz;
  printk(KERN_INFO " ioctl: Entered \n");
@@ -465,13 +498,13 @@ unsigned long int pagsiz;
 
 	case SCHAR_PAGES:{
                   pagsiz=BIGPHYS_PAGES_2;
-                  copy_to_user ((void *)arg,&pagsiz,8);
-		      return 0;
+                  if ( copy_to_user ((void *)arg,&pagsiz,8) ) return -EFAULT;
+		  return 0;
             }
 
 	case SCHAR_RING:{
                   pagsiz=RING_PAGES_2;
-                  copy_to_user ((void *)arg,&pagsiz,8);
+                  if ( copy_to_user ((void *)arg,&pagsiz,8) ) return -EFAULT;
 		      return 0;
             }
 
@@ -501,7 +534,7 @@ unsigned long int pagsiz;
 #if   SLC_VERSION == 5
 static int schar_read_proc_2(ctl_table *ctl, int write, struct file *file,
 			   void *buffer, size_t *lenp, loff_t *ppos)
-#elif SLC_VERSION == 6
+#else
 static int schar_read_proc_2(struct ctl_table *ctl, int write,
 			     void __user *buffer, size_t *lenp, loff_t *ppos)
 #endif
@@ -535,7 +568,7 @@ static int schar_read_proc_2(struct ctl_table *ctl, int write,
 	*lenp = len;
 #if   SLC_VERSION == 5
 	return proc_dostring(ctl, write, file, buffer, lenp, ppos);
-#elif SLC_VERSION == 6
+#else
 	return proc_dostring(ctl, write, buffer, lenp, ppos);
 #endif
 }
@@ -577,7 +610,7 @@ int ethinit_module(void)
 	/* register proc entry */
 #if   SLC_VERSION == 5
 	schar_root_header_2 = register_sysctl_table(schar_root_dir_2, 0);
-#elif SLC_VERSION == 6
+#else
 	schar_root_header_2 = register_sysctl_table(schar_root_dir_2);
 #endif
 
@@ -618,6 +651,8 @@ static ssize_t schar_write_2(struct file *file, const char *buf, size_t count,
   dev=dev_get_by_name("eth2");
 #elif SLC_VERSION == 6
   dev=dev_get_by_name(&init_net,"p1p1");
+#elif SLC_VERSION == 7
+  dev=dev_get_by_name(&init_net, __ETH2__ );
 #endif
   err=-ENODEV;
   if (dev == NULL)
@@ -743,11 +778,19 @@ static int schar_mmap_2(struct file *filp, struct vm_area_struct *vma)
   unsigned long start = vma->vm_start;
   char *vmalloc_area_ptr = (char *)vmalloc_area;
   unsigned long pfn;
+#if SLC_VERSION < 7
   lock_kernel();
+#else
+  /* mutex_lock(&mutex_eth2); */
+#endif
   printk(KERN_INFO " entering mmap \n");
   if (!buf_start_2) {
     printk(KERN_INFO " Data was not initialized");
+#if SLC_VERSION < 7
     unlock_kernel();
+#else
+    /* mutex_unlock(&mutex_eth2); */
+#endif
     return -EINVAL;
   }
 
@@ -755,7 +798,11 @@ static int schar_mmap_2(struct file *filp, struct vm_area_struct *vma)
        pages allocated */
   if (length > BIGPHYS_PAGES_2*PAGE_SIZE){
     printk(KERN_INFO " Page allocation problem %ld %ld \n",length,BIGPHYS_PAGES_2*PAGE_SIZE);
-    unlock_kernel();      
+#if SLC_VERSION < 7
+    unlock_kernel();
+#else
+    /* mutex_unlock(&mutex_eth2); */
+#endif
      return -EIO;
   }
 
@@ -766,15 +813,26 @@ static int schar_mmap_2(struct file *filp, struct vm_area_struct *vma)
                                       PAGE_SHARED)) < 0) {
 	     printk(KERN_INFO "do_rvmmap BAD RETURN %ld %ld ret %d \n",length,BIGPHYS_PAGES_2*PAGE_SIZE,ret);
              printk(KERN_INFO " this can happen if MEM_SHARED is not used by calling process ! \n");
-             unlock_kernel();
+#if SLC_VERSION < 7
+	     unlock_kernel();
+#else
+	     /* mutex_unlock(&mutex_eth2); */
+#endif
              return ret;
            }
            start += PAGE_SIZE;
            vmalloc_area_ptr += PAGE_SIZE;
            length -= PAGE_SIZE;
   }
+#if SLC_VERSION < 7
   vma->vm_flags |= VM_RESERVED;   /* avoid to swap out this VMA */
+  /* What to use in newer kernels instead? Anyway, it was probably not needed in SLC6, either... */
+#endif
+#if SLC_VERSION < 7
   unlock_kernel();
+#else
+  /* mutex_unlock(&mutex_eth2); */
+#endif
   return 0;
 }
 

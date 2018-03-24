@@ -129,7 +129,7 @@ int EmuPeripheralCrateBase::PCsendCommand(std::string command, std::string klass
   int num = 0;
 
   // find applications
-  std::set<xdaq::ApplicationDescriptor *> apps;
+  std::set<const xdaq::ApplicationDescriptor *> apps;
   //
   try {
     if(instance < 0)
@@ -144,10 +144,10 @@ int EmuPeripheralCrateBase::PCsendCommand(std::string command, std::string klass
   // prepare a SOAP message
   xoap::MessageReference message = PCcreateCommandSOAP(command);
   xoap::MessageReference reply;
-  xdaq::ApplicationDescriptor *ori=this->getApplicationDescriptor();
+  const xdaq::ApplicationDescriptor *ori=this->getApplicationDescriptor();
   //
   // send the message one-by-one
-  std::set<xdaq::ApplicationDescriptor *>::iterator i = apps.begin();
+  std::set<const xdaq::ApplicationDescriptor *>::iterator i = apps.begin();
   for (; i != apps.end(); ++i) {
     // postSOAP() may throw an exception when failed.
     try {
@@ -169,7 +169,7 @@ int EmuPeripheralCrateBase::PCsendCommandwithAttr(std::string command, std::stri
   int num = 0;
 
   // find applications
-  std::set<xdaq::ApplicationDescriptor *> apps;
+  std::set<const xdaq::ApplicationDescriptor *> apps;
   //
   try {
     if(instance < 0)
@@ -184,10 +184,10 @@ int EmuPeripheralCrateBase::PCsendCommandwithAttr(std::string command, std::stri
   // prepare a SOAP message
   xoap::MessageReference message = PCcreateCommandSOAPwithAttr(command, tag, attr);
   xoap::MessageReference reply;
-  xdaq::ApplicationDescriptor *ori=this->getApplicationDescriptor();
+  const xdaq::ApplicationDescriptor *ori=this->getApplicationDescriptor();
   //
   // send the message one-by-one
-  std::set<xdaq::ApplicationDescriptor *>::iterator i = apps.begin();
+  std::set<const xdaq::ApplicationDescriptor *>::iterator i = apps.begin();
   for (; i != apps.end(); ++i) {
     // postSOAP() may throw an exception when failed.
     try {

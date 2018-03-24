@@ -4,12 +4,12 @@
 
 Summary: CMS Emu local DAQ Gbit and peripheral crate VME drivers for kernel %{kernel_version} based on the igb module for the Intel dual port NIC model I350-F2
 Name: emu-igb_emu
-Version: 2.1.12
-Release: 1.slc6
+Version: 2.3.0
+Release: 1.centos7
 License: none
 Group: none
 URL: none
-Source0: cvs
+Source0: svn
 BuildRoot: /tmp/%{name}-%{version}-%{release}-root
 
 
@@ -17,6 +17,8 @@ BuildRoot: /tmp/%{name}-%{version}-%{release}-root
 
 
 %build
+# Create file containing interface name definitions based on those in the #include file:
+awk '/#define/ { print "export "$2"="$3 }' %{workingDir}/igb_emu/include/interfaceNames.h > %{workingDir}/script/ifnames_igb_emu.sh
 
 
 %pre
@@ -35,8 +37,9 @@ cp %{workingDir}/igb_emu/eth_hook_2_vme/eth_hook_2_vme.ko $RPM_BUILD_ROOT/usr/lo
 cp %{workingDir}/igb_emu/eth_hook_3_vme/eth_hook_3_vme.ko $RPM_BUILD_ROOT/usr/local/bin/igb_emu
 cp %{workingDir}/igb_emu/eth_hook_4_vme/eth_hook_4_vme.ko $RPM_BUILD_ROOT/usr/local/bin/igb_emu
 cp %{workingDir}/igb_emu/eth_hook_5_vme/eth_hook_5_vme.ko $RPM_BUILD_ROOT/usr/local/bin/igb_emu
-cp %{workingDir}/igb_emu/igb-5.1.2/src/igb_emu.ko         $RPM_BUILD_ROOT/usr/local/bin/igb_emu
-cp %{workingDir}/script/load_igb_emu.sh                   $RPM_BUILD_ROOT/usr/local/bin/igb_emu
+cp %{workingDir}/igb_emu/igb-5.3.5.12/src/igb_emu.ko         $RPM_BUILD_ROOT/usr/local/bin/igb_emu
+cp %{workingDir}/script/load_igb_emu.sh                      $RPM_BUILD_ROOT/usr/local/bin/igb_emu
+cp %{workingDir}/script/ifnames_igb_emu.sh                   $RPM_BUILD_ROOT/usr/local/bin/igb_emu
 touch %{_topdir}/BUILD/ChangeLog
 touch %{_topdir}/BUILD/README
 touch %{_topdir}/BUILD/MAINTAINER

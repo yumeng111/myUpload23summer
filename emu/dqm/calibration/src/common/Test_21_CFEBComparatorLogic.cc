@@ -6,9 +6,9 @@ using namespace emu::dqm::utils;
 
 
 Test_21_CFEBComparatorLogic::Test_21_CFEBComparatorLogic(std::string dfile):
-  Test_Generic(dfile)
+  Test_Generic(dfile, "21_CFEBComparatorLogic")
 {
-  testID = "21_CFEBComparatorLogic";
+  // testID = "21_CFEBComparatorLogic";
 
   //need to load from xml at some point
   events_per_hstrip = 250;
@@ -22,7 +22,7 @@ Test_21_CFEBComparatorLogic::Test_21_CFEBComparatorLogic(std::string dfile):
 
   //do we need this?  binCheckMask=0x16EBF7F6; // same value used in Lisa's test16
 
-  logger = Logger::getInstance(testID);
+  // logger = Logger::getInstance(testID);
   
 }
 

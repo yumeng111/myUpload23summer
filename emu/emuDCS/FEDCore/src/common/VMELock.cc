@@ -6,7 +6,7 @@
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
+#include <unistd.h> // for close
 
 
 emu::fed::VMELock::VMELock(const std::string &fileName)
@@ -15,19 +15,21 @@ lockfile_(fileName),
 fd_(-1),
 nFileLock_(0)
 {
-	// Try to open the file
-	if ((fd_ = open(lockfile_.c_str(), O_CREAT)) < 0) {
+	// Try to open the file (see http://pubs.opengroup.org/onlinepubs/009695399/functions/open.html)
+	// making sure other people can use it.
+        mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
+	if ((fd_ = open(lockfile_.c_str(), O_CREAT, mode)) < 0) {
 		std::ostringstream error;
 		error << "Error opening lock file " << lockfile_ << ":  permissions problem?";
 		XCEPT_RAISE(emu::fed::exception::SoftwareException, error.str());
 	}
 
-	// Make sure other people can use this file
-	if (fchmod(fd_, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)) {
-		std::ostringstream error;
-		error << "Error changing permissions of lock file " << lockfile_;
-		XCEPT_RAISE(emu::fed::exception::SoftwareException, error.str());
-	}
+	// // Make sure other people can use this file
+	// if (fchmod(fd_, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)) {
+	// 	std::ostringstream error;
+	// 	error << "Error changing permissions of lock file " << lockfile_;
+	// 	XCEPT_RAISE(emu::fed::exception::SoftwareException, error.str());
+	// }
 
 	// Initialize the mutex
 	pthread_mutexattr_t mutexAttr;

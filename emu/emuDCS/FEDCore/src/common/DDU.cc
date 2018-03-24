@@ -6,7 +6,7 @@
 #include <cmath>
 #include <iomanip>
 #include <sstream>
-#include <unistd.h>
+#include <unistd.h> // for usleep
 
 #include "emu/fed/Fiber.h"
 #include "emu/fed/JTAGElement.h"

@@ -181,7 +181,7 @@ emu::base::FactFinder::createRequestAcknowlegdementSOAP() const {
     xoap::SOAPEnvelope envelope = reply->getSOAPPart().getEnvelope();
     xoap::SOAPBody body = envelope.getBody();
     xoap::SOAPName requestAcknowledgedName = envelope.createName("factRequestResponse", "esd", ESD_NS_URI);
-    xoap::SOAPElement bodyElement = body.addBodyElement( requestAcknowledgedName );
+    body.addBodyElement( requestAcknowledgedName );
   }
   catch( xoap::exception::Exception& e ){
     XCEPT_RETHROW ( xoap::exception::Exception, "Failed to create fact request acknowledgement SOAP message: ", e ); 
@@ -581,7 +581,7 @@ void
 emu::base::FactFinder::findTargetDescriptor(){
   if ( isFactFinderInDebugMode_.value_ ) cout << "*** emu::base::FactFinder::findTargetDescriptor" << endl;
   string targetClass = "DataWarehouse";
-  std::set<xdaq::ApplicationDescriptor *> descriptors = getApplicationContext()->getDefaultZone()->getApplicationDescriptors(targetClass); // This doesn't throw.
+  std::set<const xdaq::ApplicationDescriptor *> descriptors = getApplicationContext()->getDefaultZone()->getApplicationDescriptors(targetClass); // This doesn't throw.
   if ( descriptors.size() == 0 ){
     stringstream ss;
     ss << "Failed to find application descriptor for " << targetClass;

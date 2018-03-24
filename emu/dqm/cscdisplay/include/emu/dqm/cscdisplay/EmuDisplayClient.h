@@ -175,13 +175,13 @@ public:
 
 
 
-  std::map<std::string, std::list<std::string> > requestObjectsList(xdaq::ApplicationDescriptor* monitor);
-  std::map<std::string, std::list<std::string> > requestCanvasesList(xdaq::ApplicationDescriptor* monitor);
+  std::map<std::string, std::list<std::string> > requestObjectsList(const xdaq::ApplicationDescriptor* monitor);
+  std::map<std::string, std::list<std::string> > requestCanvasesList(const xdaq::ApplicationDescriptor* monitor);
   TMessage* requestObjects(xdata::Integer nodeaddr,  std::string folder, std::string objname);
   TMessage* requestCanvas(xdata::Integer nodeaddr,  std::string folder, std::string objname, int width, int height);
-  Counters requestCSCCounters(xdaq::ApplicationDescriptor* monitor);
-  DQMReport requestReport(xdaq::ApplicationDescriptor* monitor);
-  std::set<std::string> requestFoldersList(xdaq::ApplicationDescriptor* dest);
+  Counters requestCSCCounters(const xdaq::ApplicationDescriptor* monitor);
+  DQMReport requestReport(const xdaq::ApplicationDescriptor* monitor);
+  std::set<std::string> requestFoldersList(const xdaq::ApplicationDescriptor* dest);
 
   emu::base::Fact findFact(const emu::base::Component& component, const std::string& factType);
   emu::base::FactCollection findFacts();
@@ -244,7 +244,7 @@ protected:
 
   void setCSCMapFile(std::string filename);
 
-  std::string getHref(xdaq::ApplicationDescriptor *appDescriptor);
+  std::string getHref(const xdaq::ApplicationDescriptor *appDescriptor);
 
   // EmuPage1 reports
   vector<emu::base::WebReportItem> materialToReportOnPage1();
@@ -307,10 +307,10 @@ private:
 
   toolbox::exception::HandlerSignature*	 	errorHandler_;
 
-  std::set<xdaq::ApplicationDescriptor*> 	getAppsList(xdata::String className, xdata::String group="dqm");
+  std::set<const xdaq::ApplicationDescriptor*> 	getAppsList(xdata::String className, xdata::String group="dqm");
 
   // List of all external data servers tids
-  std::set<xdaq::ApplicationDescriptor*> 	monitors;
+  std::set<const xdaq::ApplicationDescriptor*> 	monitors;
 
 
   xdata::String 	xmlHistosBookingCfgFile_;

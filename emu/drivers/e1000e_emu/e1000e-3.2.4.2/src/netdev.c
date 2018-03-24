@@ -22,6 +22,8 @@
 
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+#include "../../include/interfaceNames.h"
+
 #include <linux/module.h>
 #include <linux/types.h>
 #include <linux/init.h>
@@ -568,19 +570,19 @@ static void e1000_receive_skb(struct e1000_adapter *adapter,
 				 le16_to_cpu(vlan), skb);
 	else
 #endif /* NETIF_F_HW_VLAN_TX */
-	  if      (strcmp(adapter->netdev->name,"p1p1")==0){
+	  if      (strcmp(adapter->netdev->name, __ETH2__ )==0){
 	    /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
 	    if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
 	    else                                                   netif_rx_hook_2(skb);
-	  }else if(strcmp(adapter->netdev->name,"p1p2")==0){
+	  }else if(strcmp(adapter->netdev->name, __ETH3__ )==0){
 	    /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
 	    if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
 	    else                                                   netif_rx_hook_3(skb);
-	  }else if(strcmp(adapter->netdev->name,"p2p1")==0){
+	  }else if(strcmp(adapter->netdev->name, __ETH4__ )==0){
 	    /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
 	    if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
 	    else                                                   netif_rx_hook_4(skb);
-	  }else if(strcmp(adapter->netdev->name,"p2p2")==0){
+	  }else if(strcmp(adapter->netdev->name, __ETH5__ )==0){
 	    /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
 	    if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
 	    else                                                   netif_rx_hook_5(skb);
@@ -591,7 +593,25 @@ static void e1000_receive_skb(struct e1000_adapter *adapter,
 	if (staterr & E1000_RXD_STAT_VP)
 		__vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), tag);
 
-	napi_gro_receive(&adapter->napi, skb);
+	if      (strcmp(adapter->netdev->name, __ETH2__ )==0){
+	  /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
+	  if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
+	  else                                                   netif_rx_hook_2(skb);
+	}else if(strcmp(adapter->netdev->name, __ETH3__ )==0){
+	  /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
+	  if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
+	  else                                                   netif_rx_hook_3(skb);
+	}else if(strcmp(adapter->netdev->name, __ETH4__ )==0){
+	  /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
+	  if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
+	  else                                                   netif_rx_hook_4(skb);
+	}else if(strcmp(adapter->netdev->name, __ETH5__ )==0){
+	  /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
+	  if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
+	  else                                                   netif_rx_hook_5(skb);
+	}else{
+	  napi_gro_receive(&adapter->napi, skb);
+	}
 #endif /* HAVE_VLAN_RX_REGISTER */
 #else /* CONFIG_E1000E_NAPI */
 #ifdef HAVE_VLAN_RX_REGISTER
@@ -600,19 +620,19 @@ static void e1000_receive_skb(struct e1000_adapter *adapter,
 		ret = vlan_hwaccel_rx(skb, adapter->vlgrp, le16_to_cpu(vlan));
 	else
 #endif
-	  if      (strcmp(adapter->netdev->name,"p1p1")==0){
+	  if      (strcmp(adapter->netdev->name, __ETH2__ )==0){
 	    /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
 	    if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
 	    else                                                   netif_rx_hook_2(skb);
-	  }else if(strcmp(adapter->netdev->name,"p1p2")==0){
+	  }else if(strcmp(adapter->netdev->name, __ETH3__ )==0){
 	    /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
 	    if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
 	    else                                                   netif_rx_hook_3(skb);
-	  }else if(strcmp(adapter->netdev->name,"p2p1")==0){
+	  }else if(strcmp(adapter->netdev->name, __ETH4__ )==0){
 	    /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
 	    if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
 	    else                                                   netif_rx_hook_4(skb);
-	  }else if(strcmp(adapter->netdev->name,"p2p2")==0){
+	  }else if(strcmp(adapter->netdev->name, __ETH5__ )==0){
 	    /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
 	    if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
 	    else                                                   netif_rx_hook_5(skb);
@@ -623,7 +643,25 @@ static void e1000_receive_skb(struct e1000_adapter *adapter,
 	if (staterr & E1000_RXD_STAT_VP)
 		__vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), tag);
 
-	ret = netif_rx(skb);
+	if      (strcmp(adapter->netdev->name, __ETH2__ )==0){
+	  /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
+	  if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
+	  else                                                   netif_rx_hook_2(skb);
+	}else if(strcmp(adapter->netdev->name, __ETH3__ )==0){
+	  /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
+	  if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
+	  else                                                   netif_rx_hook_3(skb);
+	}else if(strcmp(adapter->netdev->name, __ETH4__ )==0){
+	  /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
+	  if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
+	  else                                                   netif_rx_hook_4(skb);
+	}else if(strcmp(adapter->netdev->name, __ETH5__ )==0){
+	  /* Data may be stored fragmented in skb. Make it contiguous for our hook: */
+	  if( skb_is_nonlinear(skb) && skb_linearize(skb) != 0 ) kfree_skb(skb);
+	  else                                                   netif_rx_hook_5(skb);
+	}else{
+	  ret = netif_rx(skb);
+	}
 #endif /* HAVE_VLAN_RX_REGISTER */
 	if (unlikely(ret == NET_RX_DROP))
 		adapter->rx_dropped_backlog++;

@@ -105,6 +105,7 @@ emu::supervisor::Application::Application(xdaq::ApplicationStub *stub)
   run_type_("UNKNOWN"), run_number_(1), runSequenceNumber_(0),
   daq_mode_("UNKNOWN"), ttc_source_(""),
   rcmsStateNotifier_(getApplicationLogger(), getApplicationDescriptor(), getApplicationContext()),
+  localDAQClass_( "emu::ldaq::manager::Application" ),
   TFCellOpState_(""), TFCellOpName_("Run Control"), TFCellClass_("emtf::Cell"), TFCellInstance_(21), isUsingLegacyTF_(false),
   wl_semaphore_(toolbox::BSem::EMPTY), quit_calibration_(false),
   daq_descr_(NULL), tf_descr_(NULL), ttc_descr_(NULL), 
@@ -130,10 +131,8 @@ emu::supervisor::Application::Application(xdaq::ApplicationStub *stub)
   isBookedRunNumber_  ( false ),
   state_table_(this)
 {  
-  setUpLogger();
-  
   appDescriptor_ = getApplicationDescriptor();
-
+  
   xdata::InfoSpace *i = getApplicationInfoSpace();
   i->fireItemAvailable("isInCalibrationSequence", &isInCalibrationSequence_);
   i->fireItemAvailable("RunType", &run_type_);
@@ -149,6 +148,8 @@ emu::supervisor::Application::Application(xdaq::ApplicationStub *stub)
 
   i->fireItemAvailable("usePrimaryTCDS", &usePrimaryTCDS_);
   
+  i->fireItemAvailable( "localDAQClass",  &localDAQClass_  );
+
   i->fireItemAvailable("TFCellOpState",   &TFCellOpState_  );
   i->fireItemAvailable("TFCellOpName",    &TFCellOpName_   );
   i->fireItemAvailable("TFCellClass",     &TFCellClass_    );
@@ -253,13 +254,15 @@ emu::supervisor::Application::Application(xdaq::ApplicationStub *stub)
   
   state_table_.addApplication("emu::fed::Manager");
   state_table_.addApplication("emu::pc::EmuPeripheralCrateManager");
-  state_table_.addApplication("emu::daq::manager::Application");
+  state_table_.addApplication( localDAQClass_ );
   state_table_.addApplication("ttc::TTCciControl");
   state_table_.addApplication("ttc::LTCControl");
   state_table_.addApplication("tcds::ici::ICIController");
   state_table_.addApplication("tcds::pi::PIController");
   state_table_.addApplication("tcds::lpm::LPMController");
 
+  setUpLogger();
+  
   LOG4CPLUS_INFO(getApplicationLogger(), "emu::supervisor::Application constructed for " << state_table_ );
 }
 
@@ -272,10 +275,10 @@ void emu::supervisor::Application::setUpLogger(){
   getApplicationLogger().addAppender( myAppender );
 }
 
-xdaq::ApplicationDescriptor* emu::supervisor::Application::findAppDescriptor( const string& klass, const string& service ){
+const xdaq::ApplicationDescriptor* emu::supervisor::Application::findAppDescriptor( const string& klass, const string& service ){
   // Return the first app descriptor with the specified class and service name or NULL if no such app.
-  std::set<xdaq::ApplicationDescriptor *> apps = getApplicationContext()->getDefaultZone()->getApplicationDescriptors( klass );
-  for ( std::set<xdaq::ApplicationDescriptor *>::iterator ad = apps.begin(); ad != apps.end(); ++ad ){
+  std::set<const xdaq::ApplicationDescriptor *> apps = getApplicationContext()->getDefaultZone()->getApplicationDescriptors( klass );
+  for ( std::set<const xdaq::ApplicationDescriptor *>::iterator ad = apps.begin(); ad != apps.end(); ++ad ){
     if ( (*ad)->getAttribute( "service" ) == service ) return *ad;
   }
   return NULL;
@@ -284,8 +287,7 @@ xdaq::ApplicationDescriptor* emu::supervisor::Application::findAppDescriptor( co
 void emu::supervisor::Application::getAppDescriptors(){
 
   try {
-    daq_descr_ = getApplicationContext()->getDefaultZone()
-      ->getApplicationDescriptor("emu::daq::manager::Application", 0);
+    daq_descr_ = getApplicationContext()->getDefaultZone()->getApplicationDescriptor( localDAQClass_ , 0);
   } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
     LOG4CPLUS_ERROR(getApplicationLogger(), "Failed to get application descriptor for local DAQ Manager. "
 		    << xcept::stdformat_exception_history(e));
@@ -329,7 +331,7 @@ void emu::supervisor::Application::getAppDescriptors(){
 }
 
 void emu::supervisor::Application::getTFAppDescriptor(){
-  std::set<xdaq::ApplicationDescriptor *> tfs;
+  std::set<const xdaq::ApplicationDescriptor *> tfs;
   // First try to find emtf::Cell
   isUsingLegacyTF_.value_ = false;
   TFCellOpName_ = "Run Control";
@@ -503,7 +505,7 @@ xoap::MessageReference emu::supervisor::Application::onConfigure(xoap::MessageRe
   nevents_ = -1;
 
   if ( run_type_.toString() == "Calib_RunAllInOneGo" ){
-    // We're to run all calibration in one go, so let's not really configure here, just pretend to RCMS that we have.
+    // We're to run all calibrations in one go, so let's not really configure here, just pretend to RCMS that we have.
     // During the sequence we'll be making the configure-->start-->halt transition cycle several times
     // while pretending to RCMS that we're 'running' uninterrupted.
     calib_wl_->submit( notifier_signature_ );
@@ -1299,7 +1301,7 @@ void emu::supervisor::Application::sendCalibrationStatus( unsigned int iRun, uns
 					       .add( "calibStepIndex", &calibStepIndex ) );
   }
   catch( xcept::Exception &e ){
-    LOG4CPLUS_WARN( getApplicationLogger(), "Failed to send calibration status to emu::daq::manager::Application : " << xcept::stdformat_exception_history(e) );
+    LOG4CPLUS_WARN( getApplicationLogger(), "Failed to send calibration status to " << localDAQClass_.toString() << " : " << xcept::stdformat_exception_history(e) );
   }
 
 }
@@ -1310,7 +1312,7 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
   LOG4CPLUS_DEBUG(getApplicationLogger(), evt->type() << "(begin)");
   LOG4CPLUS_INFO(getApplicationLogger(), "runtype: " << run_type_.toString()
 		 << " runnumber: " << run_number_ << " nevents: " << nevents_.toString());
-
+  
   xdata::Boolean isGlobalInControl( toolbox::tolower( run_type_.toString() ) == "global" );
 
   rcmsStateNotifier_.findRcmsStateListener();      	
@@ -1339,13 +1341,13 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
 
     try {
       state_table_.refresh();
-      if (state_table_.getState("emu::daq::manager::Application", 0) != "Halted") {
+      if (state_table_.getState( localDAQClass_ , 0) != "Halted") {
 	if ( isDAQManagerControlled("Halt") ){
 	  try{
-	    if ( bool( isDAQResponsive_ ) ) m.sendCommand( "emu::daq::manager::Application", 0, "Halt" );
+	    if ( bool( isDAQResponsive_ ) ) m.sendCommand(  localDAQClass_ , 0, "Halt" );
 	  } catch( xcept::Exception& e ){
 	    isDAQResponsive_ = false;
-	    LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to send Halt to emu::daq::manager::Application." << xcept::stdformat_exception_history(e) );
+	    LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to send Halt to " << localDAQClass_.toString() << "." << xcept::stdformat_exception_history(e) );
 	  }
 	  waitForDAQToExecute("Halt", 10);
 	}
@@ -1387,11 +1389,11 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
     // (in centrally started calibration runs).
     try {
       if ( bool( isDAQResponsive_ ) ){
-	LOG4CPLUS_INFO( getApplicationLogger(), "Sending to emu::daq::manager::Application : maxNumberOfEvents " << nevents_ .toString() 
+	LOG4CPLUS_INFO( getApplicationLogger(), "Sending to " << localDAQClass_.toString() << " : maxNumberOfEvents " << nevents_ .toString() 
 			<< ", runType " << ( isCalibrationMode() ? run_type_.toString() : "Monitor" )
 			<< ", isGlobalInControl " << isGlobalInControl.toString()
 			<< ", writeBadEventsOnly " << localDAQWriteBadEventsOnly_.toString() );
-	m.setParameters( "emu::daq::manager::Application", 
+	m.setParameters(  localDAQClass_ , 
 			 emu::soap::Parameters()
 			 .add( "maxNumberOfEvents" , &nevents_                    )
 			 .add( "runType"           , &run_type_                   )
@@ -1401,7 +1403,7 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
       }
     } catch (xcept::Exception& e) {
       isDAQResponsive_ = false;
-      LOG4CPLUS_WARN( getApplicationLogger(), "Failed to send to emu::daq::manager::Application : maxNumberOfEvents " << nevents_ .toString() 
+      LOG4CPLUS_WARN( getApplicationLogger(), "Failed to send to " << localDAQClass_.toString() << " : maxNumberOfEvents " << nevents_ .toString() 
 		      << ", runType " << run_type_.toString()
 		      << ", isGlobalInControl " << isGlobalInControl.toString() 
 		      << ", writeBadEventsOnly " << localDAQWriteBadEventsOnly_.toString() 
@@ -1412,10 +1414,10 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
     // Configure local DAQ first as its FSM is driven asynchronously,
     // and it will probably finish the transition by the time the others do.
     try {
-      if ( bool( isDAQResponsive_ ) && isDAQManagerControlled("Configure") ) m.sendCommand( "emu::daq::manager::Application", 0, "Configure" );
+      if ( bool( isDAQResponsive_ ) && isDAQManagerControlled("Configure") ) m.sendCommand(  localDAQClass_ , 0, "Configure" );
     } catch (xcept::Exception& e){
       isDAQResponsive_ = false;
-      LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to send Configure to emu::daq::manager::Application." << xcept::stdformat_exception_history(e) );
+      LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to send Configure to " << localDAQClass_.toString() << "." << xcept::stdformat_exception_history(e) );
     }
     
     if ( isUsingTCDS_ ){
@@ -1623,26 +1625,33 @@ void emu::supervisor::Application::startAction(toolbox::Event::Reference evt)
     
     isDAQResponsive_ = true; // Maybe the local DAQ has been relaunched/cured in the meantime if it was unresponsive, so let's give it a chance.
     try {
-      if (state_table_.getState("emu::daq::manager::Application", 0) == "Halted" &&
+      if (state_table_.getState( localDAQClass_ , 0) == "Halted" &&
         isDAQManagerControlled("Configure")                                        ) {
     	if ( bool( isDAQResponsive_ ) ){
-	  m.setParameters( "emu::daq::manager::Application", emu::soap::Parameters().add( "maxNumberOfEvents", &nevents_ ) );
-	  m.sendCommand( "emu::daq::manager::Application", 0, "Configure" );
+	  xdata::Boolean isGlobalInControl( toolbox::tolower( run_type_.toString() ) == "global" );
+	  m.setParameters(  localDAQClass_ , 
+			    emu::soap::Parameters()
+			    .add( "maxNumberOfEvents" , &nevents_                    ) 
+			    .add( "runType"           , &run_type_                   )
+			    .add( "isGlobalInControl" , &isGlobalInControl           )
+			    .add( "writeBadEventsOnly", &localDAQWriteBadEventsOnly_ )
+			    );
+	  m.sendCommand(  localDAQClass_ , 0, "Configure" );
 	  if ( isCommandFromWeb_ ) waitForDAQToExecute("Configure", 60, true);
-	  else                     waitForDAQToExecute("Configure", 2);
+	  else                     waitForDAQToExecute("Configure", 5);
 	}
       }
       if ( isDAQManagerControlled("Enable") ) {
     	if ( bool( isDAQResponsive_ ) ){
-	  m.setParameters( "emu::daq::manager::Application", emu::soap::Parameters().add( "runNumber", &run_number_ ) );
-	  m.sendCommand( "emu::daq::manager::Application", 0, "Enable" );
+	  m.setParameters(  localDAQClass_ , emu::soap::Parameters().add( "runNumber", &run_number_ ) );
+	  m.sendCommand(  localDAQClass_ , 0, "Enable" );
 	  if ( isCommandFromWeb_ ) waitForDAQToExecute("Enable", 60, true);
-	  else                     waitForDAQToExecute("Enable", 2);
+	  else                     waitForDAQToExecute("Enable", 5);
 	}
       }
     } catch (xcept::Exception& e){
       isDAQResponsive_ = false;
-      LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to communicate with emu::daq::manager::Application in Start." << xcept::stdformat_exception_history(e) );
+      LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to communicate with " << localDAQClass_.toString() << " in Start." << xcept::stdformat_exception_history(e) );
     }
 
     state_table_.refresh();
@@ -1779,16 +1788,16 @@ void emu::supervisor::Application::stopAction(toolbox::Event::Reference evt)
     try {
       if ( isDAQManagerControlled("Halt") ){ 
 	if ( bool( isDAQResponsive_ ) ){
-	  m.sendCommand( "emu::daq::manager::Application", 0, "Halt" );
+	  m.sendCommand(  localDAQClass_ , 0, "Halt" );
 	  if ( isCommandFromWeb_ ) waitForDAQToExecute("Halt", 60, true);
-	  else                     waitForDAQToExecute("Halt", 3);
+	  else                     waitForDAQToExecute("Halt", 5);
 	}
       }
     } catch (xcept::Exception& e){
       isDAQResponsive_ = false;
-      LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to Halt emu::daq::manager::Application in Stop." << xcept::stdformat_exception_history(e) );
+      LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to Halt " << localDAQClass_.toString() << " in Stop." << xcept::stdformat_exception_history(e) );
     }
-    cout << "    Halt emu::daq::manager::Application: " << sw.read() << endl;
+    cout << "    Halt " << localDAQClass_.toString() << ": " << sw.read() << endl;
 
     m.setResponseTimeout( 60 ); // Allow FED ample time to stop.
     m.sendCommand( "emu::fed::Manager", "Disable" );
@@ -1912,16 +1921,16 @@ void emu::supervisor::Application::haltAction(toolbox::Event::Reference evt)
     try {
       if ( isDAQManagerControlled("Halt") ){
 	if ( bool( isDAQResponsive_ ) ){
-	  m.sendCommand( "emu::daq::manager::Application", 0, "Halt" );
+	  m.sendCommand(  localDAQClass_ , 0, "Halt" );
 	  if ( isCommandFromWeb_ ) waitForDAQToExecute("Halt", 60, true);
-	  else                     waitForDAQToExecute("Halt", 3);
+	  else                     waitForDAQToExecute("Halt", 5);
 	}
       }
     } catch (xcept::Exception& e){
       isDAQResponsive_ = false;
-      LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to Halt emu::daq::manager::Application in Halt." << xcept::stdformat_exception_history(e) );
+      LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to Halt " << localDAQClass_.toString() << " in Halt." << xcept::stdformat_exception_history(e) );
     }
-    cout << "    Halt emu::daq::manager::Application: " << sw.read() << endl;
+    cout << "    Halt " << localDAQClass_.toString() << ": " << sw.read() << endl;
 
     if ( ! isUsingTCDS_ ){
       // Issue a resync now to make sure L1A is reset to zero in the FEDs in case a global run follows.
@@ -2033,16 +2042,16 @@ void emu::supervisor::Application::resetAction() throw (toolbox::fsm::exception:
     try {
       if ( isDAQManagerControlled("Halt") ){
 	if ( bool( isDAQResponsive_ ) ){
-	  m.sendCommand( "emu::daq::manager::Application", 0, "Halt" );
+	  m.sendCommand( localDAQClass_, 0, "Halt" );
 	  if ( isCommandFromWeb_ ) waitForDAQToExecute("Halt", 60, true);
-	  else                     waitForDAQToExecute("Halt", 3);
+	  else                     waitForDAQToExecute("Halt", 5);
 	}
       }
     } catch (xcept::Exception& e){
       isDAQResponsive_ = false;
-      LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to Halt emu::daq::manager::Application in Reset." << xcept::stdformat_exception_history(e) );
+      LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to Halt " << localDAQClass_.toString() << " in Reset." << xcept::stdformat_exception_history(e) );
     }
-    cout << "    Halt emu::daq::manager::Application: " << sw.read() << endl;
+    cout << "    Halt " << localDAQClass_.toString() << ": " << sw.read() << endl;
 
     if ( ! isUsingTCDS_ ){
       // Issue a resync now to make sure L1A is reset to zero in the FEDs in case a global run follows.
@@ -2255,22 +2264,26 @@ void emu::supervisor::Application::sendCommandCell(string command){
     param1Attr.setUsePrefixOfParent( false ).add( "name", &param1Name );
     param2Attr.setUsePrefixOfParent( false ).add( "name", &param2Name );
     param3Attr.setUsePrefixOfParent( false ).add( "name", &param3Name );
-    emu::soap::extractParameters( m.sendCommand( tf_descr_, 
-						 emu::soap::QualifiedName( "OpSendCommand", "urn:ts-soap:3.0", "ts-soap" ),
-						 emu::soap::Parameters()
-						 .add( "operation", &TFCellOpName_ )
-						 .add( "command"  , &commandName   )
-						 .add( "param"    , &tf_key_         , &param1Attr )
-						 .add( "param"    , &tf_key_         , &param2Attr )
-						 .add( "param"    , &tf_run_settings_, &param3Attr ),
-						 emu::soap::Attributes()
-						 .setUsePrefixOfParent( false )
-						 .add( "async", &async )
-						 .add( "cid"  , &cid   )
-						 .add( "sid"  , &sid   )
-						 ),
-				  emu::soap::Parameters().add( "warningMessage", &warningMessage )
-				  );
+    xoap::MessageReference reply = m.sendCommand( tf_descr_, 
+						  emu::soap::QualifiedName( "OpSendCommand", "urn:ts-soap:3.0", "ts-soap" ),
+						  emu::soap::Parameters()
+						  .add( "operation", &TFCellOpName_ )
+						  .add( "command"  , &commandName   )
+						  .add( "param"    , &tf_key_         , &param1Attr )
+						  .add( "param"    , &tf_key_         , &param2Attr )
+						  .add( "param"    , &tf_run_settings_, &param3Attr ),
+						  emu::soap::Attributes()
+						  .setUsePrefixOfParent( false )
+						  .add( "async", &async )
+						  .add( "cid"  , &cid   )
+						  .add( "sid"  , &sid   )
+						  );
+    try{
+      emu::soap::extractParameters( reply, emu::soap::Parameters().add( "warningMessage", &warningMessage ) );
+    }
+    catch( xcept::Exception& e ){
+      // Do nothing. Apparently, warningMessage is not included if there are no warnings.
+    }
     if ( warningMessage.toString().length() > 0 ){
       LOG4CPLUS_ERROR( getApplicationLogger(), "Command '" << commandName.toString() << "' returned with warning message from TF Cell: " << warningMessage.toString() );
     }
@@ -2515,7 +2528,7 @@ string emu::supervisor::Application::getDAQMode(){
 
   xdata::Boolean daqMode( false );
   try{
-    m.getParameters( "emu::daq::manager::Application", 0, emu::soap::Parameters().add( "supervisedMode", &daqMode ) );
+    m.getParameters(  localDAQClass_ , 0, emu::soap::Parameters().add( "supervisedMode", &daqMode ) );
     result = ( bool( daqMode ) ? "supervised" : "unsupervised" );
     REVOKE_ALARM( "noLocalDAQ", NULL );
   } catch (xcept::Exception e) {
@@ -2537,7 +2550,7 @@ string emu::supervisor::Application::getLocalDAQState(){
 
   xdata::String daqState( "UNKNOWN" );
   try{
-    m.getParameters( "emu::daq::manager::Application", 0, emu::soap::Parameters().add( "daqState", &daqState ) );
+    m.getParameters(  localDAQClass_ , 0, emu::soap::Parameters().add( "daqState", &daqState ) );
     REVOKE_ALARM( "noLocalDAQ", NULL );
   } catch (xcept::Exception e) {
     isDAQResponsive_ = false;
@@ -2585,7 +2598,7 @@ bool emu::supervisor::Application::waitForDAQToExecute( const string command, co
   if ( ! bool( isDAQResponsive_ ) ) return false;
 
   string expectedState;
-  if      ( command == "Configure" ){ expectedState = "Ready";   }
+  if      ( command == "Configure" ){ expectedState = "Configured";   }
   else if ( command == "Enable"    ){ expectedState = "Enabled"; }
   else if ( command == "Halt"      ){ expectedState = "Halted";  }
   else                              { return true; }
@@ -2600,8 +2613,8 @@ bool emu::supervisor::Application::waitForDAQToExecute( const string command, co
   emu::soap::Messenger m( this );
   xdata::String  daqState;
   for ( unsigned int i=0; i<=seconds; ++i ){
-    m.getParameters( "emu::daq::manager::Application", 0, emu::soap::Parameters().add( "daqState", &daqState ) );
-    if ( daqState.toString() != "Halted"  && daqState.toString() != "Ready" && 
+    m.getParameters(  localDAQClass_ , 0, emu::soap::Parameters().add( "daqState", &daqState ) );
+    if ( daqState.toString() != "Halted"  && daqState.toString() != "Configured" && 
 	 daqState.toString() != "Enabled" && daqState.toString() != "INDEFINITE" ){
       LOG4CPLUS_ERROR( getApplicationLogger(), "Local DAQ is in " << daqState.toString() << " state. Please destroy and recreate local DAQ." );
       stringstream ss9;
@@ -2632,13 +2645,13 @@ bool emu::supervisor::Application::isDAQManagerControlled(string command)
 
   emu::soap::Messenger m( this );
   xdata::Boolean supervisedMode;
-  // xdata::Boolean configuredInSupervisedMode;
+  xdata::Boolean configuredInSupervisedMode;
   xdata::String  daqState;
   try {
-    m.getParameters( "emu::daq::manager::Application", 0,
+    m.getParameters(  localDAQClass_ , 0,
 		     emu::soap::Parameters()
 		     .add( "supervisedMode"            , &supervisedMode             )
-		     // .add( "configuredInSupervisedMode", &configuredInSupervisedMode )
+		     .add( "configuredInSupervisedMode", &configuredInSupervisedMode )
 		     .add( "daqState"                  , &daqState                   ) );
     isDAQResponsive_ = true;
   }
@@ -2647,13 +2660,13 @@ bool emu::supervisor::Application::isDAQManagerControlled(string command)
     return false;
   }
 
-  // No point in sending any command when DAQ is in an irregular state (failed, indefinite, ...)
-  if ( daqState.toString() != "Halted"  && daqState.toString() != "Ready" && 
+  // No point in sending any command when DAQ is in an irregular state (failed)
+  if ( daqState.toString() != "Halted"  && daqState.toString() != "Configured" &&
        daqState.toString() != "Enabled" && daqState.toString() != "INDEFINITE" ){
-    LOG4CPLUS_WARN( getApplicationLogger(), "No command \"" << command << "\" sent to emu::daq::manager::Application because local DAQ is in " 
+    LOG4CPLUS_WARN( getApplicationLogger(), "No command \"" << command << "\" sent to " << localDAQClass_.toString() << " because local DAQ is in " 
 		    << daqState.toString() << " state. Please destroy and recreate local DAQ." );
     stringstream ss11;
-    ss11 <<  "No command \"" << command << "\" sent to emu::daq::manager::Application because local DAQ is in " 
+    ss11 <<  "No command \"" << command << "\" sent to " << localDAQClass_.toString() << " because local DAQ is in " 
 	 << daqState.toString() << " state. Please destroy and recreate local DAQ." ;
     XCEPT_DECLARE( emu::supervisor::exception::Exception, eObj, ss11.str() );
     this->notifyQualified( "warn", eObj );
@@ -2663,9 +2676,6 @@ bool emu::supervisor::Application::isDAQManagerControlled(string command)
   // Don't send any other command when DAQ is in unsupervised mode.
   if ( ! bool( supervisedMode ) ) { return false; }
   
-  // And don't send any other command when DAQ was configured in unsupervised mode, either.
-  // if ( command != "Configure" && !bool( configuredInSupervisedMode ) ) { return false; }
-
   return true;
 
 }
@@ -2704,7 +2714,7 @@ void emu::supervisor::Application::StateTable::addApplication(string klass)
 {
 
 	// find applications
-	std::set<xdaq::ApplicationDescriptor *> apps;
+	std::set<const xdaq::ApplicationDescriptor *> apps;
 	try {
 		apps = app_->getApplicationContext()->getDefaultZone()
 				->getApplicationDescriptors(klass);
@@ -2715,7 +2725,7 @@ void emu::supervisor::Application::StateTable::addApplication(string klass)
 
 	// add to the table
         bSem_.take();
-	for (std::set<xdaq::ApplicationDescriptor *>::iterator i = apps.begin(); i != apps.end(); ++i) {
+	for (std::set<const xdaq::ApplicationDescriptor *>::iterator i = apps.begin(); i != apps.end(); ++i) {
 	  if ( (*i)->getClassName().substr( 0, 6 ) == "tcds::" ){
 	    // Apparently, a TCDS app...
 	    if( app_->isUsingTCDS_ ){
@@ -2723,21 +2733,21 @@ void emu::supervisor::Application::StateTable::addApplication(string klass)
 	      std::string service = (*i)->getAttribute( "service" );
 	      if ( service.substr( service.length()-4 ) == "-pri" ){
 		// ...and it's the primary system, and we're to use the primary system...
-		if ( (bool)(app_->usePrimaryTCDS_) ) table_.push_back(pair<xdaq::ApplicationDescriptor *, string>(*i, "NULL"));
+		if ( (bool)(app_->usePrimaryTCDS_) ) table_.push_back(pair<const xdaq::ApplicationDescriptor *, string>(*i, "NULL"));
 	      }
 	      else if ( service.substr( service.length()-4 ) == "-sec" ){
 		// ...or it's the secondary system, and we're to use the secondary system...
-		if ( ! (bool)(app_->usePrimaryTCDS_) ) table_.push_back(pair<xdaq::ApplicationDescriptor *, string>(*i, "NULL"));
+		if ( ! (bool)(app_->usePrimaryTCDS_) ) table_.push_back(pair<const xdaq::ApplicationDescriptor *, string>(*i, "NULL"));
 	      }
 	      else{
 		// ...or it's without system designation, in which case we take it.
-		table_.push_back(pair<xdaq::ApplicationDescriptor *, string>(*i, "NULL"));
+		table_.push_back(pair<const xdaq::ApplicationDescriptor *, string>(*i, "NULL"));
 	      }
 	    }
 	  }
 	  else{
 	    // Apparently, it's not a TCDS app, so we take it without further checks.
-	    table_.push_back(pair<xdaq::ApplicationDescriptor *, string>(*i, "NULL"));
+	    table_.push_back(pair<const xdaq::ApplicationDescriptor *, string>(*i, "NULL"));
 	  }
 	}
         bSem_.give();
@@ -2751,17 +2761,15 @@ void emu::supervisor::Application::StateTable::refresh( bool forceRefresh )
 	if ( timeNow < lastRefreshTime_ + 2 && !forceRefresh ) return;
 
 	string klass = "";
-	int instance = -1;
 	string service = "";
 
 	emu::soap::Messenger m( app_ );
 
-	vector<pair<xdaq::ApplicationDescriptor *, string> >::iterator i =
+	vector<pair<const xdaq::ApplicationDescriptor *, string> >::iterator i =
 			table_.begin();
 	for (; i != table_.end(); ++i) {
 
 	        klass    = i->first->getClassName();
-		instance = i->first->getInstance();
 		service  = i->first->getAttribute( "service" );
 
 		try {
@@ -2779,14 +2787,14 @@ void emu::supervisor::Application::StateTable::refresh( bool forceRefresh )
 			else if ( klass == "tcds::lpm::LPMController" ){
 			  if ( service.substr( 0, 7 ) == "lpm-csc"   && app_->pm_       ) state = app_->pm_      ->getSteadyState();
 			}
-			else if ( klass == "emu::daq::manager::Application" ){
+			else if ( klass == app_->localDAQClass_.toString() ){
 			  if ( bool( app_->isDAQResponsive_ ) ){
 			    try{
 			      m.getParameters( i->first, emu::soap::Parameters().add( "stateName", &state ) );
 			    }catch (xcept::Exception& e){
 			      state = STATE_UNKNOWN;
 			      app_->isDAQResponsive_ = false;
-			      LOG4CPLUS_ERROR( app_->getApplicationLogger(), "Failed to get state of emu::daq::manager::Application." << xcept::stdformat_exception_history(e) );
+			      LOG4CPLUS_ERROR( app_->getApplicationLogger(), "Failed to get state of " << app_->localDAQClass_.toString() << "." << xcept::stdformat_exception_history(e) );
 			    }
 			  }
 			  else{
@@ -2820,10 +2828,10 @@ void emu::supervisor::Application::StateTable::refresh( bool forceRefresh )
                         bSem_.give();
 		}
 
-		if (klass == "emu::daq::manager::Application" && i->second == STATE_UNKNOWN) {
-			LOG4CPLUS_WARN(app_->getApplicationLogger(), "State of emu::daq::manager::Application will be unknown.");
+		if (klass == app_->localDAQClass_.toString() && i->second == STATE_UNKNOWN) {
+			LOG4CPLUS_WARN(app_->getApplicationLogger(), "State of " << app_->localDAQClass_.toString() << " will be unknown.");
 			stringstream ss14;
-			ss14 << "State of emu::daq::manager::Application will be unknown.";
+			ss14 << "State of " << app_->localDAQClass_.toString() << " will be unknown.";
 			XCEPT_DECLARE( emu::supervisor::exception::Exception, eObj, ss14.str() );
 			app_->notifyQualified( "warn", eObj );
 		}
@@ -2835,7 +2843,7 @@ string emu::supervisor::Application::StateTable::getState(string klass, unsigned
 {
 	string state = "";
 
-	vector<pair<xdaq::ApplicationDescriptor *, string> >::const_iterator i =
+	vector<pair<const xdaq::ApplicationDescriptor *, string> >::const_iterator i =
 			table_.begin();
 	for (; i != table_.end(); ++i) {
 		if (klass == i->first->getClassName()
@@ -2852,14 +2860,14 @@ bool emu::supervisor::Application::StateTable::isValidState(string expected) con
 {
 	bool is_valid = true;
 
-	vector<pair<xdaq::ApplicationDescriptor *, string> >::const_iterator i =
+	vector<pair<const xdaq::ApplicationDescriptor *, string> >::const_iterator i =
 			table_.begin();
 	for (; i != table_.end(); ++i) {
 		string checked = expected;
 		string klass = i->first->getClassName();
 
-		// Ignore emu::daq::manager::Application in global runs.
-		if ( klass == "emu::daq::manager::Application" 
+		// Ignore local DAQ in global runs.
+		if ( klass == app_->localDAQClass_.toString()  
 		     && app_->run_type_ == "Global" ) continue;
 
 		// TTC/LTC have their own peculiar state names. Translate them:
@@ -2892,7 +2900,7 @@ void emu::supervisor::Application::StateTable::webOutput(xgi::Output *out, strin
 	*out << tr() << endl;
 
 	// Applications
-	vector<pair<xdaq::ApplicationDescriptor *, string> >::iterator i =
+	vector<pair<const xdaq::ApplicationDescriptor *, string> >::iterator i =
 			table_.begin();
 	for (; i != table_.end(); ++i) {
 		string klass = i->first->getClassName();
@@ -2911,7 +2919,7 @@ void emu::supervisor::Application::StateTable::webOutput(xgi::Output *out, strin
 
 ostream& emu::supervisor::operator<<( ostream& os, const emu::supervisor::Application::StateTable& st ){
   os << endl << "emu::supervisor::Application(0) " << st.getApplication()->getFSM()->getCurrentState() << endl;
-  for (vector<pair<xdaq::ApplicationDescriptor *, string> >::const_iterator i = st.getTable()->begin(); i != st.getTable()->end(); ++i) {
+  for (vector<pair<const xdaq::ApplicationDescriptor *, string> >::const_iterator i = st.getTable()->begin(); i != st.getTable()->end(); ++i) {
     os << i->first->getClassName() << " (" << i->first->getInstance() << ",'" << i->first->getAttribute( "service" ) << "') " << i->second << endl;
   }
   return os;
@@ -2993,7 +3001,7 @@ void emu::supervisor::Application::writeRunInfo( bool toDatabase ){
   // If DAQ Manager is absent, we have nothing to do here:
   if ( ! isDAQManagerControlled("Halt") ) return;
 
-  // emu::daq::manager::Application's FSM is asynchronous. Wait for it.
+  // Local DAQ's FSM is asynchronous. Wait for it.
   if ( ! waitForDAQToExecute("Halt", 10, true ) ){
     LOG4CPLUS_WARN(getApplicationLogger(), "Nothing written to run database as local DAQ has not stopped.");
     stringstream ss22;
@@ -3032,7 +3040,7 @@ void emu::supervisor::Application::writeRunInfo( bool toDatabase ){
     xdata::Vector<xdata::String> rui_instances;
 
     try{
-      emu::soap::extractParameters( m.sendCommand( "emu::daq::manager::Application", 0, "QueryRunSummary" ),
+      emu::soap::extractParameters( m.sendCommand(  localDAQClass_ , 0, "QueryRunSummary" ),
 				    emu::soap::Parameters()                  
 				    .add( "start_time"   , &start_time     ) 
 				    .add( "stop_time"    , &stop_time      ) 

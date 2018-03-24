@@ -82,7 +82,7 @@ void PipelineAnalyzer::analyze(){
 	
 	double bestDepth = p.getBestDepth();
 
-	if ( isnan( bestDepth ) || bestDepth <= 0.) addToResults( crate, dmbSlot, cfeb,       -1. );
+	if ( ::isnan( bestDepth ) || bestDepth <= 0.) addToResults( crate, dmbSlot, cfeb,       -1. );
 	else                                        addToResults( crate, dmbSlot, cfeb, bestDepth );
 
 	logFile_ << "\nFitting all measurements at different pipeline depth settings:"

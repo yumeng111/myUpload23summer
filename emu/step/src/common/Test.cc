@@ -6,7 +6,6 @@
 #include "emu/utils/DOM.h"
 #include "emu/utils/String.h"
 #include "emu/utils/System.h"
-#include "emu/utils/SimpleTimer.h"
 
 #include "emu/pc/Crate.h"
 #include "emu/pc/VMEController.h"
@@ -27,17 +26,6 @@
 //#include <cmath>
 #include <sys/stat.h>
 
-#ifdef DIP
-const char* emu::step::Test::SPSTimingSignalNames_[] = { "SPSSuperCycleStart", "SPSCycleStart", "SPSExtractionStart", "SPSExtractionEnd" };
-
-const char* emu::step::Test::DIPPublications_[] = {
-  "dip/acc/SPS/Timing/SuperCycle/StartEvent",
-  "dip/acc/SPS/Timing/Cycle/StartEvent",
-  "dip/acc/SPS/Timing/Cycle/StartExtractionEvent",
-  "dip/acc/SPS/Timing/Cycle/EndExtractionEvent"
-};
-#endif
-
 using namespace emu::utils;
 
 emu::step::Test::Test( const string& id, 
@@ -52,15 +40,7 @@ emu::step::Test::Test( const string& id,
   , isFake_( isFake )
   , isToStop_( false )
   , runNumber_( 0 )
-  , runStartTime_( "YYYYMMDD_hhmmss_UTC" )
-#ifdef DIP
-  , SPSCycleName_( "SPS.USER.SFTPRO2" )
-  , DIPMessageReceivedFlags_( 0 )
-  , dip_( Dip::create() )
-  , spsListener_( new SPSListener( this ) )
-  , subscriptions_( new DipSubscription*[nDIPPublications] )
-#endif
-{
+  , runStartTime_( "YYYYMMDD_hhmmss_UTC" ){
 
   stringstream ss;
   if ( ! getProcedure( id, emu::step::Test::forConfigure_ ) || ! getProcedure( id, emu::step::Test::forEnable_ ) ){
@@ -81,12 +61,7 @@ emu::step::Test::Test( const string& id,
   progress_.setTotal( 1 ); // for the percent to be 0 before the total is set to its proper value
 }
 
-emu::step::Test::~Test(){
-#ifdef DIP
-  delete[] subscriptions_;
-  delete spsListener_;
-#endif
-}
+//emu::step::Test::~Test(){}
 
 void emu::step::Test::configure(){
   configureCrates();
@@ -120,8 +95,7 @@ void ( emu::step::Test::* emu::step::Test::getProcedure( const string& testId, S
   if ( testId == "27"  ) return ( state == forConfigure_ ? &emu::step::Test::configure_27   : &emu::step::Test::enable_27   );
   if ( testId == "27s" ) return ( state == forConfigure_ ? &emu::step::Test::configure_27   : &emu::step::Test::enable_27   );
   if ( testId == "30"  ) return ( state == forConfigure_ ? &emu::step::Test::configure_30   : &emu::step::Test::enable_30   );
-  if ( testId == "40"  ) return ( state == forConfigure_ ? &emu::step::Test::configure_40   : &emu::step::Test::enable_27   );
-  if ( testId == "40s" ) return ( state == forConfigure_ ? &emu::step::Test::configure_40   : &emu::step::Test::enable_27   );
+  if ( testId == "40"  ) return ( state == forConfigure_ ? &emu::step::Test::configure_40   : &emu::step::Test::enable_40   );
   return NULL;
 }
 
@@ -142,6 +116,7 @@ void emu::step::Test::createEndcap( const string& generalSettingsXML,
   for ( x = xpaths.begin(), v = values.begin(); x != xpaths.end() && v != values.end(); ++x, ++v ) valuesMap[x->second] = v->second;
   VME_XML_ = utils::setSelectedNodesValues( generalSettingsXML, valuesMap );
 
+
   // Get the parameters to be added to their general values for this test:
   xpaths = utils::getSelectedNodesValues( specialSettingsXML, "//settings/test[@id='" + id_ + "']/addTo/@xpath" );
   values = utils::getSelectedNodesValues( specialSettingsXML, "//settings/test[@id='" + id_ + "']/addTo/@value" );
@@ -149,6 +124,7 @@ void emu::step::Test::createEndcap( const string& generalSettingsXML,
   valuesMap.clear();
   for ( x = xpaths.begin(), v = values.begin(); x != xpaths.end() && v != values.end(); ++x, ++v ) valuesMap[x->second] = v->second;
   VME_XML_ = utils::setSelectedNodesValues( VME_XML_, valuesMap, utils::add );
+
 
   // Save XML in file:
   string fileName( "VME_" + withoutChars( " \t:;<>'\",?/~`!@#$%^&*()=[]|\\", group_ ) + "_Test" + id_ + ".xml" );
@@ -232,7 +208,7 @@ void emu::step::Test::setUpDDU(emu::pc::Crate* crate)
       LOG4CPLUS_INFO( *pLogger_, "Kill Fiber  is set to 0x" << hex << ( (*ddu)->readFlashKillFiber() & 0xffff ) << dec );
       LOG4CPLUS_INFO( *pLogger_, "GbEPrescale is set to 0x" << hex << ( (*ddu)->readGbEPrescale()    & 0xffff ) << dec );
       LOG4CPLUS_INFO( *pLogger_, "Fake L1A    is set to 0x" << hex << ( (*ddu)->readFakeL1()         & 0xffff ) << dec );
-      if ( ( (*ddu)->readFlashKillFiber() & 0x000f ) != GbEPrescaleWord ){
+      if ( (*ddu)->readFlashKillFiber() & 0x000f != GbEPrescaleWord ){
 	LOG4CPLUS_ERROR( *pLogger_, "Failed to set GbEPrescale to 0x" << hex << GbEPrescaleWord << dec );
       }
     }
@@ -243,6 +219,7 @@ void emu::step::Test::setUpDDU(emu::pc::Crate* crate)
 
 void emu::step::Test::configureCrates(){
 
+  // cout << "emu::step::Test::configureCrates: Test " << id_ << " isFake_ = " << isFake_ << endl << flush;
   if ( isFake_ ) return;
 
   vector<emu::pc::Crate*> crates = parser_.GetEmuEndcap()->crates();
@@ -422,10 +399,6 @@ void emu::step::Test::setUpODMBPulsing( emu::pc::DAQMB *dmb, ODMBMode_t mode, OD
     LOG4CPLUS_INFO( *pLogger_, "ODMB kill mask changed from 0x" << hex << oldKillMask << " to 0x" << newKillMask << dec );
   }
 
-  if ( pLogger_ ){
-    int mask_pulse( dmb->odmb_read_mask_pulse() );
-    LOG4CPLUS_INFO( *pLogger_, "ODMB pulse mask is " << mask_pulse << dec << ( mask_pulse==0 ? " (pulsing enabled)" : " (pulsing disabled)" ) );
-  }
 }
 
 // One pipeline fuction to rule them all.
@@ -1174,8 +1147,6 @@ void emu::step::Test::configure_15(){ // OK
       for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
 
 	if( (*dmb)->GetHardwareVersion() == 2 ){
- 	  enum { pulse=0, noPulse=1 };
-	  (*dmb)->odmb_mask_pulse( noPulse );
 	  setUpODMBPulsing( *dmb, ODMBPedestalMode, ODMBInputKill_t( kill_ALCT | kill_TMB ) );
 	} // if( (*dmb)->GetHardwareVersion() == 2 )
 	::sleep(1);
@@ -2361,96 +2332,53 @@ void emu::step::Test::configure_27(){
 }
 
 void emu::step::Test::enable_27(){
-  if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "emu::step::Test::enable_27 starting (may be used for tests 27(s),40(s))" ); }
+  if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "emu::step::Test::enable_27 starting" ); }
+  
   // Test of undefined duration, progress should be monitored in local DAQ.
   
-  TimingOptions timingOptions( this );
+  vector<emu::pc::Crate*> crates = parser_.GetEmuEndcap()->crates();
 
-#ifdef DIP
-  bool subscribedToDIP = false;
-  if ( timingOptions.synchronizeTestStart() || timingOptions.doSynchronizedDumps() ){
-    subscribeToDIP();
-    subscribedToDIP = true;
-    ::sleep( 2 ); // wait a couple of sec for the subscriptions to be confirmed;
-    // TODO: waitForSubscriptionConfirmation method?
-  }
+  // Get optional TMB counter dump period
+  double tmbDumpPeriodInSec = ( parameters_.find( "tmb_counter_dump_period_ms" ) == parameters_.end() ? double( 0. ) : double( parameters_[ "tmb_counter_dump_period_ms" ] ) * 0.001 );
 
-  if ( timingOptions.synchronizeTestStart() ){
-    LOG4CPLUS_INFO( *pLogger_, "Waiting for " << timingOptions.printTimingSignals( timingOptions.spsTimingSignalsForStart() ) << " to start triggering..." ); 
-    // waitForSPSTimingSignals returns negative number if 'Halt' button is pressed during the wait
-    if ( waitForSPSTimingSignals( timingOptions.spsTimingSignalsForStart() ) < 0 ){
-      if ( subscribedToDIP ) unsubscribeFromDIP();
-      return;
+  vector<emu::pc::TMB*> tmbs;
+  string dumperName( withoutChars( " \t:;<>'\",?/~`!@#$%^&*()=[]|\\", group_ ) + "_Test" + id_ + "_" + runStartTime_ );
+  string dumpDir;
+  if ( tmbDumpPeriodInSec > 0. ){
+    // Collect TMBs whose counters are to be dumped periodically:
+    for ( vector<emu::pc::Crate*>::iterator crate = crates.begin(); crate != crates.end(); ++crate ){
+      vector<emu::pc::TMB*> tmbsInCrate = (*crate)->tmbs();
+      tmbs.insert( tmbs.end(), tmbsInCrate.begin(), tmbsInCrate.end() );
     }
-    LOG4CPLUS_INFO( *pLogger_, "SPS signal received, starting triggering." );
+    // Get the data directory name. That's where we want to save the TMB counters' dump file, too.
+    dumpDir = getDataDirName(); 
+    if ( dumpDir.size() == 0 ){
+      if ( pLogger_ ){ LOG4CPLUS_WARN( *pLogger_, "No data directory found on this host. TMB counter's dump files will be saved in /tmp instead." ); }
+      dumpDir = "/tmp";
+    }
+    if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "TMB counters will be dumped every " << tmbDumpPeriodInSec << " seconds to a file in directory " << dumpDir ); }
   }
-
-  // Start synchronized dumper if needed
-  Dumper *synchronizedDumper = NULL;
-  if ( timingOptions.doSynchronizedDumps() ) synchronizedDumper = new Dumper( &timingOptions );
-  bool firstSignal = true;
-#endif
+  else{
+    if ( pLogger_ ){ LOG4CPLUS_WARN( *pLogger_, "TMB counters will not be read out and saved. Set the parameter tmb_counter_dump_period_ms to a positive integer (e.g. 10000 for 10s samples) if you want to dump them periodically." ); }
+  }
 
   // Start triggering
-  vector<emu::pc::Crate*> crates = parser_.GetEmuEndcap()->crates();
   for ( vector<emu::pc::Crate*>::iterator crate = crates.begin(); crate != crates.end(); ++crate ){
 
     (*crate)->ccb()->startTrigger(); // necessary for tmb to start triggering (alct should work with just L1A reset and bc0)
     (*crate)->ccb()->l1aReset();
     (*crate)->ccb()->bc0(); 
 
-    if ( isToStop_ ){
-#ifdef DIP
-      if ( subscribedToDIP ) unsubscribeFromDIP();
-      delete synchronizedDumper;
-#endif
-      return;
-    }
+    if ( isToStop_ ) return;
   }
 
-  // Start periodic dumper if needed
-  PeriodicDumper *periodicDumper = NULL;
-  if ( timingOptions.doPeriodicDumps() ) periodicDumper = new PeriodicDumper( &timingOptions );
+  // Start periodic dumper
+  PeriodicDumper tmbCountsDumper( this, dumperName, dumpDir, tmbDumpPeriodInSec, tmbs, pLogger_ );
 
   // Let's stay here until we're told to stop. Only then should we go on to disable trigger.
   while( true ){
-
-    if ( isToStop_ ){ 
-#ifdef DIP
-      if ( subscribedToDIP ) unsubscribeFromDIP();
-      delete synchronizedDumper;
-#endif
-      delete periodicDumper;
-      return;
-    }
-
-#ifdef DIP
-    if ( timingOptions.doSynchronizedDumps() ){
-      int index;
-      if ( ( index = receivedSPSSignal( timingOptions.spsTimingSignalsForDumps() ) ) >= 0 ){
-	// Don't dump counters on the first signal, but do on all subsequent ones:
-	if ( ! firstSignal ){
-	  cout << "Not first signal: " << DIPPublications_[index] << endl;
-	  if ( synchronizedDumper ) synchronizedDumper->dumpCounters( DIPPublications_[index] );
-	}
-	else{
-	  cout << "First signal: " << DIPPublications_[index] << endl;
-	  firstSignal = false;
-	}
-	// Reset the counters on every signal:
-	if ( synchronizedDumper ) synchronizedDumper->resetCounters( DIPPublications_[index] );
-      }
-      ::usleep( 100 ); // Wait a little before rechecking for SPS signal.
-    }
-    else{
-      // We only need to check for user's halt request, which we can do at a leasurely once-a-second rate. 
-      ::sleep( 1 );
-    }
-#else
-    // We only need to check for user's halt request, which we can do at a leasurely once-a-second rate. 
+    if ( isToStop_ ) return;
     ::sleep( 1 );
-#endif
-
 //     // Find the time between the DMB's receiving CLCT pretrigger and L1A:
 //     for ( vector<emu::pc::Crate*>::iterator crate = crates.begin(); crate != crates.end(); ++crate ){
 //       vector<emu::pc::DAQMB *> dmbs = (*crate)->daqmbs();
@@ -2458,8 +2386,7 @@ void emu::step::Test::enable_27(){
 // 	PrintDmbValuesAndScopes( (*crate)->GetChamber( *dmb )->GetTMB(), *dmb, (*crate)->ccb(), (*crate)->mpc() );
 //       } // for ( vector<emu::pc::TMB*>::iterator tmb = tmbs.begin(); tmb != tmbs.end(); ++tmb )
 //     } // for ( vector<emu::pc::Crate*>::iterator crate = crates.begin(); crate != crates.end(); ++crate )
-
-  } // while( true )
+  }
 }
 
 void emu::step::Test::configure_30(){
@@ -2614,13 +2541,62 @@ void emu::step::Test::configure_40(){
   }
 }
 
-void emu::step::Test::enable_40(){} // It would be the same as enable_27, so use that one instead to avoid code duplication.
+void emu::step::Test::enable_40(){
+  if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "emu::step::Test::enable_40 starting" ); }
+  
+  // Test of undefined duration, progress should be monitored in local DAQ.
+  
+  vector<emu::pc::Crate*> crates = parser_.GetEmuEndcap()->crates();
+
+  // Get optional TMB counter dump period
+  double tmbDumpPeriodInSec = ( parameters_.find( "tmb_counter_dump_period_ms" ) == parameters_.end() ? double( 0. ) : double( parameters_[ "tmb_counter_dump_period_ms" ] ) * 0.001 );
+
+  vector<emu::pc::TMB*> tmbs;
+  string dumperName( withoutChars( " \t:;<>'\",?/~`!@#$%^&*()=[]|\\", group_ ) + "_Test" + id_ + "_" + runStartTime_ );
+  string dumpDir;
+  if ( tmbDumpPeriodInSec > 0. ){
+    // Collect TMBs whose counters are to be dumped periodically:
+    for ( vector<emu::pc::Crate*>::iterator crate = crates.begin(); crate != crates.end(); ++crate ){
+      vector<emu::pc::TMB*> tmbsInCrate = (*crate)->tmbs();
+      tmbs.insert( tmbs.end(), tmbsInCrate.begin(), tmbsInCrate.end() );
+    }
+    // Get the data directory name. That's where we want to save the TMB counters' dump file, too.
+    dumpDir = getDataDirName(); 
+    if ( dumpDir.size() == 0 ){
+      if ( pLogger_ ){ LOG4CPLUS_WARN( *pLogger_, "No data directory found on this host. TMB counter's dump files will be saved in /tmp instead." ); }
+      dumpDir = "/tmp";
+    }
+    if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "TMB counters will be dumped every " << tmbDumpPeriodInSec << " seconds to a file in directory " << dumpDir ); }
+  }
+  else{
+    if ( pLogger_ ){ LOG4CPLUS_WARN( *pLogger_, "TMB counters will not be read out and saved. Set the parameter tmb_counter_dump_period_ms to a positive integer (e.g. 10000 for 10s samples) if you want to dump them periodically." ); }
+  }
+
+  // Start triggering
+  for ( vector<emu::pc::Crate*>::iterator crate = crates.begin(); crate != crates.end(); ++crate ){
+
+    (*crate)->ccb()->startTrigger(); // necessary for tmb to start triggering (alct should work with just L1A reset and bc0)
+    (*crate)->ccb()->l1aReset();
+    (*crate)->ccb()->bc0(); 
+
+    if ( isToStop_ ) return;
+  }
+      
+  // Start periodic dumper
+  PeriodicDumper tmbCountsDumper( this, dumperName, dumpDir, tmbDumpPeriodInSec, tmbs, pLogger_ );
+
+  // Let's stay here until we're told to stop. Only then should we go on to disable trigger.
+  while( true ){
+    if ( isToStop_ ) return;
+    ::sleep( 1 );
+  }
+}
 
 void emu::step::Test::configure_fake(){
   if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "emu::step::Test::configure_fake starting" ); }
-  for ( uint64_t i = 0; i < 3; ++i ){
+  for ( uint64_t i = 0; i < 30; ++i ){
     if ( isToStop_ ) return;
-    ::sleep( 1 );
+    ::sleep( 1 );    
   }
   if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "emu::step::Test::configure_fake ending" ); }
 }
@@ -2628,91 +2604,22 @@ void emu::step::Test::configure_fake(){
 void emu::step::Test::enable_fake(){
   if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "emu::step::Test::enable_fake starting" ); }
 
-  TimingOptions timingOptions( this );
-
-#ifdef DIP
-  bool subscribedToDIP = false;
-  if ( timingOptions.synchronizeTestStart() || timingOptions.doSynchronizedDumps() ){
-    subscribeToDIP();
-    subscribedToDIP = true;
-    ::sleep( 2 ); // wait a couple of sec for the subscriptions to be confirmed;
-    // TODO: waitForSubscriptionConfirmation method?
-  }
-
-  if ( timingOptions.synchronizeTestStart() ){
-    LOG4CPLUS_INFO( *pLogger_, "Waiting for " << timingOptions.printTimingSignals( timingOptions.spsTimingSignalsForStart() ) << " to start triggering..." ); 
-    // waitForSPSTimingSignals returns negative number if 'Halt' button is pressed during the wait
-    if ( waitForSPSTimingSignals( timingOptions.spsTimingSignalsForStart() ) < 0 ){
-      if ( subscribedToDIP ) unsubscribeFromDIP();
-      return;
-    }
-    LOG4CPLUS_INFO( *pLogger_, "SPS signal received, starting triggering." );
-  }
-
-  Dumper *synchronizedDumper = NULL;
-  if ( timingOptions.doSynchronizedDumps() ) synchronizedDumper = new Dumper( &timingOptions );
-  bool firstSignal = true;
-#endif
-
-  PeriodicDumper *periodicDumper = NULL;
-  if ( timingOptions.doPeriodicDumps() ) periodicDumper = new PeriodicDumper( &timingOptions );
-
-  uint64_t nEvents = 60;
+  uint64_t nEvents = 30;
   bsem_.take();
   nEvents_ = nEvents;
   progress_.setTotal( (int)nEvents_ );
   bsem_.give();
-
-  emu::utils::SimpleTimer st;
-  int previousEventTime = int( st.sec() );
-  uint64_t iEvent = 0;
-  while ( iEvent < nEvents ){
-
+  for ( uint64_t iEvent = 0; iEvent < nEvents; ++iEvent ){
     if ( isToStop_ ){ 
-      LOG4CPLUS_INFO( *pLogger_, "emu::step::Test::enable_fake ending forced" );
-#ifdef DIP
-      if ( subscribedToDIP ) unsubscribeFromDIP();
-      delete synchronizedDumper;
-#endif
-      delete periodicDumper;
+      if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "emu::step::Test::enable_fake ending forced" ); }
       return;
     }
-    
-#ifdef DIP
-    if ( timingOptions.doSynchronizedDumps() ){
-      int index;
-      if ( ( index = receivedSPSSignal( timingOptions.spsTimingSignalsForDumps() ) ) >= 0 ){
-	// Don't dump counters on the first signal, but do on all subsequent ones:
-	if ( ! firstSignal ){
-	  cout << "Not first signal: " << DIPPublications_[index] << endl;
-	  if ( synchronizedDumper ) synchronizedDumper->dumpCounters( DIPPublications_[index] );
-	}
-	else{
-	  cout << "First signal: " << DIPPublications_[index] << endl;
-	  firstSignal = false;
-	}
-	// Reset the counters on every signal:
-	if ( synchronizedDumper ) synchronizedDumper->resetCounters( DIPPublications_[index] );
-      }
-      ::usleep( 1000 ); // wait a millisec before rechecking 
-    }
-#endif
-
-    if ( int( st.sec() ) > previousEventTime ){
-      previousEventTime = int( st.sec() );
-      if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "Event " << iEvent + 1 ); }
-      progress_.setCurrent( (int)iEvent + 1 );
-      iEvent++;
-    }
+    if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "Event " << iEvent + 1 ); }
+    progress_.setCurrent( (int)iEvent + 1 );
+    ::sleep( 1 );    
   }
   
-#ifdef DIP
-  if ( subscribedToDIP ) unsubscribeFromDIP();
-  delete synchronizedDumper;
-#endif
-  delete periodicDumper;
-
-  LOG4CPLUS_INFO( *pLogger_, "emu::step::Test::enable_fake ending" );
+  if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "emu::step::Test::enable_fake ending" ); }
 }
 
 void emu::step::Test::onException( xcept::Exception& e ){ // callback for toolbox::exception::Listener
@@ -2720,109 +2627,3 @@ void emu::step::Test::onException( xcept::Exception& e ){ // callback for toolbo
     LOG4CPLUS_ERROR( *pLogger_, "Exception caught in periodic TMB dumper thread: " << xcept::stdformat_exception_history(e) );
   }
 }
-
-#ifdef DIP
-
-//
-// DIP
-//
-
-void emu::step::Test::subscribeToDIP(){
-  // Set the host name of the DIP server
-  dip_->setDNSNode( "dipnsgpn1.cern.ch,dipnsgpn2.cern.ch" ); // TODO: make configurable?
-  // Create a subsciption for each DIP publication on our list
-  for( int i = 0 ; i < nDIPPublications; i++ ){
-    try{
-      subscriptions_[i] = dip_->createDipSubscription( DIPPublications_[i], spsListener_ );
-    }
-    catch( DipException& e ){
-      LOG4CPLUS_ERROR( *pLogger_, "Failed to subscribe to DIP for " << DIPPublications_[i] << " : " << e.what() );
-    }    
-    // Also fill the inverse of the DIPPublications_ array
-    DIPPublicationIndices_[DIPPublications_[i]] = i;  
-  }
-}
-
-void emu::step::Test::unsubscribeFromDIP(){
-  LOG4CPLUS_INFO( *pLogger_, "Destroying DIP subscriptions." );
-  for ( int i = 0 ; i < nDIPPublications; i++ ){
-    try{
-      dip_->destroyDipSubscription( subscriptions_[i] );
-    }
-    catch( DipException& e ){
-      LOG4CPLUS_ERROR( *pLogger_, "Failed to unsubscribe " << DIPPublications_[i] << " from DIP: " << e.what() );
-    }
-  }
-}
-
-void emu::step::Test::resetDIPMessageReceivedFlags( unsigned int signals ){
-  bsem_.take();
-  DIPMessageReceivedFlags_ &= ~signals;
-  bsem_.give();
-}
-
-int emu::step::Test::receivedSPSSignal( unsigned int signals ){
-  bsem_.take();
-  // cout << "Checking DIPMessageReceivedFlags_=" << DIPMessageReceivedFlags_ << " against " << signals << endl;
-  unsigned int received = ( DIPMessageReceivedFlags_ & signals );
-  // Find out which signal we received:
-  int index = 0;
-  if ( received ) while ( ( received & 1<<index ) == 0 ) index++;
-  else            index = -1;
-  // We now know it's been received, so reset the flag so that we can't take it again unless there's another signal. 
-  //  DIPMessageReceivedFlags_ &= ~signals;
-  DIPMessageReceivedFlags_ = 0;
-  bsem_.give();
-  return index;
-}
-
-int emu::step::Test::waitForSPSTimingSignals( unsigned int signals ){
-  // Reset the receive flag of these signals to FALSE to be able to catch the next new signal.
-  resetDIPMessageReceivedFlags( signals );
-  // Start a polling loop
-  int index;
-  while( ( index = receivedSPSSignal( signals ) ) < 0 ){
-    ::usleep( 1000 );
-    // Check if the user wants us to stop
-    if ( isToStop_ ) return -1; // Negative means the wait was interrupted.
-  }
-  
-  return index; // A valid index means that the signal arrived.
-}
-
-//
-// Nested DIP listener class
-//
-
-void emu::step::Test::SPSListener::connected( DipSubscription *subscription ) {
-  LOG4CPLUS_INFO( *client_->pLogger_, "Publication source  " << subscription->getTopicName()<< " available." );
-}
-
-void emu::step::Test::SPSListener::disconnected( DipSubscription *subscription, char *reason ) {
-  LOG4CPLUS_INFO( *client_->pLogger_, "Publication source " << subscription->getTopicName()<< " unavailable. Reason: " << reason );
-}
-
-void emu::step::Test::SPSListener::handleException( DipSubscription* subscription, DipException& ex ){
-  LOG4CPLUS_ERROR( *client_->pLogger_, "Subscription " << subscription->getTopicName()<< " has error: " << ex.what() );
-}
-
-void emu::step::Test::SPSListener::handleMessage( DipSubscription *subscription, DipData &message ){
-  LOG4CPLUS_INFO( *client_->pLogger_, "Received data from " << subscription->getTopicName() );
-  if ( client_->DIPPublicationIndices_.find( subscription->getTopicName() ) == client_->DIPPublicationIndices_.end() ){
-    LOG4CPLUS_WARN( *client_->pLogger_, "Received data from unknown publication " << subscription->getTopicName() );
-    return;
-  }
-  client_->bsem_.take();
-  // Find the index of this subscription/publication:
-  int index = client_->DIPPublicationIndices_[ subscription->getTopicName() ];
-  // Note that cycleName can change day to day, so we won't require it to match anything for the time being.
-  // if ( true ){
-  // TODO: Ask which cycleName corresponds to our testbeam area.
-  if ( client_->SPSCycleName_ == message.extractString( "cycleName" ) ){
-    // Set the corresponding receive flag to indicate the reception (only that single bit of the flag should be changed here):
-    client_->DIPMessageReceivedFlags_ |= 1<<index;
-  }
-  // cout << "client_->DIPMessageReceivedFlags_=" << client_->DIPMessageReceivedFlags_ << endl;
-  client_->bsem_.give();
-}
-#endif

@@ -230,8 +230,8 @@ throw (emu::exception::ConfigurationException)
        * Now, after reading tables from DB, we need to copy them into our empty tables.
        */
 
-      DefinitionType &def_tstore = table_tstore.getTableDefinition();
-      DefinitionType &def_conf   = table_2fill.getTableDefinition();
+      DefinitionType def_tstore(  table_tstore.getTableDefinition() );
+      DefinitionType def_conf  (  table_2fill.getTableDefinition()  );
 
       if (DBG)
       {
@@ -374,8 +374,8 @@ throw (emu::exception::ConfigurationException)
       // but we do check furcher that table definition are the same (case-insensitive)
       xdata::Table table_2write = tstore.definition(*t);
 
-      DefinitionType &def_tstore = table_2write.getTableDefinition();
-      DefinitionType &def_conf   = table.getTableDefinition();
+      DefinitionType def_tstore( table_2write.getTableDefinition() );
+      DefinitionType def_conf  ( table.getTableDefinition()        );
 
       if (DBG)
       {

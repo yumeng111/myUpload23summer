@@ -19,7 +19,6 @@ Sources=\
 	SwitchGUI.cc \
         XMLParser.cc \
 	Switch.cc
-	
 
 IncludeDirs = \
         $(XDAQ_ROOT)/include \
@@ -34,7 +33,7 @@ TestLibraryDirs = \
 
 UserCFlags  = 
 UserCCFlags = 
-UserDynamicLinkFlags = --warn-unresolved-symbols
+UserDynamicLinkFlags =
 UserStaticLinkFlags =
 UserExecutableLinkFlags =
 

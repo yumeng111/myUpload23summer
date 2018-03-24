@@ -36,8 +36,8 @@ ExternalObjects = \
 	$(BUILD_HOME)/emu/dqm/common/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)/libemudqmcommon.a 
 
 IncludeDirs = $(XdaqIncludeDirs) \
-	$(BUILD_HOME)/emu/daq/server/include \
-        $(BUILD_HOME)/emu/daq/reader/include \
+	$(BUILD_HOME)/emu/ldaq/server/include \
+        $(BUILD_HOME)/emu/ldaq/reader/include \
 	$(BUILD_HOME)/emu/dqm/cmssw/emu/dqm/cmssw \
 	$(BUILD_HOME)/emu/dqm/cmssw/src/common \
 	$(BUILD_HOME)/emu/dqm/common/include \
@@ -48,7 +48,7 @@ IncludeDirs = $(XdaqIncludeDirs) \
 
 LibraryDirs = $(XdaqLibraryDirs) \
 	$(BUILD_HOME)/emu/dqm/tfanalyzer/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)/ \
-	$(BUILD_HOME)/emu/daq/reader/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)/ 
+	$(BUILD_HOME)/emu/ldaq/reader/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)/ 
 
 
 UserSourcePath = 
@@ -62,7 +62,7 @@ UserExecutableLinkFlags += $(ROOTGLIBS)
 # These libraries can be platform specific and
 # potentially need conditional processing
 #
-Libraries = $(XdaqLibraries) emudaqreader emudqmtfanalyzer
+Libraries = $(XdaqLibraries) emuldaqreader emudqmtfanalyzer
 
 #
 # Compile the source files and create a shared library

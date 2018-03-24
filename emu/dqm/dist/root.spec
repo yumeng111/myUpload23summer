@@ -1,10 +1,13 @@
 %define	name emu-ROOT	
-%define version	5.34.25
+%define version 6.12.06	
 %define release	1
+%define root_dir /opt
+%define os_name centos7
+%define gcc_version gcc4_8_5
 
 Name: %{name}
 Version: %{version}
-Release: %{release}.slc6.gcc4_4_7
+Release: %{release}.%{os_name}.%{gcc_version}
 License: GNU Lesser General Public License
 Group: Applications/Physics
 BuildArch: x86_64
@@ -31,6 +34,7 @@ exit 0
 exit 0
 
 %install
+ln -s %{root_dir} %{_buildrootdir}/%{name}-%{version}-%{release}.%{buildarch}/%{root_dir}
 exit 0
 
 %clean
@@ -38,5 +42,5 @@ exit 0
 
 %files
 %defattr(-,root,root)
-/opt/cern/root_v5.34.25
+/opt/cern/root_v%{version}
 

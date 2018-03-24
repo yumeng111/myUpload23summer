@@ -1,6 +1,8 @@
 #include "SwitchGUI.h"
 #include "XMLParser.h" 
 
+#include "xgi/framework/Method.h"
+
 // provides factory method for instantion of HellWorld application
 //
 XDAQ_INSTANTIATOR_IMPL(SwitchGUI)
@@ -10,19 +12,19 @@ using namespace std;
 
 emu::pcsw::Switch *S;
 
-SwitchGUI::SwitchGUI(xdaq::ApplicationStub * s)throw (xdaq::exception::Exception): xdaq::Application(s) {
-  xgi::bind(this,&SwitchGUI::Default, "Default");
-  xgi::bind(this,&SwitchGUI::MainPage, "MainPage");
-  xgi::bind(this,&SwitchGUI::GotoMain, "GotoMain");
-  xgi::bind(this,&SwitchGUI::GotoMacGUI,"GotoMacGUI");
-  xgi::bind(this,&SwitchGUI::Maintenance, "Maintenance");
-  xgi::bind(this,&SwitchGUI::BackupSwitch, "BackupSwitch");
-  xgi::bind(this,&SwitchGUI::ResetSwitch, "ResetSwitch");
-  xgi::bind(this,&SwitchGUI::PowerSwitch, "PowerSwitch");
-  xgi::bind(this,&SwitchGUI::ResetCounters, "ResetCounters");
-  xgi::bind(this,&SwitchGUI::MacGUI, "MacGUI");
-  xgi::bind(this,&SwitchGUI::CLRcounters,"CLRcounters");
-  xgi::bind(this,&SwitchGUI::ProblemsGUI,"ProblemsGUI");
+SwitchGUI::SwitchGUI(xdaq::ApplicationStub * s)throw (xdaq::exception::Exception): xdaq::Application(s), xgi::framework::UIManager(this) {
+  xgi::framework::deferredbind(this,this,&SwitchGUI::Default, "Default");
+  xgi::framework::deferredbind(this,this,&SwitchGUI::MainPage, "MainPage");
+  xgi::framework::deferredbind(this,this,&SwitchGUI::GotoMain, "GotoMain");
+  xgi::framework::deferredbind(this,this,&SwitchGUI::GotoMacGUI,"GotoMacGUI");
+  xgi::framework::deferredbind(this,this,&SwitchGUI::Maintenance, "Maintenance");
+  xgi::framework::deferredbind(this,this,&SwitchGUI::BackupSwitch, "BackupSwitch");
+  xgi::framework::deferredbind(this,this,&SwitchGUI::ResetSwitch, "ResetSwitch");
+  xgi::framework::deferredbind(this,this,&SwitchGUI::PowerSwitch, "PowerSwitch");
+  xgi::framework::deferredbind(this,this,&SwitchGUI::ResetCounters, "ResetCounters");
+  xgi::framework::deferredbind(this,this,&SwitchGUI::MacGUI, "MacGUI");
+  xgi::framework::deferredbind(this,this,&SwitchGUI::CLRcounters,"CLRcounters");
+  xgi::framework::deferredbind(this,this,&SwitchGUI::ProblemsGUI,"ProblemsGUI");
 
   xoap::bind(this,&SwitchGUI::FixCrates,"FixCrates", XDAQ_NS_URI);
 
@@ -53,7 +55,6 @@ void SwitchGUI::MainPage(xgi::Input * in, xgi::Output * out ) {
   *out << cgicc::HTMLDoctype(cgicc::HTMLDoctype::eStrict) << std::endl;
   *out << cgicc::html().set("lang", "en").set("dir","ltr") << std::endl;
   std::string myUrn = getApplicationDescriptor()->getURN().c_str();
-  xgi::Utils::getPageHeader(out,"SwitchGUI",myUrn,"","");
 
   /*
   *out << "xmlFileName_ = " <<  (std::string) xmlFileName_ << "<br>" << std::endl;
@@ -166,7 +167,6 @@ void SwitchGUI::Maintenance(xgi::Input * in, xgi::Output * out ) throw (xgi::exc
   *out << cgicc::HTMLDoctype(cgicc::HTMLDoctype::eStrict) << std::endl;
   *out << cgicc::html().set("lang", "en").set("dir","ltr") << std::endl;
   std::string myUrn = getApplicationDescriptor()->getURN().c_str();
-  xgi::Utils::getPageHeader(out,"SwitchGUI: VME Gigabit Switch Maintenance",myUrn,"","");
 
   std::stringstream sTitle;
   sTitle << "SwitchGUI: " << S->sidelabel << " Side Maintenance";
@@ -243,7 +243,6 @@ void SwitchGUI::MacGUI(xgi::Input * in, xgi::Output * out ) throw (xgi::exceptio
   *out << cgicc::HTMLDoctype(cgicc::HTMLDoctype::eStrict) << std::endl;
   *out << cgicc::html().set("lang", "en").set("dir","ltr") << std::endl;
   std::string myUrn = getApplicationDescriptor()->getURN().c_str();
-  xgi::Utils::getPageHeader(out,"SwitchGUI: VME Gigabit Switch MAC Tables",myUrn,"","");
 
   *out << cgicc::table();
   *out << cgicc::tr();
@@ -292,7 +291,6 @@ void SwitchGUI::ProblemsGUI(xgi::Input * in, xgi::Output * out ) throw (xgi::exc
   *out << cgicc::HTMLDoctype(cgicc::HTMLDoctype::eStrict) << std::endl;
   *out << cgicc::html().set("lang", "en").set("dir","ltr") << std::endl;
   std::string myUrn = getApplicationDescriptor()->getURN().c_str();
-  xgi::Utils::getPageHeader(out,"SwitchGUI: VME Problem Tables",myUrn,"","");
 
   *out << cgicc::table();
   *out << cgicc::tr();

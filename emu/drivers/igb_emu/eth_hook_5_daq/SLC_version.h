@@ -7,6 +7,8 @@
 #define SLC_VERSION 5
 #elif LINUX_VERSION_CODE == KERNEL_VERSION(2,6,32)
 #define SLC_VERSION 6
+#elif LINUX_VERSION_CODE == KERNEL_VERSION(3,10,0)
+#define SLC_VERSION 7
 #else
 #warning Do not know this version of the kernel.
 #endif

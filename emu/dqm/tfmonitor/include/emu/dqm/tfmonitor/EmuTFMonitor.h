@@ -33,8 +33,8 @@
 #include "i2oEmuMonitorMsg.h"
 
 #include "emu/dqm/tfmonitor/exception/Exception.h"
-#include "emu/daq/reader/RawDataFile.h"
-#include "emu/daq/reader/Spy.h"
+#include "emu/ldaq/reader/RawDataFile.h"
+#include "emu/ldaq/reader/Spy.h"
 
 /*
 #include "EmuFileReader.h"
@@ -259,7 +259,7 @@ protected:
   xdata::Boolean	loopFileReadout_;
 
 
-  emu::daq::reader::Base*         	deviceReader_;         // device reader
+  emu::ldaq::reader::Base*         	deviceReader_;         // device reader
   xdata::String         inputDeviceName_;      // input device name (file path or board number)
   xdata::String         inputDeviceType_;      // spy, slink or file
   xdata::String         inputDataFormat_;      // "DDU" or "DCC"
@@ -290,19 +290,19 @@ protected:
 
 
   // Used to access the application's descriptor without a function call.
-  xdaq::ApplicationDescriptor *appDescriptor_;
+  const xdaq::ApplicationDescriptor *appDescriptor_;
 
   //    Used to access the application's context without a function call.
   xdaq::ApplicationContext *appContext_;
 
   // Used to access the application's zone without a function call.
-  xdaq::Zone *zone_;
+  const xdaq::Zone *zone_;
 
 
   // == Vector of all external data servers tids
-  std::set<xdaq::ApplicationDescriptor*> dataservers_;
+  std::set<const xdaq::ApplicationDescriptor*> dataservers_;
   // == Vector of all collectors tids
-  std::set<xdaq::ApplicationDescriptor*> collectors_;
+  std::set<const xdaq::ApplicationDescriptor*> collectors_;
 
   // == The maximum frame size to be allocated by the Client
   xdata::UnsignedInteger maxFrameSize_;

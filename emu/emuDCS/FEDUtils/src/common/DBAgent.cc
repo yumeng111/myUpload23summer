@@ -251,7 +251,7 @@ throw (emu::fed::exception::SOAPException)
 {
 	
 	// find application
-	xdaq::ApplicationDescriptor *app = NULL;
+	const xdaq::ApplicationDescriptor *app = NULL;
 	try {
 		if (instance < 0) {
 			app = application_->getApplicationContext()->getFirstApplication(klass)->getApplicationDescriptor();
@@ -297,7 +297,7 @@ throw (emu::fed::exception::SOAPException)
 
 
 
-xoap::MessageReference emu::fed::DBAgent::sendSOAPMessage(const xoap::MessageReference &message, xdaq::ApplicationDescriptor *app)
+xoap::MessageReference emu::fed::DBAgent::sendSOAPMessage(const xoap::MessageReference &message, const xdaq::ApplicationDescriptor *app)
 throw (emu::fed::exception::SOAPException)
 {
 	// XDAQ people are lazy

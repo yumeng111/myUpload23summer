@@ -639,9 +639,9 @@ JSONSpirit::Array emu::fed::Manager::getUnderlyingStatus()
 
 	JSONSpirit::Array returnMe;
 
-	std::set<xdaq::ApplicationDescriptor *> descriptors = getApplicationContext()->getDefaultZone()->getApplicationGroup("default")->getApplicationDescriptors("emu::fed::Communicator");
+	std::set<const xdaq::ApplicationDescriptor *> descriptors = getApplicationContext()->getDefaultZone()->getApplicationGroup("default")->getApplicationDescriptors("emu::fed::Communicator");
 
-	for (std::set<xdaq::ApplicationDescriptor *>::iterator iDescriptor = descriptors.begin(); iDescriptor != descriptors.end(); iDescriptor++) {
+	for (std::set<const xdaq::ApplicationDescriptor *>::iterator iDescriptor = descriptors.begin(); iDescriptor != descriptors.end(); iDescriptor++) {
 
 		JSONSpirit::Object applicationObject;
 
@@ -680,7 +680,7 @@ JSONSpirit::Array emu::fed::Manager::getUnderlyingStatus()
 		// Figure out which monitor matches this communicator
 		std::string monitorURL;
 		try {
-			xdaq::ApplicationDescriptor *monitorApp = findMatchingApplication<xdata::String, std::string>("emu::fed::Monitor", "systemName", systemNamePair.value_.get_str());
+			const xdaq::ApplicationDescriptor *monitorApp = findMatchingApplication<xdata::String, std::string>("emu::fed::Monitor", "systemName", systemNamePair.value_.get_str());
 			std::ostringstream monitorStream;
 			monitorStream << monitorApp->getContextDescriptor()->getURL() << "/" << monitorApp->getURN();
 			monitorURL = monitorStream.str();
@@ -692,7 +692,7 @@ JSONSpirit::Array emu::fed::Manager::getUnderlyingStatus()
 		// Do the same for the Commander applications
 		std::string commanderURL;
 		try {
-			xdaq::ApplicationDescriptor *commanderApp = findMatchingApplication<xdata::String, std::string>("emu::fed::Commander", "systemName", systemNamePair.value_.get_str());
+			const xdaq::ApplicationDescriptor *commanderApp = findMatchingApplication<xdata::String, std::string>("emu::fed::Commander", "systemName", systemNamePair.value_.get_str());
 			std::ostringstream commanderStream;
 			commanderStream << commanderApp->getContextDescriptor()->getURL() << "/" << commanderApp->getURN();
 			commanderURL = commanderStream.str();

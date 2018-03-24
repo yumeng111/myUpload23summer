@@ -10,7 +10,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <cstdlib>
-#include <unistd.h>
+#include <unistd.h> // for usleep
 
 #include "CAENVMElib.h"
 #include "CAENVMEtypes.h"

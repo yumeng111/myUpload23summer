@@ -12,12 +12,12 @@ using namespace XERCES_CPP_NAMESPACE;
 using namespace emu::dqm::utils;
 using namespace boost::algorithm;
 
-Test_30_PipelineDepth::Test_30_PipelineDepth(std::string dfile): Test_Generic(dfile)
+Test_30_PipelineDepth::Test_30_PipelineDepth(std::string dfile): Test_Generic(dfile, "30_PipelineDepth")
 {
-	testID = "30_PipelineDepth";
+	// testID = "30_PipelineDepth";
 	nExpectedEvents = 300;
 	binCheckMask=0x18100001;
-	logger = Logger::getInstance(testID);
+	// logger = Logger::getInstance(testID);
 
 	PD_min = 63;
 	PD_max = 72;

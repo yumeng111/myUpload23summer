@@ -16,6 +16,8 @@
 #include <iomanip>
 #include <sstream>
 
+#include "xgi/framework/Method.h"
+
 namespace emu {
   namespace x2p {
 
@@ -37,8 +39,8 @@ EmuDim::EmuDim(xdaq::ApplicationStub * s): xdaq::WebApplication(s)
   read_timeout = 0;
   lastread_ch = -1;
 
-  xgi::bind(this,&EmuDim::Default, "Default");
-  xgi::bind(this,&EmuDim::MainPage, "MainPage");
+  xgi::framework::deferredbind(this,this,&EmuDim::Default, "Default");
+  xgi::framework::deferredbind(this,this,&EmuDim::MainPage, "MainPage");
   //
   current_state_ = 0;
   xmas_state_ = 0;
@@ -74,9 +76,9 @@ EmuDim::EmuDim(xdaq::ApplicationStub * s): xdaq::WebApplication(s)
   xoap::bind(this, &EmuDim::SoapStart, "SoapStart", XDAQ_NS_URI);
   xoap::bind(this, &EmuDim::SoapStop, "SoapStop", XDAQ_NS_URI);
   xoap::bind(this, &EmuDim::SoapInfo, "SoapInfo", XDAQ_NS_URI);
-  xgi::bind(this,&EmuDim::ButtonStart      ,"ButtonStart");
-  xgi::bind(this,&EmuDim::ButtonStop      ,"ButtonStop");
-  xgi::bind(this,&EmuDim::SwitchBoard      ,"SwitchBoard");
+  xgi::framework::deferredbind(this,this,&EmuDim::ButtonStart      ,"ButtonStart");
+  xgi::framework::deferredbind(this,this,&EmuDim::ButtonStop      ,"ButtonStop");
+  xgi::framework::deferredbind(this,this,&EmuDim::SwitchBoard      ,"SwitchBoard");
 
   for(int i=0; i<TOTAL_CRATES; i++) 
   {  crate_state[i]=0; 
@@ -324,8 +326,15 @@ void EmuDim::MainPage(xgi::Input * in, xgi::Output * out ) throw (xgi::exception
 void EmuDim::MyHeader(xgi::Input * in, xgi::Output * out, std::string title ) 
   throw (xgi::exception::Exception) {
   //
-  *out << "<h1 style=\"text-align: center\"> " << title << "</h1>" << std::endl;
-  *out << "<h5 style=\" font-weight: regular; text-align: center\"> " << "( time stamp: " << getLocalDateTime()  << " ) </h5>" << std::endl;
+  *out << cgicc::HTMLDoctype(cgicc::HTMLDoctype::eStrict) << std::endl;
+  *out << cgicc::html().set("lang", "en").set("dir","ltr") << std::endl;
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  //const CgiEnvironment& env = cgi.getEnvironment();
+  //
+  std::string myUrl = getApplicationDescriptor()->getContextDescriptor()->getURL();
+  std::string myUrn = getApplicationDescriptor()->getURN();
   //
 }
 

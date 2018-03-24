@@ -8,16 +8,16 @@ using namespace emu::dqm::utils;
 using namespace boost::algorithm;
 
 
-Test_AFEB06::Test_AFEB06(std::string dfile): Test_Generic(dfile)
+Test_AFEB06::Test_AFEB06(std::string dfile): Test_Generic(dfile, "AFEB06" )
 {
-  testID    = "AFEB06";
+  // testID    = "AFEB06";
   nExpectedEvents   = 14000;
   dduID     = 0;
   //  binCheckMask=0x16CFF3F6;
   binCheckMask  = 0x1FEBF3F6;
   //  binCheckMask=0xF7CB3BF6;
   ltc_bug   = 2;
-  logger = Logger::getInstance(testID);
+  // logger = Logger::getInstance(testID);
 
   num_tpamps    = 2;
   num_thresh    = 70;

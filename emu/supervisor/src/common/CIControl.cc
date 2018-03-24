@@ -1,7 +1,7 @@
 #include "emu/supervisor/CIControl.h"
 
 emu::supervisor::CIControl::CIControl( xdaq::Application *parent, 
-				       xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
+				       const xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
 				       xdata::String partition )
   : emu::supervisor::TCDSControl::TCDSControl( parent, tcdsApplicationDescriptor, partition, "CI" ){}
 

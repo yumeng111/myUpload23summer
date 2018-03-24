@@ -25,16 +25,16 @@ timeSlice( T const & data, int nCFEB, int nSample)
   return (CSCCFEBTimeSlice *)(data.cfebData(nCFEB)->timeSlice(nSample));
 }
 
-Test_GasGain::Test_GasGain(std::string dfile): Test_Generic(dfile)
+Test_GasGain::Test_GasGain(std::string dfile): Test_Generic(dfile, "GasGain")
 {
-  testID = "GasGain";
+  // testID = "GasGain";
   nExpectedEvents = 100000;
   dduID=0;
   binCheckMask=0x1FFB7BF6;
   ltc_bug=2;
  
 
-  logger = Logger::getInstance(testID);
+  // logger = Logger::getInstance(testID);
 
 
 }

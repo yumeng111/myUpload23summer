@@ -22,25 +22,32 @@ sideName=( \
 "B" "" \
 )
 
-# .duck for DQM_Display:
-echo "xsltproc --stringparam FARM DQM_Display --stringparam DIR $OUTDIR EmuDAQDUCKGenerator.xsl $RUIMAP > $OUTDIR/DQM_Display.duck"
-xsltproc --stringparam FARM DQM_Display --stringparam DIR $OUTDIR --stringparam NAME DAQ_writeN_buildN EmuDAQDUCKGenerator.xsl $RUIMAP > $OUTDIR/DQM_Display.duck
+#
+# First we generate the XDAQ configuration (.xml) files (common to DAQ and DQM), 
+# and for each we generate the corresponding FunctionManager configurtion (.duck) file:
+#
 
-# loop over plus, minus and both sides:
+# Loop over plus, minus and both sides:
 for SIDE in ${(k)sideName}; do
-    # .duck for DQM:
-    echo "xsltproc --stringparam SIDE $SIDE --stringparam FARM DQM --stringparam DIR $OUTDIR --stringparam NAME DAQ${sideName[$SIDE]}_writeN_buildN EmuDAQDUCKGenerator.xsl $RUIMAP > $OUTDIR/DQM${sideName[$SIDE]}.duck"
-    xsltproc --stringparam SIDE $SIDE --stringparam FARM DQM --stringparam DIR $OUTDIR --stringparam NAME DAQ${sideName[$SIDE]}_writeN_buildN EmuDAQDUCKGenerator.xsl $RUIMAP > $OUTDIR/DQM${sideName[$SIDE]}.duck
-    # loop over all parameter combinations for DAQ:
+    # Loop over all parameter combinations for DAQ:
     for WRITE in Y N; do
 	for BUILD in Y N; do
 	    NAME=DAQ${sideName[$SIDE]}_write${WRITE}_build${BUILD}
-	    # .duck for DAQ:
-	    echo "xsltproc --stringparam SIDE $SIDE --stringparam FARM DAQ --stringparam DIR $OUTDIR --stringparam NAME $NAME EmuDAQDUCKGenerator.xsl $RUIMAP > $OUTDIR/$NAME.duck"
-	    xsltproc --stringparam SIDE $SIDE --stringparam FARM DAQ --stringparam DIR $OUTDIR --stringparam NAME $NAME EmuDAQDUCKGenerator.xsl $RUIMAP > $OUTDIR/$NAME.duck
-	    # common .xml for DAQ and DQM and DQM_Display:
-	    echo "xsltproc --stringparam SIDE $SIDE --stringparam WRITE $WRITE --stringparam BUILD $BUILD EmuDAQConfigGenerator.xsl $RUIMAP > $OUTDIR/$NAME.xml"
-	    xsltproc --stringparam SIDE $SIDE --stringparam WRITE $WRITE --stringparam BUILD $BUILD EmuDAQConfigGenerator.xsl $RUIMAP > $OUTDIR/$NAME.xml
+	    # Generate the XDAQ configuration (.xml) file (common to DAQ and DQM):
+	    print "xsltproc --stringparam WRITE ${WRITE} --stringparam SIDE ${SIDE} ${0:h}/lDAQConfigGenerator.xsl ${RUIMAP} > ${OUTDIR}/${NAME}.xml"
+	    xsltproc --stringparam WRITE ${WRITE} --stringparam BUILD ${BUILD} --stringparam SIDE ${SIDE} ${0:h}/lDAQConfigGenerator.xsl ${RUIMAP} > ${OUTDIR}/${NAME}.xml
+	    # Generate the corresponding FunctionManager configuration (.duck) file for DAQ:
+	    print "xsltproc --stringparam SIDE ${SIDE} --stringparam DIR $OUTDIR --stringparam NAME ${NAME} --stringparam FARM DAQ ${0:h}/lDAQDuckGenerator.xsl ${OUTDIR}/${NAME}.xml > ${OUTDIR}/${NAME}.duck"
+	    xsltproc --stringparam SIDE ${SIDE} --stringparam DIR $OUTDIR --stringparam NAME ${NAME} --stringparam FARM DAQ ${0:h}/lDAQDuckGenerator.xsl ${OUTDIR}/${NAME}.xml > ${OUTDIR}/${NAME}.duck
 	done
     done
+    # Generate the corresponding FunctionManager configuration (.duck) file for DQM:
+    NAME=DAQ${sideName[$SIDE]}_writeY_buildN
+    print "xsltproc --stringparam SIDE ${SIDE} --stringparam DIR $OUTDIR --stringparam NAME ${NAME} --stringparam FARM DQM ${0:h}/lDAQDuckGenerator.xsl ${OUTDIR}/${NAME}.xml > ${OUTDIR}/DQM${sideName[$SIDE]}.duck"
+    xsltproc --stringparam SIDE ${SIDE} --stringparam DIR $OUTDIR --stringparam NAME ${NAME} --stringparam FARM DQM ${0:h}/lDAQDuckGenerator.xsl ${OUTDIR}/${NAME}.xml > ${OUTDIR}/DQM${sideName[$SIDE]}.duck
 done
+
+# Generate the FunctionManager configuration (.duck) file for DQM display:
+NAME=DAQ_writeY_buildN
+print "xsltproc --stringparam DIR $OUTDIR --stringparam NAME ${NAME} --stringparam FARM DQM_Display ${0:h}/lDAQDuckGenerator.xsl ${OUTDIR}/${NAME}.xml > ${OUTDIR}/DQM_Display.duck"
+xsltproc --stringparam DIR $OUTDIR --stringparam NAME ${NAME} --stringparam FARM DQM_Display ${0:h}/lDAQDuckGenerator.xsl ${OUTDIR}/${NAME}.xml > ${OUTDIR}/DQM_Display.duck

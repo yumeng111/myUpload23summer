@@ -24,6 +24,8 @@ Link="http://www.phys.ufl.edu/emu/csc/dqm"
 #PACKAGE_VER_MAJOR=1
 #PACKAGE_VER_MINOR=3
 #PACKAGE_VER_PATCH=23
+# == Change BUILD_VERSION for new rpm builds
+#BUILD_VERSION=1
 
 include $(XDAQ_ROOT)/config/Makefile.rules
 include $(XDAQ_ROOT)/config/mfRPM.rules
@@ -36,9 +38,6 @@ Packages=\
 	dqm/cscmonitor \
 	dqm/utils \
 	dqm/cscdisplay \
-	dqm/tfanalyzer \
-        dqm/tfmonitor \
-        dqm/tfdisplay \
 	dqm/calibration \
 	dqm/dcfebpipeline
 

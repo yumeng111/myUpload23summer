@@ -25,7 +25,12 @@ include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
 #DebugFlags=
 #CFlags+= 
 #CCFlags= -g -O1 -Wall
-CCFlags+= -DLOCAL_UNPACK
+CCFlags+= -DLOCAL_UNPACK -O3 
+
+ifdef NEW_UNPACKER2013
+CCFlags+= -DUNPACKER2013
+endif
+
 #
 # Packages to be built
 #
@@ -74,14 +79,13 @@ endif
 IncludeDirs += 	$(INST_BUILD_HOME)/emu/dqm/cmssw/include/emu/dqm/cmssw \
 	$(INST_BUILD_HOME)/emu/dqm/cmssw/src/common \
 	$(INST_BUILD_HOME)/emu/dqm/common/include \
-	$(INST_BUILD_HOME)/emu/daq/reader/include \
+	$(INST_BUILD_HOME)/emu/ldaq/reader/include \
 	$(CMSSW) \
 	$(BOOST) \
-	$(ORA_DIR)/include \
-	$(SQLITE)/include
+	$(ORA_DIR)/include 
 
 
-LibraryDirs = $(XdaqLibraryDirs) $(SQLITE)/lib 
+LibraryDirs = $(XdaqLibraryDirs)  
 ifeq ("$(USELOCALBUILD)", "yes")
 LibraryDirs += $(INST_BUILD_HOME)/$(XDAQ_PLATFORM)/lib
 endif
@@ -98,7 +102,7 @@ UserExecutableLinkFlags += $(ROOTGLIBS)
 # These libraries can be platform specific and
 # potentially need conditional processing
 #
-Libraries = $(XdaqLibraries) emudaqreader Minuit sqlite3 
+Libraries = $(XdaqLibraries) emuldaqreader Minuit sqlite3 
 ifeq ("$(USELOCALBUILD)", "yes")
 Libraries += emudqmcommon CSCRawToDigi CSCDigi
 endif

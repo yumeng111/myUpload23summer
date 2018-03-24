@@ -306,9 +306,9 @@ void EmuTFDisplayClient::controlDQM (xgi::Input * in, xgi::Output * out)  throw 
   }
 
 
-  std::set<xdaq::ApplicationDescriptor*>  monitors = getAppsList(monitorClass_);
+  std::set<const xdaq::ApplicationDescriptor*>  monitors = getAppsList(monitorClass_);
   if (!monitors.empty()) {
-    std::set<xdaq::ApplicationDescriptor*>::iterator mon;
+    std::set<const xdaq::ApplicationDescriptor*>::iterator mon;
 
     for (mon=monitors.begin(); mon!=monitors.end(); ++mon) {
       if (node == "ALL") {
@@ -365,12 +365,12 @@ void EmuTFDisplayClient::getNodesStatus (xgi::Input * in, xgi::Output * out)  th
   *out << "var NODES_LIST=[" << std::endl;
   *out << "['Node','State','Run Number','DAQ Events','DQM Events','Rate (Evt/s)','Readout Mode','Data Source','Last event timestamp']," << std::endl;
 
-  std::set<xdaq::ApplicationDescriptor*>  monitors = getAppsList(monitorClass_);
-  std::set<xdaq::ApplicationDescriptor*>  ruis = getAppsList("EmuRUI","default");
+  std::set<const xdaq::ApplicationDescriptor*>  monitors = getAppsList(monitorClass_);
+  std::set<const xdaq::ApplicationDescriptor*>  ruis = getAppsList("EmuRUI","default");
   if (!monitors.empty()) {
-    std::set<xdaq::ApplicationDescriptor*>::iterator pos;
-    std::set<xdaq::ApplicationDescriptor*>::iterator rui_itr;
-    xdaq::ApplicationDescriptor* rui=NULL;
+    std::set<const xdaq::ApplicationDescriptor*>::iterator pos;
+    std::set<const xdaq::ApplicationDescriptor*>::iterator rui_itr;
+    const xdaq::ApplicationDescriptor* rui=NULL;
     
     for (pos=monitors.begin(); pos!=monitors.end(); ++pos) {
       // for (int i=0; i<monitors_.size(); i++) {
@@ -670,7 +670,7 @@ void EmuTFDisplayClient::getRefPlot (xgi::Input * in, xgi::Output * out)  throw 
 }
 
 
-std::map<std::string, std::list<std::string> > EmuTFDisplayClient::requestObjectsList(xdaq::ApplicationDescriptor* monitor)
+std::map<std::string, std::list<std::string> > EmuTFDisplayClient::requestObjectsList(const xdaq::ApplicationDescriptor* monitor)
 {
 
   // Prepare SOAP Message for DQM Mode 
@@ -772,7 +772,7 @@ std::map<std::string, std::list<std::string> > EmuTFDisplayClient::requestObject
   return bmap;
 }
 
-std::map<std::string, std::list<std::string> > EmuTFDisplayClient::requestCanvasesList(xdaq::ApplicationDescriptor* monitor)
+std::map<std::string, std::list<std::string> > EmuTFDisplayClient::requestCanvasesList(const xdaq::ApplicationDescriptor* monitor)
 {
 
   // Prepare SOAP Message for DQM Mode 
@@ -887,7 +887,7 @@ TMessage* EmuTFDisplayClient::requestObjects(xdata::Integer nodeaddr, std::strin
   TMessage* buf = NULL;
   try
     {
-      xdaq::ApplicationDescriptor* d = i2o::utils::getAddressMap()->getApplicationDescriptor(nodeaddr);
+      const xdaq::ApplicationDescriptor* d = i2o::utils::getAddressMap()->getApplicationDescriptor(nodeaddr);
       if (d==NULL) return buf;
       // appBSem_.take();
       LOG4CPLUS_DEBUG (getApplicationLogger(), "Sending requestObjects to " << d->getClassName() << " ID" << d->getLocalId());
@@ -965,7 +965,7 @@ TMessage* EmuTFDisplayClient::requestCanvas(xdata::Integer nodeaddr, std::string
   TMessage* buf = NULL;
   try
     {
-      xdaq::ApplicationDescriptor* d = i2o::utils::getAddressMap()->getApplicationDescriptor(nodeaddr);
+      const xdaq::ApplicationDescriptor* d = i2o::utils::getAddressMap()->getApplicationDescriptor(nodeaddr);
       if (d==NULL) return buf;
       // appBSem_.take();
       LOG4CPLUS_DEBUG (getApplicationLogger(), "Sending requestCanvas: \"" << folder << "/" << objname << "\" to " << d->getClassName() << " ID" << d->getLocalId());
@@ -1025,12 +1025,12 @@ void EmuTFDisplayClient::updateFoldersMap()
   if (time(NULL)- foldersMap.getTimeStamp()>10) {
     // appBSem_.take();
     foldersMap.clear();
-    std::set<xdaq::ApplicationDescriptor*> monitors = getAppsList(monitorClass_);
+    std::set<const xdaq::ApplicationDescriptor*> monitors = getAppsList(monitorClass_);
     if (!monitors.empty()) {
   
 
       LOG4CPLUS_DEBUG (getApplicationLogger(), "Start Monitoring Folders List updating");  
-      std::set<xdaq::ApplicationDescriptor*>::iterator pos;
+      std::set<const xdaq::ApplicationDescriptor*>::iterator pos;
 
       for (pos=monitors.begin(); pos!=monitors.end(); ++pos) {
         if ((*pos) == NULL) continue;
@@ -1052,7 +1052,7 @@ void EmuTFDisplayClient::updateFoldersMap()
 }
 
 
-std::set<std::string>  EmuTFDisplayClient::requestFoldersList(xdaq::ApplicationDescriptor* dest)
+std::set<std::string>  EmuTFDisplayClient::requestFoldersList(const xdaq::ApplicationDescriptor* dest)
 {
 
   // Prepare SOAP Message for DQM Node 
@@ -1127,15 +1127,15 @@ std::set<std::string>  EmuTFDisplayClient::requestFoldersList(xdaq::ApplicationD
 }
 
 // == Get Application Descriptors for specified Data Server class name == //
-std::set<xdaq::ApplicationDescriptor*> EmuTFDisplayClient::getAppsList(xdata::String className, xdata::String group)
+std::set<const xdaq::ApplicationDescriptor*> EmuTFDisplayClient::getAppsList(xdata::String className, xdata::String group)
 {
 
-  std::set<xdaq::ApplicationDescriptor*> applist;
+  std::set<const xdaq::ApplicationDescriptor*> applist;
   try
     {
       applist.clear();
 
-      xdaq::ApplicationGroup *g = getApplicationContext()->getDefaultZone()->getApplicationGroup(group);
+      const xdaq::ApplicationGroup *g = getApplicationContext()->getDefaultZone()->getApplicationGroup(group);
       if (g) applist =	g->getApplicationDescriptors(className.toString());
       // sort(applist.begin(), applist.end(), Compare_ApplicationDescriptors());
     }

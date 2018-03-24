@@ -4,8 +4,8 @@ PCVMEDIRS= gbit-vme/eth_hook_jtag_simple gbit-vme/dl2k_driver
 PCVMESLC5DIRS= gbit-vme-slc5/eth_hook_jtag_simple gbit-vme-slc5/dl2k_driver
 DAQPCVMESUBDIRS= dlk2-daq-pcvme/dl2k_driver dlk2-daq-pcvme/eth_hook_3_nobigphysxxx dlk2-daq-pcvme/eth_hook_jtag_simple
 E1000EMUSUBDIRS= e1000_emu/eth_hook_2_daq e1000_emu/eth_hook_2_vme e1000_emu/eth_hook_3_daq e1000_emu/eth_hook_3_vme e1000_emu/eth_hook_4_daq e1000_emu/eth_hook_4_vme e1000_emu/eth_hook_5_daq e1000_emu/eth_hook_5_vme e1000_emu/e1000-7.0.39/src
-IGBEMUSUBDIRS= igb_emu/eth_hook_2_daq igb_emu/eth_hook_2_vme igb_emu/eth_hook_3_daq igb_emu/eth_hook_3_vme igb_emu/eth_hook_4_daq igb_emu/eth_hook_4_vme igb_emu/eth_hook_5_daq igb_emu/eth_hook_5_vme igb_emu/igb-5.1.2/src
-IGBEMUCC7SUBDIRS= igb_emu_cc7/eth_hook_2_vme igb_emu_cc7/eth_hook_3_vme igb_emu_cc7/igb-5.3.5.12/src
+#IGBEMUSUBDIRS= igb_emu/eth_hook_2_daq igb_emu/eth_hook_2_vme igb_emu/eth_hook_3_daq igb_emu/eth_hook_3_vme igb_emu/eth_hook_4_daq igb_emu/eth_hook_4_vme igb_emu/eth_hook_5_daq igb_emu/eth_hook_5_vme igb_emu/igb-5.1.2/src
+IGBEMUSUBDIRS= igb_emu/eth_hook_2_daq igb_emu/eth_hook_2_vme igb_emu/eth_hook_3_daq igb_emu/eth_hook_3_vme igb_emu/eth_hook_4_daq igb_emu/eth_hook_4_vme igb_emu/eth_hook_5_daq igb_emu/eth_hook_5_vme igb_emu/igb-5.3.5.12/src
 E1000EEMUSUBDIRS= e1000e_emu/eth_hook_2_daq e1000e_emu/eth_hook_2_vme e1000e_emu/eth_hook_3_daq e1000e_emu/eth_hook_3_vme e1000e_emu/eth_hook_4_daq e1000e_emu/eth_hook_4_vme e1000e_emu/eth_hook_5_daq e1000e_emu/eth_hook_5_vme e1000e_emu/e1000e-3.2.4.2/src
 SUBDIRS=$(DAQSUBDIRS) $(DAQSUBDIRS904) $(PCVMEDIRS) $(DAQPCVMESUBDIRS) $(IGBEMUSUBDIRS) ${E1000EEMUSUBDIRS} ${E1000EMUSUBDIRS}
 
@@ -26,7 +26,6 @@ all:
 	@echo "   daqpcvme"
 	@echo "   daqpcvmerpm"
 	@echo "   igbemu"
-	@echo "   igbemucc7"
 	@echo "   igbemurpm"
 	@echo "   e1000eemu"
 	@echo "   e1000eemurpm"
@@ -125,12 +124,6 @@ igbemu:
 	(cd $$i; make); \
 	done
 
-igbemucc7:
-	@for i in $(IGBEMUCC7SUBDIRS); do \
-        echo "make in $$i..."; \
-	(cd $$i; make); \
-	done
-
 igbemurpm:	igbemu
 	mkdir -p rpm/{BUILD,RPMS}
 	rpmbuild -bb -vv emu-igb_emu.spec
@@ -160,3 +153,4 @@ e1000eemu:
 e1000eemurpm:	e1000eemu
 	mkdir -p rpm/{BUILD,RPMS}
 	rpmbuild -bb -vv emu-e1000e_emu.spec
+

@@ -11,7 +11,7 @@ Package=dqm/cmssw
 CXX     = g++
 
 #CXXFLAGS  = -g -pedantic -Wno-long-long -Wall -O3 -fPIC -DDQMLOCAL
-CXXFLAGS = $(CCFlags) -O3 -DDQMLOCAL -DLOCAL_UNPACK -pedantic -Wno-long-long -DNDEBUG
+CXXFLAGS = $(CCFlags) -O3 -DDQMLOCAL -DLOCAL_UNPACK -pedantic -Wno-long-long -DNDEBUG -std=c++11
 #CXXFLAGS = $(CCFlags)  -DDQMLOCAL -DLOCAL_UNPACK -pedantic -Wno-long-long
 #-fPIC
 

@@ -8,7 +8,7 @@ namespace emu{
     class CIControl : public TCDSControl{
     public:
       CIControl( xdaq::Application *parent, 
-		 xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
+		 const xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
 		 xdata::String partition );
       CIControl& setRunType( xdata::String & runType );
       CIControl& configureSequence();

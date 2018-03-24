@@ -36,7 +36,8 @@ UserCFlags = $(ROOTCFLAGS)
 UserCCFlags = $(ROOTCFLAGS) -fPIC
 UserDynamicLinkFlags = $(ROOTLIBS)
 UoserStaticLinkFlags =
-UserExecutableLinkFlags += $(ROOTCFLAGS) -lProof -lProofPlayer -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+# UserExecutableLinkFlags += $(ROOTCFLAGS) -lProof -lProofPlayer -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+UserExecutableLinkFlags += $(ROOTCFLAGS) -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 
 # These libraries can be platform specific and
 # potentially need conditional processing

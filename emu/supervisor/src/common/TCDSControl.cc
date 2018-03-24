@@ -6,7 +6,7 @@
 #include <unistd.h> // for usleep
 
 emu::supervisor::TCDSControl::TCDSControl( xdaq::Application *parent, 
-					   xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
+					   const xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
 					   xdata::String partition, 
 					   string tcdsDeviceName )
   : parentApplication_( parent )

@@ -50,7 +50,7 @@ namespace emu {
 			*
 			*	@author Phillip Killewald &lt;paste@mps.ohio-state.edu&gt;
 			**/
-			xoap::MessageReference getParameters(xdaq::ApplicationDescriptor *applicationDescriptor)
+			xoap::MessageReference getParameters(const xdaq::ApplicationDescriptor *applicationDescriptor)
 			throw (emu::fed::exception::SOAPException);
 
 			/** Sends the GetParameters SOAP command to a target application.
@@ -160,13 +160,13 @@ namespace emu {
 			* @returns the application descriptor of the matching application
 			**/
 			template<typename T, typename V>
-			xdaq::ApplicationDescriptor *findMatchingApplication(const std::string &myClass, const std::string &parameter, const V &value)
+			const xdaq::ApplicationDescriptor *findMatchingApplication(const std::string &myClass, const std::string &parameter, const V &value)
 			throw (emu::fed::exception::SoftwareException)
 			{
 				
-				std::set<xdaq::ApplicationDescriptor *> descriptors = getApplicationContext()->getDefaultZone()->getApplicationGroup("default")->getApplicationDescriptors(myClass);
+				std::set<const xdaq::ApplicationDescriptor *> descriptors = getApplicationContext()->getDefaultZone()->getApplicationGroup("default")->getApplicationDescriptors(myClass);
 				
-				for (std::set<xdaq::ApplicationDescriptor *>::iterator jDescriptor = descriptors.begin(); jDescriptor != descriptors.end(); jDescriptor++) {
+				for (std::set<const xdaq::ApplicationDescriptor *>::iterator jDescriptor = descriptors.begin(); jDescriptor != descriptors.end(); jDescriptor++) {
 					
 					xoap::MessageReference reply;
 					try {

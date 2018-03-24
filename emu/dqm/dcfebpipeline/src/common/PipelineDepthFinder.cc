@@ -186,7 +186,7 @@ double PipelineDepthFinder::getBestDepthA(){
     ++x;
     ++w;
   }
-  if ( isnan( sum_xw ) || isnan( sum_w ) || sum_w <= 0. ){
+  if ( ::isnan( sum_xw ) || ::isnan( sum_w ) || sum_w <= 0. ){
     logFile_ << "Failed to fit best depth.\n";
     return bestDepth;
   }

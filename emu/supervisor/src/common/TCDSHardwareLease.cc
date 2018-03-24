@@ -3,7 +3,7 @@
 #include "toolbox/task/TimerFactory.h"
 
 emu::supervisor::TCDSHardwareLease::TCDSHardwareLease( xdaq::Application *parent, 
-						       xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
+						       const xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
 						       const xdata::String& actionRequestorId,
 						       toolbox::TimeInterval const& interval )
   : parentApplication_( parent )

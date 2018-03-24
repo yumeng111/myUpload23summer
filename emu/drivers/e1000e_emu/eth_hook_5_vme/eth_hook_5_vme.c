@@ -39,6 +39,7 @@
 
 #include "SLC_version.h"
 #include "schar.h"
+#include "../include/interfaceNames.h"
 
 #define SCHAR_MAJOR_5 235
 
@@ -57,7 +58,11 @@ int ethinit_module(void);
 
 static ssize_t schar_read_5(struct file *file, char *buf, size_t count, loff_t *offset); 
 static ssize_t schar_write_5(struct file *file, const char *buf, size_t count,loff_t *offset);
+#if SLC_VERSION < 7
 static int schar_ioctl_5(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg);
+#else
+static long schar_ioctl_5(struct file *file, unsigned int cmd, unsigned long arg);
+#endif
 static int schar_open_5(struct inode *inode, struct file *file);
 static int schar_release_5(struct inode *inode, struct file *file);
 
@@ -66,7 +71,11 @@ EXPORT_SYMBOL(netif_rx_hook_5);
 static struct file_operations schar_fops = {
 	read: schar_read_5, 
         write: schar_write_5,
+#if SLC_VERSION < 7
 	ioctl: schar_ioctl_5,
+#else
+	unlocked_ioctl: schar_ioctl_5,
+#endif
 	open: schar_open_5,
 	release: schar_release_5,
 };
@@ -84,12 +93,15 @@ static struct ctl_table_header *schar_root_header_5 = NULL;
 #if   SLC_VERSION == 5
 static int schar_read_proc_5(ctl_table *ctl, int write, struct file *file,
 			   void *buffer, size_t *lenp, loff_t *ppos);
-#elif SLC_VERSION == 6
+#else
 static int schar_read_proc_5(struct ctl_table *ctl, int write,
 			     void __user *buffer, size_t *lenp, loff_t *ppos);
 #endif
 static ctl_table schar_sysctl_table_5[] = {
-	{ DEV_SCHAR_ENTRY,	/* binary id */
+	{ 
+#if SLC_VERSION < 7
+	DEV_SCHAR_ENTRY,	/* binary id */
+#endif
 	  "5",			/* name */
 	  &schar_proc_string_5,	/* data */
 	  SCHAR_MAX_SYSCTL,	/* max size of output */
@@ -103,7 +115,10 @@ static ctl_table schar_sysctl_table_5[] = {
 };
 
 static ctl_table schar_dir_5[] = {
-	{ DEV_SCHAR,		/* /proc/dev/schar */
+	{ 
+#if SLC_VERSION < 7
+	  DEV_SCHAR,		/* /proc/dev/schar */
+#endif
 	  "schar",		/* name */
 	  NULL,
 	  0,
@@ -113,7 +128,10 @@ static ctl_table schar_dir_5[] = {
 };
 
 static ctl_table schar_root_dir_5[] = {
-	{ CTL_DEV,		/* /proc/dev */
+	{ 
+#if SLC_VERSION < 7
+	  CTL_DEV,		/* /proc/dev */
+#endif
 	  "dev",		/* name */
 	  NULL,
 	  0,
@@ -250,8 +268,13 @@ int netif_rx_hook_5(struct sk_buff *skb)
 
 
 
+#if SLC_VERSION < 7
 static int schar_ioctl_5(struct inode *inode, struct file *file,
 		       unsigned int cmd, unsigned long arg)
+#else
+static long schar_ioctl_5(struct file *file,
+		       unsigned int cmd, unsigned long arg)
+#endif
 {
 
 	/* make sure that the command is really one of schar's */
@@ -311,7 +334,7 @@ static int schar_ioctl_5(struct inode *inode, struct file *file,
 #if   SLC_VERSION == 5
 static int schar_read_proc_5(ctl_table *ctl, int write, struct file *file,
 			   void *buffer, size_t *lenp, loff_t *ppos)
-#elif SLC_VERSION == 6
+#else
 static int schar_read_proc_5(struct ctl_table *ctl, int write,
 			     void __user *buffer, size_t *lenp, loff_t *ppos)
 #endif
@@ -350,7 +373,7 @@ static int schar_read_proc_5(struct ctl_table *ctl, int write,
 	*lenp = len;
 #if   SLC_VERSION == 5
 	return proc_dostring(ctl, write, file, buffer, lenp, ppos);
-#elif SLC_VERSION == 6
+#else
 	return proc_dostring(ctl, write, buffer, lenp, ppos);
 #endif
 	
@@ -480,7 +503,7 @@ int ethinit_module(void)
 	/* register proc entry */
 #if   SLC_VERSION == 5
 	schar_root_header_5 = register_sysctl_table(schar_root_dir_5, 0);
-#elif SLC_VERSION == 6
+#else
 	schar_root_header_5 = register_sysctl_table(schar_root_dir_5);
 #endif
 	// schar_root_dir_5->child->de->fill_inode = &schar_fill_inode_5;
@@ -531,6 +554,8 @@ static ssize_t schar_write_5(struct file *file, const char *buf, size_t count,
   dev=dev_get_by_name("eth5");
 #elif SLC_VERSION == 6
   dev=dev_get_by_name(&init_net,"p2p2");
+#elif SLC_VERSION == 7
+  dev=dev_get_by_name(&init_net, __ETH5__ );
 #endif
   err=-ENODEV;
   if (dev == NULL)
@@ -577,7 +602,7 @@ static ssize_t schar_write_5(struct file *file, const char *buf, size_t count,
    print_skb( "ETH5 after skb_reserve", skb );
 #if   SLC_VERSION == 5
    skb->nh.raw = skb->data;
-#elif SLC_VERSION == 6
+#else
    skb_reset_network_header(skb);
 #endif
    print_skb( "ETH5 after skb_reset_network_header", skb );
@@ -594,7 +619,7 @@ static ssize_t schar_write_5(struct file *file, const char *buf, size_t count,
         			
 #if   SLC_VERSION == 5
                         skb->tail = skb->data;
-#elif SLC_VERSION == 6
+#else
 			skb_reset_tail_pointer(skb);
 #endif
 			print_skb( "ETH5 after skb_reset_tail_pointer", skb );

@@ -4378,6 +4378,8 @@ static inline void __kc_dev_mc_unsync(struct net_device __maybe_unused * dev,
 
 #if ( LINUX_VERSION_CODE < KERNEL_VERSION(3,17,0) )
 #define timespec64 timespec
+
+#if ( LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0) )
 static inline struct timespec64 timespec_to_timespec64(const struct timespec ts)
 {
 	return ts;
@@ -4388,6 +4390,7 @@ static inline struct timespec timespec64_to_timespec(const struct timespec64
 {
 	return ts64;
 }
+#endif // ( LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0) )
 
 #define timespec64_equal timespec_equal
 #define timespec64_compare timespec_compare
@@ -4459,6 +4462,7 @@ extern void __kc_netdev_rss_key_fill(void *buffer, size_t len);
 	      (SLE_VERSION_CODE >= SLE_VERSION(11,4,0)) && \
 	      (SLE_VERSION_CODE < SLE_VERSION(12,0,0)) ) )
 
+#if ( LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0) )
 /**
  *     skb_put_padto - increase size and pad an skbuff up to a minimal size
  *     @skb: buffer to pad
@@ -4486,6 +4490,9 @@ static inline int eth_skb_pad(struct sk_buff *skb)
 {
 	return skb_put_padto(skb, ETH_ZLEN);
 }
+#endif // ( LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0) )
+
+
 #endif /* RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(6,7)) */
 #ifndef napi_alloc_skb
 static inline struct sk_buff *__kc_napi_alloc_skb(struct napi_struct *napi,
@@ -4503,7 +4510,8 @@ static inline struct sk_buff *__kc_napi_alloc_skb(struct napi_struct *napi,
 #define HAVE_RXFH_HASHFUNC
 #endif /* 3.19.0 */
 
-#if ( LINUX_VERSION_CODE < KERNEL_VERSION(3,20,0) )
+// #if ( LINUX_VERSION_CODE < KERNEL_VERSION(3,20,0) )
+#if ( LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0) )
 /* vlan_tx_xx functions got renamed to skb_vlan */
 #define skb_vlan_tag_get vlan_tx_tag_get
 #define skb_vlan_tag_present vlan_tx_tag_present

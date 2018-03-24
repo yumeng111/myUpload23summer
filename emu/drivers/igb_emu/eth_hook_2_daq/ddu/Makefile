@@ -4,6 +4,7 @@ PWD	:= $(shell pwd)
 
 default:
 	rm -f *.h *.c
+	ln -s ../../include/interfaceNames.h
 	ln -s ../SLC_version.h
 	ln -s ../schar.h
 	ln -s ../eth_hook_2_daq.h

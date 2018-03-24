@@ -79,12 +79,12 @@ public:
 #else
 
 /**
- * Generic exception raised by the emu::daq::rui package.
+ * Generic exception raised by the emu::ldaq::rui package.
  */
 XCEPT_DEFINE_EXCEPTION(monitor, Exception)
 
 /**
- * I2O exception raised by the emu::daq::rui package.
+ * I2O exception raised by the emu::ldaq::rui package.
  */
 XCEPT_DEFINE_EXCEPTION(monitor, I2O)
 

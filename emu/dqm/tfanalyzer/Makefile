@@ -51,7 +51,7 @@ UserExecutableLinkFlags += $(ROOTCFLAGS) -Xlinker -rpath -Xlinker $(BUILD_HOME)/
 # These libraries can be platform specific and
 # potentially need conditional processing
 #
-Libraries = $(XdaqLibraries) emudaqreader
+Libraries = $(XdaqLibraries) emuldaqreader
 
 #
 # Compile the source files and create a shared library

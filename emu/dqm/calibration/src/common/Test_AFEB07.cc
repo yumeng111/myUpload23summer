@@ -4,9 +4,9 @@ using namespace XERCES_CPP_NAMESPACE;
 
 using namespace emu::dqm::utils;
 
-Test_AFEB07::Test_AFEB07(std::string dfile): Test_Generic(dfile)
+Test_AFEB07::Test_AFEB07(std::string dfile): Test_Generic(dfile, "AFEB07")
 {
-  testID = "AFEB07";
+  // testID = "AFEB07";
   nExpectedEvents = 12800;
   dduID=0;
   //  binCheckMask=0x16CFF3F6;
@@ -14,7 +14,7 @@ Test_AFEB07::Test_AFEB07(std::string dfile): Test_Generic(dfile)
   //  binCheckMask=0xF7CB3BF6;
   ltc_bug=2;
   fSTEPsetup=0;
-  logger = Logger::getInstance(testID);
+  // logger = Logger::getInstance(testID);
 }
 
 

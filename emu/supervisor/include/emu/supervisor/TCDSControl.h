@@ -16,7 +16,7 @@ namespace emu{
     public:
       enum RunType_t { global, local, AFEBcalibration, CFEBcalibration, UNKNOWN };
       TCDSControl( xdaq::Application *parent, 
-		   xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
+		   const xdaq::ApplicationDescriptor* tcdsApplicationDescriptor, 
 		   xdata::String partition,
 		   string tcdsDeviceName );
       virtual ~TCDSControl();
@@ -60,7 +60,7 @@ namespace emu{
       xdata::String partition_;
       xdata::String actionRequestorId_;
       xdata::String fedEnableMask_;
-      xdaq::ApplicationDescriptor* const tcdsApplicationDescriptor_;
+      const xdaq::ApplicationDescriptor* const tcdsApplicationDescriptor_;
       RunType_t runType_;
       auto_ptr<TCDSHardwareLease> hardwareLease_;
     };

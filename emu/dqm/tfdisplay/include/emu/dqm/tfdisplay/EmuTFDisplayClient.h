@@ -82,12 +82,12 @@ class EmuTFDisplayClient : public xdaq::WebApplication, xdata::ActionListener
 
   /// the thing that receives the message
 
-  std::map<std::string, std::list<std::string> > requestObjectsList(xdaq::ApplicationDescriptor* monitor);
-  std::map<std::string, std::list<std::string> > requestCanvasesList(xdaq::ApplicationDescriptor* monitor);
+  std::map<std::string, std::list<std::string> > requestObjectsList(const xdaq::ApplicationDescriptor* monitor);
+  std::map<std::string, std::list<std::string> > requestCanvasesList(const xdaq::ApplicationDescriptor* monitor);
   TMessage* requestObjects(xdata::Integer nodeaddr,  std::string folder, std::string objname);
   TMessage* requestCanvas(xdata::Integer nodeaddr,  std::string folder, std::string objname, int width, int height);
 
-  std::set<std::string> requestFoldersList(xdaq::ApplicationDescriptor* dest);
+  std::set<std::string> requestFoldersList(const xdaq::ApplicationDescriptor* dest);
   void updateFoldersMap();
   
  protected:
@@ -98,10 +98,10 @@ class EmuTFDisplayClient : public xdaq::WebApplication, xdata::ActionListener
   
   toolbox::exception::HandlerSignature  * errorHandler_;
   
-  std::set<xdaq::ApplicationDescriptor*> getAppsList(xdata::String className, xdata::String group="dqm");
+  std::set<const xdaq::ApplicationDescriptor*> getAppsList(xdata::String className, xdata::String group="dqm");
 
   // == Vector of all external data servers tids
-  std::set<xdaq::ApplicationDescriptor*> monitors_;
+  std::set<const xdaq::ApplicationDescriptor*> monitors_;
 
   xdata::String monitorClass_;
   xdata::String iconsURL_;

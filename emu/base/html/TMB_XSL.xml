@@ -58,8 +58,7 @@
 	  <tr>
 	    <th class="chamber">chamber</th>
 	    <th class="RUI">RUI</th>
-	    <th class="DDU" colspan="3">DDU</th>
-	    <th class="DCC" colspan="2">DCC</th>
+	    <th class="DDU" colspan="4">DDU</th>
 	    <th class="fiber" colspan="3">fiber cassette</th>
 	    <th class="PC" colspan="4">peripheral crate</th>
 	    <th class="SP">SP</th>
@@ -67,11 +66,10 @@
 	  <tr>
 	    <th class="chamber">name</th>
 	    <th class="RUI">instance</th>
+	    <th class="DDU">FED Id</th>
 	    <th class="DDU">crate</th>
 	    <th class="DDU">slot</th>
 	    <th class="DDU">input</th>
-	    <th class="DCC">fifo</th>
-	    <th class="DCC">S-link</th>
 	    <th class="fiber">crate</th>
 	    <th class="fiber">position</th>
 	    <th class="fiber">socket</th>
@@ -84,11 +82,10 @@
 	  <tr>
 	    <td class="chamber">ME<xsl:value-of select="translate(@endcap,'-','&#8211;')"/><xsl:value-of select="@station"/>/<xsl:value-of select="@type"/>/<xsl:value-of select="format-number(@number,'00')"/></td>
 	    <td class="RUI"><xsl:value-of select="../../../@instance"/></td>
+	    <td class="DDU"><xsl:value-of select="../../@fedId"/></td>
 	    <td class="DDU"><xsl:value-of select="../../@crate"/></td>
 	    <td class="DDU"><xsl:value-of select="../../@slot"/></td>
 	    <td class="DDU"><xsl:value-of select="../@id"/></td>
-	    <td class="DCC"><xsl:value-of select="../../../DCC/@fifo"/></td>
-	    <td class="DCC"><xsl:value-of select="../../../DCC/@slink"/></td>
 	    <td class="fiber"><xsl:value-of select="../FiberCassette/@crate"/></td>
 	    <td class="fiber"><xsl:value-of select="../FiberCassette/@pos"/></td>
 	    <td class="fiber"><xsl:value-of select="../FiberCassette/@socket"/></td>
@@ -108,7 +105,7 @@
     <div class="hiddenInfo" id="div_hiddenInfo">
       <div class="hiddenInfo" id="div_RUIs">
 	<xsl:for-each select="document(concat($BASEDIR,'RUI-to-chamber_mapping.xml'))//RUI">
-	  <div class="hiddenInfo" id="div_RUI{@instance}">
+	  <div class="hiddenInfo" id="div_FED{DDU/@fedId}_RUI{@instance}">
 	    <xsl:for-each select="DDU/input/Chamber">
 	      <div class="hiddenInfo"><xsl:attribute name="id">div_ME<xsl:value-of select="@endcap"/><xsl:value-of select="@station"/>/<xsl:value-of select="@type"/>/<xsl:value-of select="format-number(@number,'00')"/></xsl:attribute></div>
 	    </xsl:for-each>

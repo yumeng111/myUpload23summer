@@ -140,7 +140,7 @@ private: // XDAQ parameters
 		xdata::String pi_;
 	};
 
-        xdaq::ApplicationDescriptor* appDescriptor_;
+        const xdaq::ApplicationDescriptor* appDescriptor_;
         Logger logger_;
 
         xdata::Boolean isInCalibrationSequence_; /// An automatic sequence of calibration runs is being executed.
@@ -158,6 +158,8 @@ private: // XDAQ parameters
 	xdata::UnsignedInteger tts_id_;
 	xdata::UnsignedInteger tts_bits_;
         xdaq2rc::RcmsStateNotifier rcmsStateNotifier_;
+
+	xdata::String          localDAQClass_;  
 
 	xdata::String          TFCellOpState_;
 	xdata::String          TFCellOpName_;
@@ -195,10 +197,10 @@ private: // XDAQ parameters
 	bool isCalibrationMode();
 	bool isAlctCalibrationMode();
 
-        xdaq::ApplicationDescriptor *daq_descr_, *tf_descr_, *ttc_descr_, 
+        const xdaq::ApplicationDescriptor *daq_descr_, *tf_descr_, *ttc_descr_, 
 	  *ci_plus_descr_, *ci_minus_descr_, *ci_tf_descr_, *pm_descr_, *pi_plus_descr_, *pi_minus_descr_, *pi_tf_descr_;
 
-        xdaq::ApplicationDescriptor* findAppDescriptor( const string& klass, const string& service );
+        const xdaq::ApplicationDescriptor* findAppDescriptor( const string& klass, const string& service );
         void getAppDescriptors();
         void getTFAppDescriptor();
         void getTCDSAppDescriptors();
@@ -289,13 +291,13 @@ private: // XDAQ parameters
 		void webOutput(xgi::Output *out, string sv_state)
 				throw (xgi::exception::Exception);
 	        Application* getApplication() const { return app_; }
-	        const vector<pair<xdaq::ApplicationDescriptor *, string> >* getTable() const { return &table_; }
+	        const vector<pair<const xdaq::ApplicationDescriptor *, string> >* getTable() const { return &table_; }
 
 	private:
 		Application *app_;
 	        mutable toolbox::BSem bSem_;
 	        time_t lastRefreshTime_;
-		vector<pair<xdaq::ApplicationDescriptor *, string> > table_;
+		vector<pair<const xdaq::ApplicationDescriptor *, string> > table_;
 	} state_table_;
 
 };

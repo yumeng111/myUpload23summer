@@ -772,6 +772,7 @@ void emu::ldaq::rui::Application::putParamsIntoInfoSpace
 
 void emu::ldaq::rui::Application::attachListeners(){
   appInfoSpace_->addItemRetrieveListener("dataFileNames",this);
+  appInfoSpace_->addItemChangedListener("runStartTime",this);
 }
 
 void emu::ldaq::rui::Application::stateChanged(toolbox::fsm::FiniteStateMachine & fsm)
@@ -3715,6 +3716,9 @@ void emu::ldaq::rui::Application::actionPerformed(xdata::Event & received )
 
   if ( e.itemName() == "dataFileNames" && e.type() == "ItemRetrieveEvent" ){
     updateDataFileNames();
+  }
+  else if ( e.itemName() == "runStartTime" && e.type() == "ItemChangedEvent" ){
+    runStartUTC_ = toUnixTime( runStartTime_ );
   }
 }
 

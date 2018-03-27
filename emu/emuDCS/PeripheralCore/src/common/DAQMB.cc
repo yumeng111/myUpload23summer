@@ -5916,7 +5916,10 @@ char * DAQMB::GetCounters()
      read_later(L1A_COUNTER);        // at 61
      read_later(L1A_COUNTER2);
      read_later(DDU_PACKETS);
-     read_now(QPLL_UNLOCKS, (char *)NewCounter);  // at 64
+     read_later(QPLL_UNLOCKS);   // at 64
+     read_later(AUTO_KILL_ANY);  // at 65
+     read_now(AUTO_KILL_OPT, (char *)NewCounter);  // at 66
+     
      return (char *)NewCounter;
   }
   else return NULL;

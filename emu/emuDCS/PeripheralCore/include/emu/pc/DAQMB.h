@@ -858,6 +858,8 @@ public:
   inline void odmb_calib_mode(int mode) { WriteRegister(ODMB_MODE, mode); }
   inline int  odmb_read_calib_mode() { return ReadRegister(ODMB_MODE); }
   inline int  odmb_read_pedestal_mode() { return ReadRegister(L1A_MODE); }
+  inline int  odmb_read_autokill_any() { return ReadRegister(AUTO_KILL_ANY); }
+  inline int  odmb_read_autokill_optic() { return ReadRegister(AUTO_KILL_OPT); }
 
   //DCFEB FIFO operations
   inline void odmb_rst_dcfeb_fifo(const unsigned fifo_select){WriteRegister(ODMB_RST_FIFO, fifo_select & 0x7F);}
@@ -1116,7 +1118,9 @@ public:
   static const unsigned NUM_LCTS_BASE = 0x370C;
   static const unsigned BAD_CRC_BASE = 0x3A0C;
   static const unsigned FIBER_ERROR_BASE = 0x3B0C;
-
+  static const unsigned AUTO_KILL_ANY = 0x3B8C;   
+  static const unsigned AUTO_KILL_OPT = 0x3B9C;   
+    
   static const unsigned LCT_L1A_DLY = 0x4000;
   static const unsigned TMB_DLY = 0x4004;
   static const unsigned PUSH_DLY = 0x4008;

@@ -4141,7 +4141,7 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
         *out << cgicc::span().set("style","color:red");
         *out << buf;
         *out << "--->> BAD <<--- should be ";
-        sprintf(buf,"V%02X_%02X (tag %02X%02X)",(fw_xml>>8)&0xFF, fw_xml&0xFF,(fw_xml>>8)&0xFF, fw_xml&0xF);
+        sprintf(buf,"V%02X_%02X (tag %02X%02X)",(fw_xml>>8)&0xFF, fw_xml&0xFF,(fw_xml>>8)&0xFF, fw_xml&0xFF);
         *out << buf << cgicc::span();
     }
      *out << cgicc::br();
@@ -4212,6 +4212,47 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
      *out << cgicc::td() << "Kill mask: " << std::hex << thisDMB->odmb_read_kill_mask() << std::dec << cgicc::td();      
      *out << cgicc::td() << "Crate ID: " << thisDMB->odmb_read_CrateID() << cgicc::td();      
      *out << cgicc::tr() << std::endl;
+     *out << cgicc::table();
+     *out << cgicc::fieldset() << cgicc::br() << std::endl;
+
+     // ODMB auto killed DCFEBs
+     *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+     *out << std::endl ;
+     *out << cgicc::legend("Auto Killed DCFEBs").set("style","color:blue") 
+          << std::endl ;
+     *out << cgicc::table().set("border","1").set("cellpadding","4");
+       //
+       *out << cgicc::tr();
+       for(int icol=0; icol<8; icol++)
+       {       
+          *out << cgicc::td();
+          if(icol>0) *out << "DCFEB " << icol;
+          *out << cgicc::td() << std::endl;
+       }
+       *out << cgicc::tr() << std::endl;
+       //
+       int killed=thisDMB->odmb_read_autokill_any();
+       *out << cgicc::tr();
+       for(int icol=0; icol<8; icol++)
+       {       
+          *out << cgicc::td();
+          if(icol==0) *out << "Auto Killed: Any";
+          else *out << (killed&(1<<(icol-1)))?1:0;
+          *out << cgicc::td() << std::endl;
+       }
+       *out << cgicc::tr() << std::endl;
+       //
+       killed=thisDMB->odmb_read_autokill_optic();
+       *out << cgicc::tr();
+       for(int icol=0; icol<8; icol++)
+       {       
+          *out << cgicc::td();
+          if(icol==0) *out << "Auto Killed: Fiber";
+          else *out << (killed&(1<<(icol-1)))?1:0;
+          *out << cgicc::td() << std::endl;
+       }
+       *out << cgicc::tr() << std::endl;
+       //
      *out << cgicc::table();
      *out << cgicc::fieldset() << cgicc::br() << std::endl;
   

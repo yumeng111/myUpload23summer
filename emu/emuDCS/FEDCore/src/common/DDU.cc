@@ -678,7 +678,8 @@ throw (emu::fed::exception::DDUException)
 		const std::vector<uint16_t> bogoData(1,0);
 		writeRegister(VMESERI, 0x0904, 16, bogoData);
 		// Flash needs to sleep after writing
-		usleep(100000);
+		// usleep(100000);
+		usleep(300000); // Try longer sleep to see if the subsequent writeKillFiber (in configure) still fails.
 	} catch (emu::fed::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception communicating with DDU";

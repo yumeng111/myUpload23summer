@@ -973,205 +973,10 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
   
   std::cout << getLocalDateTime() << " CFEB utilities " << thisChamber->GetLabel() << std::endl;  //
   MyHeader(in,out,Name);
-
-  CFEBDataIn_ = 0;
-  //
-  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
-  *out << cgicc::legend("DCFEB JTAG Functions").set("style","color:blue") << std::endl ;
-  //
-
   std::vector<CFEB> cfebs = thisDMB->cfebs() ;
   //
-  //
-  std::string dmbstring =
-      toolbox::toString("%d",dmb);
-  std::string CFEBFunct =
-      toolbox::toString("/%s/CFEBFunction",getApplicationDescriptor()->getURN().c_str());
-
-  *out << cgicc::h1("This is a debug tool for EXPERTS ONLY!!") << cgicc::br() << std::endl;
-  
-  // Begin select signal
-  // Config listbox
-
-  *out << cgicc::form().set("action", CFEBFunct) << std::endl;
-  
-  *out << "Choose CFEB: " << std::endl;
-  *out << cgicc::select().set("name", "cfeb") << std::endl;
-  
+  std::string dmbstring = toolbox::toString("%d",dmb);
   char sbuf[50];
-  for (unsigned i = 0; i < cfebs.size(); ++i) {
-    sprintf(sbuf,"%d",i);
-    if (i == 0) {
-      *out << cgicc::option()
-	.set("value", sbuf)
-	.set("selected", "");
-    } else {
-      *out << cgicc::option()
-	.set("value", sbuf);
-    }
-    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
-  }
-  // CFEB #7 will be used for broadcast
-  *out << cgicc::option().set("value", "7") << "All CFEBs" << cgicc::option() << std::endl;
-
-  *out << cgicc::select() << std::endl;
-
-  int n_keys = FuncName.size();
-  int selected_index = 0;
-  
-  *out << "  Choose CFEB function: " << std::endl;
-  *out << cgicc::select().set("name", "runtype") << std::endl;
-  
-  selected_index = 0;
-  for (int i = 0; i < n_keys; ++i) {
-    sprintf(sbuf,"%d",i);
-    if (i == selected_index) {
-      *out << cgicc::option()
-	.set("value", sbuf)
-	.set("selected", "");
-    } else {
-      *out << cgicc::option()
-	.set("value", sbuf);
-    }
-    *out << FuncName[i] << cgicc::option() << std::endl;
-  }
-
-  *out << cgicc::select() << cgicc::br() << std::endl;
-
-  *out << "CFEB Data in (hex) " << std::endl;
-  sprintf(sbuf, "%016lX", CFEBDataIn_);
-  *out << cgicc::input().set("type","text").set("value",sbuf).set("name","CFEBDataIn") << std::endl ;
-  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
-  *out << cgicc::input().set("type", "submit")
-    .set("name", "command")
-    .set("value", "Start CFEB Function") << cgicc::br() << std::endl;
-   *out << "    ======>> CFEB Data Out (hex): " << std::hex << CFEBDataOut_ << std::endl;
-    
-  *out << cgicc::form() << cgicc::br() << std::endl;
-
-  std::string RestoreCfebJtagIdle = toolbox::toString("/%s/RestoreCfebJtagIdle",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",RestoreCfebJtagIdle) << std::endl ;
-  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
-  *out << cgicc::input().set("type","submit").set("value","Restore CFEB JTAG Idle state") << std::endl ;
-  *out << cgicc::form() << std::endl ; 
-
-  //End select signal
-    //
-  *out << cgicc::fieldset()<< cgicc::br() << std::endl;
-
-  // --=== Reset DCFEB Optical Transceivers ===--
-  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl ;
-  //
-  *out << cgicc::legend("Reset DCFEB Optical Transceivers").set("style","color:blue") ;
-  //
-  *out << cgicc::table().set("border","1");
-  //
-  *out << cgicc::td() << cgicc::td();
-  int tot_p_chans=7;
-  for(int icc=1; icc<=tot_p_chans; icc++)
-  {
-           *out << cgicc::td().set("align","center") << "CFEB " << icc  << cgicc::td();
-  }
-  *out << cgicc::tr();
-  *out << cgicc::td() << "ODMB link" << cgicc::td();
-  for(int icc=0; icc<tot_p_chans; icc++)
-  {
-     *out << cgicc::td();
-        std::string DCFEBLinkReset = toolbox::toString("/%s/DCFEBLinkReset",getApplicationDescriptor()->getURN().c_str());
-        *out << cgicc::form().set("method","GET").set("action",DCFEBLinkReset) << std::endl ;
-        *out << cgicc::input().set("type","submit").set("value","Reset") << std::endl ;
-        *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
-        *out << cgicc::input().set("type","hidden").set("value","1").set("name","link");
-        sprintf(sbuf, "%d", icc ); 
-        *out << cgicc::input().set("type","hidden").set("value",sbuf).set("name","cfeb");
-        *out << cgicc::form() << std::endl ;
-     *out << cgicc::td();
-  }
-
-  *out << cgicc::tr();
-  *out << cgicc::td() << "OTMB link" << cgicc::td();
-  for(int icc=0; icc<tot_p_chans; icc++)
-  {
-     *out << cgicc::td();
-        std::string DCFEBLinkReset = toolbox::toString("/%s/DCFEBLinkReset",getApplicationDescriptor()->getURN().c_str());
-        *out << cgicc::form().set("method","GET").set("action",DCFEBLinkReset) << std::endl ;
-        *out << cgicc::input().set("type","submit").set("value","Reset") << std::endl ;
-        *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
-        *out << cgicc::input().set("type","hidden").set("value","2").set("name","link");
-        sprintf(sbuf, "%d", icc ); 
-        *out << cgicc::input().set("type","hidden").set("value",sbuf).set("name","cfeb");
-        *out << cgicc::form() << std::endl ;
-     *out << cgicc::td();
-  }
- // *out << cgicc::tr();
-  *out << cgicc::table();
-  //
-  *out << cgicc::fieldset() << cgicc::br();
-  //
-  
-  // --=== Virtex6 register read ===--
-  //
-  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
-  *out << cgicc::legend("Virtex 6 Registers").set("style","color:blue") << std::endl ;
-
-  std::string ReadDcfebVirtex6Reg = toolbox::toString("/%s/ReadDcfebVirtex6Reg",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",ReadDcfebVirtex6Reg) << std::endl ;
-  
-  *out << "Choose CFEB: " << std::endl;
-  *out << cgicc::select().set("name", "cfeb") << std::endl;  
-  for (unsigned i = 0; i < cfebs.size(); ++i) {
-    sprintf(sbuf,"%d",i);
-    if (i == 0) {
-      *out << cgicc::option().set("value", sbuf).set("selected", "");
-    } else {
-      *out << cgicc::option().set("value", sbuf);
-    }
-    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
-  }
-  *out << cgicc::select() << std::endl;
-  
-  // make a map of register index -> name
-  std::map<int, std::string> regNames;
-  regNames[VTX6_REG_CRC] = "CRC";
-  regNames[VTX6_REG_FAR] = "FAR";
-  //  regNames[VTX6_REG_FDRI] = "FDRI";
-  regNames[VTX6_REG_FDRO] = "FDRO";
-  regNames[VTX6_REG_CMD] = "CMD";
-  regNames[VTX6_REG_CTL0] = "CTL0";
-  regNames[VTX6_REG_MASK] = "MASK";
-  regNames[VTX6_REG_STAT] = "STATUS";
-  //  regNames[VTX6_REG_LOUT] = "LOUT";
-  regNames[VTX6_REG_COR0] = "COR0";
-  //  regNames[VTX6_REG_MFWR] = "MFWR";
-  //  regNames[VTX6_REG_CBC] = "CBC";
-  regNames[VTX6_REG_IDCODE] = "IDCODE";
-  regNames[VTX6_REG_AXSS] = "AXSS";
-  regNames[VTX6_REG_COR1] = "COR1";
-  //  regNames[VTX6_REG_CSOB] = "CSOB";
-  regNames[VTX6_REG_WBSTAR] = "WBSTAR";
-  regNames[VTX6_REG_TIMER] = "TIMER";
-  regNames[VTX6_REG_BOOTSTS] = "BOOTSTS";
-  regNames[VTX6_REG_CTL1] = "CTL1";
-  regNames[VTX6_REG_DWC] = "DWC";
-  
-  // print the drop down list
-  *out << cgicc::select().set("name", "reg") << std::endl;
-  std::map<int, std::string>::iterator it;
-  for (it = regNames.begin(); it != regNames.end(); ++it) {
-    sprintf(sbuf, "%d", it->first);
-    *out << cgicc::option().set("value", sbuf) << it->second << cgicc::option() << std::endl;
-  }
-  *out << cgicc::select() << std::endl;
-
-  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl;
-  *out << cgicc::input().set("type","submit").set("value","Read Virtex6 Register") << std::endl;
-  
-  *out << cgicc::br() << std::endl;
-  *out << "Result (hex): " << std::hex << DcfebVirtex6RegisterRead_ << std::dec << std::endl;
-  
-  *out << cgicc::form() << std::endl;  
-  *out << cgicc::fieldset()<< cgicc::br() << std::endl;
-  // ================================================
   
 // DCFEB configuration
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
@@ -1512,6 +1317,198 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::form() <<  FirmwareDir_+"cfeb/me11_dcfeb.mcs" << cgicc::br() << std::endl;
 
   *out << cgicc::fieldset()<< cgicc::br() << std::endl;
+
+  // DCFEB JTAG functions
+  CFEBDataIn_ = 0;
+  //
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+  *out << cgicc::legend("DCFEB JTAG Functions").set("style","color:blue") << std::endl ;
+  //
+
+  std::string CFEBFunct =
+      toolbox::toString("/%s/CFEBFunction",getApplicationDescriptor()->getURN().c_str());
+
+  // Begin select signal
+  // Config listbox
+
+  *out << cgicc::form().set("action", CFEBFunct) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+  // CFEB #7 will be used for broadcast
+  *out << cgicc::option().set("value", "7") << "All CFEBs" << cgicc::option() << std::endl;
+
+  *out << cgicc::select() << std::endl;
+
+  int n_keys = FuncName.size();
+  int selected_index = 0;
+  
+  *out << "  Choose CFEB function: " << std::endl;
+  *out << cgicc::select().set("name", "runtype") << std::endl;
+  
+  selected_index = 0;
+  for (int i = 0; i < n_keys; ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == selected_index) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << FuncName[i] << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << cgicc::br() << std::endl;
+
+  *out << "CFEB Data in (hex) " << std::endl;
+  sprintf(sbuf, "%016lX", CFEBDataIn_);
+  *out << cgicc::input().set("type","text").set("value",sbuf).set("name","CFEBDataIn") << std::endl ;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Start CFEB Function") << cgicc::br() << std::endl;
+   *out << "    ======>> CFEB Data Out (hex): " << std::hex << CFEBDataOut_ << std::endl;
+    
+  *out << cgicc::form() << cgicc::br() << std::endl;
+
+  std::string RestoreCfebJtagIdle = toolbox::toString("/%s/RestoreCfebJtagIdle",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",RestoreCfebJtagIdle) << std::endl ;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type","submit").set("value","Restore CFEB JTAG Idle state") << std::endl ;
+  *out << cgicc::form() << std::endl ; 
+
+  //End select signal
+    //
+  *out << cgicc::fieldset()<< cgicc::br() << std::endl;
+
+  
+  // --=== Virtex6 register read ===--
+  //
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+  *out << cgicc::legend("Virtex 6 Registers").set("style","color:blue") << std::endl ;
+
+  std::string ReadDcfebVirtex6Reg = toolbox::toString("/%s/ReadDcfebVirtex6Reg",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",ReadDcfebVirtex6Reg) << std::endl ;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option().set("value", sbuf).set("selected", "");
+    } else {
+      *out << cgicc::option().set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+  *out << cgicc::select() << std::endl;
+  
+  // make a map of register index -> name
+  std::map<int, std::string> regNames;
+  regNames[VTX6_REG_CRC] = "CRC";
+  regNames[VTX6_REG_FAR] = "FAR";
+  //  regNames[VTX6_REG_FDRI] = "FDRI";
+  regNames[VTX6_REG_FDRO] = "FDRO";
+  regNames[VTX6_REG_CMD] = "CMD";
+  regNames[VTX6_REG_CTL0] = "CTL0";
+  regNames[VTX6_REG_MASK] = "MASK";
+  regNames[VTX6_REG_STAT] = "STATUS";
+  //  regNames[VTX6_REG_LOUT] = "LOUT";
+  regNames[VTX6_REG_COR0] = "COR0";
+  //  regNames[VTX6_REG_MFWR] = "MFWR";
+  //  regNames[VTX6_REG_CBC] = "CBC";
+  regNames[VTX6_REG_IDCODE] = "IDCODE";
+  regNames[VTX6_REG_AXSS] = "AXSS";
+  regNames[VTX6_REG_COR1] = "COR1";
+  //  regNames[VTX6_REG_CSOB] = "CSOB";
+  regNames[VTX6_REG_WBSTAR] = "WBSTAR";
+  regNames[VTX6_REG_TIMER] = "TIMER";
+  regNames[VTX6_REG_BOOTSTS] = "BOOTSTS";
+  regNames[VTX6_REG_CTL1] = "CTL1";
+  regNames[VTX6_REG_DWC] = "DWC";
+  
+  // print the drop down list
+  *out << cgicc::select().set("name", "reg") << std::endl;
+  std::map<int, std::string>::iterator it;
+  for (it = regNames.begin(); it != regNames.end(); ++it) {
+    sprintf(sbuf, "%d", it->first);
+    *out << cgicc::option().set("value", sbuf) << it->second << cgicc::option() << std::endl;
+  }
+  *out << cgicc::select() << std::endl;
+
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl;
+  *out << cgicc::input().set("type","submit").set("value","Read Virtex6 Register") << std::endl;
+  
+  *out << cgicc::br() << std::endl;
+  *out << "Result (hex): " << std::hex << DcfebVirtex6RegisterRead_ << std::dec << std::endl;
+  
+  *out << cgicc::form() << std::endl;  
+  *out << cgicc::fieldset()<< cgicc::br() << std::endl;
+  // ================================================
+  // --=== Reset DCFEB Optical Transceivers ===--
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl ;
+  //
+  *out << cgicc::legend("Reset DCFEB Optical Transceivers").set("style","color:blue") ;
+  //
+  *out << cgicc::table().set("border","1");
+  //
+  *out << cgicc::td() << cgicc::td();
+  int tot_p_chans=7;
+  for(int icc=1; icc<=tot_p_chans; icc++)
+  {
+           *out << cgicc::td().set("align","center") << "CFEB " << icc  << cgicc::td();
+  }
+  *out << cgicc::tr();
+  *out << cgicc::td() << "ODMB link" << cgicc::td();
+  for(int icc=0; icc<tot_p_chans; icc++)
+  {
+     *out << cgicc::td();
+        std::string DCFEBLinkReset = toolbox::toString("/%s/DCFEBLinkReset",getApplicationDescriptor()->getURN().c_str());
+        *out << cgicc::form().set("method","GET").set("action",DCFEBLinkReset) << std::endl ;
+        *out << cgicc::input().set("type","submit").set("value","Reset") << std::endl ;
+        *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+        *out << cgicc::input().set("type","hidden").set("value","1").set("name","link");
+        sprintf(sbuf, "%d", icc ); 
+        *out << cgicc::input().set("type","hidden").set("value",sbuf).set("name","cfeb");
+        *out << cgicc::form() << std::endl ;
+     *out << cgicc::td();
+  }
+
+  *out << cgicc::tr();
+  *out << cgicc::td() << "OTMB link" << cgicc::td();
+  for(int icc=0; icc<tot_p_chans; icc++)
+  {
+     *out << cgicc::td();
+        std::string DCFEBLinkReset = toolbox::toString("/%s/DCFEBLinkReset",getApplicationDescriptor()->getURN().c_str());
+        *out << cgicc::form().set("method","GET").set("action",DCFEBLinkReset) << std::endl ;
+        *out << cgicc::input().set("type","submit").set("value","Reset") << std::endl ;
+        *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+        *out << cgicc::input().set("type","hidden").set("value","2").set("name","link");
+        sprintf(sbuf, "%d", icc ); 
+        *out << cgicc::input().set("type","hidden").set("value",sbuf).set("name","cfeb");
+        *out << cgicc::form() << std::endl ;
+     *out << cgicc::td();
+  }
+ // *out << cgicc::tr();
+  *out << cgicc::table();
+  //
+  *out << cgicc::fieldset() << cgicc::br();
+  //
 
 }
 
@@ -4209,7 +4206,7 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
      *out << cgicc::tr();
      *out << cgicc::td() << "Inj delay: " << thisDMB->odmb_read_Inj_delay() << cgicc::td();      
      *out << cgicc::td() << "Ext delay: " << thisDMB->odmb_read_Ext_delay() << cgicc::td();      
-     *out << cgicc::td() << "Kill mask: " << std::hex << thisDMB->odmb_read_kill_mask() << std::dec << cgicc::td();      
+     *out << cgicc::td() << "Kill mask (in Hex): " << std::hex << thisDMB->odmb_read_kill_mask() << std::dec << cgicc::td();      
      *out << cgicc::td() << "Crate ID: " << thisDMB->odmb_read_CrateID() << cgicc::td();      
      *out << cgicc::tr() << std::endl;
      *out << cgicc::table();
@@ -4232,12 +4229,14 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
        *out << cgicc::tr() << std::endl;
        //
        int killed=thisDMB->odmb_read_autokill_any();
+       int killbit;
        *out << cgicc::tr();
        for(int icol=0; icol<8; icol++)
        {       
+          killbit = (killed&(1<<(icol-1)))?1:0;
           *out << cgicc::td();
           if(icol==0) *out << "Auto Killed: Any";
-          else *out << (killed&(1<<(icol-1)))?1:0;
+          else *out << killbit;
           *out << cgicc::td() << std::endl;
        }
        *out << cgicc::tr() << std::endl;
@@ -4246,9 +4245,10 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
        *out << cgicc::tr();
        for(int icol=0; icol<8; icol++)
        {       
+          killbit = (killed&(1<<(icol-1)))?1:0;
           *out << cgicc::td();
           if(icol==0) *out << "Auto Killed: Fiber";
-          else *out << (killed&(1<<(icol-1)))?1:0;
+          else *out << killbit;
           *out << cgicc::td() << std::endl;
        }
        *out << cgicc::tr() << std::endl;

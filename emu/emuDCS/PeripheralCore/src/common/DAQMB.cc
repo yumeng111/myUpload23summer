@@ -8377,10 +8377,10 @@ void DAQMB::dcfeb_readfirmware_mcs(CFEB & cfeb, const char *filename)
    unsigned read_size=0x800;
    unsigned short *buf;
    FILE *mcsfile;
-   int total_blocks=4096; // use 1335 for only the firmware part of the prom
+   int total_blocks=1335; // only the firmware part of the prom
 // int readback_size=read_size*total_blocks*2=5468160; 
 // XC6VLX130T's configuration bitstream (firmware) is exactly 5464972 bytes:
-   const int FIRMWARE_SIZE=16777216; // use 5464972 for only the firmware part of the prom
+   const int FIRMWARE_SIZE=5464972;
 
    mcsfile=fopen(filename, "w");
    if(mcsfile==NULL)

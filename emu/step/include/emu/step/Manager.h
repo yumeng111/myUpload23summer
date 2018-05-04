@@ -79,7 +79,7 @@ namespace emu { namespace step {
       xdata::Boolean isCurrentTestDurationUndefined_; ///< TRUE if the current test needs to accumulate N events, i.e., it's duration is not defined explicitly or by pulse injections
       toolbox::task::WorkLoop *workLoop_; ///< work loop for the test procedure to be executed in a separate thread
       toolbox::task::ActionSignature *testSequenceSignature_;
-      map<string,xdaq::ApplicationDescriptor*> testerDescriptors_; ///< peripheral crate group --> emu::step::Tester application descriptor map
+      map<string,const xdaq::ApplicationDescriptor*> testerDescriptors_; ///< peripheral crate group --> emu::step::Tester application descriptor map
       set<uint32_t> ruisToReadData_;
       set<string> dataFileNames_; ///< The names of all data files written since the last configure
       xdata::String dataFileNamesCSV_; ///< The names of all data files written since the last configure

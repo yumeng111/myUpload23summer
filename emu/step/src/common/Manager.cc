@@ -55,7 +55,7 @@ void emu::step::Manager::bindWebInterface(){
 
 
 void emu::step::Manager::createConfiguration(){
-  set<xdaq::ApplicationDescriptor *> apps = getApplicationContext()->getDefaultZone()->getApplicationDescriptors( "emu::step::Tester" );
+  set<const xdaq::ApplicationDescriptor *> apps = getApplicationContext()->getDefaultZone()->getApplicationDescriptors( "emu::step::Tester" );
 
   if ( apps.size() == 0 ){
     XCEPT_RAISE( xcept::Exception, "No emu::step::Tester applications found." );
@@ -64,7 +64,7 @@ void emu::step::Manager::createConfiguration(){
   map<string,string> pCrateSettingsFileNames;
 
   emu::soap::Messenger m( this );
-  for ( std::set<xdaq::ApplicationDescriptor*>::iterator app = apps.begin(); app != apps.end(); ++app ) {
+  for ( std::set<const xdaq::ApplicationDescriptor*>::iterator app = apps.begin(); app != apps.end(); ++app ) {
     xdata::String group;
     xdata::String fileName;
     m.getParameters( *app,
@@ -88,7 +88,7 @@ void emu::step::Manager::createConfiguration(){
 
 void emu::step::Manager::startFED( bool inPassthroughMode ){
   // If we use FED crate(s), we control the FED system here. (If the DDU is in the PCrate, we'll set it up together with it for each individual test.)
-  set<xdaq::ApplicationDescriptor *> apps = getApplicationContext()->getDefaultZone()->getApplicationDescriptors( "emu::fed::Communicator" );
+  set<const xdaq::ApplicationDescriptor *> apps = getApplicationContext()->getDefaultZone()->getApplicationDescriptors( "emu::fed::Communicator" );
 
   if ( apps.size() == 0 ){
     LOG4CPLUS_WARN( logger_, "No emu::fed::Communicator applications found. Will look for DDU in the peripheral crate instead." );
@@ -107,7 +107,7 @@ void emu::step::Manager::startFED( bool inPassthroughMode ){
       // Get the FED settings file names
       set<string> fedSettingsFileNames;
       emu::soap::Messenger m( this );
-      for ( set<xdaq::ApplicationDescriptor*>::iterator app = apps.begin(); app != apps.end(); ++app ) {
+      for ( set<const xdaq::ApplicationDescriptor*>::iterator app = apps.begin(); app != apps.end(); ++app ) {
 	xdata::String xmlFileName;
 	m.getParameters( *app, emu::soap::Parameters().add( "xmlFileName", &xmlFileName ) );
 	fedSettingsFileNames.insert( xmlFileName.toString() );
@@ -306,7 +306,7 @@ bool emu::step::Manager::testSequenceInWorkLoop( toolbox::task::WorkLoop *wl ){
   //
   // Set parameters in Tester apps
   //
-  for ( map<string,xdaq::ApplicationDescriptor*>::const_iterator t = testerDescriptors_.begin(); t != testerDescriptors_.end(); ++t ){
+  for ( map<string,const xdaq::ApplicationDescriptor*>::const_iterator t = testerDescriptors_.begin(); t != testerDescriptors_.end(); ++t ){
     if ( t->second ){
       try{
 	xdata::Vector<xdata::String> crateIds      = configuration_->getCrateIds     ( t->first );
@@ -330,7 +330,7 @@ bool emu::step::Manager::testSequenceInWorkLoop( toolbox::task::WorkLoop *wl ){
 	return false;
       }
     } // if ( t->second )
-  } // for ( map<string,xdaq::ApplicationDescriptor*>::const_iterator t = testerDescriptors_.begin(); t != testerDescriptors_.end(); ++t )
+  } // for ( map<string,const xdaq::ApplicationDescriptor*>::const_iterator t = testerDescriptors_.begin(); t != testerDescriptors_.end(); ++t )
     
   if ( fsm_.getCurrentState() == 'H'  || fsm_.getCurrentState() == 'F' ) return false; // Get out of here if it's been stopped in the meantime.
 
@@ -458,7 +458,7 @@ string emu::step::Manager::checkDataCompleteness( const string& testId ){
     // Get total number of events to be taken for the current test
     //
     set<uint64_t> testsNEvents;
-    for ( map<string,xdaq::ApplicationDescriptor*>::iterator app = testerDescriptors_.begin(); app != testerDescriptors_.end(); ++app ){
+    for ( map<string,const xdaq::ApplicationDescriptor*>::iterator app = testerDescriptors_.begin(); app != testerDescriptors_.end(); ++app ){
       xdata::UnsignedInteger64 nEvents;
       m.getParameters( app->second , emu::soap::Parameters().add( "nEvents", &nEvents ) );
       testsNEvents.insert( uint64_t( nEvents ) );
@@ -529,7 +529,7 @@ void emu::step::Manager::updateChamberMaps(){
   try{
     chamberMaps_.clear();
     emu::soap::Messenger m( this );
-    for ( map<string,xdaq::ApplicationDescriptor*>::iterator app = testerDescriptors_.begin(); app != testerDescriptors_.end(); ++app ){
+    for ( map<string,const xdaq::ApplicationDescriptor*>::iterator app = testerDescriptors_.begin(); app != testerDescriptors_.end(); ++app ){
       xdata::Vector< xdata::Bag<ChamberMap> > maps;
       m.getParameters( app->second , emu::soap::Parameters().add( "chamberMaps", &maps ) );
       if ( maps.elements() == 0 ){
@@ -825,7 +825,7 @@ void emu::step::Manager::waitForTestsToConfigure(){
     bool allConfigured = true;
     // Query the Tester apps
     map<string,pair<double,string> > groupsProgress; // group -> ( progress, message )
-    for ( map<string,xdaq::ApplicationDescriptor*>::iterator app = testerDescriptors_.begin(); app != testerDescriptors_.end(); ++app ){
+    for ( map<string,const xdaq::ApplicationDescriptor*>::iterator app = testerDescriptors_.begin(); app != testerDescriptors_.end(); ++app ){
       xdata::String  reasonForFailure;
       xdata::Double  progress;
       xdata::Boolean testConfigured;
@@ -866,7 +866,7 @@ void emu::step::Manager::waitForTestsToFinish( const bool isTestDurationUndefine
 	double progress = 100. * double( STEPCount.value_ ) / double( maxNumberOfEvents.value_ ); // in %
 	// Assign every group the same progress. It would be complicated to attribute, and it wouldn't make much sense anyway.
 	map<string,pair<double,string> > groupsProgress; // group -> ( progress, message )
-	map<string,xdaq::ApplicationDescriptor*>::iterator app;
+	map<string,const xdaq::ApplicationDescriptor*>::iterator app;
 	for ( app = testerDescriptors_.begin(); app != testerDescriptors_.end(); ++app ){
 	  groupsProgress[app->first] = make_pair<double,string>( progress, reasonForFailure );
 	}
@@ -878,7 +878,7 @@ void emu::step::Manager::waitForTestsToFinish( const bool isTestDurationUndefine
     else{
       // Query the Tester apps
       map<string,pair<double,string> > groupsProgress; // group -> ( progress, message )
-      for ( map<string,xdaq::ApplicationDescriptor*>::iterator app = testerDescriptors_.begin(); app != testerDescriptors_.end(); ++app ){
+      for ( map<string,const xdaq::ApplicationDescriptor*>::iterator app = testerDescriptors_.begin(); app != testerDescriptors_.end(); ++app ){
 	xdata::String  reasonForFailure;
 	xdata::Double  progress;
 	xdata::Boolean testDone;

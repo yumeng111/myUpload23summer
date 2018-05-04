@@ -128,11 +128,11 @@ void emu::step::Application::moveToFailedState( xcept::Exception exception ){
 
 string emu::step::Application::generateLoggerName()
 {
-    xdaq::ApplicationDescriptor *appDescriptor = getApplicationDescriptor();
-    string                      appClass       = appDescriptor->getClassName();
-    unsigned long               appInstance    = appDescriptor->getInstance();
-    stringstream                ss;
-    string                      loggerName;
+    const xdaq::ApplicationDescriptor *appDescriptor = getApplicationDescriptor();
+    string                            appClass       = appDescriptor->getClassName();
+    unsigned long                     appInstance    = appDescriptor->getInstance();
+    stringstream                      ss;
+    string                            loggerName;
 
     ss << appClass << appInstance;
     loggerName = ss.str();

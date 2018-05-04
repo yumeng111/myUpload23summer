@@ -208,7 +208,7 @@ void emu::step::Test::setUpDDU(emu::pc::Crate* crate)
       LOG4CPLUS_INFO( *pLogger_, "Kill Fiber  is set to 0x" << hex << ( (*ddu)->readFlashKillFiber() & 0xffff ) << dec );
       LOG4CPLUS_INFO( *pLogger_, "GbEPrescale is set to 0x" << hex << ( (*ddu)->readGbEPrescale()    & 0xffff ) << dec );
       LOG4CPLUS_INFO( *pLogger_, "Fake L1A    is set to 0x" << hex << ( (*ddu)->readFakeL1()         & 0xffff ) << dec );
-      if ( (*ddu)->readFlashKillFiber() & 0x000f != GbEPrescaleWord ){
+      if ( ( (*ddu)->readFlashKillFiber() & 0x000f ) != GbEPrescaleWord ){
 	LOG4CPLUS_ERROR( *pLogger_, "Failed to set GbEPrescale to 0x" << hex << GbEPrescaleWord << dec );
       }
     }

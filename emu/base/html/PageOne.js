@@ -822,7 +822,7 @@ function Panel( name, refreshPeriod, dataURL ) {
 		});
 		$("#" + self.name + "-td_value_MUTFUPState").attr("class", combinedState);
 		$("#" + self.name + "-a_value_MUTFUPState").text( combinedState );
-		$("#" + self.name + "-a_value_MUTFUPState").attr("title", (combinedState == "INDEFINITE" ? 'MUTFUP TCDS CI and PI Controller applications are not in the same FSM state.' : 'MUTFUP TCDS CI and PI Controller applications are '+combinedState ));
+		$("#" + self.name + "-a_value_MUTFUPState").attr("title", (combinedState == "INDEFINITE" ? 'MUTFUP TCDS CI and PI Controller applications are not in the same FSM state.' : 'MUTFUP TCDS CI and PI Controller applications are '+combinedState )+' Click to visit the PI.');
 	});
 
  	// Get TCDS PI spy log

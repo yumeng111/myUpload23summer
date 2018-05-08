@@ -8,6 +8,8 @@
 #include <sstream>
 #include <unistd.h> // for usleep
 
+#include "xcept/tools.h"
+
 #include "emu/fed/Fiber.h"
 #include "emu/fed/JTAGElement.h"
 
@@ -99,19 +101,33 @@ emu::fed::DDU::~DDU()
 void emu::fed::DDU::configure()
 throw (emu::fed::exception::DDUException)
 {
+  std::ostringstream logMessage;
+
+  const int nTries = 3;
+  for ( int iTry=0; iTry<nTries; ++iTry ){
+
 	try {
 		writeGbEPrescale(gbe_prescale_);
 		writeFlashKillFiber(killfiber_);
 		writeKillFiber(killfiber_);
+		logMessage << "\nTry " << iTry+1 << "/" << nTries << " of configuring DDU " << std::setw(2) 
+			   << std::setfill('0') << rui_ << " succeeded.";
+		break;
 	} catch (emu::fed::exception::Exception &e) {
+	        logMessage << "\nTry " << iTry+1 << "/" << nTries << " of configuring DDU " << std::setw(2) 
+			   << std::setfill('0') << rui_ << " failed: "
+			   << xcept::stdformat_exception_history( e );
 		std::ostringstream error;
-		error << "Exception communicating with DDU";
+		error << "Exception communicating with DDU. List of tries:" << logMessage.str() << "\nEnd list of tries.\n";
 		XCEPT_DECLARE_NESTED(emu::fed::exception::DDUException, e2, error.str(), e);
 		std::ostringstream tag;
 		tag << "RUI " << std::setw(2) << std::setfill('0') << rui_;
 		e2.setProperty("tag", tag.str());
-		throw e2;
+		if ( iTry+1 == nTries ) throw e2; // Only throw after the last try.
+		usleep( 300000 );
 	}
+
+  }
 }
 
 

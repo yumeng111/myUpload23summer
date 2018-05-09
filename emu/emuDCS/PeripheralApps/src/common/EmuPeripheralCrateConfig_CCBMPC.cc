@@ -653,6 +653,14 @@ void EmuPeripheralCrateConfig::MPCUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::input().set("type","submit").set("value","Read MPC Firmware in MCS format") << std::endl ;
   *out << cgicc::form() << std::endl ;
   //
+  *out << cgicc::br();
+  //
+  std::string MPCreadbc0s =
+    toolbox::toString("/%s/MPCReadBC0",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",MPCreadbc0s) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Read BC0 Counters") << std::endl ;
+  *out << cgicc::form() << std::endl ;
+  //
   *out << cgicc::fieldset() << cgicc::br();
   //
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
@@ -730,7 +738,7 @@ void EmuPeripheralCrateConfig::MPCUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::form().set("method","GET") << std::endl ;
   *out << cgicc::pre();
   *out << cgicc::textarea().set("name","MPC Output").set("rows","30").set("cols","132").set("WRAP","OFF");
-  *out << "Check MPC Configuration Output:" << std::endl;
+//  *out << "Check MPC Configuration Output:" << std::endl;
   *out << OutputStringMPCStatus.str() << std::endl ;
   *out << cgicc::textarea();
   OutputStringMPCStatus.str("");
@@ -809,6 +817,7 @@ void EmuPeripheralCrateConfig::MPCReadFirmware(xgi::Input * in, xgi::Output * ou
   void EmuPeripheralCrateConfig::MPCCheckConfig(xgi::Input * in, xgi::Output * out ) 
     throw (xgi::exception::Exception)
   {
+    OutputStringMPCStatus << "Check MPC Configuration Output:" << std::endl;
     thisMPC->RedirectOutput(&OutputStringMPCStatus);
     thisMPC->CheckConfig();
     thisMPC->RedirectOutput(&std::cout);
@@ -1369,6 +1378,17 @@ void EmuPeripheralCrateConfig::MPCnewPRBS(xgi::Input * in, xgi::Output * out )
       if(gtpreset>=0 && gtpreset<=15) mpc_gtpresets |= (1<<gtpreset);
     }
     if(mpc_gtpresets > 0) thisMPC->resetGTP(mpc_gtpresets);
+    this->MPCUtils(in,out);
+  }
+
+  void EmuPeripheralCrateConfig::MPCReadBC0(xgi::Input * in, xgi::Output * out ) 
+    throw (xgi::exception::Exception)
+  {
+    thisMPC->RedirectOutput(&OutputStringMPCStatus);
+    thisMPC->readBC0Counters();
+    thisMPC->RedirectOutput(&std::cout);
+    std::cout << OutputStringMPCStatus.str() << std::endl;      
+    
     this->MPCUtils(in,out);
   }
 

@@ -1328,5 +1328,20 @@ int MPC::program_eprom(const char *mcsfile, int chip, int broadcast)
      return 0;
 }
 
+void MPC::readBC0Counters()
+{
+    unsigned short bc0counter[9];
+    for(unsigned i=0; i<8; i++)
+    {
+        read_later(BC0BASE+i*2);
+    }
+    read_now(BC0BASE+8*2, (char *)bc0counter);
+    (*MyOutput_) << "BC0 counters read back:" << std::endl;
+    for(unsigned i=0; i<9; i++)
+    {
+       (*MyOutput_) << "  TMB #" << i+1 << ":   " << bc0counter[i] << std::endl;
+    }
+}
+
   } // namespace emu::pc
 } // namespace emu

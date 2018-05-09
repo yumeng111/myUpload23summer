@@ -566,6 +566,7 @@ private:
   void MPCPRBSError(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void MPCGTPReset(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void MPCCheckConfig(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void MPCReadBC0(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   //
   // CCB utils
   void CCBUtils(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);

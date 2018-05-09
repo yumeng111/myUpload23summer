@@ -237,6 +237,7 @@ class MPC : public VMEModule, public EmuLogger {
   int Read_FIFO_B_New(int link, unsigned short *data);
   int read_oldPRBS();
   int read_newPRBS();
+  void readBC0Counters();
   void inject_PRBSerror();
   void resetGTP(int signal);
   void mpc_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip);
@@ -276,7 +277,9 @@ class MPC : public VMEModule, public EmuLogger {
     DSNread    = 0xc2,
     DSNclear   = 0xc4,
     DSNwrite0  = 0xc6,
-    DSNwrite1  = 0xc8
+    DSNwrite1  = 0xc8,
+    // BC0 counters
+    BC0BASE = 0xD2
   };
   enum CSR0options {
     CSR0_FPGATestMode = 0x01, CSR0_FPGAResetLogic = 0x02,

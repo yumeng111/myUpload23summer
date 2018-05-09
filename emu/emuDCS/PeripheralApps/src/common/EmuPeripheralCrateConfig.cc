@@ -330,6 +330,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::MPCGTPReset, "MPCGTPReset");
   xgi::bind(this,&EmuPeripheralCrateConfig::CCBCheckConfig, "CCBCheckConfig");
   xgi::bind(this,&EmuPeripheralCrateConfig::MPCCheckConfig, "MPCCheckConfig"); 
+  xgi::bind(this,&EmuPeripheralCrateConfig::MPCReadBC0, "MPCReadBC0"); 
   xgi::bind(this,&EmuPeripheralCrateConfig::GEMreadFPGAid, "GEMreadFPGAid"); 
   xgi::bind(this,&EmuPeripheralCrateConfig::GEMreadFPGAsysmon, "GEMreadFPGAsysmon"); 
   xgi::bind(this,&EmuPeripheralCrateConfig::GEMProgramFPGA, "GEMProgramFPGA"); 

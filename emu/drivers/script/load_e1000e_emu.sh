@@ -9,7 +9,7 @@ function interfaceNames(){
     export __ETH4__=p2p1
     export __ETH5__=p2p2
     # If an explicit naming scheme is defined for the network interfaces, take that instead of the implicit one.
-    [[ -f ${0:h}/ifnames_e1000e_emu.sh ]] && source ${0:h}/ifnames_e1000e_emu.sh
+    [[ -f ${DRIVERS_DIR}/ifnames_e1000e_emu.sh ]] && source ${DRIVERS_DIR}/ifnames_e1000e_emu.sh || print "${DRIVERS_DIR}/ifnames_e1000e_emu.sh not found. Falling back to default interface naming scheme."
 }
 
 function module_parameters(){

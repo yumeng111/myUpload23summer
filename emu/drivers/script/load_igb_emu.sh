@@ -9,7 +9,7 @@ function interfaceNames(){
     export __ETH4__=p2p1
     export __ETH5__=p2p2
     # If an explicit naming scheme is defined for the network interfaces, take that instead of the implicit one.
-    [[ -f ${0:h}/ifnames_igb_emu.sh ]] && source ${0:h}/ifnames_igb_emu.sh
+    [[ -f ${DRIVERS_DIR}/ifnames_igb_emu.sh ]] && source ${DRIVERS_DIR}/ifnames_igb_emu.sh || print "${DRIVERS_DIR}/ifnames_igb_emu.sh not found. Falling back to default interface naming scheme."
 }
 
 function module_parameters(){
@@ -138,6 +138,8 @@ function load_igb_emu(){
     echo "Bringing up the interfaces for the plugged-in NICs"
     # Take the position within the rack from the host name (e.g. 15 from ctrl-s2g18-15-01) and add it to 100:
     HOSTNUMBER="1${${$(hostname -s)%-*}##*-}"
+    # Check if it makes sense
+    [[ ${HOSTNUMBER} == <0-255> ]] || HOSTNUMBER=100
     for N in 2 3 4 5; do
 	print "/sbin/ifconfig ${IF_NAME[$N]} down"
 	/sbin/ifconfig ${IF_NAME[$N]} down
@@ -200,9 +202,9 @@ for ALIAS in emu42fastprod01 emu-me11-step{1,2,3,4} ctrl-s2g18-{15..18}-01 srv-c
 	exit 0
     fi
 done
-for ALIAS in vmepc-e1x07-21-01 vmepc-e1x07-26-01; do
+for ALIAS in vmepc-e1x07-21-01 vmepc-e1x07-26-01 emusx5-systest1; do
     if [[ $(host $ALIAS | grep -i -c $(hostname -s)) -ge 1 ]]; then
-	load_igb_emu eth_hook_2_ddu eth_hook_3_dmb eth_hook_4_vme eth_hook_5_vme
+	load_igb_emu eth_hook_2_vme eth_hook_3_dmb eth_hook_4_vme eth_hook_5_vme
 	exit 0
     fi
 done

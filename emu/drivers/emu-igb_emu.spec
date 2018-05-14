@@ -4,7 +4,7 @@
 
 Summary: CMS Emu local DAQ Gbit and peripheral crate VME drivers for kernel %{kernel_version} based on the igb module for the Intel dual port NIC model I350-F2
 Name: emu-igb_emu
-Version: 2.3.0
+Version: 2.3.1
 Release: 1.centos7
 License: none
 Group: none

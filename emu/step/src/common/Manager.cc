@@ -251,10 +251,10 @@ void emu::step::Manager::haltAction(toolbox::Event::Reference e){
   }
 
   try{
-    m.sendCommand( "emu::daq::manager::Application", "Halt" );
-    LOG4CPLUS_INFO( logger_, "Sent 'Halt' command to emu::daq::manager::Application" );
+    m.sendCommand( "emu::ldaq::manager::Application", "Halt" );
+    LOG4CPLUS_INFO( logger_, "Sent 'Halt' command to emu::ldaq::manager::Application" );
   } catch( xcept::Exception &e ){
-    XCEPT_RETHROW( toolbox::fsm::exception::Exception, "Failed to send 'Halt' command to emu::daq::manager::Application", e );
+    XCEPT_RETHROW( toolbox::fsm::exception::Exception, "Failed to send 'Halt' command to emu::ldaq::manager::Application", e );
   }
 
   // Halt the FED
@@ -288,10 +288,10 @@ void emu::step::Manager::failAction(toolbox::Event::Reference e){
   }
   // Try to stop the DAQ, too.
   try{
-    m.sendCommand( "emu::daq::manager::Application", "Halt" );
-    LOG4CPLUS_INFO( logger_, "Sent 'Halt' command to emu::daq::manager::Application while going to 'Failed' state." );
+    m.sendCommand( "emu::ldaq::manager::Application", "Halt" );
+    LOG4CPLUS_INFO( logger_, "Sent 'Halt' command to emu::ldaq::manager::Application while going to 'Failed' state." );
   } catch( xcept::Exception &e ){
-    LOG4CPLUS_INFO( logger_, "Failed to send 'Halt' command to emu::daq::manager::Application while going to 'Failed' state. " << stdformat_exception_history( e ) );
+    LOG4CPLUS_INFO( logger_, "Failed to send 'Halt' command to emu::ldaq::manager::Application while going to 'Failed' state. " << stdformat_exception_history( e ) );
   }
   // ...then execute the standard 'fail' action.
   emu::step::Application::failAction( e );
@@ -364,19 +364,19 @@ bool emu::step::Manager::testSequenceInWorkLoop( toolbox::task::WorkLoop *wl ){
       //
       configuration_->setTestStatus( testId, "configuring", "This test is being prepared." );
       const uint64_t daqTimeOutInSeconds = 15;
-      m.sendCommand( "emu::daq::manager::Application", "Halt" );      
+      m.sendCommand( "emu::ldaq::manager::Application", "Halt" );      
       if ( ! waitForDAQToExecute( "Halt", daqTimeOutInSeconds ) ){
 	XCEPT_RAISE( xcept::Exception, string( "DAQ failed to execute 'Halt' in ") + utils::stringFrom<uint64_t>( daqTimeOutInSeconds ) + " seconds." );
       }
       xdata::String             runType = string( ( (bool) isCurrentTestDurationUndefined_ ) ? "STEP_" : "Test_" ) + testId.toString();
       xdata::Integer64  maxNumberOfEvents = ( ( (bool) isCurrentTestDurationUndefined_ ) ? (int) testParameters.getNEvents() : -1 ); // unlimited if negative
       xdata::Boolean writeBadEventsOnly = false;
-      m.setParameters( "emu::daq::manager::Application", 
+      m.setParameters( "emu::ldaq::manager::Application", 
 		       emu::soap::Parameters()
 		       .add( "runType"           , &runType            )
 		       .add( "maxNumberOfEvents" , &maxNumberOfEvents  )
 		       .add( "writeBadEventsOnly", &writeBadEventsOnly ) );
-      m.sendCommand( "emu::daq::manager::Application", "Configure" );      
+      m.sendCommand( "emu::ldaq::manager::Application", "Configure" );      
       m.sendCommand( "emu::step::Tester", "Configure" );
       if ( ! waitForDAQToExecute( "Configure", daqTimeOutInSeconds ) ){
 	XCEPT_RAISE( xcept::Exception, string( "DAQ failed to execute 'Configure' in ") + utils::stringFrom<uint64_t>( daqTimeOutInSeconds ) + " seconds." );
@@ -397,7 +397,7 @@ bool emu::step::Manager::testSequenceInWorkLoop( toolbox::task::WorkLoop *wl ){
       // Enable all Tester apps
       //
       // First enable the local DAQ
-      m.sendCommand( "emu::daq::manager::Application", "Enable" );
+      m.sendCommand( "emu::ldaq::manager::Application", "Enable" );
       if ( ! waitForDAQToExecute( "Enable", daqTimeOutInSeconds ) ){
 	XCEPT_RAISE( xcept::Exception, string( "DAQ failed to execute 'Enable' in ") + utils::stringFrom<uint64_t>( daqTimeOutInSeconds ) + " seconds." );
       }
@@ -406,7 +406,7 @@ bool emu::step::Manager::testSequenceInWorkLoop( toolbox::task::WorkLoop *wl ){
       xdata::String runStartTime;
       xdata::UnsignedInteger32 runNumber;
       xdata::Vector<xdata::String> dataDirNames; // all RUIs' data directory names
-      m.getParameters( "emu::daq::manager::Application", 0, 
+      m.getParameters( "emu::ldaq::manager::Application", 0, 
 		       emu::soap::Parameters()
 		       .add( "runNumber"   , &runNumber    )
 		       .add( "runStartTime", &runStartTime )
@@ -424,7 +424,7 @@ bool emu::step::Manager::testSequenceInWorkLoop( toolbox::task::WorkLoop *wl ){
       // Halt all Tester apps
       //
       m.sendCommand( "emu::step::Tester", "Halt" );
-      m.sendCommand( "emu::daq::manager::Application", "Halt" );
+      m.sendCommand( "emu::ldaq::manager::Application", "Halt" );
       if ( ! waitForDAQToExecute( "Halt", daqTimeOutInSeconds ) ){
 	XCEPT_RAISE( xcept::Exception, string( "DAQ failed to execute 'Halt' in ") + utils::stringFrom<uint64_t>( daqTimeOutInSeconds ) + " seconds." );
       }
@@ -475,7 +475,7 @@ string emu::step::Manager::checkDataCompleteness( const string& testId ){
     if ( (bool) isCurrentTestDurationUndefined_ ){
       xdata::Integer64 maxNumberOfEvents;
       xdata::UnsignedInteger64 STEPCount;
-      m.getParameters( "emu::daq::manager::Application", 0, 
+      m.getParameters( "emu::ldaq::manager::Application", 0, 
 		       emu::soap::Parameters()
 		       .add( "maxNumberOfEvents", &maxNumberOfEvents )
 		       .add( "STEPCount"        , &STEPCount         ) );
@@ -487,7 +487,7 @@ string emu::step::Manager::checkDataCompleteness( const string& testId ){
       xdata::Vector<xdata::UnsignedInteger64> rui_counts;
       xdata::Vector<xdata::UnsignedInteger32> rui_instances;
       xdata::String xs;
-      emu::soap::extractParameters( m.sendCommand( "emu::daq::manager::Application", 0, "QueryRunSummary" ), 
+      emu::soap::extractParameters( m.sendCommand( "emu::ldaq::manager::Application", 0, "QueryRunSummary" ), 
 				    emu::soap::Parameters()
 				    .add( "rui_instances", &rui_instances )
 				    .add( "rui_counts"   , &rui_counts    )                                 );
@@ -567,7 +567,7 @@ void emu::step::Manager::updateDataFileNames(){
       emu::soap::Messenger m( this );
       // Get data file names written in this test
       xdata::Vector<xdata::String> dataFileNames;
-      m.getParameters( "emu::daq::manager::Application", 0, emu::soap::Parameters().add( "dataFileNames", &dataFileNames ) );
+      m.getParameters( "emu::ldaq::manager::Application", 0, emu::soap::Parameters().add( "dataFileNames", &dataFileNames ) );
       // cout << "dataFileNames" << dataFileNames.toString() << endl;
       // Add them to the list of all data file names written in this run
       for ( size_t iFile = 0; iFile < dataFileNames.elements(); iFile++ ){
@@ -792,9 +792,9 @@ string emu::step::Manager::createXMLWebPage(){
 
 bool emu::step::Manager::waitForDAQToExecute( const string command, const uint64_t seconds ){
   string expectedState;
-  if      ( command == "Configure" ){ expectedState = "Ready";   }
-  else if ( command == "Enable"    ){ expectedState = "Enabled"; }
-  else if ( command == "Halt"      ){ expectedState = "Halted";  }
+  if      ( command == "Configure" ){ expectedState = "Configured"; }
+  else if ( command == "Enable"    ){ expectedState = "Enabled";    }
+  else if ( command == "Halt"      ){ expectedState = "Halted";     }
   else                              { return true; }
 
   // Poll, and return TRUE if and only if DAQ gets into the expected state before timeout.
@@ -802,7 +802,7 @@ bool emu::step::Manager::waitForDAQToExecute( const string command, const uint64
   xdata::String  daqState;
   for ( uint64_t i=0; i<=seconds; ++i ){
     if ( fsm_.getCurrentState() == 'H' || fsm_.getCurrentState() == 'F' ) return true; // Get out of here if we've been stopped in the meantime.
-    m.getParameters( "emu::daq::manager::Application", 0, emu::soap::Parameters().add( "daqState", &daqState ) );
+    m.getParameters( "emu::ldaq::manager::Application", 0, emu::soap::Parameters().add( "daqState", &daqState ) );
     if ( daqState.toString() == "Failed" ){
       LOG4CPLUS_ERROR( logger_, "Local DAQ is in 'Failed' state. Please destroy and recreate local DAQ." );
       return false;
@@ -857,7 +857,7 @@ void emu::step::Manager::waitForTestsToFinish( const bool isTestDurationUndefine
       xdata::String  reasonForFailure;
       xdata::Integer64 maxNumberOfEvents;
       xdata::UnsignedInteger64 STEPCount;
-      m.getParameters( "emu::daq::manager::Application", 0, 
+      m.getParameters( "emu::ldaq::manager::Application", 0, 
 		       emu::soap::Parameters()
 		       .add( "reasonForFailure" , &reasonForFailure  ) // empty if not in failed state
 		       .add( "maxNumberOfEvents", &maxNumberOfEvents )

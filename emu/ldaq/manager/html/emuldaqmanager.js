@@ -12,6 +12,7 @@
  }
 
 function onRecycle( ruiInstance ){
-    document.forms['countTable'][ruiInstance].value = ruiInstance;
-    document.forms['countTable'][ruiInstance].name = 'recycle';
+    var formIndex = Number(ruiInstance)-1;
+    document.forms['countTable'][formIndex].value = ruiInstance;
+    document.forms['countTable'][formIndex].name = 'recycle';
 }

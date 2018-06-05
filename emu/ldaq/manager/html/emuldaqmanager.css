@@ -200,7 +200,7 @@ div#selectDDUInputs{
     align-items: flex-start;
 }
 
-table.counts tr { background-color: #c6e8ff; color: #111144; border-style: solid; border-collapse: separate; border-width: 2; } 
+table.counts tr { background-color: #c6e8ff; color: #111144; border-style: solid; border-collapse: separate; border-width: 1pt; } 
 table.counts th.Halted    { background-color: #89b7e3; }
 table.counts th.Configured{ background-color: #e3d589; }
 table.counts th.Enabled   { background-color: #98e389; }

@@ -177,7 +177,7 @@ public:
   virtual unsigned int boardType() const = 0;
   virtual bool SelfTest() = 0;
   virtual void init() = 0;
-  virtual void configure() = 0;
+  // virtual void configure() = 0;
   
   void Parse(char *buf,int *Count,char **Word);
   int  svfLoad(int, const char *, int, int verify=0);
@@ -205,6 +205,7 @@ public:
   int eth_read_timeout(int rd_tmo);
   int LeftToRead();
   int read_prom(const char *vfyfile, const char *mcsfile );
+  int verify_prom(const char *vfyfile, const char *mcsfile );
   void write_mcs(char *buf, int nbytes, FILE *outf);
   int read_mcs(char *binbuf, FILE *finp);
 

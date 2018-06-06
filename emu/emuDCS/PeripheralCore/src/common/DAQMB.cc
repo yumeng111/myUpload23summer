@@ -699,7 +699,11 @@ std::ostream & operator<<(std::ostream & os, DAQMB & daqmb) {
   return os;
 }
 //
-void DAQMB::configure() {
+void DAQMB::configure(int c) 
+{
+  // c=0: same as 1
+  // c=1: (power-on chambers if not already on) & write flash
+  // c=2: FAST configure, power-on chambers & configure CCB & MPC
    //
   //  std::cout << std::endl;
    //
@@ -870,8 +874,10 @@ void DAQMB::configure() {
      // Load FLASH memory
      WriteSFM();
    }
-   
-   if(hardware_version_==2)
+
+ if( c<2 )
+ {   // if c==2, skip this during power-up-init, because these parameters already stored in EPROM
+   if(hardware_version_==2)   
    {
       // set delays
       odmb_set_LCT_L1A_delay(l1acc_dav_delay_);
@@ -891,6 +897,7 @@ void DAQMB::configure() {
    {
          dcfeb_configure(cfebs_[lfeb]);   
    }
+ }
    restoreCFEBIdle();
 }
 //

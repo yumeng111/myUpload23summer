@@ -629,7 +629,7 @@ public:
   //
   bool SelfTest() ;
   void init() ;
-  void configure() ;
+  void configure(int c=0) ;
   bool checkDAQMBXMLValues();
   inline int GetNumberOfConfigurationReads() { return number_of_configuration_reads_; }
   inline bool GetDAQMBSmokingGunIsOK() { return dmb_smoking_gun_status_; }

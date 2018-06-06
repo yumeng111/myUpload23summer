@@ -617,7 +617,7 @@ int Crate::configure(int c, int ID) {
          return -1;
       }
       myDmbs[i]->restoreCFEBIdle();
-      myDmbs[i]->configure();
+      myDmbs[i]->configure(c);
     }
   }
 

@@ -25,6 +25,9 @@
   <!-- It's either DAQ or DQM or DQM_Display-->
   <xsl:param name="FARM"/>
 
+  <xsl:param name="XDAQ_ZONE">emu</xsl:param>
+  <!-- <xsl:param name="XDAQ_ZONE">emu904</xsl:param> -->
+
   <xsl:param name="CONFIG_FILE"><xsl:value-of select="$DIR"/>/<xsl:value-of select="$NAME"/>.xml</xsl:param>
   <xsl:param name="FM_CONFIG_PATH">
     <xsl:if test="$FARM='DAQ'">DAQ/<xsl:value-of select="$NAME"/></xsl:if>
@@ -32,19 +35,15 @@
     <xsl:if test="$FARM='DQM_Display'">DQM/DQM_Display</xsl:if>
   </xsl:param>
   <!-- <xsl:param name="PATHTOEXECUTIVE">/opt/xdaq/bin/xdaq.exe</xsl:param> -->
-  <xsl:param name="PATHTOEXECUTIVE">/opt/xdaq/share/emu/scripts/xdaq_autorestart.sh</xsl:param>
+  <xsl:param name="PATHTOEXECUTIVE">/opt/xdaq/share/<xsl:value-of select="$XDAQ_ZONE"/>/scripts/xdaq_autorestart.sh</xsl:param>
 
-  <!-- <xsl:param name="DAQ_ENVIRONMENTSTRING">HOME=/nfshome0/cscdaq BUILD_HOME=/nfshome0/cscdaq/TriDAS XDAQ_ROOT=/opt/xdaq XDAQ_OS=linux XDAQ_PLATFORM=x86_64_c7 XDAQ_DOCUMENT_ROOT=/opt/xdaq/htdocs XDAQ_SETUP_ROOT=/opt/xdaq/share ROOTSYS=/opt/cern/root_v6.12.06 DQMCONFIG=/nfshome0/cscdaq/config/dqm LD_LIBRARY_PATH=/opt/cern/root_v6.12.06/lib:/opt/xdaq/lib XDAQ_ZONE=emu XDAQ_PROFILE=/opt/xdaq/share/emu/profile/default.profile PATH=/bin:/usr/bin</xsl:param> -->
+  <xsl:param name="DAQ_ENVIRONMENTSTRING">HOME=/nfshome0/cscdaq BUILD_HOME=/nfshome0/cscdaq/EmuLib/14/TriDAS XDAQ_ROOT=/opt/xdaq XDAQ_OS=linux XDAQ_PLATFORM=x86_64_cc7 XDAQ_DOCUMENT_ROOT=/opt/xdaq/htdocs XDAQ_SETUP_ROOT=/opt/xdaq/share ROOTSYS=/opt/cern/root_v6.12.06 DQMCONFIG=/nfshome0/cscdaq/config/dqm LD_LIBRARY_PATH=/opt/cern/root_v6.12.06/lib:/opt/xdaq/lib XDAQ_ZONE=<xsl:value-of select="$XDAQ_ZONE"/> XDAQ_PROFILE=/opt/xdaq/share/<xsl:value-of select="$XDAQ_ZONE"/>/profile/emu.profile PATH=/bin:/usr/bin</xsl:param>
 
-  <!-- <xsl:param name="DQM_ENVIRONMENTSTRING">HOME=/nfshome0/cscdqm BUILD_HOME=/nfshome0/cscdqm/TriDAS XDAQ_ROOT=/opt/xdaq XDAQ_OS=linux XDAQ_PLATFORM=x86_64_c7 XDAQ_DOCUMENT_ROOT=/opt/xdaq/htdocs XDAQ_SETUP_ROOT=/opt/xdaq/share ROOTSYS=/opt/cern/root_v6.12.06 DQMCONFIG=/nfshome0/cscdqm/config/dqm LD_LIBRARY_PATH=/opt/cern/root_v6.12.06/lib:/opt/xdaq/lib XDAQ_ZONE=emu XDAQ_PROFILE=/opt/xdaq/share/emu/profile/default.profile PATH=/bin:/usr/bin</xsl:param> -->
+  <xsl:param name="DQM_ENVIRONMENTSTRING">HOME=/nfshome0/cscdqm BUILD_HOME=/nfshome0/cscdqm/EmuLib/14/TriDAS XDAQ_ROOT=/opt/xdaq XDAQ_OS=linux XDAQ_PLATFORM=x86_64_cc7 XDAQ_DOCUMENT_ROOT=/opt/xdaq/htdocs XDAQ_SETUP_ROOT=/opt/xdaq/share ROOTSYS=/opt/cern/root_v6.12.06 DQMCONFIG=/nfshome0/cscdqm/config/dqm LD_LIBRARY_PATH=/opt/cern/root_v6.12.06/lib:/opt/xdaq/lib XDAQ_ZONE=<xsl:value-of select="$XDAQ_ZONE"/> XDAQ_PROFILE=/opt/xdaq/share/<xsl:value-of select="$XDAQ_ZONE"/>/profile/emu.profile PATH=/bin:/usr/bin</xsl:param>
 
-  <!-- <xsl:param name="DAQ_ENVIRONMENTSTRING">HOME=/nfshome0/cscdaq BUILD_HOME=/nfshome0/cscdaq/TriDAS XDAQ_ROOT=/opt/xdaq XDAQ_OS=linux XDAQ_PLATFORM=x86_64_c7 XDAQ_DOCUMENT_ROOT=/opt/xdaq/htdocs XDAQ_SETUP_ROOT=/opt/xdaq/share ROOTSYS=/opt/cern/root_v6.12.06 DQMCONFIG=/nfshome0/cscdaq/config/dqm LD_LIBRARY_PATH=/opt/cern/root_v6.12.06/lib:/opt/xdaq/lib XDAQ_ZONE=emu XDAQ_PROFILE=/nfshome0/cscdaq/etc/default.profile PATH=/bin:/usr/bin</xsl:param> -->
+  <!-- <xsl:param name="DAQ_ENVIRONMENTSTRING">HOME=/nfshome0/cscdaq BUILD_HOME=/nfshome0/cscdaq/EmuLib/14/TriDAS XDAQ_ROOT=/opt/xdaq XDAQ_OS=linux XDAQ_PLATFORM=x86_64_cc7 XDAQ_DOCUMENT_ROOT=/opt/xdaq/htdocs XDAQ_SETUP_ROOT=/opt/xdaq/share ROOTSYS=/opt/cern/root_v6.12.06 DQMCONFIG=/nfshome0/cscdaq/config/dqm LD_LIBRARY_PATH=/opt/cern/root_v6.12.06/lib:/nfshome0/cscdaq/EmuLib/14/TriDAS/x86_64_cc7/lib:/opt/xdaq/lib XDAQ_ZONE=<xsl:value-of select="$XDAQ_ZONE"/> XDAQ_PROFILE=/opt/xdaq/share/<xsl:value-of select="$XDAQ_ZONE"/>/profile/emu.profile PATH=/bin:/usr/bin</xsl:param> -->
 
-  <!-- <xsl:param name="DQM_ENVIRONMENTSTRING">HOME=/nfshome0/cscdqm BUILD_HOME=/nfshome0/cscdqm/TriDAS XDAQ_ROOT=/opt/xdaq XDAQ_OS=linux XDAQ_PLATFORM=x86_64_c7 XDAQ_DOCUMENT_ROOT=/opt/xdaq/htdocs XDAQ_SETUP_ROOT=/opt/xdaq/share ROOTSYS=/opt/cern/root_v6.12.06 DQMCONFIG=/nfshome0/cscdqm/config/dqm LD_LIBRARY_PATH=/opt/cern/root_v6.12.06/lib:/opt/xdaq/lib XDAQ_ZONE=emu XDAQ_PROFILE=/nfshome0/cscdaq/etc/default.profile PATH=/bin:/usr/bin</xsl:param> -->
-
-  <xsl:param name="DAQ_ENVIRONMENTSTRING">HOME=/nfshome0/cscdaq BUILD_HOME=/nfshome0/cscdaq/TriDAS XDAQ_ROOT=/opt/xdaq XDAQ_OS=linux XDAQ_PLATFORM=x86_64_c7 XDAQ_DOCUMENT_ROOT=/opt/xdaq/htdocs XDAQ_SETUP_ROOT=/opt/xdaq/share ROOTSYS=/opt/cern/root_v6.12.06 DQMCONFIG=/nfshome0/cscdaq/config/dqm LD_LIBRARY_PATH=/opt/cern/root_v6.12.06/lib:/opt/xdaq/lib XDAQ_ZONE=emu XDAQ_PROFILE=/opt/xdaq/share/emu/profile/emu.profile PATH=/bin:/usr/bin</xsl:param>
-
-  <xsl:param name="DQM_ENVIRONMENTSTRING">HOME=/nfshome0/cscdqm BUILD_HOME=/nfshome0/cscdqm/TriDAS XDAQ_ROOT=/opt/xdaq XDAQ_OS=linux XDAQ_PLATFORM=x86_64_c7 XDAQ_DOCUMENT_ROOT=/opt/xdaq/htdocs XDAQ_SETUP_ROOT=/opt/xdaq/share ROOTSYS=/opt/cern/root_v6.12.06 DQMCONFIG=/nfshome0/cscdqm/config/dqm LD_LIBRARY_PATH=/opt/cern/root_v6.12.06/lib:/opt/xdaq/lib XDAQ_ZONE=emu XDAQ_PROFILE=/opt/xdaq/share/emu/profile/emu.profile PATH=/bin:/usr/bin</xsl:param>
+  <!-- <xsl:param name="DQM_ENVIRONMENTSTRING">HOME=/nfshome0/cscdqm BUILD_HOME=/nfshome0/cscdqm/EmuLib/14/TriDAS XDAQ_ROOT=/opt/xdaq XDAQ_OS=linux XDAQ_PLATFORM=x86_64_cc7 XDAQ_DOCUMENT_ROOT=/opt/xdaq/htdocs XDAQ_SETUP_ROOT=/opt/xdaq/share ROOTSYS=/opt/cern/root_v6.12.06 DQMCONFIG=/nfshome0/cscdqm/config/dqm LD_LIBRARY_PATH=/opt/cern/root_v6.12.06/lib:/nfshome0/cscdqm/EmuLib/14/TriDAS/x86_64_cc7/lib:/opt/xdaq/lib XDAQ_ZONE=<xsl:value-of select="$XDAQ_ZONE"/> XDAQ_PROFILE=/opt/xdaq/share/<xsl:value-of select="$XDAQ_ZONE"/>/profile/emu.profile PATH=/bin:/usr/bin</xsl:param> -->
 
   <xsl:output method="xml" indent="yes"/>
 
@@ -63,7 +62,7 @@
 		       className="rcms.fm.ajaxFM.MyFunctionManager"
 		       role="CSC" >
 	<!-- This takes too long, and RCMS times out:	<property name="pathToOrphanHandler" type="String"> -->
-	<!-- 	  <value>/opt/xdaq/share/emu/scripts/killOrphanedXDAQ.sh</value> -->
+	<!-- 	  <value>/opt/xdaq/share/<xsl:value-of select="$XDAQ_ZONE"/>/scripts/killOrphanedXDAQ.sh</value> -->
 	<!-- 	</property> -->
 
 	<xsl:comment>JobControls</xsl:comment>

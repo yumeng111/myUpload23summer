@@ -30,6 +30,13 @@
   <xsl:param name="EMULIBDIR">${XDAQ_ROOT}/lib</xsl:param>
   <xsl:param name="XDAQLIBDIR">${XDAQ_ROOT}/lib</xsl:param>
 
+  <xsl:param name="MANAGER_HOST">csc-daq.cms</xsl:param>
+  <xsl:param name="DISPLAY_HOST">csc-dqm.cms</xsl:param>
+  <xsl:param name="EXSYS_URL">http://csc-expert.cms:8080/cdw/factcollection</xsl:param>
+  <!-- <xsl:param name="MANAGER_HOST">vmepc-e1x07-23-01.cms904</xsl:param> -->
+  <!-- <xsl:param name="DISPLAY_HOST">vmepc-e1x07-23-01.cms904</xsl:param> -->
+  <!-- <xsl:param name="EXSYS_URL">dummy</xsl:param> -->
+
   <xsl:output method="xml" indent="yes"/>
 
 <!-- Generate config file for EmuDAQ -->
@@ -90,9 +97,7 @@
   <xsl:template name="DAQManager">
     <xsl:comment>emu::ldaq::manager</xsl:comment>
     <xsl:variable name="HTTP_PORT">20200</xsl:variable>
-    <xc:Context url="http://csc-daq00.cms:{$HTTP_PORT}">
-    <!-- <xc:Context url="http://localhost:{$HTTP_PORT}"> -->
-    <!-- <xc:Context url="http://srv-c2d08-25-01.cms:{$HTTP_PORT}"> -->
+    <xc:Context url="http://{$MANAGER_HOST}:{$HTTP_PORT}">
       <xc:Application instance="0" class="emu::ldaq::manager::Application" network="local" id="12" service="emudaqmanager">
 	<app:properties xsi:type="soapenc:Struct" xmlns:app="urn:xdaq-application:emu::ldaq::manager::Application">
 	  <app:runTypes xsi:type="soapenc:Array" soapenc:arrayType="xsd:ur-type[11]">
@@ -117,7 +122,7 @@
 	  <app:runDbAddress xsi:type="xsd:string">jdbc:oracle:thin:@cmsonr1-v.cms:10121/cms_rcms.cern.ch</app:runDbAddress>
 	  <app:runDbUserFile xsi:type="xsd:string">/nfshome0/cscdaq/config/.runDbUser</app:runDbUserFile>
 	  <app:hardwareMapping xsi:type="xsd:string">/emu/farmer/xml/RUI-to-chamber_mapping.xml</app:hardwareMapping>
-	  <app:expertSystemURL xsi:type="xsd:string">http://csc-expert.cms:8080/cdw/factcollection</app:expertSystemURL>
+	  <app:expertSystemURL xsi:type="xsd:string"><xsl:value-of select="$EXSYS_URL"/></app:expertSystemURL>
 	  <app:isFactFinderInDebugMode xsi:type="xsd:boolean">false</app:isFactFinderInDebugMode>
 
 	</app:properties>
@@ -214,7 +219,7 @@
 		<app:item xsi:type="xsd:unsignedLong" soapenc:position="[0]">0x4000000</app:item>
 	      </app:poolSizeForClient>
               <app:fileWritingRateLimitInHz xsi:type="xsd:unsignedLong">2000</app:fileWritingRateLimitInHz>
-              <app:expertSystemURL xsi:type="xsd:string">http://csc-expert.cms:8080/cdw/factcollection</app:expertSystemURL>
+              <app:expertSystemURL xsi:type="xsd:string"><xsl:value-of select="$EXSYS_URL"/></app:expertSystemURL>
               <app:isFactFinderInDebugMode xsi:type="xsd:boolean">false</app:isFactFinderInDebugMode>
             </app:properties>
 	  </xc:Application>
@@ -427,9 +432,7 @@
   <!-- Generate context for EmuDisplayClient -->
   <xsl:template name="EmuDisplayClient">
     <xsl:comment >EmuDisplayClient</xsl:comment>
-    <xc:Context url="http://csc-dqm.cms:20550">
-    <!-- <xc:Context url="http://localhost:20550"> -->
-    <!-- <xc:Context url="http://srv-c2d08-25-01.cms:20550"> -->
+    <xc:Context url="http://{$DISPLAY_HOST}:20550">
       <xc:Application class="EmuDisplayClient" id="1450" instance="0" network="local">
 	<app:properties xmlns:app="urn:xdaq-application:EmuDisplayClient" xsi:type="soapenc:Struct">
           <app:monitorClass xsi:type="xsd:string">EmuMonitor</app:monitorClass>
@@ -440,7 +443,7 @@
           <app:xmlCfgFile xsi:type="xsd:string">/nfshome0/cscdqm/config/emuDQMBooking.xml</app:xmlCfgFile>
           <app:xmlCanvasesCfgFile xsi:type="xsd:string">/nfshome0/cscdqm/config/emuDQMCanvases.xml</app:xmlCanvasesCfgFile>
           <app:cscMapFile xsi:type="xsd:string">/nfshome0/cscdqm/config/dqm/csc_map.txt</app:cscMapFile>
-          <app:expertSystemURL xsi:type="xsd:string">http://csc-expert.cms:8080/cdw/factcollection</app:expertSystemURL>
+          <app:expertSystemURL xsi:type="xsd:string"><xsl:value-of select="$EXSYS_URL"/></app:expertSystemURL>
           <app:isFactFinderInDebugMode xsi:type="xsd:boolean">true</app:isFactFinderInDebugMode>
           <app:useExSys xsi:type="xsd:boolean">false</app:useExSys>
 	</app:properties>

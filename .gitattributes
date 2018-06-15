@@ -1896,10 +1896,6 @@ emu/farmer/src/common/RunningExecutives.cc -text
 emu/farmer/src/common/SOAP.cc -text
 emu/farmer/src/common/Xalan.cc -text
 emu/farmer/src/common/version.cc -text
-emu/farmer/xml/EmuDAQ904ConfigGenerator.xsl -text
-emu/farmer/xml/EmuDAQ904DUCKGenerator.xsl -text
-emu/farmer/xml/EmuDAQConfigGenerator.xsl -text
-emu/farmer/xml/EmuDAQDUCKGenerator.xsl -text
 emu/farmer/xml/EmuFarmer.xml -text
 emu/farmer/xml/EmuFarmer904.xml -text
 emu/farmer/xml/RUI-to-chamber_mapping.xml -text
@@ -1910,9 +1906,8 @@ emu/farmer/xml/RUI-to-computer_mapping_bdg904.xml -text
 emu/farmer/xml/RUI0-to-computer_mapping_bdg904.xml -text
 emu/farmer/xml/addFEDId.xsl -text svneol=unset#application/xml
 emu/farmer/xml/generateConfigs.sh -text
-emu/farmer/xml/generateConfigsBdg904.sh -text
-emu/farmer/xml/lDAQConfigGenerator.xsl -text svneol=unset#application/xml
-emu/farmer/xml/lDAQDuckGenerator.xsl -text svneol=unset#application/xml
+emu/farmer/xml/lDAQConfigGenerator.xsl -text
+emu/farmer/xml/lDAQDuckGenerator.xsl -text
 emu/farmer/xml/processingInstructionSetter.xsl -text
 emu/farmer/xml/statusInserter.xsl -text
 emu/fast_daq/build.sh -text

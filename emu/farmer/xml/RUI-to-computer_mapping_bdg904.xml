@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <?xml-stylesheet type="text/xml" href="RUI-to-computer_mapping_XSLT.xml"?>
-<RUI-to-computer_mapping date="2009-08-23">
-  <computer host="emuslice06.cern.ch" alias="emudaq02.cern.ch">
-    <RUI instance="1" port="20301" schar="2"/>
+<RUI-to-computer_mapping date="2018-06-14">
+  <computer host="vmepc-e1x07-23-01.cms904" alias="vmepc-e1x07-23-01.cms904">
+    <RUI instance="1" fedId="841" schar="2" status='in'/>
+    <RUI instance="2" fedId="842" schar="3" status='in'/>
   </computer>
 </RUI-to-computer_mapping>

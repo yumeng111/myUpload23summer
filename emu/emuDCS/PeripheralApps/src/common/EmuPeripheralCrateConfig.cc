@@ -4121,13 +4121,6 @@ void EmuPeripheralCrateConfig::ExpertToolsPage(xgi::Input * in, xgi::Output * ou
   *out << cgicc::td();
   //
   *out << cgicc::td();
-  std::string SetTwoLayerTriggerForSystem = toolbox::toString("/%s/SetTwoLayerTriggerForSystem",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",SetTwoLayerTriggerForSystem) << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","Enable two-layer trigger") << std::endl ;
-  *out << cgicc::form() << std::endl ;;
-  *out << cgicc::td();
-  //
-  *out << cgicc::td();
   std::string SetRadioactivityTriggerALCTOnly = toolbox::toString("/%s/SetRadioactivityTriggerALCTOnly",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",SetRadioactivityTriggerALCTOnly) << std::endl ;
   *out << cgicc::input().set("type","submit").set("value","Enable single-layer trigger - ALCT only") << std::endl ;
@@ -4141,12 +4134,6 @@ void EmuPeripheralCrateConfig::ExpertToolsPage(xgi::Input * in, xgi::Output * ou
   *out << cgicc::form() << std::endl ;;
   *out << cgicc::td();
   //
-  *out << cgicc::td();
-  std::string RdVfyCFEBVirtexExpT = toolbox::toString("/%s/RdVfyCFEBVirtexExpT",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",RdVfyCFEBVirtexExpT) << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","Check CFEB FPGAs") << std::endl ;
-  *out << cgicc::form() << std::endl ;;
-  *out << cgicc::td();
   *out << "<tr>";
   //
   *out << cgicc::td();
@@ -9907,66 +9894,6 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
   //
   *out << cgicc::fieldset();
   //
-  // Clocking Status
-  if (thisTMB->GetHardwareVersion() >= 2) {
-  *out << cgicc::fieldset();
-  *out << cgicc::legend("Clocking Status").set("style","color:blue") << std::endl ;
-  thisTMB->ReadRegister(alct_startup_status_adr);
-  thisTMB->ReadRegister(v6_snap12_qpll_adr);
-  thisTMB->ReadRegister(vme_dddsm_adr);
-  int temp_lock_var;
-  *out << cgicc::pre() << std::endl;
-  *out << "MMCM lock status       = ";
-  temp_lock_var = thisTMB->GetReadDDDStateMachineClock0Lock();
-  if (temp_lock_var == 1)
-    *out<< cgicc::span().set("style","color:green");
-  else
-    *out<< cgicc::span().set("style","color:red");
-  *out << temp_lock_var << std::endl;
-  *out << cgicc::span();
-  *out << "MMCM lost lock history = ";
-  temp_lock_var = thisTMB->GetReadMMCMLostLock();
-  if (temp_lock_var == 0)
-    *out<< cgicc::span().set("style","color:green");
-  else
-    *out<< cgicc::span().set("style","color:red");
-  *out << temp_lock_var << std::endl;
-  *out << cgicc::span();
-  *out << "MMCM lost lock count   = ";
-  temp_lock_var = thisTMB->GetReadMMCMLostLockCount();
-  if (temp_lock_var == 0)
-    *out<< cgicc::span().set("style","color:green");
-  else
-    *out<< cgicc::span().set("style","color:red");
-  *out << temp_lock_var << std::endl;
-  *out << cgicc::span(); 
-  *out << "QPLL lock status       = ";
-  temp_lock_var = thisTMB->GetReadQPLLLock();
-  if (temp_lock_var == 1)
-    *out<< cgicc::span().set("style","color:green");
-  else
-    *out<< cgicc::span().set("style","color:red");
-  *out << temp_lock_var << std::endl;
-  *out << cgicc::span();
-  *out << "QPLL lost lock history = ";
-  temp_lock_var = thisTMB->GetReadQPLLLostLock();
-  if (temp_lock_var == 0)
-    *out<< cgicc::span().set("style","color:green");
-  else
-    *out<< cgicc::span().set("style","color:red");
-  *out << temp_lock_var << std::endl;
-  *out << cgicc::span();
-  *out << "QPLL lost lock count   = ";
-  temp_lock_var = thisTMB->GetReadQPLLLostLockCount();
-  if (temp_lock_var == 0)
-    *out<< cgicc::span().set("style","color:green");
-  else
-    *out<< cgicc::span().set("style","color:red");
-  *out << temp_lock_var << std::endl;
-  *out << cgicc::span();
-  *out << cgicc::pre() << std::endl;
-  *out << cgicc::fieldset();
-  }
   //
   if (thisTMB->GetHardwareVersion() >= 2) {
     *out << cgicc::fieldset();
@@ -10077,6 +10004,68 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
   } //thisTMB->GetHardwareVersion() >= 2
   //
   // Clocking Status
+  if (thisTMB->GetHardwareVersion() >= 2) {
+  *out << cgicc::fieldset();
+  *out << cgicc::legend("Clocking Status").set("style","color:blue") << std::endl ;
+  thisTMB->ReadRegister(alct_startup_status_adr);
+  thisTMB->ReadRegister(v6_snap12_qpll_adr);
+  thisTMB->ReadRegister(vme_dddsm_adr);
+  int temp_lock_var;
+  *out << cgicc::pre() << std::endl;
+  *out << "MMCM lock status       = ";
+  temp_lock_var = thisTMB->GetReadDDDStateMachineClock0Lock();
+  if (temp_lock_var == 1)
+    *out<< cgicc::span().set("style","color:green");
+  else
+    *out<< cgicc::span().set("style","color:red");
+  *out << temp_lock_var << std::endl;
+  *out << cgicc::span();
+  *out << "MMCM lost lock history = ";
+  temp_lock_var = thisTMB->GetReadMMCMLostLock();
+  if (temp_lock_var == 0)
+    *out<< cgicc::span().set("style","color:green");
+  else
+    *out<< cgicc::span().set("style","color:red");
+  *out << temp_lock_var << std::endl;
+  *out << cgicc::span();
+  *out << "MMCM lost lock count   = ";
+  temp_lock_var = thisTMB->GetReadMMCMLostLockCount();
+  if (temp_lock_var == 0)
+    *out<< cgicc::span().set("style","color:green");
+  else
+    *out<< cgicc::span().set("style","color:red");
+  *out << temp_lock_var << std::endl;
+  *out << cgicc::span(); 
+  *out << "QPLL lock status       = ";
+  temp_lock_var = thisTMB->GetReadQPLLLock();
+  if (temp_lock_var == 1)
+    *out<< cgicc::span().set("style","color:green");
+  else
+    *out<< cgicc::span().set("style","color:red");
+  *out << temp_lock_var << std::endl;
+  *out << cgicc::span();
+  *out << "QPLL lost lock history = ";
+  temp_lock_var = thisTMB->GetReadQPLLLostLock();
+  if (temp_lock_var == 0)
+    *out<< cgicc::span().set("style","color:green");
+  else
+    *out<< cgicc::span().set("style","color:red");
+  *out << temp_lock_var << std::endl;
+  *out << cgicc::span();
+  *out << "QPLL lost lock count   = ";
+  temp_lock_var = thisTMB->GetReadQPLLLostLockCount();
+  if (temp_lock_var == 0)
+    *out<< cgicc::span().set("style","color:green");
+  else
+    *out<< cgicc::span().set("style","color:red");
+  *out << temp_lock_var << std::endl;
+  *out << cgicc::span();
+  *out << cgicc::pre() << std::endl;
+  *out << cgicc::fieldset();
+  }
+
+  // Configuration timers
+  //
   if (thisTMB->GetHardwareVersion() >= 2) {
     *out << cgicc::fieldset();
     *out << cgicc::legend("Configuration and programming timers (100 nanosecond units)").set("style","color:blue") << std::endl;
@@ -10616,220 +10605,6 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::fieldset();
   //
   *out << cgicc::br() << std::endl;
-  //
-  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
-  *out << std::endl ;
-  //
-  *out << cgicc::legend("TMB Registers").set("style","color:blue") ;
-  //
-  std::string ReadTMBRegister = 
-    toolbox::toString("/%s/ReadTMBRegister",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",ReadTMBRegister) << std::endl ;
-  *out << "Read Register (hex) " << std::endl;
-  sprintf(buf, "%04X", TMBRegisterRead_);  
-  *out << cgicc::input().set("type","text").set("value",buf).set("name","TMBRegister") << std::endl ;
-  sprintf(buf,"%d",tmb);
-  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
-  *out << cgicc::input().set("type","submit").set("value","Read TMB") << std::endl ;
-  *out << " Register value (hex): " << std::hex << TMBRegisterValue_ << std::endl;
-  *out << cgicc::form() << std::endl ;
-  //
-  std::string WriteTMBRegister = 
-    toolbox::toString("/%s/WriteTMBRegister",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",WriteTMBRegister) << std::endl ;
-  *out << "Write Register (hex) " << std::endl;
-  sprintf(buf, "%04X", TMBRegisterWrite_);
-  *out << cgicc::input().set("type","text").set("value",buf).set("name","TMBRegister") << std::endl ;
-  *out << "Register value (hex) " << std::endl;
-  sprintf(buf, "%04X", TMBWriteValue_);
-  *out << cgicc::input().set("type","text").set("value",buf).set("name","TMBValue") << std::endl ;
-  sprintf(buf,"%d",tmb);
-  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
-  *out << cgicc::input().set("type","submit").set("value","Write TMB") << std::endl ;
-  *out << cgicc::form() << cgicc::br() << std::endl ;
-  //
-  std::string TMBDumpAllRegisters = toolbox::toString("/%s/TMBDumpAllRegisters",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",TMBDumpAllRegisters) ;
-  *out << cgicc::input().set("type","submit").set("value","Dump All TMB VME Registers") ;
-  sprintf(buf,"%d",tmb);
-  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
-  *out << cgicc::form() << cgicc::br() << std::endl;
-  //
-
-  if (thisTMB->GetHardwareVersion()==2) {
-    int number_of_gems = thisTMB->GetNGemEnabledLinks();
-
-    std::string TMBFiberReset = toolbox::toString("/%s/TMBFiberReset",
-						  getApplicationDescriptor()->getURN().c_str());
-    *out << cgicc::form().set("method", "GET").set("action", TMBFiberReset);
-    *out << cgicc::input().set("type", "submit").set("value", "Check Current GTX Settings");
-    sprintf(buf, "%d", tmb);
-    *out
-      << cgicc::input().set("type", "hidden").set("value", buf).set("name",
-								    "tmb");
-    *out
-      << cgicc::input().set("type", "hidden").set("value", "read").set("name",
-								       "mode");
-    *out << cgicc::form() << std::endl;
-    *out << "&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp";
-    *out << "&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp";
-    *out << "<font size=+1><b>GTX Fiber Link Controls</b></font>" << std::endl;
-    //
-    *out << cgicc::table().set("border", "1");
-    *out << cgicc::tr();
-    *out << cgicc::td();
-    *out << "Fiber";
-    *out << cgicc::td();
-    *out << cgicc::td();
-    *out << "Status/Toggle";
-    *out << cgicc::td();
-    *out << cgicc::td();
-    *out << "Enable/Disable Status";
-    *out << cgicc::td();
-    *out << cgicc::td();
-    *out << "Reset";
-    *out << cgicc::td();
-    *out << cgicc::tr();
-    std::string fiber_num = "all";
-    std::string button_name = "Force Enable All";
-    std::string status = "N/A";
-    std::string reset_button = "Reset All";
-    std::string gem_button_name = "GEM ";
-    for (int i = -1; i < ((int) TMB_MAX_DCFEB_FIBERS + number_of_gems); ++i) {
-      int gem_num = i - (int)TMB_MAX_DCFEB_FIBERS;
-      *out << cgicc::tr();
-      *out << cgicc::td();
-      if (i < (int)TMB_MAX_DCFEB_FIBERS) {
-	*out << button_name;
-      }
-      else {
-	*out << gem_button_name << gem_num;
-      }
-      *out << cgicc::td();
-      *out << cgicc::td();
-      //
-      if (tmb_fiber_status_read_) {
-        bool read_status = false;
-        if (i < 0) {
-          read_status = thisTMB->GetReadGtxRxAllEnable();
-        } else if (i < (int)TMB_MAX_DCFEB_FIBERS) {
-          read_status = thisTMB->GetReadGtxRxEnable(i);
-        } else read_status = thisTMB->GetReadGemGtxRxEnable(gem_num);
-        std::string color;
-        std::string toggle_button;
-        if (read_status) {
-          toggle_button = "On/Off";
-          color = "color:green";
-          status = "Enabled";
-          if (i < 0){
-            status = "All On";
-          }
-        } else {
-          toggle_button = "On/Off";
-          color = "color:red";
-          status = "Disabled";
-          if (i < 0){
-            status = "Disables Allowed";
-          }
-        }
-        TMBFiberReset = toolbox::toString("/%s/TMBFiberReset",
-            getApplicationDescriptor()->getURN().c_str());
-        *out << cgicc::form().set("method", "GET").set("action", TMBFiberReset);
-        *out << cgicc::input().set("type", "submit").set("value", toggle_button).set("style", color);
-        sprintf(buf, "%d", tmb);
-        *out << cgicc::input().set("type", "hidden").set("value", buf).set("name", "tmb");
-        *out << cgicc::input().set("type", "hidden").set("value", "toggle").set("name", "mode");
-        *out << cgicc::input().set("type", "hidden").set("value", fiber_num).set("name", "fiber");
-        *out << cgicc::form() << std::endl;
-      } else {
-        *out << "N/A";
-      }
-      //
-      *out << cgicc::td();
-      *out << cgicc::td();
-      *out << status;
-      *out << cgicc::td();
-      *out << cgicc::td();
-      //
-      TMBFiberReset = toolbox::toString("/%s/TMBFiberReset", getApplicationDescriptor()->getURN().c_str());
-      *out << cgicc::form().set("method", "GET").set("action", TMBFiberReset);
-      *out << cgicc::input().set("type", "submit").set("value", reset_button);
-      sprintf(buf, "%d", tmb);
-      *out << cgicc::input().set("type", "hidden").set("value", buf).set("name", "tmb");
-      *out << cgicc::input().set("type", "hidden").set("value", "reset").set("name", "mode");
-      *out << cgicc::input().set("type", "hidden").set("value", fiber_num).set("name", "fiber");
-      *out << cgicc::form() << std::endl;
-      //
-      *out << cgicc::td();
-      *out << cgicc::tr();
-      std::stringstream ss;
-      std::stringstream bn;
-      ss << i + 1;
-      bn << i + 1;
-      fiber_num = ss.str();
-      button_name = bn.str();
-      reset_button = "Reset";
-    }
-    *out << cgicc::table();
-  }// GTX monitor for OTMB
-
-  //
-  *out << cgicc::fieldset() << cgicc::br() << std::endl;
-  //
-
-  if (thisTMB->GetHardwareVersion()==2) {
-     // --=== Virtex6 register read ===--
-     //
-     *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
-     *out << cgicc::legend("Virtex 6 Registers").set("style","color:blue") << std::endl ;
-
-     std::string ReadOTMBVirtex6Reg = toolbox::toString("/%s/ReadOTMBVirtex6Reg",getApplicationDescriptor()->getURN().c_str());
-     *out << cgicc::form().set("method","GET").set("action",ReadOTMBVirtex6Reg) << std::endl ;
-  
-     // make a map of register index -> name
-     std::map<int, std::string> regNames;
-     regNames[VTX6_REG_CRC] = "CRC";
-     regNames[VTX6_REG_FAR] = "FAR";
-     //  regNames[VTX6_REG_FDRI] = "FDRI";
-     regNames[VTX6_REG_FDRO] = "FDRO";
-     regNames[VTX6_REG_CMD] = "CMD";
-     regNames[VTX6_REG_CTL0] = "CTL0";
-     regNames[VTX6_REG_MASK] = "MASK";
-     regNames[VTX6_REG_STAT] = "STATUS";
-     //  regNames[VTX6_REG_LOUT] = "LOUT";
-     regNames[VTX6_REG_COR0] = "COR0";
-     //  regNames[VTX6_REG_MFWR] = "MFWR";
-     //  regNames[VTX6_REG_CBC] = "CBC";
-     regNames[VTX6_REG_IDCODE] = "IDCODE";
-     regNames[VTX6_REG_AXSS] = "AXSS";
-     regNames[VTX6_REG_COR1] = "COR1";
-     //  regNames[VTX6_REG_CSOB] = "CSOB";
-     regNames[VTX6_REG_WBSTAR] = "WBSTAR";
-     regNames[VTX6_REG_TIMER] = "TIMER";
-     regNames[VTX6_REG_BOOTSTS] = "BOOTSTS";
-     regNames[VTX6_REG_CTL1] = "CTL1";
-     regNames[VTX6_REG_DWC] = "DWC";
-  
-     // print the drop down list
-     char sbuf[200];
-     *out << cgicc::select().set("name", "reg") << std::endl;
-     std::map<int, std::string>::iterator it;
-     for (it = regNames.begin(); it != regNames.end(); ++it) {
-        sprintf(sbuf, "%d", it->first);
-        *out << cgicc::option().set("value", sbuf) << it->second << cgicc::option() << std::endl;
-     }
-     *out << cgicc::select() << std::endl;
-     sprintf(buf, "%d", tmb);
-     *out << cgicc::input().set("type","hidden").set("name","tmb").set("value",buf) << std::endl;
-     *out << cgicc::input().set("type","submit").set("value","Read Virtex6 Register") << std::endl;
-  
-     *out << cgicc::br() << std::endl;
-     *out << "Read Back (hex): " << std::hex << OTMBVirtex6RegisterRead_ << std::dec << std::endl;
-  
-     *out << cgicc::form() << std::endl;  
-     *out << cgicc::fieldset() << cgicc::br() << std::endl;
-     // ================================================
-  }
   //--------------------------------------------------------
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
   *out << cgicc::legend("Other TMB Utilities").set("style","color:blue") << std::endl ;
@@ -11443,6 +11218,222 @@ if (thisTMB->GetHardwareVersion()==2)
   *out << cgicc::form() << std::endl ;
   //
   *out << cgicc::fieldset();
+
+  //  TMB Registers
+  //
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+  *out << std::endl ;
+  //
+  *out << cgicc::legend("TMB Registers").set("style","color:blue") ;
+  //
+  std::string ReadTMBRegister = 
+    toolbox::toString("/%s/ReadTMBRegister",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",ReadTMBRegister) << std::endl ;
+  *out << "Read Register (hex) " << std::endl;
+  sprintf(buf, "%04X", TMBRegisterRead_);  
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","TMBRegister") << std::endl ;
+  sprintf(buf,"%d",tmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+  *out << cgicc::input().set("type","submit").set("value","Read TMB") << std::endl ;
+  *out << " Register value (hex): " << std::hex << TMBRegisterValue_ << std::endl;
+  *out << cgicc::form() << std::endl ;
+  //
+  std::string WriteTMBRegister = 
+    toolbox::toString("/%s/WriteTMBRegister",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",WriteTMBRegister) << std::endl ;
+  *out << "Write Register (hex) " << std::endl;
+  sprintf(buf, "%04X", TMBRegisterWrite_);
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","TMBRegister") << std::endl ;
+  *out << "Register value (hex) " << std::endl;
+  sprintf(buf, "%04X", TMBWriteValue_);
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","TMBValue") << std::endl ;
+  sprintf(buf,"%d",tmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+  *out << cgicc::input().set("type","submit").set("value","Write TMB") << std::endl ;
+  *out << cgicc::form() << cgicc::br() << std::endl ;
+  //
+  std::string TMBDumpAllRegisters = toolbox::toString("/%s/TMBDumpAllRegisters",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",TMBDumpAllRegisters) ;
+  *out << cgicc::input().set("type","submit").set("value","Dump All TMB VME Registers") ;
+  sprintf(buf,"%d",tmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+  *out << cgicc::form() << cgicc::br() << std::endl;
+  //
+
+  if (thisTMB->GetHardwareVersion()==2) {
+    int number_of_gems = thisTMB->GetNGemEnabledLinks();
+
+    std::string TMBFiberReset = toolbox::toString("/%s/TMBFiberReset",
+						  getApplicationDescriptor()->getURN().c_str());
+    *out << cgicc::form().set("method", "GET").set("action", TMBFiberReset);
+    *out << cgicc::input().set("type", "submit").set("value", "Check Current GTX Settings");
+    sprintf(buf, "%d", tmb);
+    *out
+      << cgicc::input().set("type", "hidden").set("value", buf).set("name",
+								    "tmb");
+    *out
+      << cgicc::input().set("type", "hidden").set("value", "read").set("name",
+								       "mode");
+    *out << cgicc::form() << std::endl;
+    *out << "&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp";
+    *out << "&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp";
+    *out << "<font size=+1><b>GTX Fiber Link Controls</b></font>" << std::endl;
+    //
+    *out << cgicc::table().set("border", "1");
+    *out << cgicc::tr();
+    *out << cgicc::td();
+    *out << "Fiber";
+    *out << cgicc::td();
+    *out << cgicc::td();
+    *out << "Status/Toggle";
+    *out << cgicc::td();
+    *out << cgicc::td();
+    *out << "Enable/Disable Status";
+    *out << cgicc::td();
+    *out << cgicc::td();
+    *out << "Reset";
+    *out << cgicc::td();
+    *out << cgicc::tr();
+    std::string fiber_num = "all";
+    std::string button_name = "Force Enable All";
+    std::string status = "N/A";
+    std::string reset_button = "Reset All";
+    std::string gem_button_name = "GEM ";
+    for (int i = -1; i < ((int) TMB_MAX_DCFEB_FIBERS + number_of_gems); ++i) {
+      int gem_num = i - (int)TMB_MAX_DCFEB_FIBERS;
+      *out << cgicc::tr();
+      *out << cgicc::td();
+      if (i < (int)TMB_MAX_DCFEB_FIBERS) {
+	*out << button_name;
+      }
+      else {
+	*out << gem_button_name << gem_num;
+      }
+      *out << cgicc::td();
+      *out << cgicc::td();
+      //
+      if (tmb_fiber_status_read_) {
+        bool read_status = false;
+        if (i < 0) {
+          read_status = thisTMB->GetReadGtxRxAllEnable();
+        } else if (i < (int)TMB_MAX_DCFEB_FIBERS) {
+          read_status = thisTMB->GetReadGtxRxEnable(i);
+        } else read_status = thisTMB->GetReadGemGtxRxEnable(gem_num);
+        std::string color;
+        std::string toggle_button;
+        if (read_status) {
+          toggle_button = "On/Off";
+          color = "color:green";
+          status = "Enabled";
+          if (i < 0){
+            status = "All On";
+          }
+        } else {
+          toggle_button = "On/Off";
+          color = "color:red";
+          status = "Disabled";
+          if (i < 0){
+            status = "Disables Allowed";
+          }
+        }
+        TMBFiberReset = toolbox::toString("/%s/TMBFiberReset",
+            getApplicationDescriptor()->getURN().c_str());
+        *out << cgicc::form().set("method", "GET").set("action", TMBFiberReset);
+        *out << cgicc::input().set("type", "submit").set("value", toggle_button).set("style", color);
+        sprintf(buf, "%d", tmb);
+        *out << cgicc::input().set("type", "hidden").set("value", buf).set("name", "tmb");
+        *out << cgicc::input().set("type", "hidden").set("value", "toggle").set("name", "mode");
+        *out << cgicc::input().set("type", "hidden").set("value", fiber_num).set("name", "fiber");
+        *out << cgicc::form() << std::endl;
+      } else {
+        *out << "N/A";
+      }
+      //
+      *out << cgicc::td();
+      *out << cgicc::td();
+      *out << status;
+      *out << cgicc::td();
+      *out << cgicc::td();
+      //
+      TMBFiberReset = toolbox::toString("/%s/TMBFiberReset", getApplicationDescriptor()->getURN().c_str());
+      *out << cgicc::form().set("method", "GET").set("action", TMBFiberReset);
+      *out << cgicc::input().set("type", "submit").set("value", reset_button);
+      sprintf(buf, "%d", tmb);
+      *out << cgicc::input().set("type", "hidden").set("value", buf).set("name", "tmb");
+      *out << cgicc::input().set("type", "hidden").set("value", "reset").set("name", "mode");
+      *out << cgicc::input().set("type", "hidden").set("value", fiber_num).set("name", "fiber");
+      *out << cgicc::form() << std::endl;
+      //
+      *out << cgicc::td();
+      *out << cgicc::tr();
+      std::stringstream ss;
+      std::stringstream bn;
+      ss << i + 1;
+      bn << i + 1;
+      fiber_num = ss.str();
+      button_name = bn.str();
+      reset_button = "Reset";
+    }
+    *out << cgicc::table();
+  }// GTX monitor for OTMB
+
+  //
+  *out << cgicc::fieldset() << cgicc::br() << std::endl;
+  //
+
+  if (thisTMB->GetHardwareVersion()==2) {
+     // --=== Virtex6 register read ===--
+     //
+     *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+     *out << cgicc::legend("Virtex 6 Registers").set("style","color:blue") << std::endl ;
+
+     std::string ReadOTMBVirtex6Reg = toolbox::toString("/%s/ReadOTMBVirtex6Reg",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",ReadOTMBVirtex6Reg) << std::endl ;
+  
+     // make a map of register index -> name
+     std::map<int, std::string> regNames;
+     regNames[VTX6_REG_CRC] = "CRC";
+     regNames[VTX6_REG_FAR] = "FAR";
+     //  regNames[VTX6_REG_FDRI] = "FDRI";
+     regNames[VTX6_REG_FDRO] = "FDRO";
+     regNames[VTX6_REG_CMD] = "CMD";
+     regNames[VTX6_REG_CTL0] = "CTL0";
+     regNames[VTX6_REG_MASK] = "MASK";
+     regNames[VTX6_REG_STAT] = "STATUS";
+     //  regNames[VTX6_REG_LOUT] = "LOUT";
+     regNames[VTX6_REG_COR0] = "COR0";
+     //  regNames[VTX6_REG_MFWR] = "MFWR";
+     //  regNames[VTX6_REG_CBC] = "CBC";
+     regNames[VTX6_REG_IDCODE] = "IDCODE";
+     regNames[VTX6_REG_AXSS] = "AXSS";
+     regNames[VTX6_REG_COR1] = "COR1";
+     //  regNames[VTX6_REG_CSOB] = "CSOB";
+     regNames[VTX6_REG_WBSTAR] = "WBSTAR";
+     regNames[VTX6_REG_TIMER] = "TIMER";
+     regNames[VTX6_REG_BOOTSTS] = "BOOTSTS";
+     regNames[VTX6_REG_CTL1] = "CTL1";
+     regNames[VTX6_REG_DWC] = "DWC";
+  
+     // print the drop down list
+     char sbuf[200];
+     *out << cgicc::select().set("name", "reg") << std::endl;
+     std::map<int, std::string>::iterator it;
+     for (it = regNames.begin(); it != regNames.end(); ++it) {
+        sprintf(sbuf, "%d", it->first);
+        *out << cgicc::option().set("value", sbuf) << it->second << cgicc::option() << std::endl;
+     }
+     *out << cgicc::select() << std::endl;
+     sprintf(buf, "%d", tmb);
+     *out << cgicc::input().set("type","hidden").set("name","tmb").set("value",buf) << std::endl;
+     *out << cgicc::input().set("type","submit").set("value","Read Virtex6 Register") << std::endl;
+  
+     *out << cgicc::br() << std::endl;
+     *out << "Read Back (hex): " << std::hex << OTMBVirtex6RegisterRead_ << std::dec << std::endl;
+  
+     *out << cgicc::form() << std::endl;  
+     *out << cgicc::fieldset() << cgicc::br() << std::endl;
+     // ================================================
+  }
 
 }
 //

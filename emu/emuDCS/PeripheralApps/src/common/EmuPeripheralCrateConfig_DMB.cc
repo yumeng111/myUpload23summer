@@ -986,7 +986,8 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
         *out << cgicc::form().set("method","GET").set("action",ConfigDCFEBs) << std::endl ;
         *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
         *out << cgicc::input().set("type","submit").set("value","Configure All DCFEBs") << std::endl ;
-        *out << cgicc::form() << cgicc::br()<< cgicc::hr() << std::endl ; 
+        *out << " (Note: CCB Hard-Reset is needed after this!) " << cgicc::form();
+        *out << cgicc::br()<< cgicc::hr() << std::endl ; 
 
   // print DCFEB parameter blocks
   std::string PrintDCFEBparam =
@@ -2811,7 +2812,9 @@ std::cout << "Power Read: " << std::hex << power_read << std::dec <<std::endl;
   *out << cgicc::input().set("type","submit").set("value","Configure DMB+CFEBs") << std::endl ;
   sprintf(buf,"%d",dmb);
   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
-  *out << cgicc::form() << std::endl ;
+  if(D_hversion>=2) *out << " (Note: CCB Hard-Reset is needed after this!)";
+  *out << cgicc::form();
+  *out << std::endl ;
   *out << cgicc::br();
   //
 if(D_hversion>=2)

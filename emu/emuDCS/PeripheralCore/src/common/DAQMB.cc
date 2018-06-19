@@ -9191,6 +9191,15 @@ int DAQMB::DCSread2(char *data, int read_dcfeb)
       if(fiber_error[i]) link_status |= 1;
   }
   data2[retn+dsysmon.size()] = link_status; 
+
+// Liu 2018-05-06, add new ODMB auto-kill registers
+  unsigned short tmp[4];
+  read_later(AUTO_KILL_ANY);
+  read_later(AUTO_KILL_OPT);
+  read_now(ODMB_KILL, (char *)tmp);
+  data2[retn+dsysmon.size()+1] = (tmp[0]&0xFF) + (tmp[1]&0xFF)*256; 
+  data2[retn+dsysmon.size()+2] = tmp[2]&0x3FF; 
+  
   retn += TOTAL_ODMB;
   return retn;
 }

@@ -146,12 +146,13 @@ protected:
   int read_interval;
   int TOTAL_TMB_COUNTERS, TOTAL_TMB_COUNTERS2;
   xdata::TimeVal last_read_time;
+  int auto_killed_dcfebs;
   unsigned short ccbmpcreg[60][4];
   bool first_read[60], donebits_changed[60];
 
   static const int TOTAL_DCS_COUNTERS=64;
   static const int TOTAL_TMB_VOLTAGES=16;
-  static const int TOTAL_DCFEB_MONS=222;  // (19+8+3)*7+9+3 (3 are reserved)
+  static const int TOTAL_DCFEB_MONS=222;  // (19+8+3)*7+9+3 (1 for DCFEB link status, 1 for DCFEB auto-kill registers, 1 is reserved)
   static const int MAX_TMB_COUNTERS=120;;
   static const int REAL_TMB_COUNTERS=93;
   
@@ -191,6 +192,7 @@ private:
   void CheckCrates(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void SwitchBoard(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void Problems(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void DCFEBProblems(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   // define states
   void stateChanged(toolbox::fsm::FiniteStateMachine &fsm) throw (toolbox::fsm::exception::Exception);
   void dummyAction(toolbox::Event::Reference e) throw (toolbox::fsm::exception::Exception);

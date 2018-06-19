@@ -271,7 +271,7 @@ bool Chamber::GetDimLV2(int hint, LV_2_DimBroker *dim_lv )
       dim_lv->odmb.PPIB5V = data[80+30*DCFEB_NUMBER+2];  //  #2 in ODMB block
       dim_lv->odmb.PPIB3V = data[80+30*DCFEB_NUMBER+4];  //  #4 in ODMB block
       dim_lv->odmb.PPIBCU = data[80+30*DCFEB_NUMBER+3]*0.001;  //  #3 in ODMB block, (mA)->(A)
-      dim_lv->odmb.ODMB1 = 0;
+      dim_lv->odmb.ODMB1 = (int(data[80+30*DCFEB_NUMBER+11])<<16) + int(data[80+30*DCFEB_NUMBER+10]);   // #10 & #11 in ODMB block, DCFEB auto-kill registers
       dim_lv->odmb.ODMB2 = 0;
       dim_lv->odmb.ODMB3 = 0;
 

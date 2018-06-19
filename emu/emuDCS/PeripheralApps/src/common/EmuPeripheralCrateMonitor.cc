@@ -53,6 +53,7 @@ EmuPeripheralCrateMonitor::EmuPeripheralCrateMonitor(xdaq::ApplicationStub * s):
   xgi::bind(this,&EmuPeripheralCrateMonitor::SwitchBoard, "SwitchBoard");
   xgi::bind(this,&EmuPeripheralCrateMonitor::CrateStatus, "CrateStatus");
   xgi::bind(this,&EmuPeripheralCrateMonitor::Problems, "Problems");
+  xgi::bind(this,&EmuPeripheralCrateMonitor::DCFEBProblems, "DCFEBProblems");
   xgi::bind(this,&EmuPeripheralCrateMonitor::CrateSelection, "CrateSelection");
   xgi::bind(this,&EmuPeripheralCrateMonitor::TCounterSelection, "TCounterSelection");
   xgi::bind(this,&EmuPeripheralCrateMonitor::DCounterSelection, "DCounterSelection");
@@ -154,6 +155,7 @@ EmuPeripheralCrateMonitor::EmuPeripheralCrateMonitor(xdaq::ApplicationStub * s):
   DCS_this_crate_no_=0;
   dcs_station=0;
   dcs_chamber=0;
+  auto_killed_dcfebs=0;
 
   dcs_mask.clear();
   tcs_mask.clear();
@@ -838,6 +840,14 @@ void EmuPeripheralCrateMonitor::MainPage(xgi::Input * in, xgi::Output * out )
     std::string problems = toolbox::toString("/%s/Problems",getApplicationDescriptor()->getURN().c_str());
     *out << cgicc::form().set("method","GET").set("action",problems).set("target","_blank") << std::endl ;
     *out << cgicc::input().set("type","submit").set("value","All Problems").set("name", "Problems") << std::endl ;
+    *out << cgicc::form() << std::endl ;
+    //
+    *out << cgicc::td();
+    //
+    *out << cgicc::td();
+    std::string dcfebproblems = toolbox::toString("/%s/DCFEBProblems",getApplicationDescriptor()->getURN().c_str());
+    *out << cgicc::form().set("method","GET").set("action",dcfebproblems) << std::endl ;
+    *out << cgicc::input().set("type","submit").set("value","Auto-Killed DCFEBs") << std::endl ;
     *out << cgicc::form() << std::endl ;
     //
     *out << cgicc::td();
@@ -3473,6 +3483,7 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
 
   x2p_count2++;
   std::cout << "Access2 " << x2p_count2 << " at " << getLocalDateTime() << std::endl;
+  auto_killed_dcfebs=0;
 
   for ( unsigned int i = 0; i < crateVector.size(); i++ )
   {
@@ -3692,6 +3703,17 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
               {
                  ival=(*febdata)[upgraded*TOTAL_DCFEB_MONS+k];
                  *out << " " << ival;
+                 if(dcfebn==7 && cnt_idx==11)   /* ODMB kill-mask register  */
+                 {
+                     int mask_in_use=ival;
+                     int mask_in_config=myVector[j]->GetKillInputMask();
+                     for(int d=0; d<7; d++)
+                     {
+                         if((mask_in_use &1)==1 && (mask_in_config &1)==0)  auto_killed_dcfebs++;
+                         mask_in_use >>=1;
+                         mask_in_config >>=1;
+                     }
+                 }
               }
               else
               {
@@ -4535,6 +4557,93 @@ void EmuPeripheralCrateMonitor::Problems(xgi::Input * in, xgi::Output * out )
   *out << "</pre>" << std::endl;
 }
 
+void EmuPeripheralCrateMonitor::DCFEBProblems(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) 
+{
+  //
+  MyHeader(in,out,"List of Auto-Killed DCFEBs");
+  //
+  cgicc::CgiEnvironment cgiEnvi(in);
+  //
+  std::string Page=cgiEnvi.getPathInfo()+"?"+cgiEnvi.getQueryString();
+  //
+  int confbit, prob_crate;
+  int ival;
+  bool goodfeb;
+  Crate *now_crate=0;
+  std::vector<DAQMB*> myVector;
+  xdata::InfoSpace * is;
+
+  if(Monitor_On_)
+  {
+     *out << cgicc::span().set("style","color:green");
+     *out << cgicc::b(cgicc::i("Monitor Status: On")) << cgicc::span() << std::endl ;
+  } else 
+  { 
+     *out << cgicc::span().set("style","color:red");
+     *out << cgicc::b(cgicc::i("Monitor Status: Off")) << cgicc::span() << std::endl ;
+  }
+
+  auto_killed_dcfebs=0;
+  *out << "<pre>" << std::endl;
+  for ( unsigned int i = 0; i < crateVector.size(); i++ )
+  {
+     myVector = crateVector[i]->daqmbs();
+
+     int problem_readings=0;
+     is = xdata::getInfoSpaceFactory()->get(monitorables_[i]);
+
+     xdata::Vector<xdata::Float> *febdata = dynamic_cast<xdata::Vector<xdata::Float> *>(is->find("DCFEBmons"));
+     if(febdata==NULL)
+     {  goodfeb=false;
+     }
+     else
+     {  goodfeb=true;
+     }
+
+     int upgraded=0;
+     for(unsigned int j=0; j<myVector.size(); j++) 
+     {
+        int dversion=myVector[j]->GetHardwareVersion();
+        if(dversion!=2) continue;
+        int imask= 0xFF & (myVector[j]->GetPowerMask());
+        bool chamber_off = (imask==0xFF);
+        std::string cscname=myVector[j]->GetLabel();
+
+        for(int k=0; k<TOTAL_DCFEB_MONS; k++) 
+        {  
+           if(goodfeb)
+           { 
+              int cnt_idx=k%30;
+              int dcfebn=k/30;
+              if(dcfebn==7 && cnt_idx==11)   /* ODMB kill-mask register  */
+              {
+                     ival=(*febdata)[upgraded*TOTAL_DCFEB_MONS+k];
+                     int mask_in_use=ival;
+                     int mask_in_config=myVector[j]->GetKillInputMask();
+                     for(int d=0; d<7; d++)
+                     {
+                         if((mask_in_use &1)==1 && (mask_in_config &1)==0)
+                         {  
+                           auto_killed_dcfebs++;
+                           *out << cscname << " DCFEB#" << d+1 << std::endl;
+                         }
+                         mask_in_use >>=1;
+                         mask_in_config >>=1;
+                     }
+              }
+           }
+        }
+        upgraded++;
+     }  // end of chamber loop
+//     if(problem_readings>2)  crateVector[i]->SetLife(false);
+// too many reading errors, probably VCC problem
+  }  // end of crate loop
+  *out << std::endl << auto_killed_dcfebs << " DCFEB(s) auto-killed." << std::endl;
+  *out << "</pre>" << std::endl;
+
+}
+
 void EmuPeripheralCrateMonitor::InitCounterNames()
 {
     TCounterName.clear();
@@ -4911,6 +5020,7 @@ void EmuPeripheralCrateMonitor::ForEmuPage1(xgi::Input *in, xgi::Output *out)
   std::string myUrl = getApplicationDescriptor()->getContextDescriptor()->getURL();
   std::string myUrn = getApplicationDescriptor()->getURN().c_str();
   main_url_ = myUrl + "/" + myUrn + "/MainPage";
+  std::string dcfeb_url = myUrl + "/" + myUrn + "/DCFEBProblems";
   *out << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << std::endl
        << "<?xml-stylesheet type=\"text/xml\" href=\"/emu/base/html/EmuPage1_XSL.xml\"?>" << std::endl
        << "<ForEmuPage1 application=\"" << getApplicationDescriptor()->getClassName()
@@ -4939,6 +5049,14 @@ void EmuPeripheralCrateMonitor::ForEmuPage1(xgi::Input *in, xgi::Output *out)
          << "\" valueDescription=\"" << "should be non-zero when VME access is ON"
          <<          "\" nameURL=\"" << " "
          <<         "\" valueURL=\"" << " "
+         << "\"/>" << std::endl;
+
+    *out << "  <monitorable name=\"" << "Auto-Killed DCFEBs"
+         <<            "\" value=\"" << auto_killed_dcfebs
+         <<  "\" nameDescription=\"" << " "
+         << "\" valueDescription=\"" << "click this to access the page with auto-killed DCFEB list"
+         <<          "\" nameURL=\"" << " "
+         <<         "\" valueURL=\"" << dcfeb_url
          << "\"/>" << std::endl;
 
   *out << "</ForEmuPage1>" << std::endl;

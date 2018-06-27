@@ -1,4 +1,28 @@
 * text=auto !eol
+emu/CSCL1FM/.settings/org.eclipse.jdt.core.prefs -text
+emu/CSCL1FM/README -text
+emu/CSCL1FM/build.xml -text
+emu/CSCL1FM/gui/css/csc.css -text
+emu/CSCL1FM/gui/img/CSC.png -text svneol=unset#image/png
+emu/CSCL1FM/gui/js/GUI.js -text
+emu/CSCL1FM/gui/js/ajaxRequest.js -text
+emu/CSCL1FM/gui/js/ajaxRequestFunctions.js -text
+emu/CSCL1FM/gui/js/buttons.js -text
+emu/CSCL1FM/gui/js/control.js -text
+emu/CSCL1FM/gui/js/jquery-2.1.4.min.js -text
+emu/CSCL1FM/gui/js/notifications.js -text
+emu/CSCL1FM/gui/jsp/controlPanel.jsp -text
+emu/CSCL1FM/gui/jsp/header.jsp -text
+emu/CSCL1FM/gui/jsp/stateTable.jsp -text
+emu/CSCL1FM/src/rcms/fm/ajaxFM/CSC.java -text
+emu/CSCL1FM/src/rcms/fm/ajaxFM/MyEventHandler.java -text
+emu/CSCL1FM/src/rcms/fm/ajaxFM/MyFunctionManager.java -text
+emu/CSCL1FM/src/rcms/fm/ajaxFM/MyInputs.java -text
+emu/CSCL1FM/src/rcms/fm/ajaxFM/MyStateMachineDefinition.java -text
+emu/CSCL1FM/src/rcms/fm/ajaxFM/MyStates.java -text
+emu/CSCL1FM/src/rcms/fm/ajaxFM/myParameters/MyParameterSet.java -text
+emu/CSCL1FM/src/rcms/fm/ajaxFM/notificationsToGUI/parameters/ChangedParameterSender.java -text
+emu/CSCL1FM/src/rcms/fm/ajaxFM/updatesFromGUI/MySetParameterHandler.java -text
 emu/Makefile -text
 emu/base/Makefile -text
 emu/base/html/DAQ_Disks.html -text

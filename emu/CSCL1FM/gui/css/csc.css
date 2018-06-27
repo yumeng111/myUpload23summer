@@ -1,0 +1,85 @@
+td, th { background-color: rgb(211, 206, 196); }
+#lifeCycle, #status, #FSM {background-color: rgba(255,255,255,0.3); color: rgb(91, 73, 34); }
+#FMParameters {background-color: rgba(255,255,255,0.6); color: rgb(91, 73, 34); }
+#properties, #lifeCycle, #status, #FSM, #FMParameters {padding:10pt 5%; margin:20pt 10%;}
+#properties {
+    display: -webkit-flex;
+    display: flex;
+    flex-direction:column;
+    justify-content: flex-start;    
+}
+#location {
+    display: -webkit-flex;
+    display: flex;
+    flex-direction:row;
+    justify-content: space-between;    
+}
+.propertyValue{ color: rgb(215, 202, 169); }
+.propertyName{ color: rgb(58, 45, 18);}
+#FSMState {
+    display: -webkit-flex;
+    display: flex;
+    flex-direction:row;
+    justify-content: center;    
+}
+#currentState {
+    font-family: arial, helvetica, sans-serif;
+    color: rgb(58, 45, 18);
+    font-size: xx-large;
+    text-align: center;
+}
+#FSM {
+    display: -webkit-flex;
+    display: flex;
+    height: 80%;
+    flex-direction:row;
+    justify-content: flex-start;    
+}
+div.Initial {background-color: rgba(255,255,255,0.3);}
+div.Halted {background-color: rgba(15, 118, 255, 0.3)}
+div.Configured {background-color: rgba(255,255,0,0.3);}
+div.Running {background-color: rgba(34, 235, 34, 0.3)}
+div.Error {background-color: rgba(255,0,0,0.3);}
+div.Initializing, div.Configuring, div.Starting, div.Stopping, div.Halting {background-color: rgba(200,200,200,0.1);}
+#customizedArea {background-image: url('../img/CSC.png');background-repeat: no-repeat;background-size: cover;}
+#controlLayout {    
+    display: -webkit-flex;
+    display: flex;
+    width: 100%;
+    height: 80%;
+    flex-direction:column;
+    justify-content: space-evenly;
+}
+input.button1 {margin:0pt 10pt;}
+#commandParameterSection {
+    display: -webkit-flex;
+    display: flex;
+    width: 100%;
+    height: 80%;
+    flex-direction:column;
+    flex-wrap: nowrap;
+}
+#commandParameterSection select { background-color: rgb(77, 66, 44); border-color: rgb(77, 66, 44);  color: rgb(200, 200, 0); -moz-appearance: none; -webkit-appearance: none;} /* use -*-appearance to get rid of non-stylable arrow */
+#commandParameterSection option { background-color: rgb(77, 66, 44); border-color: rgb(77, 66, 44);  color: rgb(200, 200, 0); }
+.MyControlButton {margin:0pt 10pt; background-color: rgb(77, 66, 44); border-color: rgb(77, 66, 44);}
+.myConfigureButton, .myStopButton { color: rgb(200, 200, 0); }
+.myStartButton { color: yellowgreen; }
+.myInitializeButton, .myHaltButton { color: lightskyblue; }
+.myCreateButton { background-color: rgb(174, 165, 141); border-color: rgb(174, 165, 141); color: rgb(91, 73, 34); }
+.myAttachButton { background-color: rgb(174, 165, 141); border-color: rgb(174, 165, 141); color: rgb(239, 233, 221); }
+.myDetachButton { background-color: rgb(174, 165, 141); border-color: rgb(174, 165, 141); color: rgb(239, 233, 221); }
+.myDestroyButton { background-color: rgb(75, 75, 75); border-color: rgb(75, 75, 75); color: rgb(174, 165, 141); }
+#status input {background-color:  rgb(174, 165, 141); border-color: rgb(174, 165, 141); color: rgb(91, 73, 34); }
+.control_label{
+    font-family: arial, helvetica, sans-serif;
+    color: rgb(91, 73, 34);
+}
+#commandParameterCheckBoxSection, #parameterTableSection {margin:0pt 10pt;}
+div.flexRow{
+    display: -webkit-flex;
+    display: flex;
+    flex-direction:row;
+    flex-wrap: nowrap;
+}
+#sortedParametersTable td { background-color:transparent; border-color: rgba(255,255,255,0.2); border-width: 1pt; border-collapse: collapse; border-style: solid; }
+#sortedParametersTable th { background-color:transparent; border-color: rgba(255,255,255,0.2); border-width: 1pt; border-collapse: collapse; border-style: solid; }

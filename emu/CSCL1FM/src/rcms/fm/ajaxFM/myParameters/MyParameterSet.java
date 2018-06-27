@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import rcms.fm.ajaxFM.Version;
+
 import rcms.fm.fw.parameter.FunctionManagerParameter;
 import rcms.fm.fw.parameter.ParameterException;
 import rcms.fm.fw.parameter.ParameterSet;
@@ -97,6 +99,9 @@ public class MyParameterSet extends ParameterSet<FunctionManagerParameter> {
         public static final String CSC_RUN_TYPE             = "CSC_RUN_TYPE";
         public static final String TF_KEY                   = "TF_KEY";
 	public static final String USE_PRIMARY_TCDS         = "USE_PRIMARY_TCDS";
+        
+        // Version
+        public static final String VERSION = "VERSION";
         
         
 	public static boolean isForGUI(String parameterName) {
@@ -192,6 +197,8 @@ public class MyParameterSet extends ParameterSet<FunctionManagerParameter> {
                 this.put(new FunctionManagerParameter<StringT>(CONFIGURED_WITH_CSC_RUN_TYPE, new StringT(""), Exported.READONLY));
                 this.put(new FunctionManagerParameter<BooleanT>(CONFIGURED_WITH_USE_PRIMARY_TCDS, new BooleanT(true), Exported.READONLY));
         
+                // Version
+                this.put(new FunctionManagerParameter<>(VERSION, new StringT( (new Version()).getString() ), Exported.READONLY));
         }
 
 	/** Returns a copy of this ParameterSet. Copied from LV0. **/

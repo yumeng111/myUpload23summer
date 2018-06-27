@@ -20,6 +20,7 @@ emu/CSCL1FM/src/rcms/fm/ajaxFM/MyFunctionManager.java -text
 emu/CSCL1FM/src/rcms/fm/ajaxFM/MyInputs.java -text
 emu/CSCL1FM/src/rcms/fm/ajaxFM/MyStateMachineDefinition.java -text
 emu/CSCL1FM/src/rcms/fm/ajaxFM/MyStates.java -text
+emu/CSCL1FM/src/rcms/fm/ajaxFM/Version.java -text
 emu/CSCL1FM/src/rcms/fm/ajaxFM/myParameters/MyParameterSet.java -text
 emu/CSCL1FM/src/rcms/fm/ajaxFM/notificationsToGUI/parameters/ChangedParameterSender.java -text
 emu/CSCL1FM/src/rcms/fm/ajaxFM/updatesFromGUI/MySetParameterHandler.java -text

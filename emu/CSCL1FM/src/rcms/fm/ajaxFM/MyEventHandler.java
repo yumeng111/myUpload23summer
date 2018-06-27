@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 
 import rcms.fm.context.RCMSConstants;
 
@@ -22,13 +21,11 @@ import rcms.fm.fw.parameter.type.BooleanT;
 import rcms.fm.fw.parameter.ParameterSet;
 import rcms.stateFormat.StateNotification;
 import rcms.errorFormat.CMS.CMSError;
-import static rcms.fm.ajaxFM.CSC.logger;
 import rcms.fm.resource.QualifiedGroup;
 import rcms.fm.resource.QualifiedResource;
 import rcms.fm.resource.qualifiedresource.XdaqApplication;
 import rcms.fm.resource.qualifiedresource.XdaqApplicationContainer;
 import rcms.statemachine.StateMachineException;
-import rcms.statemachine.definition.State;
 
 public class MyEventHandler extends UserStateNotificationHandler {
 
@@ -58,7 +55,7 @@ public class MyEventHandler extends UserStateNotificationHandler {
 		this.functionManager = (MyFunctionManager) this.getUserFunctionManager();
 
                 int session_id = functionManager.getQualifiedGroup().getGroup().getDirectory().getId();
-		functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(MyParameterSet.SID, new IntegerT(session_id)));
+		functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.SID, new IntegerT(session_id)));
                 // functionManager.getParameterSet().get(MyParameterSet.SID).setValue(new IntegerT(session_id));
                 logger.info( getClass().getName() +  ".init: SID = " + session_id );
         }
@@ -89,11 +86,10 @@ public class MyEventHandler extends UserStateNotificationHandler {
                         logger.info( getClass().getName() +  ".initAction executed for "+obj.getClass().getName() );
                        
                         // set action
-                        functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(MyParameterSet.ACTION_MSG,new StringT("Initializing done.")));
+                        functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ACTION_MSG,new StringT("Initializing done.")));
 
                         functionManager.updateSTATE();
 
-                        return;
                 }
                  else if (obj instanceof StateEnteredEvent) {
                         
@@ -103,7 +99,7 @@ public class MyEventHandler extends UserStateNotificationHandler {
                         functionManager.updateSTATE();
                                                 
                         // set action
-                        functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(MyParameterSet.ACTION_MSG,new StringT("Initializing")));
+                        functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ACTION_MSG,new StringT("Initializing")));
                         
                         // get the parameters of the command
                         // 2 initialize command parameters received: GLOBAL_CONF_KEY=/GLOBAL_CONFIGURATION_MAP/904_COMBINED/COMBINED_RUN SID=1000020148
@@ -138,7 +134,7 @@ public class MyEventHandler extends UserStateNotificationHandler {
                         //
                         logger.debug("Initializing QualifiedGroup");
                         QualifiedGroup qg = functionManager.getQualifiedGroup();
-                        logger.debug("QualifiedGroup: "+qg.print().toString());
+                        logger.debug("QualifiedGroup: "+qg.print());
 
                         try {
                                 qg.init();
@@ -157,7 +153,7 @@ public class MyEventHandler extends UserStateNotificationHandler {
                                 functionManager.updateSTATE();
                                 
                                 // set action
-                                functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(MyParameterSet.ACTION_MSG,new StringT("Going to ERROR...")));
+                                functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ACTION_MSG,new StringT("Going to ERROR...")));
 
                                 return;
                         }
@@ -194,7 +190,7 @@ public class MyEventHandler extends UserStateNotificationHandler {
                         functionManager.updateSTATE();
                         
                         // set action
-                        functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(MyParameterSet.ACTION_MSG,new StringT("Initializing done.")));
+                        functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ACTION_MSG,new StringT("Initializing done.")));
                         
                         logger.info("initAction Executed");
                 }
@@ -227,7 +223,6 @@ public class MyEventHandler extends UserStateNotificationHandler {
                            functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ACTION_MSG,new StringT("Configuring done.")));                        
                         }
                         
-                        return;
                 }
                 
                 else if (obj instanceof StateEnteredEvent) {
@@ -235,7 +230,7 @@ public class MyEventHandler extends UserStateNotificationHandler {
                         functionManager.updateSTATE();
 
                         // set action
-                        functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(MyParameterSet.ACTION_MSG,new StringT("configuring")));
+                        functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ACTION_MSG,new StringT("configuring")));
                         
                         // get the parameters of the command
                         Integer runNumber = 0;
@@ -313,9 +308,8 @@ public class MyEventHandler extends UserStateNotificationHandler {
                         functionManager.updateSTATE();
 
                         // set action
-                        functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(MyParameterSet.ACTION_MSG,new StringT("Starting done.")));
+                        functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ACTION_MSG,new StringT("Starting done.")));
 
-                        return;
                 }
                 
                 else if (obj instanceof StateEnteredEvent) {
@@ -325,7 +319,7 @@ public class MyEventHandler extends UserStateNotificationHandler {
                         functionManager.updateSTATE();
                         
                         // set action
-                        functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(MyParameterSet.ACTION_MSG,new StringT("starting")));
+                        functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ACTION_MSG,new StringT("starting")));
 
                         // get the parameters of the command
                         Integer runNumber = 1;
@@ -390,9 +384,8 @@ public class MyEventHandler extends UserStateNotificationHandler {
                         functionManager.updateSTATE();
 
                         // set action
-                        functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(MyParameterSet.ACTION_MSG,new StringT("Stopping done.")));
+                        functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ACTION_MSG,new StringT("Stopping done.")));
 
-                        return;
                 }
                 
                 else if (obj instanceof StateEnteredEvent) {    
@@ -402,7 +395,7 @@ public class MyEventHandler extends UserStateNotificationHandler {
                         functionManager.updateSTATE();
                        
                         // set action
-                        functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(MyParameterSet.ACTION_MSG,new StringT("stopping")));
+                        functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ACTION_MSG,new StringT("stopping")));
                         
                         /************************************************
                          * PUT YOUR CODE HERE                                                   
@@ -439,9 +432,8 @@ public class MyEventHandler extends UserStateNotificationHandler {
                         functionManager.updateSTATE();
 
                         // set action
-                        functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(MyParameterSet.ACTION_MSG,new StringT("Halting done.")));
+                        functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ACTION_MSG,new StringT("Halting done.")));
 
-                        return;
                 }
                 
                 else if (obj instanceof StateEnteredEvent) {
@@ -451,7 +443,7 @@ public class MyEventHandler extends UserStateNotificationHandler {
                         functionManager.updateSTATE();
 
                         // set action
-                        functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(MyParameterSet.ACTION_MSG,new StringT("halting")));
+                        functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ACTION_MSG,new StringT("halting")));
                         
                         /************************************************
                          * PUT YOUR CODE HERE                                                   
@@ -501,11 +493,37 @@ public class MyEventHandler extends UserStateNotificationHandler {
                         + ", from " + ((StateNotification) obj).getFromState()
                         + ", to " + ((StateNotification) obj).getToState()
                         + ", reason: " + reason);
-                sendCMSError("Unexpected state notification received. Reason: " + (reason.length() == 0 ? "UNKNOWN." : reason));
-                try {
-                    functionManager.setState(MyStates.ERROR);
-                } catch (StateMachineException ex) {
-                    logger.error("Failed to set ERROR", ex);
+                // What we do depends on the state and run type:
+                String runType = functionManager.getParameterSet().get(MyParameterSet.RUN_TYPE).getValue().toString();
+                if ( ( runType.toLowerCase().equals( "global" ) || runType.toLowerCase().equals( "local" ) ) && 
+                     functionManager.getState().equals( MyStates.RUNNING ) ){
+                    // If we're running in global or local, we just warn the user, but we don't go into error state.
+                    String msg = "WARNING: Unexpected state notification received. Reason: " + (reason.length() == 0 ? "UNKNOWN." : reason);
+                    if ( ((StateNotification) obj).getToState().equals( "Crashed" ) ) msg += " (A process crashed.)";
+                    msg += " The next state transition will likely fail.";
+                    functionManager.getParameterSet().put( new FunctionManagerParameter<>( MyParameterSet.ACTION_MSG, new StringT( msg ) ) );
+                }
+                else if ( runType.toLowerCase().startsWith( "calib" ) && 
+                          functionManager.getState().equals( MyStates.RUNNING ) &&
+                          ((StateNotification) obj).getToState().equals( MyStates.HALTED.getStateString() )
+                        ){
+                    // The automatic calibration sequencer halts by itself. That's normal, we just follow it.
+                    try {
+                        functionManager.setState( MyStates.HALTED );
+                    } catch (StateMachineException ex) {
+                        logger.error("Failed to set HALTED on receiving unexpected state notification.", ex);
+                    }
+                }
+                else{
+                    // In all other cases we go into error.
+                    String msg = "Unexpected state notification received. Reason: " + (reason.length() == 0 ? "UNKNOWN." : reason);
+                    if ( ((StateNotification) obj).getToState().equals( "Crashed" ) ) msg += " (A process crashed.)";
+                    sendCMSError( msg );
+                    try {
+                        functionManager.setState(MyStates.ERROR);
+                    } catch (StateMachineException ex) {
+                        logger.error("Failed to set ERROR on receiving unexpected state notification.", ex);
+                    }
                 }
             }
             else if (obj instanceof StateEnteredEvent) {}
@@ -534,9 +552,9 @@ public class MyEventHandler extends UserStateNotificationHandler {
  
         private void cleanUpFMParameters() {
                 // Clean-up of the Function Manager parameters
-                functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(MyParameterSet.ACTION_MSG,new StringT("")));
-                functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(MyParameterSet.ERROR_MSG,new StringT("")));
-                functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(MyParameterSet.TTS_TEST_FED_ID,new IntegerT(-1)));
+                functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ACTION_MSG,new StringT("")));
+                functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.ERROR_MSG,new StringT("")));
+                functionManager.getParameterSet().put(new FunctionManagerParameter<>(MyParameterSet.TTS_TEST_FED_ID,new IntegerT(-1)));
         }
 
         public boolean isGUIAccessAllowed(){

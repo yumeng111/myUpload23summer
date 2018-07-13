@@ -207,7 +207,7 @@ public:
   int read_prom(const char *vfyfile, const char *mcsfile );
   int verify_prom(const char *vfyfile, const char *mcsfile );
   void write_mcs(char *buf, int nbytes, FILE *outf);
-  int read_mcs(char *binbuf, FILE *finp);
+  int read_mcs(char *binbuf, FILE *finp, unsigned limit=0);
 
   inline int get_flag(int flag) {  return ((special_flags_ >> flag ) & 1); }
   inline void set_flag(int flag) { special_flags_ |= (1<<flag); } 
@@ -253,7 +253,9 @@ protected:
   void udelay(long int usec);
   unsigned shuffle32(unsigned value);
   void shuffle57(void *data);
+  char* add_headtail(char *datain, char *dataout, int osize, int head, int tail);
   char* add_headtail(char *datain, int osize, int head, int tail);
+  char* cut_headtail(char *datain, char *dataout, int osize, int head, int tail);
   char* cut_headtail(char *datain, int osize, int head, int tail);
 
   Crate * theCrate_;

@@ -161,7 +161,7 @@ enum DEVTYPE{ALLMUX=-3,ALLSCAM=-2,ALL=-1,NONE,F1PROM,F2PROM,F3PROM,F4PROM,F5PROM
 #define EPROM_bpi_reset 25
 #define EPROM_bpi_disable 26
 #define EPROM_bpi_enable 27
-#define FINE_DELAY 28
+#define COMP_CLOCK_PHASE 28
 #define TMB_TRANSMIT_MODE 29
 #define TMB_HALF_STRIP 30
 #define TMB_LAYER_MASK 31

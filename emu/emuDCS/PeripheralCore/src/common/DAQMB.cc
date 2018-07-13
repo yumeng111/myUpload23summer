@@ -643,6 +643,28 @@ DAQMB::~DAQMB() {
   std::cout << "Killing DAQMB" << std::endl;
 }
 
+//  DMB hardware_version_  contains information for (O)DMB(x) and (x)(D)CFEB   
+//   0             same as 1
+//   1             DMB (1) + CFEB (1)     
+//   2             ODMB (2) + PPIB + DCFEB (2)
+//   3             DMB (1)+ DCFEB (2)
+//   4             ODMB (2)+ PPIB + xDCFEB (3)
+//   5             DMB (1)+ xDCFEB (3)
+//   6             ODMB7 (4)+ PPIB + xDCFEB (3)
+//   7             ODMB5 (3)+ DCFEB (2)
+//   8             ODMB5 (3)+ xDCFEB (3)
+//   9             DMB(?) + CFEB(?)
+int DAQMB::DMBversion()
+{
+  int dmb_hardware[10]={1, 1, 2, 1, 2, 1, 4, 3, 3, 0};
+  return (hardware_version_>=0 && hardware_version_<10)?dmb_hardware[hardware_version_]:0; 
+}
+
+int DAQMB::CFEBversion()
+{
+  int cfeb_hardware[10]={1, 1, 2, 2, 3, 3, 3, 2, 3, 0};
+  return (hardware_version_>=0 && hardware_version_<10)?cfeb_hardware[hardware_version_]:0; 
+}
 
 void DAQMB::end()
 {
@@ -799,8 +821,12 @@ void DAQMB::configure(int c)
    //
    (*MyOutput_) << "doing set_comp_thresh " << set_comp_thresh_ << std::endl;
 
+   set_comp_thresh(set_comp_thresh_);
+   if(CFEBversion()<=1)
+   { 
      set_comp_thresh(set_comp_thresh_);
      set_comp_thresh_bc(set_comp_thresh_);
+   }
      //(*MyOutput_) << "doing preamp_initx() " << std::endl;
      preamp_initx();
      udelay(2000);
@@ -838,7 +864,7 @@ void DAQMB::configure(int c)
 
    }
 
-   set_and_initalize_pipelines_and_fine_delays();
+//   set_and_initalize_pipelines_and_others();
 
   // ***  This part is related to the SFM (Serial Flash Memory) ****
    //
@@ -877,7 +903,7 @@ void DAQMB::configure(int c)
 
  if( c<2 )
  {   // if c==2, skip this during power-up-init, because these parameters already stored in EPROM
-   if(hardware_version_==2)   
+   if(DMBversion()>1)
    {
       // set delays
       odmb_set_LCT_L1A_delay(l1acc_dav_delay_);
@@ -891,11 +917,13 @@ void DAQMB::configure(int c)
       // save configuration to EPROM
       odmb_save_config();
    }
-
-// Write DCFEB cofiguration parameters into EPROM
-   for(unsigned lfeb=0; lfeb<cfebs_.size();lfeb++)
+   if(CFEBversion()>1)
    {
+      // Write (x)DCFEB cofiguration parameters into EPROM
+      for(unsigned lfeb=0; lfeb<cfebs_.size();lfeb++)
+      {
          dcfeb_configure(cfebs_[lfeb]);   
+      }
    }
  }
    restoreCFEBIdle();
@@ -903,7 +931,7 @@ void DAQMB::configure(int c)
 //
 bool DAQMB::checkDAQMBXMLValues() { 
   //
-  if(hardware_version_<=1)
+  if(DMBversion()<=1 && CFEBversion()<=1)
   {
 
   std::cout << "DAQMB: checkXMLValues() for crate " << this->crate() << " slot " << this->slot() << std::endl;
@@ -1000,7 +1028,7 @@ bool DAQMB::checkDAQMBXMLValues() {
   return cfebmatch;
   //
   }
-  else if(hardware_version_==2)
+  else if(DMBversion()>=2)
   {
     std::cout << "ODMB: checkXMLValues() for crate " << this->crate() << " slot " << this->slot() << std::endl;
     // check ODMB and DCFEBs here
@@ -1041,7 +1069,7 @@ bool DAQMB::checkDAQMBXMLValues() {
     {
        cfeb_index = (*cfebItr).number();
        if(cfeb_index<0 || cfeb_index>6) continue; // should not happen
-       if(cfebItr->GetHardwareVersion() <= 1) continue;
+       if(CFEBversion() <= 1) continue;
        cfebdone=(donebits>>cfeb_index)&1;
 
        confmatch &= compareValues(cfeb_name[cfeb_index]+"FPGA Done", cfebdone, 1, print_errors);
@@ -1153,7 +1181,7 @@ void DAQMB::CheckCFEBsConfiguration(bool print_errors) {
 //
 void DAQMB::enable_cfeb() {
   //
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   cmd[0]=VTX2_USR1;
   sndbuf[0]=LOAD_STR;
@@ -1175,7 +1203,7 @@ void DAQMB::enable_cfeb() {
 //
 void DAQMB::setcrateid(int dword)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   cmd[0]=VTX2_USR1;
   sndbuf[0]=CRATE_ID;
@@ -1201,7 +1229,7 @@ void DAQMB::setcrateid(int dword)
   sndbuf[0]=NOOP;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   }
-  else if(hardware_version_==2)
+  else
   {
      WriteRegister(ODMB_CRATEID, dword);
   }
@@ -1209,7 +1237,7 @@ void DAQMB::setcrateid(int dword)
 //
 void DAQMB::setfebdelay(int dword)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   cmd[0]=VTX2_USR1;
   sndbuf[0]=FEB_DELAY;
@@ -1240,7 +1268,7 @@ void DAQMB::setfebdelay(int dword)
   sndbuf[0]=NOOP;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   }
-  else if(hardware_version_==2)
+  else
   {
   } 
 }
@@ -1248,7 +1276,7 @@ void DAQMB::setfebdelay(int dword)
 void DAQMB::setcaldelay(int dword)
 {
   //
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   cmd[0]=VTX2_USR1;
   sndbuf[0]=CAL_DELAY;
@@ -1266,7 +1294,7 @@ void DAQMB::setcaldelay(int dword)
   devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,2); 
   //(*MyOutput_) << "caldelay was set to " << std::hex << dword <<std::dec << std::endl;
   }
-  else if(hardware_version_==2)
+  else
   {
      odmb_set_Cal_delay(dword);
   }
@@ -1275,7 +1303,7 @@ void DAQMB::setcaldelay(int dword)
 
 void DAQMB::setdavdelay(int dword)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   cmd[0]=VTX2_USR1;
   sndbuf[0]=TRG_DAV_DELAY;
@@ -1294,7 +1322,7 @@ void DAQMB::setdavdelay(int dword)
   devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,2);
   (*MyOutput_) << "set dav delay to " << dword << std::endl;
   }
-  else if(hardware_version_==2)
+  else
   {
   } 
 }
@@ -1303,26 +1331,25 @@ void DAQMB::fxpreblkend(int dword)
 {
   for(unsigned icfeb = 0; icfeb < cfebs_.size(); ++icfeb) 
   {
-  int hversion=cfebs_[icfeb].GetHardwareVersion();
-  if(hversion<=1)
-  {
-    DEVTYPE dv = cfebs_[icfeb].scamDevice();
-    std::cout << "Setting dv= " << dv << " to " << std::dec << dword << std::endl;
-    cmd[0]=VTX_USR1;
-    sndbuf[0]=PREBLKEND;
-    devdo(dv,5,cmd,8,sndbuf,rcvbuf,0);
-    cmd[0]=VTX_USR2;
-    //  default preblkend is state 5
-    sndbuf[0]=dword&0x0F; 
-    devdo(dv,5,cmd,4,sndbuf,rcvbuf,0);
-    cmd[0]=VTX_BYPASS;
-    sndbuf[0]=0;
-    devdo(dv,5,cmd,0,sndbuf,rcvbuf,2);
-  }
-  else if (hversion==2)
-  {
-      dcfeb_hub(cfebs_[icfeb], PREBLKEND, 4, &dword, rcvbuf, NOW);
-  }  
+    if(CFEBversion()<=1)
+    {
+       DEVTYPE dv = cfebs_[icfeb].scamDevice();
+       std::cout << "Setting dv= " << dv << " to " << std::dec << dword << std::endl;
+       cmd[0]=VTX_USR1;
+       sndbuf[0]=PREBLKEND;
+       devdo(dv,5,cmd,8,sndbuf,rcvbuf,0);
+       cmd[0]=VTX_USR2;
+       //  default preblkend is state 5
+       sndbuf[0]=dword&0x0F; 
+       devdo(dv,5,cmd,4,sndbuf,rcvbuf,0);
+       cmd[0]=VTX_BYPASS;
+       sndbuf[0]=0;
+       devdo(dv,5,cmd,0,sndbuf,rcvbuf,2);
+    }
+    else
+    {
+       dcfeb_hub(cfebs_[icfeb], PREBLKEND, 4, &dword, rcvbuf, NOW);
+    }  
   }
 }
 
@@ -1335,22 +1362,21 @@ void DAQMB::LctL1aDelay(int dword) // Set cfeb latency (0=2.9us,1=3.3us,2=3.7us,
 
 void DAQMB::LctL1aDelay(int dword,unsigned icfeb) // Set cfeb latency (0=2.9us,1=3.3us,2=3.7us,3=4.1us)
 {
-  int hversion=cfebs_[icfeb].GetHardwareVersion();
-  if(hversion<=1)
+  if(CFEBversion()<=1)
   {
-  DEVTYPE dv = cfebs_[icfeb].scamDevice();
-  cmd[0]=VTX_USR1;
-  sndbuf[0]=LCTL1ADELAY;
-  devdo(dv,5,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_USR2;
-  // 
-  sndbuf[0]=dword&0x03; 
-  devdo(dv,5,cmd,2,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_BYPASS;
-  sndbuf[0]=0;
-  devdo(dv,5,cmd,0,sndbuf,rcvbuf,2);
+     DEVTYPE dv = cfebs_[icfeb].scamDevice();
+     cmd[0]=VTX_USR1;
+     sndbuf[0]=LCTL1ADELAY;
+     devdo(dv,5,cmd,8,sndbuf,rcvbuf,0);
+     cmd[0]=VTX_USR2;
+     // 
+     sndbuf[0]=dword&0x03; 
+     devdo(dv,5,cmd,2,sndbuf,rcvbuf,0);
+     cmd[0]=VTX_BYPASS;
+     sndbuf[0]=0;
+     devdo(dv,5,cmd,0,sndbuf,rcvbuf,2);
   }
-  else if (hversion==2)
+  else
   {
       dcfeb_hub(cfebs_[icfeb], LCTL1ADELAY, 2, &dword, rcvbuf, NOW);
       udelay(1000);
@@ -1360,7 +1386,7 @@ void DAQMB::LctL1aDelay(int dword,unsigned icfeb) // Set cfeb latency (0=2.9us,1
 
 void DAQMB::calctrl_fifomrst()
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   cmd[0]=VTX2_USR1;
   sndbuf[0]=CAL_FIFOMRST;
@@ -1386,7 +1412,7 @@ void DAQMB::calctrl_fifomrst()
 void DAQMB::calctrl_global()
 {
 
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   cmd[0]=VTX2_USR1;
   sndbuf[0]=GLOBAL_RST;
@@ -1404,18 +1430,18 @@ void DAQMB::calctrl_global()
 void DAQMB::restoreCFEBIdle() {
 // Liu Oct. 1, 2012
 // Set all CFEB's JTAG state machines
-   char cfeb_maskX = (hardware_version_<=1)?0x1f:0x7f;
+   char cfeb_maskX = (DMBversion()<=1)?0x1f:0x7f;
    write_cfeb_selector(cfeb_maskX); 
    WriteRegister(reset_CFEB_JTAG, 0);
 }
 
 
 void DAQMB::restoreMotherboardIdle() {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
     devdo(MCTRL,-1,cmd,0,sndbuf,rcvbuf,2);
   }
-  else if(hardware_version_==2)
+  else
   {
     dlog_do(-1, NULL, 0, NULL, NULL, 0);
     daqmb_do(-1, NULL, 0, NULL, NULL, 0, 2);
@@ -1428,8 +1454,7 @@ void  DAQMB::set_comp_mode(int dword)
 {
   for(unsigned icfeb = 0; icfeb < cfebs_.size(); ++icfeb) 
   {
-    int hversion=cfebs_[icfeb].GetHardwareVersion();
-    if(hversion<=1)
+    if(CFEBversion()<=1)
     {
       DEVTYPE dv = cfebs_[icfeb].scamDevice();
       
@@ -1444,7 +1469,7 @@ void  DAQMB::set_comp_mode(int dword)
       sndbuf[0]=0;
       devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
     }
-    else if (hversion==2)
+    else
     {
       dcfeb_hub(cfebs_[icfeb], COMP_MODE, 5, &dword, rcvbuf, NOW);
       udelay(100);
@@ -1455,12 +1480,7 @@ void  DAQMB::set_comp_mode(int dword)
 
 void DAQMB::set_comp_thresh_bc(float thresh)
 {
- // Liu, Sept. 2012
- // This is temporary solution to avoid the broadcast for CFEBs going to DCFEBs 
- // if CFEBs and DCFEBs mixed in one DMB, it won't work
- // TODO......
- int hversion=cfebs_[0].GetHardwareVersion();
- if(hversion<=1)
+ if(CFEBversion()<=1)
  {            
    char dt[2];
    // 
@@ -1492,7 +1512,7 @@ void DAQMB::set_comp_thresh_bc(float thresh)
    devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
    udelay(200);
  }
- else if (hversion==2)
+ else
  {
    dcfeb_set_comp_thresh_bc(thresh);
    udelay(100);
@@ -1544,8 +1564,7 @@ char dt[2];
  //
  for(unsigned icfeb = 0; icfeb < cfebs_.size(); ++icfeb) 
  {
-  int hversion=cfebs_[icfeb].GetHardwareVersion();
-  if(hversion<=1)
+  if(CFEBversion()<=1)
   {
    DEVTYPE dv = cfebs_[icfeb].scamDevice();
    cmd[0]=VTX_USR1;
@@ -1562,59 +1581,56 @@ char dt[2];
    cmd[0]=VTX_BYPASS;
    devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
   }
-  else if (hversion==2)
+  else
   {
    dcfeb_hub(cfebs_[icfeb], COMP_DAC, 15, dt, rcvbuf, NOW|NOOP_YES);
   }          
    usleep(200);
  }
 }
-//
-void DAQMB::set_comp_thresh(int icfeb, float thresh)
+
+void DAQMB::set_comp_thresh(CFEB & cfeb, float thresh)
 {
-char dt[2];
-// 
-/* digitize voltages */
-// 
- int dthresh=int(4095*((3.5-thresh)/3.5)); 
- dt[0]=0;
- dt[1]=0;
- for(int i=0;i<8;i++){
-   dt[0]|=((dthresh>>(i+7))&1)<<(7-i);
-   dt[1]|=((dthresh>>i)&1)<<(6-i);
- }
- dt[0]=((dt[1]<<7)&0x80) + ((dt[0]>>1)&0x7f);
- dt[1]=dt[1]>>1;
- //
- (*MyOutput_) << "Set_comp_thresh.icfeb=" << cfebs_[icfeb].number() << " thresh=" << thresh << std::endl;
- //
-  int hversion=cfebs_[icfeb].GetHardwareVersion();
-  if(hversion<=1)
+  char dt[2];
+  // 
+  /* digitize voltages */
+  // 
+  int dthresh=int(4095*((3.5-thresh)/3.5)); 
+  dt[0]=0;
+  dt[1]=0;
+  for(int i=0;i<8;i++)
   {
-    DEVTYPE dv = cfebs_[icfeb].scamDevice();
-    //
-    //(*MyOutput_) << "cfeb= " << icfeb << std::endl;
-    //(*MyOutput_) << "dv= " << dv << std::endl;
-    //
-    cmd[0]=VTX_USR1;
-    sndbuf[0]=COMP_DAC;
-    devdo(dv,5,cmd,8,sndbuf,rcvbuf,0);
-    cmd[0]=VTX_USR2;
-    sndbuf[0]=dt[0];
-    sndbuf[1]=dt[1];
-    sndbuf[2]=0x00; 
-    devdo(dv,5,cmd,15,sndbuf,rcvbuf,0);
-    cmd[0]=VTX_USR1;
-    sndbuf[0]=NOOP;
-    devdo(dv,5,cmd,8,sndbuf,rcvbuf,0);
-    cmd[0]=VTX_BYPASS;
-    devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
+     dt[0]|=((dthresh>>(i+7))&1)<<(7-i);
+     dt[1]|=((dthresh>>i)&1)<<(6-i);
   }
-  else if (hversion==2)
+  dt[0]=((dt[1]<<7)&0x80) + ((dt[0]>>1)&0x7f);
+  dt[1]=dt[1]>>1;
+  //
+  (*MyOutput_) << "Set_comp_thresh.icfeb=" << cfeb.number() << " thresh=" << thresh << std::endl;
+  //
+  if(CFEBversion()<=1)
   {
-    dcfeb_hub(cfebs_[icfeb], COMP_DAC, 15, dt, rcvbuf, NOW|NOOP_YES);
+     DEVTYPE dv = cfeb.scamDevice();
+     //
+     cmd[0]=VTX_USR1;
+     sndbuf[0]=COMP_DAC;
+     devdo(dv,5,cmd,8,sndbuf,rcvbuf,0);
+     cmd[0]=VTX_USR2;
+     sndbuf[0]=dt[0];
+     sndbuf[1]=dt[1];
+     sndbuf[2]=0x00; 
+     devdo(dv,5,cmd,15,sndbuf,rcvbuf,0);
+     cmd[0]=VTX_USR1;
+     sndbuf[0]=NOOP;
+     devdo(dv,5,cmd,8,sndbuf,rcvbuf,0);
+     cmd[0]=VTX_BYPASS;
+     devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
+  }
+  else
+  {
+     dcfeb_hub(cfeb, COMP_DAC, 15, dt, rcvbuf, NOW|NOOP_YES);
   }          
- usleep(200);
+  usleep(200);
 }
 
 // TODO: remove set_dac() and use only set_cal_dac()
@@ -1730,8 +1746,7 @@ void DAQMB::buck_shift_ext_bc(int nstrip)
  // This is temporary solution to avoid the broadcast for CFEBs going to DCFEBs 
  // if CFEBs and DCFEBs mixed in one DMB, it won't work
  // TODO......
- int hversion=cfebs_[0].GetHardwareVersion();
- if(hversion<=1)
+ if(CFEBversion()<=1)
  {            
   char shft_bits[6]={0,0,0,0,0,0};
 
@@ -1764,7 +1779,7 @@ void DAQMB::buck_shift_ext_bc(int nstrip)
 
   ::usleep(200);
  }
- else if (hversion==2)
+ else
  {
    dcfeb_buck_shift_ext_bc(nstrip);
  }
@@ -1795,8 +1810,7 @@ void DAQMB::buck_shift_comp_bc(int nstrip)
  // This is temporary solution to avoid the broadcast for CFEBs going to DCFEBs 
  // if CFEBs and DCFEBs mixed in one DMB, it won't work
  // TODO......
- int hversion=cfebs_[0].GetHardwareVersion();
- if(hversion<=1)
+ if(CFEBversion()<=1)
  {            
   char shft_bitsa[6]={0,0,0,0,0,0};
   char shft_bitsb[6]={0,0,0,0,0,0};
@@ -1855,7 +1869,7 @@ void DAQMB::buck_shift_comp_bc(int nstrip)
 
   ::usleep(200);
  }
- else if (hversion==2)
+ else
  {
    dcfeb_buck_shift_comp_bc(nstrip);
  }
@@ -1957,8 +1971,7 @@ void DAQMB::chan2shift(int chan[5][6][16], bool debug)
  // This is temporary solution to avoid the broadcast for CFEBs going to DCFEBs 
  // if CFEBs and DCFEBs mixed in one DMB, it won't work
  // TODO......
-      int hversion=cfebs_[icfeb].GetHardwareVersion();
-      if(hversion<=1)
+      if(CFEBversion()<=1)
       {            
       cmd[0]=VTX_USR1;
       sndbuf[0]=CHIP_MASK;
@@ -1985,7 +1998,7 @@ void DAQMB::chan2shift(int chan[5][6][16], bool debug)
       cmd[0]=VTX_BYPASS;
       devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
       }
-      else if (hversion==2)
+      else
       {
          write_cfeb_selector(cfebs_[icfeb].SelectorBit());
          BuckeyeShift((int)chip_mask, shft_bits);
@@ -2064,7 +2077,7 @@ void DAQMB::trigtest()
 void DAQMB::settrgsrc(int dword)
 {
   //
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   cmd[0]=VTX2_USR1;
   sndbuf[0]=37;
@@ -2092,7 +2105,7 @@ void DAQMB::settrgsrc(int dword)
 /* DAQMB   Voltages  */
 
 float DAQMB::adcplus(int ichp,int ichn){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   unsigned int ival= (readADC(ichp, ichn)&0x0fff);
   return (float) ival;
@@ -2102,7 +2115,7 @@ float DAQMB::adcplus(int ichp,int ichn){
 
 //
 float DAQMB::adcminus(int ichp,int ichn){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   short int ival= (readADC(ichp, ichn)&0x0fff);
   if((0x0800&ival)==0x0800)ival=ival|0xf000;
@@ -2115,7 +2128,7 @@ float DAQMB::adcminus(int ichp,int ichn){
 
 //
 float DAQMB::adc16(int ichp,int ichn){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   unsigned int ival= readADC(ichp, ichn);
   float cval=ival*4.999924/65535.;
@@ -2127,7 +2140,7 @@ float DAQMB::adc16(int ichp,int ichn){
 
 void DAQMB::dmb_readstatus(char status[11])
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //
   int i;
@@ -2202,8 +2215,7 @@ void DAQMB::cfebs_readstatus()
  // Liu, Sept. 2012
  // disabled for DCFEBs for now 
  // TODO......
-    int hversion=cfebs_[icfeb].GetHardwareVersion();
-    if(hversion<=1)
+    if(CFEBversion()<=1)
     {            
       DEVTYPE dv = cfebs_[icfeb].scamDevice();
       int idv=(int)(dv-F1SCAM); 
@@ -2254,7 +2266,7 @@ void DAQMB::cfebs_readstatus()
       devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
       //}
     }
-    else if(hversion==2)
+    else
     {
        unsigned st = dcfeb_read_status(cfebs_[icfeb]);
        memcpy(&febstat_[icfeb][0],&st, 4);
@@ -2375,7 +2387,7 @@ void DAQMB::cfebs_readstatus()
 float DAQMB::readthermx(int feb)
 {
   float cval=0.0;
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   float Vout= (float) readADC(1, feb) / 1000.;
   if(feb!=6){
@@ -2389,7 +2401,7 @@ float DAQMB::readthermx(int feb)
 
 
 unsigned int DAQMB::readADC(int ireg, int ichn) {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   cmd[0]=ireg; /* register 1-4 */
   cmd[1]=ichn; /* channel 0-7 */
@@ -2434,7 +2446,7 @@ static int conv_lowv[5][8]={
 void DAQMB::lowv_onoff(char c)
 {
  /* 0x3f (or 0xff for ODMB) means all on, 0x00 means all off  */
- unsigned short all_mask=(hardware_version_<=1)?0x3F:0xFF;
+ unsigned short all_mask=(DMBversion()>1)?0xFF:0x3F;
  unsigned short mask= all_mask & c & (~power_mask_);
  WriteRegister(set_POWER_MASK, mask);
 }
@@ -2447,14 +2459,14 @@ unsigned int DAQMB::lowv_rdpwrreg()
 int DAQMB::lvmb_power_state()
 {
   // TODO: try to get the REAL power state of CFEB/ALCT from LVMB
-  int all_mask = (hardware_version_<=1)?0x3F:0xFF;
+  int all_mask = (DMBversion()>1)?0xFF:0x3F;
   return (all_mask & ReadRegister(read_POWER_MASK));
 }
 
 /* FPGA and PROM codes  */
 //
 bool DAQMB::CheckVMEFirmwareVersion() {
-  if(hardware_version_ >1) return true;
+  if(DMBversion() >1) return true;
   //
   // read the value from the DMB:
   vmefpgaid();
@@ -2503,8 +2515,7 @@ bool DAQMB::CheckCFEBFirmwareVersion(CFEB & cfeb) {
 //
 unsigned int DAQMB::febpromuser(CFEB & cfeb)
 { unsigned int ibrd=0;
-  int hversion=cfeb.GetHardwareVersion();
-if(hversion<=1)
+if(CFEBversion()<=1)
 {
   DEVTYPE dv = cfeb.promDevice();
   printf("%d \n",dv);
@@ -2535,8 +2546,7 @@ if(hversion<=1)
 unsigned int  DAQMB::febpromid(CFEB & cfeb)
 {
   unsigned int ibrd=0;
-  int hversion=cfeb.GetHardwareVersion();
-if(hversion<=1)
+if(CFEBversion()<=1)
 {
   DEVTYPE dv = cfeb.promDevice();
   cmd[0]=PROM_IDCODE;
@@ -2561,8 +2571,7 @@ if(hversion<=1)
 unsigned int  DAQMB::febfpgauser(CFEB & cfeb)
 {
   unsigned int ibrd=0;
-  int hversion=cfeb.GetHardwareVersion();
-if(hversion<=1)
+if(CFEBversion()<=1)
 {
   DEVTYPE dv = cfeb.scamDevice();
   cmd[0]=VTX_USERCODE;
@@ -2578,7 +2587,7 @@ if(hversion<=1)
   sndbuf[0]=0;
   devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
 }
-else if(hversion==2)
+else
 {
   write_cfeb_selector(cfeb.SelectorBit());
   dcfeb_fpga_call(VTX6_USERCODE, 0, (char *)&ibrd);
@@ -2589,8 +2598,7 @@ else if(hversion==2)
 unsigned int  DAQMB::febfpgaid(CFEB & cfeb)
 {
   unsigned ibrd=0;
-  int hversion=cfeb.GetHardwareVersion();
-if(hversion<=1)
+if(CFEBversion()<=1)
 {
   DEVTYPE dv = cfeb.scamDevice();
   cmd[0]=VTX_IDCODE;
@@ -2608,7 +2616,7 @@ if(hversion<=1)
   sndbuf[0]=0;
   devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
 }
-else if(hversion==2)
+else
 {
   write_cfeb_selector(cfeb.SelectorBit());
   dcfeb_fpga_call(VTX6_IDCODE, 0, (char *)&ibrd);
@@ -2618,7 +2626,7 @@ else if(hversion==2)
 
 unsigned int DAQMB::mbpromuser(int prom)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   unsigned int ibrd;
   DEVTYPE dv;
@@ -2648,7 +2656,7 @@ unsigned int DAQMB::mbpromuser(int prom)
 
 unsigned int  DAQMB::mbpromid(int prom)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   unsigned int ibrd;
   DEVTYPE dv;
@@ -2675,7 +2683,7 @@ unsigned int  DAQMB::mbfpgauser()
 {
   unsigned int ibrd=0;
 
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   DEVTYPE dv=MCTRL;
   cmd[0]=VTX2_USERCODE;
@@ -2690,7 +2698,7 @@ unsigned int  DAQMB::mbfpgauser()
   sndbuf[0]=0;
   devdo(dv,6,cmd,0,sndbuf,rcvbuf,0);
   }
-  else
+  else if(DMBversion()==2)
   {
      odmb_fpga_call(VTX6_USERCODE, 0, (char *)&ibrd);
      if ((ibrd & 0xFFFF) == 0xDBDB) ibrd >>= 16;   // use the high 16-bits if the low 16-bits are 0xDBDB.
@@ -2702,7 +2710,7 @@ unsigned int  DAQMB::mbfpgaid()
 {
   unsigned int ibrd=0;
 
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   DEVTYPE dv=MCTRL;
   cmd[0]=VTX2_IDCODE;
@@ -2717,7 +2725,7 @@ unsigned int  DAQMB::mbfpgaid()
   sndbuf[0]=0;
   devdo(dv,6,cmd,0,sndbuf,rcvbuf,0);
   }
-  else
+  else if(DMBversion()==2)
   {
      odmb_fpga_call(VTX6_IDCODE, 0, (char *)&ibrd);
   } 
@@ -2727,7 +2735,7 @@ unsigned int  DAQMB::mbfpgaid()
 //
 void DAQMB::vmefpgaid()
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //
   cmd[0]=1;
@@ -2755,14 +2763,13 @@ void DAQMB::vmefpgaid()
 //
 void DAQMB::set_cal_dac(float volt0,float volt1)
 {
-  int cfeb_hversion=cfebs_[0].GetHardwareVersion();
   unsigned short int dacout0,dacout1;
 
     /* digitize voltages */  
   dacout0=int(volt0*4095./5.0);
   dacout1=int(volt1*4095./5.0);
 
-  if(hardware_version_<=1)
+  if(CFEBversion()<=1)
   {
     /* load cdac */
     /* cmd[0]=(0xff&dacout0);
@@ -2777,7 +2784,7 @@ void DAQMB::set_cal_dac(float volt0,float volt1)
     cmd[1]=((dacout1>>8)&0xff);
     devdo(CDAC,32,cmd,0,sndbuf,rcvbuf,2); 
   }
-  else if(hardware_version_==2 && cfeb_hversion==2)
+  else
   {
     for(unsigned icfeb = 0; icfeb < cfebs_.size(); ++icfeb) 
     {
@@ -2809,8 +2816,7 @@ char shft_bits[6][6];
         shft_bits[lay][4]=((shift_array[brd][lay][2]<<7)|(shift_array[brd][lay][3]<<4)|(shift_array[brd][lay][4]<<1)|(shift_array[brd][lay][5]>>2))&0XFF;
         shft_bits[lay][5]=((shift_array[brd][lay][0]<<5)|(shift_array[brd][lay][1]<<2)|(shift_array[brd][lay][2]>>1))&0XFF;
       }
-    int hversion=cfebItr->GetHardwareVersion();
-    if(hversion<=1)
+    if(CFEBversion() <=1)
     {            
       DEVTYPE dv = cfebItr->scamDevice();
       cmd[0]=VTX_USR1;
@@ -2844,7 +2850,7 @@ char shft_bits[6][6];
       cmd[0]=VTX_BYPASS;
       devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
     }
-    else if (hversion==2)
+    else
     {
       int chip_mask= cfebItr->chipMask();
       write_cfeb_selector(cfebItr->SelectorBit());
@@ -2868,8 +2874,7 @@ char shft_bits[6][6];
 
   for(CFEBItr cfebItr = cfebs_.begin(); cfebItr != cfebs_.end(); ++cfebItr) 
   {
-    int hversion=cfebItr->GetHardwareVersion();
-    if(hversion<=1)
+    if(CFEBversion()<=1)
     {            
       DEVTYPE dv = cfebItr->scamDevice();
       int brd=cfebItr->number();
@@ -2920,7 +2925,7 @@ char shft_bits[6][6];
         jj++;
       }
     }
-    else if (hversion==2)
+    else
     {
       int chip_mask= cfebItr->chipMask();
       write_cfeb_selector(cfebItr->SelectorBit());
@@ -2946,8 +2951,7 @@ char pat[42],chk[42] = {0xBA,0xDF,0xEE,0xD5,0xDE,0xAD};
 
   for(CFEBItr cfebItr = cfebs_.begin(); cfebItr != cfebs_.end(); ++cfebItr) 
   {
-    int hversion=cfebItr->GetHardwareVersion();
-    if(hversion<=1)
+    if(CFEBversion()<=1)
     {            
 
       DEVTYPE dv = cfebItr->scamDevice();
@@ -3003,7 +3007,7 @@ char pat[42],chk[42] = {0xBA,0xDF,0xEE,0xD5,0xDE,0xAD};
       cmd[0]=VTX_BYPASS;
       devdo(dv,5,cmd,0,sndbuf,rcvbuf,2);
     }
-    else if(hversion==2)
+    else
     {
       (*MyOutput_)<<"Buckeye Shift Test for DCFEB #" << cfebItr->number()+1 << std::endl;
                             
@@ -3047,8 +3051,7 @@ char shft_bits[6][6];
 for(CFEBItr cfebItr = cfebs_.begin(); cfebItr != cfebs_.end(); ++cfebItr) 
 {
 
-  int hversion=cfebItr->GetHardwareVersion();
-  if(hversion<=1)
+  if(CFEBversion()<=1)
   {            
     DEVTYPE dv = cfebItr->scamDevice();
 
@@ -3075,7 +3078,7 @@ for(CFEBItr cfebItr = cfebs_.begin(); cfebItr != cfebs_.end(); ++cfebItr)
     cmd[0]=VTX_BYPASS;
     devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
   }
-  else if (hversion==2)
+  else
   {
       for(i=0; i<6; i++) for(j=0; j<6; j++) shft_bits[i][j]=0;
       int chip_mask= cfebItr->chipMask();
@@ -3090,7 +3093,7 @@ for(CFEBItr cfebItr = cfebs_.begin(); cfebItr != cfebs_.end(); ++cfebItr)
 
 void DAQMB::set_cal_tim_pulse(int itim)
 {
-  if(hardware_version_<=1)
+  if(CFEBversion()<=1)
   {
     //
     //(*MyOutput_)<< "setting pulse timing to " << itim << std::endl; 
@@ -3148,7 +3151,7 @@ void DAQMB::set_cal_tim_inject(int ntim)
 
 void DAQMB::toggle_pedestal()
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
     cmd[0]=VTX2_USR1;
     sndbuf[0]=PED_TRIG;
@@ -3165,7 +3168,7 @@ void DAQMB::toggle_pedestal()
     cmd[0]=VTX2_BYPASS;
     devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,2);
   }
-  else if ( hardware_version_ ==2 ){
+  else if ( DMBversion() ==2 ){
     // set ODMB to DCFEB Pedestal mode
     WriteRegister(L1A_MODE, 1);  /* 0->normal mode; 1->pedestal mode */
   }
@@ -3174,7 +3177,7 @@ void DAQMB::toggle_pedestal()
 
 void DAQMB::pulse(int Num_pulse,unsigned int pulse_delay)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
    int j;
    for(j=0;j<Num_pulse;j++){
@@ -3203,7 +3206,7 @@ void DAQMB::pulse(int Num_pulse,unsigned int pulse_delay)
 void DAQMB::inject(int Num_pulse,unsigned int pulse_delay)
 {
 
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
    (*MyOutput_) << "DAQMB.inject " << std::endl;
 
@@ -3257,7 +3260,7 @@ void DAQMB::wrtfifo(int fifo,int nsndfifo,char* sndfifo)
 //
 void DAQMB::readfifo(int fifo,int nrcvfifo,char* rcvfifo)
 {  
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //
   //(*MyOutput_) << "readfifo" << std::endl;
@@ -3308,11 +3311,14 @@ void DAQMB::readfifo(int fifo,int nrcvfifo,char* rcvfifo)
 }
 
 // DAQMB load and read flash memory (electronics experts only)
-
+//
+// July 3,2018, Liu
+// DMB's flash memory Device #9 is used for CFEB (on start-up) only, not needed for DCFEB or xDCFEB.
+//
 void DAQMB::buckflash_load(char *fshift)
 {
   
-  if(hardware_version_<=1)
+  if(CFEBversion()<=1)
   {
   (*MyOutput_) << "inside load" <<std::endl;
   
@@ -3330,7 +3336,7 @@ void DAQMB::buckflash_load(char *fshift)
 
 void DAQMB::buckflash_load2(int nbytes,char *fshift)
 {
-  if(hardware_version_<=1)
+  if(CFEBversion()<=1)
   {
  cmd[0]=0;
  devdo(BUCSHF,1,cmd,0,sndbuf,rcvbuf,0); // initialize programming
@@ -3344,7 +3350,7 @@ void DAQMB::buckflash_load2(int nbytes,char *fshift)
 
 void DAQMB::buckflash_read(char *rshift)
 {
-  if(hardware_version_<=1)
+  if(CFEBversion()<=1)
   {
  cmd[0]=0;
  devdo(BUCSHF,1,cmd,0,sndbuf,rcvbuf,1); // initialize programming 
@@ -3357,7 +3363,7 @@ void DAQMB::buckflash_read(char *rshift)
 
 void DAQMB::buckflash_read2(int nbytes,char *rshift)
 {
-  if(hardware_version_<=1)
+  if(CFEBversion()<=1)
   {
   printf("entered buckflash_read2 \n");
   cmd[0]=0;
@@ -3371,7 +3377,7 @@ void DAQMB::buckflash_read2(int nbytes,char *rshift)
 
 void DAQMB::buckflash_pflash()
 {
-  if(hardware_version_<=1)
+  if(CFEBversion()<=1)
   {
  cmd[0]=0;
  devdo(BUCSHF,1,cmd,0,sndbuf,rcvbuf,0); //initialize the counter
@@ -3385,7 +3391,7 @@ void DAQMB::buckflash_pflash()
 
 void DAQMB::buckflash_init()
 {
-  if(hardware_version_<=1)
+  if(CFEBversion()<=1)
   {
  cmd[0]=0;
  devdo(BUCSHF,1,cmd,0,sndbuf,rcvbuf,0); // initialize programming
@@ -3399,7 +3405,7 @@ void DAQMB::buckflash_init()
 
 void DAQMB::buckflash_erase()
 {
-  if(hardware_version_<=1)
+  if(CFEBversion()<=1)
   {
   //
   cmd[0]=0;
@@ -4942,7 +4948,7 @@ void Parse(char *buf,int *Count,char **Word)
 
 void DAQMB::rdbkvirtexII()
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   char a[4],b[4]; 
   #define clbword 2494 //(x32)
@@ -5155,7 +5161,7 @@ for(i=0;i<4;i++){
 
 void DAQMB::rdbkvirtex(DEVTYPE devnum)  //FEB FPGA 1-5 or  F1SCAM->F5SCAM
 {
-  if(hardware_version_<=1)
+  if(CFEBversion()<=1)
   {
   const int clbword2 = 15876;
   //const int bramword = 780;   // That is just for XCV50
@@ -5323,7 +5329,7 @@ void DAQMB::executeCommand(std::string command) {
 
 void DAQMB::toggle_caltrg()
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   cmd[0]=VTX2_USR1;
   sndbuf[0]=11;
@@ -5369,7 +5375,7 @@ void DAQMB::setpulsedelay(int tinj){
 
 void DAQMB::set_rndmtrg_rate(int rate)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   if (rate<0) rate=0x2db6d;
   cmd[0]=VTX2_USR1;
@@ -5394,7 +5400,7 @@ void DAQMB::set_rndmtrg_rate(int rate)
 
 void DAQMB::toggle_rndmtrg_start()
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   cmd[0]=VTX2_USR1;
   sndbuf[0]=RTRG_TGL;
@@ -5423,7 +5429,7 @@ void DAQMB::burst_rndmtrg()
 //
 void DAQMB::sfm_test_load(char *sndpat)
 {    
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //Program SFM with 0,1,2,3,...,263
   cmd[0]=VTX2_USR1;
@@ -5446,7 +5452,7 @@ void DAQMB::sfm_test_load(char *sndpat)
 //
 void DAQMB::sfm_test_read(char *rcvpat)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   int boffset;
   //Read SFM 
@@ -5478,13 +5484,13 @@ void DAQMB::sfm_test_read(char *rcvpat)
 //
 
 void DAQMB::cbldly_init(){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
 	 printf(" Initialize \n");
-         cmd[0]=VTX_USR1; 
+         cmd[0]=VTX2_USR1; 
          sndbuf[0]=0x1A;
          devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-         cmd[0]=VTX_USR1;
+         cmd[0]=VTX2_USR1;
          sndbuf[0]=NOOP;
          devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
          cmd[0]=VTX2_BYPASS;
@@ -5494,7 +5500,7 @@ void DAQMB::cbldly_init(){
 
 void DAQMB::trigset2(int nset, int iuse[5])
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   int i,j,k;
   char tsndbuf[512];
@@ -5546,7 +5552,7 @@ void DAQMB::trigset2(int nset, int iuse[5])
 
 void DAQMB::trgfire()
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   cmd[0]=VTX2_USR1;
   sndbuf[0]=CYCLE_TRIG;
@@ -5566,13 +5572,13 @@ void DAQMB::trgfire()
 }
 
 void DAQMB::cbldly_trig(){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   printf(" Trigger Once \n");
-  cmd[0]=VTX_USR1; 
+  cmd[0]=VTX2_USR1; 
   sndbuf[0]=0x03;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_USR1;
+  cmd[0]=VTX2_USR1;
   sndbuf[0]=NOOP;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   cmd[0]=VTX2_BYPASS;
@@ -5581,14 +5587,14 @@ void DAQMB::cbldly_trig(){
 }
 
 void DAQMB::cbldly_loadfinedelay(){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //
   printf(" Load Fine Delay \n");
-  cmd[0]=VTX_USR1; 
+  cmd[0]=VTX2_USR1; 
   sndbuf[0]=0x15;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_USR1;
+  cmd[0]=VTX2_USR1;
   sndbuf[0]=NOOP;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   cmd[0]=VTX2_BYPASS;
@@ -5598,13 +5604,13 @@ void DAQMB::cbldly_loadfinedelay(){
 }
 
 void DAQMB::cbldly_programSFM(){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   (*MyOutput_) <<" Program Serial Flash Memory" << std::endl ;
-  cmd[0]=VTX_USR1; 
+  cmd[0]=VTX2_USR1; 
   sndbuf[0]=0x18;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_USR1;
+  cmd[0]=VTX2_USR1;
   sndbuf[0]=NOOP;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   cmd[0]=VTX2_BYPASS;
@@ -5613,13 +5619,13 @@ void DAQMB::cbldly_programSFM(){
 }
 
 void DAQMB::cbldly_wrtprotectSFM(){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   (*MyOutput_) << " SFM Write Protect" <<std::endl;
-  cmd[0]=VTX_USR1; 
+  cmd[0]=VTX2_USR1; 
   sndbuf[0]=0x1e; 
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_USR1;
+  cmd[0]=VTX2_USR1;
   sndbuf[0]=NOOP;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   cmd[0]=VTX2_BYPASS;
@@ -5628,13 +5634,13 @@ void DAQMB::cbldly_wrtprotectSFM(){
 }
 
 void DAQMB::cbldly_loadmbidSFM(){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   printf(" Load DAQMB ID to SFM  \n");
-  cmd[0]=VTX_USR1; 
+  cmd[0]=VTX2_USR1; 
   sndbuf[0]=0x16;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_USR1;
+  cmd[0]=VTX2_USR1;
   sndbuf[0]=NOOP;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   cmd[0]=VTX2_BYPASS;
@@ -5643,13 +5649,13 @@ void DAQMB::cbldly_loadmbidSFM(){
 }
 
 void DAQMB::cbldly_loadcfebdlySFM(){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   printf(" Load CFEB clock delay to SFM \n"); 
-  cmd[0]=VTX_USR1; 
+  cmd[0]=VTX2_USR1; 
   sndbuf[0]=0x17;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_USR1;
+  cmd[0]=VTX2_USR1;
   sndbuf[0]=NOOP;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   cmd[0]=VTX2_BYPASS;
@@ -5658,13 +5664,13 @@ void DAQMB::cbldly_loadcfebdlySFM(){
 }
 
 void DAQMB::cbldly_refreshcfebdly(){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   printf(" Refresh Onboard CFEB delay \n");
-  cmd[0]=VTX_USR1; 
+  cmd[0]=VTX2_USR1; 
   sndbuf[0]=0x1d;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_USR1;
+  cmd[0]=VTX2_USR1;
   sndbuf[0]=NOOP;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   cmd[0]=VTX2_BYPASS;
@@ -5681,7 +5687,7 @@ void DAQMB::devdoReset(){
 std::string DAQMB::CounterName(int counter){
   //
   std::string name = "NO counter found" ;
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
      //
      if ( counter == 0 ) name = "L1A to LCT delay";
@@ -5694,7 +5700,7 @@ std::string DAQMB::CounterName(int counter){
      if ( counter == 7 ) name = "ALCT DAV Scope  ";
     //
   } 
-  else if(hardware_version_==2)
+  else if(DMBversion()==2)
   {
      //
      if ( counter == 0 ) name = "L1A Match      ";
@@ -5711,7 +5717,7 @@ std::string DAQMB::CounterName(int counter){
 //
 void DAQMB::PrintCounters(){
   //
- if(hardware_version_<=1)
+ if(DMBversion()<=1)
  {
   readtimingCounter();
   //
@@ -5754,7 +5760,7 @@ void DAQMB::PrintCounters(){
 
 void DAQMB::readtimingCounter()
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //
   //printf(" Entered READ_TIMING \n");
@@ -5792,7 +5798,7 @@ void DAQMB::readtimingCounter()
 
 void DAQMB::readtimingScope()
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //printf(" Entered READ_TIMING \n");
   //
@@ -5836,7 +5842,7 @@ void DAQMB::readtimingScope()
 
 char * DAQMB::GetCounters()
 { 
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //
   //printf(" Entered READ_TIMING \n");
@@ -5911,7 +5917,7 @@ char * DAQMB::GetCounters()
 
   return (char *)FinalCounter;
   }
-  else if(hardware_version_==2)
+  else if(DMBversion()==2)
   {
      for(int addr=1; addr<=9; addr++) read_later(L1A_MATCH_BASE+(addr<<4));    // start 0
      for(int addr=1; addr<=9; addr++) read_later(L1A_GAP_BASE+(addr<<4));      // start 9
@@ -5935,11 +5941,11 @@ char * DAQMB::GetCounters()
 unsigned DAQMB::GetCounter(int counter)
 {
   unsigned r=0;
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
      if(counter>=0 && counter<=8) r=FinalCounter[counter];
   }
-  else if(hardware_version_==2)
+  else if(DMBversion()==2)
   {
      if(counter>=0 && counter<=80) r=NewCounter[counter];
   }
@@ -6044,14 +6050,14 @@ void DAQMB::daqmb_promfpga_dump()
 }
 //
 void DAQMB::ProgramSFM(){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //
   (*MyOutput_) << " Program Serial Flash Memory" << std::endl;
-  cmd[0]=VTX_USR1; 
+  cmd[0]=VTX2_USR1; 
   sndbuf[0]=0x18;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_USR1;
+  cmd[0]=VTX2_USR1;
   sndbuf[0]=NOOP;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   cmd[0]=VTX2_BYPASS;
@@ -6061,7 +6067,7 @@ void DAQMB::ProgramSFM(){
 }
 //
 void DAQMB::LoadCFEBDelaySFM(){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //
   printf(" Load CFEB clock delay to SFM \n"); 
@@ -6078,7 +6084,7 @@ void DAQMB::LoadCFEBDelaySFM(){
 }
 //
 void DAQMB::LoadDMBIdSFM(){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //
   printf(" Load DAQMB ID to SFM  \n");
@@ -6095,14 +6101,14 @@ void DAQMB::LoadDMBIdSFM(){
 }
 //
 void DAQMB::SFMWriteProtect(){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //
   (*MyOutput_) << " SFM Write Protect" << std::endl;
-  cmd[0]=VTX_USR1; 
+  cmd[0]=VTX2_USR1; 
   sndbuf[0]=0x1e; 
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_USR1;
+  cmd[0]=VTX2_USR1;
   sndbuf[0]=NOOP;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   cmd[0]=VTX2_BYPASS;
@@ -6112,13 +6118,13 @@ void DAQMB::SFMWriteProtect(){
 }
 //
 void DAQMB::ToogleBXN(){
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //
-  cmd[0]=VTX_USR1; 
+  cmd[0]=VTX2_USR1; 
   sndbuf[0]=34; 
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_USR1;
+  cmd[0]=VTX2_USR1;
   sndbuf[0]=NOOP;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   cmd[0]=VTX2_BYPASS;
@@ -6129,7 +6135,7 @@ void DAQMB::ToogleBXN(){
 //
 void DAQMB::LoadCableDelaySFM()
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   printf(" Load Cable delay \n");
   cmd[0]=VTX2_USR1; 
@@ -6145,7 +6151,7 @@ void DAQMB::LoadCableDelaySFM()
 //
 void DAQMB::setcbldly(int dword)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   //
   cmd[0]=VTX2_USR1;
@@ -6201,7 +6207,7 @@ void DAQMB::PrintCounters(int user_option){
   (*MyOutput_) << "      2 for print most frequent values" <<std::endl;
   (*MyOutput_) << "      3 for cuts by TMB DAV and/or same DAV, then print most frequent" <<std::endl;
 
-  if(hardware_version_<=1){
+  if(DMBversion()<=1){
     //
     if( (user_option<1) | (user_option>3) ) (*MyOutput_) << "Invalid option entered" << std::endl;
     //
@@ -6376,7 +6382,8 @@ void DAQMB::PrintCounters(int user_option){
       //
     }    
     //
-  }else{ // for  hardware_version_ == 2
+  }else if( DMBversion() == 2)
+  { 
     (*MyOutput_) << std::setw(20) << "L1A Count: " << std::setw(8) << read_l1a_count() << std::endl;
     (*MyOutput_) << std::setw(20) << "Packets to DDU: " << std::setw(8) << read_num_ddu_packets() << std::endl;
     (*MyOutput_) << std::setw(20) << "QPLL unlocks: " << std::setw(8) << read_num_qpll_unlocks() << std::endl;
@@ -6514,7 +6521,7 @@ void DAQMB::test3()
 //
 void DAQMB::wrtfifox(enum DEVTYPE devnum,unsigned short int pass)
 { 
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
 
  if(devnum<FIFO1||devnum>FIFO7){
@@ -6538,7 +6545,7 @@ void DAQMB::wrtfifox(enum DEVTYPE devnum,unsigned short int pass)
 
 int DAQMB::readfifox_chk(enum DEVTYPE devnum,unsigned int short memchk)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
  int bad;
  if(devnum<FIFO1||devnum>FIFO7){
@@ -6635,7 +6642,7 @@ int DAQMB::memchk(enum DEVTYPE devnum)
 //
 int DAQMB::readfifox_togglechk(enum DEVTYPE devnum)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
  int bad;
  if(devnum<FIFO1||devnum>FIFO7){
@@ -6681,7 +6688,7 @@ int DAQMB::readfifox_togglechk(enum DEVTYPE devnum)
 //
 void DAQMB::wrtfifo_toggle(enum DEVTYPE devnum)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
     if(devnum<FIFO1||devnum>FIFO7){
     printf(" Device is not a FIFO \n");
@@ -6700,7 +6707,7 @@ void DAQMB::wrtfifo_toggle(enum DEVTYPE devnum)
 //
 void DAQMB::wrtfifo_123(enum DEVTYPE devnum)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
      if(devnum<FIFO1||devnum>FIFO7){
        printf(" Device is not a FIFO \n");
@@ -6720,7 +6727,7 @@ void DAQMB::wrtfifo_123(enum DEVTYPE devnum)
 //
 int DAQMB::readfifox_123chk(enum DEVTYPE devnum)
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
  int bad;
  if(devnum<FIFO1||devnum>FIFO7){
@@ -7009,7 +7016,7 @@ int  DAQMB::test8()
     for(i=0;i<10;i++){
       //
       v0=0.25*i;
-      set_comp_thresh(cfeb,v0);
+      set_comp_thresh(cfebs_[cfeb],v0);
       //set_comp_thresh(v0);
       usleep(500000);
       //
@@ -7270,7 +7277,7 @@ int DAQMB::DCSreadAll(char *data)
 {
   unsigned short n, m;
   int retn=0;
- if (hardware_version_<=1)
+ if (DMBversion()<=1)
  {
   if(checkvme_fail()) return 0;
 
@@ -7303,7 +7310,7 @@ int DAQMB::DCSreadAll(char *data)
      else     read_later(0x7004);
   }
  }
- else if (hardware_version_==2)
+ else if (DMBversion()==2)
  {
   if(checkvme_fail()) return 0;
 
@@ -7401,9 +7408,9 @@ bool DAQMB::checkvme_fail()
    return (bool)failed_checkvme_;
 }
 
-int DAQMB::cfeb_testjtag_shift(int icfeb,char *out){
-  int hversion=cfebs_[icfeb].GetHardwareVersion();
-  if(hversion<=1)
+int DAQMB::cfeb_testjtag_shift(int icfeb,char *out)
+{
+  if(CFEBversion()<=1)
   {
     int ierr = 0;
     DEVTYPE dv = cfebs_[icfeb].scamDevice();
@@ -7596,29 +7603,6 @@ void DAQMB::small_configure() {
 
    }
 
-void DAQMB::testlink(DEVTYPE devnum){
-//
-// this function  never been used anywhere
-/*
-  cmd[0]=VTX_USR1;
-  sndbuf[0]=0x05;
-  sndbuf[1]=0x00;
-  devdo(devnum,5,cmd,8,sndbuf,rcvbuf,0);
-  usleep(50000);
-  // due to the routing in Xilinx, we need extra time here
-  cmd[0]=VTX_USR1;
-  sndbuf[0]=0x03;
-  sndbuf[1]=0x00;
-  devdo(devnum,5,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_USR1;
-  sndbuf[0]=0x04;
-  sndbuf[1]=0x00;
-  devdo(devnum,5,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX_BYPASS;
-  sndbuf[0]=0x00;
-  devdo(devnum,5,cmd,0,sndbuf,rcvbuf,0);
-*/
-}
 
 void DAQMB::varytmbdavdelay(int delay)
 {
@@ -7635,7 +7619,7 @@ void DAQMB::varytmbdavdelay(int delay)
 
 void DAQMB::load_feb_clk_delay()
 {
-  if(hardware_version_<=1)
+  if(DMBversion()<=1)
   {
   printf(" load_feb_clk_delay called \n");
   cmd[0]=VTX2_USR1;
@@ -7711,7 +7695,7 @@ int DAQMB::read_cfeb_selector()
 {
   int mask;
   read_one(READ_CFEB_SELECTOR, (char *)&mask);
-  mask &= ((hardware_version_==2)?0x7F:0x1F);
+  mask &= ((DMBversion()==2 || DMBversion()==4)?0x7F:0x1F);
   return mask;
 }
 
@@ -7724,7 +7708,12 @@ void DAQMB::cfeb_do(int ncmd, void *cmd,int nbuf, void *inbuf,char *outbuf,int i
           irdsnd = 3    read, now
   */
    // code moved to daqmb_do()
-   daqmb_do(ncmd, cmd, nbuf, inbuf, outbuf, irdsnd, 1);
+   if(CFEBversion()<=1)
+     daqmb_do(ncmd, cmd, nbuf, inbuf, outbuf, irdsnd, 6);  // CFEB FPGA
+   else if(CFEBversion()==2)
+     daqmb_do(ncmd, cmd, nbuf, inbuf, outbuf, irdsnd, 1);  // DCFEB FPGA
+   else if(CFEBversion()==3)
+     daqmb_do(ncmd, cmd, nbuf, inbuf, outbuf, irdsnd, 7);  // xDCFEB FPGA
 }
 
 void DAQMB::dcfeb_fpga_call(int inst, unsigned data, char *outbuf)
@@ -7747,8 +7736,7 @@ std::vector<float> DAQMB::dcfeb_fpga_monitor(CFEB & cfeb, bool inDCS)
   float readf;
 
   readout.clear();
-  int hversion=cfeb.GetHardwareVersion();
-  if(hversion==2)
+  if(CFEBversion()>1)
   {
      write_cfeb_selector(cfeb.SelectorBit());
      comd=VTX6_SYSMON;
@@ -7820,6 +7808,9 @@ std::vector<float> DAQMB::dcfeb_fpga_monitor(CFEB & cfeb, bool inDCS)
   return readout;
 }
 
+// July 3, 2018, Liu
+// dcfeb_core() and decfeb_hub(), and all methods using them, are exactly the same for DCFEB and xDCFEB.
+//
 void DAQMB::dcfeb_core(int jfunc, int nbit,void *inbuf, char *outbuf, int option)
 {
 // option
@@ -7926,7 +7917,7 @@ void DAQMB::BuckeyeShift(int chip_mask,char shft_bits[6][6], char *shft_out)
 
 void DAQMB::Set_ReadAnyL1a()
 {
-  if(hardware_version_==2)
+  if(CFEBversion()>1)
   {
      for(unsigned icfeb = 0; icfeb < cfebs_.size(); ++icfeb)
      {
@@ -7986,16 +7977,16 @@ void DAQMB::dcfeb_set_PipelineDepth(CFEB & cfeb, short int depth)
 
 // set pipeline depths and fine delays for all DCFEBs; this is necessary to
 // properly read out data
-void DAQMB::set_and_initalize_pipelines_and_fine_delays() {
+void DAQMB::set_and_initalize_pipelines_and_others() {
   for(unsigned lfeb=0; lfeb<cfebs_.size();lfeb++){
-    int hversion=cfebs_[lfeb].GetHardwareVersion();
-    if(hversion==2)
+    if(CFEBversion()>1)
       {
 	dcfeb_set_PipelineDepth(cfebs_[lfeb], cfebs_[lfeb].GetPipelineDepth());
 	usleep(100);
 	Pipeline_Restart(cfebs_[lfeb]);
 	usleep(100);
-	dcfeb_fine_delay(cfebs_[lfeb], cfebs_[lfeb].GetFineDelay());
+//	dcfeb_fine_delay(cfebs_[lfeb], cfebs_[lfeb].GetFineDelay());
+        dcfeb_comp_clockphase(cfebs_[lfeb], comp_clk_phase_cfeb_[cfebs_[lfeb].number()]);
 	usleep(100);
       }
   }
@@ -8010,8 +8001,18 @@ void DAQMB::Set_NSAMPLE(CFEB & cfeb, int nsample)
 
 unsigned short DAQMB::dcfeb_fine_delay(CFEB & cfeb, unsigned short delay)
 {
+// 2018-07-12, Liu
+// This was a wrong name. FINE_DELAY was pointed to function 28 which is comp_clock_phase
+//  unsigned short temp;
+//  dcfeb_hub(cfeb, FINE_DELAY, 5, &delay, (char *)&temp, NOW|READ_YES);
+//  return (temp&0x1F);
+return 0;
+}
+
+unsigned short DAQMB::dcfeb_comp_clockphase(CFEB & cfeb, unsigned short phase)
+{
   unsigned short temp;
-  dcfeb_hub(cfeb, FINE_DELAY, 5, &delay, (char *)&temp, NOW|READ_YES);
+  dcfeb_hub(cfeb, COMP_CLOCK_PHASE, 5, &phase, (char *)&temp, NOW|READ_YES);
   return (temp&0x1F);
 }
 
@@ -8347,37 +8348,44 @@ void DAQMB::dcfeb_erase_param(CFEB & cfeb)
   std::cout << "Erasing all parameter blocks on DCFEB #" << cfeb.number()+1 << "..." << std::endl;
   write_cfeb_selector(cfeb.SelectorBit());
 
-  dcfeb_bpi_reset();
-  dcfeb_bpi_enable();
-  dcfebprom_timerstop();
-  dcfebprom_timerreset();
-  dcfebprom_timerstart();
-  for(int paramblock=0; paramblock<11; paramblock++)
+  if(CFEBversion() == 2)
   {
-     if(paramblock==1) continue;
-     if(paramblock<4)
+     dcfeb_bpi_reset();
+     dcfeb_bpi_enable();
+     dcfebprom_timerstop();
+     dcfebprom_timerreset();
+     dcfebprom_timerstart();
+     for(int paramblock=0; paramblock<11; paramblock++)
      {
-        uaddr=0x007f;  // segment address for parameter blocks
-        laddr=(3-paramblock)*0x4000;
-     }
-     else
-     {
-        uaddr=0x007E - (paramblock-4);
-        laddr=0;
-     }
-     fulladdr = (uaddr<<16) + laddr;
+        if(paramblock==1) continue;
+        if(paramblock<4)
+        {
+           uaddr=0x007f;  // segment address for parameter blocks
+           laddr=(3-paramblock)*0x4000;
+        }
+        else
+        {
+           uaddr=0x007E - (paramblock-4);
+           laddr=0;
+        }
+        fulladdr = (uaddr<<16) + laddr;
 
-     dcfebprom_loadaddress(uaddr,laddr);
-     // unlock and erase the block
-     dcfebprom_unlockerase();
+        dcfebprom_loadaddress(uaddr,laddr);
+        // unlock and erase the block
+        dcfebprom_unlockerase();
 
-     udelay((paramblock<4)?1000000:3000000);
+        udelay((paramblock<4)?1000000:3000000);
+     }
+     dcfeb_bpi_disable();
+     udelay(10);
   }
-  dcfeb_bpi_disable();
-  udelay(10);
+  else if(CFEBversion() == 3)
+  {
+     xdcfeb_erase_eprom(2, 0);
+  }  
 }
 
-void DAQMB::dcfeb_readfirmware_mcs(CFEB & cfeb, const char *filename)
+void DAQMB::dcfeb_read_firmware(CFEB & cfeb, const char *filename)
 {
 
    unsigned fulladdr=0, uaddr, laddr;
@@ -8399,11 +8407,14 @@ void DAQMB::dcfeb_readfirmware_mcs(CFEB & cfeb, const char *filename)
    write_cfeb_selector(cfeb.SelectorBit());
    buf=(unsigned short *)malloc(16*1024*1024); // can use 8*1024*1024 if only reading the firmware part of the prom
    if(buf==NULL) return;
-   dcfeb_bpi_reset();
-   dcfeb_bpi_enable();
+
+  if(CFEBversion() == 2)
+  {
+    dcfeb_bpi_reset();
+    dcfeb_bpi_enable();
    
-   for(int i=0; i< total_blocks; i++)
-   {
+    for(int i=0; i< total_blocks; i++)
+    {
        std::cout << "Block " << i << " / " << total_blocks << std::endl;
 
        uaddr = (fulladdr >> 16);
@@ -8413,9 +8424,9 @@ void DAQMB::dcfeb_readfirmware_mcs(CFEB & cfeb, const char *filename)
        dcfebprom_read(read_size, buf+i*read_size);
 
        fulladdr += read_size;
-   }
-   dcfeb_bpi_disable();
-
+    }
+    dcfeb_bpi_disable();
+  }
    write_mcs((char *)buf, FIRMWARE_SIZE, mcsfile);
    fclose(mcsfile);
    free(buf);
@@ -8435,7 +8446,7 @@ void DAQMB::dcfeb_configure(CFEB & cfeb)
    unsigned short int bufload[34], oldbuf[34];
 
    write_cfeb_selector(cfeb.SelectorBit());
-   if(cfeb.GetHardwareVersion() == 2)
+   if(CFEBversion() == 2)
    {
       set_dcfeb_parambuffer(cfeb, bufload);  
       for(int b=0; b<11; b++)
@@ -8460,6 +8471,21 @@ void DAQMB::dcfeb_configure(CFEB & cfeb)
       if(real_block==-1) std::cout << "ERROR: Failed to write DCFEB parameters to any block. " << std::endl; 
       else if(real_block<6) std::cout << "DCFEB #" << number_+1 << " parameters are in block " << real_block << std::endl;
    }
+   else if(CFEBversion() == 3)
+   {
+      set_dcfeb_parambuffer(cfeb, bufload);  
+//      xdcfeb_erase_eprom(2, 0);
+//      xdcfeb_write_eprom((char *)bufload, DCFEB_PARAMETERS*2, 2, 0);
+   }
+   // Liu, 2018-07-12 temporarily put here to configure xDCFEB. 
+        set_comp_thresh(cfeb, set_comp_thresh_);
+        usleep(100);
+	dcfeb_set_PipelineDepth(cfeb, cfeb.GetPipelineDepth());
+	usleep(100);
+	Pipeline_Restart(cfeb);
+	usleep(100);
+        dcfeb_comp_clockphase(cfeb, comp_clk_phase_cfeb_[cfeb.number()]);
+	usleep(100);
 }
 
 void DAQMB::dcfeb_print_parameters(CFEB & cfeb) 
@@ -8467,9 +8493,10 @@ void DAQMB::dcfeb_print_parameters(CFEB & cfeb)
    const int DCFEB_PARAMETERS=34;
    int number = cfeb.number();
    unsigned short int bufload[34];
+   char xbuf[12000];
 
    write_cfeb_selector(cfeb.SelectorBit());
-   if(cfeb.GetHardwareVersion() == 2)
+   if(CFEBversion() == 2)
    {
       std::cout << "Configuration Parameters for DCFEB #" << number+1 << std::endl;
       for(int block=0; block<11; block++)
@@ -8482,6 +8509,19 @@ void DAQMB::dcfeb_print_parameters(CFEB & cfeb)
          }
       }
    }
+   else if(CFEBversion() == 3)
+   {
+      std::cout << "Configuration Parameters for xDCFEB #" << number+1 << std::endl;
+//      xdcfeb_read_eprom(xbuf, 2*DCFEB_PARAMETERS, 2);
+      xdcfeb_read_eprom(xbuf, 1024, 2);
+      FILE *para=fopen("/tmp/para.mcs", "w");
+      write_mcs(xbuf, 1024, para);    
+      memcpy(bufload, xbuf, 2*DCFEB_PARAMETERS);
+         for(int i=0; i<DCFEB_PARAMETERS;i++)
+         {
+            std::cout << i << "   " << std::hex << "0x" << bufload[i] << std::dec  << std::endl;
+         }            
+   }
 }
 
 void DAQMB::dcfeb_test_dummy(CFEB & cfeb, int test)
@@ -8489,9 +8529,24 @@ void DAQMB::dcfeb_test_dummy(CFEB & cfeb, int test)
 // This dummy function can be used in various tests instead of creating a new function which would
 // require to recompile everything in PeripheralCore & PeripheralApps
      write_cfeb_selector(cfeb.SelectorBit());
-     virtex6_readreg(test);
-
-}
+//     virtex6_readreg(test);
+/*
+      char tmp[4];
+      unsigned t;
+      dcfeb_core(66,0, tmp, tmp, NOW|NOOP_YES);
+      dcfeb_core(68,0, tmp, tmp, NOW|NOOP_YES);
+      dcfeb_core(70,0, tmp, tmp, NOW|NOOP_YES);
+      dcfeb_core(71,0, tmp, tmp, NOW|NOOP_YES);
+      ::sleep(1);
+      for(int i=0; i<34*3; i++)
+      {  t=0;
+         dcfeb_core(72, 16, tmp, (char *)&t, NOW|READ_YES);
+         usleep(10000);
+         std::cout << "Param " << i << " = 0x";
+         std::cout <<  std::hex  << t << std::dec << std::endl;
+      }
+*/
+}    
 
 unsigned  DAQMB::dcfeb_readreg_virtex6(CFEB & cfeb,int test){
   write_cfeb_selector(cfeb.SelectorBit());                                   
@@ -8559,92 +8614,119 @@ void DAQMB::dcfeb_program_eprom(CFEB & cfeb, const char *mcsfile, int offset, in
    else
       write_cfeb_selector(cfeb.SelectorBit());
 
+   if(CFEBversion()==2)
+   {
       dcfeb_bpi_reset();
       dcfeb_bpi_enable();
       dcfebprom_timerstop();
       dcfebprom_timerreset();
       dcfebprom_timerstart();
-// 2. erase eprom
-   blocks=FIRMWARE_SIZE/BLOCK_SIZE;
-   if((FIRMWARE_SIZE%BLOCK_SIZE)>0) blocks++;
-   blocks += offset;
-   std::cout << "Erasing EPROM...total blocks: " << blocks  << std::endl;
-   for(i=0; i<blocks; i++)
-   {
-      uaddr=i;
-      laddr=0;
+      // 2. erase eprom
+      blocks=FIRMWARE_SIZE/BLOCK_SIZE;
+      if((FIRMWARE_SIZE%BLOCK_SIZE)>0) blocks++;
+      blocks += offset;
+      std::cout << "Erasing EPROM...total blocks: " << blocks  << std::endl;
+      for(i=0; i<blocks; i++)
+      {
+         uaddr=i;
+         laddr=0;
 
-      // printf(" eprom_load fulladdr %04x%04x \n",(uaddr&0xFFFF),(laddr&0xFFFF));
-      dcfebprom_loadaddress(uaddr,laddr);
-      // unlock and erase the block
-      dcfebprom_unlockerase();
+         // printf(" eprom_load fulladdr %04x%04x \n",(uaddr&0xFFFF),(laddr&0xFFFF));
+         dcfebprom_loadaddress(uaddr,laddr);
+         // unlock and erase the block
+         dcfebprom_unlockerase();
 
-      udelay(3000000);
-   }
+         udelay(3000000);
+      }
 
-// 3. write eprom
-   blocks=FIRMWARE_SIZE/WRITE_SIZE;
-   lastblock=FIRMWARE_SIZE%WRITE_SIZE;
-   int p1pct=blocks/100;
-   int j=0, pcnts=0;
-   if(lastblock>0) blocks++;
-   else lastblock=WRITE_SIZE;
-   std::cout << "Start programming EPROM..." << std::endl;
-   fulladdr=offset*0x10000;
-   for(i=0; i<blocks; i++)  
-   {
-   dcfeb_bpi_disable();
-   udelay(1000);
-   dcfeb_bpi_reset();
-   dcfeb_bpi_enable();
-   dcfebprom_timerstop();
-   dcfebprom_timerreset();
-   dcfebprom_timerstart();
-   udelay(1000);
-   dcfebprom_clearstatus();
-      int nwords=WRITE_SIZE;
-      if(i==blocks-1) nwords=lastblock;
+      // 3. write eprom
+      blocks=FIRMWARE_SIZE/WRITE_SIZE;
+      lastblock=FIRMWARE_SIZE%WRITE_SIZE;
+      int p1pct=blocks/100;
+      int j=0, pcnts=0;
+      if(lastblock>0) blocks++;
+      else lastblock=WRITE_SIZE;
+      std::cout << "Start programming EPROM..." << std::endl;
+      fulladdr=offset*0x10000;
+      for(i=0; i<blocks; i++)  
+      {
+         dcfeb_bpi_disable();
+         udelay(1000);
+         dcfeb_bpi_reset();
+         dcfeb_bpi_enable();
+         dcfebprom_timerstop();
+         dcfebprom_timerreset();
+         dcfebprom_timerstart();
+         udelay(1000);
+         dcfebprom_clearstatus();
+         int nwords=WRITE_SIZE;
+         if(i==blocks-1) nwords=lastblock;
+         uaddr = (fulladdr >> 16);
+         laddr = fulladdr &0xffff;
+         // printf(" load address %04x%04x \n",(uaddr&0xFFFF),(laddr&0xFFFF));
+         dcfebprom_loadaddress(uaddr,laddr);
+         // program with new data from the beginning of the block
+         dcfebprom_bufferprogram(nwords,bufw+i*WRITE_SIZE);
+         udelay(120000);
+         fulladdr += WRITE_SIZE;
+         j++;
+         if(j==p1pct)
+         {  pcnts++;
+            if(pcnts<100) std::cout << "Sending " << pcnts <<"%..." << std::endl;
+            j=0;
+         }   
+      }
+      std::cout << "Sending 100%..." << std::endl;
       uaddr = (fulladdr >> 16);
       laddr = fulladdr &0xffff;
-      // printf(" load address %04x%04x \n",(uaddr&0xFFFF),(laddr&0xFFFF));
+      // printf(" lock address %04x%04x \n",(uaddr&0xFFFF),(laddr&0xFFFF));
       dcfebprom_loadaddress(uaddr,laddr);
-      // program with new data from the beginning of the block
-      dcfebprom_bufferprogram(nwords,bufw+i*WRITE_SIZE);
-      udelay(120000);
-      fulladdr += WRITE_SIZE;
-       j++;
-       if(j==p1pct)
-       {  pcnts++;
-          if(pcnts<100) std::cout << "Sending " << pcnts <<"%..." << std::endl;
-          j=0;
-       }   
+      dcfebprom_lock();
+      udelay(500000);
+      dcfeb_bpi_disable();
    }
-    std::cout << "Sending 100%..." << std::endl;
-   uaddr = (fulladdr >> 16);
-   laddr = fulladdr &0xffff;
-   // printf(" lock address %04x%04x \n",(uaddr&0xFFFF),(laddr&0xFFFF));
-   dcfebprom_loadaddress(uaddr,laddr);
-   dcfebprom_lock();
-   udelay(500000);
-   dcfeb_bpi_disable();
+   else if(CFEBversion()==3)
+   {
+      // for xDCFEB, programming xcf32p
+   }
    free(bufin);
 }
 
 void DAQMB::dcfeb_program_virtex6(CFEB & cfeb, const char *mcsfile, int broadcast)
 {
    const int FIRMWARE_SIZE=5464972; // in bytes
+   const int PROM_SIZE=4194304; // XCF32p PROM, in bytes
+
    char *bufin, c;
    bufin=(char *)malloc(16*1024*1024);
    if(bufin==NULL)  return;
-   FILE *fin=fopen(mcsfile,"r");
+   char filename[1000];
+   strncpy(filename, mcsfile, 980);
+   
+   FILE *fin=fopen(filename,"r");
    if(fin==NULL ) 
    { 
       free(bufin);  
-      std::cout << "ERROR: Unable to open MCS file :" << mcsfile << std::endl;
+      std::cout << "ERROR: Unable to open MCS file :" << filename << std::endl;
       return; 
    }
+
    int mcssize=read_mcs(bufin, fin);
    fclose(fin);
+   if(CFEBversion()==3 && mcssize==PROM_SIZE)
+   {   // need to read a 2nd file
+      filename[strlen(filename)-5]++;
+      fin=fopen(filename,"r");
+      if(fin==NULL ) 
+      { 
+         free(bufin);  
+         std::cout << "ERROR: Unable to open 2nd MCS file :" << filename << std::endl;
+         return; 
+      }
+      int mcssize2=read_mcs(bufin+PROM_SIZE, fin);
+      fclose(fin);
+      mcssize += mcssize2;                   
+   }
    std::cout << "Read MCS size: " << mcssize << " bytes" << std::endl;
    if(mcssize<FIRMWARE_SIZE)
    {
@@ -8655,7 +8737,7 @@ void DAQMB::dcfeb_program_virtex6(CFEB & cfeb, const char *mcsfile, int broadcas
    }
    int tag=0;
    memcpy(&tag, bufin+0x600000, 4);
-   if(broadcast==-1 ||  (tag & 0x00F0FFFF)==0x00B0FEDC) 
+   if(broadcast==-1 ||  (tag & 0x00F0FFFF)==0x00B0FEDC || CFEBversion()==3) 
    {
        std::cout << "Firmware tag (DCFEB) verified!" << std::endl;
    }
@@ -8666,13 +8748,15 @@ void DAQMB::dcfeb_program_virtex6(CFEB & cfeb, const char *mcsfile, int broadcas
        return;
                   
    }
-// byte swap
-   for(int i=0; i<FIRMWARE_SIZE/2; i++)
-   {  c=bufin[i*2];
-      bufin[i*2]=bufin[i*2+1];
-      bufin[i*2+1]=c;
+   if(bufin[0x30]==0x99 && bufin[0x31]==0x55)
+   {
+      // byte swap
+      for(int i=0; i<FIRMWARE_SIZE/2; i++)
+      {  c=bufin[i*2];
+         bufin[i*2]=bufin[i*2+1];
+         bufin[i*2+1]=c;
+      }
    }
-
    if(broadcast>0)
       write_cfeb_selector(0x7F);   // broadcast to all DCFEBs
    else
@@ -8909,7 +8993,7 @@ int DAQMB::LVDB_map(int chn)
      int lvdb7_f[8]={3,6,5,4,2,0,1,7};  // on LVDB: 6,7,5,1,4,3,2,8
      int lvdb7_b[8] ={3,2,1,0,4,5,6,7};  // on LVDB: 4,3,2,1,5,6,7,8
      if(chn<0 || chn>7) return 0;
-     if(hardware_version_<=1 || lvdb_mapping_==0) return chn;
+     if(DMBversion()<=1 || lvdb_mapping_==0) return chn;
      if(lvdb_mapping_==1) return lvdb7_f[chn];
      else if(lvdb_mapping_==2) return lvdb7_b[chn];
      else return chn;
@@ -8949,27 +9033,40 @@ void DAQMB::odmb_fpga_call(int inst, unsigned data, char *outbuf)
 void DAQMB::daqmb_do(int ncmd, void *cmd,int nbuf, void *inbuf,char *outbuf,int irdsnd, int dev)
 {
      // dev=0  discrete logic (O/DMB emergency PROM access)
-     //    =1  D/CFEB      (device 1 direct)
-     //    =2  O/DMB FPGA  (device 2)
-     //    =3  DMB PROM    (device 3)
-     //    =4  VME PROM    (device 4)
-     //    =5  CFEB PROM   (device 1 with head-tail)
-     //    =6  CFEB FPGA   (device 1 with head-tail)
-
+     //    =1  x/D/CFEB      (device 1 direct)--all DCFEB functions
+     //    =2  O/DMB FPGA    (device 2)
+     //    =3  DMB PROM      (device 3)
+     //    =4  VME PROM      (device 4)
+     //    =5  CFEB PROM     (device 1 with head-tail)
+     //    =6  CFEB FPGA     (device 1 with head-tail)
+     //    =7  xDCFEB FPGA   (device 1 with head-tail)
+     //    =8  xDCFEB PROM8  (device 1 with head-tail)--parameter PROM XCF08p
+     //    =9  xDCFEB PROM1  (device 1 with head-tail)--firmware PROM1 XCF32p
+     //    =10 xDCFEB PROM0  (device 1 with head-tail)--firmware PROM0 XCF32p
+     //    =11 xDCFEB DS     (device 1 with head-tail)--digital switch DS4550 
+ 
      // irdsnd for jtag
      //     irdsnd = 0 no read, later
      //     irdsnd = 1 no read, now
      //     irdsnd = 2    read, later
      //     irdsnd = 3    read, now
      //
-
-  if(dev<0 || dev>6) return;
+  if(dev<0 || dev>11) return;
   int DAQMB_DEV;
   char tmp[2];
   int ncmd_u, nbuf_u;
-  
+  int inst_h[12]={0, 0, 0, 0, 0, 0, 8, 0,  10, 26, 42, 58};
+  int inst_t[12]={0, 0, 0, 0, 0, 5, 0, 52, 36, 20, 4,  0};
+  int data_h[12]={0, 0, 0, 0, 0, 0, 1, 0,  1,  2,  3,  4};
+  int data_t[12]={0, 0, 0, 0, 0, 1, 0, 4,  3,  2,  1,  0};
+
+  char new_cmd[200], new_data[1200], new_data2[1200];  // avoid overrun the original buffers by extra headers & tails
+  char *cmd_use, *data_use, *new_out;
+   
   if(dev==0)
   {
+     // emergency access use Jtag_Lite
+     //
      int DAQMB_DEV=0xFFFC;
      if(ncmd<0)
      { // Reset Jtag State Machine
@@ -8983,59 +9080,65 @@ void DAQMB::daqmb_do(int ncmd, void *cmd,int nbuf, void *inbuf,char *outbuf,int 
      // send empty clocks |nbuf|, inbuf & outbuf not used
      if(nbuf<0) Jtag_Lite(DAQMB_DEV, 2, (char *)inbuf, -nbuf, outbuf, 0, irdsnd&NOW);
   }
-  else
+  else 
   {  
+     // all others use Jtag_Ohio
+     // 
      ncmd_u=ncmd;
      nbuf_u=nbuf;
-     if(dev==5) 
-     { 
+     if(dev>=5 && dev <=11)
+     {
          DAQMB_DEV=1;
-         if(ncmd>0) { add_headtail((char *)cmd, ncmd, 0, 5);   ncmd_u += 5; }
-         if(nbuf>0) { add_headtail((char *)inbuf, nbuf, 0, 1); nbuf_u += 1; }
-     } 
-     else if(dev==6)
-     { 
-         DAQMB_DEV=1;
-         if(ncmd>0) { add_headtail((char *)cmd, ncmd, 8, 0);   ncmd_u += 8; }
-         if(nbuf>0) { add_headtail((char *)inbuf, nbuf, 1, 0); nbuf_u += 1; }
+         if(ncmd>0) 
+         { 
+           add_headtail((char *)cmd, new_cmd, ncmd, inst_t[dev], inst_h[dev]);
+           ncmd_u += inst_h[dev] + inst_t[dev];
+         }
+         if(nbuf>0) 
+         { 
+           add_headtail((char *)inbuf, new_data, nbuf, data_t[dev], data_h[dev]);
+           nbuf_u += data_h[dev] + data_t[dev];
+         }
+         cmd_use=new_cmd;
+         data_use=new_data;
+         new_out=new_data2;
      } 
      else
      {
          DAQMB_DEV=dev;
+         cmd_use=(char *)cmd;
+         data_use=(char *)inbuf;
+         new_out=(char *)outbuf;
      } 
      if(ncmd<0)
      { // Reset Jtag State Machine
          Jtag_Ohio(DAQMB_DEV, 0, tmp,-1, tmp, 0, (irdsnd&1));
          return;
      }
-     if(ncmd>0) Jtag_Ohio(DAQMB_DEV, 0, (char *)cmd, ncmd_u, outbuf,0,(nbuf>0)?LATER:(irdsnd&NOW));
-     //   if(ncmd>0 && nbuf>0) sleep_vme(200); 
-     if(nbuf>0) Jtag_Ohio(DAQMB_DEV, 1,(char *)inbuf,nbuf_u, outbuf,(irdsnd>>1)&1,irdsnd&NOW);
+     if(ncmd>0) Jtag_Ohio(DAQMB_DEV, 0, cmd_use, ncmd_u, new_out,0,(nbuf>0)?LATER:(irdsnd&NOW));
+     if(ncmd>0 && nbuf>0) vme_delay(200); 
+     if(nbuf>0) Jtag_Ohio(DAQMB_DEV, 1,data_use,nbuf_u, new_out,(irdsnd>>1)&1,irdsnd&NOW);
 
      // send empty clocks |nbuf|, inbuf & outbuf not used
-     if(nbuf<0) Jtag_Ohio(DAQMB_DEV, 2, (char *)inbuf, -nbuf, outbuf, 0, irdsnd&NOW);
+     if(nbuf<0) Jtag_Ohio(DAQMB_DEV, 2, (char *)data_use, -nbuf, new_out, 0, irdsnd&NOW);
 
      // !!!!!>>>> Never buffer read with odd bits (nbuf%16!=0)
-     if((irdsnd&3)==3 && nbuf%16!=0)
+     if(nbuf>0 && (irdsnd&3)==3 && nbuf_u%16!=0)
      {
         // The last short-word (16 bit) contains the real data bits
         // at the MSB. Must shift them to the LSB. 
-        int ishft=16-nbuf%16;
-        unsigned temp=((outbuf[2*(nbuf/16)+1]<<8)&0xff00)|(outbuf[2*(nbuf/16)]&0xff);
+        int ishft=16-nbuf_u%16;
+        unsigned temp=((new_out[2*(nbuf_u/16)+1]<<8)&0xff00)|(new_out[2*(nbuf_u/16)]&0xff);
         temp=(temp>>ishft);
-        outbuf[2*(nbuf/16)+1]=(temp&0xff00)>>8;
-        outbuf[2*(nbuf/16)]=temp&0x00ff;
+        new_out[2*(nbuf_u/16)+1]=(temp&0xff00)>>8;
+        new_out[2*(nbuf_u/16)]=temp&0x00ff;
      }
 
-     if(dev==5) 
-     { 
-         if(nbuf>0 && (irdsnd&3)==3) cut_headtail((char *)outbuf, nbuf_u, 0, 1);
+     if(dev>=5 && dev <=11) 
+     {   // cut the output data's extra header & tail
+         if(nbuf>0 && (irdsnd&3)==3) cut_headtail(new_out, outbuf, nbuf_u, data_t[dev], data_h[dev]);
      } 
-     else if(dev==6)
-     { 
-         if(nbuf>0 && (irdsnd&3)==3) cut_headtail((char *)outbuf, nbuf_u, 1, 0);
-     } 
-     
+     return;
   }
 }
 
@@ -9050,7 +9153,7 @@ std::vector<float> DAQMB::odmb_fpga_sysmon()
   float readf;
 
   readout.clear();
-  if(hardware_version_==2)
+  if(DMBversion()==2)
   {
      comd=VTX6_SYSMON;
 //     this can be used to change register 0x48 to enable more channels
@@ -9089,7 +9192,7 @@ std::vector<float> DAQMB::odmb_fpga_adc()
   float readf;
 
   readout.clear();
-  if(hardware_version_==2)
+  if(DMBversion()==2)
   {
      for(int i=0; i<9; i++)
      {
@@ -9137,7 +9240,7 @@ int DAQMB::DCSread2(char *data, int read_dcfeb)
   int TOTAL_DCFEB=TOTAL_SYSMON+TOTAL_ADC+TOTAL_SEU;;
   int TOTAL_ODMB=9+3;  // 3 reserved
 
-  if (hardware_version_!=2) return 0;
+  if (DMBversion()!=2 && DMBversion()!=4) return 0;
 
   if(checkvme_fail()) return 0;
 
@@ -9897,7 +10000,7 @@ void DAQMB::odmb_program_virtex6(const char *mcsfile)
 int DAQMB::read_cfeb_done()
 {
     int sig=0;
-    if(hardware_version_==2)
+    if(DMBversion()>1)
     {
        sig=ReadRegister(DCFEB_DONE) & 0x7F;
     }
@@ -9907,7 +10010,7 @@ int DAQMB::read_cfeb_done()
 int DAQMB::read_qpll_state()
 {
     int sig=0;
-    if(hardware_version_==2)
+    if(DMBversion()>1)
     {
        sig=ReadRegister(ODMB_QPLL) & 0xFFFF;
     }
@@ -9917,7 +10020,7 @@ int DAQMB::read_qpll_state()
 int DAQMB::read_odmb_id()
 {
     int sig=0;
-    if(hardware_version_==2)
+    if(DMBversion()>1)
     {
        sig=ReadRegister(read_ODMB_ID) & 0xFFFF;
     }
@@ -9926,7 +10029,7 @@ int DAQMB::read_odmb_id()
 
 void DAQMB::odmb_save_config()
 {
-    if(hardware_version_==2)
+    if(DMBversion()==2)
     {
        WriteRegister(ODMB_Save_Config, 0);
        ::sleep(2);
@@ -9936,7 +10039,7 @@ void DAQMB::odmb_save_config()
 
 void DAQMB::odmb_retrieve_config()
 {
-    if(hardware_version_==2)
+    if(DMBversion()==2)
     {
        WriteRegister(ODMB_Retrieve_Config, 0);
        ::sleep(1);
@@ -10121,9 +10224,8 @@ void DAQMB::odmb_dcfeb_tests()
   // get the slot number from the DAQMB 
   int slot = this->slot();
   std::cout << "dmb in slot " << slot << std::endl;
-  int hardware_version = this->GetHardwareVersion();
-  std::cout << "hardware version: " << hardware_version << std::endl;
-  if (hardware_version != 2) {
+  std::cout << "hardware version: " << DMBversion() << std::endl;
+  if (DMBversion() != 2) {
     std::cout << "skipping DMB (not hardware version 2)" << std::endl;   
     return;
   }
@@ -10331,7 +10433,7 @@ int DAQMB::scan_dcfeb_pipeline_depth(const unsigned lower_depth,
   }
   int ibest_pipeline_depth(-1);
   pipeline_depth_fine = -1;
-  if(GetHardwareVersion()==2){//Only run for ODMB
+  if(DMBversion()==2){//Only run for ODMB
     std::ostringstream oss("");
     oss << "Scanning pipeline depth to center muons in time bin 4.5 (time bins go from 1 to 8)." << std::endl;
     oss << "Scanning side" << (do_a?(do_b?"s A and B.":" A."):" B.") << std::endl;
@@ -10366,7 +10468,7 @@ int DAQMB::scan_dcfeb_pipeline_depth(const unsigned lower_depth,
     ibest_pipeline_depth = static_cast<int>(best_depth);
     pipeline_depth_fine = static_cast<int>(fine_delay);
   }else{
-    std::cout << "Slot " << slot() << " has hardware version " << GetHardwareVersion() << " (want 2)." << std::endl; 
+    std::cout << "Slot " << slot() << " has hardware version " << DMBversion() << " (want 2)." << std::endl; 
   }
   return ibest_pipeline_depth;
 }
@@ -10579,7 +10681,7 @@ int DAQMB::scan_delays(const unsigned device_select,
 			const unsigned upper_limit,
 			const double run_time){
   int ibest_delay(-1);
-  if(GetHardwareVersion()==2){//Only run for ODMB
+  if(DMBversion()==2){//Only run for ODMB
     for(unsigned device(1); device<=9; ++device){
       if(device_select & (1 << (device-1))){
 	const unsigned best_delay(get_best_delay(device, lower_limit, upper_limit, run_time));
@@ -10599,7 +10701,7 @@ int DAQMB::scan_delays(const unsigned device_select,
       }
     }
   }else{
-    std::cout << "Slot " << slot() << " has hardware version " << GetHardwareVersion() << " (want 2)." << std::endl; 
+    std::cout << "Slot " << slot() << " has hardware version " << DMBversion() << " (want 2)." << std::endl; 
   }
   return ibest_delay;
 }
@@ -11483,7 +11585,7 @@ void DAQMB::dcfeb_program_eprom_Xilinx(CFEB & cfeb, const char *mcsfile, int bro
 // program DCFEB's EPROM after loading the Xilinx Core into the FPGA.
 //
    unsigned short comd, tmp;
-   if(hardware_version_<=1) return;
+   if(CFEBversion()!=2) return;
    const int FIRMWARE_SIZE=5464972; // in bytes
    char *bufin, bufcmd[128], c;
    bufin=(char *)malloc(16*1024*1024);
@@ -11617,6 +11719,8 @@ int DAQMB::dcfeb_prom_test2(CFEB & cfeb, const char *filename, const char * dump
 
    // each read call takes 0x800 words
    const unsigned READ_SIZE=0x800; // in words 
+
+   if(CFEBversion()!=2) return 0;
 
 // open log files
    logFile.open(filename);
@@ -12067,6 +12171,8 @@ int DAQMB::dcfeb_prom_check_block(const int blockNum, unsigned short * readBuf, 
    unsigned int fulladdr;
    unsigned int uaddr,laddr;
    
+   if(CFEBversion()!=2) return 0;
+
    if(readBuf==NULL) return -1;
 
    // read the block
@@ -12157,6 +12263,8 @@ void DAQMB::dcfeb_prom_test(CFEB & cfeb, const char *filename)
    const int WRITE_SIZE=0x400;  // in words
 
    const unsigned READ_SIZE=0x800; // in words
+
+   if(CFEBversion()!=2) return;
 
    std::cout << "Starting DCFEB EEPROM test" << std::endl;
 
@@ -12399,5 +12507,429 @@ int DAQMB::cfeb_load_eprom(int ncfeb, const char  *svffile, int db, int verify )
      return i;
 }
 
+void DAQMB::ds4550_scan(int reg, char *snd,int cnt,char *rcv,int ird)
+{
+   int dev=11;
+   if(reg==0)      daqmb_do(4, snd,  0,  NULL, rcv, ird|NOW, dev);  // fixed instr.length = 4       
+   else if(reg==1) daqmb_do(0, NULL, cnt, snd, rcv, ird|NOW, dev);               
+}
+
+void DAQMB::xdprom_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip)
+{
+   // same interface as regular scan() but with chip seletion
+   // chip=0   PROM 0  XCF32p 
+   //      1   PROM 1  XCF32p
+   //      2   PROM 2  XCF08p 
+            
+   char temp[8];
+   if(chip<0 || chip>2) return;
+   int dev=10-chip;
+   if(reg==0) daqmb_do(16, snd, 0, NULL, rcv, ird|NOW, dev);  // fixed instr.length =16       
+   else if(reg==1) daqmb_do(0, NULL, cnt, snd, rcv, ird|NOW, dev);               
+}
+
+int DAQMB::xdcfeb_erase_eprom(int chip, int broadcast)
+{
+
+    unsigned comd=0, data=0, blank_state=0;
+    std::cout << "Erasing EPROM #" << chip << "......" << std::endl;
+    if(chip<0 || chip>2) return -1;
+    unsigned block_mask = (chip==2)?1:0xF;
+
+    getTheController()->SetUseDelay(true);
+
+//       jtag_RestoreIdle();      
+       comd=XCF_ISC_ENABLE; 
+       xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       data=0x03;
+       xdprom_scan(1, (char *)&data, 8, rcvbuf, 0, chip);
+       comd=XCF_XSC_UNLOCK; 
+       xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       data=block_mask;
+       xdprom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
+       set_flag(0);
+       comd=XCF_ISC_ERASE; 
+       xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       data=block_mask;
+       xdprom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
+       clear_flag(0);
+       ::sleep((chip==2)?40:140);
+    if(broadcast==0)
+    {
+       comd=XCF_CLR_STATUS; 
+       xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       udelay(50);
+       comd=XCF_BLANK_CHECK; 
+       xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       ::sleep(1);
+       data=0;
+       xdprom_scan(1, (char *)&data, 8, rcvbuf, READ_YES, chip);
+       blank_state = rcvbuf[0] & block_mask & 0xFF;
+       if(blank_state==0) std::cout << "Blank Check successful!" << std::endl;
+       else std::cout << "ERROR: Blank Check failed! " << std::hex << (rcvbuf[0] & 0xFF) << std::dec << std::endl;
+       comd=XCF_CLR_STATUS; 
+       xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       udelay(50);
+              
+    }
+       comd=XCF_ISC_DISABLE; 
+       xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       udelay(200);
+    std::cout << "Done." << std::endl;
+    return blank_state;
+}
+
+int DAQMB::xdcfeb_write_eprom(char *bufin, int dsize, int chip, int broadcast)
+{
+    if(chip<0 || chip>2) return -1;
+    std::cout << "Programming EPROM #" << chip << "......" << std::endl;
+    unsigned comd, data;
+
+    int PROM_SIZE=4194304; // in bytes
+    if(chip==2) PROM_SIZE /= 4;  // this is a xcf08p EPROM
+    PROM_SIZE /= 32;   // in 256-bit blocks
+ 
+     int blocks=dsize/32;  // firmware size must be in units of 256-bit units
+     if(dsize<0)
+     {
+         blocks=PROM_SIZE;
+     }
+     else if (dsize%32>0)
+     {  
+         for(int i=0; i<32; i++) bufin[dsize+i]=0xFF;  // pad the last block with 0xFF
+         blocks++;
+     }
+     if (blocks>PROM_SIZE) blocks=PROM_SIZE; 
+
+     int p1pct=blocks/100;
+     int j=0, pcnts=0;
+
+//    getTheController()->Debug(2);
+     getTheController()->SetUseDelay(true);
+  
+//     jtag_RestoreIdle();      
+     comd=XCF_ISC_ENABLE; 
+     xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0x03;
+     xdprom_scan(1, (char *)&data, 8, rcvbuf, 0, chip);
+     comd=XCF_XSC_UNLOCK; 
+     xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0x0F;
+     xdprom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
+/*
+     comd=XCF_DATA_BTC; 
+     xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0xFFFFFFEC;
+     xdprom_scan(1, (char *)&data, 32, rcvbuf, 0, chip);
+*/
+     comd=XCF_ISC_PROGRAM; 
+     xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     udelay(200);
+     for(int i=0; i<blocks; i++)
+     {
+        if((i%0x8000)==0)   
+        {  /* At beginning of each big block, send (byte) address. */
+           comd=XCF_ADD_SHIFT; 
+           xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+           data=i*32;
+           xdprom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
+        }
+       comd=XCF_DATA_SHIFT; 
+       xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       xdprom_scan(1, bufin+32*i, 256, rcvbuf, 0, chip);
+       comd=XCF_ISC_PROGRAM; 
+       xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       udelay(1000);
+       j++;
+       if(p1pct>0 && j==p1pct)
+       {  pcnts++;
+          if(pcnts<100) std::cout << "Sending " << pcnts <<"%..." << std::endl;
+          j=0;
+       }   
+     }
+     comd=XCF_DATA_DONE; 
+     xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0xC0;
+     xdprom_scan(1, (char *)&data, 8, rcvbuf, 0, chip);
+     comd=XCF_ISC_PROGRAM; 
+     xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     udelay(200);
+     std::cout << "Sending 100%..." << std::endl;
+//    getTheController()->Debug(2);
+     if(broadcast==0)
+     {
+         std::cout << "Verify. " << std::endl;
+     }
+     comd=XCF_ISC_DISABLE; 
+     xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     udelay(200);
+     return 0;
+}
+
+int DAQMB::xdcfeb_read_eprom(char *bufout, int dsize, int chip)
+{
+    if(chip<0 || chip>2) return -1;
+    std::cout << "Read EPROM #" << chip << "......" << std::endl;
+    unsigned comd, data;
+    char ttt[1024];
+    
+    int PROM_SIZE=4194304; // in bytes
+    if(chip==2) PROM_SIZE /= 4;  // this is a xcf08p EPROM
+    PROM_SIZE /= 1024;
+     
+     int blocks=dsize/1024;  // must be in units of 8192-bit (1024-byte)
+     if(dsize<0)
+     {
+         blocks=PROM_SIZE;
+     }
+     else if (dsize%1024>0)
+     {  
+         blocks++;
+     }
+     if (blocks>PROM_SIZE) blocks=PROM_SIZE; 
+
+     int p1pct=blocks/100;
+     int j=0, pcnts=0;
+
+//    getTheController()->Debug(2);
+     getTheController()->SetUseDelay(true);
+  
+//     jtag_RestoreIdle();      
+     comd=XCF_ISC_ENABLE; 
+     xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0x03;
+     xdprom_scan(1, (char *)&data, 8, rcvbuf, 0, chip);
+     for(int i=0; i<blocks; i++)
+     {
+        comd=XCF_ADD_SHIFT; 
+        xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+        data=i*0x400;
+        xdprom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
+        comd=XCF_READ; 
+        xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+        xdprom_scan(1, ttt, 8192, bufout+i*0x400, READ_YES, chip);
+        udelay(200);
+        j++;
+        if(p1pct>0 && j==p1pct)
+        {  pcnts++;
+           if(pcnts<100) std::cout << "Reading " << pcnts <<"%..." << std::endl;
+           j=0;
+        }   
+     }
+     std::cout << "Reading 100%..." << std::endl;
+//    getTheController()->Debug(2);
+     comd=XCF_ISC_DISABLE; 
+     xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     udelay(200);
+     return 0;
+}
+
+int DAQMB::xdcfeb_load_firmware(CFEB & cfeb, const char *mcsfile, int broadcast)
+{
+   unsigned comd, data;
+   const int PROM_SIZE=4194304; // in bytes
+   const int FIRMWARE_SIZE=5464972;
+   char filename[1000];
+
+   char *bufin, c;
+   bufin=(char *)malloc(16*1024*1024);
+   if(bufin==NULL)  return -2;
+   char *buf0=bufin+2*PROM_SIZE;
+   char *buf1=bufin+3*PROM_SIZE;
+
+   strncpy(filename, mcsfile, 980);
+   FILE *fin=fopen(filename,"r");
+   if(fin==NULL ) 
+   { 
+      free(bufin);  
+      std::cout << "ERROR: Unable to open MCS file :" << filename << std::endl;
+      return -3; 
+   }
+   int mcssize=read_mcs(bufin, fin);
+   fclose(fin);
+   if(mcssize==PROM_SIZE)
+   {   // need to read a 2nd file
+      filename[strlen(filename)-5]++;
+      fin=fopen(filename,"r");
+      if(fin==NULL ) 
+      { 
+         free(bufin);  
+         std::cout << "ERROR: Unable to open 2nd MCS file :" << filename << std::endl;
+         return -3; 
+      }
+      int mcssize2=read_mcs(bufin+PROM_SIZE, fin);
+      fclose(fin);
+      mcssize += mcssize2;                   
+   }
+   std::cout << "Read MCS size: " << std::dec << mcssize << " bytes" << std::endl;
+/*
+// byte swap
+   for(int i=0; i<FIRMWARE_SIZE/2; i++)
+   {  c=bufin[i*2];
+      bufin[i*2]=bufin[i*2+1];
+      bufin[i*2+1]=c;
+   }
+*/
+     // for 16-bit loading
+     for(int i=0; i<FIRMWARE_SIZE/2; i++)
+     {  buf0[i]=bufin[i*2+1];
+        buf1[i]=bufin[i*2];
+     }
+     
+//    getTheController()->Debug(2);
+     getTheController()->SetUseDelay(true);
+     std::cout << "Loading firmware to 2 EPROMs in 16-bit mode......" << std::endl;
+     if(broadcast)
+        write_cfeb_selector(0x7F);   // broadcast to all DCFEBs
+     else
+        write_cfeb_selector(cfeb.SelectorBit());
+     xdcfeb_erase_eprom(0, broadcast);    
+     xdcfeb_erase_eprom(1, broadcast);    
+     xdcfeb_write_eprom(buf0, FIRMWARE_SIZE/2, 0, broadcast);
+     xdcfeb_write_eprom(buf1, FIRMWARE_SIZE/2, 1, broadcast);  
+     std::cout << "Done."<< std::endl;
+     free(bufin);
+     return 0;
+}
+
+void DAQMB::xdcfeb_read_firmware(CFEB & cfeb, const char *filename, int seq)
+{
+//  seq=0: default, 2 mcs files, each contains one full PROM
+//  seq=1: 1 mcs file contain sequential firmware only, size of 5464972 bytes.
+//  seq=2: 2 mcs files, in parrall mode, each is half of firmware size, bytes interlaces.
+//  seq=3: 2 mcs files in sequential, first one is the size of full PROM, second one with the rest of the firmware.
+   char *buf, *buf1, *buf2;
+   FILE *mcsfile, *mcsfile2;
+   char filename1[1000], filename2[1000];
+
+    
+   const int FIRMWARE_SIZE=5464972;
+   const int PROM_SIZE=4194304; // in bytes
+
+
+   write_cfeb_selector(cfeb.SelectorBit());
+   buf=(char *)malloc(4*PROM_SIZE); // 8*1024*1024
+   if(buf==NULL) return;
+   buf1=buf+PROM_SIZE;
+   buf2=buf+2*PROM_SIZE;                       
+
+   if(CFEBversion() == 3)
+   {
+      strncpy(filename1, filename, 980);
+      mcsfile=fopen(filename1, "w");
+      if(mcsfile==NULL)
+      {
+         std::cout << "Unable to open file to write :" << filename1 << std::endl;
+         return;
+      }
+      strncpy(filename2, filename, 980);
+      filename2[strlen(filename2)-5]++;
+      mcsfile2=fopen(filename2, "w");
+      if(mcsfile2==NULL)
+      {
+          std::cout << "Unable to open second file to write :" << filename2 << std::endl;
+          return;
+      }
+
+      xdcfeb_read_eprom(buf, PROM_SIZE, 0);
+      xdcfeb_read_eprom(buf1, PROM_SIZE, 1);
+   
+      if(seq==0 || seq==2)
+      {
+          int mcssize=(seq==0)?PROM_SIZE:(FIRMWARE_SIZE/2);
+          write_mcs(buf, mcssize, mcsfile);
+          write_mcs(buf+PROM_SIZE, mcssize, mcsfile2);
+          fclose(mcsfile);
+          fclose(mcsfile2);
+      }   
+      else if(seq==1 || seq==3)
+      {
+          for(int i=0; i<FIRMWARE_SIZE/2; i++)
+          {
+             buf2[2*i]=buf1[i];
+             buf2[2*i+1]=buf[i];
+          }
+          if(seq==1)
+             write_mcs(buf2, FIRMWARE_SIZE, mcsfile);
+          else 
+          {
+             write_mcs(buf2, PROM_SIZE, mcsfile);
+             write_mcs(buf2+PROM_SIZE, FIRMWARE_SIZE-PROM_SIZE, mcsfile2);  
+          }
+          fclose(mcsfile);
+          fclose(mcsfile2);
+      }
+   }
+   free(buf);
+   std::cout << " Total " << FIRMWARE_SIZE << " bytes are read back from EPROM and saved in mcs-format file: " << filename << std::endl;
+   return;
+}
+
+  unsigned DAQMB::xdcfeb_eprom_idcode(CFEB & cfeb, int chip)
+  {
+     unsigned rt=0;
+
+     write_cfeb_selector(cfeb.SelectorBit());
+
+     unsigned comd=XCF_IDCODE; 
+     xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     char data[4];
+     xdprom_scan(1, data, 32, (char *)&rt, READ_YES, chip);
+     
+     return rt;
+  }  
+
+  unsigned DAQMB::xdcfeb_ds4550_idcode(CFEB & cfeb)
+  {
+     unsigned rt=0;
+
+     write_cfeb_selector(cfeb.SelectorBit());
+
+     unsigned comd=1; 
+     ds4550_scan(0, (char *)&comd, 4, rcvbuf, 0);
+     char data[4];
+     ds4550_scan(1, data, 32, (char *)&rt, READ_YES);
+     
+     return rt;
+  }
+  
+  int DAQMB::ds4550_read(char *buf, int address, int size)
+  {
+     if(size<=0 || address<0 || address>0xFF) return 0;
+     char code[4], data[10], outdata[10];
+     for(int i=0; i<size; i++)
+     {
+        code[0]=9; // DS4550 ADDRESS
+        ds4550_scan(0, code, 4, outdata, NOW);
+        data[0]=address+i;
+        ds4550_scan(1, data, 8, outdata, NOW);
+
+        code[0]=10; // DS4550 READ
+        ds4550_scan(0, code, 4, outdata, NOW);
+        data[0]=0;
+        ds4550_scan(1, data, 8, buf+i, NOW|READ_YES);
+       ::usleep(100);
+     }    
+     return size;
+  }
+    
+  void DAQMB::ds4550_write(char *buf, int address, int size)
+  {
+     if(size<=0 || address<0 || address>0xFF) return;
+     char code[4], data[10], outdata[10];
+     for(int i=0; i<size; i++)
+     {
+        code[0]=9; // DS4550 ADDRESS
+        ds4550_scan(0, code, 4, outdata, NOW);
+        data[0]=address+i;
+        ds4550_scan(1, data, 8, outdata, NOW);
+
+        code[0]=11; // DS4550 WRITE
+        ds4550_scan(0, code, 4, outdata, NOW);
+        ds4550_scan(1, buf+i, 8, outdata, NOW);
+        ::usleep(15000); // wait time for EPROM WRITE: typical 10ms, max 20ms
+     }    
+  }
+      
 } // namespace emu::pc
 } // namespace emu

@@ -1417,16 +1417,18 @@ void VMEModule::write_mcs(char *buf, int nbytes, FILE *outf)
             segment++;
        }
    }
-
+   fflush(outf);
 }
 
-int VMEModule::read_mcs(char *binbuf, FILE *finp)
+int VMEModule::read_mcs(char *binbuf, FILE *finp, unsigned limit)
 {
+   unsigned MCS_LIMIT=16*1024*1024;  // default and maximum size, equal to a 128Mb EPROM.
    unsigned ext_add, loc_add, dsize, current_ext=0, current_add, index, i;
    char buf[1024], addbuf[5]={0,0,0,0,0}, lenbuf[3]={0,0,0};
    int finish=0, segmented=0, lines=0, chksum, crc, c; //SK: unused:, n;
    int total_read=0;
 
+   if(limit>0 && limit < MCS_LIMIT) MCS_LIMIT=limit;
    rewind(finp);
    fgets(buf, 1020, finp);
    while(!finish && !feof(finp))
@@ -1461,7 +1463,7 @@ int VMEModule::read_mcs(char *binbuf, FILE *finp)
                           }
                           // use n instead of c if bit-flip
 */
-                          binbuf[index+i] = c&0xFF;
+                          if(index+i<MCS_LIMIT) binbuf[index+i] = c&0xFF;  // ignore anything above MCS_LIMIT
                           total_read++;
                    }
                chksum = ~chksum +1;
@@ -1500,6 +1502,7 @@ int VMEModule::read_mcs(char *binbuf, FILE *finp)
                   std::cout << "read_mcs aborted!!! CRC error or bad address record at line " << lines << std::endl;
                   return -1;
                }
+
                break;
        }
        fgets(buf, 1020, finp);
@@ -1526,15 +1529,12 @@ int tird[2]={0, 2};
 int tiwt[2]={1, 3};
 unsigned short int tmp[2]={0x0000};
 unsigned short int *data;
-unsigned int ptr_i;
-unsigned int ptr_d;
-unsigned int ptr_dh;
-unsigned int ptr_ds;
-unsigned int ptr_dt;
+unsigned int ptr_is, ptr_ih, ptr_it, ptr_i;
+unsigned int ptr_ds, ptr_dh, ptr_dt, ptr_d;
 unsigned int ptr_r;
  
  if(dev<0 || dev>0xF) return;
- if(cnt==0)return;
+ if(cnt==0) return;
  if(when!=0) when=1;
  if(ird==1 && reg==1) tiwt[1]=1;  // if READ is needed, then WRITEs are all buffered 
 
@@ -1549,8 +1549,13 @@ unsigned int ptr_r;
  unsigned add_dt=vme_base+8;
  unsigned add_d=vme_base+0xC;
  unsigned add_r=vme_base+0x14;
+ unsigned add_is=vme_base+0x30;
+ unsigned add_ih=vme_base+0x34;
+ unsigned add_it=vme_base+0x38;
  unsigned add_i=vme_base+0x1C;
+ 
  unsigned add_reset=vme_base+0x18;
+
  cnt2=cnt-1;
  data=(unsigned short int *) snd;
 
@@ -1564,13 +1569,48 @@ unsigned int ptr_r;
      // cnt==-1   treated as Reset JTAG State Machine
      // data to write: anything
      ptr_i=add_reset;
+     theController->VME_controller(tiwt[when],ptr_i,data,rcv);
+     return;
    }
    else
    {
-     ptr_i=add_i|(cnt2<<8);
+     byte=cnt/16;
+     bit=cnt-byte*16;
+     // printf(" bit byte %d %d \n",bit,byte);
+     if(byte==0||(byte==1&&bit==0)){
+       // single write
+       ptr_i=add_i|(cnt2<<8);
+       theController->VME_controller(tiwt[when],ptr_i,data,rcv);
+       return;
+     }
+     // below for multiple writes
+     // step 1. write 1 full word with header, no trailer 
+     ptr_ih=add_ih|0x0f00;
+     theController->VME_controller(1,ptr_ih,data,rcv);
+     data=data+1;
+     ptr_is=add_is;
+     for(i=0;i<byte-1;i++){
+       if(i==(byte-2)&&bit==0){
+         // if this is the last full word with no more extra bits
+         // step 3. write 1 full word with trailer
+         ptr_it=add_it|0x0f00;
+         theController->VME_controller(tiwt[when],ptr_it,data,rcv);
+         return;
+       }else{
+         // middle part
+         // step 2. write 1 full word only, no header or trailer
+         ptr_is=add_is|0x0f00;
+         theController->VME_controller(1,ptr_is,data,rcv);
+         data=data+1;
+       }
+     }
+     // if the last few bits smaller than a full word
+     // step 4. write bits with trailer
+     cnt2=bit-1;
+     ptr_it=add_it|(cnt2<<8);
+     theController->VME_controller(tiwt[when],ptr_it,data,rcv);
+     return;
    }
-   theController->VME_controller(tiwt[when],ptr_i,data,rcv);
-   return;
  }
  else if(reg==1)
  {
@@ -2072,9 +2112,9 @@ void VMEModule::shuffle57(void *data)
    *dna = d2;
 }
 
-char* VMEModule::add_headtail(char *datain, int osize, int head, int tail)
+char* VMEModule::add_headtail(char *datain, char * dataout, int osize, int head, int tail)
 {
-    if(osize<=0 || head<0 || tail<0 || datain==NULL) return datain;
+    if(osize<=0 || head<0 || tail<0 || datain==NULL || dataout==NULL) return datain;
     int nsize=osize+head+tail; 
     int nbytes=(nsize+7)/8;
     int bdata;
@@ -2100,14 +2140,19 @@ char* VMEModule::add_headtail(char *datain, int osize, int head, int tail)
         nbitpos++;
         if(nbitpos==8) { nbitpos=0; nbytepos++; }
     }
-    // step 3, copy the data back to the old buffer
-    memcpy(datain, buf, nbytes);
-    return datain;
+    // step 3, copy the data back to the new buffer
+    memcpy(dataout, buf, nbytes);
+    return dataout;
 }
 
-char* VMEModule::cut_headtail(char *datain, int osize, int head, int tail)
+char* VMEModule::add_headtail(char *datain, int osize, int head, int tail)
 {
-    if(osize<=0 || head<0 || tail<=0 || datain==NULL) return datain;
+    return add_headtail(datain, datain, osize, head, tail);
+}
+
+char* VMEModule::cut_headtail(char *datain, char *dataout, int osize, int head, int tail)
+{
+    if(osize<=0 || head<0 || tail<0 || datain==NULL || dataout==NULL) return datain;
     int nsize=osize-head-tail; 
     if(nsize<0) return datain;
     int nbytes=(nsize+7)/8;
@@ -2130,11 +2175,15 @@ char* VMEModule::cut_headtail(char *datain, int osize, int head, int tail)
            if(nbitpos==8) { nbitpos=0; nbytepos++; }
         }
     }
-    // step 3, copy the data back to the old buffer
-    memcpy(datain, buf, nbytes);
-    return datain;
+    // step 3, copy the data back to the new buffer
+    memcpy(dataout, buf, nbytes);
+    return dataout;
 }
 
+char* VMEModule::cut_headtail(char *datain,  int osize, int head, int tail)
+{
+   return cut_headtail(datain, datain, osize, head, tail);
+}
   } // namespace emu::pc
 } // namespace emu
 	

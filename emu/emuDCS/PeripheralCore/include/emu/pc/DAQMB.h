@@ -375,7 +375,7 @@ public:
   void set_comp_mode(int dword);
   void set_comp_thresh_bc(float thresh);
   void set_comp_thresh(float thresh);
-  void set_comp_thresh(int, float thresh);
+  void set_comp_thresh(CFEB & cfeb, float thresh);
   
   /// DAQMB voltages
   /// see manual, but usually ichp 1 = therm, 2 = DAC, 3 = GND
@@ -650,7 +650,6 @@ public:
   void set_chans_mode(int schan,int mode);
   void set_chans_by4(int schan,int mode);
   void small_configure();
-  void testlink(enum DEVTYPE devnum);
   void varytmbdavdelay(int delay);  
   //
   inline void SetHardwareVersion(int version) {hardware_version_ = version;}
@@ -661,6 +660,8 @@ public:
   //
   //
 public:
+  int DMBversion();
+  int CFEBversion();
   // unpacks rcvbuf from FPGA operations
   unsigned int unpack_ibrd() const;
   unsigned int unpack_ival() const;
@@ -753,9 +754,10 @@ public:
   void FADC_ShiftData(CFEB & cfeb, unsigned bits);
   void Pipeline_Restart(CFEB & cfeb);
   void dcfeb_set_PipelineDepth(CFEB & cfeb, short int depth);
-  void set_and_initalize_pipelines_and_fine_delays();
+  void set_and_initalize_pipelines_and_others();
   void Set_NSAMPLE(CFEB & cfeb, int nsample);
   unsigned short dcfeb_fine_delay(CFEB & cfeb, unsigned short delay);
+  unsigned short dcfeb_comp_clockphase(CFEB & cfeb, unsigned short phase);
   void dcfeb_set_comp_thresh_bc(float thresh);
   void dcfeb_buck_shift_ext_bc(int nstrip);
   void dcfeb_buck_shift_comp_bc(int nstrip);
@@ -771,7 +773,7 @@ public:
   int dcfeb_prom_test2(CFEB & cfeb, const char *filename, const char * dumpFilename, const bool fastCheck=false);
   int dcfeb_prom_check_block(const int blockNum, unsigned short * readBuf, const long checkWord64, std::ofstream * dumpFile, const bool partialRead=false);
   void dcfeb_prom_log(std::stringstream * msgStream, std::ofstream * logFile);
-  void dcfeb_readfirmware_mcs(CFEB & cfeb, const char *filename);
+  void dcfeb_read_firmware(CFEB & cfeb, const char *filename);
   void dcfeb_program_virtex6(CFEB & cfeb, const char *mcsfile, int broadcast=0);
   void dcfeb_program_eprom(CFEB & cfeb, const char *mcsfile, int offset, int broadcast=0);
   void dcfeb_configure(CFEB & cfeb);
@@ -943,6 +945,19 @@ public:
   int SVFLoad(int dev, const char *fn, int db, int verify );
   void dcfeb_program_eprom_Xilinx(CFEB & cfeb, const char *mcsfile, int broadcast=0);
   int cfeb_load_eprom(int ncfeb, const char  *svffile, int db, int verify );
+
+  // xDCFEB new routines
+  void ds4550_scan(int reg, char *snd,int cnt,char *rcv,int ird=0);
+  void xdprom_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip);
+  int xdcfeb_erase_eprom(int chip, int broadcast);
+  int xdcfeb_write_eprom(char *buffin, int dsize, int chip, int broadcast);
+  int xdcfeb_read_eprom(char *buffout, int dsize, int chip);
+  int xdcfeb_load_firmware(CFEB & cfeb, const char *mcsfile, int broadcast);
+  void xdcfeb_read_firmware(CFEB & cfeb, const char *filename, int seq=0);
+  unsigned xdcfeb_eprom_idcode(CFEB & cfeb, int chip);
+  unsigned xdcfeb_ds4550_idcode(CFEB & cfeb);
+  int ds4550_read(char *buf, int address, int size);
+  void ds4550_write(char *buf, int address, int size);
 
  private:
 

@@ -692,7 +692,7 @@ void EmuPeripheralCrateConfig::CFEBStatus(xgi::Input * in, xgi::Output * out )
     {
        cfebdone=(donebits>>(cfeb_index-1))&1;
        ndcfebs++;
-       sprintf(buf,"DCFEB %d : ",cfeb_index);
+       sprintf(buf,"CFEB %d : ",cfeb_index);
        *out << buf;
        //
        //*out << cgicc::br();
@@ -721,7 +721,7 @@ void EmuPeripheralCrateConfig::CFEBStatus(xgi::Input * in, xgi::Output * out )
 	      thisDMB->xdcfeb_eprom_idcode(*cfebItr, 1), 
 	      thisDMB->xdcfeb_eprom_idcode(*cfebItr, 2),
 	      thisDMB->xdcfeb_ds4550_idcode(*cfebItr));
-           *out << cgicc::br() << "&emsp; &emsp; &emsp; &emsp;" <<  buf << std::endl; 
+           *out << cgicc::br() << "&emsp; &emsp; &emsp;&emsp;" <<  buf << std::endl; 
        }
     }
     //
@@ -900,71 +900,71 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
   //
   std::vector <std::string> FuncName; 
   char Name[100];
-  FuncName.push_back("NO OP");
-  FuncName.push_back("Sys Reset");
-  FuncName.push_back("JTAG Shift Reg (32)"); 
-  FuncName.push_back("Update Status Reg (32)"); 
-  FuncName.push_back("Comparator DAC (15)"); 
-  FuncName.push_back("L1a Delay (2)"); 
-  FuncName.push_back("Read FIFO1"); 
-  FuncName.push_back("Set F5 F8 F9"); 
-  FuncName.push_back("Pre Blockend (4)"); 
-  FuncName.push_back("Comparator mode timing (5)"); 
-  FuncName.push_back("Buckeye mask (6)"); 
-  FuncName.push_back("Shift Buckeye (6*48)");
-  FuncName.push_back("ADC mask (12)");
-  FuncName.push_back("Initial ADC");
-  FuncName.push_back("ADC config memory (26)");
-  FuncName.push_back("restart pipeline");
-  FuncName.push_back("pipeline depth (9)");
-  FuncName.push_back("TTC source (2)");
-  FuncName.push_back("Set Calibration to Ext");
-  FuncName.push_back("Set Calibration to Int");   
-  FuncName.push_back("Samples to read (7)");
-  FuncName.push_back("write BPI FIFO (16)");
-  FuncName.push_back("read BPI FIFO (16)");
-  FuncName.push_back("read BPI status (16)");
-  FuncName.push_back("read BPI timer (16)");
-  FuncName.push_back("Reset BPI");
-  FuncName.push_back("Disable BPI");
-  FuncName.push_back("Enable BPI");
-  FuncName.push_back("Clock phase (4)");
-  FuncName.push_back("TMB transmit mode (2)");
-  FuncName.push_back("TMB Half Strip");  
-  FuncName.push_back("TMB Layer Mask");  
-  FuncName.push_back("DAQ low");  
-  FuncName.push_back("DAQ High");  
-  FuncName.push_back("Calib DAC (16)");  
-  FuncName.push_back("ADC Control (25)");  
-  FuncName.push_back("ADC Read (16)");  
-  FuncName.push_back("Read SEM status (10)");  
-  FuncName.push_back("Reset conf ECC error counter");
-  FuncName.push_back("Read conf ECC error count (16)");  
-  FuncName.push_back("Clear USE_ANY_L1A");  
-  FuncName.push_back("Set USE_ANY_L1A");  
-  FuncName.push_back("Clear L1A_HEAD flag");  
-  FuncName.push_back("Set L1A_HEAD flag");  
-  FuncName.push_back("ADC Fine Delay (3)");  
-  FuncName.push_back("DAQ PRBS Test Mode (3)");  
-  FuncName.push_back("DAQ PRBS Inject Error");  
-  FuncName.push_back("SEM Take Control");  
-  FuncName.push_back("SEM Double Error Detected Flag Reset");  
-  FuncName.push_back("SEM Command (8)");  
-  FuncName.push_back("SEM SEU Address Linear (24)");  
-  FuncName.push_back("SEM_SEU Address Physical (24)");  
-  FuncName.push_back("Register Selection Word (8)");  
-  FuncName.push_back("Readback Selected Register (16)");  
-  FuncName.push_back("QPLL Reset");  
-  FuncName.push_back("QPLL Lock Lost Counter (8)");
-  FuncName.push_back("Startup Status (16)");
-  FuncName.push_back("Read L1A Counter (24)");  
-  FuncName.push_back("Read L1A_MATCH Counter (12)");  
-  FuncName.push_back("Read INJPLS Counter (12)");  
-  FuncName.push_back("Read EXTPLS Counter (12)");  
-  FuncName.push_back("Read BC0 Counter (12)");  
-  FuncName.push_back("Comparator Clock Phase Reset");  
-  FuncName.push_back("Toggle DAQ TX_Disable");  // 63  
-  FuncName.push_back("TOGGLE Trig TX_Disable"); // 64 
+  FuncName.push_back("0. NO OP");
+  FuncName.push_back("1. Sys Reset");
+  FuncName.push_back("2. JTAG Shift Reg (32)"); 
+  FuncName.push_back("3. Update Status Reg (32)"); 
+  FuncName.push_back("4. Comparator DAC (15)"); 
+  FuncName.push_back("5. L1a Delay (2)"); 
+  FuncName.push_back("6. Read FIFO1"); 
+  FuncName.push_back("7. Set F5 F8 F9"); 
+  FuncName.push_back("8. Pre Blockend (4)"); 
+  FuncName.push_back("9. Comparator mode timing (5)"); 
+  FuncName.push_back("10. Buckeye mask (6)"); 
+  FuncName.push_back("11. Shift Buckeye (6*48)");
+  FuncName.push_back("12. ADC mask (12)");
+  FuncName.push_back("13. Initial ADC");
+  FuncName.push_back("14. ADC config memory (26)");
+  FuncName.push_back("15. restart pipeline");
+  FuncName.push_back("16. pipeline depth (9)");
+  FuncName.push_back("17. TTC source (2)");
+  FuncName.push_back("18. Set Calibration to Ext");
+  FuncName.push_back("19. Set Calibration to Int");   
+  FuncName.push_back("20. Samples to read (7)");
+  FuncName.push_back("21. write BPI FIFO (16)");
+  FuncName.push_back("22. read BPI FIFO (16)");
+  FuncName.push_back("23. read BPI status (16)");
+  FuncName.push_back("24. read BPI timer (16)");
+  FuncName.push_back("25. Reset BPI");
+  FuncName.push_back("26. Disable BPI");
+  FuncName.push_back("27. Enable BPI");
+  FuncName.push_back("28. Clock phase (5)");
+  FuncName.push_back("29. TMB transmit mode (2)");
+  FuncName.push_back("30. TMB Half Strip");  
+  FuncName.push_back("31. TMB Layer Mask");  
+  FuncName.push_back("32. DAQ low");  
+  FuncName.push_back("33. DAQ High");  
+  FuncName.push_back("34. Calib DAC (16)");  
+  FuncName.push_back("35. ADC Control (25)");  
+  FuncName.push_back("36. ADC Read (16)");  
+  FuncName.push_back("37. Read SEM status (10)");  
+  FuncName.push_back("38. Reset conf ECC error counter");
+  FuncName.push_back("39. Read conf ECC error count (16)");  
+  FuncName.push_back("40. Clear USE_ANY_L1A");  
+  FuncName.push_back("41. Set USE_ANY_L1A");  
+  FuncName.push_back("42. Clear L1A_HEAD flag");  
+  FuncName.push_back("43. Set L1A_HEAD flag");  
+  FuncName.push_back("44. ADC Sampling Clock Phase (3)");  
+  FuncName.push_back("45. DAQ PRBS Test Mode (3)");  
+  FuncName.push_back("46. DAQ PRBS Inject Error");  
+  FuncName.push_back("47. SEM Take Control");  
+  FuncName.push_back("48. SEM Double Error Detected Flag Reset");  
+  FuncName.push_back("49. SEM Command (8)");  
+  FuncName.push_back("50. SEM SEU Address Linear (24)");  
+  FuncName.push_back("51. SEM_SEU Address Physical (24)");  
+  FuncName.push_back("52. Register Selection Word (8)");  
+  FuncName.push_back("53. Readback Selected Register (16)");  
+  FuncName.push_back("54. QPLL Reset");  
+  FuncName.push_back("55. QPLL Lock Lost Counter (8)");
+  FuncName.push_back("56. Startup Status (16)");
+  FuncName.push_back("57. Read L1A Counter (24)");  
+  FuncName.push_back("58. Read L1A_MATCH Counter (12)");  
+  FuncName.push_back("59. Read INJPLS Counter (12)");  
+  FuncName.push_back("60. Read EXTPLS Counter (12)");  
+  FuncName.push_back("61. Read BC0 Counter (12)");  
+  FuncName.push_back("62. Comparator Clock Phase Reset");  
+  FuncName.push_back("63. Toggle DAQ TX_Disable");  // 63  
+  FuncName.push_back("64. Toggle Trig TX_Disable"); // 64 
 
   cgicc::Cgicc cgi(in);
   //
@@ -1569,7 +1569,7 @@ void EmuPeripheralCrateConfig::CFEBFunction(xgi::Input * in, xgi::Output * out )
   FuncSize.push_back(0);
   FuncSize.push_back(0);
   FuncSize.push_back(0);
-  FuncSize.push_back(4);
+  FuncSize.push_back(5);
   FuncSize.push_back(2);
   FuncSize.push_back(0);
   FuncSize.push_back(0);

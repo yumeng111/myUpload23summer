@@ -1148,7 +1148,7 @@ inline void ChamberUtilities::CFEBTiming_ConfigureLevel(CFEBTiming_Configuration
 	if((config.cfeb_mask & 0x7f) >> thisDMB->cfebs_[cfeb].number()) {
 	  
 	  // Should not set dcfeb_clock_phase with the following function for regular scan, but should pick up the dcfeb_clock_phase that is set in xml
-	  thisDMB->dcfeb_fine_delay(thisDMB->cfebs_[cfeb], config.cfeb_clock_phase);
+	  thisDMB->dcfeb_comp_clockphase(thisDMB->cfebs_[cfeb], config.cfeb_clock_phase);
 	  
 	  char tmp[2];
 	  thisDMB->autoload_select_readback_wrd(thisDMB->cfebs_[cfeb], 10);
@@ -2323,7 +2323,7 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
       for(int cfeb=0, ncfebs=thisDMB->cfebs_.size(); cfeb<ncfebs; ++cfeb) {
 	if((config.cfeb_mask & 0x7f) >> thisDMB->cfebs_[cfeb].number()) {
 	  
-	  thisDMB->dcfeb_fine_delay(thisDMB->cfebs_[cfeb], initial_cfeb_tof_delay[cfeb]);
+	  thisDMB->dcfeb_comp_clockphase(thisDMB->cfebs_[cfeb], initial_cfeb_tof_delay[cfeb]);
 	  //
 	}
 	usleep(1000);

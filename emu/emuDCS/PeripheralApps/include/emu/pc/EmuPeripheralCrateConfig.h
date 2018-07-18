@@ -698,7 +698,9 @@ private:
   void DefineFirmwareFilenames();
   std::string GetFormString(const std::string& form_element, xgi::Input* in);
   void EnableWriteDCFEBPROM(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
-
+  void SwitchBoard(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void DCFEBShutdown(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  
   //
   std::vector<TMBTester> InitTMBTests(Crate *);
   void CheckPeripheralCrateConfiguration(int full_check=0);
@@ -765,6 +767,7 @@ private:
   //
   bool showBPITools_;
   unsigned iSelectedGEM;
+  bool extra_tools_;
 };
 
   } // namespace emu::pc

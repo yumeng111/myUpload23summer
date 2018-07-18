@@ -137,6 +137,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   DisplayRatio_ = false;
   AutoRefresh_  = true;
   write_dcfeb_prom_allowed_ = true;
+  extra_tools_ = false;
   //thisTMB = 0;
   //thisDMB = 0;
   thisCCB = 0;
@@ -584,6 +585,8 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   // Allow Write to DCFEB's PROM
   //----------------------------
   xgi::bind(this,&EmuPeripheralCrateConfig::EnableWriteDCFEBPROM,"EnableWriteDCFEBPROM");
+  xgi::bind(this,&EmuPeripheralCrateConfig::SwitchBoard,"SwitchBoard");
+  xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBShutdown,"DCFEBShutdown");
   //
   // SOAP call-back functions, which relays to *Action method.
   //-----------------------------------------------------------
@@ -13897,6 +13900,25 @@ void EmuPeripheralCrateConfig::EnableWriteDCFEBPROM(xgi::Input * in, xgi::Output
   //
     write_dcfeb_prom_allowed_ = true;
     std::cout << getLocalDateTime() << " Enable Write to DCFEB's PROM. " << std::endl;
+}
+
+void EmuPeripheralCrateConfig::SwitchBoard(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception)
+{
+  cgicc::CgiEnvironment cgiEnvi(in);
+  //
+  std::string Page=cgiEnvi.getPathInfo()+"?"+cgiEnvi.getQueryString();
+  Page=cgiEnvi.getQueryString();
+  std::string command_name=Page.substr(0,Page.find("=", 0) );
+  std::string command_argu=Page.substr(Page.find("=", 0)+1);
+  if(command_name=="") return;
+
+  if (command_name=="EXTRATOOLS")
+  {
+     if (command_argu=="ON" || command_argu=="on") extra_tools_ = true;
+     else if (command_argu=="OFF" || command_argu=="off") extra_tools_ = false;
+     std::cout << "SwitchBoard: Extra Tools " << command_argu << " at " << getLocalDateTime() << std::endl;
+  }
 }
 
  }  // namespace emu::pc

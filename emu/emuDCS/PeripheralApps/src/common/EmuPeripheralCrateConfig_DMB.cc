@@ -657,6 +657,7 @@ void EmuPeripheralCrateConfig::CFEBStatus(xgi::Input * in, xgi::Output * out )
   typedef std::vector<CFEB>::iterator CFEBItr;
   //
   int donebits=thisDMB->read_cfeb_done();
+  if(thisDMB->DMBversion()<=1) donebits=0x1F; // for DMBs, no DONE bits read back, set them to 1 to pass check 
   int cfebdone=0;
 
   hversion=thisDMB->CFEBversion();    //
@@ -697,10 +698,12 @@ void EmuPeripheralCrateConfig::CFEBStatus(xgi::Input * in, xgi::Output * out )
        //
        //*out << cgicc::br();
        //
-       sprintf(buf,"FPGA DONE: %d;  FPGA id : %08x;  Firmware Tag: %08x ",
-            cfebdone,
-	    thisDMB->febfpgaid(*cfebItr),
-	    thisDMB->febfpgauser(*cfebItr));
+       if(thisDMB->DMBversion()<=1)
+          sprintf(buf,"FPGA id : %08x;  Firmware Tag: %08x ",
+            thisDMB->febfpgaid(*cfebItr), thisDMB->febfpgauser(*cfebItr));
+       else
+          sprintf(buf,"FPGA DONE: %d;  FPGA id : %08x;  Firmware Tag: %08x ",
+            cfebdone, thisDMB->febfpgaid(*cfebItr), thisDMB->febfpgauser(*cfebItr));
        //
        if ( cfebdone && thisDMB->CheckCFEBFirmwareVersion(*cfebItr) ) 
        {
@@ -4181,24 +4184,12 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
   if(hversion<=1)
   {
   //
-      unsigned long int cfebID[5], cfebIDread[5];
-      std::vector <CFEB> thisCFEBs=thisDMB->cfebs();
-      //
-      for (unsigned i=0;i<thisCFEBs.size();i++) {
-        cfebIDread[i]=thisDMB->febpromuser(thisCFEBs[i]);
-        cfebID[i]=brddb->ChamberToCFEBID(chamber,i+1);
-        std::cout<<" DB_check CFEB # "<<i<<" ID readback: "<<(cfebIDread[i]&0xfff)<<" Look up from DB: "<<(cfebID[i]&0xfff)<<std::endl;
-      }
       std::string crate=thisCrate->GetLabel();
       int slot=thisDMB->slot();
       std::cout<<" Crate: "<<crate<<" slot "<<slot<<std::endl;
-      int dmbID=brddb->CrateToDMBID(crate,slot);
-      //The readback
-      unsigned long int dmbIDread=thisDMB->mbpromuser(0);
-      std::cout<<" DB_check DMB ID readback: "<<(dmbIDread&0xfff)<<" look up from DB: "<<(dmbID&0xfff)<<std::endl;
 
     thisDMB->vmefpgaid();
-    sprintf(buf,"DMB vme FPGA : Version %d Revision %x Day %d Month %d Year %d",
+    sprintf(buf,"DMB VME Firmware : Tag %d Revision %x, Day %d Month %d Year %d",
 	  (int)thisDMB->GetFirmwareVersion(),(int)thisDMB->GetFirmwareRevision(),
 	  (int)thisDMB->GetFirmwareDay(),(int)thisDMB->GetFirmwareMonth(),(int)thisDMB->GetFirmwareYear());
     //
@@ -4216,27 +4207,27 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
     }
     *out << cgicc::br();
     //
-    sprintf(buf,"DMB prom VME->Motherboard          : %08x ",(int)thisDMB->mbpromuser(0));
+    sprintf(buf,"DMB VME prom User Code       : %08x ",(int)thisDMB->mbpromuser(0));
     *out << buf ;
     *out << cgicc::br();
     //
-    sprintf(buf,"DMB prom Motherboard Controller    : %08x ",(int)thisDMB->mbpromuser(1));
+    sprintf(buf,"DMB Control prom User Code   : %08x ",(int)thisDMB->mbpromuser(1));
     *out << buf  ;
     *out << cgicc::br();
     //
-    sprintf(buf,"DMB fpga id                        : %08x ",(int)thisDMB->mbfpgaid());
+    sprintf(buf,"DMB VME prom ID              : %08x ",(int)thisDMB->mbpromid(0));
     *out << buf  ;
     *out << cgicc::br();
     //
-    sprintf(buf,"DMB prom VME->Motherboard ID       : %08x ",(int)thisDMB->mbpromid(0));
+    sprintf(buf,"DMB Control prom ID          : %08x ",(int) thisDMB->mbpromid(1));
     *out << buf  ;
     *out << cgicc::br();
     //
-    sprintf(buf,"DMB prom Motherboard Controller ID : %08x ",(int) thisDMB->mbpromid(1));
+    sprintf(buf,"DMB Control fpga ID          : %08x ",(int)thisDMB->mbfpgaid());
     *out << buf  ;
     *out << cgicc::br();
     //
-    sprintf(buf,"DMB fpga user id                   : %x ", (int) thisDMB->mbfpgauser());
+    sprintf(buf,"DMB Control Firmware Tag     : %x ", (int) thisDMB->mbfpgauser());
   
     if ( thisDMB->CheckControlFirmwareVersion() ) {
       *out << cgicc::span().set("style","color:green");
@@ -4255,7 +4246,7 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
   {
      int fwv=thisDMB->odmb_firmware_version();
      int fw_xml=thisDMB->GetExpectedControlFirmwareTag();
-     sprintf(buf,"ODMB firmware version : V%02X_%02X (tag %02X%02X)",(fwv>>8)&0xFF, fwv&0xFF,(fwv>>8)&0xFF, fwv&0xFF);
+     sprintf(buf,"ODMB Firmware Version : V%02X_%02X (tag %02X%02X)",(fwv>>8)&0xFF, fwv&0xFF,(fwv>>8)&0xFF, fwv&0xFF);
      if ( (fwv&0xFFFF)==(fw_xml&0xFFFF) ) 
      {
         *out << cgicc::span().set("style","color:green");
@@ -4303,7 +4294,7 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
      sprintf(buf,"ODMB fpga User Code   : %08X ", (int)thisDMB->mbfpgauser());
      *out << buf << std::endl;
      int unique_id=thisDMB->read_odmb_id();     
-     sprintf(buf,"ODMB unique id        : %04X ", unique_id);
+     sprintf(buf,"ODMB unique ID        : %04X ", unique_id);
      *out << buf << std::endl;
      // ODMB Control
      // DCFEB Control

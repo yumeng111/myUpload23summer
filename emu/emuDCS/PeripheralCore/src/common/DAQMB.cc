@@ -2658,10 +2658,10 @@ unsigned int  DAQMB::mbpromid(int prom)
 {
   if(DMBversion()<=1)
   {
-  unsigned int ibrd;
-  DEVTYPE dv;
+      unsigned int ibrd;
+      DEVTYPE dv;
 
-  if(prom==0){dv=VPROM;}else{dv=MPROM;}
+      if(prom==0){dv=VPROM;}else{dv=MPROM;}
       cmd[0]=PROM_IDCODE;
       sndbuf[0]=0xFF;
       sndbuf[1]=0xFF;
@@ -2732,30 +2732,19 @@ unsigned int  DAQMB::mbfpgaid()
   return ibrd;
 }
 
-//
+// This name is missleading. It is actually DMB VME firmware version info
 void DAQMB::vmefpgaid()
 {
   if(DMBversion()<=1)
   {
-  //
-  cmd[0]=1;
-  cmd[1]=0;
-  devdo(DEVSTATUS,4,cmd,0,sndbuf,rcvbuf,1);
-  //cout <<" Register0 rcv[0,1] "<<hex<<(rcvbuf[0]&0xff)<<' '<<hex<<(rcvbuf[1]&0xff)<<'\n';
-  //
-  fwvers_=((rcvbuf[1]<<4)&0xff0)+((rcvbuf[0]>>4)&0xf);
-  fwrv_=(rcvbuf[0]&0xf);
-  //cout <<" DMB VME FPGA firmware Ver. "<< hex <<fwvers<<" Rev.: "<<fwrv<<'\n';
-  //
-  cmd[0]=1; 
-  cmd[1]=1;
-  devdo(DEVSTATUS,4,cmd,0,sndbuf,rcvbuf,1);
-  //cout <<" Register1 rcv[0,1] "<<hex<<(rcvbuf[0]&0xff)<<' '<<hex<<(rcvbuf[1]&0xff)<<'\n';
-  fwyear_=(rcvbuf[0]&0x3f);
-  fwmonth_=((rcvbuf[1]>>4)&0xf);
-  fwday_=((rcvbuf[1]<<2)&0x1c)+((rcvbuf[0]>>6)&0x3);
-  //cout <<" Date code: Month "<<fwmonth<<" Day "<<fwday<<" Year "<<fwyear<<'\n';
-  //
+     int firmwareinfo=ReadRegister(0);
+     fwvers_=(firmwareinfo >> 4)&0xFFF;
+     fwrv_=(firmwareinfo&0xF);
+ 
+     firmwareinfo=ReadRegister(4);
+     fwyear_=firmwareinfo&0x3F;
+     fwmonth_=(firmwareinfo >> 12)&0xF;
+     fwday_=(firmwareinfo>>6)&0x1F;
   }
 }
 //

@@ -1004,7 +1004,9 @@ public:
   void odmbeprom_read(unsigned nwords, unsigned short *pdata);
   bool odmbeprom_cmd_fifo_empty(unsigned int poll_interval = 100 /*us*/);
   bool odmbeprom_pec_ready(unsigned int poll_interval = 500 /*us*/);
-  
+
+  int xor_red(int da);
+  int golay24(int data);  
   //
   int shift_array_[7][6][16];
   static const int nchips[7];

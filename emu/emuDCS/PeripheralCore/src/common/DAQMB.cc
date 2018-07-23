@@ -2645,7 +2645,7 @@ unsigned int DAQMB::mbpromuser(int prom)
       sndbuf[0]=0;
       devdo(dv,8,cmd,0,sndbuf,rcvbuf,0);
 
-      printf("from mbpromuser: %08X %02X %02X %02X %02X\n",ibrd,rcvbuf[0],rcvbuf[1],rcvbuf[2],rcvbuf[3]);
+//      printf("from mbpromuser: %08X %02X %02X %02X %02X\n",ibrd,rcvbuf[0],rcvbuf[1],rcvbuf[2],rcvbuf[3]);
       if (((0xff&rcvbuf[0])!=0xff)||((0xff&rcvbuf[1])!=0xff)||
           ((0xff&rcvbuf[2])!=0xff)||((0xff&rcvbuf[3])!=0xff)) return ibrd;
   }
@@ -8432,7 +8432,7 @@ void DAQMB::dcfeb_configure(CFEB & cfeb)
    int number_ = cfeb.number();
    int real_block=-1;
    bool changed=false;
-   unsigned short int bufload[34], oldbuf[34];
+   unsigned short int bufload[DCFEB_PARAMETERS], oldbuf[DCFEB_PARAMETERS];
 
    write_cfeb_selector(cfeb.SelectorBit());
    if(CFEBversion() == 2)
@@ -8444,7 +8444,7 @@ void DAQMB::dcfeb_configure(CFEB & cfeb)
           dcfeb_readparam(b, DCFEB_PARAMETERS, oldbuf);
           for(int i=0; i<DCFEB_PARAMETERS;i++)
           {
-             if(bufload[i]!=oldbuf[i]) changed=true;
+             if(bufload[i]!=oldbuf[i]) { changed=true; break; }
           }
           if(changed)
           {  
@@ -8462,9 +8462,31 @@ void DAQMB::dcfeb_configure(CFEB & cfeb)
    }
    else if(CFEBversion() == 3)
    {
-      set_dcfeb_parambuffer(cfeb, bufload);  
-//      xdcfeb_erase_eprom(2, 0);
-//      xdcfeb_write_eprom((char *)bufload, DCFEB_PARAMETERS*2, 2, 0);
+       // each byte is encoded and produces 3 bytes
+       char *bufin=(char *)bufload;
+       char newbuf[1024], readbuf[1024];
+
+       set_dcfeb_parambuffer(cfeb, bufload);  
+
+       for(int i=0; i<DCFEB_PARAMETERS*2; i++)
+       {
+          int datain=bufin[i];
+          int chkbits=golay24(datain);
+          int dataout=((chkbits<<12)&0xFFF000)|(datain&0xFFF);
+          memcpy(newbuf+i*3, (char *)&dataout, 3);
+       }
+       xdcfeb_read_eprom(readbuf, 1024, 2);
+       for(int i=0; i<DCFEB_PARAMETERS*6; i++)
+       {
+           if(newbuf[i]!=readbuf[i]) { changed=true; break; }
+       } 
+       if(changed)
+       {             
+           std::cout << "Write configuration parameters to EPROM2 on xDCFEB #" << number_+1 << std::endl;
+           xdcfeb_erase_eprom(2, 0);
+           xdcfeb_write_eprom((char *)newbuf, DCFEB_PARAMETERS*6, 2, 0);
+           ::sleep(1);
+       }
    }
    // Liu, 2018-07-12 temporarily put here to configure xDCFEB. 
         set_comp_thresh(cfeb, set_comp_thresh_);
@@ -8481,9 +8503,10 @@ void DAQMB::dcfeb_print_parameters(CFEB & cfeb)
 {
    const int DCFEB_PARAMETERS=34;
    int number = cfeb.number();
-   unsigned short int bufload[34];
+   unsigned short int bufload[DCFEB_PARAMETERS];
    char xbuf[12000];
-
+   char *bbuf=(char *)bufload;
+   
    write_cfeb_selector(cfeb.SelectorBit());
    if(CFEBversion() == 2)
    {
@@ -8501,15 +8524,18 @@ void DAQMB::dcfeb_print_parameters(CFEB & cfeb)
    else if(CFEBversion() == 3)
    {
       std::cout << "Configuration Parameters for xDCFEB #" << number+1 << std::endl;
-//      xdcfeb_read_eprom(xbuf, 2*DCFEB_PARAMETERS, 2);
       xdcfeb_read_eprom(xbuf, 1024, 2);
       FILE *para=fopen("/tmp/para.mcs", "w");
       write_mcs(xbuf, 1024, para);    
-      memcpy(bufload, xbuf, 2*DCFEB_PARAMETERS);
-         for(int i=0; i<DCFEB_PARAMETERS;i++)
-         {
-            std::cout << i << "   " << std::hex << "0x" << bufload[i] << std::dec  << std::endl;
-         }            
+      for(int i=0; i<2*DCFEB_PARAMETERS; i++)
+      {
+         bbuf[i]=xbuf[i*3];
+      }
+      for(int i=0; i<DCFEB_PARAMETERS;i++)
+      {
+         std::cout << i << "   " << std::hex << "0x" << bufload[i] << std::dec  << std::endl;
+      }            
+      fclose(para);
    }
 }
 
@@ -8522,15 +8548,12 @@ void DAQMB::dcfeb_test_dummy(CFEB & cfeb, int test)
 /*
       char tmp[4];
       unsigned t;
-      dcfeb_core(66,0, tmp, tmp, NOW|NOOP_YES);
-      dcfeb_core(68,0, tmp, tmp, NOW|NOOP_YES);
-      dcfeb_core(70,0, tmp, tmp, NOW|NOOP_YES);
       dcfeb_core(71,0, tmp, tmp, NOW|NOOP_YES);
       ::sleep(1);
       for(int i=0; i<34*3; i++)
       {  t=0;
          dcfeb_core(72, 16, tmp, (char *)&t, NOW|READ_YES);
-         usleep(10000);
+         usleep(1000);
          std::cout << "Param " << i << " = 0x";
          std::cout <<  std::hex  << t << std::dec << std::endl;
       }
@@ -12919,6 +12942,26 @@ void DAQMB::xdcfeb_read_firmware(CFEB & cfeb, const char *filename, int seq)
         ::usleep(15000); // wait time for EPROM WRITE: typical 10ms, max 20ms
      }    
   }
-      
+
+  int DAQMB::xor_red(int da)
+  {
+      // xor reduction:  xor of 12 bits to generate a parity bit
+      int par = da&1;
+      for(unsigned i=1;i<12;i++) par = par^(da>>i);
+      return par&1;
+  }
+
+  int DAQMB::golay24(int data)
+  {
+        int BI[] = {0x7FF, 0xEE2, 0XDC5, 0XB8B, 0XF16, 0XE2D, 0XC5B, 0X8B7, 0X96E, 0XADC, 0XDB8, 0XB71};
+        int par,chkbits=0;
+        for(unsigned i=0;i<12;i++)
+        {
+             par = xor_red(data & BI[i]);
+             chkbits = chkbits | (par<<(11-i));
+        }
+        return chkbits;
+  }
+                      
 } // namespace emu::pc
 } // namespace emu

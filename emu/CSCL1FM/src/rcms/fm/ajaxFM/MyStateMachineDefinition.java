@@ -31,13 +31,18 @@ public class MyStateMachineDefinition extends UserStateMachineDefinition {
 		addTransition(MyInputs.INITIALIZE, MyStates.INITIAL, MyStates.INITIALIZING);
 //		addTransition(MyInputs.SETHALTED, MyStates.INITIALIZING, MyStates.HALTED);
 
+                //
+                // ERROR
+                //
+                addState(MyStates.ERROR);
+                addInput(MyInputs.SETERROR);
+                MyInputs.SETERROR.setVisualizable(false); // To prevent it from being displayed in the GUI
+		addTransition(MyInputs.SETERROR, MyStates.INITIALIZING, MyStates.ERROR);
+
                 
-//              addState(MyStates.STARTING);
-//		addState(MyStates.STOPPING);
-		
-//		setInitialState(MyStates.RUNNING);
-		setInitialState(MyStates.INITIAL);
+                setInitialState(MyStates.INITIAL);
                 
+
                 if ( !controlLifeCycleOnly ) extend();
         }
         
@@ -125,21 +130,6 @@ public class MyStateMachineDefinition extends UserStateMachineDefinition {
 		addTransition(MyInputs.HALT, MyStates.STARTING, MyStates.HALTING); // TODO: review whether needed
 		addTransition(MyInputs.HALT, MyStates.RUNNING, MyStates.HALTING);
 //		addTransition(MyInputs.SETHALTED, MyStates.HALTING, MyStates.HALTED);
-
-                //
-                // ERROR
-                //
-                addState(MyStates.ERROR);
-                addInput(MyInputs.SETERROR);
-                MyInputs.SETERROR.setVisualizable(false); // To prevent it from being displayed in the GUI
-                // TODO: use invisible state transitions
-		addTransition(MyInputs.SETERROR, MyStates.INITIALIZING, MyStates.ERROR);
-//		addTransition(MyInputs.SETERROR, MyStates.HALTING, MyStates.ERROR);
-//		addTransition(MyInputs.SETERROR, MyStates.HALTED, MyStates.ERROR);
-//		addTransition(MyInputs.SETERROR, MyStates.CONFIGURING, MyStates.ERROR);
-//		addTransition(MyInputs.SETERROR, MyStates.CONFIGURED, MyStates.ERROR);
-//		addTransition(MyInputs.SETERROR, MyStates.STARTING, MyStates.ERROR);
-//		addTransition(MyInputs.SETERROR, MyStates.RUNNING, MyStates.ERROR);
 
        }
 

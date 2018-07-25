@@ -494,7 +494,7 @@ public class MyEventHandler extends UserStateNotificationHandler {
                         + ", to " + ((StateNotification) obj).getToState()
                         + ", reason: " + reason);
                 // What we do depends on the state and run type:
-                String runType = functionManager.getParameterSet().get(MyParameterSet.RUN_TYPE).getValue().toString();
+                String runType = functionManager.getParameterSet().get(MyParameterSet.CSC_RUN_TYPE).getValue().toString();
                 if ( ( runType.toLowerCase().equals( "global" ) || runType.toLowerCase().equals( "local" ) ) && 
                      functionManager.getState().equals( MyStates.RUNNING ) ){
                     // If we're running in global or local, we just warn the user, but we don't go into error state.

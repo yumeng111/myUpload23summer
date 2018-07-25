@@ -13,7 +13,7 @@ public class Version {
 
     static final int MAJOR = 1;
     static final int MINOR = 1;
-    static final int PATCH = 0;
+    static final int PATCH = 1;
     
     public String getString(){ return MAJOR + "." + MINOR  + "." + PATCH; }
     public int getMajor(){ return MAJOR; }

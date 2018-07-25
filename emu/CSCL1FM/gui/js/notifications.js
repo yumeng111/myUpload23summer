@@ -85,7 +85,8 @@ function myUpdateParameters(message) {
 		}
 	}
         console.log("$('#showFMParametersCheckbox').checked="+$('#showFMParametersCheckbox').is(':checked'));
-        if ( $('#showFMParametersCheckbox').is(':checked') ){
+        // Always show diagnostics in global runs. Otherwise only if requested.
+        if ( $('#showFMParametersCheckbox').is(':checked') || isRunTypeGlobal(message) ){
             tabulateParameters( message );
             //$('#FMParameters').toggle( true );
             $('#FMParameters').css('visibility', 'visible');
@@ -95,6 +96,24 @@ function myUpdateParameters(message) {
             //$('#FMParameters').toggle( false );
             $('#FMParameters').css('visibility', 'hidden');
         }
+}
+
+function isRunTypeGlobal(message){
+    var pArray = message.getElementsByTagName('PARAMETER');
+    if (pArray != null) {
+        // loop through the array of parameters contained in this notification
+        for (var i = 0; i < pArray.length; i++) {
+            if (pArray[i] != null) {
+                pNameNode = pArray[i].getElementsByTagName('NAME')[0];
+                pValueNode = pArray[i].getElementsByTagName('VALUE')[0];
+                if (pNameNode != null && pValueNode != null) {
+                    if ( pNameNode.childNodes[0].nodeValue.toString()    == 'CSC_RUN_TYPE' && 
+                         pValueNode.textContent.toString().toLowerCase() == 'global'           ) return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 function tabulateParameters(message){

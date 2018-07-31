@@ -8,9 +8,9 @@ BUILD_HOME:=$(shell pwd)/../..
 
 include $(XDAQ_ROOT)/config/mfAutoconf.rules
 include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
-PACKAGE_VER_MAJOR=04
+PACKAGE_VER_MAJOR=05
 PACKAGE_VER_MINOR=00
-PACKAGE_VER_PATCH=05
+PACKAGE_VER_PATCH=00
 
 #
 # Packages to be built
@@ -31,7 +31,9 @@ Sources = \
 	TestParameters.cc	\
 	Test.cc	\
 	ChamberMap.cc	\
+	Dumper.cc	\
 	PeriodicDumper.cc	\
+	TimingOptions.cc \
 	version.cc
 TestSources =
 TestIncludeDirs =
@@ -42,13 +44,19 @@ IncludeDirs = \
 	$(BUILD_HOME)/emu/base/include \
 	$(BUILD_HOME)/emu/emuDCS/PeripheralCore/include \
 	$(BUILD_HOME)/emu/emuDCS/PeripheralApps/include \
-	$(BUILD_HOME)/emu/step/include
-LibraryDirs =
+	$(BUILD_HOME)/emu/step/include \
+	/opt/dip/include
+LibraryDirs = /opt/dip/lib64
 
 UserSourcePath =
 UserCFlags = $(ROOTCFLAGS)
-#UserCCFlags = -g -Wall -pedantic-errors -Wno-long-long
-UserCCFlags = -O0 -g -Wall -Wno-long-long $(ROOTCFLAGS)
+# At GIF++ we may want to use the SPS timing DIP signals. To do that:
+#   Get these DIP packages and install them (see https://readthedocs.web.cern.ch/display/ICKB/DIP+API):
+#     https://readthedocs.web.cern.ch/download/attachments/21178175/dip-5.6.3.3-1.x86_64.rpm
+#     https://readthedocs.web.cern.ch/download/attachments/21178175/dip-devel-5.6.3.3-1.x86_64.rpm
+#   Add to XDAQ configuration the module /opt/dip/lib64/libdip.so
+#   Add -DDIP to UserCCFlags if the DIP library is available and needed.
+UserCCFlags = -O0 -g -Wall -Wno-long-long $(ROOTCFLAGS) # -DDIP
 UserDynamicLinkFlags = $(ROOTLIBS)
 UserStaticLinkFlags =
 UserExecutableLinkFlags =

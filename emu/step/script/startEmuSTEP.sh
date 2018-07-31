@@ -37,6 +37,9 @@ export XDAQ_DOCUMENT_ROOT=${XDAQ_ROOT}/htdocs
 export DQMCONFIG=$HOME/config/dqm
 export LD_LIBRARY_PATH=$ROOTSYS/lib:$XDAQ_ROOT/lib
 
+export XDAQ_SETUP_ROOT=/opt/xdaq/share
+export XDAQ_ZONE=emu
+
 print
 print "Environment variables:"
 print "    BUILD_HOME         = $BUILD_HOME"
@@ -52,7 +55,7 @@ print
 OPTIONS="\
  -h $HOST \
  -p 10000 \
- -c ${HOME}/config/step/AllInOne_STEP.xml \
+ -c ${HOME}/config/step/aging/AllInOne_STEP.xml \
  -e ${HOME}/etc/default.profile"
 
 #OPTIONS="\

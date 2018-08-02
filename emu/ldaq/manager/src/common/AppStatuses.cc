@@ -141,6 +141,16 @@ emu::ldaq::manager::AppStatuses::getLowestOfLowestSTEPCount() const {
   return lowestLowest;
 }
 
+uint64_t
+emu::ldaq::manager::AppStatuses::getLowestCount( const string appName ) const {
+  uint64_t lowest = numeric_limits<uint64_t>::max();
+  bSem_.take();
+  for ( map<const xdaq::ApplicationDescriptor*, unsigned long>::const_iterator ac=appEventCounts_.begin(); ac!=appEventCounts_.end(); ++ac ){
+    if ( ( appName.size() == 0 || ac->first->getClassName() == appName ) && ac->second < lowest ) lowest = ac->second;
+  }
+  bSem_.give();
+  return lowest;
+}
 
 string
 emu::ldaq::manager::AppStatuses::getTimeOfUpdate() const {

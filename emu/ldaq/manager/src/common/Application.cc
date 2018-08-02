@@ -257,6 +257,7 @@ void emu::ldaq::manager::Application::queryAppStatuses(){
   // Perform query only if state info at least 1 second old.
   cout << "currentAppStatuses_.getAgeInSeconds() = " << currentAppStatuses_.getAgeInSeconds() << endl;
   if ( currentAppStatuses_.getAgeInSeconds() > 1 ){
+    bool isCurrentTestDurationUndefined = ( runType_.toString().find("STEP",0) != string::npos );
     set<const xdaq::ApplicationDescriptor*> apps = currentAppStatuses_.getApps();
     set<const xdaq::ApplicationDescriptor*>::iterator a;
     xdata::String state( "UNKNOWN" );
@@ -270,15 +271,16 @@ void emu::ldaq::manager::Application::queryAppStatuses(){
 	{
 	  emu::soap::Parameters p;
 	  p.add( "stateName", &state );
-	  if ( runType_.toString().find("STEP",0) == string::npos ){
-	    // Not a STEP run
+	  if ( ! isCurrentTestDurationUndefined  ){
+	    // It's a pulsing STEP test, a non-pulsing STEP test of predefined duration, or not a STEP test at all.
+	    // These don't have "STEP" in their name.
 	    if      ( (*a)->getClassName() == "emu::ldaq::rui::Application"                   ) p.add( "nEventsRead"  , &events );
 	    else if ( (*a)->getClassName() == "evb::RU" || (*a)->getClassName() == "evb::EVM" ) p.add( "eventCount"   , &events );
 	    else if ( (*a)->getClassName() == "evb::BU"                                       ) p.add( "nbEventsBuilt", &events );
 	    stepInfo = NULL;
 	  }
 	  else{
-	    // A STEP run
+	    // It's a non-pulsing STEP test, where we want each input to have at least a specified number of events.
 	    emu::soap::extractParameters( m.sendCommand( *a, "STEPQuery" ),
 					  emu::soap::Parameters()
 					  .add( "PersistentDDUError", &step.persistentDDUError )
@@ -308,7 +310,10 @@ void emu::ldaq::manager::Application::queryAppStatuses(){
     // Update the combined DAQ state
     daqState_ = currentAppStatuses_.getCombinedState();
     // Update STEP monitoring parameters, too
-    STEPCount_    = currentAppStatuses_.getLowestOfLowestSTEPCount();
+    STEPCount_ = ( isCurrentTestDurationUndefined ? 
+		   currentAppStatuses_.getLowestOfLowestSTEPCount()                    : // The lowest count of any DDU input.
+		   currentAppStatuses_.getLowestCount( "emu::ldaq::rui::Application" )   // The lowest count of any DDU.
+		   );
     STEPFinished_ = ( (int64_t) STEPCount_ >= maxNumberOfEvents_ );
   } // if ( currentAppStatuses_.getAgeInSeconds() > 1 )
 }

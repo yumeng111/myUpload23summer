@@ -37,6 +37,7 @@ namespace emu { namespace ldaq { namespace manager {
     map<const xdaq::ApplicationDescriptor*, unsigned long> getAppEventCounts() const { return appEventCounts_; }
     map<const xdaq::ApplicationDescriptor*, STEPInfo> getSTEPInfo() const { return stepInfo_; }
     uint64_t getLowestOfLowestSTEPCount() const;
+    uint64_t getLowestCount( const string appName = "" ) const;
     time_t getUnixTimeOfUpdate() const { return timeOfUpdate_; }
     set<const xdaq::ApplicationDescriptor*> getApps() const;
     set<const xdaq::ApplicationDescriptor*> getAppsInState( const string& state ) const;

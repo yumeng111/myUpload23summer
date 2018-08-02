@@ -64,6 +64,8 @@ fi
 # Prepare CSC-mapping database
 #
 
+print "Using sqlite3 at $(which sqlite3) of version $(sqlite3 --version)"
+
 P5_DB_FILE=csc_map_P5.db
 DB_FILE=csc_map.db
 

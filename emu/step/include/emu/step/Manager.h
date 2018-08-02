@@ -76,7 +76,7 @@ namespace emu { namespace step {
       emu::step::Configuration* configuration_;  ///< configuration
       xdata::Vector<xdata::String> crateIds_;
       xdata::Vector<xdata::String> testSequence_;
-      xdata::Boolean isCurrentTestDurationUndefined_; ///< TRUE if the current test needs to accumulate N events, i.e., it's duration is not defined explicitly or by pulse injections
+      xdata::Boolean isCurrentTestDurationUndefined_; ///< TRUE if the current test needs to accumulate N events, i.e., it's duration is not defined explicitly or by pulse injections. Example: cosmics.
       toolbox::task::WorkLoop *workLoop_; ///< work loop for the test procedure to be executed in a separate thread
       toolbox::task::ActionSignature *testSequenceSignature_;
       map<string,const xdaq::ApplicationDescriptor*> testerDescriptors_; ///< peripheral crate group --> emu::step::Tester application descriptor map

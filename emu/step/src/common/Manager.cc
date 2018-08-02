@@ -470,42 +470,19 @@ string emu::step::Manager::checkDataCompleteness( const string& testId ){
       return oss.str();
     }
     //
-    // Get number events read by each RUI (DDU) and check if they complete the test.
+    // Get the lowest number events read by any RUI (DDU) or any RUI input and check if they complete the test.
     //
-    if ( (bool) isCurrentTestDurationUndefined_ ){
-      xdata::Integer64 maxNumberOfEvents;
-      xdata::UnsignedInteger64 STEPCount;
-      m.getParameters( "emu::ldaq::manager::Application", 0, 
-		       emu::soap::Parameters()
-		       .add( "maxNumberOfEvents", &maxNumberOfEvents )
-		       .add( "STEPCount"        , &STEPCount         ) );
+    xdata::Integer64 maxNumberOfEvents;
+    xdata::UnsignedInteger64 STEPCount;
+    m.getParameters( "emu::ldaq::manager::Application", 0, 
+		     emu::soap::Parameters()
+		     .add( "maxNumberOfEvents", &maxNumberOfEvents )
+		     .add( "STEPCount"        , &STEPCount         ) );
+    // In timed tests (e.g. noise measurements), where the number of events to take is not predefined (and nEvents=0), 
+    // we cannot tell if the data file is complete.
+    if ( *testsNEvents.begin() != 0 ){
       if ( (int64_t) STEPCount.value_ < maxNumberOfEvents.value_ ){
 	oss << "Lowest recorded event count: " << STEPCount.toString() << " out of " << maxNumberOfEvents.toString() << " requested.";
-      }
-    }
-    else{ // if ( (bool) isCurrentTestDurationUndefined_ )
-      xdata::Vector<xdata::UnsignedInteger64> rui_counts;
-      xdata::Vector<xdata::UnsignedInteger32> rui_instances;
-      xdata::String xs;
-      emu::soap::extractParameters( m.sendCommand( "emu::ldaq::manager::Application", 0, "QueryRunSummary" ), 
-				    emu::soap::Parameters()
-				    .add( "rui_instances", &rui_instances )
-				    .add( "rui_counts"   , &rui_counts    )                                 );
-      for ( size_t i = 0; i < rui_counts.elements(); i++ ){
-	// Only consider RUIs that are actually supposed to read data:
-	if ( ruisToReadData_.size() == 0 ||
-	     ruisToReadData_.find( *(uint32_t*)( dynamic_cast<xdata::UnsignedInteger32*>( rui_instances.elementAt( i ) ) ) ) != ruisToReadData_.end() ){
-	  // In timed tests, where the number of events to take is not predefined (and nEvents=0), 
-	  // we cannot tell if the data file is complete.
-	  if ( *testsNEvents.begin() != 0 ){
-	    if ( *testsNEvents.begin() != *dynamic_cast<xdata::UnsignedInteger64*>( rui_counts.elementAt( i ) ) ){
-	      oss << "RUI "         << ( dynamic_cast<xdata::UnsignedInteger32*>( rui_instances.elementAt( i ) ) )->toString()
-		  << " read "       << ( dynamic_cast<xdata::UnsignedInteger64*>(    rui_counts.elementAt( i ) ) )->toString()
-		  << " of "         << *testsNEvents.begin() 
-		  << " events. \n";
-	    }
-	  }
-	}
       }
     }
   }

@@ -211,6 +211,14 @@ void EmuPeripheralCrateConfig::CCBUtils(xgi::Input * in, xgi::Output * out )
   //
   *out << cgicc::legend("CCB Utils").set("style","color:blue") << std::endl ;
   //
+  std::string HardReset =
+    toolbox::toString("/%s/HardReset",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",HardReset) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","HardReset").set("style","font-size : 20px;");
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::br() << cgicc::hr() << std::endl;  
+  //
   std::string ReadCCBRegister = 
     toolbox::toString("/%s/ReadCCBRegister",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",ReadCCBRegister) << std::endl ;
@@ -303,15 +311,8 @@ void EmuPeripheralCrateConfig::CCBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::input().set("type","submit").set("value","CCB FPGA Reset");
   *out << cgicc::form() << std::endl ;
   //
-  *out << cgicc::br() << std::endl;
-  //
-  std::string HardReset =
-    toolbox::toString("/%s/HardReset",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",HardReset) << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","HardReset");
-  *out << cgicc::form() << std::endl ;
-  //
-  *out << cgicc::br();
+  *out << cgicc::br() << cgicc::hr() << std::endl;  
+
   //
   std::string CCBLoadFirmware =
     toolbox::toString("/%s/CCBLoadFirmware",getApplicationDescriptor()->getURN().c_str());

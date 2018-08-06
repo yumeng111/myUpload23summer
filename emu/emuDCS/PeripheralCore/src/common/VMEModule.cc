@@ -1553,8 +1553,10 @@ unsigned int ptr_r;
  unsigned add_ih=vme_base+0x34;
  unsigned add_it=vme_base+0x38;
  unsigned add_i=vme_base+0x1C;
- 
+ unsigned add_st=vme_base+0x48;
+ unsigned add_s=vme_base+0x4C;
  unsigned add_reset=vme_base+0x18;
+ bool inst2data = (get_flag(0)==1);
 
  cnt2=cnt-1;
  data=(unsigned short int *) snd;
@@ -1579,7 +1581,7 @@ unsigned int ptr_r;
      // printf(" bit byte %d %d \n",bit,byte);
      if(byte==0||(byte==1&&bit==0)){
        // single write
-       ptr_i=add_i|(cnt2<<8);
+       ptr_i=((inst2data)?add_s:add_i)|(cnt2<<8);
        theController->VME_controller(tiwt[when],ptr_i,data,rcv);
        return;
      }
@@ -1593,7 +1595,7 @@ unsigned int ptr_r;
        if(i==(byte-2)&&bit==0){
          // if this is the last full word with no more extra bits
          // step 3. write 1 full word with trailer
-         ptr_it=add_it|0x0f00;
+         ptr_it=((inst2data)?add_st:add_it)|0x0f00;
          theController->VME_controller(tiwt[when],ptr_it,data,rcv);
          return;
        }else{
@@ -1607,7 +1609,7 @@ unsigned int ptr_r;
      // if the last few bits smaller than a full word
      // step 4. write bits with trailer
      cnt2=bit-1;
-     ptr_it=add_it|(cnt2<<8);
+     ptr_it=((inst2data)?add_st:add_it)|(cnt2<<8);
      theController->VME_controller(tiwt[when],ptr_it,data,rcv);
      return;
    }
@@ -1621,7 +1623,7 @@ unsigned int ptr_r;
    // printf(" bit byte %d %d \n",bit,byte);
    if(byte==0||(byte==1&&bit==0)){
      // single write
-     ptr_d=add_d|(cnt2<<8);
+     ptr_d=((inst2data)?add_dt:add_d)|(cnt2<<8);
      theController->VME_controller(tiwt[when],ptr_d,data,rcv);
      if(ird==1){
        ptr_r=add_r;
@@ -1631,7 +1633,7 @@ unsigned int ptr_r;
    }
    // below for multiple writes
    // step 1. write 1 full word with header, no trailer 
-   ptr_dh=add_dh|0x0f00;
+   ptr_dh=((inst2data)?add_ds:add_dh)|0x0f00;
    theController->VME_controller(1,ptr_dh,data,rcv);
    data=data+1;
    if(ird==1){       
@@ -1999,7 +2001,7 @@ void VMEModule::Jtag_Norm(long dev, int reg, const char *snd, int cnt, char *rcv
   // printf("done loop\n");
   // Now put the state machine into idle.
   int steps=2;
-  if(get_flag(reg)==1) steps=1;   // if special flag is set, stop at UPDATE
+  if(reg==0 && get_flag(0)==1) steps=1;   // if special flag is set, stop at UPDATE-IR
   for(i=0; i<steps; i++)
   {
      d=pvme;

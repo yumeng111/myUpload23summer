@@ -12559,7 +12559,10 @@ int DAQMB::xdcfeb_erase_eprom(int chip, int broadcast)
        xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
        data=block_mask;
        xdprom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
-       set_flag(0);
+
+//
+// 2018-08-06 Liu: disable special handling of ERASE to see how many EPROMs having problem
+//       set_flag(0);
        comd=XCF_ISC_ERASE; 
        xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
        data=block_mask;

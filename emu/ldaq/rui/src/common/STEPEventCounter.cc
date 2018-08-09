@@ -81,15 +81,21 @@ bool emu::ldaq::rui::STEPEventCounter::isNeededEvent( char* const DDUHeader ){
 }
 
 uint64_t emu::ldaq::rui::STEPEventCounter::getLowestCount() const {
+  // This cannot be used for deciding whether the STEP run has finished because if a DDU produces no data at all, 
+  // we cannot find out which inputs are live, and also STEPEventCounter never gets initialized...
   if ( isInitialized_ ){
     uint64_t lowestCount = std::numeric_limits<int64_t>::max(); // When cast to signed int, this should still be positive.
     bool allExcluded = true;
     for ( int i=0; i<maxDDUInputs_; ++i ){
       allExcluded &= ( !isLiveInput_[i] || isMaskedInput_[i]);
+      // std::cout << "Input " << i << " live=" << isLiveInput_[i] << " masked==" << isMaskedInput_[i] << " allExcluded=" << allExcluded << std::endl; 
       if ( isLiveInput_[i] && ! isMaskedInput_[i] )
 	if ( count_[i] < lowestCount ) lowestCount = count_[i];
     }
-    if ( allExcluded ) return std::numeric_limits<int64_t>::max(); // When cast to signed int, this should still be positive.
+    if ( allExcluded ){
+      // std::cout << "All DDU inputs excluded, returning lowest count=" << std::numeric_limits<int64_t>::max() << std::endl; 
+      return std::numeric_limits<int64_t>::max(); // When cast to signed int, this should still be positive.
+    }
     return lowestCount;
   }
   return 0;

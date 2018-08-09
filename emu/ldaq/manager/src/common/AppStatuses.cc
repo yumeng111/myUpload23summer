@@ -128,17 +128,29 @@ emu::ldaq::manager::AppStatuses::getCanonicalStateName( const string& state ) co
 uint64_t
 emu::ldaq::manager::AppStatuses::getLowestOfLowestSTEPCount() const {
   // Return the lowest of the DDUs' lowest input event counts.
-  uint64_t lowestLowest = numeric_limits<uint64_t>::max();
+  uint64_t lowest = numeric_limits<uint64_t>::max();
   bSem_.take();
   if ( ! hasSTEPInfo() ){
     bSem_.give();
-    return lowestLowest;
+    return lowest;
   }
+  // Cannot use STEPInfo::lowestCount as it will remain zero for DDUs whose all inputs are killed. Those should disregarded, but we don't know that.
+  // We check each individual input of every DDU here.
   for ( map<const xdaq::ApplicationDescriptor*, STEPInfo>::const_iterator s=stepInfo_.begin(); s!=stepInfo_.end(); ++s ){
-    if ( s->second.lowestCount < lowestLowest ) lowestLowest = s->second.lowestCount;
+    for ( size_t i = 0; i < s->second.counts.size(); i++ ){
+      // if ( s->second.lowestCount < lowestLowest ) lowestLowest = s->second.lowestCount;
+      // Only consider non-masked live inputs:
+      if ( ! bool ( *dynamic_cast<const xdata::Boolean*>( &s->second.masks     .at(i) ) ) &&
+	     bool ( *dynamic_cast<const xdata::Boolean*>( &s->second.liveInputs.at(i) ) )    ){
+
+	uint64_t count = uint64_t( *dynamic_cast<const xdata::UnsignedInteger64*>( &s->second.counts.at(i) ) );
+	if ( count < lowest ) lowest = count;
+
+      }
+    }
   }
   bSem_.give();
-  return lowestLowest;
+  return lowest;
 }
 
 uint64_t

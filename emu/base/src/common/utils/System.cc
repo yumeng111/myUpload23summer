@@ -44,13 +44,22 @@ void emu::utils::writeFile( const std::string &fileName, const std::string &cont
 {
   try
   {
-    std::fstream outFile(fileName.c_str(), std::fstream::out);
+    std::ofstream outFile(fileName.c_str(), std::fstream::out);
     outFile << content;
+    // Check for error. Check badbit first as badbit implies failbit, but failbit doesn't necessarily imply badbit.
+    if ( outFile.bad()  ) throw std::string( "badbit is set (Error due to the failure of an input/output operation on the stream buffer.)" );
+    if ( outFile.fail() ) throw std::string( "failbit is set (The last input operation failed because of an error related to the internal logic of the operation itself.)" );
   }
   catch (std::exception& e)
   {
     std::stringstream ess;
     ess << "Failed to write file \"" << fileName << "\": " << e.what();
+    XCEPT_RAISE( emu::exception::FileException, ess.str());
+  }
+  catch (std::string& e)
+  {
+    std::stringstream ess;
+    ess << "Failed to write file \"" << fileName << "\": " << e;
     XCEPT_RAISE( emu::exception::FileException, ess.str());
   }
 }

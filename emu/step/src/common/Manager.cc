@@ -127,12 +127,20 @@ void emu::step::Manager::startFED( bool inPassthroughMode ){
 	fedSettingsXML = emu::utils::setSelectedNodesValues( fedSettingsXML, "//FEDSystem/FEDCrate/DDU/Fiber/@KILLED" , "1" );
 	// ...then unkill the tested chambers'
 	for ( size_t iChamber = 0; iChamber < chamberLabels.elements(); ++iChamber ){
+	  string chamberName = emu::utils::Chamber( ( dynamic_cast<xdata::String*>( chamberLabels.elementAt( iChamber ) ) )->toString() ).name().substr( 2 );
 	  // In the FED settings XML file, chamber names are zero-padded, but without "ME", e.g., CHAMBER="-1/2/08"
 	  // while in the PCrate settings XML file, it's the other way round...
-	  fedSettingsXML = emu::utils::setSelectedNodesValues( fedSettingsXML, "//FEDSystem/FEDCrate/DDU/Fiber[@CHAMBER='" + emu::utils::Chamber( ( dynamic_cast<xdata::String*>( chamberLabels.elementAt( iChamber ) ) )->toString() ).name().substr( 2 ) + "']/@KILLED", "0" );
+	  fedSettingsXML = emu::utils::setSelectedNodesValues( fedSettingsXML, "//FEDSystem/FEDCrate/DDU/Fiber[@CHAMBER='" + chamberName + "']/@KILLED", "0" );
 	  // Also, collect the RUIs that are supposed to read data:
-	  ruisToReadData_.insert( emu::utils::stringTo<unsigned int>( emu::utils::getSelectedNodeValue( fedSettingsXML, 
-													"//FEDSystem/FEDCrate/DDU[Fiber/@CHAMBER='" + emu::utils::Chamber( ( dynamic_cast<xdata::String*>( chamberLabels.elementAt( iChamber ) ) )->toString() ).name().substr( 2 ) + "']/@RUI" ) ) );
+	  string RUI = emu::utils::getSelectedNodeValue( fedSettingsXML, "//FEDSystem/FEDCrate/DDU[Fiber/@CHAMBER='" + chamberName + "']/@RUI" );
+	  LOG4CPLUS_INFO( logger_, "FED settings XML in " << emu::utils::performExpansions( *fn ) << ":\n" << fedSettingsXML << "\n" );
+	  if ( RUI.length() > 0 ){
+	    LOG4CPLUS_INFO( logger_, "Found RUI '" << RUI << "' in FED settings XML to read out chamber " << chamberName );
+	    ruisToReadData_.insert( emu::utils::stringTo<unsigned int>( RUI ) );
+	  }
+	  else{
+	    LOG4CPLUS_ERROR( logger_, "Found no RUI in FED settings XML to read out chamber " << chamberName );
+	  }
 	}
 	LOG4CPLUS_INFO( logger_, "RUIs to read data: " << ruisToReadData_ );
 	// cout << fedSettingsXML << endl;
@@ -839,6 +847,7 @@ void emu::step::Manager::waitForTestsToFinish( const bool isTestDurationUndefine
 		       .add( "reasonForFailure" , &reasonForFailure  ) // empty if not in failed state
 		       .add( "maxNumberOfEvents", &maxNumberOfEvents )
 		       .add( "STEPCount"        , &STEPCount         ) );
+      LOG4CPLUS_INFO( logger_, "Queried emu::ldaq::manager::Application:: reasonForFailure='" << reasonForFailure.toString() << "' STEPCount=" << STEPCount.toString() << " maxNumberOfEvents=" << maxNumberOfEvents.toString() );
       if ( (uint64_t) maxNumberOfEvents > 0 ){
 	double progress = 100. * double( STEPCount.value_ ) / double( maxNumberOfEvents.value_ ); // in %
 	// Assign every group the same progress. It would be complicated to attribute, and it wouldn't make much sense anyway.

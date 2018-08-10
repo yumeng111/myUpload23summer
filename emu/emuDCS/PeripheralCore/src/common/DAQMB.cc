@@ -10699,11 +10699,11 @@ int DAQMB::scan_delays(const unsigned device_select,
 	const unsigned best_delay(get_best_delay(device, lower_limit, upper_limit, run_time));
 	std::string name("");
 	if(device>=1 && device <=7){
-	  name="L1A_LCT_DLY";
+	  name="L1A_LCT_DLY (l1acc_dav_delay in XML)";
 	}else if(device==8){
-	  name="OTMBDAV_DLY";
+	  name="OTMBDAV_DLY (tmb_dav_delay in XML)";
 	}else if(device==9){
-	  name="ALCTDAV_DLY";
+	  name="ALCTDAV_DLY (alct_dav_delay in XML)";
 	}else{
 	  name="???????????";
 	}

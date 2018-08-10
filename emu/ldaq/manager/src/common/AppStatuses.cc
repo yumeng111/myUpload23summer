@@ -150,7 +150,7 @@ emu::ldaq::manager::AppStatuses::getLowestOfLowestSTEPCount() const {
     }
   }
   bSem_.give();
-  return lowest;
+  return ( lowest == numeric_limits<uint64_t>::max() ? 0 : lowest );
 }
 
 uint64_t

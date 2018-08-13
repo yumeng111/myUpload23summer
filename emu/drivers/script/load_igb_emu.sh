@@ -108,15 +108,6 @@ function load_igb_emu(){
     /sbin/lsmod | grep igb
     /sbin/lspci -k | grep -A 3 Ethernet
 
-    # Remove igb module, just in case it's still loaded
-    if [[ $(/sbin/lsmod | grep -c 'igb ') -gt 0 ]]; then
-	echo "Removing tenacious igb module"
-	echo "rmmod igb"
-	/usr/sbin/rmmod igb
-	echo "lsmod | grep igb"
-	/sbin/lsmod | grep igb
-    fi
-
     # Disable automatic start on boot and network manager for the plugged-in interfaces
     for N in 2 3 4 5; do
 	if [[ -f /etc/sysconfig/network-scripts/ifcfg-${IF_NAME[$N]} ]]; then

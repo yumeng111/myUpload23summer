@@ -882,6 +882,7 @@ public:
 
   void odmb_loadparam(int paramblock,int nval,unsigned short int  *val);
   void odmb_readparam(int paramblock,int nval,unsigned short int  *val);         
+  void odmb_print_parameters();
 
   void odmb_readfirmware_mcs(const char *filename);
   void odmb_program_eprom(const char *mcsfile);

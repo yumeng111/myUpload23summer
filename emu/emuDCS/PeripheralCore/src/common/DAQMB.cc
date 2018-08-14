@@ -752,6 +752,8 @@ void DAQMB::configure(int c)
   (*MyOutput_) << "DAQMB: configure() for crate " << this->crate() << " slot " << this->slot() << std::endl;
   //
 
+ if(DMBversion()==1)
+ {
    //get the initial value first:
    killinput_=GetKillInput();
    cfeb_clk_delay_=GetCfebClkDelay();
@@ -759,7 +761,7 @@ void DAQMB::configure(int c)
    xlatency_=GetxLatency();
 
    //***Do this setting only for calibration ****
-  int cal_delay_bits = (calibration_LCT_delay_ & 0xF)
+   int cal_delay_bits = (calibration_LCT_delay_ & 0xF)
      | (calibration_l1acc_delay_ & 0x1F) << 4
       | (pulse_delay_ & 0x1F) << 9
       | (inject_delay_ & 0x1F) << 14;
@@ -780,35 +782,40 @@ void DAQMB::configure(int c)
    setdavdelay(dav_delay_bits);
    //
 
-   // *** This part is for Buck_Flash (Parallel Memory) *****
-   int comp_mode_bits = (comp_mode_ & 3) | ((comp_timing_ & 7) << 2);
-   //
-   cfebs_readstatus();
    bool cfebmatch=true;
-   //check the comp_timing, comp_mode, Pre_block_end and Extr_l1A latency setting
-   for(unsigned lfeb=0; lfeb<cfebs_.size();lfeb++){
-     //for (int lfeb=0;lfeb<5;lfeb++) {
-     //if (iuse[lfeb]==1) {
+   int comp_mode_bits = (comp_mode_ & 3) | ((comp_timing_ & 7) << 2);
+   if(CFEBversion()<=1)
+   {
+     // *** This part is for Buck_Flash (Parallel Memory) *****
      //
-     for (int y=0; y<4; y++) printf("%2x \n",(febstat_[lfeb][y]&0xff));
-     //
-     std::cout << "<>" << comp_mode_bits << " " << pre_block_end_ << " " << xlatency_ << std::endl;
-     //
-     std::cout << "Match &&&&&&&&&&& " << cfebmatch << std::endl;
-     //
-     std::cout << "1 " << ((febstat_[lfeb][2])&0x1f) << std::endl;
-     std::cout << "2 " << (((febstat_[lfeb][2]>>5)&0x07)+((febstat_[lfeb][3]&0x01)<<3)) << std::endl;
-     std::cout << "3 " << ((febstat_[lfeb][3]>>1)&0x03) << std::endl;
-     //
-     if ((((febstat_[lfeb][2])&0x1f)!=comp_mode_bits) ||
-	 ((((febstat_[lfeb][2]>>5)&0x07)+((febstat_[lfeb][3]&0x01)<<3))!=pre_block_end_)||
-       (((febstat_[lfeb][3]>>1)&0x03)!=xlatency_)) {cfebmatch=false;
-       std::cout << "Reprogram DMB flash cfeb" << lfeb << std::endl;
-       std::cout << "comp_mode_bits old " << std::hex << (febstat_[lfeb][2]&0x1f) << " new " << comp_mode_bits << std::dec << std::endl;
-       std::cout << " pre_block_end old " << (((febstat_[lfeb][2]>>5)&0x07)+((febstat_[lfeb][3]&0x01)<<3)) << " new " << pre_block_end_ << std::endl;
-       std::cout << " xlatency old " << ((febstat_[lfeb][3]>>1)&0x03) << " new " << xlatency_ << std::endl;
+     cfebs_readstatus();
+     //check the comp_timing, comp_mode, Pre_block_end and Extr_l1A latency setting
+     for(unsigned lfeb=0; lfeb<cfebs_.size();lfeb++)
+     {
+       //for (int lfeb=0;lfeb<5;lfeb++) {
+       //if (iuse[lfeb]==1) {
+       //
+       for (int y=0; y<4; y++) printf("%2x \n",(febstat_[lfeb][y]&0xff));
+       //
+       std::cout << "<>" << comp_mode_bits << " " << pre_block_end_ << " " << xlatency_ << std::endl;
+       //
+       std::cout << "Match &&&&&&&&&&& " << cfebmatch << std::endl;
+       //
+       std::cout << "1 " << ((febstat_[lfeb][2])&0x1f) << std::endl;
+       std::cout << "2 " << (((febstat_[lfeb][2]>>5)&0x07)+((febstat_[lfeb][3]&0x01)<<3)) << std::endl;
+       std::cout << "3 " << ((febstat_[lfeb][3]>>1)&0x03) << std::endl;
+       //
+       if ((((febstat_[lfeb][2])&0x1f)!=comp_mode_bits) ||
+  	   ((((febstat_[lfeb][2]>>5)&0x07)+((febstat_[lfeb][3]&0x01)<<3))!=pre_block_end_)||
+           (((febstat_[lfeb][3]>>1)&0x03)!=xlatency_)) 
+       {  cfebmatch=false;
+          std::cout << "Reprogram DMB flash cfeb" << lfeb << std::endl;
+          std::cout << "comp_mode_bits old " << std::hex << (febstat_[lfeb][2]&0x1f) << " new " << comp_mode_bits << std::dec << std::endl;
+          std::cout << " pre_block_end old " << (((febstat_[lfeb][2]>>5)&0x07)+((febstat_[lfeb][3]&0x01)<<3)) << " new " << pre_block_end_ << std::endl;
+          std::cout << " xlatency old " << ((febstat_[lfeb][3]>>1)&0x03) << " new " << xlatency_ << std::endl;
        }
-   }
+     }
+   }  // end of CFEBversion()==1
    //
    enable_cfeb(); //enable..disable CFEBs
    //
@@ -821,7 +828,7 @@ void DAQMB::configure(int c)
    //
    (*MyOutput_) << "doing set_comp_thresh " << set_comp_thresh_ << std::endl;
 
-   set_comp_thresh(set_comp_thresh_);
+ //  set_comp_thresh(set_comp_thresh_);
    if(CFEBversion()<=1)
    { 
      set_comp_thresh(set_comp_thresh_);
@@ -900,7 +907,7 @@ void DAQMB::configure(int c)
      // Load FLASH memory
      WriteSFM();
    }
-
+ }  // end of DMBversion==1
  if( c<2 )
  {   // if c==2, skip this during power-up-init, because these parameters already stored in EPROM
    if(DMBversion()>1)
@@ -914,6 +921,7 @@ void DAQMB::configure(int c)
       odmb_set_Ext_delay(pulse_delay_);
       odmb_set_Cal_delay(calibration_LCT_delay_);
       odmb_set_kill_mask(kill_input_mask_);
+      setcrateid(crate_id_);
       // save configuration to EPROM
       odmb_save_config();
    }
@@ -8545,19 +8553,6 @@ void DAQMB::dcfeb_test_dummy(CFEB & cfeb, int test)
 // require to recompile everything in PeripheralCore & PeripheralApps
      write_cfeb_selector(cfeb.SelectorBit());
 //     virtex6_readreg(test);
-/*
-      char tmp[4];
-      unsigned t;
-      dcfeb_core(71,0, tmp, tmp, NOW|NOOP_YES);
-      ::sleep(1);
-      for(int i=0; i<34*3; i++)
-      {  t=0;
-         dcfeb_core(72, 16, tmp, (char *)&t, NOW|READ_YES);
-         usleep(1000);
-         std::cout << "Param " << i << " = 0x";
-         std::cout <<  std::hex  << t << std::dec << std::endl;
-      }
-*/
 }    
 
 unsigned  DAQMB::dcfeb_readreg_virtex6(CFEB & cfeb,int test){
@@ -9549,6 +9544,25 @@ void DAQMB::odmb_readparam(int paramblock,int nwords,unsigned short int  *val)
   odmbeprom_loadaddress(uaddr,laddr);
   odmbeprom_read(nwords,val);
   odmb_bpi_disable();
+}
+
+void DAQMB::odmb_print_parameters() 
+{
+   const int ODMB_PARAMETERS=12;
+   unsigned short int bufload[ODMB_PARAMETERS];
+   char *bbuf=(char *)bufload;
+   
+   if(DMBversion() == 2)
+   {
+      std::cout << "Configuration Parameters for ODMB" << std::endl;
+      int block=0;
+      std::cout << "---- From parameter block #" << block << " ----" << std::endl;
+      odmb_readparam(block, ODMB_PARAMETERS, bufload);
+      for(int i=0; i<ODMB_PARAMETERS;i++)
+      {
+         std::cout << i << "   " << std::hex << "0x" << bufload[i] << std::dec  << std::endl;
+      }
+   }
 }
 
 void DAQMB::odmb_readfirmware_mcs(const char *filename)
@@ -12565,6 +12579,7 @@ int DAQMB::xdcfeb_erase_eprom(int chip, int broadcast)
 //       set_flag(0);
        comd=XCF_ISC_ERASE; 
        xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       if(DMBversion()==2) clear_flag(0);   
        data=block_mask;
        xdprom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
        clear_flag(0);

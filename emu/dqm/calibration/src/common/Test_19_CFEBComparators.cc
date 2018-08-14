@@ -13,7 +13,9 @@ Test_19_CFEBComparators::Test_19_CFEBComparators(std::string dfile):
     // testID = "19_CFEBComparators";
     nExpectedEvents = 25200;
     dduID = 0;
-    binCheckMask=0x16EBF7F6; // same value used in Lisa
+    // binCheckMask=0x16EBF7F6; // same value used in Lisa
+    // Try masking out 0x00800001 to ignore CFEB DAV errors in this test
+    binCheckMask    =  0x166BF7F6; 
 
     ltc_bug   = 2;
     // logger = Logger::getInstance(testID);

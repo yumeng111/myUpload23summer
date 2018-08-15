@@ -218,34 +218,6 @@ void EmuPeripheralCrateConfig::CCBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::form() << std::endl ;
   //
   *out << cgicc::br() << cgicc::hr() << std::endl;  
-  //
-  std::string ReadCCBRegister = 
-    toolbox::toString("/%s/ReadCCBRegister",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",ReadCCBRegister) << std::endl ;
-  *out << "Read Register (hex) " << std::endl;
-  sprintf(buf, "%04X", CCBRegisterRead_);  
-  *out << cgicc::input().set("type","text").set("value",buf).set("name","CCBRegister") << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","Read CCB") << std::endl ;
-  *out << " Register value (hex): " << std::hex << CCBRegisterValue_ << std::endl;
-  *out << cgicc::form() << std::endl ;
-  //
-  std::string WriteCCBRegister = 
-    toolbox::toString("/%s/WriteCCBRegister",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",WriteCCBRegister) << std::endl ;
-  *out << "Write Register (hex) " << std::endl;
-  sprintf(buf, "%04X", CCBRegisterWrite_);
-  *out << cgicc::input().set("type","text").set("value",buf).set("name","CCBRegister") << std::endl ;
-  *out << "Register value (hex) " << std::endl;
-  sprintf(buf, "%04X", CCBWriteValue_);
-  *out << cgicc::input().set("type","text").set("value",buf).set("name","CCBValue") << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","Write CCB") << std::endl ;
-  *out << cgicc::form() << cgicc::br() << std::endl ;
-  //
-  std::string ReadTTCRegister =
-    toolbox::toString("/%s/ReadTTCRegister",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::a("[Read TTCrx Registers]").set("href",ReadTTCRegister).set("target","_blank") << std::endl;
-  //
-  *out << cgicc::br() << cgicc::br() << std::endl;
 
   // Begin select signal
   // Config listbox
@@ -309,11 +281,41 @@ void EmuPeripheralCrateConfig::CCBUtils(xgi::Input * in, xgi::Output * out )
     toolbox::toString("/%s/CCBFPGAReset",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",CCBFPGAReset) << std::endl ;
   *out << cgicc::input().set("type","submit").set("value","CCB FPGA Reset");
+  *out << cgicc::form() << cgicc::br() << std::endl ;
+  //
+  std::string ReadCCBRegister = 
+    toolbox::toString("/%s/ReadCCBRegister",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",ReadCCBRegister) << std::endl ;
+  *out << "Read Register (hex) " << std::endl;
+  sprintf(buf, "%04X", CCBRegisterRead_);  
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","CCBRegister") << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Read CCB") << std::endl ;
+  *out << " Register value (hex): " << std::hex << CCBRegisterValue_ << std::endl;
   *out << cgicc::form() << std::endl ;
   //
-  *out << cgicc::br() << cgicc::hr() << std::endl;  
-
+  std::string WriteCCBRegister = 
+    toolbox::toString("/%s/WriteCCBRegister",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",WriteCCBRegister) << std::endl ;
+  *out << "Write Register (hex) " << std::endl;
+  sprintf(buf, "%04X", CCBRegisterWrite_);
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","CCBRegister") << std::endl ;
+  *out << "Register value (hex) " << std::endl;
+  sprintf(buf, "%04X", CCBWriteValue_);
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","CCBValue") << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Write CCB") << std::endl ;
+  *out << cgicc::form() << cgicc::br() << std::endl ;
   //
+  std::string ReadTTCRegister =
+    toolbox::toString("/%s/ReadTTCRegister",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::a("[Read TTCrx Registers]").set("href",ReadTTCRegister).set("target","_blank") << std::endl;
+  //
+  *out << cgicc::br();
+  *out << cgicc::fieldset() << cgicc::br() << std::endl; 
+
+  // CCB Firmware
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+  *out << cgicc::legend("CCB Firmware").set("style","color:blue") << std::endl ;
+  
   std::string CCBLoadFirmware =
     toolbox::toString("/%s/CCBLoadFirmware",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",CCBLoadFirmware) << std::endl ;

@@ -874,10 +874,10 @@ void EmuPlotter::processChamber(const CSCEventData& data, int nodeID=0, int dduI
 
           if (tmbHeader && tmbTrailer)
             {
-              /*
+		/*
                      std::cout << "=== TMB Firmware Version: " << tmbHeader->FirmwareVersion()
               		<< ",  Revision: 0x" << std::hex << tmbHeader->FirmwareRevision() << std::dec  << std::endl;
-              */
+		*/
 
               CSCCLCTData* clctData = data.clctData();
 
@@ -889,6 +889,31 @@ void EmuPlotter::processChamber(const CSCEventData& data, int nodeID=0, int dduI
                   if (clctsDatasTmp[lct].isValid())
                     clctsDatas.push_back(clctsDatasTmp[lct]);
                 }
+            
+              for (uint32_t lct=0; lct<clctsDatas.size(); lct++)
+                {
+                  if (clctsDatas.size() == 1)
+                    {
+                      /// Fill ME11 ALCT-CLCT Match time synchronization histo
+                      if ((cid.station() == 1) && (cid.ring() == 1))
+                        {
+                          int keystrip = clctsDatasTmp[lct].getKeyStrip();
+                          // std::cout << cscTag << " keystrip: " << clctsDatasTmp[lct].getKeyStrip() << std::endl;
+                          if (keystrip<=128)   // ME11b
+                            {
+                              if (isMEvalid(cscME, "ALCT_Match_Time_me11b", mo))
+                                mo->Fill(tmbHeader->ALCTMatchTime());
+                            }
+                          else     // ME11a
+                            {
+                              if (isMEvalid(cscME, "ALCT_Match_Time_me11a", mo))
+                                mo->Fill(tmbHeader->ALCTMatchTime());
+                            }
+                        }
+                    }
+                }
+
+
 
               FEBunpacked = FEBunpacked +1;
               tmb_unpacked = 1;

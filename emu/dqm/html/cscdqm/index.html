@@ -128,9 +128,11 @@
       .SEVERITY_SEVERE  {background-color: orange; font-weight: bold;}
       .SEVERITY_CRITICAL  {background-color: red; font-weight: bold;}
       .SEVERITY_REPEATING_PROBLEM {background-color: #9090FF; font-weight: bold;}
-      .SEVERITY_KNOWN_PROBLEM {background-color: magenta; font-weight: bold;}
+      .SEVERITY_KNOWN_PROBLEM {background-color: white; border: 2px solid magenta; font-weight: bold;}
+      .SEVERITY_KNOWN_MINOR {background-color: white; border: 2px solid yellow; font-weight: bold;}
       .SEVERITY_NO_DATA {background-color: #8C8C8C; font-weight: bold;}
       .SEVERITY_FILTERED {background-color: #CCCCCC; font-weight: bold;}
+      .SEVERITY_NO_HV_SEGMENT {background-color: #60D0D0; font-weight: bold;}
       .RUN_TYPE_ONLINE {background-color: white; font-weight: bold;}
       .RUN_TYPE_UNKNOWN {background-color: #BBBBBB; }
       .RUN_TYPE_COSMICS {background-color: #8FBC8F; }
@@ -257,10 +259,12 @@
       var DDUMap="redir?url=ddu_csc_map.js";
       var VMEMap="redir?url=vme_pc_map.js";
       var TestsMap="redir?url=tests_map.js";
+      var HVMap="redir?url=hvmap.js";
       var KnownProblemsList="redir?url=known_problems.js";
       var NodesStatsFile="redir?url=stats.js";
       // var RunsList="redir?url=runs_list.js";
       var RunsList="getRunsList";
+      var AllRunsList="redir?url=runs_list_all.js";
       
       // DQM Reports
       var TextReport="redir?url=dqm_report.txt";
@@ -292,12 +296,14 @@
       var RUNS=false;	// list of Runs
       var TREE_RUNS=false; //  actually list of Tests/Canvases
       var CSCMAP=false;
+      var HVMAP=false;
       var CSC_LIST=false;
       var DDUMAP=false;
       var NODES_LIST=false;
       var KNOWN_PROBLEMS=false;
       var NODES_HISTORY=false;
       var fShowKnownProblems=true;
+      var fShowAllRunsList=false;
       
       var CSC_COUNTERS=false;
       var TESTS_MAP=false;
@@ -341,8 +347,8 @@
       var histDepth=200;
       var numCSCs=0;
       var numDDUs=0;
-      var getNodesListDelay=10;
-      var getCSCListDelay=20;
+      var getNodesListDelay=15;
+      var getCSCListDelay=30;
       var totalDAQevents=0;
       var totalDQMevents=0;
       var totalCSCblocks=0;
@@ -354,15 +360,16 @@
       
       var DQM_SEVERITY = 
       	[
-      	{"name": "LOW_STAT", "color": "yellowgreen", "descr": "Not Enough Statistics to perform Quality Test. Wait for more events."},
+      	{"name": "LOW_STAT", "color": "yellowgreen", "descr": "Not Enough Statistics to perform Quality Test or Very Low Severity ignorable errors. Wait for more events (>200 per chamber)."},
       	{"name": "MINOR", "color": "yellow", "descr": "Minor Issue. Could be ignored."},
       	{"name": "TOLERABLE", "color": "lightpink", "descr": "Tolerable Issue. Check status periodically. Report if switched to higher severity level." },
-      	{"name": "SEVERE", "color": "orange", "descr": "Severe Problem. Check status periodically. Report if switched to higher severity level"},
-      	{"name": "CRITICAL", "color": "red", "descr": "Important Problem. Consult with CEO and Hardware Experts."},
+      	{"name": "SEVERE", "color": "orange", "descr": "Severe Problem. Check status periodically. Consult with CSC Ops. Report if switched to higher severity level"},
+      	{"name": "CRITICAL", "color": "red", "descr": "Important Problem. Consult with CSC Ops and Hardware Experts."},
       	{"name": "REPEATING_PROBLEM", "color": "#9090FF", "descr": "Repeating Problem wrt selected comparison Run."},
       	{"name": "KNOWN_PROBLEM", "color": "magenta", "descr": "Acknowledged by Expert Problem."},
       	{"name": "NO_DATA", "color": "#8C8C8C", "descr": "No Events data for DDU or CSC. Check with official disabled CSCs list."},
-      	{"name": "FILTERED", "color": "#CCCCCC", "descr": "Problems are not shown because of applied filter."}
+      	{"name": "FILTERED", "color": "#CCCCCC", "descr": "Problems are not shown because of applied filter."},
+        {"name": "NO_HV_SEGMENT", "color": "#60D0D0", "descr": "HV segment problem. Check with DCS and HV experts."}
       	];
       
       var CSC_TYPES = [
@@ -428,7 +435,12 @@
       	var out = "<table class='dqm_report'><tr>";
       	out += "<td><b>Severity legend:</b> ";
       	for (var i=0; i<DQM_SEVERITY.length; i++) {
+		if (i == 6) {
+			out += " <span title='"+DQM_SEVERITY[i].descr+"' class='SEVERITY_"+DQM_SEVERITY[i].name+"'>" + DQM_SEVERITY[i].name + "</span> ";
+			out += " <span title='Known Minor Problem' class='SEVERITY_KNOWN_MINOR'>" + "KNOWN_MINOR" + "</span> ";
+		} else {
       		out += " <span title='"+DQM_SEVERITY[i].descr+"' class='SEVERITY_"+DQM_SEVERITY[i].name+"'>" + DQM_SEVERITY[i].name + "</span> ";
+		}
       	}
       	out += "</td></tr></table>";
       	return out; 
@@ -733,7 +745,7 @@
       			
       			// Display DDUs 
       			//out += "<tr class='me'><td id='cscDDU' class='me' colspan='2' >DDUs</td>";	
-      			out += "<tr><td class='me_type'>RUI#</td><td class='me_type'>DDU ID</td>";
+      			out += "<tr><td class='me_type'>RUI#</td><td class='me_type'>DDU ID</td><td class='me_type'>FED ID</td>";
       			for (var i=1; i<=15; i++) {
       				out += "<td class='me_type'>Input "+i+"</td>";
       			};
@@ -744,6 +756,7 @@
       				if (rui && rui.length) {
       					out += "<td class='me_type' id='cscRUI"+i+"' class='me_ddu' >"+rui[1]+"</td>";
       					out += "<td class='me_type' id='csc"+rui[0]+"'>"+rui[0]+"</td>";
+					out += "<td class='me_type'>"+rui[19]+"</td>";
       					for (var j=4; j<19; j++) {
       						out += "<td id='csc"+rui[j]+"'>"+rui[j]+"</td>";
       					}
@@ -782,7 +795,7 @@
                               rui = DDUMAP[i];
                               for (var j=4; j<19; j++){
                                       if (rui[j]==id) {
-      				   ddu_link = rui[0] + " Input:" + (j-3);
+      				   ddu_link = rui[0] + " (" + rui[19] +") Input:" + (j-3);
       				   return ddu_link;
                                       }
                               }
@@ -968,6 +981,7 @@
       				var value = nodes[idx][j];
       			        // Fix run start time. should be UTC
       			        if (j==4) value = value.replace("CEST", "UTC");
+				if (j==4) value = value.replace("CET", "UTC");
 				if (j==6) value = "<a href='' onClick='getNodeHistory(\""+nodes[idx][0]+"\",\"averageRate\"); return false;' title='Show DQM Rate history'><b>"+value+"</b></a>";
 				if (j==9) value = "<a href='' onClick='getNodeHistory(\""+nodes[idx][0]+"\",\"cscRate\"); return false;' title='Show CSC Rate history'><b>"+value+"</b></a>";
       				out+="<td class='node_info'>"+value+"</td>";
@@ -1050,7 +1064,8 @@
 		var options = {
           chart: {
                 renderTo: 'plots_div',
-		zoomType: 'x'
+		zoomType: 'x',
+		height:   '600'
           },
 
 	  title: {
@@ -1378,6 +1393,7 @@
       					RunNumber=nodes[i][3];
       					RunStartTime=nodes[i][4];
       					RunStartTime = RunStartTime.replace("CEST","UTC"); 
+					RunStartTime = RunStartTime.replace("CET","UTC"); 
       					
       					// id = 'node_'+node;
       					id=node;
@@ -1410,7 +1426,7 @@
       						}
       					}
       
-      					totalDAQevents += parseInt(nodes[i][4]);
+      					// totalDAQevents += parseInt(nodes[i][4]);
       					totalDQMevents += parseInt(nodes[i][5]);
       					totalDQMrate += parseInt(nodes[i][6]);
       					totalCSCblocks += parseInt(nodes[i][8]);
@@ -1470,7 +1486,7 @@
       		}
           }
       	req.send(null);	
-      	setTimeout('getNodesList()', 10000);
+      	setTimeout('getNodesList()', 20000);
       	// addlog("Update Nodes List", "info");
       	return false;
       }
@@ -1646,7 +1662,7 @@
         	req.send(null);
               if (RunName == "Online")
               {
-                setTimeout('loadCSCList()', 20000);
+                setTimeout('loadCSCList()', 30000);
               }
       	return false;
       }
@@ -1694,7 +1710,7 @@
       	req.send(null);	
       	if (RunName == "Online")
               {
-      	  setTimeout('getCSCCounters()', 20000);
+      	  setTimeout('getCSCCounters()', 30000);
       	}
       	return false;
       }
@@ -1758,6 +1774,18 @@
               }
               return "";
       }
+
+      function getHVinfo(id)
+      {
+         var hv_list = HVMAP;
+         if (hv_list.length>0) {
+            for (var i=0; i<hv_list.length; i++) {
+               if (hv_list[i][0] == id )
+                 return "RDB ID#"+hv_list[i][1] + " part" + hv_list[i][2];
+            }
+         }
+         return "";
+      }
       
       function getFolderName(id, scope) {
       	if (scope == "EMU") return "EMU";
@@ -1784,7 +1812,7 @@
       	if ( id.search("ME") >=0 )
       	{
       	  out += "<tr style='border: 1px black solid;'><td style='border: 0px black solid;'><b>" + id + "</b> ";
-      	  out += "is connected to <b><font color='blue'>" + getPCrateId(id) + "</font></b>; fiber linked to <b><font color='blue'>"  + getLinkedDDU(id) + "</font></b></td>";
+      	  out += "is connected to <b><font color='blue'>" + getPCrateId(id) + "</font></b>; fiber linked to <b><font color='blue'>"  + getLinkedDDU(id) + "</font></b><br><b>HV Info: <font color='blue'>" + getHVinfo(id) + "</font></b></td>";
       	  out += "</tr><tr style='border: 1px black solid;' ><td style='border: 1px black solid;'> Counters: " + getCountersForCSC(id) + "</td>";
       	} else {
       	  out += "<tr style='border: 1px black solid;'><td style='border: 0px black solid;'><b>" + id + "</b></td>";
@@ -1814,6 +1842,7 @@
       						//out += "<tr><td></td><td>" + entry.descr + "</td><td>"+entry.severity+"</td></tr>";
       						
       						var sev_idx = parseInt(entry.severity);
+                                                if (entry.testID == "CSC_NO_HV_SEGMENT") sev_idx=9;
       						
       						var sev_name = DQM_SEVERITY[sev_idx].name;
       						var sev_str = "";
@@ -1835,7 +1864,11 @@
       									if ( ((id.search("ME") >=0) || ((id.search("DDU") >=0) && fCompareDDUs))
       										&& isProblemKnown(id, entry)) {
       										// sev_idx = 6; // KNOWN problem
-      										t_obj.style.border = "2px solid magenta";
+										// if (sev_idx < 2) {
+										//   t_obj.style.border = "2px solid yellow"; }
+ 										// else {
+      										  t_obj.style.border = "2px solid magenta";
+ 										// }
       										known_entry = getKnownProblemEntry(id, entry);
       										}
       									}
@@ -1944,10 +1977,12 @@
       
       }
       
-      function setEntryStatus(objname, severity, hasKnown)
+      function setEntryStatus(objname, severity, hasKnown, known_severity)
       {
       	if (objname) {
-      		
+		bcol = "magenta";
+		if (known_severity == 1) { bcol = "yellow";}
+
       		if (objname.search("DDU") >= 0) {
       			idx = getDDUindex(objname)// DDUs.push(entry);
       			id = addPadding(idx,2,'0');
@@ -1956,7 +1991,7 @@
       			if (m_obj) {
       				// addlog(objname + " " + severity, "debug");
       				if (severity >= 0) m_obj.style.background = DQM_SEVERITY[severity].color;			
-      				if (hasKnown) { m_obj.style.border = "2px solid magenta"; }
+      				if (hasKnown) { m_obj.style.border = "2px solid " + bcol; }
       				else m_obj.style.border = "";
       				
       			}			
@@ -1966,7 +2001,7 @@
       			if (m_obj) {
       				// addlog(objname + " " + severity, "debug");
       				if (severity >= 0) m_obj.style.background = DQM_SEVERITY[severity].color;			
-      				if (hasKnown) { m_obj.style.border = "2px solid magenta"; }
+      				if (hasKnown) { m_obj.style.border = "2px solid " + bcol; }
       				else m_obj.style.border = "";
       			}
       		}
@@ -2108,8 +2143,10 @@
       					if (report[i]) {
       						var obj_sev = -1;
       						var err_cnt = 0;
+						var known_sev = -1;
       						var filtered = true;
       						var hasKnown = false;
+						var hasNoHV = false;
       						var n_out = "<tr><th class='repScope' colspan=5><b>" + report[i].name + "</b></th></tr>";
       						if (report[i].list && report[i].list.length) {
       							err_list = report[i].list;
@@ -2135,8 +2172,12 @@
       										if (isRepeating) sev_idx=5; // REPEATING problem
       									
       										isKnown = isProblemKnown(report[i].objID, entry);
+										if ((entry.testID == "CSC_NO_HV_SEGMENT") && !isKnown) hasNoHV = true; // sev_idx=9;
       										if (fShowKnownProblems) {
-      											if (isKnown ) hasKnown = true;// sev_idx = 6; // KNOWN problem
+      											if (isKnown ) {
+												hasKnown = true;// sev_idx = 6; // KNOWN problem
+												if (sev_idx > known_sev) known_sev = sev_idx;
+											}
       										}
       									}	
       									
@@ -2148,7 +2189,7 @@
       									
       									filtered = false; 
       									
-      									if ( (sev_idx > obj_sev) 
+      									if ( (sev_idx > obj_sev)
       										&& (!fShowKnownProblems || 
       											(fShowKnownProblems && !isKnown)) ) obj_sev = sev_idx;
       									
@@ -2186,11 +2227,13 @@
       						if (err_cnt >0 ) out += n_out;
       						// var sev_name = DQM_SEVERITY[obj_sev].name;
       						// if (selSeverityFilter == sev_name) {
+						if ( hasNoHV && (obj_sev == 2) ) obj_sev = 9;
+
       						if (filtered) obj_sev = 8;
-                                                      if ( (obj_sev > 0) || hasKnown 
+                                                      if ( (obj_sev > 0   ) || hasKnown 
       							|| ((obj_sev == 0 ) && (entry.testID==""))
       							|| ((obj_sev == 0 ) && (entry.testID!="") && fMarkLowStatErrs) ) 
-      							setEntryStatus(report[i].objID, obj_sev, hasKnown);
+      							setEntryStatus(report[i].objID, obj_sev, hasKnown, known_sev);
       						// }
       					// addlog(DQM_REPORT.report[i].objID, "info");
       					// setEntryStatus(DQM_REPORT.report[i]);
@@ -2437,7 +2480,7 @@
       function setRunsFilter()
       {
               out = "<table class='dqm_report'><tr>";
-      	out += "<td colspan=5><b>Runs Count: <font color='blue'><span id='runs_count'></span></font></b></td></tr></tr>";
+      	out += "<td colspan=5><b>Runs Count: <font color='blue'><span id='runs_count'></span></font></b><br><span title='Check to Enable getting all runs list'><label>All Runs List</label> <input type=checkbox  id='showallruns' onclick='selectAllRunsListMode()'></span></td></tr></tr>";
               out += "<td><b>Run Types </b></td> ";
               for (var i=0; i<RUN_TYPES.length; i++) {
                       out += "<td><span title='"+RUN_TYPES[i].descr+"' class='RUN_TYPE_"+RUN_TYPES[i].type+"'>" + RUN_TYPES[i].name + "</span></td> ";
@@ -2451,6 +2494,8 @@
       function getRunsList()
       {
       	var fullUrl = baseURL+ RunsList;
+
+        if (fShowAllRunsList) fullUrl = baseURL+ AllRunsList;
       	
       	
       	var req=false;
@@ -2494,7 +2539,7 @@
       		}
           }
       	req.send(null);	
-      	setTimeout('getRunsList()', 60000);
+      	setTimeout('getRunsList()', 90000);
       	return false;
       }
       
@@ -2794,7 +2839,8 @@
       	
 //      	        out+= "<td class='td_status'><input class='button' type='button' name='action' style='background-color: #90ff90; font: bold 8pt Arial;' value='Show All' onClick='return showAllNodesStatuses();' title='Click to show all EmuMonitors statuses'></td>";	
       		out+= "<td><b>Total:</b></td><td class='td_status'> #DDUs: <b>"+ numDDUs+"</b></td><td class='td_status'> #CSCs: <b>"+numCSCs+"</b></td>";
-      		out+= "<td class='td_status'>DAQ Evts: <b>"+totalDAQevents+"</b></td><td class='td_status'>DQM Evts: <b>"+totalDQMevents+"</b></td>"
+//     		out+= "<td class='td_status'>DAQ Evts: <b>"+totalDAQevents+"</b></td><td class='td_status'>DQM Evts: <b>"+totalDQMevents+"</b></td>"
+	        out+= "<td class='td_status'>DQM Evts: <b>"+totalDQMevents+"</b></td>";
       		out+= "<td class='td_status'>CSC blocks: <b>"+totalCSCblocks+"</b></td>";
 		out+= "<td class='td_status'><a href='' onClick='getNodeHistory(\"\",\"averageRate\"); return false;' title='Click to view Total DQM Rate history'>DQM Rate: <b>"+totalDQMrate+"</b></a></td>";
       		out+= "<td class='td_status'><a href='' onClick='getNodeHistory(\"\",\"cscRate\"); return false;' title='Click to view Total CSC Rate history'>CSC Rate: <b>"+totalCSCrate+"</b></a></td>";
@@ -2803,7 +2849,7 @@
       		
       		obj.innerHTML=out;
       	}
-      	setTimeout('updateSysStatus()', 2000);
+      	setTimeout('updateSysStatus()', 5000);
       }
       
       function showAllNodesStatuses()
@@ -2843,6 +2889,7 @@
                          var value = nodes[idx][j];
                          // Fix run start time. should be UTC
                          if (j==4) value = value.replace("CEST", "UTC");
+			 if (j==4) value = value.replace("CET", "UTC")
       		   if (j>=5 && j<=9) { 
       			var diff = 0;
       			color = 'black';
@@ -2955,7 +3002,7 @@
       		{
       		  r_link.innerHTML = "<a class='RLink' href=''>Run: " + RunNumber + " (Online)</a>";
       		} else {
-      		  r_link.innerHTML = "<a class='RLink' href=''>Run: " + RunName + "</a> [<a href='getROOTFile?file="+ RunName +".root'>Download ROOT File</a>]";
+      		  r_link.innerHTML = "<a class='RLink' href=''>Run: " + RunName + "</a> [<a href='http://csc-dqm.cms:20550/urn:xdaq-application:lid=1450/getROOTFile?file="+ RunName +".root'>Download ROOT File</a>]";
       		}
       	  }
       	if (entry_key.search("EMU") >= 0) {
@@ -3199,6 +3246,19 @@
       			fAutoUpdatePlot=false;
       		}
       	}
+      }
+
+      
+      function selectAllRunsListMode()
+      {
+        var obj = document.getElementById("showallruns");
+        if (obj) {
+                if (obj.checked) {
+                        fShowAllRunsList=true;
+                } else {
+                        fShowAllRunsList=false;
+                }
+        }
       }
       
       function selectObject (id, f_deselect, idx) {
@@ -3742,6 +3802,7 @@ function showChart()
       document.write('<script src="', baseURL+DDUMap, '" type="text/javascript"><\/script>');
       document.write('<script src="', baseURL+VMEMap, '" type="text/javascript"><\/script>');
       document.write('<script src="', baseURL+TestsMap, '" type="text/javascript"><\/script>');
+      document.write('<script src="', baseURL+HVMap, '" type="text/javascript"><\/script>');
       document.write('<script src="', baseURL+KnownProblemsList, '" type="text/javascript"><\/script>');
       // document.write('<script src="', baseURL+NodesStatsFile, '" type="text/javascript"><\/script>');
       document.write('<script src="', baseURL+"redir?url=highcharts/adapters/standalone-framework.js", '" type="text/javascript"><\/script>');

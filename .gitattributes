@@ -340,6 +340,7 @@ emu/dqm/html/cscdqm/canvases_list.js -text
 emu/dqm/html/cscdqm/csc_map.js -text
 emu/dqm/html/cscdqm/ddu_csc_map.js -text
 emu/dqm/html/cscdqm/ddu_csc_map_preLS1.js -text
+emu/dqm/html/cscdqm/hvmap.js -text
 emu/dqm/html/cscdqm/index.html -text
 emu/dqm/html/cscdqm/known_problems.js -text
 emu/dqm/html/cscdqm/known_problems_preLS1.js -text

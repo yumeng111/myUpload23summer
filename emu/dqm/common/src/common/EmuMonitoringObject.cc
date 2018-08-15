@@ -234,6 +234,7 @@ int EmuMonitoringObject::applyParameters()
     if ((itr = params.find("SetXLabels")) != params.end())
     {
       std::map<int, std::string> labels = ParseAxisLabels(itr->second);
+      object->GetXaxis()->SetNoAlphanumeric(); // For ROOT6 to prevent getting zero means values
       for (std::map<int, std::string>::iterator l_itr = labels.begin(); l_itr != labels.end(); ++l_itr)
       {
         object->GetXaxis()->SetBinLabel(l_itr->first, l_itr->second.c_str());
@@ -245,6 +246,7 @@ int EmuMonitoringObject::applyParameters()
     if ((itr = params.find("SetYLabels")) != params.end())
     {
       std::map<int, std::string> labels = ParseAxisLabels(itr->second);
+      object->GetYaxis()->SetNoAlphanumeric(); // For ROOT6 to prevent getting zero means values
       for (std::map<int, std::string>::iterator l_itr = labels.begin(); l_itr != labels.end(); ++l_itr)
       {
         object->GetYaxis()->SetBinLabel(l_itr->first, l_itr->second.c_str());

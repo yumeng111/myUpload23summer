@@ -960,6 +960,65 @@ public:
   int ds4550_read(char *buf, int address, int size);
   void ds4550_write(char *buf, int address, int size);
 
+  // 2018-08-15 Liu, moved the following ODMB constats into Public block
+  // 
+  static const unsigned ODMB_RST_DCFEB_JTAG = 0x1018;
+  static const unsigned ODMB_SEL_DCFEB_JTAG = 0x1020;
+  static const unsigned ODMB_DCFEB_TDO = 0x1014;
+
+  static const unsigned ODMB_MODE = 0x3000;
+  static const unsigned ODMB_SOFT_RESET = 0x3004;
+  static const unsigned DCFEB_REPROGRAM = 0x3010;
+  static const unsigned DCFEB_RESYNC = 0x3014;
+  static const unsigned DCFEB_DONE = 0x3120;
+  static const unsigned ODMB_QPLL = 0x3124;
+  static const unsigned DCFEB_PULSE = 0x3200;
+  static const unsigned DATA_MUX = 0x3300;
+  static const unsigned TRIG_MUX = 0x3304;
+  static const unsigned LVMB_MUX = 0x3308;
+  static const unsigned L1A_COUNTER = 0x33FC;
+  static const unsigned L1A_COUNTER2 = 0x35FC;
+  static const unsigned L1A_MODE = 0x3400;
+  static const unsigned RQST_OTMB_ON_L1A = 0x3404;
+  static const unsigned MASK_L1A = 0x3408;
+  static const unsigned MASK_PLS = 0x340C;
+  static const unsigned DDU_PACKETS = 0x34AC;
+  static const unsigned QPLL_UNLOCKS = 0x34FC;
+  static const unsigned BAD_DDU_PLL = 0x3A8C;
+
+  // the following group are base registers, +(1-7) for DCFEB1-7, +8 OTMB, +9 ALCT 
+  static const unsigned L1A_MATCH_BASE = 0x320C;
+  static const unsigned L1A_GAP_BASE = 0x330C;
+  static const unsigned STORED_PACKETS_BASE = 0x340C;
+  static const unsigned SHIPPED_PACKETS_BASE = 0x350C;
+  static const unsigned NUM_LCTS_BASE = 0x370C;
+  static const unsigned BAD_CRC_BASE = 0x3A0C;
+  static const unsigned FIBER_ERROR_BASE = 0x3B0C;
+  static const unsigned AUTO_KILL_ANY = 0x3B8C;   
+  static const unsigned AUTO_KILL_OPT = 0x3B9C;   
+    
+  static const unsigned LCT_L1A_DLY = 0x4000;
+  static const unsigned TMB_DLY = 0x4004;
+  static const unsigned PUSH_DLY = 0x4008;
+  static const unsigned ALCT_DLY = 0x400C;
+  static const unsigned INJ_DLY = 0x4010;
+  static const unsigned EXT_DLY = 0x4014;
+  static const unsigned CAL_DLY = 0x4018;
+  static const unsigned ODMB_KILL = 0x401C;
+  static const unsigned ODMB_CRATEID = 0x4020;
+
+  static const unsigned read_ODMB_ID = 0x4100;
+  static const unsigned read_FW_VERSION = 0x4200;
+  static const unsigned read_FW_BUILD = 0x4300;
+
+  static const unsigned ODMB_RD_DCFEB_FIFO = 0x5000;
+  static const unsigned ODMB_DCFEB_FIFO_CNT = 0x500C;
+  static const unsigned ODMB_SEL_DCFEB_FIFO = 0x5010;
+  static const unsigned ODMB_RST_FIFO = 0x5020;
+  static const unsigned READ_TX_WORD      = 0x5300; ///< read one 16-bit word from DDU tx FIFO
+  static const unsigned READ_TX_WORDCOUNT = 0x530c; ///< read number of 16-bit words in DDU tx FIFO
+  static const unsigned RESET_TX          = 0x5320; ///< reset DDU tx FIFO
+
  private:
 
   // DCFEB BPI-->EPROM access rountines
@@ -1103,63 +1162,6 @@ public:
   //static const unsigned ODMB_CTRL = 0x3000;
   //static const unsigned DCFEB_CTRL = 0x3010;
   
-  // updated ODMB commands
-  // Jack Bradmiller-Feld June 3, 2014. ODMB firmware version 3.06
-  static const unsigned ODMB_RST_DCFEB_JTAG = 0x1018;
-  static const unsigned ODMB_SEL_DCFEB_JTAG = 0x1020;
-  static const unsigned ODMB_DCFEB_TDO = 0x1014;
-
-  static const unsigned ODMB_MODE = 0x3000;
-  static const unsigned ODMB_SOFT_RESET = 0x3004;
-  static const unsigned DCFEB_REPROGRAM = 0x3010;
-  static const unsigned DCFEB_RESYNC = 0x3014;
-  static const unsigned DCFEB_DONE = 0x3120;
-  static const unsigned ODMB_QPLL = 0x3124;
-  static const unsigned DCFEB_PULSE = 0x3200;
-  static const unsigned DATA_MUX = 0x3300;
-  static const unsigned TRIG_MUX = 0x3304;
-  static const unsigned LVMB_MUX = 0x3308;
-  static const unsigned L1A_COUNTER = 0x33FC;
-  static const unsigned L1A_COUNTER2 = 0x35FC;
-  static const unsigned L1A_MODE = 0x3400;
-  static const unsigned MASK_L1A = 0x3408;
-  static const unsigned MASK_PLS = 0x340C;
-  static const unsigned DDU_PACKETS = 0x34AC;
-  static const unsigned QPLL_UNLOCKS = 0x34FC;
-  static const unsigned BAD_DDU_PLL = 0x3A8C;
-
-  // the following group are base registers, +(1-7) for DCFEB1-7, +8 OTMB, +9 ALCT 
-  static const unsigned L1A_MATCH_BASE = 0x320C;
-  static const unsigned L1A_GAP_BASE = 0x330C;
-  static const unsigned STORED_PACKETS_BASE = 0x340C;
-  static const unsigned SHIPPED_PACKETS_BASE = 0x350C;
-  static const unsigned NUM_LCTS_BASE = 0x370C;
-  static const unsigned BAD_CRC_BASE = 0x3A0C;
-  static const unsigned FIBER_ERROR_BASE = 0x3B0C;
-  static const unsigned AUTO_KILL_ANY = 0x3B8C;   
-  static const unsigned AUTO_KILL_OPT = 0x3B9C;   
-    
-  static const unsigned LCT_L1A_DLY = 0x4000;
-  static const unsigned TMB_DLY = 0x4004;
-  static const unsigned PUSH_DLY = 0x4008;
-  static const unsigned ALCT_DLY = 0x400C;
-  static const unsigned INJ_DLY = 0x4010;
-  static const unsigned EXT_DLY = 0x4014;
-  static const unsigned CAL_DLY = 0x4018;
-  static const unsigned ODMB_KILL = 0x401C;
-  static const unsigned ODMB_CRATEID = 0x4020;
-
-  static const unsigned read_ODMB_ID = 0x4100;
-  static const unsigned read_FW_VERSION = 0x4200;
-  static const unsigned read_FW_BUILD = 0x4300;
-
-  static const unsigned ODMB_RD_DCFEB_FIFO = 0x5000;
-  static const unsigned ODMB_DCFEB_FIFO_CNT = 0x500C;
-  static const unsigned ODMB_SEL_DCFEB_FIFO = 0x5010;
-  static const unsigned ODMB_RST_FIFO = 0x5020;
-  static const unsigned READ_TX_WORD      = 0x5300; ///< read one 16-bit word from DDU tx FIFO
-  static const unsigned READ_TX_WORDCOUNT = 0x530c; ///< read number of 16-bit words in DDU tx FIFO
-  static const unsigned RESET_TX          = 0x5320; ///< reset DDU tx FIFO
 
 
   static const unsigned ODMB_Save_Config = 0x6000;

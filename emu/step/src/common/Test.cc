@@ -256,7 +256,7 @@ void emu::step::Test::configureCrates(){
       (*crate)->configure( 0 );
       // Issue a hard reset or else the events will not have TMB data of the ME4/2 chambers at P5.
       // For the time being, skip hard reset for crates with ODMBs as they unset the LVMB on/off switch.
-      if ( (*crate)->daqmbs().size() && (*crate)->daqmbs().at( 0 )->GetHardwareVersion() < 2 ){ // TODO: remove this condition once ODMB is fixed.
+      // if ( (*crate)->daqmbs().size() && (*crate)->daqmbs().at( 0 )->GetHardwareVersion() < 2 ){ // TODO: remove this condition once ODMB is fixed.
 	// It's only necessary for tests 19 and 21 and 27. In fact, it upsets test 13...
 	if ( id_ == "19" || id_ == "21" || id_ == "27" || id_ == "27s" ){
 	  ::sleep( 1 );
@@ -273,7 +273,7 @@ void emu::step::Test::configureCrates(){
 	  }
 	}
 
-      }
+      // }
 
       // Set up the DDU if and only if there's one in this crate. Includes a hard reset
       setUpDDU(*crate);
@@ -388,7 +388,8 @@ void emu::step::Test::setUpDMB( emu::pc::DAQMB *dmb ){
 }
 
 void emu::step::Test::setUpODMBPulsing( emu::pc::DAQMB *dmb, ODMBMode_t mode, ODMBInputKill_t killInput ){
-  if( dmb->GetHardwareVersion() < 2 ) return;
+  // if( dmb->GetHardwareVersion() < 2 ) return;
+  if( is_DMB( dmb->GetHardwareVersion() ) ) return;
 
   int slot_number  = dmb->slot();
   char rcv[2];
@@ -430,15 +431,18 @@ void emu::step::Test::setUpODMBPulsing( emu::pc::DAQMB *dmb, ODMBMode_t mode, OD
 void emu::step::Test::setAllDCFEBsPipelineDepth( emu::pc::DAQMB* dmb, const short int depth ){
   // If depth is omitted, then reset pipeline depth to its config (XML) value as it may have been zeroed by a hard reset.
 
-  if ( dmb->cfebs().at( 0 ).GetHardwareVersion() != 2 ) return; // All CFEBs should have the same HW version; get it from the first.
+  // if ( dmb->cfebs().at( 0 ).GetHardwareVersion() != 2 ) return; // All CFEBs should have the same HW version; get it from the first.
+  if ( is_with_CFEB( dmb->GetHardwareVersion() ) ) return; // CFEB has no pipeline depth to set
 
-  if ( dmb->GetHardwareVersion() == 2) { // reprogram DCFEBs
+  // if ( dmb->GetHardwareVersion() == 2) { // reprogram DCFEBs
+  if ( is_with_DCFEB( dmb->GetHardwareVersion() ) || is_with_xDCFEB( dmb->GetHardwareVersion() ) ) { // reprogram DCFEBs
     char rcv[2];
     unsigned int addr;
     unsigned short int data;
     int irdwr;
     int slot = dmb->slot();
     irdwr = 3; addr = 0x003010 | (slot<<19); data = 0x0001;      
+    // irdwr = 3; addr = emu::pc::DAQMB::DCFEB_REPROGRAM | (slot<<19); data = 0x0001;      
     dmb->getCrate()->vmeController()->vme_controller(irdwr,addr,&data,rcv);
     usleep(300000);
   }
@@ -459,7 +463,10 @@ void emu::step::Test::setAllDCFEBsPipelineDepth( emu::pc::DAQMB* dmb, const shor
     dmb->Pipeline_Restart( *cfeb ); // and then restart the pipeline
     usleep( 100000 );
 
-    if(dmb->GetHardwareVersion() != 2){
+    // if(dmb->GetHardwareVersion() != 2){
+    if( is_DMB( dmb->GetHardwareVersion() ) && 
+	( is_with_DCFEB( dmb->GetHardwareVersion() ) || is_with_xDCFEB( dmb->GetHardwareVersion() ) )
+	){
       // set DCFEBs to behave like CFEBs and send data on any L1A, required when not using ODMB
       dmb->dcfeb_Set_ReadAnyL1a( *cfeb );
     }
@@ -486,7 +493,8 @@ void emu::step::Test::turnONlvDCFEBandALCT(emu::pc::Crate* crate ) {
   vector<emu::pc::DAQMB *> dmbs = crate->daqmbs();    
   for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
     
-    if( (*dmb)->GetHardwareVersion() == 2 ) {
+    // if( (*dmb)->GetHardwareVersion() == 2 ) {
+    if( is_ODMB( (*dmb)->GetHardwareVersion() ) ){
       if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "turning on-chamber boards ON for this ODMB" ); }
       int state = (*dmb)->lvmb_power_state();
       if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "low voltage power state before power on: " << state ); }
@@ -523,7 +531,8 @@ void emu::step::Test::configureODMB( emu::pc::Crate* crate ) {
   vector<emu::pc::DAQMB *> dmbs = crate->daqmbs();    
   for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
     
-    if( (*dmb)->GetHardwareVersion() == 2 ) {
+    // if( (*dmb)->GetHardwareVersion() == 2 ) {
+    if( is_ODMB( (*dmb)->GetHardwareVersion() ) ){
       int slot_number  = (*dmb)->slot();
 
       char rcv[2];
@@ -585,7 +594,8 @@ void emu::step::Test::resyncDCFEBs(emu::pc::Crate* crate){
 
   vector<emu::pc::DAQMB *> dmbs = crate->daqmbs();
   for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
-    if( (*dmb)->GetHardwareVersion() == 2 ) {
+    // if( (*dmb)->GetHardwareVersion() == 2 ) {
+    if( is_ODMB( (*dmb)->GetHardwareVersion() ) ){
       slot_number  = (*dmb)->slot();
 
       unsigned int fw_version = (*dmb)->odmb_firmware_version();
@@ -619,7 +629,12 @@ void emu::step::Test::hardResetOTMBs(emu::pc::Crate* crate){
 }
 
 void emu::step::Test::printDCFEBUserCodes( emu::pc::DAQMB* dmb ){
-  if ( dmb->cfebs().at( 0 ).GetHardwareVersion() != 2 ) return;  // All CFEBs should have the same HW version; get it from the first.
+  // if ( dmb->cfebs().at( 0 ).GetHardwareVersion() != 2 ) return;  // All CFEBs should have the same HW version; get it from the first.
+  if ( ! ( 
+	   is_with_DCFEB ( dmb->GetHardwareVersion() ) || 
+	   is_with_xDCFEB( dmb->GetHardwareVersion() ) 
+	 ) 
+     ) return;
 
   vector <emu::pc::CFEB> cfebs = dmb->cfebs();
   for( vector<emu::pc::CFEB>::reverse_iterator cfeb = cfebs.rbegin(); cfeb != cfebs.rend(); ++cfeb){
@@ -1171,7 +1186,8 @@ void emu::step::Test::configure_15(){ // OK
       // Configure DCFEB.
       for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
 
-	if( (*dmb)->GetHardwareVersion() == 2 ){
+	// if( (*dmb)->GetHardwareVersion() == 2 ){
+	if( is_ODMB( (*dmb)->GetHardwareVersion() ) ){
 	  setUpODMBPulsing( *dmb, ODMBPedestalMode, ODMBInputKill_t( kill_ALCT | kill_TMB ) );
 	} // if( (*dmb)->GetHardwareVersion() == 2 )
 	::sleep(1);
@@ -1181,8 +1197,9 @@ void emu::step::Test::configure_15(){ // OK
 
       (*crate)->ccb()->EnableL1aFromVme(); // enable L1A and clct_pretrig from VME command, disable all other trigger sources
 
-      // Take the hardware version of the first DMB, assuming ODMB and copper DMB are never tested simulatenously!!!
-      uint64_t extTrigDelay = ( (*crate)->daqmbs().at(0)->GetHardwareVersion() == 2 ? ext_trig_delay_odmb : ext_trig_delay );
+      // Take the hardware version of the first DMB, assuming ODMB and copper DMB are never tested simulatenously within the same crate!!!
+      // uint64_t extTrigDelay = ( (*crate)->daqmbs().at(0)->GetHardwareVersion() == 2 ? ext_trig_delay_odmb : ext_trig_delay );
+      uint64_t extTrigDelay = ( is_ODMB( (*crate)->daqmbs().at(0)->GetHardwareVersion() ) ? ext_trig_delay_odmb : ext_trig_delay );
       (*crate)->ccb()->SetExtTrigDelay( extTrigDelay ); // Delay of ALCT and CLCT external triggers before distribution to backplane      
       if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "ext_trig_delay set to " << extTrigDelay ); }
 
@@ -1292,7 +1309,8 @@ void emu::step::Test::configure_16(){
 
     for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
       
-      if( (*dmb)->GetHardwareVersion() == 2 ){
+      // if( (*dmb)->GetHardwareVersion() == 2 ){
+      if( is_ODMB( (*dmb)->GetHardwareVersion() ) ){
 	setUpODMBPulsing( *dmb, ODMBPedestalMode, ODMBInputKill_t( kill_ALCT | kill_TMB ) );
       } // if( (*dmb)->GetHardwareVersion() == 2 )
       ::sleep(1);
@@ -1302,7 +1320,8 @@ void emu::step::Test::configure_16(){
     (*crate)->ccb()->EnableL1aFromSyncAdb();
 
     // Take the hardware version of the first DMB, assuming ODMB and copper DMB are never tested simulatenously!!!
-    uint64_t extTrigDelay = ( (*crate)->daqmbs().at(0)->GetHardwareVersion() == 2 ? ext_trig_delay_odmb : ext_trig_delay );
+    // uint64_t extTrigDelay = ( (*crate)->daqmbs().at(0)->GetHardwareVersion() == 2 ? ext_trig_delay_odmb : ext_trig_delay );
+    uint64_t extTrigDelay = ( is_ODMB( (*crate)->daqmbs().at(0)->GetHardwareVersion() ) ? ext_trig_delay_odmb : ext_trig_delay );
     (*crate)->ccb()->SetExtTrigDelay( extTrigDelay ); // Delay of ALCT and CLCT external triggers before distribution to backplane      
     if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "ext_trig_delay set to " << extTrigDelay ); }
     
@@ -1453,8 +1472,9 @@ void emu::step::Test::configure_17(){ // OK
 
     (*crate)->ccb()->EnableL1aFromDmbCfebCalibX();
 
-    // Take the hardware version of the first DMB, assuming ODMB and copper DMB are never tested simulatenously!!!
-    uint64_t extTrigDelay = ( (*crate)->daqmbs().at(0)->GetHardwareVersion() == 2 ? ext_trig_delay_odmb : ext_trig_delay );
+    // Take the hardware version of the first DMB, assuming ODMB and copper DMB are never tested simulatenously in the same crate!!!
+    // uint64_t extTrigDelay = ( (*crate)->daqmbs().at(0)->GetHardwareVersion() == 2 ? ext_trig_delay_odmb : ext_trig_delay );
+    uint64_t extTrigDelay = ( is_ODMB( (*crate)->daqmbs().at(0)->GetHardwareVersion() ) ? ext_trig_delay_odmb : ext_trig_delay );
     (*crate)->ccb()->SetExtTrigDelay( extTrigDelay ); // Delay of ALCT and CLCT external triggers before distribution to backplane      
     if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "ext_trig_delay set to " << extTrigDelay ); }
     
@@ -1478,7 +1498,9 @@ void emu::step::Test::configure_17(){ // OK
 
       setUpODMBPulsing( *dmb, ODMBCalibrationMode, ODMBInputKill_t( kill_ALCT | kill_TMB ) );
       
-      if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+      // if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+      if ( is_with_DCFEB ( (*dmb)->GetHardwareVersion() ) || 
+	   is_with_xDCFEB( (*dmb)->GetHardwareVersion() )    ){
 	float ComparatorThresholds = (*dmb)->GetCompThresh();
 	(*dmb)->set_comp_thresh(ComparatorThresholds);
 	usleep(100000);
@@ -1539,13 +1561,16 @@ void emu::step::Test::enable_17(){
 	// (*crate)->ccb()->l1aReset();
 	// if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "Resync after buck shift" ); }
 
-	if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+	// if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+	if ( is_with_DCFEB ( (*dmb)->GetHardwareVersion() ) || 
+	     is_with_xDCFEB( (*dmb)->GetHardwareVersion() )    ){
           usleep(100000); // buck shifting takes a lot more time for DCFEBs (should check this)
           (*crate)->ccb()->bc0(); // needed after DCFEB buck shifting?
 	  usleep(100000);
         }
 
-	if( (*dmb)->GetHardwareVersion() < 2 ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT
+	// if( (*dmb)->GetHardwareVersion() < 2 ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT
+	if( is_DMB( (*dmb)->GetHardwareVersion() ) ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT
 
       } // for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb )
 
@@ -1556,14 +1581,18 @@ void emu::step::Test::enable_17(){
 	uint64_t timesetting = iDelay%10 + 5;
 	for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
 
-	  if      ( (*dmb)->GetHardwareVersion()  < 2 ){
+	  // if      ( (*dmb)->GetHardwareVersion()  < 2 ){
+	  if  ( is_DMB( (*dmb)->GetHardwareVersion() ) ){
 	    (*dmb)->set_cal_tim_pulse( timesetting ); // Change pulse delay on DMB FPGA
 	  }
-	  else if ( (*dmb)->GetHardwareVersion() == 2 ){
-        (*dmb)->odmb_set_Ext_delay( timesetting ); // sets EXT_DLY
+	  // else if ( (*dmb)->GetHardwareVersion() == 2 ){
+	  else if ( is_ODMB( (*dmb)->GetHardwareVersion() ) ){
+	    (*dmb)->odmb_set_Ext_delay( timesetting ); // sets EXT_DLY
 	  }
 
-	  if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+	  // if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+	  if ( is_with_DCFEB ( (*dmb)->GetHardwareVersion() ) || 
+	       is_with_xDCFEB( (*dmb)->GetHardwareVersion() )    ){
 	    usleep(500000);
 	    msWaitAfterPulse = 10; // pulsing takes a lot more time for DCFEBs...
 	  }
@@ -1633,8 +1662,9 @@ void emu::step::Test::configure_17b(){ // OK
 
     (*crate)->ccb()->EnableL1aFromDmbCfebCalibX();
 
-    // Take the hardware version of the first DMB, assuming ODMB and copper DMB are never tested simulatenously!!!
-    uint64_t extTrigDelay = ( (*crate)->daqmbs().at(0)->GetHardwareVersion() == 2 ? ext_trig_delay_odmb : ext_trig_delay );
+    // Take the hardware version of the first DMB, assuming ODMB and copper DMB are never tested simulatenously in the same crate!!!
+    // uint64_t extTrigDelay = ( (*crate)->daqmbs().at(0)->GetHardwareVersion() == 2 ? ext_trig_delay_odmb : ext_trig_delay );
+    uint64_t extTrigDelay = ( is_ODMB( (*crate)->daqmbs().at(0)->GetHardwareVersion() ) ? ext_trig_delay_odmb : ext_trig_delay );
     (*crate)->ccb()->SetExtTrigDelay( extTrigDelay ); // Delay of ALCT and CLCT external triggers before distribution to backplane      
     if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "ext_trig_delay set to " << extTrigDelay ); }
 
@@ -1658,7 +1688,9 @@ void emu::step::Test::configure_17b(){ // OK
 
       setUpODMBPulsing( *dmb, emu::step::ODMBPedestalMode, kill_ALCT );
       
-      if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+      // if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+      if ( is_with_DCFEB ( (*dmb)->GetHardwareVersion() ) || 
+	   is_with_xDCFEB( (*dmb)->GetHardwareVersion() )    ){
 	float ComparatorThresholds = (*dmb)->GetCompThresh();
 	(*dmb)->set_comp_thresh(ComparatorThresholds);
 	usleep(100000);
@@ -1718,13 +1750,16 @@ void emu::step::Test::enable_17b(){
 	(*dmb)->buck_shift();
         usleep(100000); // buck shifting takes a lot more time for DCFEBs
 
-	if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+	// if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+	if ( is_with_DCFEB ( (*dmb)->GetHardwareVersion() ) || 
+	     is_with_xDCFEB( (*dmb)->GetHardwareVersion() )    ){
           usleep(100000); // buck shifting takes a lot more time for DCFEBs (should check this)
           (*crate)->ccb()->bc0(); // needed after DCFEB buck shifting?
 	  usleep(100000);
         }
 
-	if( (*dmb)->GetHardwareVersion() < 2 ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT
+	// if( (*dmb)->GetHardwareVersion() < 2 ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT
+	if( is_DMB( (*dmb)->GetHardwareVersion() ) ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT
 
       } // for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb )
 
@@ -1736,7 +1771,9 @@ void emu::step::Test::enable_17b(){
 	for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
 	  (*dmb)->set_cal_dac( 0, dac );
 	  
- 	  if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+ 	  // if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+	  if ( is_with_DCFEB ( (*dmb)->GetHardwareVersion() ) || 
+	       is_with_xDCFEB( (*dmb)->GetHardwareVersion() )    ){
  	    usleep(100000); // setting the dac lot more time for DCFEBs... (this should be checked again)
  	  }
 	  
@@ -1849,8 +1886,9 @@ void emu::step::Test::configure_19(){
     // |  15 |     0 | Dmb_l1A_Release signal from custom backplane: enabled                                                       |
     (*crate)->ccb()->EnableL1aFromDmbCfebCalibX();
 
-    // Take the hardware version of the first DMB, assuming ODMB and copper DMB are never tested simulatenously!!!
-    uint64_t extTrigDelay = ( (*crate)->daqmbs().at(0)->GetHardwareVersion() == 2 ? ext_trig_delay_odmb : ext_trig_delay );
+    // Take the hardware version of the first DMB, assuming ODMB and copper DMB are never tested simulatenously in the same crate!!!
+    // uint64_t extTrigDelay = ( (*crate)->daqmbs().at(0)->GetHardwareVersion() == 2 ? ext_trig_delay_odmb : ext_trig_delay );
+    uint64_t extTrigDelay = ( is_ODMB( (*crate)->daqmbs().at(0)->GetHardwareVersion() ) ? ext_trig_delay_odmb : ext_trig_delay );
     (*crate)->ccb()->SetExtTrigDelay( extTrigDelay ); // Delay of ALCT and CLCT external triggers before distribution to backplane      
     if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "ext_trig_delay set to " << extTrigDelay ); }
 
@@ -1921,14 +1959,17 @@ void emu::step::Test::enable_19(){
 
         (*dmb)->restoreCFEBIdle(); // need to restore DCFEB JTAG after a buckshift
 
-        if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+        // if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+	if ( is_with_DCFEB ( (*dmb)->GetHardwareVersion() ) || 
+	     is_with_xDCFEB( (*dmb)->GetHardwareVersion() )    ){
           usleep(100000); // buck shifting takes a lot more time for DCFEBs (should check this)
           // (*crate)->ccb()->l1aReset();  // Resync causes one event to be lost. Also, the analyzer complains about OOS counters... And the test works without it.
           (*crate)->ccb()->bc0(); // needed after DCFEB buck shifting?
           usleep(100000);
         }
 
-        if( (*dmb)->GetHardwareVersion() < 2 ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT	
+        // if( (*dmb)->GetHardwareVersion() < 2 ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT	
+	if( is_DMB( (*dmb)->GetHardwareVersion() ) ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT
 
       } // for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb )
       
@@ -1940,12 +1981,16 @@ void emu::step::Test::enable_19(){
           float dac = iAmp * dmb_tpamp_step + dmb_tpamp_first;
           (*dmb)->set_dac( 0, dac * 5. / 4095. ); // DAQMB::set_dac( voltage of calib1 DAC, voltage of calib0 DAC )
           
-          if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+          // if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+	  if ( is_with_DCFEB ( (*dmb)->GetHardwareVersion() ) || 
+	       is_with_xDCFEB( (*dmb)->GetHardwareVersion() )    ){
             usleep(100000); // setting the dac lot more time for DCFEBs... (this should be checked again)
           }
           
           // calculate first thresholds based on current dac value
-          if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){
+          // if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){
+	  if ( is_with_DCFEB ( (*dmb)->GetHardwareVersion() ) || 
+	       is_with_xDCFEB( (*dmb)->GetHardwareVersion() )    ){
             first_thresholds.push_back( max( int64_t( 0 ), (int64_t)(dac * scale_turnoff_dcfeb / 16 - range_turnoff) ) );
           }else{
             first_thresholds.push_back( max( int64_t( 0 ), (int64_t)(dac * scale_turnoff / 16 - range_turnoff) ) );
@@ -1963,7 +2008,9 @@ void emu::step::Test::enable_19(){
             float threshold = (float)( iThreshold * thresh_step + *first_threshold ) / 1000.;
             (*dmb)->set_comp_thresh( threshold );
             
-            if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+            // if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+	    if ( is_with_DCFEB ( (*dmb)->GetHardwareVersion() ) || 
+		 is_with_xDCFEB( (*dmb)->GetHardwareVersion() )    ){
               //usleep(500000); // set_comp_thresh takes a lot more time for DCFEBs...
               usleep(1000); // set_comp_thresh takes more time for DCFEBs...
               //usWaitAfterPulse = 10000; // pulsing takes a lot more time for DCFEBs... (why not just change msec_between_pulses?)
@@ -2042,8 +2089,9 @@ void emu::step::Test::configure_21(){
 
     (*crate)->ccb()->EnableL1aFromDmbCfebCalibX();
 
-    // Take the hardware version of the first DMB, assuming ODMB and copper DMB are never tested simulatenously!!!
-    uint64_t extTrigDelay = ( (*crate)->daqmbs().at(0)->GetHardwareVersion() == 2 ? ext_trig_delay_odmb : ext_trig_delay );
+    // Take the hardware version of the first DMB, assuming ODMB and copper DMB are never tested simulatenously in the same crate!!!
+    // uint64_t extTrigDelay = ( (*crate)->daqmbs().at(0)->GetHardwareVersion() == 2 ? ext_trig_delay_odmb : ext_trig_delay );
+    uint64_t extTrigDelay = ( is_ODMB( (*crate)->daqmbs().at(0)->GetHardwareVersion() ) ? ext_trig_delay_odmb : ext_trig_delay );
     (*crate)->ccb()->SetExtTrigDelay( extTrigDelay ); // Delay of ALCT and CLCT external triggers before distribution to backplane      
     if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "ext_trig_delay set to " << extTrigDelay ); }
 
@@ -2054,7 +2102,8 @@ void emu::step::Test::configure_21(){
       (*dmb)->set_dac( (float)dmb_test_pulse_amp * 5. / 4095., 0 ); // set inject amplitude - first parameter (same for the entire test)
       (*dmb)->set_comp_thresh( (float)cfeb_threshold / 1000. ); // set cfeb thresholds (for the entire test)
 
-      if( (*dmb)->GetHardwareVersion() < 2 ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT
+      // if( (*dmb)->GetHardwareVersion() < 2 ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT
+      if( is_DMB( (*dmb)->GetHardwareVersion() ) ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT
 
       emu::pc::TMB* tmb = (*crate)->GetChamber( *dmb )->GetTMB();
       if (tmb) {
@@ -2104,7 +2153,9 @@ void emu::step::Test::enable_21(){
       for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
         (*dmb)->trighalfx( halfStrip );
 
-        if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+        // if ( (*dmb)->cfebs().at( 0 ).GetHardwareVersion() == 2 ){ // All CFEBs should have the same HW version; get it from the first.
+	if ( is_with_DCFEB ( (*dmb)->GetHardwareVersion() ) || 
+	     is_with_xDCFEB( (*dmb)->GetHardwareVersion() )    ){
           usleep(100000); // buck shifting takes a lot more time for DCFEBs (should check this)
           (*crate)->ccb()->bc0(); // may not need this (should check)
           usleep(100000);

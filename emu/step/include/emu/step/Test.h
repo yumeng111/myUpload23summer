@@ -207,6 +207,11 @@ namespace emu{
       void hardResetOTMBs(emu::pc::Crate* crate); ///< hard-reset all OTMBs *only* (to clean the hot channel masks)
       void printDCFEBUserCodes( emu::pc::DAQMB* dmb );
       string getDataDirName() const;
+      bool is_DMB        ( const int DMB_hw_v ) const { return ( DMB_hw_v == 1 || DMB_hw_v == 3 || DMB_hw_v == 5 ); }
+      bool is_ODMB       ( const int DMB_hw_v ) const { return ( DMB_hw_v == 2 || DMB_hw_v == 4                  ); }
+      bool is_with_CFEB  ( const int DMB_hw_v ) const { return ( DMB_hw_v == 1                                   ); }
+      bool is_with_DCFEB ( const int DMB_hw_v ) const { return ( DMB_hw_v == 2 || DMB_hw_v == 3                  ); }
+      bool is_with_xDCFEB( const int DMB_hw_v ) const { return ( DMB_hw_v == 4 || DMB_hw_v == 5                  ); }
 
       void configure_11();
       void configure_11c();

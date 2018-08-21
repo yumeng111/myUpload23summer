@@ -3702,11 +3702,11 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
               if((dcfebn<7 && (cnt_idx==10 ||cnt_idx==15 ||cnt_idx==27 ||cnt_idx==28 ||cnt_idx==29)) || (dcfebn==7 && cnt_idx>=9)) 
               {
                  ival=(*febdata)[upgraded*TOTAL_DCFEB_MONS+k];
-                 *out << " " << ival;
                  if(dcfebn==7 && cnt_idx==11)   /* ODMB kill-mask register  */
                  {
                      int mask_in_use=ival;
                      int mask_in_config=myVector[j]->GetKillInputMask();
+                     ival ^= mask_in_config;  /* remove the bits already masked in the configuration */
                      for(int d=0; d<7; d++)
                      {
                          if((mask_in_use &1)==1 && (mask_in_config &1)==0)  auto_killed_dcfebs++;
@@ -3714,6 +3714,7 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
                          mask_in_config >>=1;
                      }
                  }
+                 *out << " " << ival;
               }
               else
               {

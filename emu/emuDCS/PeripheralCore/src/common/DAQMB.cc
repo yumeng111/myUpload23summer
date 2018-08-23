@@ -10302,7 +10302,7 @@ void DAQMB::odmb_dcfeb_tests()
 	
   // print results
   if (!power_on_correct&&!power_on_others) {
-    (*MyOutput_) << "Power-on test failed--no copper communication." << std::endl;
+    (*MyOutput_) << "Power-on test failed--no copper communication." << std::endl << std::endl;
     return;
   }
   else if (power_on_others) { // print incorrect mappings
@@ -10322,15 +10322,15 @@ void DAQMB::odmb_dcfeb_tests()
 	}
       } // check coppers loop
     } // analyze results
-    return;
+//    return;
   } // print incorrect mappings
 
   // otherwise, we passed, turn on all DCFEBs
-  (*MyOutput_) << "Power-on test passed for all DCFEBs -- copper mapping is correct." << std::endl;
+  (*MyOutput_) << "Power-on test passed for other DCFEBs." << std::endl << std::endl;
  
 
   //store results of fiber test
-  std::vector<std::vector<int> > fiber_mapping, nrx_pckt;
+  unsigned int l1a_match_count[7][7], nrx_pckt[7][7];
   // now send L1A matches to one DCFEB at a time
   for (CFEBItr cfeb = cfebs.begin(); cfeb != cfebs.end(); ++cfeb ) { // copper loop	  
     unsigned int dcfeb_cop = (*cfeb).number();
@@ -10346,22 +10346,16 @@ void DAQMB::odmb_dcfeb_tests()
     send_dcfeb_pulse(L1A_L1A_MATCH,number_of_l1as_to_send); 
     usleep(10000);
 	  
-    std::vector<int> nrx_pckt_local;
     std::cout << "Copper selected: " << dcfeb_cop+1 << std::endl;
-    std::vector<int>fiber_mapping_local(7,0);
-    for(unsigned int dcfeb_fib(0); dcfeb_fib<7; dcfeb_fib++) {
-      // vme_wrapper_->VMEWrite(0x5010,dcfeb_fib+1,slot,"Select DCFEB FIFO");
+    for(unsigned int dcfeb_fib(0); dcfeb_fib<7; dcfeb_fib++) 
+    {
       unsigned int VMEresult = this->read_n_l1a_match(dcfeb_fib+1);
       std::cout << "L1A matches for fiber " << dcfeb_fib+1 << ": " << std::dec << VMEresult << std::endl;
+      l1a_match_count[dcfeb_cop][dcfeb_fib]=VMEresult;
       VMEresult = this->read_nrx_pckt(dcfeb_fib+1);
-      usleep(3);
       std::cout << "Packets received by fiber " << dcfeb_fib+1 << ": " << std::dec << VMEresult << std::endl;
-      nrx_pckt_local.push_back(VMEresult);
-      if (VMEresult>0) fiber_mapping_local[dcfeb_fib]=1;
+      nrx_pckt[dcfeb_cop][dcfeb_fib]=VMEresult;
     } // end fiber loop
-    // vme_wrapper_->VMEWrite(0x5020,0x7F,slot,"Reset FIFOs"); 
-    fiber_mapping.push_back(fiber_mapping_local);
-    nrx_pckt.push_back(nrx_pckt_local); // store results for this dev
   } // end dcfeb_cop loop
 
   // analyze and print results
@@ -10371,10 +10365,11 @@ void DAQMB::odmb_dcfeb_tests()
     unsigned int dcfeb_cop = (*cfeb).number();	  
     bool nothing_received(true);
     for (unsigned int dcfeb_fib(0); dcfeb_fib<7; dcfeb_fib++) {
-      unsigned int nrx = nrx_pckt.at(dcfeb_cop)[dcfeb_fib]; 
-      if (fiber_mapping.at(dcfeb_cop)[dcfeb_fib]==1) {
+      unsigned int nrx = nrx_pckt[dcfeb_cop][dcfeb_fib]; 
+      if (nrx>0) {
 	nothing_received=false;
-	if (dcfeb_fib!=dcfeb_cop) { // wrong fiber
+	if (dcfeb_fib!=dcfeb_cop) 
+	{ // wrong fiber
 	  all_passed=false;
 	  (*MyOutput_) << "DCFEB " << dcfeb_cop+1 
 		       << " mapped to fiber " << dcfeb_fib+1
@@ -10382,9 +10377,9 @@ void DAQMB::odmb_dcfeb_tests()
 		       << nrx/(float)number_of_l1as_to_send << ")" 
 		       << std::endl;
 	}
-	else if (nrx < number_of_l1as_to_send) { // right fiber, but lost packets
-	  all_passed=false;
-	  (*MyOutput_) << "DCFEB " << dcfeb_cop+1 
+	else if (nrx < number_of_l1as_to_send) 
+	{ // right fiber, but lost packets
+	  std::cout << "DCFEB " << dcfeb_cop+1 
 		       << " lost packets -- efficiency = " 
 		       << nrx << "/" << number_of_l1as_to_send << " ("
 		       << nrx/(float)number_of_l1as_to_send << ")"
@@ -10395,22 +10390,24 @@ void DAQMB::odmb_dcfeb_tests()
     if (nothing_received) {// if we just got nothing
       (*MyOutput_) << "The fiber connected to DCFEB " << dcfeb_cop+1
 		   << " sent no packets." << std::endl;
+      all_passed=false;
     }
   } // copper loop  
   // otherwise, we're good
-  if(all_passed) {
+  if(all_passed) 
     (*MyOutput_) << "All fiber mappings are correct." << std::endl;
-    for (unsigned int dcfeb_fib(0); dcfeb_fib<7; dcfeb_fib++) {
-      int nrx(nrx_pckt[dcfeb_fib].at(dcfeb_fib)); 
-      std::cout << "Fiber " << dcfeb_fib+1 
-		<< " received " << nrx
-		<< "/" << number_of_l1as_to_send
-		<< " packets -- efficiency = " << nrx/(float)number_of_l1as_to_send
-		<< std::endl;
-    } 
-  }
-  std::cout << "\n\n" << std::endl;
+  for (CFEBItr cfeb = cfebs.begin(); cfeb != cfebs.end(); ++cfeb ) 
+  {  // copper loop
+    unsigned int dcfeb_cop = (*cfeb).number();	  
+    unsigned int nrx=nrx_pckt[dcfeb_cop][dcfeb_cop]; 
+    (*MyOutput_) << "Fiber " << dcfeb_cop+1 
+ 		 << " received " << nrx
+		 << "/" << number_of_l1as_to_send
+		 << " packets -- efficiency = " << nrx/(float)number_of_l1as_to_send
+		 << std::endl;
+  } 
 
+  std::cout << std::endl;
 
   fflush(stdout);
 
@@ -10445,7 +10442,7 @@ int DAQMB::read_nrx_pckt(unsigned dev)
 int DAQMB::read_n_l1a_match(unsigned dev)
 {
   // Read L1A_MATCH count for a DCFEB, OTMB, or ALCT -- dev index runs from 1 to 9
-  unsigned int addr_read_n_l1a_match = 0x340C | (0x00F0&((dev)<<4));
+  unsigned int addr_read_n_l1a_match = 0x320C | (0x00F0&((dev)<<4));
   return ReadRegister(addr_read_n_l1a_match);
 } 
 
@@ -10614,15 +10611,13 @@ float DAQMB::get_best_pipeline_depth(const unsigned lower_depth,
   }
 
   //Restore settings we've changed
-  odmb_set_kill_mask(original_kill);
   for(unsigned dcfeb(0); dcfeb<cfebs_.size() && dcfeb<7; ++dcfeb){
-    odmb_set_kill_mask(0xFFFFu);
     dcfeb_set_PipelineDepth(cfebs_[dcfeb], original_depth[dcfeb]);
     dcfeb_fine_delay(cfebs_[dcfeb], original_delay[dcfeb]);
     Pipeline_Restart(cfebs_[dcfeb]);
+  }
     odmb_rst_dcfeb_fifo(0x7Fu);
     odmb_set_kill_mask(original_kill);
-  }
 
   return best_depth;
 }

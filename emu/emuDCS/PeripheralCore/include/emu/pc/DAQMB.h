@@ -959,6 +959,7 @@ public:
   unsigned xdcfeb_ds4550_idcode(CFEB & cfeb);
   int ds4550_read(char *buf, int address, int size);
   void ds4550_write(char *buf, int address, int size);
+  void xdcfeb_test_autoload(CFEB & cfeb);
 
   // 2018-08-15 Liu, moved the following ODMB constats into Public block
   // 

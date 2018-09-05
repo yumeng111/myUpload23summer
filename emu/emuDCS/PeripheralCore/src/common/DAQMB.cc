@@ -8494,6 +8494,8 @@ void DAQMB::dcfeb_configure(CFEB & cfeb)
            xdcfeb_erase_eprom(2, 0);
            xdcfeb_write_eprom((char *)newbuf, DCFEB_PARAMETERS*6, 2, 0);
            ::sleep(1);
+           // verify
+           xdcfeb_read_eprom(readbuf, 1024, 2); 
        }
    }
    // Liu, 2018-07-12 temporarily put here to configure xDCFEB. 
@@ -8553,6 +8555,7 @@ void DAQMB::dcfeb_test_dummy(CFEB & cfeb, int test)
 // require to recompile everything in PeripheralCore & PeripheralApps
      write_cfeb_selector(cfeb.SelectorBit());
 //     virtex6_readreg(test);
+
 }    
 
 unsigned  DAQMB::dcfeb_readreg_virtex6(CFEB & cfeb,int test){
@@ -12571,7 +12574,7 @@ int DAQMB::xdcfeb_erase_eprom(int chip, int broadcast)
 
 //
 // 2018-08-06 Liu: disable special handling of ERASE to see how many EPROMs having problem
-//       set_flag(0);
+       set_flag(0);
        comd=XCF_ISC_ERASE; 
        xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
        if(DMBversion()==2) clear_flag(0);   
@@ -12685,6 +12688,9 @@ int DAQMB::xdcfeb_write_eprom(char *bufin, int dsize, int chip, int broadcast)
      {
          std::cout << "Verify. " << std::endl;
      }
+     comd=XCF_CLR_STATUS; 
+     xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     udelay(50);
      comd=XCF_ISC_DISABLE; 
      xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      udelay(200);
@@ -12743,9 +12749,13 @@ int DAQMB::xdcfeb_read_eprom(char *bufout, int dsize, int chip)
      }
      std::cout << "Reading 100%..." << std::endl;
 //    getTheController()->Debug(2);
+     
+     comd=XCF_CLR_STATUS; 
+     xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     udelay(50);
      comd=XCF_ISC_DISABLE; 
      xdprom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
-     udelay(200);
+     udelay(100);
      return 0;
 }
 
@@ -12975,6 +12985,25 @@ void DAQMB::xdcfeb_read_firmware(CFEB & cfeb, const char *filename, int seq)
         }
         return chkbits;
   }
+
+void DAQMB::xdcfeb_test_autoload(CFEB & cfeb)
+{
+      if(CFEBversion() != 3) return;
+   
+      write_cfeb_selector(cfeb.SelectorBit());
+
+      char tmp[4];
+      unsigned t;
+      dcfeb_core(71,0, tmp, tmp, NOW|NOOP_YES);
+      ::sleep(1);
+      for(int i=0; i<34*3; i++)
+      {  t=0;
+         dcfeb_core(72, 16, tmp, (char *)&t, NOW|READ_YES);
+         usleep(1000);
+         std::cout << "Param " << i << " = 0x";
+         std::cout <<  std::hex  << t << std::dec << std::endl;
+      }  
+}    
                       
 } // namespace emu::pc
 } // namespace emu

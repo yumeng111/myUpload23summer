@@ -683,7 +683,6 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   showBPITools_=false;
 
   prbs_test_ = false;
-  brddb= new emu::db::BoardsDB();
 
   parsed=0;
 }
@@ -3808,7 +3807,7 @@ void EmuPeripheralCrateConfig::FixCFEB(xgi::Input * in, xgi::Output * out )
 	//
 	std::string crate=thisCrate->GetLabel();
 	int slot=thisDMB->slot();
-	int dmbID=brddb->CrateToDMBID(crate,slot);
+	int dmbID=0;
 	//
 	unsigned short int dword[2];	
 	dword[0]=dmbID&0x03ff;

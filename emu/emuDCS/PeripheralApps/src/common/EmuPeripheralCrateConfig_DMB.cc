@@ -1031,8 +1031,6 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
     }
     *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
 
-//test
-//  thisDMB->dcfeb_test_dummy(cfebs[i], 0);
   }
 
   *out << cgicc::select() << std::endl;
@@ -3512,7 +3510,7 @@ void EmuPeripheralCrateConfig::DMBVmeLoadFirmwareEmergency(xgi::Input * in, xgi:
 
     std::string crate=thisCrate->GetLabel();
     int slot=thisDMB->slot();
-    int dmbID=brddb->CrateToDMBID(crate,slot);
+    int dmbID=0;
     dword[0]=dmbNumber&0x03ff;
     dword[1]=0xDB00;
     if (((dmbNumber&0xfff)==0)||((dmbNumber&0xfff)==0xfff)) dword[0]=dmbID&0x03ff;
@@ -4887,7 +4885,7 @@ xoap::MessageReference EmuPeripheralCrateConfig::LoadAllVmePromUserid (xoap::Mes
       //Read database for the board number:
       std::string crate=thisCrate->GetLabel();
       int slot=thisDMB->slot();
-      int dmbID=brddb->CrateToDMBID(crate,slot);
+      int dmbID=0;
 
       prombrdname[0]=boardnumber&0xff;
       prombrdname[1]=(boardnumber>>8)&0x03;
@@ -4995,7 +4993,7 @@ xoap::MessageReference EmuPeripheralCrateConfig::LoadAllCfebPromUserid (xoap::Me
 	  std::cout <<" This CFEB Board Number should be set to: "<<boardid<<std::endl;
 	*/
 	std::string chamber=thisChamber->GetLabel();
-	int cfebID=brddb->ChamberToCFEBID(chamber,i+1);
+	int cfebID=0;
 	//the id readback from CFEB
 	promid[0]=boardid&0xff;
 	promid[1]=(boardid>>8)&0xff;

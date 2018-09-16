@@ -58,7 +58,6 @@
 #include "emu/pc/EmuEndcap.h"
 #include "emu/pc/VMECC.h"
 // #include "emu/pc/EMU_CC_constants.h"
-#include "emu/db/BoardsDB.h"
 #include "emu/pc/DDU.h"
 //
 #include "emu/pc/EmuPeripheralCrateBase.h"
@@ -133,7 +132,6 @@ protected:
   ALCTController *alct ;
   RAT * rat;
   MPC * thisMPC;
-  emu::db::BoardsDB *brddb;
   CrateUtilities myCrateTest;
   std::stringstream CrateTestsOutput;
   ChamberUtilities MyTest[10][30];

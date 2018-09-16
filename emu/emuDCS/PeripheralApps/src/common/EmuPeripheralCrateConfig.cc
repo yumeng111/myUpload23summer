@@ -11759,7 +11759,7 @@ void EmuPeripheralCrateConfig::LoadSpartan6ALCTFirmware(xgi::Input * in, xgi::Ou
   if(thisTMB)
   {
     ALCTController * thisALCT = thisTMB->alctController();
-    if(thisALCT && (thisALCT->GetHardwareVersion()==2))
+    if(thisALCT && (thisALCT->GetHardwareVersion()>=2))
     {
        std::string svffile = ALCTFirmware_[tmb].toString() + ".svf";
        // Put CCB in FPGA mode to make the CCB ignore TTC commands (such as hard reset)

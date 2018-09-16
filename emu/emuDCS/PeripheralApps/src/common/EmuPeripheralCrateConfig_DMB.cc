@@ -3073,17 +3073,16 @@ if(D_hversion<=1)
      //
      std::string CFEBLoadFirmwareID = toolbox::toString("/%s/CFEBLoadFirmwareID",getApplicationDescriptor()->getURN().c_str());
      *out << cgicc::form().set("method","GET").set("action",CFEBLoadFirmwareID) << std::endl ;
-     *out << "CFEB to download (0-4):";
-     *out << cgicc::input().set("type","text").set("value","-1").set("name","DMBNumber");
-     *out << " Board Serial_Number:";
-     *out << cgicc::input().set("type","text").set("value","0").set("name","CFEBSerialNumber")<<std::endl;
-     *out << cgicc::input().set("type","submit").set("value","CFEB Load Firmware/Serial Number recovery") << std::endl ;
+     *out << "CFEB to download (1-5):";
+     *out << cgicc::input().set("type","text").set("value","0").set("name","DMBNumber");
+     *out << cgicc::input().set("type","submit").set("value","CFEB Load Firmware (NEW)") << std::endl ;
      sprintf(buf,"%d",dmb);
      *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
      *out << cgicc::form() << std::endl ;
      //
      *out << cgicc::br();
      //
+/* comment out. This is unfinished and unsafe to use.
      *out << cgicc::td();
      std::string RdVfyCFEBVirtexDMB = toolbox::toString("/%s/RdVfyCFEBVirtexDMB",getApplicationDescriptor()->getURN().c_str());
      *out << cgicc::form().set("method","GET").set("action",RdVfyCFEBVirtexDMB) << std::endl ;
@@ -3094,6 +3093,7 @@ if(D_hversion<=1)
      *out << cgicc::td();
      *out << cgicc::br() << std::endl;
      //
+*/
   }
 }
 else if(D_hversion==2)
@@ -3527,7 +3527,8 @@ void EmuPeripheralCrateConfig::DMBVmeLoadFirmwareEmergency(xgi::Input * in, xgi:
 }
 //
 void EmuPeripheralCrateConfig::CFEBReadFirmware(xgi::Input * in, xgi::Output * out ) 
-  throw (xgi::exception::Exception) {
+  throw (xgi::exception::Exception) 
+{
   //
   LOG4CPLUS_INFO(getApplicationLogger(),"Started CFEB firmware Verify");
   //
@@ -3541,8 +3542,7 @@ void EmuPeripheralCrateConfig::CFEBReadFirmware(xgi::Input * in, xgi::Output * o
     dmbNumber = cgi["DMBNumber"]->getIntegerValue();
   }
   //
-  std::cout << "Loading DMBNumber " <<dmbNumber << std::endl ;
-  //*out << "Loading DMBNumber " <<dmbNumber ;
+  //std::cout << "CFEB Number " <<dmbNumber << std::endl ;
   //*out << cgicc::br();
   //
   cgicc::form_iterator name = cgi.getElement("dmb");
@@ -3555,15 +3555,6 @@ void EmuPeripheralCrateConfig::CFEBReadFirmware(xgi::Input * in, xgi::Output * o
   }
   //
   DAQMB * thisDMB = dmbVector[dmb];
-  int mindmb = dmb;
-  int maxdmb = dmb+1;
-  if (thisDMB->slot() == 25) { //if DMB slot = 25, loop over each cfeb
-    mindmb = 0;
-    maxdmb = dmbVector.size()-1;
-  }
-  for (dmb=mindmb; dmb<maxdmb; dmb++) {
-    //
-    thisDMB = dmbVector[dmb];
     //
     std::cout << "CFEBReadFirmware - DMB " << dmb << std::endl;
     //
@@ -3634,6 +3625,7 @@ void EmuPeripheralCrateConfig::CFEBReadFirmware(xgi::Input * in, xgi::Output * o
 	}
       }
 
+#if 0
       //
       // check the DMB MPROM firmware
       std::cout << "Verifying DMB MPROM firmware for DMB=" << dmb << std::endl;
@@ -3683,12 +3675,10 @@ void EmuPeripheralCrateConfig::CFEBReadFirmware(xgi::Input * in, xgi::Output * o
          logs2 << " file error in check_eprom_readback" << std::endl;
       }
       LOG4CPLUS_INFO(getApplicationLogger(), logs2.str());
-
+#endif
     }
     ::sleep(1);
     thisCCB->hardReset();
-  }
-  //
   this->DMBUtils(in,out);
   //
 }
@@ -3784,7 +3774,8 @@ void EmuPeripheralCrateConfig::CCBHardResetFromDMBPage(xgi::Input * in, xgi::Out
   this->DMBUtils(in,out);
   //
 }
-//
+
+// This uses the new JTAG routine to load CFEB firmware
 void EmuPeripheralCrateConfig::CFEBLoadFirmwareID(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {
   //
@@ -3800,23 +3791,6 @@ void EmuPeripheralCrateConfig::CFEBLoadFirmwareID(xgi::Input * in, xgi::Output *
     dmbNumber = cgi["DMBNumber"]->getIntegerValue();
   }
   //
-  int cfebSerialNumber = 0;
-  //
-  cgicc::form_iterator name3 = cgi.getElement("CFEBSerialNumber");
-  //int registerValue = -1;
-  if(name3 != cgi.getElements().end()) {
-    cfebSerialNumber = cgi["CFEBSerialNumber"]->getIntegerValue();
-  }
-  //
-  std::cout << "Loading CFEBNumber " <<dmbNumber << " with serial number: "<<cfebSerialNumber<<std::endl ;
-  if (cfebSerialNumber>2600 ||cfebSerialNumber<1 ||
-      dmbNumber>4 || dmbNumber<0) {
-    std::cout<<"Invalid cfeb number, or serial number"<<std::endl;
-    return;
-  }
-  //*out << "Loading DMBNumber " <<dmbNumber ;
-  //*out << cgicc::br();
-  //
   cgicc::form_iterator name = cgi.getElement("dmb");
   //
   int dmb=0;
@@ -3827,41 +3801,26 @@ void EmuPeripheralCrateConfig::CFEBLoadFirmwareID(xgi::Input * in, xgi::Output *
   }
   //
   DAQMB * thisDMB = dmbVector[dmb];
-  if ((thisDMB->slot() >21) || (thisDMB->slot() <3)){
-    std::cout<<" Invalid DMB slot for CFEB Number reloading "<<thisDMB->slot()<<std::endl;
-    return;
-  }
-  //
   std::cout << "CFEBLoadFirmware - DMB " << dmb << std::endl;
-  //
-  //    thisCCB->hardReset();
   //
   if (thisDMB) {
     //
     std::vector<CFEB> thisCFEBs = thisDMB->cfebs();
     //
-    ::sleep(1);
-    //
     std::ostringstream dum;
     dum << "loading CFEB firmware for DMB=" << dmb << " CFEB="<< dmbNumber << std::endl;
     LOG4CPLUS_INFO(getApplicationLogger(), dum.str());
-    for (unsigned int i=0; i<thisCFEBs.size(); i++) {
-      if (thisCFEBs[i].number() == dmbNumber ) {
-	std::cout <<" ThisCFEB[i].promdevice: "<<thisCFEBs[i].promDevice()<<std::endl;
-	//force CFEB device switch
-	unsigned short int dword[2];
-	dword[0]=thisDMB->febpromuser(thisCFEBs[4-i]);
-	dword[0]=cfebSerialNumber;
-	dword[1]=0xCFEB;
-	char * outp=(char *)dword;   // recast dword
-	
-	thisDMB->epromload(thisCFEBs[i].promDevice(),CFEBFirmware_.toString().c_str(),1,outp);
+    bool goodcfeb=false;
+    for (unsigned int i=0; i<thisCFEBs.size(); i++) 
+    {
+      if (thisCFEBs[i].number() == (dmbNumber-1) ) 
+      {
+         thisDMB->write_cfeb_selector(thisCFEBs[i].SelectorBit());
+         goodcfeb=true;
       }
     }
+    if(goodcfeb) thisDMB->SVFLoad(5,CFEBFirmware_.toString().c_str(),0,1);
   }
-  //    ::sleep(1);
-  //    thisCCB->hardReset();
-  //
   this->DMBUtils(in,out);
   //
 }

@@ -549,7 +549,7 @@ namespace emu {
   namespace pc {
 
 // declarations
-void Parse(char *buf,int *Count,char **Word);
+//void Parse(char *buf,int *Count,char **Word);
 void shuffle(char *a,char *b);
 
 
@@ -4923,7 +4923,7 @@ ipass == 3 - load only the stuff after the board number
 #endif
 }
 
-
+#if 0
 void Parse(char *buf,int *Count,char **Word)
 {
 
@@ -4940,7 +4940,7 @@ void Parse(char *buf,int *Count,char **Word)
   }
   *buf = '\0';
 }
-
+#endif
 
 
 void DAQMB::rdbkvirtexII()
@@ -9065,10 +9065,10 @@ void DAQMB::daqmb_do(int ncmd, void *cmd,int nbuf, void *inbuf,char *outbuf,int 
   int DAQMB_DEV;
   char tmp[2];
   int ncmd_u, nbuf_u;
-  int inst_h[12]={0, 0, 0, 0, 0, 0, 8, 0,  10, 26, 42, 58};
-  int inst_t[12]={0, 0, 0, 0, 0, 5, 0, 52, 36, 20, 4,  0};
-  int data_h[12]={0, 0, 0, 0, 0, 0, 1, 0,  1,  2,  3,  4};
-  int data_t[12]={0, 0, 0, 0, 0, 1, 0, 4,  3,  2,  1,  0};
+  int inst_h[12]={0, 0, 0, 0, 0, 5, 0, 0,  10, 26, 42, 58};
+  int inst_t[12]={0, 0, 0, 0, 0, 0, 8, 52, 36, 20, 4,  0};
+  int data_h[12]={0, 0, 0, 0, 0, 1, 0, 0,  1,  2,  3,  4};
+  int data_t[12]={0, 0, 0, 0, 0, 0, 1, 4,  3,  2,  1,  0};
 
   char new_cmd[200], new_data[1200], new_data2[1200];  // avoid overrun the original buffers by extra headers & tails
   char *cmd_use, *data_use, *new_out;
@@ -11291,7 +11291,7 @@ int DAQMB::SVFLoad(int dev, const char *fn, int db, int verify )
 	       if ( send_packages == total_packages ) std::cout << "Done!" << std::endl;
             }
 	    //
-            daqmb_do(0, NULL, hdrbits+nbits+tdrbits, (char*)realsnd, (char*)rcv, NOW+((verify>0 && cmpflag>0)?1:0), dev); 
+            daqmb_do(0, NULL, hdrbits+nbits+tdrbits, (char*)realsnd, (char*)rcv, NOW+((verify>0 && cmpflag>0)?READ_YES:0), dev); 
 	    //
 	    if (db)
 	    {	

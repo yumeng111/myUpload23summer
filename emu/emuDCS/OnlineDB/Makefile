@@ -18,8 +18,6 @@ Description="Database related EMU code"
 
 Sources=\
 	OnlineDBVersion.cc \
-	BoardsDB.cc \
-	ConnectionsDB.cc \
 	TStoreRequest.cc \
 	ConfigurationEditor.cc \
 	TableDefinitions.cc \
@@ -37,15 +35,15 @@ Sources=\
 	ConfigEditor.cc
 #	PCConfigEditor.cc
 #	ConnectionsGUI.cc 
+#	BoardsDB.cc 
+#	ConnectionsDB.cc 
 
 
 IncludeDirs = \
 	$(XDAQ_ROOT)/include \
 	$(BUILD_HOME)/emu/base/include \
 	$(BUILD_HOME)/emu/soap/include \
-	$(BUILD_HOME)/emu/emuDCS/OnlineDB/include \
-	$(BUILD_HOME)/emu/emuDCS/PeripheralCore/include \
-	$(BUILD_HOME)/emu/emuDCS/PeripheralApps/include
+	$(BUILD_HOME)/emu/emuDCS/OnlineDB/include
 
 TestLibraryDirs = \
 	$(XDAQ_ROOT)/lib 

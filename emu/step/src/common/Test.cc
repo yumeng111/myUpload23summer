@@ -9,7 +9,6 @@
 #include "emu/utils/SimpleTimer.h"
 
 #include "emu/pc/Crate.h"
-#include "emu/pc/VMEController.h"
 #include "emu/pc/CCB.h"
 #include "emu/pc/TMB.h"
 #include "emu/pc/DAQMB.h"
@@ -388,31 +387,26 @@ void emu::step::Test::setUpDMB( emu::pc::DAQMB *dmb ){
 }
 
 void emu::step::Test::setUpODMBPulsing( emu::pc::DAQMB *dmb, ODMBMode_t mode, ODMBInputKill_t killInput ){
-  // if( dmb->GetHardwareVersion() < 2 ) return;
-  if( is_DMB( dmb->GetHardwareVersion() ) ) return;
+  if( dmb->DMBversion() < 2 ) return;
 
-  int slot_number  = dmb->slot();
   char rcv[2];
   unsigned int addr;
   unsigned short int data;
-  int irdwr;
 
   int odmb_fw_vers = (dmb->odmb_firmware_version()/0x100);
   printf("odmb fw vers read from odmb: %4x\n", dmb->odmb_firmware_version());
   printf("odmb fw vers: %d\n", odmb_fw_vers);
   // set ODMB to Pedestal mode
-  irdwr = 3;
   if      ( mode == emu::step::ODMBPedestalMode ) {
     addr = (odmb_fw_vers >= 3) ? 0x003400 : 0x003000;
-    addr = addr | slot_number<<19;
     data = (odmb_fw_vers >= 3) ? 0x01 : 0x2000;
   }
   else if ( mode == emu::step::ODMBCalibrationMode ) {
-    addr = (0x003000) | slot_number<<19;
+    addr = 0x003000;
     data = (odmb_fw_vers >= 3) ? 0x01 : 0x003F;
   }
   cout<<"Pulsing: addr ="<<addr<<"  data = "<<data<<endl;
-  dmb->getCrate()->vmeController()->vme_controller(irdwr,addr,&data,rcv);
+  dmb->WriteRegister(addr, data);
 
   // Kill ALCT/TMB inputs to ODMB if requested, unkill them otherwise.
   // Keep alive all DCFEBs inputs to ODMB unless they're explicitly requested to be killed.
@@ -431,21 +425,11 @@ void emu::step::Test::setUpODMBPulsing( emu::pc::DAQMB *dmb, ODMBMode_t mode, OD
 void emu::step::Test::setAllDCFEBsPipelineDepth( emu::pc::DAQMB* dmb, const short int depth ){
   // If depth is omitted, then reset pipeline depth to its config (XML) value as it may have been zeroed by a hard reset.
 
-  // if ( dmb->cfebs().at( 0 ).GetHardwareVersion() != 2 ) return; // All CFEBs should have the same HW version; get it from the first.
-  if ( is_with_CFEB( dmb->GetHardwareVersion() ) ) return; // CFEB has no pipeline depth to set
+  if ( dmb->CFEBversion() <=1 ) return; // CFEB has no pipeline depth to set
 
-  // if ( dmb->GetHardwareVersion() == 2) { // reprogram DCFEBs
-  if ( is_with_DCFEB( dmb->GetHardwareVersion() ) || is_with_xDCFEB( dmb->GetHardwareVersion() ) ) { // reprogram DCFEBs
-    char rcv[2];
-    unsigned int addr;
-    unsigned short int data;
-    int irdwr;
-    int slot = dmb->slot();
-    irdwr = 3; addr = 0x003010 | (slot<<19); data = 0x0001;      
-    // irdwr = 3; addr = emu::pc::DAQMB::DCFEB_REPROGRAM | (slot<<19); data = 0x0001;      
-    dmb->getCrate()->vmeController()->vme_controller(irdwr,addr,&data,rcv);
+ // reprogram DCFEBs
+    dmb->odmb_reprogram_dcfebs();
     usleep(300000);
-  }
 
   vector <emu::pc::CFEB> cfebs = dmb->cfebs();
   for( vector<emu::pc::CFEB>::reverse_iterator cfeb = cfebs.rbegin(); cfeb != cfebs.rend(); ++cfeb){
@@ -463,10 +447,7 @@ void emu::step::Test::setAllDCFEBsPipelineDepth( emu::pc::DAQMB* dmb, const shor
     dmb->Pipeline_Restart( *cfeb ); // and then restart the pipeline
     usleep( 100000 );
 
-    // if(dmb->GetHardwareVersion() != 2){
-    if( is_DMB( dmb->GetHardwareVersion() ) && 
-	( is_with_DCFEB( dmb->GetHardwareVersion() ) || is_with_xDCFEB( dmb->GetHardwareVersion() ) )
-	){
+    if( dmb->DMBversion() <= 1  &&  dmb->CFEBversion() > 1 ) {
       // set DCFEBs to behave like CFEBs and send data on any L1A, required when not using ODMB
       dmb->dcfeb_Set_ReadAnyL1a( *cfeb );
     }
@@ -531,22 +512,9 @@ void emu::step::Test::configureODMB( emu::pc::Crate* crate ) {
   vector<emu::pc::DAQMB *> dmbs = crate->daqmbs();    
   for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
     
-    // if( (*dmb)->GetHardwareVersion() == 2 ) {
-    if( is_ODMB( (*dmb)->GetHardwareVersion() ) ){
-      int slot_number  = (*dmb)->slot();
-
-      char rcv[2];
-      unsigned int addr;
-      unsigned short int data;
-      int irdwr;
-
+    if( (*dmb)->DMBversion() == 2 ) {
       // ODMB Reset
-      irdwr = 3;
-      int odmb_fw_vers = ((*dmb)->odmb_firmware_version() / 0x100);
-      addr = (odmb_fw_vers >= 3) ? 0x003004 : 0x003000;
-      addr = addr | slot_number<<19;
-      data = (odmb_fw_vers >= 3) ? 0x01 : 0x100;
-      crate->vmeController()->vme_controller(irdwr,addr,&data,rcv);
+      (*dmb)->odmb_soft_reset();
       usleep(300000);
 
       // Unkill ALCT and TMB inputs to ODMB.
@@ -558,58 +526,35 @@ void emu::step::Test::configureODMB( emu::pc::Crate* crate ) {
 	LOG4CPLUS_INFO( *pLogger_, "ODMB kill mask changed from 0x" << hex << oldKillMask << " to 0x" << newKillMask << dec );
       }
 
-
       // ODMB configured to accept real triggers
-      // irdwr = 3; addr = emu::pc::DAQMB::ODMB_MODE | slot_number<<19; data = 0x0000;
-      irdwr = 3; addr = (0x003000)| slot_number<<19; data = 0x0000;
-      crate->vmeController()->vme_controller(irdwr,addr,&data,rcv);
-      if (odmb_fw_vers >= 3) {
-        // addr = emu::pc::DAQMB::DATA_MUX | slot_number<<19;
-        addr = (0x003300)| slot_number<<19;
-        crate->vmeController()->vme_controller(irdwr,addr,&data,rcv);
-        // addr = emu::pc::DAQMB::TRIG_MUX | slot_number<<19;
-        addr = (0x003304)| slot_number<<19;
-        crate->vmeController()->vme_controller(irdwr,addr,&data,rcv);
-        // addr = emu::pc::DAQMB::LVMB_MUX | slot_number<<19;
-        addr = (0x003308)| slot_number<<19;
-        crate->vmeController()->vme_controller(irdwr,addr,&data,rcv);
-        // addr = emu::pc::DAQMB::L1A_MODE | slot_number<<19;
-        addr = (0x003400)| slot_number<<19;
-        crate->vmeController()->vme_controller(irdwr,addr,&data,rcv);
-        addr = (0x003404)| slot_number<<19;
-        crate->vmeController()->vme_controller(irdwr,addr,&data,rcv);
-      }
+      int data = 0x0000;
+      unsigned addr = emu::pc::DAQMB::ODMB_MODE;
+      (*dmb)->WriteRegister(addr, data);
 
-    } // if( (*dmb)->GetHardwareVersion() == 2 )
+      addr = emu::pc::DAQMB::DATA_MUX;
+      (*dmb)->WriteRegister(addr, data);
+
+      addr = emu::pc::DAQMB::TRIG_MUX;
+      (*dmb)->WriteRegister(addr, data);
+
+      addr = emu::pc::DAQMB::LVMB_MUX;
+      (*dmb)->WriteRegister(addr, data);
+
+      addr = emu::pc::DAQMB::L1A_MODE;
+      (*dmb)->WriteRegister(addr, data);
+
+      addr = emu::pc::DAQMB::RQST_OTMB_ON_L1A;
+      (*dmb)->WriteRegister(addr, data);
+
+    } // if( (*dmb)->DMBversion() == 2 )
   } // for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb )
 } 
 
 void emu::step::Test::resyncDCFEBs(emu::pc::Crate* crate){
-  
-  char rcv[2];
-  unsigned int addr;
-  unsigned short int data;
-  int irdwr;
-  int slot_number;
-
   vector<emu::pc::DAQMB *> dmbs = crate->daqmbs();
   for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
-    // if( (*dmb)->GetHardwareVersion() == 2 ) {
-    if( is_ODMB( (*dmb)->GetHardwareVersion() ) ){
-      slot_number  = (*dmb)->slot();
-
-      unsigned int fw_version = (*dmb)->odmb_firmware_version();
-      if (fw_version >= 265) continue; // 265 == 0x0109
-
-      // Resync ODMB and DCFEB L1A Counters
-      irdwr = 3; 
-      if (((*dmb)->odmb_firmware_version() / 0x100) >= 3) {
-        addr = 0x003014 | (slot_number<<19); data = 0x0001;
-      }
-      else {
-	addr = 0x003010 | (slot_number<<19); data = 0x0002;
-      }
-      crate->vmeController()->vme_controller(irdwr,addr,&data,rcv);
+    if( (*dmb)->DMBversion() == 2 ) {
+      (*dmb)->odmb_resync_dcfebs();
       cout<<" Calling Resync "<<endl;
     } // ODMB only
   } // loop DMBs
@@ -629,19 +574,14 @@ void emu::step::Test::hardResetOTMBs(emu::pc::Crate* crate){
 }
 
 void emu::step::Test::printDCFEBUserCodes( emu::pc::DAQMB* dmb ){
-  // if ( dmb->cfebs().at( 0 ).GetHardwareVersion() != 2 ) return;  // All CFEBs should have the same HW version; get it from the first.
-  if ( ! ( 
-	   is_with_DCFEB ( dmb->GetHardwareVersion() ) || 
-	   is_with_xDCFEB( dmb->GetHardwareVersion() ) 
-	 ) 
-     ) return;
+  if ( dmb->CFEBversion() <= 2 ) return;
 
   vector <emu::pc::CFEB> cfebs = dmb->cfebs();
   for( vector<emu::pc::CFEB>::reverse_iterator cfeb = cfebs.rbegin(); cfeb != cfebs.rend(); ++cfeb){
     ostringstream oss;
     oss << "CFEB: " << cfeb->number()
 	<< ", user code: " << hex << dmb->febfpgauser( *cfeb )
-	<< ", Virtex status: " << dmb->virtex6_readreg( 7 );
+	<< ", Virtex status: " << dmb->dcfeb_readreg_statusvirtex6(*cfeb);
     if ( pLogger_ ){ 
       LOG4CPLUS_INFO( *pLogger_, oss.str() ); 
     }

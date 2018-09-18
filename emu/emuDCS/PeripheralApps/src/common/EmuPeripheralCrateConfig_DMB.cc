@@ -672,8 +672,8 @@ void EmuPeripheralCrateConfig::CFEBStatus(xgi::Input * in, xgi::Output * out )
        //
        //*out << cgicc::br();
        //
-       sprintf(buf,"CFEB prom user id : %08x;  CFEB fpga user id : %08x ",
-	    thisDMB->febpromuser(*cfebItr),
+       sprintf(buf,"CFEB prom chip id : %08x;  CFEB fpga user id : %08x ",
+	    thisDMB->febpromid(*cfebItr),
 	    thisDMB->febfpgauser(*cfebItr));
        //
        if ( thisDMB->CheckCFEBFirmwareVersion(*cfebItr) ) 

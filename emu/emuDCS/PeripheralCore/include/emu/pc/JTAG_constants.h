@@ -243,6 +243,21 @@ enum DEVTYPE{ALLMUX=-3,ALLSCAM=-2,ALL=-1,NONE,F1PROM,F2PROM,F3PROM,F4PROM,F5PROM
 #define VTX6_REG_CTL1 24
 #define VTX6_REG_DWC  26
 
+/* spartan 6 instructaions */
+#define SPT6_CFG_OUT 0x4
+#define SPT6_CFG_IN 0x5
+#define SPT6_USERCODE 0x8
+#define SPT6_IDCODE 0x9
+#define SPT6_JPROGRAM 0xB
+#define SPT6_JSTART 0xC
+#define SPT6_JSHUTDOWN 0xD
+#define SPT6_ISC_ENABLE 0x10
+#define SPT6_ISC_PROGRAM 0x11
+#define SPT6_ISC_NOOP 0x14
+#define SPT6_ISC_READ 0x15
+#define SPT6_ISC_DISABLE 0x16
+#define SPT6_ISC_DNA 0x30
+#define SPT6_BYPASS 0x3F
 
 /* CALCTRL modes */
 #define CAL_FIFOMRST 0xe

@@ -216,6 +216,7 @@
 //
 #include <string>
 #include "emu/pc/EMU_JTAG_constants.h"
+#include "emu/pc/JTAG_constants.h"
 #include "emu/pc/EmuLogger.h"
 //
 
@@ -689,6 +690,10 @@ class ALCTController : public EmuLogger
   void ProgramALCTProms();
   int SVFLoad(int *, const char *, int);  //this method is to be deprecated...
   //
+  // new JTAG routines for new ALCT Mezzanines
+  void fpga_scan(int reg, char *snd,int cnt,char *rcv,int ird);
+  void prom_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip);
+
 protected:
   //
   //
@@ -972,6 +977,10 @@ private:
   //
   std::string ALCTHotChannelMaskArray_[6];          // !!!Note: this is not the same as in firmware/hardware!
                                                     // Here bit=0 channel ON (default state); bit=1 channel OFF.
+
+  // for common JTAG
+  enum WRT { LATER, NOW };
+
 };
 
   } // namespace emu::pc

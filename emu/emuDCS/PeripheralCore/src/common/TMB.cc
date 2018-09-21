@@ -12325,13 +12325,13 @@ void TMB::new_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chain)
 {
    // same interface as regular scan() but with chain seletion
    // chain=0  --> not used
-   //       1  TMB Mez (FPGA+PROM) 
-   //       2  TMB User PROMs
+   //       1  TMB Mez (FPGA+PROM)  <chip access>
+   //       2  TMB User PROMs       <chip access>
    //       3  RAT
    //       4  ALCT Slow Control
    //       5  ALCT Slow (FPGA+PROM)
    //       6  ALCT Fast Control
-   //       7  ALCT Mez (FPGA+PROM)
+   //       7-11  ALCT Mez (FPGA+PROMs) <chip access>  corresponding to ALCT hardware version 0-4
    //   +0xT0  T= chip selection, depends on the chain:
    //          T=0  don't select chip; or only one chip in the chain
    //          T=1  1st chip in the chain;
@@ -12340,17 +12340,25 @@ void TMB::new_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chain)
    //  +0x100  use bootstrap register instead of FPGA as JTAG source
    //          chain 1 always use bootstrap register
            
-   int jchain=chain & 0xF;
+   int achain=chain & 0xF;
+   int jchain=achain;
+   if(jchain>7 && jchain<12) jchain=7;  // all ALCT Mezs use jchain=7
    int chip=(chain >> 4) & 0xF;
    if(jchain<1 || jchain>7 || chip>5) return;
    bool useboot=false;
    if( jchain==1 || ((chain>>8) & 0xF)==1) useboot=true;   
    unsigned long TDI=0, TMS=1, TCK=2, TDO=15; 
-   int TIR[6]={0,0,8,0,0,0}, HIR[6]={0,8,0,0,0,0}, HDR[6]={0,1,0,0,0,0}, TDR[6]={0,0,1,0,0,0}; 
-   unsigned short lowb=0,  highb=chain;
-   if(chain>=4)
+   int TIR[18]={ 0, 6,14,22,30, 0, 5, 0, 5,13, 0, 8, 0, 6,22, 0, 6,22}, 
+       HIR[18]={32,24,16, 8, 0, 8, 0,16, 8, 0, 8, 0,32,16, 0,20, 4, 0},
+       HDR[18]={ 4, 3, 2, 1, 0, 1, 0, 2, 1, 0, 1, 0, 2, 1, 0, 2, 1, 0}, 
+       TDR[18]={ 0, 1, 2, 3, 4, 0, 1, 0, 1, 2, 0, 1, 0, 1, 2, 0, 1, 2}; 
+       //        -TMB----------UPROMs-ALCT0-ALCT 1--ALCT 2&3--ALCT 4-
+   int chipshift[12]={0, 0, 5, 0, 0, 0, 0, 7, 9, 12, 12, 15};
+   int shiftpos=chipshift[achain]+chip-1;
+   unsigned short lowb=0,  highb=jchain;
+   if(jchain>=4)
    { 
-       lowb=chain & 3;  
+       lowb=jchain & 3;  
        highb=0; 
    }
    unsigned long vmeaddr = 0x10;
@@ -12361,21 +12369,22 @@ void TMB::new_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chain)
       regV += 0x80;
    }
    unsigned long handle=(TDI)+(TMS<<4)+(TCK<<8)+(TDO<<12) + (regV<<16) + (vmeaddr<<32);
-   char buff[4200];
+   char buff[4200], rbuff[4200];
    int ncnt=cnt;
    if(cnt>0) memcpy(buff, snd, (cnt+7)/8);
    if(chip>0 && reg==1)
    {
-      add_headtail(buff, cnt, TDR[chip], HDR[chip]);
-      ncnt += HDR[chip]+TDR[chip];
+      add_headtail(buff, cnt, TDR[shiftpos], HDR[shiftpos]);
+      ncnt += HDR[shiftpos]+TDR[shiftpos];
    }
    else if (chip>0 && reg==0 && cnt>0) 
    { 
-      add_headtail(buff, cnt, TIR[chip], HIR[chip]); 
-      ncnt += HIR[chip]+TIR[chip];
+      add_headtail(buff, cnt, TIR[shiftpos], HIR[shiftpos]); 
+      ncnt += HIR[shiftpos]+TIR[shiftpos];
    }
-   Jtag_Norm(handle, reg, buff, ncnt, rcv, ird, NOW);
-   if(chip>0 && reg==1) cut_headtail(rcv, ncnt, TDR[chip], HDR[chip]);
+   Jtag_Norm(handle, reg, buff, ncnt, rbuff, ird, NOW);
+   if(chip>0 && reg==1) cut_headtail(rbuff, ncnt, TDR[shiftpos], HDR[shiftpos]);
+   if((rcv!=NULL) && (cnt>0)) memcpy(rcv,rbuff, (cnt+7)/8);
 }
   
 } // namespace emu::pc

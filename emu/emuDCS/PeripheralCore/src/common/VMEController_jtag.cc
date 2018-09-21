@@ -2223,31 +2223,5 @@ void VMEController::scan_word(int reg,const char *snd, int cnt, char *rcv,int ir
   }
 }
 
-void VMEController::DCFEBEPROM_read(DEVTYPE dv,int ncmd,const char *cmd,int nbuf,const char *inbuf,char *outbuf,int ird,int snd,int init)
-{
-  if(init==1){
-    if(dv==36)feuse=0x01;
-    if(dv==37)feuse=0x02;
-    if(dv==38)feuse=0x04;
-    if(dv==39)feuse=0x08;
-    if(dv==40)feuse=0x10;
-    if(dv==41)feuse=0x20;
-    if(dv==42)feuse=0x40;
-    if(dv==43)feuse=0x1F;
-    add_i=vmeadd|msk01|msk_i;
-    add_d=vmeadd|msk01|msk_d;
-    add_dh=vmeadd|msk01|msk_dh;
-    add_ds=vmeadd|msk01|msk_ds;
-    add_dt=vmeadd|msk01|msk_dt;
-    add_rst=vmeadd|msk01|msk_rst;
-    add_sw=vmeadd|msk01|msk_sw;
-    add_sr=vmeadd|msk01|msk_sr;
-    add_r=vmeadd|msk01|msk_r;
-    setuse();
-    }
-    scan_dmb(INSTR_REG,cmd,ncmd,outbuf,0,0);
-    scan_dmb(DATA_REG,inbuf,nbuf,outbuf,ird,snd);
- }
-
 } // namespace emu::pc  
 } // namespace emu  

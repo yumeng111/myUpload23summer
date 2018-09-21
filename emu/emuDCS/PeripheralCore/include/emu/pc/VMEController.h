@@ -278,7 +278,6 @@ public:
   void new_devdo(DEVTYPE dev,int ncmd,const char *cmd,int nbuf,const char *inbuf,char *outbuf,int irdsnd);
   void scan_dmb(int reg,const char *snd,int cnt2,char *rcv,int ird, int when);
   void scan_dmb_headtail(int reg,const char *snd,int cnt,char *rcv,int ird,int headtail, int when);
-  void DCFEBEPROM_read(DEVTYPE dv,int ncmd,const char *cmd,int nbuf,const char *inbuf,char *outbuf,int ird,int snd,int init);
   void scan_reset(int reg, const char *snd, int cnt2, char *rcv,int ird);
   void scan_reset_headtail(int reg, const char *snd, int cnt2, char *rcv, int headtail,int ird);
   //

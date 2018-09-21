@@ -1969,11 +1969,9 @@ void ALCTController::PrintFastControlId() {
 
 void ALCTController::PrintFastControlChipCode() {
   //
-  if(hardware_version_ <=1 ) {
     char gg[70];
-    sprintf(gg, "Chip IDCODE: FPGA=%08X, PROM0=%08X, PROM1=%08X\n", GetFastControlFPGAIdCode(), alct_prom0_idcode_, alct_prom1_idcode_);
+    sprintf(gg, "Chip IDCODE: FPGA=%08X, PROM0=%08X, PROM1=%08X\n", alct_fpga_idcode_, alct_prom0_idcode_, alct_prom1_idcode_);
     (*MyOutput_) << gg;
-  }
 /*
     (*MyOutput_) << "FPGA, PROM0, PROM1 IDCODE = " 
   	       << std::hex << GetFastControlFPGAIdCode() << ", "
@@ -2206,7 +2204,32 @@ void ALCTController::ReadFastControlMezzIDCodes() {
   //
   alct_prom1_idcode_ = (tmb_->bits_to_int(tmb_->GetDRtdo(),tmb_->GetRegLength(),0) ) & 0xfffffff;
   }
-  else alct_fpga_idcode_ = ID_288384;  // fake id to pass the fpga_id check, not necessary but...
+  else 
+  {
+     alct_fpga_idcode_ = 0;
+     char temp[4]={0,0,0,0};
+     int inst=SPT6_IDCODE;
+     fpga_scan(0, (char *)&inst, 6, NULL, NOW);
+     ::usleep(10);
+     fpga_scan(1, temp, 32, (char *)&alct_fpga_idcode_, NOW|READ_YES);
+     inst=SPT6_BYPASS;
+     fpga_scan(0, (char *)&inst, 6, NULL, NOW);
+
+     alct_prom0_idcode_ = 0; 
+     inst=XCF_IDCODE;
+     prom_scan(0, (char *)&inst, 16, NULL, NOW, 0);
+     ::usleep(10);
+     prom_scan(1, temp, 32, (char *)&alct_prom0_idcode_, NOW|READ_YES, 0);
+
+     alct_prom1_idcode_ = 0; 
+     if(hardware_version_==2 || hardware_version_==3)
+     { // only those two have second PROM
+        inst=XCF_IDCODE;
+        prom_scan(0, (char *)&inst, 16, NULL, NOW, 1);
+        ::usleep(10);
+        prom_scan(1, temp, 32, (char *)&alct_prom1_idcode_, NOW|READ_YES, 1);
+     }
+  }
   //
   return;
 }
@@ -4536,6 +4559,25 @@ void ALCTController::DisableTestPulse()
     SetTestpulsePowerSwitchReg_(OFF);
     WriteTestpulsePowerSwitchReg_();
     return;
+}
+
+void ALCTController::fpga_scan(int reg, char *snd,int cnt,char *rcv,int ird)
+{
+    int jchain=7+GetHardwareVersion();
+    int isize=(jchain>8)?6:5;
+    if(reg==0) cnt=isize;  // fix Instruction size
+    tmb_->new_scan(reg, snd, cnt, rcv, ird, jchain+0x10);
+}
+
+void ALCTController::prom_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip)
+{
+    // chip=0  first PROM
+    // chip=1  second PROM if exists
+    int jchain=7+GetHardwareVersion();
+    if(chip<0 || chip>1 || ((jchain==7||jchain==11)&&chip>0)) return;
+    int isize=(jchain>8)?16:8;
+    if(reg==0) cnt=isize;  // fix Instruction size
+    tmb_->new_scan(reg, snd, cnt, rcv, ird, jchain+0x10*(chip+2));
 }
 
   } // namespace emu::pc

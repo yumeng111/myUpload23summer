@@ -800,7 +800,7 @@ void VMEController::sdly()
   unsigned short int tmp2[2]={0,0};
   tmp2[0]=50;  // 50x16=800ns delay
   //  cout <<" sdly() called "<<endl;
-  vme_controller(6,0,tmp2,tmp);
+  vme_controller(6,0,tmp2,NULL);
 }
 
 
@@ -815,7 +815,7 @@ void  VMEController::sleep_vme(const char *outbuf)   // time in usec
   tmp_time >>= 4; // in 16 nsec
   tmp2[0]=tmp_time & 0xffff;
   tmp2[1]=(tmp_time >> 16) & 0xffff;
-  vme_controller(6,0,tmp2,tmp);
+  vme_controller(6,0,tmp2,NULL);
 }
 
 void  VMEController::sleep_vme(int time) // time in usec
@@ -826,7 +826,7 @@ void  VMEController::sleep_vme(int time) // time in usec
   tmp_time=((time+1)/2)*125;   // in 16ns
   tmp2[0]=tmp_time & 0xffff;
   tmp2[1]=(tmp_time >> 16) & 0xffff;
-  vme_controller(6,0,tmp2,tmp);
+  vme_controller(6,0,tmp2,NULL);
 }
 
 int VMEController::eth_reset(int ethsocket)
@@ -876,6 +876,13 @@ int VMEController::eth_write()
      //   ether_header.h_proto = htons(0xfff);
 
    msg_size = sizeof(ether_header) + nwbuf;
+ 
+  // have to drop the packet if too big (something wrong)  
+   if(msg_size<=0 || msg_size>9000)
+   {
+     printf("Error in eth_write(), packet size too big: %d\n",msg_size);
+     return -1;
+   }
    memcpy(msgbuf, &ether_header, sizeof(ether_header));
    memcpy(msgbuf + sizeof(ether_header), wbuf, nwbuf); 
    nwritten = write(theSocket, (const void *)msgbuf, msg_size);
@@ -1453,7 +1460,10 @@ int VMEController::VME_controller(int irdwr,unsigned int ptr,unsigned short int 
     }
     fpacket_delay=fpacket_delay+(data[0]+data[1]*65536)*DELAY2;
     irdwr=1;  // delay always acts like a buffered WRITE command.
-    if (data[1]) irdwr=3;  //send immediately for longer delays  
+    if (data[1])
+    {   irdwr=3;  //send immediately for longer delays  
+        std::cout << "WARNING: long delay, packet sent now." << std::endl;
+    }
   } 
 
     /* check for overflow */
@@ -1492,21 +1502,21 @@ int VMEController::VME_controller(int irdwr,unsigned int ptr,unsigned short int 
     nvme=0;
     istrt=0;
 
-  /* for normal READ/WRITE, need copy the data out of the spebuff. */
-  actual_return=0; 
-  if(LRG_read_flag==0 && LRG_read_pnt>0)
-  {   if(rcv) memcpy(rcv, spebuff, LRG_read_pnt);
-      actual_return += LRG_read_pnt/2;
-  } 
-  /* read back bytes from vme if needed */
+    /* for normal READ/WRITE, need copy the data out of the spebuff. */
+    actual_return=0; 
+    if(LRG_read_flag==0 && LRG_read_pnt>0)
+    {   if(rcv) memcpy(rcv, spebuff, LRG_read_pnt);
+        actual_return += LRG_read_pnt/2;
+    } 
+    /* read back bytes from vme if needed */
  
-  if(nread>0){
-    clear_error();
-    int vcc_error306=0;
+    if(nread>0){
+      clear_error();
+      int vcc_error306=0;
 READETH:
-    nrbuf=nread;
-    size=eth_read();
-    if(size<10)
+      nrbuf=nread;
+      size=eth_read();
+      if(size<10)
         { if(vcc_error306) printf(" EWI 306 packets: %d\n", vcc_error306);
           printf(" ERROR: no data read back from crate %02X, address %08X\n", hw_dest_addr[5]&0xff, ptr);
           error_count++;
@@ -1530,12 +1540,12 @@ READETH:
         }
 // Jinghua Liu to debug
    
-    if(DEBUG>10)
-    {
-      printf("Read back size %d \n",size);
-      for(i=0;i<size;i++) printf("%02X ",rbuf[i]&0xff);
-      printf("\n");
-    }
+      if(DEBUG>10)
+      {
+        printf("Read back size %d \n",size);
+        for(i=0;i<size;i++) printf("%02X ",rbuf[i]&0xff);
+        printf("\n");
+      }
       radd_to=(unsigned char *)rbuf;
       radd_from=(unsigned char *)rbuf+6;
 // Check if the packet is expected. To reject unwanted broadcast packets.
@@ -1563,9 +1573,10 @@ hw_source_addr[0],hw_source_addr[1],hw_source_addr[2],hw_source_addr[3],hw_sourc
       r_head3=(unsigned char *)rbuf+20;
       r_datat=(unsigned char *)rbuf+22;
       r_num=((r_head3[0]<<8)&0xff00)|(r_head3[1]&0xff);  
+      if((r_num*2) > (r_nbyte-8)) r_num=0;   // wrong data size, bad packet.
       return_type=r_head0[1];
       if(return_type!=5)
-       {  
+      {  // Error handling 
           if(return_type==0xff || return_type==0xfe || return_type==0xfd)
           {
              error_type=(r_datat[0]&0x3)*256+r_datat[1];
@@ -1599,13 +1610,13 @@ hw_source_addr[0],hw_source_addr[1],hw_source_addr[2],hw_source_addr[3],hw_sourc
 // very complicated. Have to deal with that later. Jinghua Liu 5/5/2006.
 //
           goto READETH;
-       }
+      }
 
     if(LRG_read_flag>0) 
     {  // forced read, store the data in the special buffer
-// Jinghua Liu: byte swap!!!
        for(i=0;i<r_num;i++)
-       {  spebuff[2*i+LRG_read_pnt]=r_datat[2*i+1];
+       {  // Jinghua Liu: byte swap!!!
+          spebuff[2*i+LRG_read_pnt]=r_datat[2*i+1];
           spebuff[2*i+1+LRG_read_pnt]=r_datat[2*i];
        }
        LRG_read_pnt += 2*r_num;  //data in special buffer
@@ -1615,11 +1626,11 @@ hw_source_addr[0],hw_source_addr[1],hw_source_addr[2],hw_source_addr[3],hw_sourc
     }
     else 
     {  // normal read
-// Jinghua Liu: byte swap!!!
        for(i=0;i<r_num;i++)
        {  
           if(rcv)
           {
+             // Jinghua Liu: byte swap!!!
              rcv[2*i+LRG_read_pnt]=r_datat[2*i+1];
              rcv[2*i+1+LRG_read_pnt]=r_datat[2*i];
           }
@@ -1628,12 +1639,11 @@ hw_source_addr[0],hw_source_addr[1],hw_source_addr[2],hw_source_addr[3],hw_sourc
        actual_return += r_num;
     }
     nread=0;
-  }
-
+  } // end of nread>0
   // after normal READ/WRITE, always turn off LARGE_read
   if(LRG_read_flag==0) LRG_read_pnt=0;   
 
-  }
+  }  // end of irwd=2 or 3
   return actual_return;
 }
 

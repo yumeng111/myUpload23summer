@@ -11041,8 +11041,10 @@ bool TMB::checkvme_fail()
    if(data[1]&0x40)
    {  
        i=read_one(0, data);
-       if(i<=0) return true;  // if VCC problem, or TMB VME access time-out
-       else return false;
+       if((data[1]&0x3F)==slot())   // TMB register 0 contains slot number 
+          return false;
+       else 
+          return true;
    }
    else return true;      // if VME ready bit 0, can't access VME
 }

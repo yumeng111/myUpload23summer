@@ -3469,6 +3469,7 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
   unsigned short mpcreg0, mpcreg1=0, mpcreg2=0, mpcreg3=0;
   float val, V7, lvdb_temp;
   std::vector<DAQMB*> myVector;
+  std::vector<TMB*> mytmbs;
   xdata::InfoSpace * is;
   int ip, slot, ch_state, ival;
   unsigned int bad_module, ccbbits;
@@ -3488,6 +3489,7 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
   for ( unsigned int i = 0; i < crateVector.size(); i++ )
   {
      myVector = crateVector[i]->daqmbs();
+     mytmbs = crateVector[i]->tmbs();
      ip=crateVector[i]->CrateID();
      if(crate_off[i])
      {  // for OFF crates, send -2. in all fields, timestamp is current
@@ -3686,7 +3688,22 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
            if(goodtmb && ((ch_state & 0x1A8)==0))
            { 
               val= (*tmbdata)[j*TOTAL_TMB_VOLTAGES+k];
-              *out << " " << val;
+              if(k==14)  // DCFEB dead links, this is an integer
+              {
+                     ival=(int)val;
+                     int mask_in_use=ival;
+                     int mask_in_config=mytmbs[j]->GetEnableCLCTInputs();
+                     ival &= mask_in_config;  /* remove the bits already masked in the configuration, for X2P */
+                     for(int d=0; d<7; d++)
+                     {
+                         if((mask_in_use &1)==1 && (mask_in_config &1)==1)  auto_killed_dcfebs++;
+                         mask_in_use >>=1;
+                         mask_in_config >>=1;
+                     }
+                     *out << " " << ival;
+              }
+              else
+                  *out << " " << val;
            }
            else
            {
@@ -3706,7 +3723,7 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
                  {
                      int mask_in_use=ival;
                      int mask_in_config=myVector[j]->GetKillInputMask();
-                     ival ^= mask_in_config;  /* remove the bits already masked in the configuration */
+                     ival ^= mask_in_config;  /* remove the bits already masked in the configuration, for X2P */
                      for(int d=0; d<7; d++)
                      {
                          if((mask_in_use &1)==1 && (mask_in_config &1)==0)  auto_killed_dcfebs++;
@@ -4570,9 +4587,11 @@ void EmuPeripheralCrateMonitor::DCFEBProblems(xgi::Input * in, xgi::Output * out
   //
   int confbit, prob_crate;
   int ival;
-  bool goodfeb;
+  float val;
+  bool goodfeb, goodtmb;
   Crate *now_crate=0;
   std::vector<DAQMB*> myVector;
+  std::vector<TMB*> mytmbs;
   xdata::InfoSpace * is;
 
   if(Monitor_On_)
@@ -4590,6 +4609,7 @@ void EmuPeripheralCrateMonitor::DCFEBProblems(xgi::Input * in, xgi::Output * out
   for ( unsigned int i = 0; i < crateVector.size(); i++ )
   {
      myVector = crateVector[i]->daqmbs();
+     mytmbs = crateVector[i]->tmbs();
 
      int problem_readings=0;
      is = xdata::getInfoSpaceFactory()->get(monitorables_[i]);
@@ -4601,7 +4621,13 @@ void EmuPeripheralCrateMonitor::DCFEBProblems(xgi::Input * in, xgi::Output * out
      else
      {  goodfeb=true;
      }
-
+     xdata::Vector<xdata::Float> *tmbdata = dynamic_cast<xdata::Vector<xdata::Float> *>(is->find("TMBvolts"));
+     if(tmbdata==NULL || tmbdata->size()<myVector.size()*TOTAL_TMB_VOLTAGES)
+     {  goodtmb=false;
+     }
+     else
+     {  goodtmb=true;
+     }
      int upgraded=0;
      for(unsigned int j=0; j<myVector.size(); j++) 
      {
@@ -4611,6 +4637,29 @@ void EmuPeripheralCrateMonitor::DCFEBProblems(xgi::Input * in, xgi::Output * out
         bool chamber_off = (imask==0xFF);
         std::string cscname=myVector[j]->GetLabel();
 
+        for(int k=0; k<TOTAL_TMB_VOLTAGES; k++) 
+        {  
+           if(goodtmb)
+           { 
+              val= (*tmbdata)[j*TOTAL_TMB_VOLTAGES+k];
+              if(k==14)  // DCFEB dead links, this is an integer
+              {
+                     ival=(int)val;
+                     int mask_in_use=ival;
+                     int mask_in_config=mytmbs[j]->GetEnableCLCTInputs();
+                     for(int d=0; d<7; d++)
+                     {
+                         if((mask_in_use &1)==1 && (mask_in_config &1)==1)
+                         {
+                            auto_killed_dcfebs++;
+                            *out << cscname << " DCFEB#" << d+1 << " OTMB link" << std::endl;
+                         }
+                         mask_in_use >>=1;
+                         mask_in_config >>=1;
+                     }
+              }
+           }
+        }
         for(int k=0; k<TOTAL_DCFEB_MONS; k++) 
         {  
            if(goodfeb)
@@ -4627,7 +4676,7 @@ void EmuPeripheralCrateMonitor::DCFEBProblems(xgi::Input * in, xgi::Output * out
                          if((mask_in_use &1)==1 && (mask_in_config &1)==0)
                          {  
                            auto_killed_dcfebs++;
-                           *out << cscname << " DCFEB#" << d+1 << std::endl;
+                           *out << cscname << " DCFEB#" << d+1 << " ODMB link" << std::endl;
                          }
                          mask_in_use >>=1;
                          mask_in_config >>=1;

@@ -10372,26 +10372,11 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::input().set("type","submit").set("value","Step 4) CCB hard reset") << std::endl ;
   *out << cgicc::form() << std::endl ;
   //
-  std::string CheckTMBFirmware = toolbox::toString("/%s/CheckTMBFirmware",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",CheckTMBFirmware) ;
-  if ( tmb_vme_ready == 1 ) {
-    //
-    *out << cgicc::input().set("type","submit").set("value","Step 5) Check TMB VME Ready").set("style","color:green");
-    //
-  } else if ( tmb_vme_ready == 0 ) {
-    //
-    *out << cgicc::input().set("type","submit").set("value","Step 5) Check TMB VME Ready").set("style","color:red");
-    //
-  } else {
-    //
-    *out << cgicc::input().set("type","submit").set("value","Step 5) Check TMB VME Ready").set("style","color:blue");
-    //
-  }
-  *out << cgicc::form() << std::endl ;
-  //
   std::string ClearTMBBootReg = toolbox::toString("/%s/ClearTMBBootReg",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",ClearTMBBootReg) << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","Step 6) Enable VME Access to TMB FPGA") << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Step 5) Enable VME Access to TMB FPGA") << std::endl ;
+  sprintf(buf,"%d",tmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
   *out << cgicc::form() << std::endl ;
   }  // end of TMB
   else
@@ -10414,26 +10399,11 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
     *out << cgicc::input().set("type","submit").set("value","Step 3) CCB hard reset") << std::endl ;
     *out << cgicc::form() << std::endl ;
     //
-    std::string CheckTMBFirmware = toolbox::toString("/%s/CheckTMBFirmware",getApplicationDescriptor()->getURN().c_str());
-    *out << cgicc::form().set("method","GET").set("action",CheckTMBFirmware) ;
-    if ( tmb_vme_ready == 1 ) {
-      //
-      *out << cgicc::input().set("type","submit").set("value","Step 4) Check TMB VME Ready").set("style","color:green");
-      //
-    } else if ( tmb_vme_ready == 0 ) {
-      //
-      *out << cgicc::input().set("type","submit").set("value","Step 4) Check TMB VME Ready").set("style","color:red");
-      //
-    } else {
-      //
-      *out << cgicc::input().set("type","submit").set("value","Step 4) Check TMB VME Ready").set("style","color:blue");
-      //
-    }
-    *out << cgicc::form() << std::endl ;
-    //
     std::string ClearTMBBootReg = toolbox::toString("/%s/ClearTMBBootReg",getApplicationDescriptor()->getURN().c_str());
     *out << cgicc::form().set("method","GET").set("action",ClearTMBBootReg) << std::endl ;
-    *out << cgicc::input().set("type","submit").set("value","Step 5) Enable VME Access to TMB FPGA") << std::endl ;
+    *out << cgicc::input().set("type","submit").set("value","Step 4) Enable VME Access to TMB FPGA") << std::endl ;
+    sprintf(buf,"%d",tmb);
+    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
     *out << cgicc::form() << std::endl ;
 
     *out << cgicc::br() << std::endl;
@@ -10526,12 +10496,12 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   }  // end of old ALCT
   else
   {  // begin new ALCT
-    *out << "firmware version = " << ALCTFirmware_[tmb].toString() << ".svf" << cgicc::br() << std::endl;
+    *out << "firmware version = " << ALCTFirmware_[tmb].toString() << "_0.mcs" << cgicc::br() << std::endl;
     *out << "Step 1)  Disable DCS monitoring to crates" << cgicc::br() << std::endl;
     //
     std::string LoadSpartan6ALCTFirmware = toolbox::toString("/%s/LoadSpartan6ALCTFirmware",getApplicationDescriptor()->getURN().c_str());
     *out << cgicc::form().set("method","GET").set("action",LoadSpartan6ALCTFirmware) << std::endl ;
-    sprintf(buf,"Step 2) Load ALCT Spartan 6 Firmware in slot %d",tmbVector[tmb]->slot());
+    sprintf(buf,"Step 2) Load ALCT Spartan-6 Firmware in slot %d",tmbVector[tmb]->slot());
     *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
     sprintf(buf,"%d",tmb);
     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
@@ -11767,15 +11737,17 @@ void EmuPeripheralCrateConfig::LoadSpartan6ALCTFirmware(xgi::Input * in, xgi::Ou
     ALCTController * thisALCT = thisTMB->alctController();
     if(thisALCT && (thisALCT->GetHardwareVersion()>=2))
     {
-       std::string svffile = ALCTFirmware_[tmb].toString() + ".svf";
+       std::string firmfile = ALCTFirmware_[tmb].toString() + "_0.mcs";
        // Put CCB in FPGA mode to make the CCB ignore TTC commands (such as hard reset)
        thisCCB->setCCBMode(CCB::VMEFPGA);
        //
-       std::cout  << getLocalDateTime() <<  "Write new ALCT Mezzanine (Spartan 6) firmware to slot " << thisTMB->slot() << std::endl;
+       std::cout  << getLocalDateTime() <<  " Write new ALCT Mezzanine (Spartan-6) firmware to slot " << thisTMB->slot() << std::endl;
+          // this uses SVF file
+          // thisTMB->setup_jtag(ChainAlctFastMezz);
+          // thisTMB->svfLoad(0,firmfile.c_str(), 0, 1);
+       thisALCT->load_firmware(firmfile.c_str(), 0); // no broadcast
        //
-       thisTMB->setup_jtag(ChainAlctFastMezz);
-       thisTMB->svfLoad(0,svffile.c_str(), 0, 1);
-
+       std::cout  << getLocalDateTime() <<  " Finished." << std::endl;
        // Put CCB back into DLOG mode to listen to TTC commands...
        thisCCB->setCCBMode(CCB::DLOG);
     }
@@ -12216,26 +12188,27 @@ void EmuPeripheralCrateConfig::CheckTMBFirmware(xgi::Input * in, xgi::Output * o
 void EmuPeripheralCrateConfig::ClearTMBBootReg(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {
   //
-  if (tmb_vme_ready == 1) {
-    //
-    for (unsigned tmb=0; tmb<tmbVector.size(); tmb++) {
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("tmb");
+  //
+  int tmb=0;
+  if(name != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "TMB " << tmb << std::endl;
+    TMB_ = tmb;
+  }
+  //
+  TMB * thisTMB = tmbVector[tmb];
       //
-      TMB * thisTMB = tmbVector[tmb];
-      //
-      if (thisTMB->slot() < 22) {
+  if(thisTMB)
+  {
 	short unsigned int BootReg;
 	thisTMB->tmb_get_boot_reg(&BootReg);
 	BootReg &= 0xff7f;                    // Give JTAG chain to the FPGA to configure ALCT on hard reset
 	BootReg &= 0xf7ff;                    // Allow FPGA access to the VME register
 	thisTMB->tmb_set_boot_reg(BootReg);
-	//
-      }
-    }
-  } else {
-    //
-    std::cout << "TMB is not ready for VME access" << std::endl;
   }
-  //
   this->TMBUtils(in,out);
   //
 }

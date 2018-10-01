@@ -4865,11 +4865,11 @@ int ALCTController::load_firmware(const char *mcsfile, int broadcast)
 {
    unsigned comd, data;
    const int PROM_SIZE=4194304; // in bytes
-   const int FIRMWARE_SIZE=5464972;
+   int FIRMWARE_SIZE=0;
    char filename[1000];
 
    char *bufin, c;
-   bufin=(char *)malloc(6*1024*1024);
+   bufin=(char *)malloc(2*PROM_SIZE);
    if(bufin==NULL)  return -2;
    char *buf0=bufin;
    char *buf1=bufin+PROM_SIZE;
@@ -4884,6 +4884,7 @@ int ALCTController::load_firmware(const char *mcsfile, int broadcast)
    }
    int mcssize=tmb_->read_mcs(bufin, fin);
    fclose(fin);
+   FIRMWARE_SIZE=mcssize;
    int mcssize2=0;
    if(mcssize==PROM_SIZE)
    {   // need to read a 2nd file
@@ -4899,9 +4900,9 @@ int ALCTController::load_firmware(const char *mcsfile, int broadcast)
          mcssize2=tmb_->read_mcs(bufin+PROM_SIZE, fin);
          fclose(fin);
       }
-      mcssize += mcssize2;                   
+      FIRMWARE_SIZE += mcssize2;                   
    }
-   std::cout << "Read MCS size: " << std::dec << mcssize << " bytes" << std::endl;
+   std::cout << "Read MCS size: " << std::dec << FIRMWARE_SIZE << " bytes" << std::endl;
 /*
 // byte swap
    for(int i=0; i<FIRMWARE_SIZE/2; i++)
@@ -4915,8 +4916,8 @@ int ALCTController::load_firmware(const char *mcsfile, int broadcast)
      std::cout << "Loading firmware to EPROM(s)......" << std::endl;
      erase_eprom(0, broadcast);    
      if(mcssize2) erase_eprom(1, broadcast);    
-     write_eprom(buf0, FIRMWARE_SIZE/2, 0, broadcast);
-     if(mcssize2) write_eprom(buf1, FIRMWARE_SIZE/2, 1, broadcast);  
+     write_eprom(buf0, mcssize, 0, broadcast);
+     if(mcssize2) write_eprom(buf1, mcssize2, 1, broadcast);  
      std::cout << "Done."<< std::endl;
      free(bufin);
      return 0;

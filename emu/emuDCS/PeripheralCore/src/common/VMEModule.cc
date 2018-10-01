@@ -1507,7 +1507,12 @@ int VMEModule::read_mcs(char *binbuf, FILE *finp, unsigned limit)
        }
        fgets(buf, 1020, finp);
    }
-   return total_read;
+   if(finish==0)
+   {   
+      std::cout << "ERROR: End Tag missing, mcs file corrupted!" << std::endl;
+      return -1;
+   }
+   else return total_read;
 }
 
 void VMEModule::Jtag_Ohio(int dev, int reg,const char *snd,int cnt,char *rcv,int ird, int when)

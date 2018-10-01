@@ -457,6 +457,21 @@ std::ostream & operator<<(std::ostream & os, ALCTController & alct) {
   return os;
   //
 }
+int ALCTController::ALCTversion()
+{  
+// 0     Virtex  600E for 192, 288, 384 ALCTs, hardware_version=0 or 1
+// 1     Virtex 1000E for 576, 672 ALCTs, hardware_version=0 or 1
+// 2     Spartan-6 LX150,  hardware_version=2
+// 3     Spartan-6 LX150T, hardware_version=3
+// 4     Spartan-6 LX100,  hardware_version=4
+
+   if(hardware_version_<=1)
+   {
+       if(NumberOfChannelsInAlct_ <= 384) return 0;
+       else return 1;
+   }
+   else return hardware_version_;
+}
 //
 ///////////////////////////////////////////////////////////////////
 // Useful methods to use ALCTController...
@@ -2180,9 +2195,6 @@ void ALCTController::SetExpectedFastControlMonth(int firmware_month) {
 //
 void ALCTController::ReadFastControlMezzIDCodes() {
   //
-  // Liu 2017-05-05:
-  // for new Spartan-6 FPGA, skip the following to avoid sending junk bits to the JTAG chain.
-  //
   if(hardware_version_ <=1 ) {
   tmb_->setup_jtag(ChainAlctFastMezz);
   //
@@ -2228,6 +2240,10 @@ void ALCTController::ReadFastControlMezzIDCodes() {
         prom_scan(0, (char *)&inst, 16, NULL, NOW, 1);
         ::usleep(10);
         prom_scan(1, temp, 32, (char *)&alct_prom1_idcode_, NOW|READ_YES, 1);
+     }
+     else if(hardware_version_==4)
+     {  // not a real PROM idcode, but the DS4550 chip's idcode.
+        alct_prom1_idcode_ = ds4550_idcode();
      }
   }
   //
@@ -4563,7 +4579,7 @@ void ALCTController::DisableTestPulse()
 
 void ALCTController::fpga_scan(int reg, char *snd,int cnt,char *rcv,int ird)
 {
-    int jchain=7+GetHardwareVersion();
+    int jchain=7+ALCTversion();
     int isize=(jchain>8)?6:5;
     if(reg==0) cnt=isize;  // fix Instruction size
     tmb_->new_scan(reg, snd, cnt, rcv, ird, jchain+0x10);
@@ -4573,11 +4589,386 @@ void ALCTController::prom_scan(int reg, char *snd,int cnt,char *rcv,int ird, int
 {
     // chip=0  first PROM
     // chip=1  second PROM if exists
-    int jchain=7+GetHardwareVersion();
+    int jchain=7+ALCTversion();
     if(chip<0 || chip>1 || ((jchain==7||jchain==11)&&chip>0)) return;
     int isize=(jchain>8)?16:8;
     if(reg==0) cnt=isize;  // fix Instruction size
     tmb_->new_scan(reg, snd, cnt, rcv, ird, jchain+0x10*(chip+2));
+}
+
+void ALCTController::ds4550_scan(int reg, char *snd,int cnt,char *rcv,int ird)
+{
+   if(ALCTversion()!=4) return;  // only LX100, version 4 has DS4550 chip.
+   int dev=11 + 0x30;
+   if(reg==0) cnt=4;  // fix Instruction size to 4
+   tmb_->new_scan(reg, snd, cnt, rcv, ird, dev);
+}
+
+  unsigned ALCTController::ds4550_idcode()
+  {
+     unsigned rt=0;
+     unsigned comd=1; 
+     ds4550_scan(0, (char *)&comd, 4, NULL, 0);
+     char data[4];
+     ds4550_scan(1, data, 32, (char *)&rt, READ_YES);
+     
+     return rt;
+  }
+  
+  int ALCTController::ds4550_read(char *buf, int address, int size)
+  {
+     if(size<=0 || address<0 || address>0xFF) return 0;
+     char code[4], data[10], outdata[10];
+     for(int i=0; i<size; i++)
+     {
+        code[0]=9; // DS4550 ADDRESS
+        ds4550_scan(0, code, 4, outdata, NOW);
+        data[0]=address+i;
+        ds4550_scan(1, data, 8, outdata, NOW);
+
+        code[0]=10; // DS4550 READ
+        ds4550_scan(0, code, 4, outdata, NOW);
+        data[0]=0;
+        ds4550_scan(1, data, 8, buf+i, NOW|READ_YES);
+       ::usleep(100);
+     }    
+     return size;
+  }
+    
+  void ALCTController::ds4550_write(char *buf, int address, int size)
+  {
+     if(size<=0 || address<0 || address>0xFF) return;
+     char code[4], data[10], outdata[10];
+     for(int i=0; i<size; i++)
+     {
+        code[0]=9; // DS4550 ADDRESS
+        ds4550_scan(0, code, 4, outdata, NOW);
+        data[0]=address+i;
+        ds4550_scan(1, data, 8, outdata, NOW);
+
+        code[0]=11; // DS4550 WRITE
+        ds4550_scan(0, code, 4, outdata, NOW);
+        ds4550_scan(1, buf+i, 8, outdata, NOW);
+        ::usleep(15000); // wait time for EPROM WRITE: typical 10ms, max 20ms
+     }    
+  }
+
+int ALCTController::erase_eprom(int chip, int broadcast)
+{
+    char rcvbuf[100];
+    unsigned comd=0, data=0, blank_state=0;
+    std::cout << "Erasing EPROM #" << chip << "......" << std::endl;
+    if(chip<0 || chip>1) return -1;
+    unsigned block_mask = (chip==1)?1:0xF;
+
+    tmb_->getTheController()->SetUseDelay(true);
+
+//       jtag_RestoreIdle();      
+       comd=XCF_ISC_ENABLE; 
+       prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       data=0x03;
+       prom_scan(1, (char *)&data, 8, rcvbuf, 0, chip);
+       comd=XCF_XSC_UNLOCK; 
+       prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       data=block_mask;
+       prom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
+
+//
+// 2018-08-06 Liu: disable special handling of ERASE to see how many EPROMs having problem
+       tmb_->set_flag(0);
+       comd=XCF_ISC_ERASE; 
+       prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       tmb_->clear_flag(0);   
+       data=block_mask;
+       prom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
+       ::sleep((chip==1)?40:140);
+    if(broadcast==0)
+    {
+       comd=XCF_CLR_STATUS; 
+       prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       ::usleep(50);
+       comd=XCF_BLANK_CHECK; 
+       prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       ::sleep(1);
+       data=0;
+       prom_scan(1, (char *)&data, 8, rcvbuf, READ_YES, chip);
+       blank_state = rcvbuf[0] & block_mask & 0xFF;
+       if(blank_state==0) std::cout << "Blank Check successful!" << std::endl;
+       else std::cout << "ERROR: Blank Check failed! " << std::hex << (rcvbuf[0] & 0xFF) << std::dec << std::endl;
+       comd=XCF_CLR_STATUS; 
+       prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       ::usleep(50);
+              
+    }
+       comd=XCF_ISC_DISABLE; 
+       prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       ::usleep(200);
+    std::cout << "Done." << std::endl;
+    return blank_state;
+}
+
+int ALCTController::write_eprom(char *bufin, int dsize, int chip, int broadcast)
+{
+    char rcvbuf[1024];
+    if(chip<0 || chip>1) return -1;
+    std::cout << "Programming EPROM #" << chip << "......" << std::endl;
+    unsigned comd, data;
+
+    int PROM_SIZE=4194304; // in bytes
+    if(chip==1) PROM_SIZE /= 4;  // this is a xcf08p EPROM
+    PROM_SIZE /= 32;   // in 256-bit blocks
+ 
+     int blocks=dsize/32;  // firmware size must be in units of 256-bit units
+     if(dsize<0)
+     {
+         blocks=PROM_SIZE;
+     }
+     else if (dsize%32>0)
+     {  
+         for(int i=0; i<32; i++) bufin[dsize+i]=0xFF;  // pad the last block with 0xFF
+         blocks++;
+     }
+     if (blocks>PROM_SIZE) blocks=PROM_SIZE; 
+
+     int p1pct=blocks/100;
+     int j=0, pcnts=0;
+
+//    tmb_->getTheController()->Debug(2);
+     tmb_->getTheController()->SetUseDelay(true);
+  
+//     jtag_RestoreIdle();      
+     comd=XCF_ISC_ENABLE; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0x03;
+     prom_scan(1, (char *)&data, 8, rcvbuf, 0, chip);
+     comd=XCF_XSC_UNLOCK; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0x0F;
+     prom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
+/*
+     comd=XCF_DATA_BTC; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0xFFFFFFEC;
+     prom_scan(1, (char *)&data, 32, rcvbuf, 0, chip);
+*/
+     comd=XCF_ISC_PROGRAM; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     ::usleep(200);
+     for(int i=0; i<blocks; i++)
+     {
+        if((i%0x8000)==0)   
+        {  /* At beginning of each big block, send (byte) address. */
+           comd=XCF_ADD_SHIFT; 
+           prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+           data=i*32;
+           prom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
+        }
+       comd=XCF_DATA_SHIFT; 
+       prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       prom_scan(1, bufin+32*i, 256, rcvbuf, 0, chip);
+       comd=XCF_ISC_PROGRAM; 
+       prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+       ::usleep(1000);
+       j++;
+       if(p1pct>0 && j==p1pct)
+       {  pcnts++;
+          if(pcnts<100) std::cout << "Sending " << pcnts <<"%..." << std::endl;
+          j=0;
+       }   
+     }
+     comd=XCF_DATA_DONE; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0xC0;
+     prom_scan(1, (char *)&data, 8, rcvbuf, 0, chip);
+     comd=XCF_ISC_PROGRAM; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     ::usleep(200);
+     std::cout << "Sending 100%..." << std::endl;
+//    tmb_->getTheController()->Debug(2);
+     if(broadcast==0)
+     {
+         std::cout << "Verify. " << std::endl;
+     }
+     comd=XCF_CLR_STATUS; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     ::usleep(50);
+     comd=XCF_ISC_DISABLE; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     ::usleep(200);
+     return 0;
+}
+
+int ALCTController::read_eprom(char *bufout, int dsize, int chip)
+{
+    char rcvbuf[1024];
+    if(chip<0 || chip>1) return -1;
+    std::cout << "Read EPROM #" << chip << "......" << std::endl;
+    unsigned comd, data;
+    char ttt[1024];
+    
+    int PROM_SIZE=4194304; // in bytes
+    if(chip==1) PROM_SIZE /= 4;  // this is a xcf08p EPROM
+    PROM_SIZE /= 1024;
+     
+     int blocks=dsize/1024;  // must be in units of 8192-bit (1024-byte)
+     if(dsize<0)
+     {
+         blocks=PROM_SIZE;
+     }
+     else if (dsize%1024>0)
+     {  
+         blocks++;
+     }
+     if (blocks>PROM_SIZE) blocks=PROM_SIZE; 
+
+     int p1pct=blocks/100;
+     int j=0, pcnts=0;
+
+//    tmb_->getTheController()->Debug(2);
+     tmb_->getTheController()->SetUseDelay(true);
+  
+//     jtag_RestoreIdle();      
+     comd=XCF_ISC_ENABLE; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0x03;
+     prom_scan(1, (char *)&data, 8, rcvbuf, 0, chip);
+     for(int i=0; i<blocks; i++)
+     {
+        comd=XCF_ADD_SHIFT; 
+        prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+        data=i*0x400;
+        prom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
+        comd=XCF_READ; 
+        prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+        prom_scan(1, ttt, 8192, bufout+i*0x400, READ_YES, chip);
+        ::usleep(200);
+        j++;
+        if(p1pct>0 && j==p1pct)
+        {  pcnts++;
+           if(pcnts<100) std::cout << "Reading " << pcnts <<"%..." << std::endl;
+           j=0;
+        }   
+     }
+     std::cout << "Reading 100%..." << std::endl;
+//    tmb_->getTheController()->Debug(2);
+     
+     comd=XCF_CLR_STATUS; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     ::usleep(50);
+     comd=XCF_ISC_DISABLE; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     ::usleep(100);
+     return 0;
+}
+
+int ALCTController::load_firmware(const char *mcsfile, int broadcast)
+{
+   unsigned comd, data;
+   const int PROM_SIZE=4194304; // in bytes
+   const int FIRMWARE_SIZE=5464972;
+   char filename[1000];
+
+   char *bufin, c;
+   bufin=(char *)malloc(6*1024*1024);
+   if(bufin==NULL)  return -2;
+   char *buf0=bufin;
+   char *buf1=bufin+PROM_SIZE;
+
+   strncpy(filename, mcsfile, 980);
+   FILE *fin=fopen(filename,"r");
+   if(fin==NULL ) 
+   { 
+      free(bufin);  
+      std::cout << "ERROR: Unable to open MCS file :" << filename << std::endl;
+      return -3; 
+   }
+   int mcssize=tmb_->read_mcs(bufin, fin);
+   fclose(fin);
+   int mcssize2=0;
+   if(mcssize==PROM_SIZE)
+   {   // need to read a 2nd file
+      filename[strlen(filename)-5]++;
+      fin=fopen(filename,"r");
+      if(fin==NULL ) 
+      { 
+         free(bufin);  
+         std::cout << "WRANING: Unable to open 2nd MCS file :" << filename << std::endl;
+      }
+      else
+      {
+         mcssize2=tmb_->read_mcs(bufin+PROM_SIZE, fin);
+         fclose(fin);
+      }
+      mcssize += mcssize2;                   
+   }
+   std::cout << "Read MCS size: " << std::dec << mcssize << " bytes" << std::endl;
+/*
+// byte swap
+   for(int i=0; i<FIRMWARE_SIZE/2; i++)
+   {  c=bufin[i*2];
+      bufin[i*2]=bufin[i*2+1];
+      bufin[i*2+1]=c;
+   }
+*/
+//    tmb_->getTheController()->Debug(2);
+     tmb_->getTheController()->SetUseDelay(true);
+     std::cout << "Loading firmware to EPROM(s)......" << std::endl;
+     erase_eprom(0, broadcast);    
+     if(mcssize2) erase_eprom(1, broadcast);    
+     write_eprom(buf0, FIRMWARE_SIZE/2, 0, broadcast);
+     if(mcssize2) write_eprom(buf1, FIRMWARE_SIZE/2, 1, broadcast);  
+     std::cout << "Done."<< std::endl;
+     free(bufin);
+     return 0;
+}
+
+void ALCTController::read_firmware(const char *filename)
+{
+//  2 mcs files in sequential, first one is the size of full PROM, second one with the rest of the firmware.
+   char *buf, *buf1, *buf2;
+   FILE *mcsfile, *mcsfile2;
+   char filename1[1000], filename2[1000];
+
+    
+   int FIRMWARE_SIZE[5]={0, 0, 4194304, 4238708, 3336404};
+   const int PROM_SIZE=4194304; // in bytes
+   
+   int PROM2size=0;
+   if(FIRMWARE_SIZE[ALCTversion()]>PROM_SIZE) PROM2size=FIRMWARE_SIZE[ALCTversion()] - PROM_SIZE;
+   buf=(char *)malloc(2*PROM_SIZE); // 8*1024*1024
+   if(buf==NULL) return;
+   buf1=buf;
+   buf2=buf+PROM_SIZE;                       
+
+      strncpy(filename1, filename, 980);
+      mcsfile=fopen(filename1, "w");
+      if(mcsfile==NULL)
+      {
+         std::cout << "Unable to open file to write :" << filename1 << std::endl;
+         free(buf); 
+         return;
+      }
+   read_eprom(buf, PROM_SIZE, 0);
+   tmb_->write_mcs(buf, PROM_SIZE, mcsfile);
+   fclose(mcsfile);
+   if(PROM2size)
+   {
+      strncpy(filename2, filename, 980);
+      filename2[strlen(filename2)-5]++;
+      mcsfile2=fopen(filename2, "w");
+      if(mcsfile2==NULL)
+      {
+          std::cout << "Unable to open second file to write :" << filename2 << std::endl;
+          free(buf);
+          return;
+      }
+      read_eprom(buf1, PROM2size, 1);
+      tmb_->write_mcs(buf+PROM_SIZE, PROM2size, mcsfile2);
+      fclose(mcsfile2);
+   }
+   free(buf);
+   std::cout << " Total " << FIRMWARE_SIZE << " bytes are read back from EPROM and saved in mcs-format file: " << filename << std::endl;
+   return;
 }
 
   } // namespace emu::pc

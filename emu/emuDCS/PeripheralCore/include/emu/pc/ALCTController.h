@@ -233,6 +233,7 @@ class ALCTController : public EmuLogger
   //!chamberType = ME11, ME12, ME13, ME21, ME22, ME31, ME32, ME41, ME42
   ALCTController(TMB * tmb, std::string chamberType); 
   ~ALCTController();
+  int ALCTversion();
   //
   ///////////////////////////////////////////////////////////////////////////
   //  Useful methods to use ALCTController:
@@ -693,6 +694,15 @@ class ALCTController : public EmuLogger
   // new JTAG routines for new ALCT Mezzanines
   void fpga_scan(int reg, char *snd,int cnt,char *rcv,int ird);
   void prom_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip);
+  void ds4550_scan(int reg, char *snd,int cnt,char *rcv,int ird);
+  unsigned ds4550_idcode();
+  int ds4550_read(char *buf, int address, int size);
+  void ds4550_write(char *buf, int address, int size);
+  int erase_eprom(int chip, int broadcast);
+  int write_eprom(char *bufin, int dsize, int chip, int broadcast);
+  int read_eprom(char *bufout, int dsize, int chip);
+  int load_firmware(const char *mcsfile, int broadcast);
+  void read_firmware(const char *filename);
 
 protected:
   //

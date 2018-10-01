@@ -11548,7 +11548,7 @@ void EmuPeripheralCrateConfig::ALCTReadFirmware(xgi::Input * in, xgi::Output * o
         chambername.replace(t,1,"_");
         t = chambername.find('/');
     }
-    std::string mcsfile="/tmp/ALCT_"+ chambername + ".mcs";
+    std::string mcsfile="/tmp/ALCT_"+ chambername + "_0.mcs";
     std::string jtagfile;
     ALCTController * thisALCT = thisTMB->alctController();
     std::string alcttype=thisALCT->GetChamberType();
@@ -11561,9 +11561,15 @@ void EmuPeripheralCrateConfig::ALCTReadFirmware(xgi::Input * in, xgi::Output * o
       //
     std::cout  << getLocalDateTime() << " Reading back ALCT firmware from slot " << thisTMB->slot() << std::endl;
       //
-    thisTMB->setup_jtag(ChainAlctFastMezz);
-    thisTMB->read_prom(jtagfile.c_str(),mcsfile.c_str());
-
+    if(thisALCT->ALCTversion()>1)
+    {  // new ALCT mezzanines
+       thisALCT->read_firmware(mcsfile.c_str());
+    }
+    else
+    {  // old ALCT mezzanines
+       thisTMB->setup_jtag(ChainAlctFastMezz);
+       thisTMB->read_prom(jtagfile.c_str(),mcsfile.c_str());
+    }
     // Put CCB back into DLOG mode to listen to TTC commands...
     thisCCB->setCCBMode(CCB::DLOG);
   }

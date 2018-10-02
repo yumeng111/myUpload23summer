@@ -1818,7 +1818,6 @@ emu/emuDCS/PeripheralCore/include/emu/pc/CFEB.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/Chamber.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/Crate.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/DAQMB.h -text
-emu/emuDCS/PeripheralCore/include/emu/pc/DCFEB.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/DDU.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/EMU_CC_constants.h -text
 emu/emuDCS/PeripheralCore/include/emu/pc/EMU_JTAG_constants.h -text
@@ -1848,7 +1847,6 @@ emu/emuDCS/PeripheralCore/src/common/Chamber.cc -text
 emu/emuDCS/PeripheralCore/src/common/CoreVersion.cc -text
 emu/emuDCS/PeripheralCore/src/common/Crate.cc -text
 emu/emuDCS/PeripheralCore/src/common/DAQMB.cc -text
-emu/emuDCS/PeripheralCore/src/common/DCFEB.cc -text
 emu/emuDCS/PeripheralCore/src/common/DDU.cc -text
 emu/emuDCS/PeripheralCore/src/common/EMUjtag.cc -text
 emu/emuDCS/PeripheralCore/src/common/EPROMBadBit_SVFFileFix.cc -text

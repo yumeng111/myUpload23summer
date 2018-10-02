@@ -36,9 +36,6 @@
 
 #define INSTR_REG 0
 #define DATA_REG 1
-#define PROM_BYPASS 0xFF
-#define TERMINATE 2
-
 
 /* Buckeye shift variables */
 
@@ -71,10 +68,6 @@ enum DEVTYPE{ALLMUX=-3,ALLSCAM=-2,ALL=-1,NONE,F1PROM,F2PROM,F3PROM,F4PROM,F5PROM
 //#define PRE_DEF_DELAY 7
 //#define COMPMODE_DEF 0x0A
 
-/* JTAG instructions */
-#define EXT_TEST 0x00
-#define BYPASS   0x81
-#define SEL_PATH 0x7E
 /* Path options */
 /* #define NO_PATH    0x00
 #define CPLD_PATH  0x02
@@ -89,7 +82,7 @@ enum DEVTYPE{ALLMUX=-3,ALLSCAM=-2,ALL=-1,NONE,F1PROM,F2PROM,F3PROM,F4PROM,F5PROM
 #define SCA_BRD    0x80
 #define BUFF_PATH  0x80 */
 
-/* ISPROM scan instructions */
+/* Xilinx XCV PROM scan instructions */
 #define PROM_BYPASS 0xFF
 #define PROM_SAMPLE 0x01
 #define PROM_EXTEST 0x00
@@ -97,7 +90,14 @@ enum DEVTYPE{ALLMUX=-3,ALLSCAM=-2,ALL=-1,NONE,F1PROM,F2PROM,F3PROM,F4PROM,F5PROM
 #define PROM_HIGHZ 0xFC
 #define PROM_IDCODE 0xFE
 #define PROM_USERCODE 0xFD
+#define PROM_DISABLE 0xF0
+#define PROM_READ   0xEF
 #define PROM_CONFIG 0xEE
+#define PROM_DATA   0xED
+#define PROM_ERASE  0xEC
+#define PROM_ADDRESS 0xEB
+#define PROM_PROGRAM 0xEA
+#define PROM_ENABLE 0xE8
 
 /* VIRTEXII fpga scan instructions */
 #define VTX2_EXTEST 0x00
@@ -339,34 +339,16 @@ enum DEVTYPE{ALLMUX=-3,ALLSCAM=-2,ALL=-1,NONE,F1PROM,F2PROM,F3PROM,F4PROM,F5PROM
 #define NOOP_YES 4
 #define NO_BYPASS 8
 
+// DMB & CFEB JTAG devices (real and virtual)
 #define D_CFEB 1
 #define CTRL_FPGA 2
 #define CTRL_PROM 3
 #define VME_PROM 4
 #define CFEB_PROM 5
 #define CFEB_FPGA 6
-
-#define Bit_Slip_Odd 17
-#define Bit_Slip_Even 18
-#define Chip_Sel 19
-#define EPROM_mcs 21
-#define EPROM_read_mcs 22
-#define EPROM_status_mcs 23
-#define EPROM_timer_mcs 24
-#define EPROM_reset_mcs 25
-#define EPROM_disablefifo_mcs 26
-#define EPROM_enablefifo_mcs 27
-#define COMP_Fine_Delay  28
-#define TMB_TX_MODE 29
-#define TMB_TX_SHIFTLAYERS 30
-#define TMB_TX_LAYER_MASK 31
-#define DAQRate_1p00GB 32
-#define DAQRate_2p56GB 33
-#define SEM_STATUS 37
-#define SEM_Reset_Error_Counters 38
-#define SEM_ERRCNT_READ 39
-#define L1AHEAD_DISABLE 42
-#define L1AHEAD_ENABLE 43
+#define XDCFEB_FPGA 7
+#define XDCFEB_PROM 10
+#define XDCFEB_DS 11
 
 // Xilinx Platform Flash PROM XCF32P
 #define XCF_DATA_DONE 0x09

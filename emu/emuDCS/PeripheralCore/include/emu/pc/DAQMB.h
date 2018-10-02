@@ -943,6 +943,10 @@ public:
   void SEM_control(CFEB &cfeb);
   void SEM_rst_doublerrorflag(CFEB &cfeb);
 
+  int read_xcv_prom(int dev, char *fn);
+  void cfeb_read_firmware(CFEB & cfeb, const char *mcsfile);
+  int cfeb_verify_firmware(CFEB & cfeb, const char *mcsfile);
+  
   int SVFLoad(int dev, const char *fn, int db, int verify );
   void dcfeb_program_eprom_Xilinx(CFEB & cfeb, const char *mcsfile, int broadcast=0);
   int cfeb_load_eprom(int ncfeb, const char  *svffile, int db, int verify );

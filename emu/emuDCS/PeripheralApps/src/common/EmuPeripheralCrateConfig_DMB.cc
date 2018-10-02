@@ -927,12 +927,12 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
   FuncName.push_back("21. write BPI FIFO (16)");
   FuncName.push_back("22. read BPI FIFO (16)");
   FuncName.push_back("23. read BPI status (16)");
-  FuncName.push_back("24. read BPI timer (16)");
+  FuncName.push_back("24. read BPI timer (32)");
   FuncName.push_back("25. Reset BPI");
   FuncName.push_back("26. Disable BPI");
   FuncName.push_back("27. Enable BPI");
   FuncName.push_back("28. Clock phase (5)");
-  FuncName.push_back("29. TMB transmit mode (2)");
+  FuncName.push_back("29. TMB transmit mode (3)");
   FuncName.push_back("30. TMB Half Strip");  
   FuncName.push_back("31. TMB Layer Mask");  
   FuncName.push_back("32. DAQ low");  
@@ -1617,9 +1617,9 @@ void EmuPeripheralCrateConfig::CFEBFunction(xgi::Input * in, xgi::Output * out )
   FuncSize.push_back(0);
   FuncSize.push_back(0);
   FuncSize.push_back(5);
-  FuncSize.push_back(2);
-  FuncSize.push_back(0);
-  FuncSize.push_back(0);
+  FuncSize.push_back(3);
+  FuncSize.push_back(30);
+  FuncSize.push_back(6);
   FuncSize.push_back(0);
   FuncSize.push_back(0);
   FuncSize.push_back(16);

@@ -7706,11 +7706,11 @@ void DAQMB::cfeb_do(int ncmd, void *cmd,int nbuf, void *inbuf,char *outbuf,int i
   */
    // code moved to daqmb_do()
    if(CFEBversion()<=1)
-     daqmb_do(ncmd, cmd, nbuf, inbuf, outbuf, irdsnd, 6);  // CFEB FPGA
+     daqmb_do(ncmd, cmd, nbuf, inbuf, outbuf, irdsnd, CFEB_FPGA);  // CFEB FPGA
    else if(CFEBversion()==2)
-     daqmb_do(ncmd, cmd, nbuf, inbuf, outbuf, irdsnd, 1);  // DCFEB FPGA
+     daqmb_do(ncmd, cmd, nbuf, inbuf, outbuf, irdsnd, D_CFEB);  // DCFEB FPGA
    else if(CFEBversion()==3)
-     daqmb_do(ncmd, cmd, nbuf, inbuf, outbuf, irdsnd, 7);  // xDCFEB FPGA
+     daqmb_do(ncmd, cmd, nbuf, inbuf, outbuf, irdsnd, XDCFEB_FPGA);  // xDCFEB FPGA
 }
 
 void DAQMB::dcfeb_fpga_call(int inst, unsigned data, char *outbuf)
@@ -10218,7 +10218,7 @@ void DAQMB::dcfeb_set_TMBTxMode(int cfeb_number, int mode){
     5       send 1/2 strip patterns to layers
     
   */
-  dcfeb_hub(cfebs_[cfeb_number], TMB_TX_MODE, 3, &mode, rcvbuf, NOW);  
+  dcfeb_hub(cfebs_[cfeb_number], TMB_TRANSMIT_MODE, 3, &mode, rcvbuf, NOW);  
 }
 
 void DAQMB::dcfeb_set_TMBTxModeShiftLayers(int cfeb_number, char hs[6]){
@@ -10227,11 +10227,11 @@ void DAQMB::dcfeb_set_TMBTxModeShiftLayers(int cfeb_number, char hs[6]){
     | ((hs[3] << 7) & 0x80);
   sndbuf[2] = ((hs[3] >> 1) & 0x0f) | ((hs[4] << 4) & 0xf0);
   sndbuf[3] = ((hs[4] >> 4) & 0x01) | ((hs[5] << 1) & 0x3e);
-  dcfeb_hub(cfebs_[cfeb_number], TMB_TX_SHIFTLAYERS, 30, sndbuf, rcvbuf, NOW);  
+  dcfeb_hub(cfebs_[cfeb_number], TMB_HALF_STRIP, 30, sndbuf, rcvbuf, NOW);  
 }
 
 void DAQMB::dcfeb_set_TMBTxModeLayerMask(int cfeb_number, int layer_mask){
-  dcfeb_hub(cfebs_[cfeb_number], TMB_TX_LAYER_MASK, 6, &layer_mask, rcvbuf, NOW);  
+  dcfeb_hub(cfebs_[cfeb_number], TMB_LAYER_MASK, 6, &layer_mask, rcvbuf, NOW);  
 }
 
 int DAQMB::dcfeb_read_config(CFEB &cfeb, int ival)
@@ -10875,7 +10875,7 @@ unsigned DAQMB::SEM_read_errcnt(CFEB &cfeb){
 //	[15:8] = multi_bit_err_cnt;
 //	[7:0]  = sngl_bit_err_cnt;
       unsigned tmp = 0xd5eedfba, rb;
-      dcfeb_hub(cfeb,SEM_ERRCNT_READ, 16, &tmp, (char *)&rb, READ_YES|NOW);
+      dcfeb_hub(cfeb,ECC_ERR_CNT, 16, &tmp, (char *)&rb, READ_YES|NOW);
       return (rb & 0xFFFF);
 }
 
@@ -10893,6 +10893,102 @@ void DAQMB::SEM_rst_doublerrorflag(CFEB &cfeb){
       unsigned tmp=0x0000;
       char buf[4];
       dcfeb_hub(cfeb,SEM_RST_DED, 8, &tmp, buf, NOW);
+}
+
+int DAQMB::read_xcv_prom(int dev, char *fn)
+{
+     //   CTRL_PROM: DMB PROM    (device 3)
+     //   VME_PROM:  VME PROM    (device 4)
+     //   CFEB_PROM:  CFEB PROM   (device 1 with head-tail)
+
+     int addrblock=0x40;  // each read block is always this size
+     int blocks=256;
+     int blocksize=4096;  // in bits
+     if(dev!=CTRL_PROM && dev!=VME_PROM && dev!=CFEB_PROM) return 0;
+     if(dev==CTRL_PROM) blocks *= 2;
+     if(dev==CTRL_PROM || dev==VME_PROM) blocksize *= 2;
+     int dataaddr=blocksize/8;  // in bytes
+     char temp[1200];
+
+     int cmd=PROM_ENABLE;
+     int data=0x34;
+     daqmb_do(8, (char *)&cmd, 6, (char *)&data, NULL, NOW, dev); 
+     for(int i=0; i<blocks; i++)
+     {
+         cmd=PROM_ADDRESS;
+         data=i*addrblock;
+         daqmb_do(8, (char *)&cmd, 6, (char *)&data, NULL, NOW, dev); 
+         cmd=PROM_READ;
+         daqmb_do(8, (char *)&cmd, 0, (char *)&data, NULL, NOW, dev); 
+         udelay(50);
+         daqmb_do(0, (char *)&cmd, blocksize, temp, fn+i*dataaddr, READ_YES|NOW, dev); 
+     }
+     cmd=PROM_DISABLE;
+     daqmb_do(8, (char *)&cmd, 0, (char *)&data, NULL, NOW, dev); 
+     udelay(110000);
+     cmd=PROM_BYPASS;
+     daqmb_do(8, (char *)&cmd, 0, (char *)&data, NULL, NOW, dev); 
+     return blocks*dataaddr;
+}
+
+void DAQMB::cfeb_read_firmware(CFEB & cfeb, const char *filename)
+{
+     const int PROM_SIZE=256*1024; // in bytes
+     FILE *mcsfile;
+
+     write_cfeb_selector(cfeb.SelectorBit());
+     char *buf=(char *)malloc(PROM_SIZE);
+     if(buf==NULL) return;
+
+     mcsfile=fopen(filename, "w");
+     if(mcsfile==NULL)
+      {
+         std::cout << "Unable to open file to write :" << filename << std::endl;
+         free(buf);
+         return;
+     }
+     int rt=read_xcv_prom(CFEB_PROM, buf);
+     if(rt>0) write_mcs(buf, rt, mcsfile);
+     fclose(mcsfile);
+     free(buf);
+}
+
+int DAQMB::cfeb_verify_firmware(CFEB & cfeb, const char *filename)
+{
+     //  RETURN CODE: 0:Good; >0:Error Count; <0: Failure.
+ 
+     const int PROM_SIZE=256*1024; // in bytes
+
+     write_cfeb_selector(cfeb.SelectorBit());
+     char *buf=(char *)malloc(2*PROM_SIZE);
+     if(buf==NULL) return -1;
+     char *buf2=buf+PROM_SIZE;
+
+     FILE *fin=fopen(filename,"r");
+     if(fin==NULL ) 
+     { 
+        free(buf);  
+        std::cout << "ERROR: Unable to open MCS file :" << filename << std::endl;
+        return -2; 
+     }
+     int mcssize=read_mcs(buf2, fin, PROM_SIZE);
+     fclose(fin);
+     int rt=read_xcv_prom(CFEB_PROM, buf);
+     int cmp=0;
+     if(rt>0 && mcssize>0)
+     {
+         for(int i=0; i< rt && i<mcssize; i++)
+         { 
+             if(buf[i]!=buf2[i]) cmp++;    
+         }     
+         free(buf);
+         return cmp;
+     }
+     else 
+     {   
+        free(buf);
+        return -3;
+     }
 }
 
 int DAQMB::SVFLoad(int dev, const char *fn, int db, int verify )
@@ -12533,7 +12629,7 @@ int DAQMB::cfeb_load_eprom(int ncfeb, const char  *svffile, int db, int verify )
 
 void DAQMB::ds4550_scan(int reg, char *snd,int cnt,char *rcv,int ird)
 {
-   int dev=11;
+   int dev=XDCFEB_DS;
    if(reg==0)      daqmb_do(4, snd,  0,  NULL, rcv, ird|NOW, dev);  // fixed instr.length = 4       
    else if(reg==1) daqmb_do(0, NULL, cnt, snd, rcv, ird|NOW, dev);               
 }
@@ -12547,7 +12643,7 @@ void DAQMB::xdprom_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip)
             
    char temp[8];
    if(chip<0 || chip>2) return;
-   int dev=10-chip;
+   int dev=XDCFEB_PROM-chip;
    if(reg==0) daqmb_do(16, snd, 0, NULL, rcv, ird|NOW, dev);  // fixed instr.length =16       
    else if(reg==1) daqmb_do(0, NULL, cnt, snd, rcv, ird|NOW, dev);               
 }

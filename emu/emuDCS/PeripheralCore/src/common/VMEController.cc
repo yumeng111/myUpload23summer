@@ -1462,7 +1462,7 @@ int VMEController::VME_controller(int irdwr,unsigned int ptr,unsigned short int 
     irdwr=1;  // delay always acts like a buffered WRITE command.
     if (data[1])
     {   irdwr=3;  //send immediately for longer delays  
-        std::cout << "WARNING: long delay, packet sent now." << std::endl;
+//        std::cout << "WARNING: long delay, packet sent now." << std::endl;
     }
   } 
 

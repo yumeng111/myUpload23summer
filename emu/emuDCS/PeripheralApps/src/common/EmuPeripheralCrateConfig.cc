@@ -22,7 +22,7 @@ namespace emu {
 typedef std::vector<CFEB>::iterator CFEBItr;
 
 const std::string       CFEB_FIRMWARE_FILENAME = "cfeb/cfeb_pro.svf";
-const std::string       CFEB_VERIFY_FILENAME = "cfeb/cfeb_verify.svf";
+const std::string       CFEB_VERIFY_FILENAME = "cfeb/cfeb_pro.mcs";
 const std::string       CFEB_COMPARE_FILENAME = "cfeb/eprom_cfeb.cmp";
 //
 const std::string       DMB_FIRMWARE_FILENAME   = "dmb/dmb6cntl_pro.svf";
@@ -402,7 +402,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBLoadFirmware, "CFEBLoadFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::CCBHardResetFromDMBPage, "CCBHardResetFromDMBPage");
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBReadFirmware, "CFEBReadFirmware");
-  xgi::bind(this,&EmuPeripheralCrateConfig::CFEBLoadFirmwareID, "CFEBLoadFirmwareID");
+  xgi::bind(this,&EmuPeripheralCrateConfig::CFEBVerifyFirmware, "CFEBVerifyFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::RdVfyCFEBVirtexDMB, "RdVfyCFEBVirtexDMB");
   xgi::bind(this,&EmuPeripheralCrateConfig::RdVfyCFEBVirtexExpT, "RdVfyCFEBVirtexExpT");
   xgi::bind(this,&EmuPeripheralCrateConfig::DMBCheckConfiguration, "DMBCheckConfiguration");
@@ -414,7 +414,6 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::ALCTDAVScan, "ALCTDAVScan");
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBUtils, "CFEBUtils");
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBFunction, "CFEBFunction");
-  xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBReadFirmware, "DCFEBReadFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBPromTest, "DCFEBPromTest");
   xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBPromTestFast, "DCFEBPromTestFast");
   xgi::bind(this,&EmuPeripheralCrateConfig::AllDCFEBsPromTestFast, "AllDCFEBsPromTestFast");

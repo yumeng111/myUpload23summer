@@ -1074,7 +1074,7 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::legend("DCFEB Firmware").set("style","color:blue") << std::endl ;
   //
   std::string CFEBreadfirm =
-      toolbox::toString("/%s/DCFEBReadFirmware",getApplicationDescriptor()->getURN().c_str());
+      toolbox::toString("/%s/CFEBReadFirmware",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("action", CFEBreadfirm) << std::endl;
   
   *out << "Choose CFEB: " << std::endl;
@@ -2082,10 +2082,9 @@ void EmuPeripheralCrateConfig::DCFEBParaErase(xgi::Input * in, xgi::Output * out
      this->CFEBUtils(in,out);                               
 }
  
-void EmuPeripheralCrateConfig::DCFEBReadFirmware(xgi::Input * in, xgi::Output * out )
+void EmuPeripheralCrateConfig::CFEBReadFirmware(xgi::Input * in, xgi::Output * out )
   throw (xgi::exception::Exception)
 {
-
   cgicc::Cgicc cgi(in);
 
   cgicc::form_iterator name = cgi.getElement("dmb");
@@ -2101,8 +2100,11 @@ void EmuPeripheralCrateConfig::DCFEBReadFirmware(xgi::Input * in, xgi::Output * 
   //
   DAQMB * thisDMB = dmbVector[dmb];
 
+  if(thisDMB)
+  {
      std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
      unsigned icfeb=atoi(cfeb_value.c_str());
+     std::cout << "CFEB #" << icfeb+1 << std::endl;
      std::vector<CFEB> cfebs = thisDMB->cfebs() ;
      if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
 
@@ -2119,9 +2121,14 @@ void EmuPeripheralCrateConfig::DCFEBReadFirmware(xgi::Input * in, xgi::Output * 
      } 
      std::string mcsfile;
 
-     std::cout << getLocalDateTime() << " DCFEB firmware read back from DMB " << dmb << " CFEB " << cfebs[icfeb].number()+1 << std::endl;
+     std::cout << getLocalDateTime() << " CFEB firmware read back from DMB " << dmb << " CFEB #" << (cfebs[icfeb].number()+1) << std::endl;
 
-     if(thisDMB->CFEBversion()==2)   
+     if(thisDMB->CFEBversion()<=1)   
+     {
+        mcsfile="/tmp/CFEB_"+chambername+"_C"+cfeb_value+".mcs";
+        thisDMB->cfeb_read_firmware(cfebs[icfeb], mcsfile.c_str());
+     }
+     else if(thisDMB->CFEBversion()==2)   
      {
         mcsfile="/tmp/DCFEB_"+chambername+"_C"+cfeb_value+".mcs";
         thisDMB->dcfeb_read_firmware(cfebs[icfeb], mcsfile.c_str());
@@ -2131,8 +2138,18 @@ void EmuPeripheralCrateConfig::DCFEBReadFirmware(xgi::Input * in, xgi::Output * 
         mcsfile="/tmp/xDCFEB_"+chambername+"_C"+cfeb_value+"_0.mcs";            
         thisDMB->xdcfeb_read_firmware(cfebs[icfeb], mcsfile.c_str(), imode);
      }
-     std::cout << getLocalDateTime() << " DCFEB firmware read back finished." << std::endl;
+     std::cout << getLocalDateTime() << " CFEB #" << (cfebs[icfeb].number()+1) << " firmware read back finished. Saved to " << mcsfile << std::endl;
+     if(thisDMB->CFEBversion()<=1)   
+        OutputStringDMBStatus[dmb] << getLocalDateTime() << " CFEB #" << (cfebs[icfeb].number()+1) << " firmware read back finished. Saved to " << mcsfile << std::endl;
+  }
+  if(thisDMB->CFEBversion()<=1)   
+  {
+     this->DMBUtils(in,out);
+  }
+  else
+  { 
      this->CFEBUtils(in,out);                    
+  }
 }
   
 void EmuPeripheralCrateConfig::DCFEBProgramFpgaAll(xgi::Input * in, xgi::Output * out )
@@ -3028,7 +3045,7 @@ if(D_hversion<=1)
   //
   std::string DMBVmeLoadFirmware = toolbox::toString("/%s/DMBVmeLoadFirmware",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",DMBVmeLoadFirmware) << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","DMB Vme Load Firmware") << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","DMB VME Load Firmware") << std::endl ;
   sprintf(buf,"%d",dmb);
   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
   *out << DMBVmeFirmware_.toString();
@@ -3038,9 +3055,7 @@ if(D_hversion<=1)
   //
   std::string DMBVmeLoadFirmwareEmergency = toolbox::toString("/%s/DMBVmeLoadFirmwareEmergency",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",DMBVmeLoadFirmwareEmergency) << std::endl ;
-  *out << "DMB Board Number:";
-  *out <<cgicc::input().set("type","text").set("value","0").set("name","DMBNumber")<<std::endl;
-  *out << cgicc::input().set("type","submit").set("value","DMB Vme Load Firmware (Emergency)") << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","DMB VME Load Firmware (Emergency)") << std::endl ;
   sprintf(buf,"%d",dmb);
   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
   *out << cgicc::form() << std::endl ;
@@ -3051,33 +3066,36 @@ if(D_hversion<=1)
   {
      std::string CFEBLoadFirmware = toolbox::toString("/%s/CFEBLoadFirmware",getApplicationDescriptor()->getURN().c_str());
      *out << cgicc::form().set("method","GET").set("action",CFEBLoadFirmware) << std::endl ;
-     *out << "CFEB to download (1-5), (-1 == all) : ";
-     *out << cgicc::input().set("type","text").set("value","-1").set("name","DMBNumber") << std::endl ;
+     *out << "CFEB (0-4), (-1 == all) : ";
+     *out << cgicc::input().set("type","text").set("value","0").set("name","cfeb") << std::endl ;
      *out << cgicc::input().set("type","submit").set("value","CFEB Load Firmware") << std::endl ;
      sprintf(buf,"%d",dmb);
      *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << CFEBFirmware_.toString();
+     *out << cgicc::form() << std::endl ;
+     //
+     *out << cgicc::br();
+     //
+     std::string CFEBVerifyFirmwareID = toolbox::toString("/%s/CFEBVerifyFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",CFEBVerifyFirmwareID) << std::endl ;
+     *out << "CFEB (0-4):";
+     *out << cgicc::input().set("type","text").set("value","0").set("name","cfeb");
+     *out << cgicc::input().set("type","submit").set("value","CFEB Verify Firmware") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << CFEBVerify_.toString();
      *out << cgicc::form() << std::endl ;
      //
      *out << cgicc::br();
 
-     std::string CFEBReadFirmware = toolbox::toString("/%s/CFEBReadFirmware",getApplicationDescriptor()->getURN().c_str());
-     *out << cgicc::form().set("method","GET").set("action",CFEBReadFirmware) << std::endl ;
-     *out << "CFEB to verify (0-4), (-1 == all) : ";
-     *out << cgicc::input().set("type","text").set("value","-1").set("name","DMBNumber") << std::endl ;
+     std::string CFEBReadFw = toolbox::toString("/%s/CFEBReadFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",CFEBReadFw) << std::endl ;
+     *out << "CFEB (0-4): ";
+     *out << cgicc::input().set("type","text").set("value","0").set("name","cfeb") << std::endl ;
      *out << cgicc::input().set("type","submit").set("value","CFEB Read Firmware") << std::endl ;
      sprintf(buf,"%d",dmb);
      *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
-     *out << cgicc::form() << std::endl ;
-     //
-     *out << cgicc::br();
-     //
-     std::string CFEBLoadFirmwareID = toolbox::toString("/%s/CFEBLoadFirmwareID",getApplicationDescriptor()->getURN().c_str());
-     *out << cgicc::form().set("method","GET").set("action",CFEBLoadFirmwareID) << std::endl ;
-     *out << "CFEB to download (1-5):";
-     *out << cgicc::input().set("type","text").set("value","0").set("name","DMBNumber");
-     *out << cgicc::input().set("type","submit").set("value","CFEB Load Firmware (NEW)") << std::endl ;
-     sprintf(buf,"%d",dmb);
-     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::input().set("type","hidden").set("value","0").set("name","mode");
      *out << cgicc::form() << std::endl ;
      //
      *out << cgicc::br();
@@ -3141,7 +3159,7 @@ else if(D_hversion==2)
 	//
   std::string CCBHardResetFromDMBPage = toolbox::toString("/%s/CCBHardResetFromDMBPage",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",CCBHardResetFromDMBPage) << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","CCB hard reset") << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","CCB Hard Reset") << std::endl ;
   *out << cgicc::form() << std::endl ;
   //
   *out << cgicc::fieldset();
@@ -3151,15 +3169,6 @@ else if(D_hversion==2)
   *out << cgicc::form().set("method","GET") << std::endl ;
   *out << cgicc::pre();
   *out << cgicc::textarea().set("name","CrateTestDMBOutput").set("rows","30").set("cols","132").set("WRAP","OFF");
-	if (total_bad_cfeb_bits >= 0) {
-		*out << "CFEB FPGA check:  Total bad bits =  " << std::dec << total_bad_cfeb_bits;
-		*out << ", total good bits = " << total_good_cfeb_bits;
-		*out << std::endl;
-		*out << "See latest cfebvirtex_check.log in ~/firmware/status_check for more details";
-		*out << std::endl;
-		total_bad_cfeb_bits = -1;	// Turn off display for next time.
-	}
-	*out << std::endl;
   *out << OutputStringDMBStatus[dmb].str() << std::endl ;
   *out << cgicc::textarea();
   OutputStringDMBStatus[dmb].str("");
@@ -3471,16 +3480,6 @@ void EmuPeripheralCrateConfig::DMBVmeLoadFirmwareEmergency(xgi::Input * in, xgi:
   //
   cgicc::Cgicc cgi(in);
   //
-  int dmbNumber = 0;
-  //
-  cgicc::form_iterator name2 = cgi.getElement("DMBNumber");
-  //int registerValue = -1;
-  if(name2 != cgi.getElements().end()) {
-    dmbNumber = cgi["DMBNumber"]->getIntegerValue();
-  }
-  //
-  std::cout << "Loading DMB# " <<dmbNumber << std::endl ;
-  //
   cgicc::form_iterator name = cgi.getElement("dmb");
   //
   int dmb=0;
@@ -3510,12 +3509,8 @@ void EmuPeripheralCrateConfig::DMBVmeLoadFirmwareEmergency(xgi::Input * in, xgi:
 
     std::string crate=thisCrate->GetLabel();
     int slot=thisDMB->slot();
-    int dmbID=0;
-    dword[0]=dmbNumber&0x03ff;
+    dword[0]=0;
     dword[1]=0xDB00;
-    if (((dmbNumber&0xfff)==0)||((dmbNumber&0xfff)==0xfff)) dword[0]=dmbID&0x03ff;
-
-    std::cout<<" The DMB number is set to: "<<dword[0]<<" Entered: "<<dmbNumber<<" Database lookup: "<<dmbID<<std::endl;
     char * outp=(char *)dword;  
     thisDMB->epromload(RESET,DMBVmeFirmware_.toString().c_str(),1,outp);  // load mprom
   }
@@ -3526,244 +3521,71 @@ void EmuPeripheralCrateConfig::DMBVmeLoadFirmwareEmergency(xgi::Input * in, xgi:
   //
 }
 //
-void EmuPeripheralCrateConfig::CFEBReadFirmware(xgi::Input * in, xgi::Output * out ) 
-  throw (xgi::exception::Exception) 
-{
-  //
-  LOG4CPLUS_INFO(getApplicationLogger(),"Started CFEB firmware Verify");
-  //
-  cgicc::Cgicc cgi(in);
-  //
-  int dmbNumber = -1;
-  //
-  cgicc::form_iterator name2 = cgi.getElement("DMBNumber");
-  //int registerValue = -1;
-  if(name2 != cgi.getElements().end()) {
-    dmbNumber = cgi["DMBNumber"]->getIntegerValue();
-  }
-  //
-  //std::cout << "CFEB Number " <<dmbNumber << std::endl ;
-  //*out << cgicc::br();
-  //
-  cgicc::form_iterator name = cgi.getElement("dmb");
-  //
-  int dmb=0;
-  if(name != cgi.getElements().end()) {
-    dmb = cgi["dmb"]->getIntegerValue();
-    std::cout << "DMB " << dmb << std::endl;
-    DMB_ = dmb;
-  }
-  //
-  DAQMB * thisDMB = dmbVector[dmb];
-    //
-    std::cout << "CFEBReadFirmware - DMB " << dmb << std::endl;
-    //
-    thisCCB->hardReset();
-    //
-    if (thisDMB) {
-      // check the CFEB EPROM firmware first
-      //
-      std::vector<CFEB> thisCFEBs = thisDMB->cfebs();
-      //
-      ::sleep(1);
-      //
-      if (dmbNumber == -1 ) { // This, actually, is a CFEB number, not DMB
-	for (unsigned int i=0; i<thisCFEBs.size(); i++) {
-	  std::ostringstream dum;
-	  dum << "Verifying CFEB firmware for DMB=" << dmb << " CFEB="<< i << std::endl;
-	  LOG4CPLUS_INFO(getApplicationLogger(), dum.str());
-	  unsigned short int dword[2];
-	  dword[0]=thisDMB->febpromuser(thisCFEBs[i]);
-	  CFEBid_[dmb][i] = dword[0];  // fill summary file with user ID value read from this CFEB
-	  char * outp=(char *)dword;   // recast dword
-	  unlink("/tmp/eprom.bit");
-	  thisDMB->epromload_verify(thisCFEBs[i].promDevice(),CFEBVerify_.toString().c_str(),1,outp);  // load mprom
-	  // create a report from the results above 
-	  std::ostringstream logs;
-	  int erropen = thisDMB->check_eprom_readback("/tmp/eprom.bit",CFEBCompare_.toString().c_str()); // hardcoded file name; bad, but I didn't start it //KK
-	  if(erropen>=0){
-	     logs<<" Total number of bad bits: "<<thisDMB->GetNumberOfBadReadbackBits()<<std::endl;
-	     for(unsigned int bit=0; bit<thisDMB->GetNumberOfBadReadbackBits() && bit<20; bit++ ){
-	        logs << " broken word position: " << std::setw(6) << thisDMB->GetWordWithBadReadbackBit(bit)
-	             << ", bad bit position: " << thisDMB->GetBadReadbackBitPosition(bit)
-	             << ", bad bit type (type=0 1->0 type=1 0->1): "<< thisDMB->GetBadReadbackBitType(bit)
-	             << std::endl;
-	     }
-             if( thisDMB->GetNumberOfBadReadbackBits()>20 ) logs << "  only first 20 bad CFEB firmware bits were reported above " << std::endl;
-	  } else {
-	     logs << " file error in check_eprom_readback" << std::endl;
-	  }
-	  LOG4CPLUS_INFO(getApplicationLogger(), logs.str());
-	}
-      } else {
-	std::cout << "Verifying CFEB firmware for DMB=" << dmb << " CFEB="<< dmbNumber << std::endl;
-	unsigned short int dword[2];
-	for (unsigned int i=0; i<thisCFEBs.size(); i++) {
-	  if (thisCFEBs[i].number() == dmbNumber ) {
-	    dword[0]=thisDMB->febpromuser(thisCFEBs[i]);
-	    CFEBid_[dmb][i] = dword[0];  // fill summary file with user ID value read from this CFEB
-	    char * outp=(char *)dword;   // recast dword
-	    unlink("/tmp/eprom.bit");
-	    thisDMB->epromload_verify(thisCFEBs[i].promDevice(),CFEBVerify_.toString().c_str(),1,outp);  // load mprom
-	    // create a report from the results above 
-	    std::ostringstream logs;
-	    int erropen = thisDMB->check_eprom_readback("/tmp/eprom.bit",CFEBCompare_.toString().c_str()); // hardcoded file name; bad, but I didn't start it //KK
-	    if(erropen>=0){
-	       logs<<" Total number of bad bits: "<<thisDMB->GetNumberOfBadReadbackBits()<<std::endl;
-	       for(unsigned int bit=0; bit<thisDMB->GetNumberOfBadReadbackBits() && bit<20; bit++ ){
-	          logs << " broken word position: " << std::setw(6) << thisDMB->GetWordWithBadReadbackBit(bit)
-	               << ", bad bit position: " << thisDMB->GetBadReadbackBitPosition(bit)
-	               << ", bad bit type (type=0 1->0 type=1 0->1): "<< thisDMB->GetBadReadbackBitType(bit)
-	               << std::endl;
-	       }
-               if( thisDMB->GetNumberOfBadReadbackBits()>20 ) logs << "  only first 20 bad CFEB firmware bits were reported above " << std::endl;
-	    } else {
-	       logs << " file error in check_eprom_readback" << std::endl;
-	    }
-	    LOG4CPLUS_INFO(getApplicationLogger(), logs.str());
-	  }
-	}
-      }
-
-#if 0
-      //
-      // check the DMB MPROM firmware
-      std::cout << "Verifying DMB MPROM firmware for DMB=" << dmb << std::endl;
-      unsigned short int dword[2];
-      dword[0]=0;
-      char * outp=(char *)dword;   // recast dword
-      unlink("/tmp/eprom.bit");
-      thisDMB->epromload_verify(MPROM, DMBVerify_.toString().c_str(), 1, outp);    // dmb mprom
-      // create a report from the results above 
-      std::ostringstream logs;
-      int erropen = thisDMB->check_eprom_readback("/tmp/eprom.bit",DMBCompare_.toString().c_str()); // hardcoded file name; bad, but I didn't start it //KK
-      if(erropen>=0){
-         logs<<" Total number of bad bits: "<<thisDMB->GetNumberOfBadReadbackBits()<<std::endl;
-         for(unsigned int bit=0; bit<thisDMB->GetNumberOfBadReadbackBits() && bit<20; bit++ ){
-            logs << " broken word position: " << std::setw(6) << thisDMB->GetWordWithBadReadbackBit(bit)
-                 << ", bad bit position: " << thisDMB->GetBadReadbackBitPosition(bit)
-                 << ", bad bit type (type=0 1->0 type=1 0->1): "<< thisDMB->GetBadReadbackBitType(bit)
-                 << std::endl;
-         }
-         if( thisDMB->GetNumberOfBadReadbackBits()>20 ) logs << "  only first 20 bad DMB MPROM firmware bits were reported above " << std::endl;
-      } else {
-         logs << " file error in check_eprom_readback" << std::endl;
-      }
-      LOG4CPLUS_INFO(getApplicationLogger(), logs.str());
-
-      // check the DMB VPROM firmware
-      std::cout << "Verifying DMB VPROM firmware for DMB=" << dmb << std::endl;
-
-      dword[0]=thisDMB->mbpromuser(0);
-      dword[1]=0xdb00;
-      outp=(char *)dword;   // recast dword
-      unlink("/tmp/eprom.bit");
-      thisDMB->epromload_verify(VPROM, DMBVmeVerify_.toString().c_str(), 1, outp);    // dmb mprom
-      // create a report from the results above 
-      std::ostringstream logs2;
-      erropen = thisDMB->check_eprom_readback("/tmp/eprom.bit",DMBVmeCompare_.toString().c_str()); // hardcoded file name; bad, but I didn't start it //KK
-      if(erropen>=0){
-         logs2<<" Total number of bad bits: "<<thisDMB->GetNumberOfBadReadbackBits()<<std::endl;
-         for(unsigned int bit=0; bit<thisDMB->GetNumberOfBadReadbackBits() && bit<20; bit++ ){
-            logs2 << " broken word position: " << std::setw(6) << thisDMB->GetWordWithBadReadbackBit(bit)
-                 << ", bad bit position: " << thisDMB->GetBadReadbackBitPosition(bit)
-                 << ", bad bit type (type=0 1->0 type=1 0->1): "<< thisDMB->GetBadReadbackBitType(bit)
-                 << std::endl;
-         }
-         if( thisDMB->GetNumberOfBadReadbackBits()>20 ) logs2 << "  only first 20 bad DMB VPROM firmware bits were reported above " << std::endl;
-      } else {
-         logs2 << " file error in check_eprom_readback" << std::endl;
-      }
-      LOG4CPLUS_INFO(getApplicationLogger(), logs2.str());
-#endif
-    }
-    ::sleep(1);
-    thisCCB->hardReset();
-  this->DMBUtils(in,out);
-  //
-}
-//
-void EmuPeripheralCrateConfig::CFEBLoadFirmware(xgi::Input * in, xgi::Output * out ) 
+void EmuPeripheralCrateConfig::CFEBVerifyFirmware(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {
   //
-  LOG4CPLUS_INFO(getApplicationLogger(),"Started CFEB firmware download");
-  //
   cgicc::Cgicc cgi(in);
-  //
-  int dmbNumber = -1;
-  //
-  cgicc::form_iterator name2 = cgi.getElement("DMBNumber");
-  //int registerValue = -1;
-  if(name2 != cgi.getElements().end()) {
-    dmbNumber = cgi["DMBNumber"]->getIntegerValue();
-  }
-  //
-  std::cout << "Loading CFEB " <<dmbNumber << std::endl ;
-  dmbNumber--;
-  std::cout << "... which is " << dmbNumber << " according to the software... " << std::endl;
-  //*out << "Loading DMBNumber " <<dmbNumber ;
-  //*out << cgicc::br();
-  //
+
   cgicc::form_iterator name = cgi.getElement("dmb");
-  //
   int dmb=0;
   if(name != cgi.getElements().end()) {
     dmb = cgi["dmb"]->getIntegerValue();
     std::cout << "DMB " << dmb << std::endl;
     DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
   }
   //
   DAQMB * thisDMB = dmbVector[dmb];
-  int mindmb = dmb;
-  int maxdmb = dmb+1;
-  if (thisDMB->slot() == 25) { //if DMB slot = 25, loop over each cfeb
-    mindmb = 0;
-    maxdmb = dmbVector.size()-1;
+
+  if(thisDMB)
+  {
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::cout << "CFEB #" << icfeb+1 << std::endl;
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+
+     OutputStringDMBStatus[dmb].clear();
+     std::string mcsfile;
+
+     std::cout << getLocalDateTime() << " CFEB firmware verify from DMB " << dmb << " CFEB #" << (cfebs[icfeb].number()+1);
+     int rt;
+     if(thisDMB->CFEBversion()<=1)   
+     {
+        mcsfile=CFEBVerify_.toString();
+        std::cout << ", use file " << mcsfile << std::endl;
+        rt=thisDMB->cfeb_verify_firmware(cfebs[icfeb], mcsfile.c_str());
+     }
+     else if(thisDMB->CFEBversion()==2)   
+     {
+     //   rt=thisDMB->dcfeb_verify_firmware(cfebs[icfeb], mcsfile.c_str());
+     }
+     else
+     {
+     //   rt=thisDMB->xdcfeb_verify_firmware(cfebs[icfeb], mcsfile.c_str(), imode);
+     }
+     if(rt==0)
+     {
+          std::cout << getLocalDateTime()  << " CFEB #" << (cfebs[icfeb].number()+1) << " firmware verify finished. No error." << std::endl;
+          OutputStringDMBStatus[dmb] << getLocalDateTime()  << " CFEB #" << (cfebs[icfeb].number()+1) << " firmware verify finished. No error." << std::endl;
+     }
+     else if(rt>0)
+     {
+          std::cout << getLocalDateTime()  << " ERROR: CFEB #" << (cfebs[icfeb].number()+1) << " firmware verify finished with " << rt << " error(s)." << std::endl;
+          OutputStringDMBStatus[dmb] << getLocalDateTime()  << " ERROR: CFEB #" << (cfebs[icfeb].number()+1) << " firmware verify finished with " << rt << " error(s)." << std::endl;
+     }
+     else 
+     {
+          std::cout << getLocalDateTime()  << " ERROR: CFEB #" << (cfebs[icfeb].number()+1) << " firmware verify failed with code: " << rt << std::endl;
+          OutputStringDMBStatus[dmb] << getLocalDateTime()  << " ERROR: CFEB #" << (cfebs[icfeb].number()+1) << " firmware verify failed with code: " << rt << std::endl;
+     }     
   }
-  for (dmb=mindmb; dmb<maxdmb; dmb++) {
-    //
-    thisDMB = dmbVector[dmb];
-    //
-    std::cout << "CFEBLoadFirmware - DMB " << dmb << std::endl;
-    //
-    //    thisCCB->hardReset();
-    //
-    if (thisDMB) {
-      //
-      std::vector<CFEB> thisCFEBs = thisDMB->cfebs();
-      //
-      ::sleep(1);
-      //
-      if (dmbNumber == -2 || dmbNumber == -1) {
-	for (unsigned int i=0; i<thisCFEBs.size(); i++) {
-	  std::ostringstream dum;
-	  dum << "loading CFEB firmware for DMB=" << dmb << " CFEB="<< i << std::endl;
-	  LOG4CPLUS_INFO(getApplicationLogger(), dum.str());
-	  unsigned short int dword[2];
-	  dword[0]=thisDMB->febpromuser(thisCFEBs[i]);
-	  CFEBid_[dmb][i] = dword[0];  // fill summary file with user ID value read from this CFEB
-	  char * outp=(char *)dword;   // recast dword
-	  thisDMB->epromload(thisCFEBs[i].promDevice(),CFEBFirmware_.toString().c_str(),1,outp);  // load mprom
-	}
-      } else {
-	std::cout << "loading CFEB firmware for DMB=" << dmb << " CFEB="<< dmbNumber << std::endl;
-	unsigned short int dword[2];
-	for (unsigned int i=0; i<thisCFEBs.size(); i++) {
-	  if (thisCFEBs[i].number() == dmbNumber ) {
-	    dword[0]=thisDMB->febpromuser(thisCFEBs[i]);
-	    CFEBid_[dmb][i] = dword[0];  // fill summary file with user ID value read from this CFEB
-	    char * outp=(char *)dword;   // recast dword
-	    thisDMB->epromload(thisCFEBs[i].promDevice(),CFEBFirmware_.toString().c_str(),1,outp);  // load mprom
-	  }
-	}
-      }
-    }
-    //    ::sleep(1);
-    //    thisCCB->hardReset();
-  }
-  //
-  this->DMBUtils(in,out);
-  //
+  if(thisDMB->CFEBversion()<=1)   
+     this->DMBUtils(in,out);
+  else
+     this->CFEBUtils(in,out);                    
 }
 //
 void EmuPeripheralCrateConfig::CCBHardResetFromDMBPage(xgi::Input * in, xgi::Output * out ) 
@@ -3776,19 +3598,16 @@ void EmuPeripheralCrateConfig::CCBHardResetFromDMBPage(xgi::Input * in, xgi::Out
 }
 
 // This uses the new JTAG routine to load CFEB firmware
-void EmuPeripheralCrateConfig::CFEBLoadFirmwareID(xgi::Input * in, xgi::Output * out ) 
+void EmuPeripheralCrateConfig::CFEBLoadFirmware(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {
-  //
-  LOG4CPLUS_INFO(getApplicationLogger(),"Started CFEB firmware download with Board_number");
   //
   cgicc::Cgicc cgi(in);
   //
-  int dmbNumber = -1;
+  int icfeb = 0;
   //
-  cgicc::form_iterator name2 = cgi.getElement("DMBNumber");
-  //int registerValue = -1;
+  cgicc::form_iterator name2 = cgi.getElement("cfeb");
   if(name2 != cgi.getElements().end()) {
-    dmbNumber = cgi["DMBNumber"]->getIntegerValue();
+    icfeb = cgi["cfeb"]->getIntegerValue();
   }
   //
   cgicc::form_iterator name = cgi.getElement("dmb");
@@ -3801,25 +3620,32 @@ void EmuPeripheralCrateConfig::CFEBLoadFirmwareID(xgi::Input * in, xgi::Output *
   }
   //
   DAQMB * thisDMB = dmbVector[dmb];
-  std::cout << "CFEBLoadFirmware - DMB " << dmb << std::endl;
-  //
-  if (thisDMB) {
+  if (thisDMB) 
+  {
+    std::cout << "CFEBLoadFirmware - DMB " << dmb << std::endl;
     //
     std::vector<CFEB> thisCFEBs = thisDMB->cfebs();
-    //
-    std::ostringstream dum;
-    dum << "loading CFEB firmware for DMB=" << dmb << " CFEB="<< dmbNumber << std::endl;
-    LOG4CPLUS_INFO(getApplicationLogger(), dum.str());
     bool goodcfeb=false;
-    for (unsigned int i=0; i<thisCFEBs.size(); i++) 
+    if(icfeb==-1)
     {
-      if (thisCFEBs[i].number() == (dmbNumber-1) ) 
-      {
-         thisDMB->write_cfeb_selector(thisCFEBs[i].SelectorBit());
-         goodcfeb=true;
-      }
+        std::cout << "Loading CFEB firmware to all CFEBs" << std::endl;
+        thisDMB->write_cfeb_selector(0x1F);
+        goodcfeb=true;
+
     }
-    if(goodcfeb) thisDMB->SVFLoad(5,CFEBFirmware_.toString().c_str(),0,1);
+    else
+    {
+        std::cout << "Loading CFEB firmware to CFEB #"<< (icfeb+1) << std::endl;
+        for (unsigned int i=0; i<thisCFEBs.size(); i++) 
+        {
+          if (thisCFEBs[i].number() == icfeb ) 
+          {
+             thisDMB->write_cfeb_selector(thisCFEBs[i].SelectorBit());
+             goodcfeb=true;
+          }
+        }
+    }
+    if(goodcfeb) thisDMB->SVFLoad(CFEB_PROM,CFEBFirmware_.toString().c_str(),0,1);
   }
   this->DMBUtils(in,out);
   //

@@ -424,7 +424,7 @@ private:
   void CFEBLoadFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void CCBHardResetFromDMBPage(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);  
   void CFEBReadFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
-  void CFEBLoadFirmwareID(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void CFEBVerifyFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
 	void ScanCFEBVirtex(DAQMB *const thisDMB, Chamber *const thisChamber, std::ofstream &LogFileCheckCFEBVtx,
 		const std::string &checkDir) throw (xgi::exception::Exception);
   void RdVfyCFEBVirtex(const int dmbIndex) throw (xgi::exception::Exception); 
@@ -438,7 +438,6 @@ private:
   void AllDCFEBsPromTestFast(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void DCFEBParaPrint(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void DCFEBParaErase(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
-  void DCFEBReadFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void DCFEBProgramFpga(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void DCFEBProgramFpgaAll(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void DCFEBProgramEprom(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 

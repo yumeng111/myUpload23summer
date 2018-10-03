@@ -9084,7 +9084,7 @@ void DAQMB::daqmb_do(int ncmd, void *cmd,int nbuf, void *inbuf,char *outbuf,int 
          return;
      }
      if(ncmd>0) Jtag_Lite(DAQMB_DEV, 0, (char *)cmd,ncmd, outbuf,0,(nbuf>0)?LATER:(irdsnd&NOW));
-     //   if(ncmd>0 && nbuf>0) vme_delay(100); 
+     if(ncmd>0 && nbuf>0) vme_delay(10); 
      if(nbuf>0) Jtag_Lite(DAQMB_DEV, 1,(char *)inbuf,nbuf,outbuf,(irdsnd>>1)&1,irdsnd&NOW);
 
      // send empty clocks |nbuf|, inbuf & outbuf not used
@@ -10909,17 +10909,24 @@ int DAQMB::read_xcv_prom(int dev, char *fn)
      if(dev==CTRL_PROM || dev==VME_PROM) blocksize *= 2;
      int dataaddr=blocksize/8;  // in bytes
      char temp[1200];
+     bzero(temp, 1200);
+
+     theController->SetUseDelay(true);
 
      int cmd=PROM_ENABLE;
      int data=0x34;
      daqmb_do(8, (char *)&cmd, 6, (char *)&data, NULL, NOW, dev); 
+     udelay(100);
      for(int i=0; i<blocks; i++)
      {
          cmd=PROM_ADDRESS;
          data=i*addrblock;
-         daqmb_do(8, (char *)&cmd, 6, (char *)&data, NULL, NOW, dev); 
+         daqmb_do(8, (char *)&cmd, 16, (char *)&data, NULL, NOW, dev); 
+         // daqmb_do(0, (char *)&cmd, -2, temp, NULL, NOW, dev);
+         udelay(5);
          cmd=PROM_READ;
          daqmb_do(8, (char *)&cmd, 0, (char *)&data, NULL, NOW, dev); 
+         //daqmb_do(0, (char *)&cmd, -2, temp, NULL, NOW, dev);
          udelay(50);
          daqmb_do(0, (char *)&cmd, blocksize, temp, fn+i*dataaddr, READ_YES|NOW, dev); 
      }
@@ -10933,6 +10940,7 @@ int DAQMB::read_xcv_prom(int dev, char *fn)
 
 void DAQMB::cfeb_read_firmware(CFEB & cfeb, const char *filename)
 {
+     const int FIRMWARE_SIZE=69900; // in bytes
      const int PROM_SIZE=256*1024; // in bytes
      FILE *mcsfile;
 
@@ -10948,7 +10956,7 @@ void DAQMB::cfeb_read_firmware(CFEB & cfeb, const char *filename)
          return;
      }
      int rt=read_xcv_prom(CFEB_PROM, buf);
-     if(rt>0) write_mcs(buf, rt, mcsfile);
+     if(rt>=FIRMWARE_SIZE) write_mcs(buf, FIRMWARE_SIZE, mcsfile);
      fclose(mcsfile);
      free(buf);
 }
@@ -10957,6 +10965,7 @@ int DAQMB::cfeb_verify_firmware(CFEB & cfeb, const char *filename)
 {
      //  RETURN CODE: 0:Good; >0:Error Count; <0: Failure.
  
+     const int FIRMWARE_SIZE=69900; // in bytes
      const int PROM_SIZE=256*1024; // in bytes
 
      write_cfeb_selector(cfeb.SelectorBit());
@@ -10975,9 +10984,9 @@ int DAQMB::cfeb_verify_firmware(CFEB & cfeb, const char *filename)
      fclose(fin);
      int rt=read_xcv_prom(CFEB_PROM, buf);
      int cmp=0;
-     if(rt>0 && mcssize>0)
+     if(rt>=FIRMWARE_SIZE && mcssize>=FIRMWARE_SIZE)
      {
-         for(int i=0; i< rt && i<mcssize; i++)
+         for(int i=0; i< FIRMWARE_SIZE; i++)
          { 
              if(buf[i]!=buf2[i]) cmp++;    
          }     
@@ -10986,8 +10995,8 @@ int DAQMB::cfeb_verify_firmware(CFEB & cfeb, const char *filename)
      }
      else 
      {   
-        free(buf);
-        return -3;
+         free(buf);
+         return -3;
      }
 }
 

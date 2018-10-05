@@ -469,6 +469,7 @@ private:
   void TMBDumpAllRegisters(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void TMBFiberReset(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void TMBClearUserProms(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void TMBReadUserProms(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void HardResetTmbFpga(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void UnjamTMB(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void UnjamTmbFpga(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 

@@ -12325,7 +12325,7 @@ void TMB::otmb_program_eprom(const char *mcsfile)
 
 void TMB::new_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chain)
 {
-   // same interface as regular scan() but with chain seletion
+   // same interface as regular scan() but with chain seletion, default chain=1
    // chain=0  --> not used
    //       1  TMB Mez (FPGA+PROM)  <chip access>
    //       2  TMB User PROMs       <chip access>
@@ -12350,7 +12350,7 @@ void TMB::new_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chain)
    bool useboot=false;
    if( jchain==1 || ((chain>>8) & 0xF)==1) useboot=true;   
    unsigned long TDI=0, TMS=1, TCK=2, TDO=15; 
-   int TIR[18]={ 0, 6,14,22,30, 0, 5, 0, 5,13, 0, 8, 0, 6,22, 0, 6,22}, 
+   int TIR[18]={ 0, 6,14,22,30, 0, 8, 0, 5,13, 0, 8, 0, 6,22, 0, 6,22}, 
        HIR[18]={32,24,16, 8, 0, 8, 0,16, 8, 0, 8, 0,32,16, 0,20, 4, 0},
        HDR[18]={ 4, 3, 2, 1, 0, 1, 0, 2, 1, 0, 1, 0, 2, 1, 0, 2, 1, 0}, 
        TDR[18]={ 0, 1, 2, 3, 4, 0, 1, 0, 1, 2, 0, 1, 0, 1, 2, 0, 1, 2}; 
@@ -12387,6 +12387,135 @@ void TMB::new_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chain)
    Jtag_Norm(handle, reg, buff, ncnt, rbuff, ird, NOW);
    if(chip>0 && reg==1) cut_headtail(rbuff, ncnt, TDR[shiftpos], HDR[shiftpos]);
    if((rcv!=NULL) && (cnt>0)) memcpy(rcv,rbuff, (cnt+7)/8);
+}
+
+void TMB::new_RestoreIdle(int dev)
+{
+     new_scan(0, NULL, -1, NULL, NOW, dev); 
+}
+
+int TMB::read_user_prom(int chip, char *fn)
+{
+     //   chip=0: PROM0    (for TMB)
+     //       =1: PROM1    (for ALCT)
+
+     int addrblock=0x40;  // each read block is always this size
+     int blocks=64;
+     int blocksize=4096;  // in bits
+     if(chip!=0 && chip!=1) return -1;
+     int dataaddr=blocksize/8;  // in bytes
+     char temp[1200];
+     bzero(temp, 1200);
+
+     int dev= 2 + 0x10*(chip+1);  // use bootstrap register
+     theController->SetUseDelay(true);
+     new_RestoreIdle(dev);
+
+     int cmd=PROM_IDCODE;
+     int data=0x0;
+     unsigned int promid=0;
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
+     new_scan(1, (char *)&data, 32, (char *)&promid, READ_YES|NOW, dev); 
+     std::cout << "Read User Prom " << chip << ", IDCODE=" << std::hex  << promid << std::dec;
+     if((promid&0xFFFF)==0x2093)
+     {   // XC18V256
+         std::cout << ", type=XC18V256. " << std::endl;
+     }
+     else if((promid&0xFFFF)==0x3093)
+     {   // XC18V512
+         std::cout << ", type=XC18V512. " << std::endl;
+         blocks *=2;
+     }
+     else
+     {
+         std::cout << ". Failed to access User Prom. Abort..." << std::endl;
+         return -2;
+     }
+     cmd=PROM_ENABLE;
+     data=0x34;
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
+     new_scan(1, (char *)&data, 6, NULL, NOW, dev); 
+     udelay(100);
+     for(int i=0; i<blocks; i++)
+     {
+         cmd=PROM_ADDRESS;
+         data=i*addrblock;
+         new_scan(0, (char *)&cmd, 8,  NULL, NOW, dev); 
+         new_scan(1, (char *)&data, 16, NULL, NOW, dev); 
+         udelay(5);
+         cmd=PROM_READ;
+         new_scan(0, (char *)&cmd, 8, NULL,NOW, dev); 
+         udelay(50);
+         new_scan(1, temp, blocksize,  fn+i*dataaddr, READ_YES|NOW, dev); 
+     }
+     cmd=PROM_DISABLE;
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
+     udelay(110000);
+     cmd=PROM_BYPASS;
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
+     return blocks*dataaddr;
+}
+
+void TMB::read_user_prom_mcs(int chip, const char *filename)
+{
+     //   chip=0: PROM0    (for TMB)
+     //       =1: PROM1    (for ALCT)
+
+     const int PROM_SIZE=64*1024; // in bytes
+     FILE *mcsfile;
+
+     char *buf=(char *)malloc(PROM_SIZE);
+     if(buf==NULL) return;
+
+     mcsfile=fopen(filename, "w");
+     if(mcsfile==NULL)
+      {
+         std::cout << "Unable to open file to write :" << filename << std::endl;
+         free(buf);
+         return;
+     }
+     int rt=read_user_prom(chip, buf);
+     if(rt>=0 && rt<=PROM_SIZE) write_mcs(buf, rt, mcsfile);
+     fclose(mcsfile);
+     free(buf);
+}
+
+void TMB::erase_user_prom(int chip)
+{
+     //   chip=0: PROM0    (for TMB)
+     //       =1: PROM1    (for ALCT)
+
+     int addrblock=0x40;  // each read block is always this size
+     int blocks=256;
+     int blocksize=4096;  // in bits
+     if(chip!=CTRL_PROM && chip!=VME_PROM) return;
+     int dataaddr=blocksize/8;  // in bytes
+     char temp[1200];
+     bzero(temp, 1200);
+
+     int dev= 2 + 0x10*(chip+1) + 0x100;  // use bootstrap register
+     theController->SetUseDelay(true);
+     new_RestoreIdle(dev);
+
+     int cmd=PROM_ENABLE;
+     int data=0x34;
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
+     new_scan(1, (char *)&data, 6, NULL, NOW, dev); 
+     udelay(100);
+         cmd=PROM_ADDRESS;
+         data=1;
+         new_scan(0, (char *)&cmd, 8,  NULL, NOW, dev); 
+         new_scan(1, (char *)&data, 16, NULL, NOW, dev); 
+         udelay(5);
+         cmd=PROM_ERASE;
+         new_scan(0, (char *)&cmd, 8, NULL,NOW, dev); 
+         ::sleep(15);
+     cmd=PROM_DISABLE;
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
+     udelay(110000);
+     cmd=PROM_BYPASS;
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
+     return;
 }
   
 } // namespace emu::pc

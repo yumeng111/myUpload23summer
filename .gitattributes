@@ -1752,7 +1752,6 @@ emu/emuDCS/PeripheralApps/src/common/CalibDAQ.cc -text
 emu/emuDCS/PeripheralApps/src/common/ChamberUtilities.cc -text
 emu/emuDCS/PeripheralApps/src/common/CrateUtilities.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuCompareMcsFiles.cc -text
-emu/emuDCS/PeripheralApps/src/common/EmuController.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuEndcapConfigWrapper.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPCrateConfigTStore.cc -text
 emu/emuDCS/PeripheralApps/src/common/EmuPeripheralCrateBase.cc -text

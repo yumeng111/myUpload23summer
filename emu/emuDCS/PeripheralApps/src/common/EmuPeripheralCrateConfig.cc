@@ -471,6 +471,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBFiberReset, "TMBFiberReset");
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBConfigure, "TMBConfigure");
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBClearUserProms, "TMBClearUserProms");
+  xgi::bind(this,&EmuPeripheralCrateConfig::TMBReadUserProms, "TMBReadUserProms");
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBReadConfiguration, "TMBReadConfiguration");
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBCheckConfiguration, "TMBCheckConfiguration");
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBReadStateMachines, "TMBReadStateMachines");
@@ -3305,6 +3306,7 @@ void EmuPeripheralCrateConfig::PowerOnFixCFEB(xgi::Input * in, xgi::Output * out
   //    *out << cgicc::br();
   //  }
   //
+  *out << cgicc::span().set("style","color:black") << cgicc::h3("Attention: It is strongly recommended to re-start the application before doing Step 1). ") << cgicc::span();
   *out << cgicc::br();
   //
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
@@ -3710,8 +3712,8 @@ void EmuPeripheralCrateConfig::FixCFEB(xgi::Input * in, xgi::Output * out )
       TMB * thisTMB = tmbVector[chamber_index];
       ALCTController  * thisALCT = thisTMB->alctController();
       //
-      if (!thisALCT) {
-	std::cout << "This ALCT not defined" << std::endl;
+      if (!thisALCT || (thisALCT->ALCTversion()>=2)) {
+	std::cout << "ALCT not defined or No action needed" << std::endl;
 	SetCurrentCrate(initial_crate);
 	this->PowerOnFixCFEB(in,out);
       }
@@ -3895,31 +3897,9 @@ void EmuPeripheralCrateConfig::FixCFEB(xgi::Input * in, xgi::Output * out )
       unsigned short int dword[2];
       for (unsigned int i=0; i<thisCFEBs.size(); i++) {
 	if (thisCFEBs[i].number() == cfeb_index ) {
-	  dword[0]=thisDMB->febpromuser(thisCFEBs[i]);
-	  CFEBid_[chamber_index][i] = dword[0];  // fill summary file with user ID value read from this CFEB
-	  char * outp=(char *)dword;   // recast dword
-		for(int readback=0; readback<n_readbacks; readback++){
-          unlink("/tmp/eprom.bit");
-          thisDMB->epromread(thisCFEBs[i].promDevice());
-          std::ostringstream logs;
-          int erropen = thisDMB->check_eprom_readback("/tmp/eprom.bit",CFEBCompare_.toString().c_str()); // hardcoded file name; bad, but I didn't start it //KK
-          if(erropen>=0){
-             logs<<" Total number of bad bits: "<<thisDMB->GetNumberOfBadReadbackBits()<<std::endl;
-             for(unsigned int bit=0; bit<thisDMB->GetNumberOfBadReadbackBits() && bit<20; bit++ ){
-                logs << " broken word position: " << std::setw(6) << thisDMB->GetWordWithBadReadbackBit(bit)
-                     << ", bad bit position: " << thisDMB->GetBadReadbackBitPosition(bit)
-                     << ", bad bit type (type=0 1->0 type=1 0->1): "<< thisDMB->GetBadReadbackBitType(bit)
-                     << std::endl;
-             }
-             if( thisDMB->GetNumberOfBadReadbackBits()>20 ) logs << "  only first 20 bad CFEB firmware bits were reported above " << std::endl;
-          } else {
-             logs << " file error in check_eprom_readback" << std::endl;
-          }
-          LOG4CPLUS_INFO(getApplicationLogger(), logs.str());
-		}
-
-		thisDMB->epromload(thisCFEBs[i].promDevice(),CFEBFirmware_.toString().c_str(),1,outp);  // load mprom
-		thisCCB->hardReset(); 
+             thisDMB->write_cfeb_selector(thisCFEBs[i].SelectorBit());
+             thisDMB->SVFLoad(CFEB_PROM,CFEBFirmware_.toString().c_str(),0,1);	
+	     thisCCB->hardReset(); 
 	}
       }
       loaded_ok[problem_index] = 0;
@@ -3933,37 +3913,6 @@ void EmuPeripheralCrateConfig::FixCFEB(xgi::Input * in, xgi::Output * out )
   }
   //
   SetCurrentCrate(initial_crate);
-  //
-  //
-  //    if(ncmd==2){
-  //      // now readback bit contents of prom
-  //      char * outp="....";    // recast dword
-  //      thisDMB->epromload_verify(thisCFEB.promDevice(),CFEBVerify_.toString().c_str(),1,outp);  // load mprom
-  //      std::cout << " time calculation " << std::endl;
-  //      time_t rawtime;
-  //      time(&rawtime);
-  //      std::string buf;
-  //      std::string time_dump = ctime(&rawtime);
-  //      std::string time = time_dump.substr(0,time_dump.length()-1);
-  //      while( time.find(" ",0) != std::string::npos ) {
-  //        int thispos = time.find(" ",0);
-  //        time.replace(thispos,1,"_");
-  //      }
-  //      std::cout << "time " << time << std::endl;
-  //      std::string temp = toolbox::toString("mv eprom.bit /tmp/verify_%s_slot%d_cfeb%d_%s.bit",crateVector[crate_index]->GetLabel().c_str(),thisDMB->slot(),thisCFEB.number()+1,time.c_str());
-  //      std::cout  << temp << std::endl;
-  //      system(temp.c_str());
-  
-  // now reprogram the prom
-  //      unsigned short int dword[2];
-  //    dword[0]=thisDMB->febpromuser(thisCFEB);
-  //    char * outp2=(char *)dword;   // recast dword
-  //    thisDMB->epromload(thisCFEB.promDevice(),CFEBFirmware_.toString().c_str(),1,outp2);
-  //    // now do a hard reset
-  //    thisDMB->lowv_onoff(0x20);
-  //    usleep(500000);
-  //    thisDMB->lowv_onoff(0x3f);
-  //
   this->PowerOnFixCFEB(in,out);
 }
 //
@@ -8424,6 +8373,34 @@ void EmuPeripheralCrateConfig::TMBClearUserProms(xgi::Input * in, xgi::Output * 
   //
 }
 //
+void EmuPeripheralCrateConfig::TMBReadUserProms(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("tmb");
+  int tmb=0;
+  if(name != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "TMB " << tmb << std::endl;
+    TMB_ = tmb;
+  }
+  //
+  TMB * thisTMB = tmbVector[tmb];
+  if(thisTMB)
+  {
+     std::string mcsfile1="/tmp/TMB_user_prom_0.mcs";
+     std::string mcsfile2="/tmp/TMB_user_prom_1.mcs";
+//     thisTMB->RedirectOutput(&OutputStringTMBStatus[tmb]);
+     thisTMB->read_user_prom_mcs(ChipLocationTmbUserPromALCT, mcsfile2.c_str());
+     thisTMB->read_user_prom_mcs(ChipLocationTmbUserPromTMB, mcsfile1.c_str());
+//     thisTMB->RedirectOutput(&std::cout);
+  }
+  //
+  this->TMBUtils(in,out);
+  //
+}
+//
 void EmuPeripheralCrateConfig::TMBConfigure(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {
   //
@@ -10614,15 +10591,6 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::form() << std::endl ;
   *out << cgicc::td();
   //
-  //  *out << cgicc::td().set("ALIGN","left");
-  //  std::string ReadbackALCTFirmware = toolbox::toString("/%s/ReadbackALCTFirmware",getApplicationDescriptor()->getURN().c_str());
-  //  *out << cgicc::form().set("method","GET").set("action",ReadbackALCTFirmware) << std::endl ;
-  //  *out << cgicc::input().set("type","submit").set("value","Readback ALCT PROM").set("style","color:blue") << std::endl ;
-  //  sprintf(buf,"%d",tmb);
-  //  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","ntmb"); 
-  //  *out << cgicc::form() << std::endl ;
-  //  *out << cgicc::td();
-  //
   ////////////////////////////////////////
   *out << cgicc::tr();
   //
@@ -10784,6 +10752,18 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::form() << std::endl ;
   *out << cgicc::td();
   //
+  if(extra_tools_)
+  {
+     *out << cgicc::td().set("ALIGN","left");
+     std::string TMBReadUserProms = toolbox::toString("/%s/TMBReadUserProms",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",TMBReadUserProms) ;
+     *out << cgicc::input().set("type","submit").set("value","Read TMB+ALCT User Proms") ;
+     sprintf(buf,"%d",tmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+     *out << cgicc::form() << std::endl ;
+     *out << cgicc::td();
+  //
+  }
   /////////////////////////////////////////////////
   *out << cgicc::tr();
   //

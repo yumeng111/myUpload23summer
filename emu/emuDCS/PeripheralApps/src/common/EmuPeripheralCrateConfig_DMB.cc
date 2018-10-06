@@ -2532,6 +2532,7 @@ void EmuPeripheralCrateConfig::LVMBStatus(xgi::Input * in, xgi::Output * out )
   //
   char buf[2000], sbuf[100];
   int hversion=thisDMB->DMBversion();
+  int cversion=thisDMB->CFEBversion();
   int nadcs, indx, cfebs, vstart, feed;
   unsigned short *ubuf=(unsigned short *)buf;
   double val, fvalue[100];
@@ -2593,11 +2594,11 @@ void EmuPeripheralCrateConfig::LVMBStatus(xgi::Input * in, xgi::Output * out )
   *out << cgicc::table().set("border","1").set("cellpadding","4");
   //
   *out <<cgicc::tr() << cgicc::td() << cgicc::td();
-  *out <<cgicc::td() << ((hversion<=1)?"3.3 V":"3.0 V") << cgicc::td();
+  *out <<cgicc::td() << ((cversion<=1)?"3.3 V":"3.0 V") << cgicc::td();
   *out <<cgicc::td() << "I (A)" << cgicc::td();
-  *out <<cgicc::td() << ((hversion<=1)?"5.0 V":"4.0 V") << cgicc::td();
+  *out <<cgicc::td() << ((cversion<=1)?"5.0 V":"4.0 V") << cgicc::td();
   *out <<cgicc::td() << "I (A)" << cgicc::td();
-  *out <<cgicc::td() << ((hversion<=1)?"6.0 V":"5.5 V") << cgicc::td();
+  *out <<cgicc::td() << ((cversion<=1)?"6.0 V":"5.5 V") << cgicc::td();
   *out <<cgicc::td() << "I (A)" << cgicc::td();
   *out << cgicc::tr() << std::endl;
 
@@ -2669,7 +2670,7 @@ void EmuPeripheralCrateConfig::LVMBStatus(xgi::Input * in, xgi::Output * out )
   *out  << cgicc::td()<< sbuf<< cgicc::td() << cgicc::tr() << std::endl;
   *out << cgicc::table() << cgicc::br()<< std::endl;
 
-  if(hversion==2)
+  if(hversion==2 || hversion==4)
   {
      double tp = sqrt(2.1962*1000000 + 1000000*(1.8639-fvalue[55])/3.88)-1481.96;
      *out << cgicc::br() << cgicc::b("LVDB7 Temperature sensor") << std::endl;
@@ -3916,6 +3917,7 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
   Chamber * thisChamber = chamberVector[dmb];
   std::string chamber=thisChamber->GetLabel();
   int hversion=thisDMB->DMBversion();
+  int cversion=thisDMB->CFEBversion();
   char buf[2000], sbuf[100];
   int nadcs, cfebs, vstart, feed;
   unsigned short *ubuf=(unsigned short *)buf;
@@ -3924,7 +3926,7 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
   cfebs=5;
   vstart=19;
   feed=38;
-  if (hversion==2)
+  if (hversion==2 || hversion==4)
   { 
      nadcs=7;
      cfebs=7;
@@ -4207,9 +4209,9 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
   for (int i=0; i<8; i++) chn2pos[i]=thisDMB->LVDB_map(i);
   //
   float normv[3]={0.,0.,0.};
-  if (hversion<=1) 
+  if (cversion<=1) 
      { normv[0]=3.3; normv[1]=5.0; normv[2]=6.0; }
-  else if (hversion==2) 
+  else if (cversion>=2) 
      { normv[0]=3.0; normv[1]=4.0; normv[2]=5.5; }
 
   *out << cgicc::table().set("border","1").set("cellpadding","4");
@@ -4531,7 +4533,7 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
         val=fvalue[3*lfeb+cnt];
         sprintf(sbuf, "CFEB%d  %3.1fV, I = %6.2f ",feb+1, normv[cnt], val);
         *out << cgicc::td();
-        if(cnt==1 && hversion<=1)
+        if(cnt==1 && hversion<=1 && !(isME13 && (feb==4)))
         {
            if ( val< 0.8 ||  val > 1.2 )	 
               *out << cgicc::span().set("style","color:red");

@@ -325,6 +325,7 @@ void EmuPeripheralCrateManager::ForEmuPage1(xgi::Input *in, xgi::Output *out)
           InFlash_plus = flashid64.toString();
           flashid64 = myTStore->readLastConfigIdFlashed("minus");
           InFlash_minus = flashid64.toString();
+          need_init = false;
        }
        catch (emu::exception::ConfigurationException &e)
        {
@@ -338,7 +339,6 @@ void EmuPeripheralCrateManager::ForEmuPage1(xgi::Input *in, xgi::Output *out)
      else
      {  std::cout << "Can't create object TStoreReadWriter" << std::endl;
      }
-     need_init = false;
      delete myTStore;
   }
   time_t t;

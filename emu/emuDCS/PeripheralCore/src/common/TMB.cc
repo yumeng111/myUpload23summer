@@ -709,8 +709,8 @@ void TMB::ReadTmbIdCodes() {
  {
   unsigned short comd=VTX6_IDCODE;
   unsigned temp=0, data=0;
-  scan(0, (char *)&comd, 10, rcvbuf, 0);
-  scan(1, (char *)&temp, 32, (char *)&data, 1);
+  new_scan(0, (char *)&comd, 10, rcvbuf, 0);
+  new_scan(1, (char *)&temp, 32, (char *)&data, 1);
   tmb_idcode_[device]=data;
   device += 5;
   tmb_set_boot_reg(0);  
@@ -11185,28 +11185,29 @@ unsigned TMB::virtex6_readreg(int reg)
 {
   if(hardware_version_==2)
   {
-     setup_jtag(ChainTmbMezz);
+//     setup_jtag(ChainTmbMezz);
+     int dev=1;  // TMB Mez
      //restore idle;
-     RestoreIdle();
+     new_RestoreIdle(dev);
 
      unsigned short comd;
      unsigned data[7]={0x66AA9955, 4, 0, 4, 4, 4};
      unsigned *rt, rtv;
      comd=VTX6_CFG_IN;
-     scan(0, (char *)&comd, 10, rcvbuf, 0);
+     new_scan(0, (char *)&comd, 10, rcvbuf, 0);
      unsigned ins=((reg&0x1F)<<13)+(1<<27)+(1<<29)+1;
      data[2]=shuffle32(ins);
-     scan(1, (char *)data, 6*32, rcvbuf, 0);     
+     new_scan(1, (char *)data, 6*32, rcvbuf, 0);     
 
      comd=VTX6_CFG_OUT;
-     scan(0, (char *)&comd, 10, rcvbuf, 0);
+     new_scan(0, (char *)&comd, 10, rcvbuf, 0);
      data[0]=0;
-     scan(1, (char *)data, 32, rcvbuf, 1);     
+     new_scan(1, (char *)data, 32, rcvbuf, 1);     
      rt = (unsigned *)rcvbuf;
      rtv=shuffle32(*rt);
 //     printf("return: %08X\n", rtv);
      comd=VTX6_BYPASS;
-     scan(0, (char *)&comd, 10, rcvbuf, 0);
+     new_scan(0, (char *)&comd, 10, rcvbuf, 0);
      tmb_set_boot_reg(0);
      return rtv;
   } 
@@ -11224,13 +11225,13 @@ void TMB::virtex6_writereg(int reg, unsigned value)
      unsigned short comd;
      unsigned data[6]={0x66AA9955, 4, 0, 0, 4, 4};
      comd=VTX6_CFG_IN;
-     scan(0, (char *)&comd, 10, rcvbuf, 0);
+     new_scan(0, (char *)&comd, 10, rcvbuf, 0);
      unsigned ins=((reg&0x1F)<<13)+(2<<27)+(1<<29)+1;
      data[2]=shuffle32(ins);
      data[3]=shuffle32(value);
-     scan(1, (char *)data, 6*32, rcvbuf, 0);     
+     new_scan(1, (char *)data, 6*32, rcvbuf, 0);     
      comd=VTX6_BYPASS;
-     scan(0, (char *)&comd, 10, rcvbuf, 0);
+     new_scan(0, (char *)&comd, 10, rcvbuf, 0);
      tmb_set_boot_reg(0);
   }
 }

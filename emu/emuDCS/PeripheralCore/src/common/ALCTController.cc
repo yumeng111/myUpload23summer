@@ -1985,7 +1985,12 @@ void ALCTController::PrintFastControlId() {
 void ALCTController::PrintFastControlChipCode() {
   //
     char gg[70];
-    sprintf(gg, "Chip IDCODE: FPGA=%08X, PROM0=%08X, PROM1=%08X\n", alct_fpga_idcode_, alct_prom0_idcode_, alct_prom1_idcode_);
+    if(ALCTversion()==0)
+      sprintf(gg, "Chip IDCODE: FPGA=%08X, PROM=%08X\n", alct_fpga_idcode_, alct_prom0_idcode_);
+    else if(ALCTversion()==4)
+      sprintf(gg, "Chip IDCODE: FPGA=%08X, PROM=%08X, DS4550=%08X\n", alct_fpga_idcode_, alct_prom0_idcode_, alct_prom1_idcode_);
+    else
+      sprintf(gg, "Chip IDCODE: FPGA=%08X, PROM0=%08X, PROM1=%08X\n", alct_fpga_idcode_, alct_prom0_idcode_, alct_prom1_idcode_);
     (*MyOutput_) << gg;
 /*
     (*MyOutput_) << "FPGA, PROM0, PROM1 IDCODE = " 

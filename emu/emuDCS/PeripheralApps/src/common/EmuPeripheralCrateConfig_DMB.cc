@@ -2708,6 +2708,7 @@ void EmuPeripheralCrateConfig::DMBUtils(xgi::Input * in, xgi::Output * out )
   DAQMB * thisDMB = dmbVector[dmb];
   //
   Chamber * thisChamber = chamberVector[dmb];
+  std::vector<CFEB> cfebs = thisDMB->cfebs() ;
   //
   int D_hversion=thisDMB->DMBversion();
   int tot_p_chans; // total power channels on LVDB
@@ -2740,7 +2741,7 @@ void EmuPeripheralCrateConfig::DMBUtils(xgi::Input * in, xgi::Output * out )
   }
   //
   //
-  char buf[200], nbuf[100];
+  char buf[200], nbuf[100], sbuf[200];
   unsigned short *voltbuf;
   voltbuf = (unsigned short *)buf;
   //
@@ -3067,8 +3068,22 @@ if(D_hversion<=1)
   {
      std::string CFEBLoadFirmware = toolbox::toString("/%s/CFEBLoadFirmware",getApplicationDescriptor()->getURN().c_str());
      *out << cgicc::form().set("method","GET").set("action",CFEBLoadFirmware) << std::endl ;
-     *out << "CFEB (0-4), (-1 == all) : ";
-     *out << cgicc::input().set("type","text").set("value","0").set("name","cfeb") << std::endl ;
+
+       *out << "Choose CFEB: " << std::endl;
+       *out << cgicc::select().set("name", "cfeb") << std::endl;
+       for (unsigned i = 0; i < cfebs.size(); ++i) 
+       {
+          sprintf(sbuf,"%d",i);
+           if (i == 0) 
+              *out << cgicc::option().set("value", sbuf).set("selected", "");
+           else  
+              *out << cgicc::option().set("value", sbuf);
+           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+       }
+       // -1 will be used for broadcast
+       *out << cgicc::option().set("value", "-1") << "All CFEBs" << cgicc::option() << std::endl;
+       *out << cgicc::select() << std::endl;
+
      *out << cgicc::input().set("type","submit").set("value","CFEB Load Firmware") << std::endl ;
      sprintf(buf,"%d",dmb);
      *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
@@ -3079,8 +3094,20 @@ if(D_hversion<=1)
      //
      std::string CFEBVerifyFirmwareID = toolbox::toString("/%s/CFEBVerifyFirmware",getApplicationDescriptor()->getURN().c_str());
      *out << cgicc::form().set("method","GET").set("action",CFEBVerifyFirmwareID) << std::endl ;
-     *out << "CFEB (0-4):";
-     *out << cgicc::input().set("type","text").set("value","0").set("name","cfeb");
+
+       *out << "Choose CFEB: " << std::endl;
+       *out << cgicc::select().set("name", "cfeb") << std::endl;
+       for (unsigned i = 0; i < cfebs.size(); ++i) 
+       {
+          sprintf(sbuf,"%d",i);
+           if (i == 0) 
+              *out << cgicc::option().set("value", sbuf).set("selected", "");
+           else  
+              *out << cgicc::option().set("value", sbuf);
+           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+       }
+       *out << cgicc::select() << std::endl;
+
      *out << cgicc::input().set("type","submit").set("value","CFEB Verify Firmware") << std::endl ;
      sprintf(buf,"%d",dmb);
      *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
@@ -3091,8 +3118,20 @@ if(D_hversion<=1)
 
      std::string CFEBReadFw = toolbox::toString("/%s/CFEBReadFirmware",getApplicationDescriptor()->getURN().c_str());
      *out << cgicc::form().set("method","GET").set("action",CFEBReadFw) << std::endl ;
-     *out << "CFEB (0-4): ";
-     *out << cgicc::input().set("type","text").set("value","0").set("name","cfeb") << std::endl ;
+
+       *out << "Choose CFEB: " << std::endl;
+       *out << cgicc::select().set("name", "cfeb") << std::endl;
+       for (unsigned i = 0; i < cfebs.size(); ++i) 
+       {
+          sprintf(sbuf,"%d",i);
+           if (i == 0) 
+              *out << cgicc::option().set("value", sbuf).set("selected", "");
+           else  
+              *out << cgicc::option().set("value", sbuf);
+           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+       }
+       *out << cgicc::select() << std::endl;
+
      *out << cgicc::input().set("type","submit").set("value","CFEB Read Firmware") << std::endl ;
      sprintf(buf,"%d",dmb);
      *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
@@ -3632,21 +3671,14 @@ void EmuPeripheralCrateConfig::CFEBLoadFirmware(xgi::Input * in, xgi::Output * o
         std::cout << "Loading CFEB firmware to all CFEBs" << std::endl;
         thisDMB->write_cfeb_selector(0x1F);
         goodcfeb=true;
-
     }
-    else
+    else if( icfeb>=0 && icfeb<thisCFEBs.size()) 
     {
-        std::cout << "Loading CFEB firmware to CFEB #"<< (icfeb+1) << std::endl;
-        for (unsigned int i=0; i<thisCFEBs.size(); i++) 
-        {
-          if (thisCFEBs[i].number() == icfeb ) 
-          {
-             thisDMB->write_cfeb_selector(thisCFEBs[i].SelectorBit());
-             goodcfeb=true;
-          }
-        }
+        std::cout << "Loading CFEB firmware to CFEB #"<< (thisCFEBs[icfeb].number()+1) << std::endl;
+        thisDMB->write_cfeb_selector(thisCFEBs[icfeb].SelectorBit());
+        goodcfeb=true;
     }
-    if(goodcfeb) thisDMB->SVFLoad(CFEB_PROM,CFEBFirmware_.toString().c_str(),0,1);
+    if(goodcfeb) thisDMB->SVFLoad(CFEB_PROM,CFEBFirmware_.toString().c_str(),0,1);  // debug=NO, verify=YES
   }
   this->DMBUtils(in,out);
   //

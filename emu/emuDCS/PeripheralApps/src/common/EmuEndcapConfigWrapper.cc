@@ -349,6 +349,7 @@ throw (emu::exception::ConfigurationException)
 
   int number = getInt(conf, "CFEB_NUMBER");
   if(verbose_) std::cout << "CFEB(" << number << ")" << std::endl;
+  if(number<0 || number>6) return;
   CFEB cfeb(number);
 
   theDaqmb->SetExpectedCFEBFirmwareTag(number, getStringAsLongInt(conf, "CFEB_FIRMWARE_TAG"));

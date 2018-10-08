@@ -952,7 +952,7 @@ void XMLParser::DAQMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber 
 	  parseNode(daughterNode);
 	  if(fillInt("cfeb_number", number)){
 	    //daqmb_->SendOutput("CFEB");
-	    if ( number <7 ){
+	    if ( number>=0 && number <7 ){
 	      CFEB cfeb(number);
 //fg explicitly prevend the parser from interpreting the following 5 options ...
 //	      int ivalue;

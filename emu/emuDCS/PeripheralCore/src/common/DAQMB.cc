@@ -8437,6 +8437,89 @@ void DAQMB::dcfeb_read_firmware(CFEB & cfeb, const char *filename)
    return;
 }
 
+int DAQMB::dcfeb_verify_firmware(CFEB & cfeb, const char *mcsfile)
+{
+
+   if(CFEBversion() != 2) return -20;
+
+   unsigned fulladdr=0, uaddr, laddr;
+   unsigned read_size=0x800;
+   unsigned short *buf;
+   int total_blocks=1335; // only the firmware part of the prom
+// int readback_size=read_size*total_blocks*2=5468160; 
+// XC6VLX130T's configuration bitstream (firmware) is exactly 5464972 bytes:
+   const int FIRMWARE_SIZE=5464972;
+
+// 1. read mcs file
+   char *bufin;
+   bufin=(char *)malloc(16*1024*1024);
+   if(bufin==NULL)  return -10;
+   unsigned short *bufw= (unsigned short *)bufin;
+   FILE *fin=fopen(mcsfile,"r");
+   if(fin==NULL ) 
+   { 
+      free(bufin);  
+      std::cout << "ERROR: Unable to open MCS file :" << mcsfile << std::endl;
+      return -1;
+   }
+   int mcssize=read_mcs(bufin, fin);
+   fclose(fin);
+   std::cout << "Read MCS size: " << mcssize << " bytes" << std::endl;
+
+   if(mcssize<FIRMWARE_SIZE)
+   {
+       std::cout << "ERROR: Wrong MCS file. Quit..." << std::endl;
+       free(bufin);
+       return -2;
+   }
+   int tag=0;
+   memcpy(&tag, bufin+0x600000, 4);
+   if( (tag & 0x00F0FFFF)==0x00B0FEDC) 
+   {
+       std::cout << "Firmware tag (DCFEB) verified!" << std::endl;
+   }
+   else
+   {
+       std::cout << "ERROR: Firmware tag (DCFEB) not found in MCS file. Quit..." << std::endl; 
+       free(bufin);
+       return -3;                 
+   }
+
+// 2. read EPROM
+   write_cfeb_selector(cfeb.SelectorBit());
+   buf=(unsigned short *)malloc(8*1024*1024); // can use 8*1024*1024 if only reading the firmware part of the prom
+   if(buf==NULL)
+   {
+      free(bufin);
+      return -10;
+   }
+
+    dcfeb_bpi_reset();
+    dcfeb_bpi_enable();
+   
+    for(int i=0; i< total_blocks; i++)
+    {
+       std::cout << "Block " << i << " / " << total_blocks << std::endl;
+
+       uaddr = (fulladdr >> 16);
+       laddr = fulladdr &0xffff;
+       dcfebprom_loadaddress(uaddr, laddr);
+
+       dcfebprom_read(read_size, buf+i*read_size);
+
+       fulladdr += read_size;
+    }
+    dcfeb_bpi_disable();
+
+// 3. compare buffers
+   int errcount=0;
+   char *bufrd=(char *)buf;
+   for(int i=0; i<FIRMWARE_SIZE; i++) if(bufin[i]!=bufrd[i])  errcount++; 
+   free(bufin);
+   free(buf);
+   return errcount;
+}
+
 void DAQMB::dcfeb_configure(CFEB & cfeb) 
 {
    // For each DCFEB, try to find a good parameter block with lowest block number and then use it.

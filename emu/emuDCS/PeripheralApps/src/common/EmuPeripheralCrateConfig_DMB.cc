@@ -1116,6 +1116,29 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
     .set("name", "command")
     .set("value", "Read back DCFEB firmware") << std::endl;
   *out << cgicc::form() << cgicc::br() << std::endl;
+
+     //
+     std::string DCFEBVerifyFirmware = toolbox::toString("/%s/CFEBVerifyFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",DCFEBVerifyFirmware) << std::endl ;
+
+       *out << "Choose CFEB: " << std::endl;
+       *out << cgicc::select().set("name", "cfeb") << std::endl;
+       for (unsigned i = 0; i < cfebs.size(); ++i) 
+       {
+          sprintf(sbuf,"%d",i);
+           if (i == 0) 
+              *out << cgicc::option().set("value", sbuf).set("selected", "");
+           else  
+              *out << cgicc::option().set("value", sbuf);
+           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+       }
+       *out << cgicc::select() << std::endl;
+
+     *out << cgicc::input().set("type","submit").set("value","Verify DCFEB firmware") << std::endl ;
+     *out << cgicc::input().set("type","hidden").set("value",dmbstring).set("name","dmb");
+     *out <<  dcfeb_firmware_name ;
+     *out << cgicc::form()  << cgicc::br() << std::endl ;
+     //
   
   //
   std::string CFEBwritefirm =
@@ -1580,6 +1603,17 @@ if(thisDMB->CFEBversion()==2)
   *out << cgicc::table();
   //
   *out << cgicc::fieldset() << cgicc::br();
+  //
+  // Output area
+  //
+  *out << cgicc::form().set("method","GET") << std::endl ;
+  *out << cgicc::pre();
+  *out << cgicc::textarea().set("name","CrateTestDMBOutput").set("rows","30").set("cols","132").set("WRAP","OFF");
+  *out << OutputStringDMBStatus[dmb].str() << std::endl ;
+  *out << cgicc::textarea();
+//  OutputStringDMBStatus[dmb].str("");
+  *out << cgicc::pre();
+  *out << cgicc::form() << std::endl ;
   //
 
 }
@@ -3211,7 +3245,7 @@ else if(D_hversion==2)
   *out << cgicc::textarea().set("name","CrateTestDMBOutput").set("rows","30").set("cols","132").set("WRAP","OFF");
   *out << OutputStringDMBStatus[dmb].str() << std::endl ;
   *out << cgicc::textarea();
-  OutputStringDMBStatus[dmb].str("");
+//  OutputStringDMBStatus[dmb].str("");
   *out << cgicc::pre();
   *out << cgicc::form() << std::endl ;
   //
@@ -3592,18 +3626,24 @@ void EmuPeripheralCrateConfig::CFEBVerifyFirmware(xgi::Input * in, xgi::Output *
 
      std::cout << getLocalDateTime() << " CFEB firmware verify from DMB " << dmb << " CFEB #" << (cfebs[icfeb].number()+1);
      int rt;
+     std::string dcfeb_firmware_name= (thisDMB->CFEBversion()==2)? (FirmwareDir_+"cfeb/me11_dcfeb.mcs"):(FirmwareDir_+"cfeb/me11_xdcfeb_0.mcs") ; 
+
      if(thisDMB->CFEBversion()<=1)   
      {
-        mcsfile=CFEBVerify_.toString();
-        std::cout << ", use file " << mcsfile << std::endl;
-        rt=thisDMB->cfeb_verify_firmware(cfebs[icfeb], mcsfile.c_str());
+          mcsfile=CFEBVerify_.toString();
+          std::cout << ", use file " << mcsfile << std::endl;
+          rt=thisDMB->cfeb_verify_firmware(cfebs[icfeb], mcsfile.c_str());
      }
      else if(thisDMB->CFEBversion()==2)   
      {
-     //   rt=thisDMB->dcfeb_verify_firmware(cfebs[icfeb], mcsfile.c_str());
+          mcsfile=dcfeb_firmware_name;
+          std::cout << ", use file " << mcsfile << std::endl;
+          rt=thisDMB->dcfeb_verify_firmware(cfebs[icfeb], mcsfile.c_str());
      }
      else
      {
+     //   mcsfile=dcfeb_firmware_name;
+     //   std::cout << ", use file " << mcsfile << std::endl;
      //   rt=thisDMB->xdcfeb_verify_firmware(cfebs[icfeb], mcsfile.c_str(), imode);
      }
      if(rt==0)
@@ -3726,6 +3766,7 @@ void EmuPeripheralCrateConfig::DMBCheckConfiguration(xgi::Input * in, xgi::Outpu
   }
   //
   DAQMB * thisDMB = dmbVector[dmb];
+  OutputStringDMBStatus[dmb].clear();
   //
   thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
   thisDMB->checkDAQMBXMLValues();

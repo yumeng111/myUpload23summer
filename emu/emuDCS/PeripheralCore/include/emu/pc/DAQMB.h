@@ -774,6 +774,7 @@ public:
   int dcfeb_prom_check_block(const int blockNum, unsigned short * readBuf, const long checkWord64, std::ofstream * dumpFile, const bool partialRead=false);
   void dcfeb_prom_log(std::stringstream * msgStream, std::ofstream * logFile);
   void dcfeb_read_firmware(CFEB & cfeb, const char *filename);
+  int dcfeb_verify_firmware(CFEB & cfeb, const char *mcsfile);
   void dcfeb_program_virtex6(CFEB & cfeb, const char *mcsfile, int broadcast=0);
   void dcfeb_program_eprom(CFEB & cfeb, const char *mcsfile, int offset, int broadcast=0);
   void dcfeb_configure(CFEB & cfeb);

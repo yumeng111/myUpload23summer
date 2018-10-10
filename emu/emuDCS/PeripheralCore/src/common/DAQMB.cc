@@ -2172,8 +2172,8 @@ void DAQMB::dmb_readstatus(char status[11])
   //
   devdo(MCTRL,6,cmd,88,sndbuf,rcvbuf,1);
   for(i=0;i<11;i++)status[i]=rcvbuf[i];
-  for (i=0;i<11;i++)
-    {printf(" i= %d, rcvbuf[i]= %02x, status[i]= %02x \n",i,rcvbuf[i]&0xFF,status[i]&0xFF);}
+//  for (i=0;i<11;i++)
+//    {printf(" i= %d, rcvbuf[i]= %02x, status[i]= %02x \n",i,rcvbuf[i]&0xFF,status[i]&0xFF);}
 
   //
   /* DMB6CNTL status: bit[14:7]: L1A buffer length
@@ -2195,8 +2195,8 @@ void DAQMB::dmb_readstatus(char status[11])
   printf(" FIFO half_full: %02x",i); printf("h 1 means less than half_full\n");
   i=(rcvbuf[5]>>1)&0x7f; 
   printf(" FIFO PAE: %03x",i); printf("h  1 means more than PAE words\n");
-  printf(" GUs new 32 bits: %02x%02x%02x%02x\n",rcvbuf[9]&0xff,rcvbuf[8]&0xff,rcvbuf[7]&0xff,rcvbuf[6]&0xff);
 
+//  printf(" GUs new 32 bits: %02x%02x%02x%02x\n",rcvbuf[9]&0xff,rcvbuf[8]&0xff,rcvbuf[7]&0xff,rcvbuf[6]&0xff);
   CableDelay_ =((rcvbuf[6]>>2)&0x3f)+((rcvbuf[7]<<6)&0xc0); 
   printf(" Cable_Delay: %02xh \n",CableDelay_);
   CrateID_=((rcvbuf[7]>>2)&0x3f)+((rcvbuf[8]<<6)&0x40); 
@@ -2238,7 +2238,7 @@ void DAQMB::cfebs_readstatus()
       febbuf[idv][2]='\0';
       febbuf[idv][3]='\0';
     //if(iuse[idv]==1){
-      std::cout << " dv= " << dv << " STATUS_S " << STATUS_S << std::endl;
+//      std::cout << " dv= " << dv << " STATUS_S " << STATUS_S << std::endl;
       cmd[0]=VTX_USR1;
       sndbuf[0]=STATUS_S;
       devdo(dv,5,cmd,8,sndbuf,rcvbuf,0);
@@ -2261,7 +2261,7 @@ void DAQMB::cfebs_readstatus()
       febstat_[idv][2]=rcvbuf[2]&0xff;
       febstat_[idv][3]=rcvbuf[3]&0xff;
       //
-      printf(" SCA rcvbuf *** %02x %02x %02x %02x \n",rcvbuf[0]&0xFF,rcvbuf[1]&0xFF,rcvbuf[2]&0xFF,rcvbuf[3]&0xFF);
+//      printf(" SCA rcvbuf *** %02x %02x %02x %02x \n",rcvbuf[0]&0xFF,rcvbuf[1]&0xFF,rcvbuf[2]&0xFF,rcvbuf[3]&0xFF);
 
       // The following should return "BADFEED5"
       /*      cmd[0]=VTX2_USR1;
@@ -7157,8 +7157,8 @@ int DAQMB::test10()
   //
   int i,ierr,pass;
   char cmp;
-  char rcvpat[256];
-  char sndpat[256];
+  char rcvpat[264];
+  char sndpat[264];
   int match;
   //
   ierr=0;
@@ -7198,7 +7198,7 @@ int  DAQMB::test11()
   // enum DEVTYPE dv;
   int i,j,itog;
   int nmtch;
-  char pat[36],chk[32];
+  char pat[36],chk[36];
   char vshift[300];
   char v[2]={0x00,0xff};
   int ierr,pass;

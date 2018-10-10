@@ -10,6 +10,8 @@
 
 #include "xcept/tools.h"
 
+#include "emu/utils/System.h"
+
 #include "emu/fed/Fiber.h"
 #include "emu/fed/JTAGElement.h"
 
@@ -103,6 +105,9 @@ throw (emu::fed::exception::DDUException)
 {
   std::ostringstream logMessage;
 
+  std::ostringstream logFileName;
+  logFileName << "/tmp/Configure_FED" << getSlinkId() << "_" << emu::utils::getDateTime( true ) << ".log";
+
   const int nTries = 3;
   for ( int iTry=0; iTry<nTries; ++iTry ){
 
@@ -117,6 +122,7 @@ throw (emu::fed::exception::DDUException)
 	        logMessage << "\nTry " << iTry+1 << "/" << nTries << " of configuring DDU " << std::setw(2) 
 			   << std::setfill('0') << rui_ << " failed: "
 			   << xcept::stdformat_exception_history( e );
+		try{ emu::utils::writeFile( logFileName.str(), logMessage.str() ); } catch(...){}
 		std::ostringstream error;
 		error << "Exception communicating with DDU. List of tries:" << logMessage.str() << "\nEnd list of tries.\n";
 		XCEPT_DECLARE_NESTED(emu::fed::exception::DDUException, e2, error.str(), e);
@@ -128,6 +134,7 @@ throw (emu::fed::exception::DDUException)
 	}
 
   }
+  // try{ emu::utils::writeFile( logFileName.str(), logMessage.str() ); } catch(...){} // write log even if all went well
 }
 
 
@@ -2422,6 +2429,8 @@ throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException
 
 			commandCycle(dev,bypassCommand);
 
+			if (dev == DDUFPGA) usleep(10000); // Try pausing to prevent errors in IRQ-handling thread.
+
 			return result;
 
 		}
@@ -2532,6 +2541,8 @@ throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException
 			jtagWrite(dev, 8, bogoCommand, true);
 
 			commandCycle(dev,bypassCommand);
+
+			if (dev == DDUFPGA) usleep(10000); // Try pausing to prevent errors in IRQ-handling thread.
 
 			return result;
 

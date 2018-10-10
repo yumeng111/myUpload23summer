@@ -967,7 +967,6 @@ void MPC::start() {
   SetupJtag();
   VMEModule::start();
   theController->initDevice(1);
-  theController->goToScanLevel();
 }
 
 int MPC::readDSN(void *data)

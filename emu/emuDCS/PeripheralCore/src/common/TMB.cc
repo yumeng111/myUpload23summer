@@ -4426,7 +4426,6 @@ void TMB::start() {
   SetupJtag();
   VMEModule::start();
   theController->initDevice(ucla_ldev);
-  theController->goToScanLevel();
 }
 //
 void TMB::start(int idev,int JtagSource) {
@@ -4450,7 +4449,6 @@ char rcvx[2];
 char sndx[2];
   if(ucla_ldev==1){
     tmb_vme(0xff,0x00,sndx,rcvx,1);
-    theController->release_plev();
   }else{
     theController->send_last();
   }

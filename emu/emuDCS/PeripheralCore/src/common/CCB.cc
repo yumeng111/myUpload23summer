@@ -798,7 +798,6 @@ void CCB::start() {
   SetupJtag();
   VMEModule::start();
   theController->initDevice(1);
-  theController->goToScanLevel();
 }
 //
 void CCB::startI2C(){

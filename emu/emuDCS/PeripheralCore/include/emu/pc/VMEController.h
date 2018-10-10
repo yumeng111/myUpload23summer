@@ -279,7 +279,6 @@ public:
   void scan_dmb(int reg,const char *snd,int cnt2,char *rcv,int ird, int when);
   void scan_dmb_headtail(int reg,const char *snd,int cnt,char *rcv,int ird,int headtail, int when);
   void scan_reset(int reg, const char *snd, int cnt2, char *rcv,int ird);
-  void scan_reset_headtail(int reg, const char *snd, int cnt2, char *rcv, int headtail,int ird);
   //
   void initDevice(int idev);
   void RestoreIdle();
@@ -287,8 +286,6 @@ public:
   void CloseJTAG();
   void send_last();
   void RestoreIdle_reset();
-  void goToScanLevel();
-  void release_plev();
   void sdly();
   void RestoreIdle_jtag();
   void RestoreReset_jtag();
@@ -367,6 +364,8 @@ private:
   int port_;
   int Msg_Lvl;
   const ENDIAN indian;
+  bool done_init_;
+  bool alive_;
 
   unsigned char hw_source_addr[6];
   unsigned char hw_dest_addr[6];
@@ -380,18 +379,11 @@ private:
 
   char msgbuf[10000]; // big enough for one Jumbo packet
   char spebuff[MAXLINE];
-  bool done_init_;
-  bool alive_;
-  int slot_error[22];
  
   int max_buff;
   int tot_buff;
   /// previous fe used
   int feuseo;
-  /// JTAG level.  When plev=2, we're in JTAG mode.
-  /// if it's not reset when we're done with JTAG,
-  /// the Dynatem will hang.
-  int plev;
   int idevo;
   int board; //board type
   unsigned int add_ucla; // current VME address for JTAG

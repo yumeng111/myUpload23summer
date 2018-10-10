@@ -353,7 +353,7 @@ namespace emu {
 
 VMEController::VMEController(): 
   port_(2), indian(SWAP),  max_buff(0), tot_buff(0), 
-  plev(1), idevo(0), error_type(0), error_count(0), DEBUG(0),
+  idevo(0), error_type(0), error_count(0), DEBUG(0),
   ok_vme_write_(false), fill_write_vme_vectors_(false)
 {
   print_VME_commands = 0;
@@ -1614,14 +1614,21 @@ hw_source_addr[0],hw_source_addr[1],hw_source_addr[2],hw_source_addr[3],hw_sourc
 
     if(LRG_read_flag>0) 
     {  // forced read, store the data in the special buffer
-       for(i=0;i<r_num;i++)
-       {  // Jinghua Liu: byte swap!!!
-          spebuff[2*i+LRG_read_pnt]=r_datat[2*i+1];
-          spebuff[2*i+1+LRG_read_pnt]=r_datat[2*i];
+       if((LRG_read_pnt + 2*r_num)<MAXLINE)
+       {
+          for(i=0;i<r_num;i++)
+          {  // Jinghua Liu: byte swap!!!
+             spebuff[2*i+LRG_read_pnt]=r_datat[2*i+1];
+             spebuff[2*i+1+LRG_read_pnt]=r_datat[2*i];
+          }
+          LRG_read_pnt += 2*r_num;  //data in special buffer
+          if(DEBUG){
+              printf("LARGE READ: %d bytes stored in the special buffer\n", 2*r_num);
+          }
        }
-       LRG_read_pnt += 2*r_num;  //data in special buffer
-       if(DEBUG){
-           printf("LARGE READ: %d bytes stored in the special buffer\n", 2*r_num);
+       else
+       {
+          printf("Error: Special Buffer full, discard new packet!!!\n");
        }
     }
     else 

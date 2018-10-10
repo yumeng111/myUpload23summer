@@ -4929,26 +4929,6 @@ ipass == 3 - load only the stuff after the board number
 #endif
 }
 
-#if 0
-void Parse(char *buf,int *Count,char **Word)
-{
-
-  *Word = buf;
-  *Count = 0;
-  while(*buf != '\0')  {
-    while ((*buf==' ') || (*buf=='\t') || (*buf=='\n') || (*buf=='"')) *(buf++)='\0';
-    if ((*buf != '\n') && (*buf != '\0'))  {
-      Word[(*Count)++] = buf;
-    }
-    while ((*buf!=' ')&&(*buf!='\0')&&(*buf!='\n')&&(*buf!='\t')&&(*buf!='"')) {
-      buf++;
-    }
-  }
-  *buf = '\0';
-}
-#endif
-
-
 void DAQMB::rdbkvirtexII()
 {
   if(DMBversion()<=1)
@@ -4956,7 +4936,7 @@ void DAQMB::rdbkvirtexII()
   char a[4],b[4]; 
   #define clbword 2494 //(x32)
   int i,k,totbits,totbytes;
-  char sndbuf2[36];
+  char sndbuf2[64];
   int ival;
   FILE *fp=fopen("rbk.dat","w");
  
@@ -8454,7 +8434,6 @@ int DAQMB::dcfeb_verify_firmware(CFEB & cfeb, const char *mcsfile)
    char *bufin;
    bufin=(char *)malloc(16*1024*1024);
    if(bufin==NULL)  return -10;
-   unsigned short *bufw= (unsigned short *)bufin;
    FILE *fin=fopen(mcsfile,"r");
    if(fin==NULL ) 
    { 
@@ -9642,7 +9621,6 @@ void DAQMB::odmb_print_parameters()
 {
    const int ODMB_PARAMETERS=12;
    unsigned short int bufload[ODMB_PARAMETERS];
-   char *bbuf=(char *)bufload;
    
    if(DMBversion() == 2)
    {
@@ -12955,7 +12933,6 @@ int DAQMB::xdcfeb_read_eprom(char *bufout, int dsize, int chip)
 
 int DAQMB::xdcfeb_load_firmware(CFEB & cfeb, const char *mcsfile, int broadcast)
 {
-   unsigned comd, data;
    const int PROM_SIZE=4194304; // in bytes
    const int FIRMWARE_SIZE=5464972;
    char filename[1000];

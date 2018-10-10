@@ -1173,81 +1173,6 @@ unsigned int ptr;
 
 }
 
-void  VMEController::scan_reset_headtail(int reg,const char *snd, int cnt,char *rcv,int headtail,int ird)
-{
-int i,j;
-int byte,bit;
-unsigned short int x00[1]={0x00};
-unsigned short int x01[1]={0x01};
-unsigned short int x02[1]={0x02};
-unsigned short int x03[1]={0x03};
-unsigned short int ival,ival2;
-unsigned short int *data;
-unsigned int ptr;
- if(headtail==3)x01[1]=0x01;
- if(headtail==3)x03[1]=0x03;
- if(headtail==0)x01[1]=0x00;
- if(headtail==0)x03[1]=0x02;
- if(headtail==3)x01[1]=0x01;
- if(headtail==3)x03[1]=0x03;
- if(cnt==0)return;
- ptr=add_reset;
- data=(unsigned short int *) snd;
- // printf("scan_reset %d %d %02x %02x \n",reg,cnt,snd[1]&0xff,snd[0]&0xff);
-
- /* instr */
-
- if(reg==0){
-    vme_controller(1,ptr,x00,rcv);sdly();
-    vme_controller(1,ptr,x00,rcv);sdly();
-    vme_controller(1,ptr,x01,rcv);sdly();
-    vme_controller(1,ptr,x01,rcv);sdly();
-    vme_controller(1,ptr,x00,rcv);sdly();
-    vme_controller(1,ptr,x00,rcv);sdly();
- }
-
- /* data */
-
- if(reg==1){ 
-    vme_controller(1,ptr,x00,rcv);sdly();
-    vme_controller(1,ptr,x00,rcv);sdly();
-    vme_controller(1,ptr,x01,rcv);sdly();
-    vme_controller(1,ptr,x00,rcv);sdly();
-    vme_controller(1,ptr,x00,rcv);sdly();
- }
- byte=cnt/16;
- bit=cnt-byte*16;
- for(i=0;i<byte;i++){
-   for(j=0;j<16;j++){
-      ival=*data>>j;
-      ival2=ival&0x01;
-      if(i!=byte-1 || bit!=0 || j!=15){
-        if(ival2==0){vme_controller(1,ptr,x00,rcv);sdly();}
-        if(ival2==1){vme_controller(1,ptr,x02,rcv);sdly();}
-      }else{
-        if(ival2==0){vme_controller(1,ptr,x01,rcv);sdly();}
-        if(ival2==1){vme_controller(1,ptr,x03,rcv);sdly();}
-      }
-   }
-   data=data+1;
- }  
- for(j=0;j<bit;j++){
-   ival=*data>>j;
-   ival2=ival&0x01;
-   if(j<bit-1){
-     if(ival2==0){vme_controller(1,ptr,x00,rcv);sdly();}
-     if(ival2==1){vme_controller(1,ptr,x02,rcv);sdly();}
-
-   }else{
-     if(ival2==0){vme_controller(1,ptr,x01,rcv);sdly();}
-     if(ival2==1){vme_controller(1,ptr,x03,rcv);sdly();}
-   }
- }
-  vme_controller(1,ptr,x01,rcv);sdly();       
-  vme_controller(3,ptr,x00,rcv);sdly();       
-
-}
-
 void  VMEController::daqmb_fifo(int irdwr,int ififo,int nbyte,unsigned short int *buf,unsigned char *rcv)
 {
  int i;
@@ -1508,12 +1433,6 @@ void VMEController::CycleIdle_jtag(int cycles)
      for(k=0;k<3;k++)vme_controller((k==2 && i==cycles)?3:1,ptr,d+k,tmp);
   }
   //
-}
-
-void VMEController::goToScanLevel(){
-}
-
-void VMEController::release_plev(){
 }
 
 /* register 1-7 special commands 0x10-rs 0x11-w feb power 0x12-r febpower */

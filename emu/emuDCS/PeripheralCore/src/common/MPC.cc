@@ -1146,7 +1146,7 @@ void MPC::mpc_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip)
    if(chip<0 || chip>2) return;
    int TIR[3]={0, 6, 22}, HIR[3]={32,16,0}, HDR[3]={2,1,0}, TDR[3]={0,1,2};
    unsigned long TDI=5, TMS=6, TCK=7, TDO=8; 
-   unsigned long regV=0x6200;
+   unsigned long regV=ReadRegister(CSR0);
    unsigned long handle=(TDI)+(TMS<<4)+(TCK<<8)+(TDO<<12) + (regV<<16);
    char buff[4200];
    int ncnt=cnt;
@@ -1162,7 +1162,7 @@ void MPC::mpc_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip)
       ncnt += HIR[chip]+TIR[chip];
    }
    Jtag_Norm(handle, reg, buff, ncnt, rcv, ird, NOW);
-   if(reg==1) cut_headtail(rcv, ncnt, TDR[chip], HDR[chip]);
+   if(reg==1 && rcv && (ird&NOW)) cut_headtail(rcv, ncnt, TDR[chip], HDR[chip]);
 }
 
 void MPC::jtag_RestoreIdle()
@@ -1340,6 +1340,36 @@ void MPC::readBC0Counters()
     {
        (*MyOutput_) << "  TMB #" << i+1 << ":   " << bc0counter[i] << std::endl;
     }
+}
+
+unsigned MPC::readIDCODE(int chip)
+{
+   // chip=0   FPGA   
+   //      1   PROM 1 
+   //      2   PROM 2 
+           
+   if(chip<0 || chip>2) return 0;
+
+   unsigned idcode[4] = {0};
+   char temp[8]={0};
+   int inst;
+   if(chip==0)
+   {
+     inst=SPT6_IDCODE;
+     mpc_scan(0, (char *)&inst, 6, rcvbuf, NOW, chip);
+     udelay(10);
+     mpc_scan(1, temp, 32, (char *)idcode, NOW|READ_YES, chip);
+     inst=SPT6_BYPASS;
+     mpc_scan(0, (char *)&inst, 6, rcvbuf, NOW, chip);
+   }
+   else
+   {
+     inst=XCF_IDCODE;
+     mpc_scan(0, (char *)&inst, 16, rcvbuf, NOW, chip);
+     udelay(10);
+     mpc_scan(1, temp, 32, (char *)idcode, NOW|READ_YES, chip);
+   }   
+   return idcode[0];
 }
 
   } // namespace emu::pc

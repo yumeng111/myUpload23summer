@@ -864,11 +864,12 @@ void EmuPeripheralCrateConfig::CFEBStatus(xgi::Input * in, xgi::Output * out )
      }
      *out << cgicc::table().set("border","1");
      //
+     int maxcfebs=(thisDMB->DMBversion()>1)?7:5;
      *out <<cgicc::td() << "Channel" << std::setprecision(4)<< cgicc::td();
      for(int ch=0; ch<27; ch++)
      {
        if(ch) *out << cgicc::td() << chname[ch-1] << cgicc::td();
-       for(int feb=0; feb<7; feb++)
+       for(int feb=0; feb<maxcfebs; feb++)
        {
           if(ch==0) *out << cgicc::td() << "CFEB " << feb+1 << cgicc::td();
           else
@@ -3621,7 +3622,7 @@ void EmuPeripheralCrateConfig::CFEBVerifyFirmware(xgi::Input * in, xgi::Output *
      std::vector<CFEB> cfebs = thisDMB->cfebs() ;
      if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
 
-     OutputStringDMBStatus[dmb].clear();
+     OutputStringDMBStatus[dmb].str("");
      std::string mcsfile;
 
      std::cout << getLocalDateTime() << " CFEB firmware verify from DMB " << dmb << " CFEB #" << (cfebs[icfeb].number()+1);
@@ -3766,7 +3767,7 @@ void EmuPeripheralCrateConfig::DMBCheckConfiguration(xgi::Input * in, xgi::Outpu
   }
   //
   DAQMB * thisDMB = dmbVector[dmb];
-  OutputStringDMBStatus[dmb].clear();
+  OutputStringDMBStatus[dmb].str("");
   //
   thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
   thisDMB->checkDAQMBXMLValues();
@@ -3817,6 +3818,7 @@ void EmuPeripheralCrateConfig::DCFEBTests(xgi::Input * in, xgi::Output * out )
   }
   //
   DAQMB * thisDMB = dmbVector[dmb];
+  OutputStringDMBStatus[dmb].str("");
   // write to output box
   thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
   thisDMB->odmb_dcfeb_tests();

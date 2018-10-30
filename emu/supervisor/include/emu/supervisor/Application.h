@@ -77,7 +77,9 @@ public:
 			throw (xgi::exception::Exception);
 	void webHardResetViaTCDS(xgi::Input *in, xgi::Output *out)
 			throw (xgi::exception::Exception);
-	void webBgoTrainViaTCDS(xgi::Input *in, xgi::Output *out)
+	void webResyncBgoTrainViaTCDS(xgi::Input *in, xgi::Output *out)
+			throw (xgi::exception::Exception);
+	void webHardResetBgoTrainViaTCDS(xgi::Input *in, xgi::Output *out)
 			throw (xgi::exception::Exception);
 	void webCalibPC(xgi::Input *in, xgi::Output *out)
 			throw (xgi::exception::Exception);

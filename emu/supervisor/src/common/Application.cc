@@ -192,9 +192,10 @@ emu::supervisor::Application::Application(xdaq::ApplicationStub *stub)
   xgi::bind(this, &emu::supervisor::Application::webSetTTS,      "SetTTS");
   xgi::bind(this, &emu::supervisor::Application::webSwitchTTS,   "SwitchTTS");
   xgi::bind(this, &emu::supervisor::Application::webRunSequence, "RunSequence");
-  xgi::bind(this, &emu::supervisor::Application::webResyncViaTCDS,   "ResyncViaTCDS");
-  xgi::bind(this, &emu::supervisor::Application::webHardResetViaTCDS,"HardResetViaTCDS");
-  xgi::bind(this, &emu::supervisor::Application::webBgoTrainViaTCDS, "BgoTrainViaTCDS");
+  xgi::bind(this, &emu::supervisor::Application::webResyncViaTCDS           , "ResyncViaTCDS"           );
+  xgi::bind(this, &emu::supervisor::Application::webHardResetViaTCDS        , "HardResetViaTCDS"        );
+  xgi::bind(this, &emu::supervisor::Application::webResyncBgoTrainViaTCDS   , "ResyncBgoTrainViaTCDS"   );
+  xgi::bind(this, &emu::supervisor::Application::webHardResetBgoTrainViaTCDS, "HardResetBgoTrainViaTCDS");
   
   xoap::bind(this, &emu::supervisor::Application::onConfigure,   "Configure",   XDAQ_NS_URI);
   xoap::bind(this, &emu::supervisor::Application::onStart,       "Start",       XDAQ_NS_URI);
@@ -847,27 +848,25 @@ void emu::supervisor::Application::webDefault(xgi::Input *in, xgi::Output *out)
     *out << tr();
     
     *out << td() << form().set("action", "/" + getApplicationDescriptor()->getURN() + "/ResyncViaTCDS");
-    *out << "<input type='submit' name='command' value='Single Resync' title='Attention! This will send a single, unprotected resync.'" 
+    *out << "<input type='submit' name='command' value='Single Resync' title='Attention! This will send a single, unprotected resync. During the run, consider Resync in Bgo train instead.'" 
 	 << ( state == 'C' || state == 'E' ? "" : " disabled='disabled'" ) << "/>";
     *out << form() << td();
     
     *out << td() << form().set("action", "/" + getApplicationDescriptor()->getURN() + "/HardResetViaTCDS");
-    *out << "<input type='submit' name='command' value='Single HardReset' title='Attention! This will send a single, unprotected hard reset.'" 
+    *out << "<input type='submit' name='command' value='Single HardReset' title='Attention! This will send a single, unprotected hard reset. During the run, consider HardReset in Bgo train instead.'" 
 	 << ( state == 'C' || state == 'E' ? "" : " disabled='disabled'" ) << "/>";
     *out << form() << td();
     
-    *out << td() << form().set("action", "/" + getApplicationDescriptor()->getURN() + "/BgoTrainViaTCDS");
-    *out << "<input type='submit' name='command' value='Send Bgo train' title='Send the selected Bgo train. Use this to send Bgos during the run.'" 
+    *out << td() << form().set("action", "/" + getApplicationDescriptor()->getURN() + "/ResyncBgoTrainViaTCDS");
+    *out << "<input type='submit' name='command' value=' Resync in Bgo train' title='Send Resync in a Bgo train. Use this during the run.'" 
 	 << ( state == 'C' || state == 'E' ? "" : " disabled='disabled'" ) << "/>";
-    *out << "<select name='bgoTrainName' title='Select a Bgo train to send.'" 
-	 << ( state == 'C' || state == 'E' ? "" : " disabled='disabled'" ) << ">";
-    *out << "<option value='HardReset' title='Disable trigger, hard reset, resync, EC0 and enable trigger.'>Hard Reset</option>";
-    *out << "<option value='Resync' title='Disable trigger, resync, EC0 and enable trigger.'>Resync</option>";
-    // *out << "<option value='Pause' title='Disable trigger.'>Pause</option>";
-    // *out << "<option value='Resume' title='Enable trigger.'>Resume</option>";
-    *out << "</select>";
     *out << form() << td();
-
+    
+    *out << td() << form().set("action", "/" + getApplicationDescriptor()->getURN() + "/HardResetBgoTrainViaTCDS");
+    *out << "<input type='submit' name='command' value='HardReset in Bgo train' title='Send Hard reset in a Bgo train. Use this during the run.'" 
+	 << ( state == 'C' || state == 'E' ? "" : " disabled='disabled'" ) << "/>";
+    *out << form() << td();
+    
     *out << tr();
     *out << table(); 
   }  
@@ -1064,28 +1063,47 @@ void emu::supervisor::Application::webHardResetViaTCDS(xgi::Input *in, xgi::Outp
   webRedirect(in, out);
 }
 
-
-void emu::supervisor::Application::webBgoTrainViaTCDS(xgi::Input *in, xgi::Output *out)
+void emu::supervisor::Application::webHardResetBgoTrainViaTCDS(xgi::Input *in, xgi::Output *out)
   throw (xgi::exception::Exception)
 {
   isCommandFromWeb_ = true;
   
   if ( !pm_ ){
-    XCEPT_RAISE( xgi::exception::Exception, "Failed to send Bgo train via TCDS as no LPM appliation was found." );
+    XCEPT_RAISE( xgi::exception::Exception, "Failed to issue hard reset Bgo train via TCDS as no LPM appliation was found." );
   }
 
   try{
-    xdata::String bgoTrainName( getCGIParameter(in, "bgoTrainName") );
-    if ( !bgoTrainName.toString().empty() ) pm_->sendBgoTrain( bgoTrainName );
+    xdata::String HardReset( "HardReset" );
+    pm_->sendBgoTrain( HardReset );
   }
   catch( xcept::Exception& e ){
-    XCEPT_RETHROW( xgi::exception::Exception, "Failed to send Bgo train via TCDS.", e );
+    XCEPT_RETHROW( xgi::exception::Exception, "Failed to issue hard reset Bgo train via TCDS.", e );
   }
 
   keep_refresh_ = true;
   webRedirect(in, out);
 }
 
+void emu::supervisor::Application::webResyncBgoTrainViaTCDS(xgi::Input *in, xgi::Output *out)
+  throw (xgi::exception::Exception)
+{
+  isCommandFromWeb_ = true;
+  
+  if ( !pm_ ){
+    XCEPT_RAISE( xgi::exception::Exception, "Failed to issue resync Bgo train via TCDS as no LPM appliation was found." );
+  }
+
+  try{
+    xdata::String Resync( "Resync" );
+    pm_->sendBgoTrain(  Resync );
+  }
+  catch( xcept::Exception& e ){
+    XCEPT_RETHROW( xgi::exception::Exception, "Failed to issue resync Bgo train via TCDS.", e );
+  }
+
+  keep_refresh_ = true;
+  webRedirect(in, out);
+}
 
 void emu::supervisor::Application::webRedirect(xgi::Input *in, xgi::Output *out)
   throw (xgi::exception::Exception)
@@ -1323,6 +1341,11 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
 
   emu::soap::Messenger m( this );
 
+  ostringstream swLog;
+  emu::base::Stopwatch sw;
+  sw.start();
+  swLog << "Timing in startAction: " << endl;
+
   try {
 
     //
@@ -1336,11 +1359,14 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
 	// Reset csctf-cell operation
 	OpResetCell();
 	if ( !ignoreTFCell() ) waitForTFCellOpToReach("halted",5);
+	swLog << "    Reset TF Cell: " << sw.read() << endl;
       }
     }
 
     try {
       state_table_.refresh();
+      swLog << "    state_table_.refresh: " << sw.read() << endl;    
+
       if (state_table_.getState( localDAQClass_ , 0) != "Halted") {
 	if ( isDAQManagerControlled("Halt") ){
 	  try{
@@ -1349,8 +1375,9 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
 	    isDAQResponsive_ = false;
 	    LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to send Halt to " << localDAQClass_.toString() << "." << xcept::stdformat_exception_history(e) );
 	  }
-	  waitForDAQToExecute("Halt", 10);
+	  waitForDAQToExecute("Halt", 10, true);
 	}
+	swLog << "    Halt local DAQ: " << sw.read() << endl;
       }
        
       if ( ! isUsingTCDS_ ){
@@ -1362,6 +1389,7 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
 	  // Allow ttc::LTCControl some time to halt:
 	  ::sleep(2);
 	}
+	swLog << "    Halt TTC/LTC: " << sw.read() << endl;
       }
       else{
 	if ( pm_       ) pm_      ->halt();
@@ -1371,9 +1399,11 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
 	if ( pi_plus_  ) pi_plus_ ->halt();
 	if ( pi_minus_ ) pi_minus_->halt();
 	if ( pi_tf_    ) pi_tf_   ->halt();
+	swLog << "    Halt TCDS: " << sw.read() << endl;
       }
 
       waitForAppsToReach("Halted",false,30);
+      swLog << "    Halted everything: " << sw.read() << endl;
 
     } catch (xcept::Exception& ignored) {}
     
@@ -1419,7 +1449,8 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
       isDAQResponsive_ = false;
       LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to send Configure to " << localDAQClass_.toString() << "." << xcept::stdformat_exception_history(e) );
     }
-    
+    swLog << "    Sent configure to local DAQ: " << sw.read() << endl;
+
     if ( isUsingTCDS_ ){
       int index = keyToIndex(run_type_);
       if ( index < 0 ){
@@ -1445,6 +1476,7 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
       //
       // Configure LPM and wait for it to finish.
       if ( pm_       ) pm_      ->setRunType( run_type_ ).configure( pm_conf ).waitForState( "Configured", 30 );
+      swLog << "    Configure TCDS PM: " << sw.read() << endl;
       // Configure CIs and wait for them to finish.
       if ( ci_plus_  ) ci_plus_ ->setRunType( run_type_ ).configure( ci_p_conf  );
       if ( ci_minus_ ) ci_minus_->setRunType( run_type_ ).configure( ci_m_conf  );
@@ -1452,6 +1484,7 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
       if ( ci_plus_  ) ci_plus_ ->waitForState( "Configured", 30 );
       if ( ci_minus_ ) ci_minus_->waitForState( "Configured", 30 );
       if ( ci_tf_    ) ci_tf_   ->waitForState( "Configured", 30 );
+      swLog << "    Configure TCDS CIs: " << sw.read() << endl;
       // Configure PIs and wait for them to finish.
       if ( pi_plus_  ) pi_plus_ ->setRunType( run_type_ ).configure( pi_conf, usePrimaryTCDS_ );
       if ( pi_minus_ ) pi_minus_->setRunType( run_type_ ).configure( pi_conf, usePrimaryTCDS_ );
@@ -1459,6 +1492,7 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
       if ( pi_plus_  ) pi_plus_ ->waitForState( "Configured", 30 );
       if ( pi_minus_ ) pi_minus_->waitForState( "Configured", 30 );
       if ( pi_tf_    ) pi_tf_   ->waitForState( "Configured", 30 );
+      swLog << "    Configure TCDS PIs: " << sw.read() << endl;
       //
       // Emu-specific TCDS commands
       //
@@ -1467,8 +1501,10 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
       if ( ci_plus_  ) ci_plus_ ->configureSequence();
       if ( ci_minus_ ) ci_minus_->configureSequence();
       if ( ci_tf_    ) ci_tf_   ->configureSequence();
+      swLog << "    Configure sequence in TCDS CIs: " << sw.read() << endl;
       // Execute our explicit PM commands:
       if ( pm_       ) pm_      ->configureSequence();
+      swLog << "    Configure sequence in TCDS PM: " << sw.read() << endl;
     }
     else{
       int index = getCalibParamIndex(run_type_);
@@ -1482,6 +1518,7 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
 	m.setParameters( "ttc::LTCControl" , emu::soap::Parameters().add( "Configuration", &calib_params_[index].bag.ltc_ ) );
       }
       m.sendCommand( "ttc::LTCControl", "configure" );
+      swLog << "    Configure TTC/LTC: " << sw.read() << endl;
     } // if ( ! isUsingTCDS_ )
 
     m.setResponseTimeout( 600 ); // Allow PCrates ample time to be configured.
@@ -1495,6 +1532,7 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
     }  
     LOG4CPLUS_INFO( getApplicationLogger(), "Configured PCrates." );
     m.resetResponseTimeout(); // Reset response timeout to default value.
+    swLog << "    Configure PCrates: " << sw.read() << endl;
        
     // Configure TF Cell operation
     if ( isUsingLegacyTF_.value_ ){
@@ -1525,25 +1563,42 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
 	  if ( ! bool( isGlobalInControl ) ) throw eObj;
 	} 
       }
+      swLog << "    Configure TF Cell: " << sw.read() << endl;
     } // if ( isUsingLegacyTF_.value_ )
     else{
       if ( tf_descr_ != NULL && controlTFCellOp_.value_ ){
 	if ( waitForTFCellOpToReach("halted",5) ){
-	    LOG4CPLUS_INFO( getApplicationLogger(), "Sending 'engage' to TF Cell." );
-	    sendCommandCell("engage");
-	    LOG4CPLUS_INFO( getApplicationLogger(), "Sent 'engage' to TF Cell." );
-	    if ( waitForTFCellOpToReach("engaged",5) ){
-	      LOG4CPLUS_INFO( getApplicationLogger(), "Sending 'setup' to TF Cell." );
-	      sendCommandCell("setup");
-	      LOG4CPLUS_INFO( getApplicationLogger(), "Sent 'setup' to TF Cell." );
-	      if ( waitForTFCellOpToReach("synchronized",5) ){
-		LOG4CPLUS_INFO( getApplicationLogger(), "Sending 'configure' to TF Cell." );
-		sendCommandCell("configure");
-		LOG4CPLUS_INFO( getApplicationLogger(), "Sent 'configure' to TF Cell." );
+	  LOG4CPLUS_INFO( getApplicationLogger(), "Sending 'engage' to TF Cell." );
+	  sendCommandCell("engage");
+	  LOG4CPLUS_INFO( getApplicationLogger(), "Sent 'engage' to TF Cell." );
+	  if ( waitForTFCellOpToReach("engaged",5) ){
+	    LOG4CPLUS_INFO( getApplicationLogger(), "Sending 'setup' to TF Cell." );
+	    sendCommandCell("setup");
+	    LOG4CPLUS_INFO( getApplicationLogger(), "Sent 'setup' to TF Cell." );
+	    if ( waitForTFCellOpToReach("synchronized",5) ){
+	      LOG4CPLUS_INFO( getApplicationLogger(), "Sending 'configure' to TF Cell." );
+	      sendCommandCell("configure");
+	      LOG4CPLUS_INFO( getApplicationLogger(), "Sent 'configure' to TF Cell." );
+	      if ( waitForTFCellOpToReach("configured",5) ){
+		LOG4CPLUS_INFO( getApplicationLogger(), "TF Cell is now configured." );
+	      }
+	      else{
+		XCEPT_RAISE( xcept::Exception, string( "EMTF failed to reach 'configured' state." ) );
 	      }
 	    }
+	    else{
+	      XCEPT_RAISE( xcept::Exception, string( "EMTF failed to reach 'synchronized' state." ) );
+	    }
+	  }
+	  else{
+	    XCEPT_RAISE( xcept::Exception, string( "EMTF failed to reach 'engaged' state." ) );
+	  }
+	}
+	else{
+	  XCEPT_RAISE( xcept::Exception, string( "EMTF failed to reach 'halted' state before being configured." ) );
 	}
       }
+      swLog << "    Configure EMTF Cell: " << sw.read() << endl;
     } // if ( isUsingLegacyTF_.value_ ) else
 
     xdata::String runType( toolbox::tolower( run_type_.toString() ) );
@@ -1551,21 +1606,23 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
     m.setParameters( "emu::fed::Manager", emu::soap::Parameters().add( "runType", &runType ) );
     // Configure FED
     m.sendCommand( "emu::fed::Manager", "Configure" );
+    swLog << "    Configure FED: " << sw.read() << endl;
 
     // By now the local DAQ must have finished configuring. Checking it is practically only needed
     // in tests when the local DAQ Manager is the only supervised app. We certainly don't need to do it
     // in global runs.
     try{
-      if ( runType != "global" ) 
+      if ( ! bool( isGlobalInControl ) ) 
 	if ( isDAQManagerControlled("Configure") ) waitForDAQToExecute("Configure", 5, true);
     } catch (xcept::Exception ignored) {}
-
+    swLog << "    Check local DAQ: " << sw.read() << endl;
 
     if ( !waitForAppsToReach("Configured",false,30) ){
       stringstream ss;
       ss << state_table_;
       XCEPT_RAISE(xcept::Exception,"Applications failed to reach 'Configured' state. Their current state: "+ss.str() );
     }
+    swLog << "    Check all apps: " << sw.read() << endl;
 
     // state_table_.refresh();
     // if (!state_table_.isValidState("Configured")) {
@@ -1576,6 +1633,7 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
     // }
     refreshConfigParameters();
     
+    LOG4CPLUS_INFO( getApplicationLogger(), swLog.str() );
   } catch ( xoap::exception::Exception& e) {
     XCEPT_RETHROW( toolbox::fsm::exception::Exception, "Configure transition failed.", e );
   } catch ( xcept::Exception& e ) {
@@ -1599,7 +1657,13 @@ void emu::supervisor::Application::startAction(toolbox::Event::Reference evt)
   emu::soap::Messenger m( this );
 
   try {
+    ostringstream swLog;
+    emu::base::Stopwatch sw;
+    sw.start();
     state_table_.refresh();
+    swLog << "Timing in startAction: " << endl
+	 << "    state table: " << state_table_
+	 << "    state_table_.refresh: " << sw.read() << endl;    
 
     if ( isUsingTCDS_ ){
       // Send a resync to clear DDUs' L1A scaler or else the subsequent 
@@ -1613,15 +1677,18 @@ void emu::supervisor::Application::startAction(toolbox::Event::Reference evt)
       if ( ci_plus_  ) ci_plus_ ->sendBgo( Resync );
       if ( ci_minus_ ) ci_minus_->sendBgo( Resync );
       if ( ci_tf_    ) ci_tf_   ->sendBgo( Resync );
+      swLog << "    Send resync to TCDS CIs: " << sw.read() << endl;
     }
 
     m.setParameters( "emu::fed::Manager", emu::soap::Parameters().add( "runNumber", &run_number_ ) );
     // ::sleep(300); // TODO:remove
     m.sendCommand( "emu::fed::Manager", "Enable" );
+    swLog << "    Enable emu::fed::Manager: " << sw.read() << endl;
     
     if (!isCalibrationMode()) {
       m.sendCommand( "emu::pc::EmuPeripheralCrateManager", "Enable" );
     }
+    swLog << "    Enable emu::pc::EmuPeripheralCrateManager: " << sw.read() << endl;
     
     isDAQResponsive_ = true; // Maybe the local DAQ has been relaunched/cured in the meantime if it was unresponsive, so let's give it a chance.
     try {
@@ -1638,7 +1705,8 @@ void emu::supervisor::Application::startAction(toolbox::Event::Reference evt)
 			    );
 	  m.sendCommand(  localDAQClass_ , 0, "Configure" );
 	  if ( isCommandFromWeb_ ) waitForDAQToExecute("Configure", 60, true);
-	  else                     waitForDAQToExecute("Configure", 5);
+	  else                     waitForDAQToExecute("Configure", 5,  true);
+	  swLog << "    Configure  " << localDAQClass_.toString() << ": " << sw.read() << endl;
 	}
       }
       if ( isDAQManagerControlled("Enable") ) {
@@ -1646,7 +1714,8 @@ void emu::supervisor::Application::startAction(toolbox::Event::Reference evt)
 	  m.setParameters(  localDAQClass_ , emu::soap::Parameters().add( "runNumber", &run_number_ ) );
 	  m.sendCommand(  localDAQClass_ , 0, "Enable" );
 	  if ( isCommandFromWeb_ ) waitForDAQToExecute("Enable", 60, true);
-	  else                     waitForDAQToExecute("Enable", 5);
+	  else                     waitForDAQToExecute("Enable", 5,  true);
+	  swLog << "    Enable " << localDAQClass_.toString() << ": " << sw.read() << endl;
 	}
       }
     } catch (xcept::Exception& e){
@@ -1696,6 +1765,7 @@ void emu::supervisor::Application::startAction(toolbox::Event::Reference evt)
 	}
       }
     }
+    swLog << "    Enable TF Cell: " << sw.read() << endl;
 
     if ( isUsingTCDS_ ){
       // Enable TCDS
@@ -1706,6 +1776,7 @@ void emu::supervisor::Application::startAction(toolbox::Event::Reference evt)
       if ( pi_plus_  ) pi_plus_ ->waitForState( "Enabled", 30 );
       if ( pi_minus_ ) pi_minus_->waitForState( "Enabled", 30 );
       if ( pi_tf_    ) pi_tf_   ->waitForState( "Enabled", 30 );
+      swLog << "    Enable TCDS PIs: " << sw.read() << endl;
       // CIs
       if ( ci_plus_  ) ci_plus_ ->enable( run_number_ );
       if ( ci_minus_ ) ci_minus_->enable( run_number_ );
@@ -1713,12 +1784,15 @@ void emu::supervisor::Application::startAction(toolbox::Event::Reference evt)
       if ( ci_plus_  ) ci_plus_ ->enableSequence(); // This waits for the state transition to complete before issuing any commands.
       if ( ci_minus_ ) ci_minus_->enableSequence(); // This waits for the state transition to complete before issuing any commands.
       if ( ci_tf_    ) ci_tf_   ->enableSequence(); // This waits for the state transition to complete before issuing any commands.
+      swLog << "    Enable TCDS CIs: " << sw.read() << endl;
       // LPM
       if ( pm_       ) pm_      ->enable( run_number_ ).enableSequence(); // This waits for the state transition to complete.
+      swLog << "    Enable TCDS LPM: " << sw.read() << endl;
     }
 
     refreshConfigParameters();
     
+    LOG4CPLUS_INFO( getApplicationLogger(), swLog.str() );
   } catch ( xoap::exception::Exception& e) {
     XCEPT_RETHROW( toolbox::fsm::exception::Exception, "Enable transition failed.", e );
   } catch ( xcept::Exception& e ) {
@@ -1742,11 +1816,14 @@ void emu::supervisor::Application::stopAction(toolbox::Event::Reference evt)
   
   emu::soap::Messenger m( this );
 
+  bool isGlobalInControl( toolbox::tolower( run_type_.toString() ) == "global" );
+
   try {
+    ostringstream swLog;
     emu::base::Stopwatch sw;
     sw.start();
     state_table_.refresh();
-    cout << "Timing in stopAction: " << endl
+    swLog << "Timing in stopAction: " << endl
 	 << "    state table: " << state_table_
 	 << "    state_table_.refresh: " << sw.read() << endl;
 
@@ -1760,7 +1837,7 @@ void emu::supervisor::Application::stopAction(toolbox::Event::Reference evt)
       if ( tf_descr_ != NULL && controlTFCellOp_.value_ ){
 	if ( !ignoreTFCell() ) sendCommandCell("stop");
 	if ( !ignoreTFCell() ) waitForTFCellOpToReach("configured",5);
-	cout << "    stop TFCellOp: " << sw.read() << endl;
+	swLog << "    stop TFCellOp: " << sw.read() << endl;
       }
     }
     else{
@@ -1769,18 +1846,18 @@ void emu::supervisor::Application::stopAction(toolbox::Event::Reference evt)
 	sendCommandCell("stop");
 	LOG4CPLUS_INFO( getApplicationLogger(), "Sent 'stop' to TF Cell." );
 	waitForTFCellOpToReach("configured",5);
-	cout << "    stop TFCellOp: " << sw.read() << endl;
+	swLog << "    stop TFCellOp: " << sw.read() << endl;
       }      
     }
 
     if ( ! isUsingTCDS_ ){
       if (state_table_.getState("ttc::LTCControl", 0) != "configured") {
 	m.sendCommand( "ttc::LTCControl", "stop" );
-	cout << "    Stop ttc::LTCControl: " << sw.read() << endl;
+	swLog << "    Stop ttc::LTCControl: " << sw.read() << endl;
       }
       if (state_table_.getState("ttc::TTCciControl", 0) != "configured") {
 	m.sendCommand( "ttc::TTCciControl", "stop" );
-	cout << "    Stop ttc::TTCciControl: " << sw.read() << endl;
+	swLog << "    Stop ttc::TTCciControl: " << sw.read() << endl;
       }
     }
         
@@ -1789,37 +1866,38 @@ void emu::supervisor::Application::stopAction(toolbox::Event::Reference evt)
       if ( isDAQManagerControlled("Halt") ){ 
 	if ( bool( isDAQResponsive_ ) ){
 	  m.sendCommand(  localDAQClass_ , 0, "Halt" );
-	  if ( isCommandFromWeb_ ) waitForDAQToExecute("Halt", 60, true);
-	  else                     waitForDAQToExecute("Halt", 5);
+	  // We don't check and wait for local DAQ in global runs.
+	  if ( ! isGlobalInControl ) waitForDAQToExecute("Halt", 60, true);
 	}
       }
     } catch (xcept::Exception& e){
       isDAQResponsive_ = false;
       LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to Halt " << localDAQClass_.toString() << " in Stop." << xcept::stdformat_exception_history(e) );
     }
-    cout << "    Halt " << localDAQClass_.toString() << ": " << sw.read() << endl;
+    swLog << "    Halt " << localDAQClass_.toString() << ": " << sw.read() << endl;
 
     m.setResponseTimeout( 60 ); // Allow FED ample time to stop.
     m.sendCommand( "emu::fed::Manager", "Disable" );
     m.resetResponseTimeout(); // Reset response timeout to default value.
-    cout << "    Disable emu::fed::Manager: " << sw.read() << endl;
+    swLog << "    Disable emu::fed::Manager: " << sw.read() << endl;
     m.sendCommand( "emu::pc::EmuPeripheralCrateManager", "Disable" );
-    cout << "    Disable emu::pc::EmuPeripheralCrateManager: " << sw.read() << endl;
+    swLog << "    Disable emu::pc::EmuPeripheralCrateManager: " << sw.read() << endl;
 
     if ( ! isUsingTCDS_ ){
       m.sendCommand( "ttc::LTCControl", "reset" );
-      cout << "    Halt (reset) ttc::LTCControl: " << sw.read() << endl;
+      swLog << "    Halt (reset) ttc::LTCControl: " << sw.read() << endl;
       m.sendCommand( "ttc::TTCciControl", "reset" );
-      cout << "    Halt (reset) ttc::TTCciControl: " << sw.read() << endl;
+      swLog << "    Halt (reset) ttc::TTCciControl: " << sw.read() << endl;
       m.sendCommand( "ttc::TTCciControl", "configure" );
-      cout << "    Configure TTCci: " << sw.read() << endl;
+      swLog << "    Configure TTCci: " << sw.read() << endl;
       m.sendCommand( "ttc::LTCControl", "configure" );
-      cout << "    Configure LTC: " << sw.read() << endl;
+      swLog << "    Configure LTC: " << sw.read() << endl;
     }
     else{
       // Stop TCDS
       // LPM
       if ( pm_       ) pm_      ->stop().stopSequence(); // PMControl::stopSequence() waits for the state transition to complete.
+      swLog << "    Stop TCDS LPM: " << sw.read() << endl;
       // CIs
       if ( ci_plus_  ) ci_plus_ ->stop();
       if ( ci_minus_ ) ci_minus_->stop();
@@ -1833,6 +1911,7 @@ void emu::supervisor::Application::stopAction(toolbox::Event::Reference evt)
       if ( ci_plus_  ) ci_plus_ ->stopSequence();
       if ( ci_minus_ ) ci_minus_->stopSequence();
       if ( ci_tf_    ) ci_tf_   ->stopSequence();
+      swLog << "    Stop TCDS CIs: " << sw.read() << endl;
       // PIs
       if ( pi_plus_  ) pi_plus_ ->stop();
       if ( pi_minus_ ) pi_minus_->stop();
@@ -1840,10 +1919,13 @@ void emu::supervisor::Application::stopAction(toolbox::Event::Reference evt)
       if ( pi_plus_  ) pi_plus_ ->waitForState( "Configured", 30 );
       if ( pi_minus_ ) pi_minus_->waitForState( "Configured", 30 );
       if ( pi_tf_    ) pi_tf_   ->waitForState( "Configured", 30 );
+      swLog << "    Stop TCDS PIs: " << sw.read() << endl;
     }
 
     writeRunInfo( isCommandFromWeb_ ); // only write runinfo if Stop was issued from the web interface
-    if ( isCommandFromWeb_ ) cout << "    Write run info: " << sw.read() << endl;
+    if ( isCommandFromWeb_ ) swLog << "    Write run info: " << sw.read() << endl;
+
+    LOG4CPLUS_INFO( getApplicationLogger(), swLog.str() );
   } catch ( xoap::exception::Exception& e) {
     XCEPT_RETHROW( toolbox::fsm::exception::Exception, "Stop transition failed.", e );
   } catch ( xcept::Exception& e ) {
@@ -1861,11 +1943,14 @@ void emu::supervisor::Application::haltAction(toolbox::Event::Reference evt)
   
   emu::soap::Messenger m( this );
 
+  bool isGlobalInControl( toolbox::tolower( run_type_.toString() ) == "global" );
+
   try {
+    ostringstream swLog;
     emu::base::Stopwatch sw;
     sw.start();
     state_table_.refresh();
-    cout << "Timing in haltAction: " << endl
+    swLog << "Timing in haltAction: " << endl
 	 << "    state table: " << state_table_
 	 << "    state_table_.refresh: " << sw.read() << endl;
     
@@ -1881,13 +1966,13 @@ void emu::supervisor::Application::haltAction(toolbox::Event::Reference evt)
       if ( tf_descr_ != NULL && controlTFCellOp_.value_ ){
 	if ( bool(forceTFCellConf_) ){
 	  if ( !ignoreTFCell() ) OpResetCell();
-	  cout << "    reset TFCellOp: " << sw.read() << endl;
+	  swLog << "    reset TFCellOp: " << sw.read() << endl;
 	}
 	else{
 	  LOG4CPLUS_WARN( getApplicationLogger(), "\"forceTFCellConf\" is set to FALSE, therefore the TF Cell will not be 'reset' (to 'halted' state). Instead, it will be 'stopped' (to 'configured' state) so that it can be ready to start without being (re)configured if the correct key is already active." );
 	  if ( !ignoreTFCell() ) sendCommandCell("stop");
 	  if ( !ignoreTFCell() ) waitForTFCellOpToReach("configured",5);
-	  cout << "    stop TFCellOp: " << sw.read() << endl;
+	  swLog << "    stop TFCellOp: " << sw.read() << endl;
 	}
       }
     } // if ( isUsingLegacyTF_.value_ )
@@ -1902,35 +1987,35 @@ void emu::supervisor::Application::haltAction(toolbox::Event::Reference evt)
     if ( ! isUsingTCDS_ ){
       if (state_table_.getState("ttc::LTCControl", 0) != "halted") {
 	m.sendCommand( "ttc::LTCControl", "reset" );
-	cout << "    Halt (reset) ttc::LTCControl: " << sw.read() << endl;
+	swLog << "    Halt (reset) ttc::LTCControl: " << sw.read() << endl;
       }
 
       if (state_table_.getState("ttc::TTCciControl", 0) != "halted") {
 	m.sendCommand( "ttc::TTCciControl", "reset" );
-	cout << "    Halt (reset) ttc::TTCciControl: " << sw.read() << endl;
+	swLog << "    Halt (reset) ttc::TTCciControl: " << sw.read() << endl;
       }
     }
 
     m.sendCommand( "emu::fed::Manager", "Halt" );
-    cout << "    Halt emu::fed::Manager: " << sw.read() << endl;
+    swLog << "    Halt emu::fed::Manager: " << sw.read() << endl;
 
     m.sendCommand( "emu::pc::EmuPeripheralCrateManager", "Halt" );
-    cout << "    Halt emu::pc::EmuPeripheralCrateManager: " << sw.read() << endl;
+    swLog << "    Halt emu::pc::EmuPeripheralCrateManager: " << sw.read() << endl;
     
     isDAQResponsive_ = true; // Maybe the local DAQ has been relaunched/cured in the meantime if it was unresponsive, so let's give it a chance.
     try {
       if ( isDAQManagerControlled("Halt") ){
 	if ( bool( isDAQResponsive_ ) ){
 	  m.sendCommand(  localDAQClass_ , 0, "Halt" );
-	  if ( isCommandFromWeb_ ) waitForDAQToExecute("Halt", 60, true);
-	  else                     waitForDAQToExecute("Halt", 5);
+	  // We don't check and wait for local DAQ in global runs.
+	  if ( ! isGlobalInControl ) waitForDAQToExecute("Halt", 60, true);
 	}
       }
     } catch (xcept::Exception& e){
       isDAQResponsive_ = false;
       LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to Halt " << localDAQClass_.toString() << " in Halt." << xcept::stdformat_exception_history(e) );
     }
-    cout << "    Halt " << localDAQClass_.toString() << ": " << sw.read() << endl;
+    swLog << "    Halt " << localDAQClass_.toString() << ": " << sw.read() << endl;
 
     if ( ! isUsingTCDS_ ){
       // Issue a resync now to make sure L1A is reset to zero in the FEDs in case a global run follows.
@@ -1949,6 +2034,7 @@ void emu::supervisor::Application::haltAction(toolbox::Event::Reference evt)
       // The following command will not be issued if no LPM application is found.
       xdata::String Resync( "Resync" );
       if ( pm_       ) pm_      ->sendBgoTrain( Resync ).halt().waitForState( "Halted", 30 );
+      swLog << "    Halt TCDS LPM: " << sw.read() << endl;
       // CIs
       if ( ci_plus_  ) ci_plus_ ->halt();
       if ( ci_minus_ ) ci_minus_->halt();
@@ -1956,6 +2042,7 @@ void emu::supervisor::Application::haltAction(toolbox::Event::Reference evt)
       if ( ci_plus_  ) ci_plus_ ->waitForState( "Halted", 30 );
       if ( ci_minus_ ) ci_minus_->waitForState( "Halted", 30 );
       if ( ci_tf_    ) ci_tf_   ->waitForState( "Halted", 30 );
+      swLog << "    Halt TCDS CIs: " << sw.read() << endl;
       // PIs
       if ( pi_plus_  ) pi_plus_ ->halt();
       if ( pi_minus_ ) pi_minus_->halt();
@@ -1963,11 +2050,13 @@ void emu::supervisor::Application::haltAction(toolbox::Event::Reference evt)
       if ( pi_plus_  ) pi_plus_ ->waitForState( "Halted", 30 );
       if ( pi_minus_ ) pi_minus_->waitForState( "Halted", 30 );
       if ( pi_tf_    ) pi_tf_   ->waitForState( "Halted", 30 );
+      swLog << "    Halt TCDS PIs: " << sw.read() << endl;
     }
 
     writeRunInfo( isCommandFromWeb_ ); // only write runinfo if Halt was issued from the web interface
-    if ( isCommandFromWeb_ ) cout << "    Write run info: " << sw.read() << endl;
+    if ( isCommandFromWeb_ ) swLog << "    Write run info: " << sw.read() << endl;
 
+    LOG4CPLUS_INFO( getApplicationLogger(), swLog.str() );
   } catch ( xoap::exception::Exception& e) {
     XCEPT_RETHROW( toolbox::fsm::exception::Exception, "Halt transition failed.", e );
   } catch ( xcept::Exception& e ) {
@@ -1989,11 +2078,14 @@ void emu::supervisor::Application::resetAction() throw (toolbox::fsm::exception:
 
   emu::soap::Messenger m( this );
 
+  bool isGlobalInControl( toolbox::tolower( run_type_.toString() ) == "global" );
+
   try {
+    ostringstream swLog;
     emu::base::Stopwatch sw;
     sw.start();
     state_table_.refresh();
-    cout << "Timing in resetAction: " << endl
+    swLog << "Timing in resetAction: " << endl
 	 << "    state table: " << state_table_
 	 << "    state_table_.refresh: " << sw.read() << endl;    
 
@@ -2002,13 +2094,13 @@ void emu::supervisor::Application::resetAction() throw (toolbox::fsm::exception:
       if ( tf_descr_ != NULL && controlTFCellOp_.value_ ){
 	if ( bool(forceTFCellConf_) ){
 	  if ( !ignoreTFCell() ) OpResetCell();
-	  cout << "    reset TFCellOp: " << sw.read() << endl;
+	  swLog << "    reset TFCellOp: " << sw.read() << endl;
 	}
 	else{
 	  LOG4CPLUS_WARN( getApplicationLogger(), "\"forceTFCellConf\" is set to FALSE, therefore the TF Cell will not be 'reset' (to 'halted' state). Instead, it will be 'stopped' (to 'configured' state) so that it can be ready to start without being (re)configured if the correct key is already active." );
 	  if ( !ignoreTFCell() ) sendCommandCell("stop");
 	  if ( !ignoreTFCell() ) waitForTFCellOpToReach("configured",5);
-	  cout << "    stop TFCellOp: " << sw.read() << endl;
+	  swLog << "    stop TFCellOp: " << sw.read() << endl;
 	}
       }
     } // if ( isUsingLegacyTF_.value_ )
@@ -2023,35 +2115,36 @@ void emu::supervisor::Application::resetAction() throw (toolbox::fsm::exception:
     if ( ! isUsingTCDS_ ){
       if (state_table_.getState("ttc::LTCControl", 0) != "halted") {
 	m.sendCommand( "ttc::LTCControl", "reset" );
-	cout << "    Halt (reset) ttc::LTCControl: " << sw.read() << endl;
+	swLog << "    Halt (reset) ttc::LTCControl: " << sw.read() << endl;
       }
 
       if (state_table_.getState("ttc::TTCciControl", 0) != "halted") {
 	m.sendCommand( "ttc::TTCciControl", "reset" );
-	cout << "    Halt (reset) ttc::TTCciControl: " << sw.read() << endl;
+	swLog << "    Halt (reset) ttc::TTCciControl: " << sw.read() << endl;
       }
     }
 
     m.sendCommand( "emu::fed::Manager", "Halt" );
-    cout << "    Halt emu::fed::Manager: " << sw.read() << endl;
+    swLog << "    Halt emu::fed::Manager: " << sw.read() << endl;
 
     m.sendCommand( "emu::pc::EmuPeripheralCrateManager", "Halt" );
-    cout << "    Halt emu::pc::EmuPeripheralCrateManager: " << sw.read() << endl;
+    swLog << "    Halt emu::pc::EmuPeripheralCrateManager: " << sw.read() << endl;
     
     isDAQResponsive_ = true; // Maybe the local DAQ has been relaunched/cured in the meantime if it was unresponsive, so let's give it a chance.
     try {
       if ( isDAQManagerControlled("Halt") ){
 	if ( bool( isDAQResponsive_ ) ){
 	  m.sendCommand( localDAQClass_, 0, "Halt" );
-	  if ( isCommandFromWeb_ ) waitForDAQToExecute("Halt", 60, true);
-	  else                     waitForDAQToExecute("Halt", 5);
+	  if ( isCommandFromWeb_ ) 
+	  // We don't check and wait for local DAQ in global runs.
+	  if ( ! isGlobalInControl ) waitForDAQToExecute("Halt", 60, true);
 	}
       }
     } catch (xcept::Exception& e){
       isDAQResponsive_ = false;
       LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to Halt " << localDAQClass_.toString() << " in Reset." << xcept::stdformat_exception_history(e) );
     }
-    cout << "    Halt " << localDAQClass_.toString() << ": " << sw.read() << endl;
+    swLog << "    Halt " << localDAQClass_.toString() << ": " << sw.read() << endl;
 
     if ( ! isUsingTCDS_ ){
       // Issue a resync now to make sure L1A is reset to zero in the FEDs in case a global run follows.
@@ -2067,6 +2160,7 @@ void emu::supervisor::Application::resetAction() throw (toolbox::fsm::exception:
       LOG4CPLUS_ERROR( getApplicationLogger(), "Halting TCDS LPM." );
       if ( pm_       ) pm_      ->halt();
       if ( pm_       ) pm_      ->waitForState( "Halted", 30 );
+      swLog << "    Halt TCDS LPM: " << sw.read() << endl;
       // CIs
       LOG4CPLUS_ERROR( getApplicationLogger(), "Halting TCDS CIs." );
       if ( ci_plus_  ) ci_plus_ ->halt();
@@ -2075,6 +2169,7 @@ void emu::supervisor::Application::resetAction() throw (toolbox::fsm::exception:
       if ( ci_plus_  ) ci_plus_ ->waitForState( "Halted", 30 );
       if ( ci_minus_ ) ci_minus_->waitForState( "Halted", 30 );
       if ( ci_tf_    ) ci_tf_   ->waitForState( "Halted", 30 );
+      swLog << "    Halt TCDS CIs: " << sw.read() << endl;
       // PIs
       LOG4CPLUS_ERROR( getApplicationLogger(), "Halting TCDS PIs." );
       if ( pi_plus_  ) pi_plus_ ->halt();
@@ -2083,11 +2178,13 @@ void emu::supervisor::Application::resetAction() throw (toolbox::fsm::exception:
       if ( pi_plus_  ) pi_plus_ ->waitForState( "Halted", 30 );
       if ( pi_minus_ ) pi_minus_->waitForState( "Halted", 30 );
       if ( pi_tf_    ) pi_tf_   ->waitForState( "Halted", 30 );
+      swLog << "    Halt TCDS PIs: " << sw.read() << endl;
     }
 
     writeRunInfo( isCommandFromWeb_ ); // only write runinfo if Halt was issued from the web interface
-    if ( isCommandFromWeb_ ) cout << "    Write run info: " << sw.read() << endl;
+    if ( isCommandFromWeb_ ) swLog << "    Write run info: " << sw.read() << endl;
 
+    LOG4CPLUS_INFO( getApplicationLogger(), swLog.str() );
   } catch ( xoap::exception::Exception& e) {
     XCEPT_RETHROW( toolbox::fsm::exception::Exception, "Halt transition failed with xoap::exception on Reset command.", e );
   } catch ( xcept::Exception& e ) {

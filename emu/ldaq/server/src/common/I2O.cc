@@ -105,8 +105,7 @@ void emu::ldaq::server::I2O::addData( const int               runNumber,
 				     const uint16_t          errorFlag, 
 				     char*                   data, 
 				     const size_t            dataLength ){
-    // LOG4CPLUS_DEBUG(logger_, poolName_ << 
-    LOG4CPLUS_INFO(logger_, poolName_ << 
+    LOG4CPLUS_DEBUG(logger_, poolName_ << 
 		    ": " << pool_->getMemoryUsage().getUsed() <<
 		    " bytes ( " << 100*(float)(pool_->getMemoryUsage().getUsed())/(float)(pool_->getMemoryUsage().getCommitted()) << 
 		    " % ) Event " << nEvents <<
@@ -122,7 +121,7 @@ void emu::ldaq::server::I2O::addData( const int               runNumber,
 	if ( nEvents % prescaling_->value_ == 0 ){
 	  if( !pool_->isHighThresholdExceeded() )
 	    isToBeSent = true;
-	  else  LOG4CPLUS_WARN(logger_, name_ << " memory pool's high threshold exceeded.");
+	  else  LOG4CPLUS_DEBUG(logger_, name_ << " memory pool's high threshold exceeded.");
 	}
       }
     }
@@ -130,13 +129,12 @@ void emu::ldaq::server::I2O::addData( const int               runNumber,
       if ( nEvents % prescaling_->value_ == 0 ){
 	if( !pool_->isHighThresholdExceeded() )
 	  isToBeSent = true;
-	else LOG4CPLUS_WARN(logger_, name_ << " memory pool's high threshold exceeded.");
+	else LOG4CPLUS_DEBUG(logger_, name_ << " memory pool's high threshold exceeded.");
       }
     }
 
     if ( isToBeSent ){
-      // LOG4CPLUS_DEBUG(logger_, 
-      LOG4CPLUS_INFO(logger_, 
+      LOG4CPLUS_DEBUG(logger_, 
 		      "Adding " << dataLength <<
 		      " bytes of data of event " << nEvents <<
 		      " to be sent." );
@@ -147,13 +145,13 @@ void emu::ldaq::server::I2O::addData( const int               runNumber,
 	if ( bufRef != NULL ) messageQueue_.push_back( pair< toolbox::mem::Reference*, emu::ldaq::server::PositionInEvent_t >( bufRef, position ) );
       }
       catch(xcept::Exception e){
-	LOG4CPLUS_ERROR(logger_,
+	LOG4CPLUS_DEBUG(logger_,
 			"Failed to append data to be sent to " << clientName_
 			<< " : " << stdformat_exception_history(e));
       }
     }
     else{
-      LOG4CPLUS_INFO(logger_, 
+      LOG4CPLUS_DEBUG(logger_, 
 		      "Not adding " << dataLength <<
 		      " bytes of data of event " << nEvents <<
 		      " to be sent." );
@@ -314,7 +312,7 @@ void emu::ldaq::server::I2O::sendData()
       // Here we have a multi-block and/or incomplete event. Merge data and information into a single message:
       sendMergedEventMessage();
     }
-    LOG4CPLUS_INFO(logger_, "emu::ldaq::server::I2O::sendData: " << messageQueue_.size() << " data blocks pending.");
+    LOG4CPLUS_DEBUG(logger_, "emu::ldaq::server::I2O::sendData: " << messageQueue_.size() << " data blocks pending.");
   }
 
 }

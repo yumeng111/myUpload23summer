@@ -722,6 +722,9 @@ vector< pair<string, xdata::Serializable*> > emu::ldaq::rui::Application::initAn
     badEventCount_ = 0;
     params.push_back(pair<string,xdata::Serializable *>("badEventCount", &badEventCount_));
 
+    deviceResetCount_ = 0;
+    params.push_back(pair<string,xdata::Serializable *>("deviceResetCount", &deviceResetCount_));
+
     persistentDDUError_ = "";
     params.push_back(pair<string,xdata::Serializable *>("persistentDDUError", &persistentDDUError_));
 
@@ -1011,10 +1014,13 @@ void emu::ldaq::rui::Application::createDeviceReader(){
       XCEPT_RAISE(toolbox::fsm::exception::Exception, oss.str());
     }
     try {
-      if      ( inputDeviceType_ == "spy"  )
+      if      ( inputDeviceType_ == "spy"  ){
 	deviceReader_ = new emu::ldaq::reader::Spy(  inputDeviceName_.toString(), inputDataFormatInt_, false );
-      else if ( inputDeviceType_ == "file" )
+	dynamic_cast<emu::ldaq::reader::Spy*>( deviceReader_ )->setConditionForReset( emu::ldaq::reader::Spy::LoopOverwrite | emu::ldaq::reader::Spy::BufferOverwrite );
+      }
+      else if ( inputDeviceType_ == "file" ){
 	deviceReader_ = new emu::ldaq::reader::RawDataFile( inputDeviceName_.toString(), inputDataFormatInt_ );
+      }
       // TODO: slink
     }
     catch(std::runtime_error e){
@@ -2557,6 +2563,7 @@ int32_t emu::ldaq::rui::Application::continueConstructionOfFragment()
     // See if there's something to read and then read it:
   try{
     nBytesRead = deviceReader_->readNextEvent();
+    deviceResetCount_ = deviceReader_->getResetCount();
   }
   catch(...){
     stringstream oss;

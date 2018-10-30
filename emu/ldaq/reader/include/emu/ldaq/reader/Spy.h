@@ -14,6 +14,7 @@ namespace emu { namespace ldaq { namespace reader {
 
     /// error types
     enum Status_t {
+      None              = 0x0000,	///< no error
       EndOfEventMissing = 0x0001,	///< end of event missing
       Timeout           = 0x0002,	///< timeout occurred while waiting for data
       PacketsMissing    = 0x0004,	///< one or more ethernet packets didn't make it
@@ -58,6 +59,11 @@ namespace emu { namespace ldaq { namespace reader {
     /// not used in memory mapped readout
     int  chunkSize();
 
+    /// Choose which errors have to have been detected for the device to be reset
+    void setConditionForReset( uint16_t errorMask ){ conditionForReset_ = errorMask; }
+
+    virtual uint64_t getResetCount(){ return resetCount_; }
+
   protected:
     int               theFileDescriptor;
     //all below needed for ddu2004 only
@@ -83,6 +89,9 @@ namespace emu { namespace ldaq { namespace reader {
     uint16_t overwrite;   ///< overwrite
 
     char *tail_start;		///< not used
+
+    uint16_t conditionForReset_;
+    uint64_t resetCount_;
 
     // DEBUG START
     int visitCount;		///< the number of times readDDU has been called

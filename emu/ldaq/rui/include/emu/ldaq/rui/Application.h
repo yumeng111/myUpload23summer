@@ -164,6 +164,7 @@ private:
   xdata::UnsignedInteger64                 nReadingPasses_; ///< Total number of reading passes so far.
   xdata::UnsignedInteger64                 maxNBlocksInEvent_; ///< Max number of reading passes (blocks) in any event so far.
   xdata::UnsignedInteger64                 nEventsOfMultipleBlocks_;	///< Number of events read out in more than one pass (and thus put in multiple blocks).
+  xdata::UnsignedInteger64                 deviceResetCount_;	///< The number of times the device has been reset
   xdata::String                       persistentDDUError_;
   emu::ldaq::writer::RawDataFile       *fileWriter_;
   xdata::Vector<xdata::String>        dataFileNames_;

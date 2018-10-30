@@ -95,6 +95,10 @@ public:
   virtual int  readDCC( uint16_t*& buf )=0;
   /// not documented here
   virtual int  readDMB( uint16_t*& buf )=0;
+
+public:
+  /// not documented here
+  virtual uint64_t getResetCount()=0;
 };
 
 }}} // namespace emu::ldaq::reader

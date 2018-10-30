@@ -37,6 +37,8 @@ namespace emu { namespace ldaq { namespace reader {
     /// Closes file.
     void            close();
 
+    virtual uint64_t getResetCount(){ return 0; }
+
   protected:
     int             theFileDescriptor; ///< file descriptor
 

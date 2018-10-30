@@ -1,5 +1,7 @@
 #include "emu/ldaq/reader/Spy.h"
 
+#include "emu/utils/System.h"
+
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -20,8 +22,10 @@
 // DEBUG END
 
 emu::ldaq::reader::Spy::Spy( std::string filename, int format, bool debug )
-  : emu::ldaq::reader::Base( filename, format, debug ),
-    theFileDescriptor( -1 )
+  : emu::ldaq::reader::Base( filename, format, debug )
+  , theFileDescriptor( -1 )
+  , conditionForReset_( None )
+  , resetCount_( 0 )
 {
 // DEBUG START
   ec  = new emu::ldaq::reader::Clock(100);
@@ -204,9 +208,17 @@ void emu::ldaq::reader::Spy::resetAndEnable(){
   reset();
   // enableBlock();
   theDeviceIsResetAndEnabled = true;
+  resetCount_++;
+  std::cout << emu::utils::getDateTime()
+	    << " Device reset after " << endEventCount
+	    << " end-of-events read. Current reset count: " << getResetCount()
+	    << std::endl << std::flush;
 }
 
 int emu::ldaq::reader::Spy::readDDU(uint16_t*& buf) {
+
+  // Reset device if necessary
+  if ( theErrorFlag & conditionForReset_ ) resetAndEnable();
 
   theLogMessage = "";
 //-------------------------------------------------------------------//

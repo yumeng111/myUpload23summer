@@ -197,6 +197,27 @@ enum DEVTYPE{ALLMUX=-3,ALLSCAM=-2,ALL=-1,NONE,F1PROM,F2PROM,F3PROM,F4PROM,F5PROM
 #define TOGGLE_DAQ_TDIS 63
 #define TOGGLE_TRG_TDIS 64
 
+/* the following 8 functions are for testing parameters stored in XCF08P PROM. */
+/* the first 6 are persisting, don't use! */
+#define ENABLE_ECC_PARAM 65
+#define DISABLE_ECC_PARAM 66
+#define ENABLE_CRC_PARAM 67
+#define DISABLE_CRC_PARAM 68
+#define ENABLE_ECC_DECODE 69
+#define DISABLE_ECC_DECODE 70
+#define INIT_PARAM_TRANSFER 71
+#define READ_PARAM_WORD 72
+
+#define ENABLE_GBT_TEST 73
+#define DISABLE_GBT_TEST 74
+#define POWER_ON_GBT 75
+#define POWER_OFF_GBT 76
+#define WRITE_I2C_FIFO 77
+#define READ_I2C_FIFO 78
+#define READ_I2C_STATUS 79
+#define RESET_I2C 80
+#define START_I2C_PROC 81
+
 /* VIRTEX6 fpga scan instructions */
 #define VTX6_EXTEST 0x3C0
 #define VTX6_SAMPLE 0x3C1

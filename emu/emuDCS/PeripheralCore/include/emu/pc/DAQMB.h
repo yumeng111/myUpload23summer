@@ -965,6 +965,8 @@ public:
   int ds4550_read(char *buf, int address, int size);
   void ds4550_write(char *buf, int address, int size);
   void xdcfeb_test_autoload(CFEB & cfeb);
+  void xdcfeb_gbt_test_mode(CFEB & cfeb, int on_off);
+  void xdcfeb_gbt_power(CFEB & cfeb, int on_off);
 
   // 2018-08-15 Liu, moved the following ODMB constats into Public block
   // 

@@ -2493,10 +2493,10 @@ bool DAQMB::CheckVMEFirmwareVersion() {
   if ( GetFirmwareVersion() == GetExpectedVMEFirmwareTag() ) {
     check_ok = true; 
   } else { 
-    (*MyOutput_) << "expected DMB VME =" << std::hex << GetExpectedVMEFirmwareTag() << std::endl;
-    (*MyOutput_) << "read     DMB VME =" << std::hex << GetFirmwareVersion() << std::endl;
-    std::cout    << "expected DMB VME =" << std::hex << GetExpectedVMEFirmwareTag() << std::endl;
-    std::cout    << "read     DMB VME =" << std::hex << GetFirmwareVersion() << std::endl;
+    (*MyOutput_) << "expected DMB VME =" << std::hex << GetExpectedVMEFirmwareTag() << std::dec << std::endl;
+    (*MyOutput_) << "read     DMB VME =" << std::hex << GetFirmwareVersion() << std::dec << std::endl;
+    std::cout    << "expected DMB VME =" << std::hex << GetExpectedVMEFirmwareTag() << std::dec << std::endl;
+    std::cout    << "read     DMB VME =" << std::hex << GetFirmwareVersion() << std::dec << std::endl;
   }
   //
   return check_ok;
@@ -2508,10 +2508,10 @@ bool DAQMB::CheckControlFirmwareVersion() {
   if ( mbfpgauser() == (unsigned int) GetExpectedControlFirmwareTag() ) {
     check_ok = true;
   } else {
-    (*MyOutput_) << "expected DMB Control =" << std::hex << GetExpectedControlFirmwareTag() << std::endl;
-    (*MyOutput_) << "read     DMB Control =" << std::hex << mbfpgauser() << std::endl;
-    std::cout    << "expected DMB Control =" << std::hex << GetExpectedControlFirmwareTag() << std::endl;
-    std::cout    << "read     DMB Control =" << std::hex << mbfpgauser() << std::endl;
+    (*MyOutput_) << "expected DMB Control =" << std::hex << GetExpectedControlFirmwareTag() << std::dec << std::endl;
+    (*MyOutput_) << "read     DMB Control =" << std::hex << mbfpgauser() << std::dec << std::endl;
+    std::cout    << "expected DMB Control =" << std::hex << GetExpectedControlFirmwareTag() << std::dec << std::endl;
+    std::cout    << "read     DMB Control =" << std::hex << mbfpgauser() << std::dec << std::endl;
   }
   return check_ok;
   //
@@ -13165,16 +13165,38 @@ void DAQMB::xdcfeb_test_autoload(CFEB & cfeb)
 
       char tmp[4];
       unsigned t;
-      dcfeb_core(71,0, tmp, tmp, NOW|NOOP_YES);
+      dcfeb_core(INIT_PARAM_TRANSFER,0, tmp, tmp, NOW|NOOP_YES);
       ::sleep(1);
       for(int i=0; i<34*3; i++)
       {  t=0;
-         dcfeb_core(72, 16, tmp, (char *)&t, NOW|READ_YES);
+         dcfeb_core(READ_PARAM_WORD, 16, tmp, (char *)&t, NOW|READ_YES);
          usleep(1000);
          std::cout << "Param " << i << " = 0x";
          std::cout <<  std::hex  << t << std::dec << std::endl;
       }  
 }    
+
+void DAQMB::xdcfeb_gbt_test_mode(CFEB & cfeb, int on_off)
+{
+      if(CFEBversion() != 3) return;
+   
+      write_cfeb_selector(cfeb.SelectorBit());
+
+      char tmp[4];
+      dcfeb_core((on_off!=0)?ENABLE_GBT_TEST:DISABLE_GBT_TEST, 0, tmp, tmp, NOW|NOOP_YES);
+      usleep(1000);      
+}
+
+void DAQMB::xdcfeb_gbt_power(CFEB & cfeb, int on_off)
+{
+      if(CFEBversion() != 3) return;
+   
+      write_cfeb_selector(cfeb.SelectorBit());
+
+      char tmp[4];
+      dcfeb_core((on_off!=0)?POWER_ON_GBT:POWER_OFF_GBT, 0, tmp, tmp, NOW|NOOP_YES);
+      usleep(1000);      
+}
                       
 } // namespace emu::pc
 } // namespace emu

@@ -1262,6 +1262,10 @@ bool emu::supervisor::Application::calibrationSequencer(toolbox::task::WorkLoop 
       waitForAppsToReach("Halted",true);
     }
   }
+
+  // Tell RCMS we're done. RCMS should know it's normal in a running calibration to receive such a seemingly spontaneous state notification (see MyEventHandler::steadyStateAction).
+  notifyRCMS( "Halted" );
+
   isInCalibrationSequence_ = false;
   // Keep refreshing the web page so that it can be seen that the sequence has finished.
   keep_refresh_ = true;

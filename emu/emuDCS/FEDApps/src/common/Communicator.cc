@@ -1179,13 +1179,6 @@ throw (toolbox::fsm::exception::Exception)
 {
 	LOG4CPLUS_DEBUG(getApplicationLogger(), "FSM transition received:  Disable");
 
-	if (runType_ == "global") {
-		LOG4CPLUS_DEBUG(getApplicationLogger(),
-			"Disable action:  Configuring crates to ensure they are ready for a new run");
-		configureCrates();
-	} else LOG4CPLUS_DEBUG(getApplicationLogger(),
-		"Disable action:  Not configuring crates because run is not global: " << runType_.toString());
-
 	try {
 		TM_->endThreads();
 		//TM_->killThreads();

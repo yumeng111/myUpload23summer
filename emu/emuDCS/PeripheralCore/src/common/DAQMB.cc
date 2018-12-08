@@ -8686,7 +8686,7 @@ void DAQMB::dcfeb_program_eprom(CFEB & cfeb, const char *mcsfile, int offset, in
        return;
                   
    }
-
+   theController->SetUseDelay(true);
    if(broadcast)
       write_cfeb_selector(0x7F);   // broadcast to all DCFEBs
    else
@@ -8778,6 +8778,7 @@ void DAQMB::dcfeb_program_virtex6(CFEB & cfeb, const char *mcsfile, int broadcas
    char *bufin, c;
    bufin=(char *)malloc(16*1024*1024);
    if(bufin==NULL)  return;
+   unsigned char *unbuf=(unsigned char *)bufin;
    char filename[1000];
    strncpy(filename, mcsfile, 980);
    
@@ -8826,7 +8827,7 @@ void DAQMB::dcfeb_program_virtex6(CFEB & cfeb, const char *mcsfile, int broadcas
        return;
                   
    }
-   if(bufin[0x30]==0x99 && bufin[0x31]==0x55)
+   if(unbuf[0x30]==0x99 && unbuf[0x31]==0x55)
    {
       // byte swap
       for(int i=0; i<FIRMWARE_SIZE/2; i++)

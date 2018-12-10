@@ -1133,7 +1133,7 @@ inline void ChamberUtilities::CFEBTiming_ConfigureLevel(CFEBTiming_Configuration
     usleep(100);
     thisDMB->set_comp_thresh(config.comp_thresh); // Set the comparator chip threshold
     usleep(100);
-    if(thisDMB->GetHardwareVersion() < 2)
+    if(thisDMB->DMBversion() < 2)
       thisDMB->settrgsrc(0); // disable DMB's own trigger, LCT
     usleep(100);
   }
@@ -1287,8 +1287,8 @@ int ChamberUtilities::GetTMBInternalL1ADelay() {
 }
 
 void ChamberUtilities::SetDCFEBsPipelineDepth(int depth) {
-  if(thisDMB->cfebs().at(0).GetHardwareVersion() != 2)
-    return; // All CFEBs should have the same HW version; get it from the first.
+  if(thisDMB->CFEBversion() == 1)
+    return;
   
   thisDMB->odmb_reprogram_dcfebs();
   
@@ -1302,7 +1302,7 @@ void ChamberUtilities::SetDCFEBsPipelineDepth(int depth) {
     thisDMB->Pipeline_Restart(*cfeb); // and then restart the pipeline
     usleep(100000);
     
-    if(thisDMB->GetHardwareVersion() != 2) {
+    if(thisDMB->DMBversion() == 1) {
       // set DCFEBs to behave like CFEBs and send data on any L1A, required when not using ODMB
       thisDMB->dcfeb_Set_ReadAnyL1a(*cfeb);
     }
@@ -1322,7 +1322,7 @@ void ChamberUtilities::SetDCFEBsPipelineDepth(int depth) {
 }
     
 void ChamberUtilities::CFEBTiming_ConfigureODMB() {
-  if(thisDMB->GetHardwareVersion() == 2) {
+  if(thisDMB->DMBversion() == 2) {
     int slot_number = thisDMB->slot();
     
     char rcv[2];
@@ -5722,7 +5722,7 @@ void ChamberUtilities::FindL1AAndDAVDelays(){
     return;
   }
   
-  if (thisDMB->GetHardwareVersion() ==2) {
+  if (thisDMB->DMBversion() ==2) {
       FindODMBDelays();
   } else {
     //

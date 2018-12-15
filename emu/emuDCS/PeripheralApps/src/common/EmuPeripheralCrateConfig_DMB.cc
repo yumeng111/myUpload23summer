@@ -1949,22 +1949,25 @@ void EmuPeripheralCrateConfig::DCFEBPromTestFast(xgi::Input * in, xgi::Output * 
        this->CFEBUtils(in,out);
        return; 
      }
-    
+     
      // do a CCB hard reset and check if the DCFEB is still alive
      std::cout << "Hard reset..." << std::endl;
      thisCCB->hardReset();
-     int donebits = thisDMB->read_cfeb_done();
-     int isConfigured = (donebits >> cfebs[icfeb].number()) & 1;
-     if (!isConfigured)
-     {
-        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-        std::cout << "!!!!!!!!!!!!!!!!!! ERROR !!!!!!!!!!!!!!!!!!" << std::endl;
-        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl << std::endl;
-        std::cout << "DMB " << dmb << " CFEB" + cfebs[icfeb].number()+1 << " FPGA is not configured after the test!" << std::endl;
-     } else {
-        std::cout << "DMB " << dmb << " CFEB" + cfebs[icfeb].number()+1 << " FPGA is still fine after the test" << std::endl;
-     }
- 
+
+     if(thisDMB->DMBversion()>1)
+     {    
+        int donebits = thisDMB->read_cfeb_done();
+        int isConfigured = (donebits >> cfebs[icfeb].number()) & 1;
+        if (!isConfigured)
+        {
+           std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+           std::cout << "!!!!!!!!!!!!!!!!!! ERROR !!!!!!!!!!!!!!!!!!" << std::endl;
+           std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl << std::endl;
+           std::cout << "DMB " << dmb << " CFEB" << cfebs[icfeb].number()+1 << " FPGA is not configured after the test!" << std::endl;
+        } else {
+           std::cout << "DMB " << dmb << " CFEB" << cfebs[icfeb].number()+1 << " FPGA is still fine after the test" << std::endl;
+        }
+     } 
      std::cout << getLocalDateTime() << " DCFEB fast EEPROM test finished." << std::endl;
      this->CFEBUtils(in,out);           
                     

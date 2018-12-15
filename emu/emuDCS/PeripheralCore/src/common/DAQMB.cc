@@ -11936,7 +11936,7 @@ int DAQMB::dcfeb_prom_test2(CFEB & cfeb, const char *filename, const char * dump
 
 // check if the DCFEB FPGA is configured
    int donebits = read_cfeb_done();
-   int isConfigured = (donebits >> cfeb.number()) & 1;
+   int isConfigured = (DMBversion()>=2)?((donebits >> cfeb.number()) & 1):1;  // DMB doesn't have it, set to 1 to continue
    if (!isConfigured)
    {
       msg << std::endl << "FPGA of this DCFEB is not configured (before starting the test) -- skipping this DCFEB" << std::endl;
@@ -11963,7 +11963,7 @@ int DAQMB::dcfeb_prom_test2(CFEB & cfeb, const char *filename, const char * dump
    if(bufr_char == NULL) return -1;
    unsigned short * bufr = (unsigned short *) bufr_char;
   
- 
+   theController->SetUseDelay(true); 
    write_cfeb_selector(cfeb.SelectorBit());
 
 //####################################################################################

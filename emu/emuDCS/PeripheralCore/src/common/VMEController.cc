@@ -1574,6 +1574,13 @@ hw_source_addr[0],hw_source_addr[1],hw_source_addr[2],hw_source_addr[3],hw_sourc
       r_datat=(unsigned char *)rbuf+22;
       r_num=((r_head3[0]<<8)&0xff00)|(r_head3[1]&0xff);  
       if((r_num*2) > (r_nbyte-8)) r_num=0;   // wrong data size, bad packet.
+      if((r_num*2)>nread)
+      {   // If return packet has more words, discard the extra data to avoid buffer overflow.
+          // This can be caused by lost packet or packet out of sequence. 
+          // The return data is junk in this case.
+          r_num=nread/2;  
+          printf("Error: return data packet has %d bytes, expect % bytes\n", r_num*2, nread); 
+      }
       return_type=r_head0[1];
       if(return_type!=5)
       {  // Error handling 

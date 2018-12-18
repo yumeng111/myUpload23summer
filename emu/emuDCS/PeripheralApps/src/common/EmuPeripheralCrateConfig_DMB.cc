@@ -1167,8 +1167,8 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::input().set("type", "submit")
     .set("name", "command")
     .set("value", "Program DCFEB EPROM") << std::endl;
-  *out << cgicc::form() << dcfeb_firmware_name << std::endl;
-  *out << cgicc::br() << cgicc::hr() << std::endl;
+  *out << dcfeb_firmware_name << std::endl;
+  *out << cgicc::form() << cgicc::br() << cgicc::hr() << std::endl;
   
   std::string CFEBwritefirmall =
       toolbox::toString("/%s/DCFEBProgramEpromAll",getApplicationDescriptor()->getURN().c_str());
@@ -1178,7 +1178,7 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::input().set("type", "submit")
     .set("name", "command")
     .set("value", "Broadcast Program EPROM - All DCFEBs") << std::endl;
-  *out << cgicc::form() << dcfeb_firmware_name << cgicc::br() << cgicc::hr() << std::endl;
+  *out  << dcfeb_firmware_name << cgicc::form()<< cgicc::br() << cgicc::hr() << std::endl;
   *out << cgicc::fieldset()<< cgicc::br() << std::endl;
 
 // FPGA
@@ -1210,7 +1210,7 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::input().set("type", "submit")
     .set("name", "command")
     .set("value", "Program DCFEB FPGA") << std::endl;
-  *out << cgicc::form() <<dcfeb_firmware_name << cgicc::br() << cgicc::hr() << std::endl;
+  *out << dcfeb_firmware_name << cgicc::form() << cgicc::br() << cgicc::hr() << std::endl;
     //
   std::string CFEBprogfpgaall =
       toolbox::toString("/%s/DCFEBProgramFpgaAll",getApplicationDescriptor()->getURN().c_str());
@@ -1220,7 +1220,7 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::input().set("type", "submit")
     .set("name", "command")
     .set("value", "Broadcast Program FPGA - All DCFEBs") << std::endl;
-  *out << cgicc::form() << dcfeb_firmware_name << cgicc::br() << cgicc::hr() << std::endl;
+  *out << dcfeb_firmware_name << cgicc::form() << cgicc::br() << cgicc::hr() << std::endl;
   //
   if(extra_tools_)
   {
@@ -2028,17 +2028,21 @@ void EmuPeripheralCrateConfig::DCFEBPromTest(xgi::Input * in, xgi::Output * out 
      // do a CCB hard reset and check if the DCFEB is still alive
      std::cout << "Hard reset..." << std::endl;
      thisCCB->hardReset();
-     int donebits = thisDMB->read_cfeb_done();
-     int isConfigured = (donebits >> cfebs[icfeb].number()) & 1;
-     if (!isConfigured)
-     {
-        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-        std::cout << "!!!!!!!!!!!!!!!!!! ERROR !!!!!!!!!!!!!!!!!!" << std::endl;
-        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl << std::endl;
-        std::cout << "DMB " << dmb << " CFEB" + cfebs[icfeb].number()+1 << " FPGA is not configured after the test!" << std::endl;
-     } else {
-        std::cout << "DMB " << dmb << " CFEB" + cfebs[icfeb].number()+1 << " FPGA is still fine after the test" << std::endl;
-     }
+
+     if(thisDMB->DMBversion()>1)
+     {    
+        int donebits = thisDMB->read_cfeb_done();
+        int isConfigured = (donebits >> cfebs[icfeb].number()) & 1;
+        if (!isConfigured)
+        {
+           std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+           std::cout << "!!!!!!!!!!!!!!!!!! ERROR !!!!!!!!!!!!!!!!!!" << std::endl;
+           std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl << std::endl;
+           std::cout << "DMB " << dmb << " CFEB" << cfebs[icfeb].number()+1 << " FPGA is not configured after the test!" << std::endl;
+        } else {
+           std::cout << "DMB " << dmb << " CFEB" << cfebs[icfeb].number()+1 << " FPGA is still fine after the test" << std::endl;
+        }
+     } 
 
      std::cout << getLocalDateTime() << " DCFEB EEPROM test finished." << std::endl;
      this->CFEBUtils(in,out);           

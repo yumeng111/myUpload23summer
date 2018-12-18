@@ -9195,7 +9195,7 @@ void DAQMB::daqmb_do(int ncmd, void *cmd,int nbuf, void *inbuf,char *outbuf,int 
          return;
      }
      if(ncmd>0) Jtag_Ohio(DAQMB_DEV, 0, cmd_use, ncmd_u, new_out,0,(nbuf>0)?LATER:(irdsnd&NOW));
-     if(ncmd>0 && nbuf>0) vme_delay(200); 
+     if(ncmd>0 && nbuf>0) vme_delay(10); 
      if(nbuf>0) Jtag_Ohio(DAQMB_DEV, 1,data_use,nbuf_u, new_out,(irdsnd>>1)&1,irdsnd&NOW);
 
      // send empty clocks |nbuf|, inbuf & outbuf not used
@@ -12162,7 +12162,7 @@ int DAQMB::dcfeb_prom_test2(CFEB & cfeb, const char *filename, const char * dump
 
       int nwords=WRITE_SIZE;
       if(i==blocks-1) nwords=lastblock;
-      std::cout << "Writing to address " << std::hex << fulladdr << std::dec << " with " << nwords << " zero words" << std::endl;
+//      std::cout << "Writing to address " << std::hex << fulladdr << std::dec << " with " << nwords << " zero words" << std::endl;
       // printf(" load address %04x%04x \n",(uaddr&0xFFFF),(laddr&0xFFFF));
       dcfebprom_loadaddress(uaddr,laddr);
       // program with new data from the beginning of the block

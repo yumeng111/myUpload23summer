@@ -108,6 +108,15 @@ function load_igb_emu(){
     /sbin/lsmod | grep igb
     /sbin/lspci -k | grep -A 3 Ethernet
 
+    # Remove igb module, just in case it's still loaded
+    if [[ $(/sbin/lsmod | grep -c 'igb ') -gt 0 ]]; then
+	echo "Removing tenacious igb module"
+	echo "rmmod igb"
+	/usr/sbin/rmmod igb
+	echo "lsmod | grep igb"
+	/sbin/lsmod | grep igb
+    fi
+
     # Disable automatic start on boot and network manager for the plugged-in interfaces
     for N in 2 3 4 5; do
 	if [[ -f /etc/sysconfig/network-scripts/ifcfg-${IF_NAME[$N]} ]]; then
@@ -134,6 +143,11 @@ function load_igb_emu(){
 	fi
     done
 
+    # Trigger kernel events for the udev rules in /etc/udev/rules.d/70-persistent-net.rules to be applied
+    print "udevadm trigger"
+    udevadm trigger
+    sleep 1
+
     # Bring up the interfaces for the plugged-in NICs
     echo "Bringing up the interfaces for the plugged-in NICs"
     # Take the position within the rack from the host name (e.g. 15 from ctrl-s2g18-15-01) and add it to 100:
@@ -144,8 +158,17 @@ function load_igb_emu(){
 	print "/sbin/ifconfig ${IF_NAME[$N]} down"
 	/sbin/ifconfig ${IF_NAME[$N]} down
 	sleep 1
-	print "/sbin/ifconfig ${IF_NAME[$N]} promisc mtu 8192 192.168.${HOSTNUMBER}.${N}"
-	/sbin/ifconfig ${IF_NAME[$N]} promisc mtu 8192 192.168.${HOSTNUMBER}.${N}
+        case ${(P)$((N-1))} in
+            *_vme)
+		print /sbin/ifconfig ${IF_NAME[$N]} mtu 8192 up
+		/sbin/ifconfig ${IF_NAME[$N]} mtu 8192 up
+                ;;
+                *)
+		print /sbin/ifconfig ${IF_NAME[$N]} promisc mtu 8192 192.168.${HOSTNUMBER}.${N}
+		/sbin/ifconfig ${IF_NAME[$N]} promisc mtu 8192 192.168.${HOSTNUMBER}.${N}
+                ;;
+        esac
+	
     done
 
 }
@@ -202,7 +225,7 @@ for ALIAS in emu42fastprod01 emu-me11-step{1,2,3,4} ctrl-s2g18-{15..18}-01 srv-c
 	exit 0
     fi
 done
-for ALIAS in vmepc-e1x07-21-01 vmepc-e1x07-26-01 emusx5-systest1; do
+for ALIAS in vmepc-e1x07-21-01 vmepc-e1x07-26-01 emusx5-systest1 emusx50{5,6,7,8}; do
     if [[ $(host $ALIAS | grep -i -c $(hostname -s)) -ge 1 ]]; then
 	load_igb_emu eth_hook_2_vme eth_hook_3_dmb eth_hook_4_vme eth_hook_5_vme
 	exit 0

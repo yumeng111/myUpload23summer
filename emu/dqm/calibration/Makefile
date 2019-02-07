@@ -102,7 +102,7 @@ UserExecutableLinkFlags += $(ROOTGLIBS)
 # These libraries can be platform specific and
 # potentially need conditional processing
 #
-Libraries = $(XdaqLibraries) emuldaqreader Minuit sqlite3 
+Libraries = $(XdaqLibraries) xalan-c emubase emuldaqreader Minuit sqlite3 
 ifeq ("$(USELOCALBUILD)", "yes")
 Libraries += emudqmcommon CSCRawToDigi CSCDigi
 endif

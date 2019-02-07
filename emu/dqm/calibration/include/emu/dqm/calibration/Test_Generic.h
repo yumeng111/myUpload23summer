@@ -316,7 +316,7 @@ protected:
 
   virtual void initCSC(std::string cscID) = 0;
   virtual void bookTestsForCSC(std::string cscID);
-  virtual void bookCommonHistos();
+  virtual void bookCommonHistos(std::string cscID);
   void fillCrateMap(CSCCrateMap* mapobj);
   bool fillCrateMapSQLite(CSCCrateMap* mapobj); 	// Fill CSCCrateMap from SQLite DB files
   // bool fillCrateMapOracle(CSCCrateMap* mapobj); 	// Fill CSCCrateMap from Oracle DB

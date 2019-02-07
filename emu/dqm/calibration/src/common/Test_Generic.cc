@@ -389,7 +389,7 @@ int Test_Generic::loadTestCfg()
   LOG4CPLUS_INFO (logger, "Done loading test config file: " << configFile);
   delete parser;
 
-  bookCommonHistos();
+  //bookCommonHistos(); // moved into bookTestsForCSC in order to make it aware of chamber type (ME1/1 or not)
 
   return 0;
 }
@@ -974,7 +974,7 @@ int applyParameters(TH1* object, bookParams& params)
   return 0;
 }
 
-void Test_Generic::bookCommonHistos()
+void Test_Generic::bookCommonHistos( std::string cscID )
 {
   MonHistos emuhistos;
   emucnvs.clear();
@@ -1025,6 +1025,35 @@ void Test_Generic::bookCommonHistos()
               ybins = strtol(params["YBins"].c_str(), &stopstring, 10);
             }
 
+          if(emu::dqm::utils::isME11(cscID))
+            {
+// 	      LOG4CPLUS_INFO(logger, "Using parameters '*_ME11'");
+              if (params["XMin_ME11"] != "")
+                {
+                  xmin = atof(params["XMin_ME11"].c_str());
+                }
+              if (params["XMax_ME11"] != "")
+                {
+                  xmax = atof(params["XMax_ME11"].c_str());
+                }
+              if (params["YMin_ME11"] != "")
+                {
+                  ymin = atof(params["YMin_ME11"].c_str());
+                }
+              if (params["YMax_ME11"] != "")
+                {
+                  ymax = atof(params["YMax_ME11"].c_str());
+                }
+              if (params["XBins_ME11"] != "")
+                {
+                  xbins = strtol(params["XBins_ME11"].c_str(), &stopstring, 10);
+                }
+              if (params["YBins_ME11"] != "")
+                {
+                  ybins = strtol(params["YBins_ME11"].c_str(), &stopstring, 10);
+                }
+            }
+
           if ((cnvtype == "strips_cnv") || (cnvtype == "wires_cnv") || (cnvtype == "cfeb_cnv") || (cnvtype == "halfstrips_cnv") || (cnvtype == "mwires_cnv") || (cnvtype == "gasgain_cnv"))
             {
               /*
@@ -1048,6 +1077,27 @@ void Test_Generic::bookCommonHistos()
               if (params["High1Limit"] != "")
                 {
                   high1limit = atof(params["High1Limit"].c_str());
+                }
+
+              if(emu::dqm::utils::isME11(cscID))
+                {
+// 		  LOG4CPLUS_INFO(logger, "Using limit parameters '*_ME11'");
+                  if (params["Low0Limit_ME11"] != "")
+                    {
+                      low0limit = atof(params["Low0Limit_ME11"].c_str());
+                    }
+                  if (params["Low1Limit_ME11"] != "")
+                    {
+                      low1limit = atof(params["Low1Limit_ME11"].c_str());
+                    }
+                  if (params["High0Limit_ME11"] != "")
+                    {
+                      high0limit = atof(params["High0Limit_ME11"].c_str());
+                    }
+                  if (params["High1Limit_ME11"] != "")
+                    {
+                      high1limit = atof(params["High1Limit_ME11"].c_str());
+                    }
                 }
 
               tlimits[tname].low0 = low0limit;
@@ -1102,6 +1152,8 @@ void Test_Generic::bookCommonHistos()
 
 void Test_Generic::bookTestsForCSC(std::string cscID)
 {
+  bookCommonHistos( cscID );
+
   MonHistos cschistos;
   cschistos.clear();
   TestCanvases csccnvs;
@@ -1165,8 +1217,9 @@ void Test_Generic::bookTestsForCSC(std::string cscID)
               ymax2 = 0;
             }
 
-          if(isME11(cscID))
+          if(emu::dqm::utils::isME11(cscID))
             {
+// 	      LOG4CPLUS_INFO(logger, "Using parameters '*_ME11'");
               if (params["XMin_ME11"] != "")
                 {
                   xmin = atof(params["XMin_ME11"].c_str());
@@ -1246,7 +1299,7 @@ void Test_Generic::bookTestsForCSC(std::string cscID)
                   // = Set actual number of strips depending on Chamber type
                   xbins = getNumStrips(cscID, theFormatVersion);
                   xmax = getNumStrips(cscID, theFormatVersion);
-                  if (isME11(cscID) && n_ME11_DCFEBs > 0)
+                  if (emu::dqm::utils::isME11(cscID) && n_ME11_DCFEBs > 0)
                     {
                       int nDCFEBs =  n_ME11_DCFEBs;
                       if (nDCFEBs > 7 ) nDCFEBs = 7;
@@ -1258,7 +1311,7 @@ void Test_Generic::bookTestsForCSC(std::string cscID)
                   // = Set actual number of strips depending on Chamber type
                   xbins = getNumStrips(cscID, theFormatVersion)*2;
                   xmax = getNumStrips(cscID, theFormatVersion)*2;
-                  if (isME11(cscID) && params["n_ME11_TMB_DCFEBs"] != "")
+                  if (emu::dqm::utils::isME11(cscID) && params["n_ME11_TMB_DCFEBs"] != "")
                     {
                       int nDCFEBs =  atof(params["n_ME11_TMB_DCFEBs"].c_str());
                       LOG4CPLUS_INFO(logger, "Detected n_ME11_TMB_DCFEBs and it's ME11, use the value "<< nDCFEBs);
@@ -1322,8 +1375,9 @@ void Test_Generic::bookTestsForCSC(std::string cscID)
               else high1limit2 = 0;
 
 
-              if(isME11(cscID))
+              if(emu::dqm::utils::isME11(cscID))
                 {
+// 		  LOG4CPLUS_INFO(logger, "Using limit parameters '*_ME11'");
                   if (params["Low0Limit_ME11"] != "")
                     {
                       low0limit = atof(params["Low0Limit_ME11"].c_str());
@@ -1615,6 +1669,7 @@ void Test_Generic::finish()
                   if (emucnvs[subtestID] != NULL)
                     {
                       TestCanvas_1h* emucnv = dynamic_cast<TestCanvas_1h*>(emucnvs[subtestID]);
+		      LOG4CPLUS_INFO(logger, "Adding " << cnv->GetHisto()->GetName() << " (" << cnv->GetHisto()->GetTitle() << ") to " << emucnv->GetHisto()->GetName() << " (" << emucnv->GetHisto()->GetTitle() << ") for " << subtestID );
                       emucnv->GetHisto()->Add(cnv->GetHisto());
                     }
 

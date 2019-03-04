@@ -389,7 +389,7 @@ void EmuPeripheralCrateMonitor::PublishEmuInfospace(int cycle)
           {   
               int mask=myDmbs[dmbn]->GetPowerMask();
               dmbpoweroff[dmbn]= (mask==0x3F);
-              if(myDmbs[dmbn]->GetHardwareVersion()==2) upgraded++;
+              if(myDmbs[dmbn]->CFEBversion()>1) upgraded++;
           }
                                                                                    
           // begin: reload VCC's FPGA (F9)
@@ -482,7 +482,7 @@ void EmuPeripheralCrateMonitor::PublishEmuInfospace(int cycle)
                        unsigned boardid=ii/TOTAL_DCS_COUNTERS;
                        int idx=ii%TOTAL_DCS_COUNTERS;
                        int dversion=0;
-                       if(myDmbs[boardid]) dversion=myDmbs[boardid]->GetHardwareVersion();
+                       if(myDmbs[boardid]) dversion=myDmbs[boardid]->DMBversion();
                      if(dversion<=1)
                      {  
                        if(rdv >= 0xFFF) rdv = 0;
@@ -3495,8 +3495,8 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
      {  // for OFF crates, send -2. in all fields, timestamp is current
         for(unsigned int j=0; j<myVector.size(); j++) 
         {
-           int dversion=myVector[j]->GetHardwareVersion();
-           if(dversion!=2) continue;
+           int cversion=myVector[j]->CFEBversion();
+           if(cversion<=1) continue;
            slot = myVector[j]->slot();
            ip = (ip & 0xff) + slot*256;
            *out << myVector[j]->GetLabel();
@@ -3593,8 +3593,8 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
 //     myVector = crateVector[i]->daqmbs();
      for(unsigned int j=0; j<myVector.size(); j++) 
      {
-        int dversion=myVector[j]->GetHardwareVersion();
-        if(dversion!=2) continue;
+        int cversion=myVector[j]->CFEBversion();
+        if(cversion<=1) continue;
         int imask= 0xFF & (myVector[j]->GetPowerMask());
         bool chamber_off = (imask==0xFF);
         slot = myVector[j]->slot();

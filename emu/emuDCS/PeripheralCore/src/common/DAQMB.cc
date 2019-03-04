@@ -7710,7 +7710,6 @@ void DAQMB::dcfeb_fpga_call(int inst, unsigned data, char *outbuf)
 
 std::vector<float> DAQMB::dcfeb_fpga_monitor(CFEB & cfeb, bool inDCS)
 {
-  // only read out first 3 channels
   
   std::vector<float> readout;
   char buf[4]={0,0,0,0};
@@ -7723,6 +7722,8 @@ std::vector<float> DAQMB::dcfeb_fpga_monitor(CFEB & cfeb, bool inDCS)
   {
      write_cfeb_selector(cfeb.SelectorBit());
      comd=VTX6_SYSMON;
+// only read out first 3 channels
+//
 //     this can be used to change register 0x48 to enable more channels
 //     data=0x8483F00;
 //     cfeb_do(10, &comd, 32, &data, rcvbuf, 3);
@@ -9319,7 +9320,7 @@ int DAQMB::DCSread2(char *data, int read_dcfeb)
   int TOTAL_DCFEB=TOTAL_SYSMON+TOTAL_ADC+TOTAL_SEU;;
   int TOTAL_ODMB=9+3;  // 3 reserved
 
-  if (DMBversion()!=2 && DMBversion()!=4) return 0;
+  if (CFEBversion()<=1) return 0;   // only for (x)DCFEBs
 
   if(checkvme_fail()) return 0;
 
@@ -9353,7 +9354,10 @@ int DAQMB::DCSread2(char *data, int read_dcfeb)
       data2[febnum*TOTAL_DCFEB+TOTAL_SYSMON+TOTAL_ADC+2]=dcfeb_qpll_lost_count(cfebs_[lfeb]);  // #3 replaced with QPLL lost counter
     }
   }
-  retn += 7*TOTAL_DCFEB;
+  retn += 7*TOTAL_DCFEB;   // hold positions for 7 (x)DCFEBs regardless how many actually exist
+
+  if (DMBversion()<=1) return retn+TOTAL_ODMB; // only ODMBs have the following part, otherwise empty 
+
   std::vector<float> dsysmon=odmb_fpga_adc();
   for(unsigned int i=0; i<dsysmon.size(); i++)
   {

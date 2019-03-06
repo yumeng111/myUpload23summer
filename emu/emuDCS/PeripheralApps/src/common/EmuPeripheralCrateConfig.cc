@@ -11769,6 +11769,8 @@ void EmuPeripheralCrateConfig::DefineFirmwareFilenames() {
     CCBFirmware << FirmwareDir_ << "ccb/ccb2004p_" << ccbdate << ".svf";
     CCBFirmware_ = CCBFirmware.str();
 
+  if(thisMPC)
+  {
     year  = (thisMPC->GetExpectedFirmwareYear())%100;
     month = thisMPC->GetExpectedFirmwareMonth();
     day   = thisMPC->GetExpectedFirmwareDay();
@@ -11777,6 +11779,7 @@ void EmuPeripheralCrateConfig::DefineFirmwareFilenames() {
     std::ostringstream MPCFirmware;
     MPCFirmware << FirmwareDir_ << "mpc/mez_" << mpcdate;
     MPCFirmware_ = MPCFirmware.str();
+  }
 
   //  std::cout << "CCB firmware name: " << CCBFirmware_ << std::endl;
   //  std::cout << "MPC firmware name: " << MPCFirmware_ << std::endl;

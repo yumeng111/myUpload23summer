@@ -9302,7 +9302,6 @@ std::vector<float> DAQMB::odmb_fpga_adc()
 
 int DAQMB::DCSread2(char *data, int read_dcfeb)
 {
-
 // add DCFEB monitoring info here
 //     loop through all DCFEBs
 //     {    1. DCFEB SYSMON
@@ -9312,6 +9311,9 @@ int DAQMB::DCSread2(char *data, int read_dcfeb)
 // read_dcfeb flag: bit 0 (1)--read SYSMON
 //                  bit 1 (2)--read ADC
 //                  bit 2 (4)--read SEU
+//
+// ODMB specific info added at the end
+//
   int retn=0;
   short *data2= (short *)data;
   int TOTAL_SYSMON=19;

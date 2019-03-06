@@ -99,7 +99,7 @@ void Chamber::Fill(char *buffer, int source)
            i = atoi(item);
            states[idx] = i; 
        }
-       else if(idx<86 || (type_==2 && idx<308))
+       else if(idx<86 || (type_>=2 && idx<308))
        {  
            y=strtof(item,NULL);
            values[idx-5]=y;
@@ -122,7 +122,7 @@ void Chamber::Fill(char *buffer, int source)
         {   corruption = false;
         }
       }
-      else if(type_==2)
+      else if(type_>=2)
       {
         if(idx!=308 || values[302]!=(-50.))
         {   std::cout << label_ << " (type 2) BAD...total " << idx << " last one " << values[302] << std::endl;
@@ -155,7 +155,7 @@ void Chamber::Fill(char *buffer, int source)
 
 bool Chamber::GetDimLV(int hint, LV_1_DimBroker *dim_lv )
 {
-   if(type_==2) return false;
+   if(type_>=2) return false;
 
    int *info, this_st;
    float *data;
@@ -306,7 +306,7 @@ bool Chamber::GetDimLV2(int hint, LV_2_DimBroker *dim_lv )
 
 bool Chamber::GetDimTEMP(int hint, TEMP_1_DimBroker *dim_temp )
 {
-   if(type_==2) return false;
+   if(type_>=2) return false;
 
    int *info, this_st;
    float *data, total_temp;
@@ -356,7 +356,7 @@ bool Chamber::GetDimTEMP2(int hint, TEMP_2_DimBroker *dim_temp )
       dim_temp->t_odmb = data[80+30*DCFEB_NUMBER]; //  #0 in ODMB block
       dim_temp->t_otmb = data[57];
       dim_temp->t_alct = data[56];
-      dim_temp->t_lvdb = data[55];
+      dim_temp->t_lvdb = ((type_==2)?data[55]:-3.);
       
       for(int i=0; i<DCFEB_NUMBER; i++)
       {

@@ -1578,8 +1578,8 @@ hw_source_addr[0],hw_source_addr[1],hw_source_addr[2],hw_source_addr[3],hw_sourc
       {   // If return packet has more words, discard the extra data to avoid buffer overflow.
           // This can be caused by lost packet or packet out of sequence. 
           // The return data is junk in this case.
+          printf("Error: return data packet has %d bytes, expect %d bytes\n", r_num*2, nread); 
           r_num=nread/2;  
-          printf("Error: return data packet has %d bytes, expect % bytes\n", r_num*2, nread); 
       }
       return_type=r_head0[1];
       if(return_type!=5)

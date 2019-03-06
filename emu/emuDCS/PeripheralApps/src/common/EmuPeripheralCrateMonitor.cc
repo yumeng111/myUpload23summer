@@ -3243,8 +3243,8 @@ void EmuPeripheralCrateMonitor::DCSOutput(xgi::Input * in, xgi::Output * out )
      {  // for OFF crates, send -2. in all fields, timestamp is current
         for(unsigned int j=0; j<myVector.size(); j++) 
         {
-           int dversion=myVector[j]->GetHardwareVersion();
-           if(dversion==2) continue;
+           int dversion=myVector[j]->CFEBversion();
+           if(dversion>=2) continue;
            slot = myVector[j]->slot();
            ip = (ip & 0xff) + slot*256;
            *out << myVector[j]->GetLabel();
@@ -3328,8 +3328,8 @@ void EmuPeripheralCrateMonitor::DCSOutput(xgi::Input * in, xgi::Output * out )
 //     myVector = crateVector[i]->daqmbs();
      for(unsigned int j=0; j<myVector.size(); j++) 
      {
-        int dversion=myVector[j]->GetHardwareVersion();
-        if(dversion==2) continue;
+        int dversion=myVector[j]->CFEBversion();
+        if(dversion>=2) continue;
         int imask= 0x3F & (myVector[j]->GetPowerMask());
         bool chamber_off = (imask==0x3F);
         slot = myVector[j]->slot();
@@ -3595,6 +3595,7 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
      {
         int cversion=myVector[j]->CFEBversion();
         if(cversion<=1) continue;
+        int dversion=myVector[j]->DMBversion();
         int imask= 0xFF & (myVector[j]->GetPowerMask());
         bool chamber_off = (imask==0xFF);
         slot = myVector[j]->slot();
@@ -3619,14 +3620,14 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
         if((ch_state & 0x7F)==0) 
         {
           /* LVDB temperature */
-          lvdb_temp=(*dmbdata)[j*TOTAL_DCS_COUNTERS+55];
+          lvdb_temp=(*dmbdata)[j*TOTAL_DCS_COUNTERS+((dversion<2)?40:55)];
           if(lvdb_temp<80. && lvdb_temp>5.)
           {  /* if the LVDB temperature reading is OK, then check the 7Vs */
             /* Analog power */
-            V7=(*dmbdata)[j*TOTAL_DCS_COUNTERS+50];
+            V7=(*dmbdata)[j*TOTAL_DCS_COUNTERS+((dversion<2)?38:50)];
             if(V7<3.0) ch_state |= 512;
             /* Digital power */
-            V7=(*dmbdata)[j*TOTAL_DCS_COUNTERS+51];
+            V7=(*dmbdata)[j*TOTAL_DCS_COUNTERS+((dversion<2)?49:51)];
             if(V7<3.0) ch_state |= 1024;
           } 
           else

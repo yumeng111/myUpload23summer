@@ -307,7 +307,7 @@ void EmuPeripheralCrateMonitor::CreateEmuInfospace()
                 int upgraded=0;
                 for(unsigned j=0; j<myDmbs.size(); j++)
                 {
-                   if(myDmbs[j]->GetHardwareVersion()==2) upgraded++;
+                   if(myDmbs[j]->CFEBversion()>1) upgraded++;
                 }
 
             // for CCB, MPC, TTC etc.
@@ -391,7 +391,6 @@ void EmuPeripheralCrateMonitor::PublishEmuInfospace(int cycle)
               dmbpoweroff[dmbn]= (mask==0x3F);
               if(myDmbs[dmbn]->CFEBversion()>1) upgraded++;
           }
-                                                                                   
           // begin: reload VCC's FPGA (F9)
           if(cycle==2 && reload_vcc && !(now_crate->IsAlive()))
           {

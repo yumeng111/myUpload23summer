@@ -922,10 +922,10 @@ void Crate::MonitorDCS2(int cycle, char * buf, unsigned mask, int read_dcfeb)
   {
     //SK: not used:    int imask= 0xFF & (myDmbs[i]->GetPowerMask());
     //SK: not used:    bool chamber_on = (imask!=0xFF);
-    int Dversion=myDmbs[i]->GetHardwareVersion();
+    int Dversion=myDmbs[i]->CFEBversion();
     //SK: not used:    int Tversion=myTmbs[i]->GetHardwareVersion();
 
-    if(IsAlive() && Dversion==2 && (dmask & (1<<i))==0)
+    if(IsAlive() && Dversion>1 && (dmask & (1<<i))==0)
     {  
         rn=myDmbs[i]->DCSread2(buf+4+i*2*TOTAL_DCS_COUNTERS, read_dcfeb);
         if( rn>0) flag |= (1<<i);

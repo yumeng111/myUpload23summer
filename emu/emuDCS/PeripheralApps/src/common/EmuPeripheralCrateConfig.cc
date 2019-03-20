@@ -432,6 +432,8 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::RestoreCfebJtagIdle, "RestoreCfebJtagIdle");
   xgi::bind(this,&EmuPeripheralCrateConfig::ReadDcfebVirtex6Reg, "ReadDcfebVirtex6Reg");
   xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBLinkReset, "DCFEBLinkReset");
+  xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBShutdown,"DCFEBShutdown");
+  xgi::bind(this,&EmuPeripheralCrateConfig::xDCFEBReadSwitch,"xDCFEBReadSwitch");
   //
   //-----------------------------------------------
   // TMB tests
@@ -586,7 +588,6 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   //----------------------------
   xgi::bind(this,&EmuPeripheralCrateConfig::EnableWriteDCFEBPROM,"EnableWriteDCFEBPROM");
   xgi::bind(this,&EmuPeripheralCrateConfig::SwitchBoard,"SwitchBoard");
-  xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBShutdown,"DCFEBShutdown");
   //
   // SOAP call-back functions, which relays to *Action method.
   //-----------------------------------------------------------

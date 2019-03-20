@@ -449,6 +449,8 @@ private:
   void RestoreCfebJtagIdle(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void ReadDcfebVirtex6Reg(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void DCFEBLinkReset(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void DCFEBShutdown(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void xDCFEBReadSwitch(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
     
   //
   // TMB utils
@@ -697,7 +699,6 @@ private:
   std::string GetFormString(const std::string& form_element, xgi::Input* in);
   void EnableWriteDCFEBPROM(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void SwitchBoard(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
-  void DCFEBShutdown(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   
   //
   std::vector<TMBTester> InitTMBTests(Crate *);

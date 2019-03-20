@@ -8604,8 +8604,8 @@ void DAQMB::dcfeb_print_parameters(CFEB & cfeb)
    {
       std::cout << "Configuration Parameters for xDCFEB #" << number+1 << std::endl;
       xdcfeb_read_eprom(xbuf, 1024, 2);
-      FILE *para=fopen("/tmp/para.mcs", "w");
-      write_mcs(xbuf, 1024, para);    
+//      FILE *para=fopen("/tmp/para.mcs", "w");
+//      write_mcs(xbuf, 1024, para);    
       for(int i=0; i<2*DCFEB_PARAMETERS; i++)
       {
          bbuf[i]=xbuf[i*3];
@@ -8614,7 +8614,7 @@ void DAQMB::dcfeb_print_parameters(CFEB & cfeb)
       {
          std::cout << i << "   " << std::hex << "0x" << bufload[i] << std::dec  << std::endl;
       }            
-      fclose(para);
+//      fclose(para);
    }
 }
 
@@ -12947,8 +12947,8 @@ int DAQMB::xdcfeb_load_firmware(CFEB & cfeb, const char *mcsfile, int broadcast)
    char *bufin, c;
    bufin=(char *)malloc(16*1024*1024);
    if(bufin==NULL)  return -2;
-   char *buf0=bufin+2*PROM_SIZE;
-   char *buf1=bufin+3*PROM_SIZE;
+//   char *buf0=bufin+2*PROM_SIZE;
+//   char *buf1=bufin+3*PROM_SIZE;
 
    strncpy(filename, mcsfile, 980);
    FILE *fin=fopen(filename,"r");
@@ -12983,23 +12983,37 @@ int DAQMB::xdcfeb_load_firmware(CFEB & cfeb, const char *mcsfile, int broadcast)
       bufin[i*2+1]=c;
    }
 */
-     // for 16-bit loading
-     for(int i=0; i<FIRMWARE_SIZE/2; i++)
-     {  buf0[i]=bufin[i*2+1];
-        buf1[i]=bufin[i*2];
-     }
+
+// Liu 2019-03-20, change to 8-bit mode as 16-bit mode has failure after hard-reset
+//     // for 16-bit loading
+//     for(int i=0; i<FIRMWARE_SIZE/2; i++)
+//     {  buf0[i]=bufin[i*2+1];
+//        buf1[i]=bufin[i*2];
+//     }
      
 //    getTheController()->Debug(2);
      getTheController()->SetUseDelay(true);
-     std::cout << "Loading firmware to 2 EPROMs in 16-bit mode......" << std::endl;
+     if(mcssize>PROM_SIZE) 
+        std::cout << "Loading firmware to 2 EPROMs in 8-bit mode......" << std::endl;
+     else
+        std::cout << "Firmware seems to be compressed. Loading it to EPROM #0 in 8-bit mode......" << std::endl;
      if(broadcast)
         write_cfeb_selector(0x7F);   // broadcast to all DCFEBs
      else
         write_cfeb_selector(cfeb.SelectorBit());
      xdcfeb_erase_eprom(0, broadcast);    
-     xdcfeb_erase_eprom(1, broadcast);    
-     xdcfeb_write_eprom(buf0, FIRMWARE_SIZE/2, 0, broadcast);
-     xdcfeb_write_eprom(buf1, FIRMWARE_SIZE/2, 1, broadcast);  
+     if(mcssize>PROM_SIZE) xdcfeb_erase_eprom(1, broadcast);    
+//     xdcfeb_write_eprom(buf0, FIRMWARE_SIZE/2, 0, broadcast);
+//     xdcfeb_write_eprom(buf1, FIRMWARE_SIZE/2, 1, broadcast);  
+     xdcfeb_write_eprom(bufin, PROM_SIZE, 0, broadcast);
+     if(mcssize>PROM_SIZE) xdcfeb_write_eprom(bufin+PROM_SIZE, mcssize-PROM_SIZE, 1, broadcast);  
+
+// Liu 2019-03-20, add the following to make sure the switches are correct. 
+// Will be removed later once all switches are correctly set.
+     std::cout << "Set DS4550 switches to 8-bit programming mode." << std::endl;     
+     char wbuf[4]={2,0,2,0};
+     ds4550_write(wbuf, 0xf0, 3);  
+
      std::cout << "Done."<< std::endl;
      free(bufin);
      return 0;
@@ -13106,41 +13120,52 @@ void DAQMB::xdcfeb_read_firmware(CFEB & cfeb, const char *filename, int seq)
      return rt;
   }
   
-  int DAQMB::ds4550_read(char *buf, int address, int size)
+  int DAQMB::ds4550_read(CFEB & cfeb, char *buf, int address, int size)
   {
      if(size<=0 || address<0 || address>0xFF) return 0;
      char code[4], data[10], outdata[10];
+
+     write_cfeb_selector(cfeb.SelectorBit());
+
      for(int i=0; i<size; i++)
      {
         code[0]=9; // DS4550 ADDRESS
         ds4550_scan(0, code, 4, outdata, NOW);
         data[0]=address+i;
         ds4550_scan(1, data, 8, outdata, NOW);
-
+        ::usleep(500);
         code[0]=10; // DS4550 READ
         ds4550_scan(0, code, 4, outdata, NOW);
         data[0]=0;
         ds4550_scan(1, data, 8, buf+i, NOW|READ_YES);
-       ::usleep(100);
+        ::usleep(1000);
      }    
      return size;
+  }
+    
+  void DAQMB::ds4550_write(CFEB & cfeb, char *buf, int address, int size)
+  {
+     write_cfeb_selector(cfeb.SelectorBit());
+
+     ds4550_write(buf, address, size); 
   }
     
   void DAQMB::ds4550_write(char *buf, int address, int size)
   {
      if(size<=0 || address<0 || address>0xFF) return;
      char code[4], data[10], outdata[10];
+
      for(int i=0; i<size; i++)
      {
         code[0]=9; // DS4550 ADDRESS
         ds4550_scan(0, code, 4, outdata, NOW);
         data[0]=address+i;
         ds4550_scan(1, data, 8, outdata, NOW);
-
+        ::usleep(10000);
         code[0]=11; // DS4550 WRITE
         ds4550_scan(0, code, 4, outdata, NOW);
         ds4550_scan(1, buf+i, 8, outdata, NOW);
-        ::usleep(15000); // wait time for EPROM WRITE: typical 10ms, max 20ms
+        ::usleep(40000); // wait time for EPROM WRITE. Document: typical 10ms, max 20ms
      }    
   }
 

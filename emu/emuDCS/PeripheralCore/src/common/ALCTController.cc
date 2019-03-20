@@ -4630,12 +4630,12 @@ void ALCTController::ds4550_scan(int reg, char *snd,int cnt,char *rcv,int ird)
         ds4550_scan(0, code, 4, outdata, NOW);
         data[0]=address+i;
         ds4550_scan(1, data, 8, outdata, NOW);
-
+        ::usleep(500);
         code[0]=10; // DS4550 READ
         ds4550_scan(0, code, 4, outdata, NOW);
         data[0]=0;
         ds4550_scan(1, data, 8, buf+i, NOW|READ_YES);
-       ::usleep(100);
+       ::usleep(1000);
      }    
      return size;
   }
@@ -4650,11 +4650,11 @@ void ALCTController::ds4550_scan(int reg, char *snd,int cnt,char *rcv,int ird)
         ds4550_scan(0, code, 4, outdata, NOW);
         data[0]=address+i;
         ds4550_scan(1, data, 8, outdata, NOW);
-
+        ::usleep(10000);
         code[0]=11; // DS4550 WRITE
         ds4550_scan(0, code, 4, outdata, NOW);
         ds4550_scan(1, buf+i, 8, outdata, NOW);
-        ::usleep(15000); // wait time for EPROM WRITE: typical 10ms, max 20ms
+        ::usleep(40000); // wait time for EPROM WRITE. Document: typical 10ms, max 20ms
      }    
   }
 

@@ -10,15 +10,17 @@ emu::ldaq::rui::STEPEventCounter::STEPEventCounter(){
   reset();
 }
 
-void emu::ldaq::rui::STEPEventCounter::initialize( const uint64_t requestedEvents, char* const DDUHeader ){
+void emu::ldaq::rui::STEPEventCounter::initialize( const uint64_t requestedEvents, char* const DDUHeader, bool isDMBData ){
   // Sets number of requested events, live DDU inputs and zeros all counters.
   requestedEvents_ = requestedEvents;
+  isDMBData_ = isDMBData;
   neededEvents_ = 0;
   short* liveDDUInputs = (short*)( DDUHeader + offsetLiveDDUInputsField_ );
   // std::cout << "LLLL: " << std::hex << *liveDDUInputs << " " << std::dec << *liveDDUInputs << std::endl; 
   short bitMask = 0x0001;
   for ( int i=0; i<maxDDUInputs_; ++i ){
-    isLiveInput_[i] = bool( bitMask & *liveDDUInputs );
+    if ( isDMBData_ ) isLiveInput_[i] = true;
+    else              isLiveInput_[i] = bool( bitMask & *liveDDUInputs );
     bitMask <<= 1;
     count_[i] = 0;
     countRead_[i] = 0;
@@ -43,6 +45,26 @@ bool emu::ldaq::rui::STEPEventCounter::isNeededEvent( char* const DDUHeader ){
   // This event is needed if it contains data from a DDU input that has not yet produced
   // data in the requested number of events.
   // If this event is needed, increment counters for DDU inputs with data in this event.
+
+  //
+  // Special case: we're handling DMB data. Pretend all inputs are live and have data. Accept every event.
+  //
+  if ( isDMBData_ ){
+    // All inputs are the same in this case, so take, say, the first one to check if we have enough events.
+    if ( count_[0] < requestedEvents_ ){
+      ++neededEvents_;
+      for ( int i=0; i<maxDDUInputs_; ++i ){
+	++count_[i];
+	++countRead_[i];
+      }
+      return true;
+    }
+    return false;
+  }
+
+  //
+  // Normal case: DDU data.
+  //
 
   // Need this event?
   bool isNeeded = false;

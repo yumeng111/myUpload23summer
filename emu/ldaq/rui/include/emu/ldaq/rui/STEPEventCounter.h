@@ -15,7 +15,7 @@ namespace emu { namespace ldaq { namespace rui {
   public:
     enum { maxDDUInputs_ = 15 };
     STEPEventCounter();
-    void         initialize( const uint64_t requestedEvents, char* const DDUHeader );
+    void         initialize( const uint64_t requestedEvents, char* const DDUHeader, bool isDMBData );
     bool         isInitialized() const { return isInitialized_; }
     void         reset();
     bool         isNeededEvent( char* const DDUHeader );
@@ -31,6 +31,7 @@ namespace emu { namespace ldaq { namespace rui {
 
   private:
     enum { offsetNonEmptyDDUInputsField_  = 18, offsetLiveDDUInputsField_ = 22 }; // from the start of DDU header1 [bytes]
+    bool         isDMBData_; // TRUE if handling DMB data. In that case pretend all inputs are live and have data, and accept every event.
     uint64_t     requestedEvents_;
     uint64_t     neededEvents_; // the total number of events needed so far
     bool         isLiveInput_[maxDDUInputs_]; // this is obtained from the DDU header

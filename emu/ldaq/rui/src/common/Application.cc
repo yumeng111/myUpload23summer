@@ -2900,7 +2900,9 @@ int32_t emu::ldaq::rui::Application::continueSTEPRun()
 	uint64_t maxEvents;
 	if ( maxEvents_.value_ < 0 ) maxEvents = numeric_limits<uint64_t>::max();
 	else                         maxEvents = (uint64_t) maxEvents_.value_;
-	STEPEventCounter_.initialize( maxEvents, data );
+	// STEPEventCounter expects a DDU header and looks in it at the bits indicating data from the corresponding inputs.
+	// In DMB data, no such bit field exists, The last argument tells STEPEventCounter not to look for it and to accept every event. 
+	STEPEventCounter_.initialize( maxEvents, data, inputDataFormatInt_ == emu::ldaq::reader::Base::DMB );
       }
 
 //       stringstream ss;

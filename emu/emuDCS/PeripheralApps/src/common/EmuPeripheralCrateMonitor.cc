@@ -1859,7 +1859,7 @@ void EmuPeripheralCrateMonitor::DCSCrateTemp(xgi::Input * in, xgi::Output * out 
   *out <<cgicc::td();
   //
   for(unsigned int dmb=0; dmb<myVector.size(); dmb++) {
-    if(myVector[dmb]->GetHardwareVersion()==2) upgraded=true;
+    if(myVector[dmb]->CFEBversion()>=2) upgraded=true;
     *out <<cgicc::td();
     *out << myVector[dmb]->GetLabel();
     *out <<cgicc::td();
@@ -1885,7 +1885,7 @@ void EmuPeripheralCrateMonitor::DCSCrateTemp(xgi::Input * in, xgi::Output * out 
          val=(*dcsdata)[dmb*TOTAL_DCS_COUNTERS+57];  // TMB temp is at position 57  
       else
       {
-         if(myVector[dmb]->GetHardwareVersion()==2)
+         if(myVector[dmb]->CFEBversion()>=2)
          {
             if(count==0) val=(*dcfebdata)[dmb*TOTAL_DCFEB_MONS+210];
             else

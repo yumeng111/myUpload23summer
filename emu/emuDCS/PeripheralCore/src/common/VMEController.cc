@@ -1540,7 +1540,7 @@ READETH:
         }
 // Jinghua Liu to debug
    
-      if(DEBUG>10)
+      if(DEBUG>0)
       {
         printf("Read back size %d \n",size);
         for(i=0;i<size;i++) printf("%02X ",rbuf[i]&0xff);
@@ -1572,17 +1572,21 @@ hw_source_addr[0],hw_source_addr[1],hw_source_addr[2],hw_source_addr[3],hw_sourc
       r_head2=(unsigned char *)rbuf+18;
       r_head3=(unsigned char *)rbuf+20;
       r_datat=(unsigned char *)rbuf+22;
-      r_num=((r_head3[0]<<8)&0xff00)|(r_head3[1]&0xff);  
-      if((r_num*2) > (r_nbyte-8)) r_num=0;   // wrong data size, bad packet.
-      if((r_num*2)>nread)
-      {   // If return packet has more words, discard the extra data to avoid buffer overflow.
-          // This can be caused by lost packet or packet out of sequence. 
-          // The return data is junk in this case.
-          printf("Error: return data packet has %d bytes, expect %d bytes\n", r_num*2, nread); 
-          r_num=nread/2;  
-      }
+
       return_type=r_head0[1];
-      if(return_type!=5)
+      if(return_type==5)
+      {
+         r_num=((r_head3[0]<<8)&0xff00)|(r_head3[1]&0xff);  
+         if((r_num*2) > (r_nbyte-8)) r_num=0;   // wrong data size, bad packet.
+         if((r_num*2)>nread)
+         {   // If return packet has more words, discard the extra data to avoid buffer overflow.
+             // This can be caused by lost packet or packet out of sequence. 
+             // The return data is junk in this case.
+             printf("Error: return data packet has %d bytes, expect %d bytes\n", r_num*2, nread); 
+             r_num=nread/2;  
+         }
+      }
+      else
       {  // Error handling 
           if(return_type==0xff || return_type==0xfe || return_type==0xfd)
           {

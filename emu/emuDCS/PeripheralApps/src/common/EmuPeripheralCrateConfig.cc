@@ -11720,6 +11720,7 @@ void EmuPeripheralCrateConfig::LoadSpartan6ALCTFirmware(xgi::Input * in, xgi::Ou
        std::string firmfile = ALCTFirmware_[tmb].toString() + "_0.mcs";
        // Put CCB in FPGA mode to make the CCB ignore TTC commands (such as hard reset)
        thisCCB->setCCBMode(CCB::VMEFPGA);
+       thisTMB->disableALCTClock();
        //
        std::cout  << getLocalDateTime() <<  " Write new ALCT Mezzanine (Spartan-6) firmware to slot " << thisTMB->slot() << std::endl;
           // this uses SVF file
@@ -11728,6 +11729,7 @@ void EmuPeripheralCrateConfig::LoadSpartan6ALCTFirmware(xgi::Input * in, xgi::Ou
        thisALCT->load_firmware(firmfile.c_str(), 0); // no broadcast
        //
        std::cout  << getLocalDateTime() <<  " Finished." << std::endl;
+       thisTMB->enableAllClocks();
        // Put CCB back into DLOG mode to listen to TTC commands...
        thisCCB->setCCBMode(CCB::DLOG);
     }

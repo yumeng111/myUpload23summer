@@ -4627,14 +4627,14 @@ void ALCTController::ds4550_scan(int reg, char *snd,int cnt,char *rcv,int ird)
      for(int i=0; i<size; i++)
      {
         code[0]=9; // DS4550 ADDRESS
-        ds4550_scan(0, code, 4, outdata, NOW);
+        ds4550_scan(0, code, 4, outdata, 0);
         data[0]=address+i;
-        ds4550_scan(1, data, 8, outdata, NOW);
+        ds4550_scan(1, data, 8, outdata, 0);
         ::usleep(500);
         code[0]=10; // DS4550 READ
-        ds4550_scan(0, code, 4, outdata, NOW);
+        ds4550_scan(0, code, 4, outdata, 0);
         data[0]=0;
-        ds4550_scan(1, data, 8, buf+i, NOW|READ_YES);
+        ds4550_scan(1, data, 8, buf+i, READ_YES);
        ::usleep(1000);
      }    
      return size;
@@ -4647,13 +4647,13 @@ void ALCTController::ds4550_scan(int reg, char *snd,int cnt,char *rcv,int ird)
      for(int i=0; i<size; i++)
      {
         code[0]=9; // DS4550 ADDRESS
-        ds4550_scan(0, code, 4, outdata, NOW);
+        ds4550_scan(0, code, 4, outdata, 0);
         data[0]=address+i;
-        ds4550_scan(1, data, 8, outdata, NOW);
+        ds4550_scan(1, data, 8, outdata, 0);
         ::usleep(10000);
         code[0]=11; // DS4550 WRITE
-        ds4550_scan(0, code, 4, outdata, NOW);
-        ds4550_scan(1, buf+i, 8, outdata, NOW);
+        ds4550_scan(0, code, 4, outdata, 0);
+        ds4550_scan(1, buf+i, 8, outdata, 0);
         ::usleep(40000); // wait time for EPROM WRITE. Document: typical 10ms, max 20ms
      }    
   }
@@ -4667,25 +4667,26 @@ int ALCTController::erase_eprom(int chip, int broadcast)
     unsigned block_mask = (chip==1)?1:0xF;
 
     tmb_->getTheController()->SetUseDelay(true);
+//    tmb_->getTheController()->Debug(10);
 
 //       jtag_RestoreIdle();      
        comd=XCF_ISC_ENABLE; 
        prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
        data=0x03;
-       prom_scan(1, (char *)&data, 8, rcvbuf, 0, chip);
+       prom_scan(1, (char *)&data, 8, rcvbuf, READ_YES, chip);
        comd=XCF_XSC_UNLOCK; 
        prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
        data=block_mask;
-       prom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
+       prom_scan(1, (char *)&data, 24, rcvbuf, READ_YES, chip);
 
 //
 // 2018-08-06 Liu: disable special handling of ERASE to see how many EPROMs having problem
-       tmb_->set_flag(0);
+//     tmb_->set_flag(0);
        comd=XCF_ISC_ERASE; 
        prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
        tmb_->clear_flag(0);   
        data=block_mask;
-       prom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
+       prom_scan(1, (char *)&data, 24, rcvbuf, READ_YES, chip);
        ::sleep((chip==1)?40:140);
     if(broadcast==0)
     {
@@ -4708,6 +4709,8 @@ int ALCTController::erase_eprom(int chip, int broadcast)
        comd=XCF_ISC_DISABLE; 
        prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
        ::usleep(200);
+
+//    tmb_->getTheController()->Debug(0);
     std::cout << "Done." << std::endl;
     return blank_state;
 }
@@ -4738,39 +4741,41 @@ int ALCTController::write_eprom(char *bufin, int dsize, int chip, int broadcast)
      int p1pct=blocks/100;
      int j=0, pcnts=0;
 
-//    tmb_->getTheController()->Debug(2);
+//     tmb_->getTheController()->Debug(10);
      tmb_->getTheController()->SetUseDelay(true);
   
 //     jtag_RestoreIdle();      
      comd=XCF_ISC_ENABLE; 
      prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      data=0x03;
-     prom_scan(1, (char *)&data, 8, rcvbuf, 0, chip);
+     prom_scan(1, (char *)&data, 8, rcvbuf, READ_YES, chip);
      comd=XCF_XSC_UNLOCK; 
      prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      data=0x0F;
-     prom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
-/*
+     prom_scan(1, (char *)&data, 24, rcvbuf, READ_YES, chip);
+
      comd=XCF_DATA_BTC; 
      prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      data=0xFFFFFFEC;
      prom_scan(1, (char *)&data, 32, rcvbuf, 0, chip);
-*/
+
      comd=XCF_ISC_PROGRAM; 
      prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      ::usleep(200);
      for(int i=0; i<blocks; i++)
      {
+
+        if(i==2) tmb_->getTheController()->Debug(0);
         if((i%0x8000)==0)   
         {  /* At beginning of each big block, send (byte) address. */
            comd=XCF_ADD_SHIFT; 
            prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
            data=i*32;
-           prom_scan(1, (char *)&data, 24, rcvbuf, 0, chip);
+           prom_scan(1, (char *)&data, 24, rcvbuf, READ_YES, chip);
         }
        comd=XCF_DATA_SHIFT; 
        prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
-       prom_scan(1, bufin+32*i, 256, rcvbuf, 0, chip);
+       prom_scan(1, bufin+32*i, 256, rcvbuf, READ_YES, chip);
        comd=XCF_ISC_PROGRAM; 
        prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
        ::usleep(1000);
@@ -4781,10 +4786,27 @@ int ALCTController::write_eprom(char *bufin, int dsize, int chip, int broadcast)
           j=0;
        }   
      }
+
+     comd=XCF_DATA_SUCR; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0xFFFC;
+     prom_scan(1, (char *)&data, 16, rcvbuf, READ_YES, chip);
+     comd=XCF_ISC_PROGRAM; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     ::usleep(100);
+
+     comd=XCF_DATA_CCB; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0xFFF9;
+     prom_scan(1, (char *)&data, 16, rcvbuf, READ_YES, chip);
+     comd=XCF_ISC_PROGRAM; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     ::usleep(100);
+
      comd=XCF_DATA_DONE; 
      prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      data=0xC0;
-     prom_scan(1, (char *)&data, 8, rcvbuf, 0, chip);
+     prom_scan(1, (char *)&data, 8, rcvbuf, READ_YES, chip);
      comd=XCF_ISC_PROGRAM; 
      prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      ::usleep(200);

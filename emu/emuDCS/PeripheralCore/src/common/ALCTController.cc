@@ -4711,7 +4711,6 @@ int ALCTController::erase_eprom(int chip, int broadcast)
        ::usleep(200);
 
 //    tmb_->getTheController()->Debug(0);
-    std::cout << "Done." << std::endl;
     return blank_state;
 }
 
@@ -4812,10 +4811,6 @@ int ALCTController::write_eprom(char *bufin, int dsize, int chip, int broadcast)
      ::usleep(200);
      std::cout << "Sending 100%..." << std::endl;
 //    tmb_->getTheController()->Debug(2);
-     if(broadcast==0)
-     {
-         std::cout << "Verify. " << std::endl;
-     }
      comd=XCF_CLR_STATUS; 
      prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      ::usleep(50);
@@ -4896,10 +4891,12 @@ int ALCTController::load_firmware(const char *mcsfile, int broadcast)
    char filename[1000];
 
    char *bufin, c;
-   bufin=(char *)malloc(2*PROM_SIZE);
+   bufin=(char *)malloc(4*PROM_SIZE);
    if(bufin==NULL)  return -2;
    char *buf0=bufin;
    char *buf1=bufin+PROM_SIZE;
+   char *rbuf=bufin+2*PROM_SIZE;
+   char *rbuf1=rbuf+PROM_SIZE;
 
    strncpy(filename, mcsfile, 980);
    FILE *fin=fopen(filename,"r");
@@ -4946,6 +4943,19 @@ int ALCTController::load_firmware(const char *mcsfile, int broadcast)
      write_eprom(buf0, mcssize, 0, broadcast);
      if(mcssize2) write_eprom(buf1, mcssize2, 1, broadcast);  
      std::cout << "Done."<< std::endl;
+     if(broadcast==0)
+     {
+        std::cout << "Read back and Verify..." << std::endl; 
+        read_eprom(rbuf, PROM_SIZE, 0);
+        if(mcssize2) read_eprom(rbuf1, mcssize2, 1);
+        int err_count=0;
+        for(int i=0; i<FIRMWARE_SIZE; i++)
+        {
+            if(bufin[i]!=rbuf[i]) err_count++;
+        }
+        if(err_count) std::cout << "Verification failed! Error count: " << err_count << " byte(s)."<< std::endl;
+        else std::cout << "Verification successful! No error." << std::endl;
+     }
      free(bufin);
      return 0;
 }

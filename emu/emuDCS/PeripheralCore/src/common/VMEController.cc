@@ -1540,7 +1540,7 @@ READETH:
         }
 // Jinghua Liu to debug
    
-      if(DEBUG>0)
+      if(DEBUG>10)
       {
         printf("Read back size %d \n",size);
         for(i=0;i<size;i++) printf("%02X ",rbuf[i]&0xff);

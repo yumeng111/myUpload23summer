@@ -4692,18 +4692,18 @@ int ALCTController::erase_eprom(int chip, int broadcast)
     {
        comd=XCF_CLR_STATUS; 
        prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
-       ::usleep(50);
+       ::usleep(200);
        comd=XCF_BLANK_CHECK; 
        prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
-       ::sleep(1);
+       ::sleep(2);
        data=0;
        prom_scan(1, (char *)&data, 8, rcvbuf, READ_YES, chip);
        blank_state = rcvbuf[0] & block_mask & 0xFF;
        if(blank_state==0) std::cout << "Blank Check successful!" << std::endl;
-       else std::cout << "ERROR: Blank Check failed! " << std::hex << (rcvbuf[0] & 0xFF) << std::dec << std::endl;
+       else std::cout << "Warning: Blank Check returned Non-Zero: " << std::hex << (rcvbuf[0] & 0xFF) << ". Could be a problem!"  << std::dec << std::endl;
        comd=XCF_CLR_STATUS; 
        prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
-       ::usleep(50);
+       ::usleep(200);
               
     }
        comd=XCF_ISC_DISABLE; 

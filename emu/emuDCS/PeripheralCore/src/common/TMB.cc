@@ -4800,8 +4800,8 @@ void TMB::disableAllClocks(){
   //  tmb_vme(VME_READ, vme_step_adr,sndbuf,rcvbuf,NOW);  
   //  sndbuf[0]=rcvbuf[0] & 0x1f;
   //  sndbuf[1]=rcvbuf[1] & 0xf8;
-  sndbuf[0]= 0x1f;
-  sndbuf[1]= 0xf8;
+  sndbuf[0]= 0x18;
+  sndbuf[1]= 0x00;
   tmb_vme(VME_WRITE, vme_step_adr, sndbuf,rcvbuf,NOW);
 }
 //
@@ -4812,8 +4812,8 @@ void TMB::enableAllClocks(){
   //  tmb_vme(VME_READ, vme_step_adr,sndbuf,rcvbuf,NOW);   
   //  sndbuf[0]=rcvbuf[0] | 0xe0;
   //  sndbuf[1]=rcvbuf[1] | 0x07;
-  sndbuf[0] = 0xe0;
-  sndbuf[1] = 0x07;
+  sndbuf[0] = 0x1f;
+  sndbuf[1] = 0xe0;
   tmb_vme(VME_WRITE, vme_step_adr, sndbuf,rcvbuf,NOW);
 }
 

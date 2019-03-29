@@ -6186,10 +6186,6 @@ void DAQMB::WriteSFM(){
 //
 void DAQMB::PrintCounters(int user_option){
   //
-  (*MyOutput_) << "Enter 1 for simple print-out" << std::endl;
-  (*MyOutput_) << "      2 for print most frequent values" <<std::endl;
-  (*MyOutput_) << "      3 for cuts by TMB DAV and/or same DAV, then print most frequent" <<std::endl;
-
   if(DMBversion()<=1){
     //
     if( (user_option<1) | (user_option>3) ) (*MyOutput_) << "Invalid option entered" << std::endl;
@@ -8589,20 +8585,20 @@ void DAQMB::dcfeb_print_parameters(CFEB & cfeb)
    write_cfeb_selector(cfeb.SelectorBit());
    if(CFEBversion() == 2)
    {
-      std::cout << "Configuration Parameters for DCFEB #" << number+1 << std::endl;
+      (*MyOutput_) << "Configuration Parameters for DCFEB #" << number+1 << std::endl;
       for(int block=0; block<11; block++)
       {
-         std::cout << "---- From parameter block #" << block << " ----" << std::endl;
+         (*MyOutput_) << "---- From parameter block #" << block << " ----" << std::endl;
          dcfeb_readparam(block, DCFEB_PARAMETERS, bufload);
          for(int i=0; i<DCFEB_PARAMETERS;i++)
          {
-            std::cout << i << "   " << std::hex << "0x" << bufload[i] << std::dec  << std::endl;
+            (*MyOutput_) << i << "   " << std::hex << "0x" << bufload[i] << std::dec  << std::endl;
          }
       }
    }
    else if(CFEBversion() == 3)
    {
-      std::cout << "Configuration Parameters for xDCFEB #" << number+1 << std::endl;
+      (*MyOutput_) << "Configuration Parameters for xDCFEB #" << number+1 << std::endl;
       xdcfeb_read_eprom(xbuf, 1024, 2);
 //      FILE *para=fopen("/tmp/para.mcs", "w");
 //      write_mcs(xbuf, 1024, para);    
@@ -8612,7 +8608,7 @@ void DAQMB::dcfeb_print_parameters(CFEB & cfeb)
       }
       for(int i=0; i<DCFEB_PARAMETERS;i++)
       {
-         std::cout << i << "   " << std::hex << "0x" << bufload[i] << std::dec  << std::endl;
+         (*MyOutput_) << i << "   " << std::hex << "0x" << bufload[i] << std::dec  << std::endl;
       }            
 //      fclose(para);
    }
@@ -13229,6 +13225,48 @@ void DAQMB::xdcfeb_gbt_power(CFEB & cfeb, int on_off)
       dcfeb_core((on_off!=0)?POWER_ON_GBT:POWER_OFF_GBT, 0, tmp, tmp, NOW|NOOP_YES);
       usleep(1000);      
 }
-                      
+
+void DAQMB::xdcfeb_read_vttx(CFEB & cfeb, char *data_out)
+{
+      if(CFEBversion() <=1) return;
+        
+      write_cfeb_selector(cfeb.SelectorBit());
+              
+      char wf=0, tmp[10];
+      for(int i=1; i<3; i++)
+      {
+         wf= (1<<i) + 8 + (7<<7);  // read device i, total 7 bytes
+         dcfeb_core(WRITE_I2C_FIFO, 8, &wf, tmp, NOW); 
+         wf=0;    // starting register address
+         dcfeb_core(WRITE_I2C_FIFO, 8, &wf, tmp, NOW); 
+         dcfeb_core(START_I2C_PROC, 0, tmp, tmp, NOW); 
+         ::sleep(1);         
+         for(int j=0; j<7; j++)
+         {
+             wf=0; 
+             dcfeb_core(READ_I2C_FIFO, 8, &wf, tmp, NOW|READ_YES); 
+             data_out[(i-1)*8+j]=tmp[0];
+         }
+         dcfeb_core(RESET_I2C, 0, tmp, tmp, NOW);          
+         ::usleep(100000);
+      }
+} 
+
+void DAQMB::xdcfeb_print_vttx(CFEB & cfeb)
+{
+    if(CFEBversion() <=1) return;
+
+    char data[20];
+    xdcfeb_read_vttx(cfeb, data);
+    for(int i=0; i<2; i++)
+    {
+       if(i==0) (*MyOutput_) << "DAQ transmitter (to ODMB), data in Hex:" << std::endl;
+          else  (*MyOutput_) << "TRG transmitter (to OTMB), data in Hex:" << std::endl;
+       for(int j=0; j<7; j++)
+       {
+           (*MyOutput_) << "   reg " << j << " - " << std::hex << (int(data[i*8+j]) & 0xFF) << std::dec << std::endl;
+       }
+    }
+}                     
 } // namespace emu::pc
 } // namespace emu

@@ -968,6 +968,8 @@ public:
   void xdcfeb_test_autoload(CFEB & cfeb);
   void xdcfeb_gbt_test_mode(CFEB & cfeb, int on_off);
   void xdcfeb_gbt_power(CFEB & cfeb, int on_off);
+  void xdcfeb_read_vttx(CFEB & cfeb, char *data_out);
+  void xdcfeb_print_vttx(CFEB & cfeb);
 
   // 2018-08-15 Liu, moved the following ODMB constats into Public block
   // 

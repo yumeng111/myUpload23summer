@@ -1279,6 +1279,34 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
     .set("name", "command")
     .set("value", "Read xDCFEB DS4550)") << std::endl;
   *out << cgicc::form() << cgicc::br() << std::endl;
+
+  // (x)DCFEB VTTX
+  std::string readvttx =
+      toolbox::toString("/%s/xDCFEBReadVTTX",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", readvttx) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << std::endl;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Read VTTX registers)") << std::endl;
+  *out << cgicc::form() << cgicc::br() << std::endl;
   }
   *out << cgicc::fieldset()<< cgicc::br() << std::endl;
   //
@@ -2096,8 +2124,12 @@ void EmuPeripheralCrateConfig::DCFEBParaPrint(xgi::Input * in, xgi::Output * out
   }
   //
   DAQMB * thisDMB = dmbVector[dmb];
-  int hversion = thisDMB->CFEBversion();
+  if(thisDMB)
+  {
+     int hversion = thisDMB->CFEBversion();
 
+     OutputStringDMBStatus[dmb].str("");
+     
      std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
      unsigned icfeb=atoi(cfeb_value.c_str());
      std::vector<CFEB> cfebs = thisDMB->cfebs() ;
@@ -2108,11 +2140,13 @@ void EmuPeripheralCrateConfig::DCFEBParaPrint(xgi::Input * in, xgi::Output * out
         return;
      }
 
-     std::cout << getLocalDateTime() << " DCFEB parameters in EEPROM on DMB " << dmb << " CFEB " << cfebs[icfeb].number()+1 << std::endl;
+     OutputStringDMBStatus[dmb]  << getLocalDateTime() << " DCFEB parameters in EEPROM on DMB " << dmb << " CFEB " << cfebs[icfeb].number()+1 << std::endl;
 
+     thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
      thisDMB->dcfeb_print_parameters(cfebs[icfeb]);
-    
-     this->CFEBUtils(in,out);           
+     thisDMB->RedirectOutput(&std::cout);
+  }                  
+  this->CFEBUtils(in,out);           
 }
 
 void EmuPeripheralCrateConfig::DCFEBParaErase(xgi::Input * in, xgi::Output * out )
@@ -4719,7 +4753,7 @@ void EmuPeripheralCrateConfig::DMBPrintCounters(xgi::Input * in, xgi::Output * o
     //
     DAQMB * thisDMB = dmbVector[dmb];
     //
-    thisDMB->RedirectOutput(&std::cout);
+    thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
     thisDMB->PrintCounters(1);
     thisDMB->RedirectOutput(&std::cout);
     //
@@ -5247,6 +5281,61 @@ void EmuPeripheralCrateConfig::xDCFEBReadSwitch(xgi::Input * in, xgi::Output * o
      }
      std::cout << std::dec; 
      OutputStringDMBStatus[dmb] << std::dec; 
+
+//test I2C
+     std::cout << "I2C output" << std::endl;
+     char data[20];
+     thisDMB->xdcfeb_read_vttx(cfebs[icfeb],data);
+     for(int i=0;i<20;i++)
+     {
+       std::cout << i << " - " << std::hex << (int(data[i]) & 0xFF) << std::dec << std::endl;
+     }
+     this->CFEBUtils(in,out);           
+  }
+}
+
+void EmuPeripheralCrateConfig::xDCFEBReadVTTX(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  if(thisDMB)
+  {
+     OutputStringDMBStatus[dmb].str("");
+          
+     int hversion = thisDMB->CFEBversion();
+
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+     if (hversion <= 1) {
+        std::cout << "DMB " << dmb << " CFEB#" + cfebs[icfeb].number()+1 << " is not a DCFEB or xDCFEB. Skipping.." << std::endl;
+        OutputStringDMBStatus[dmb] << "DMB " << dmb << " CFEB#" + cfebs[icfeb].number()+1 << " is not a DCFEB or xDCFEB. Skipping.." << std::endl;
+        this->CFEBUtils(in,out);
+        return;
+     }
+
+     std::cout << getLocalDateTime() << " VTTX registers on DMB " << dmb << " CFEB#" << cfebs[icfeb].number()+1 << std::endl;
+     OutputStringDMBStatus[dmb] << getLocalDateTime() << " VTTX registers on DMB " << dmb << " CFEB#" << cfebs[icfeb].number()+1 << std::endl;
+
+     thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+     thisDMB->xdcfeb_print_vttx(cfebs[icfeb]);
+     thisDMB->RedirectOutput(&std::cout);
+
      this->CFEBUtils(in,out);           
   }
 }

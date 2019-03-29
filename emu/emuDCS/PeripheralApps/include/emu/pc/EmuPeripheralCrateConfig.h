@@ -451,7 +451,7 @@ private:
   void DCFEBLinkReset(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void DCFEBShutdown(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void xDCFEBReadSwitch(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
-    
+  void xDCFEBReadVTTX(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);    
   //
   // TMB utils
   void TMBUtils(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 

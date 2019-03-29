@@ -46,17 +46,17 @@ const std::string	ALCT_SLOW_FIRMWARE_FILENAME_XC18V01 = "alct/slow/slow_control_
 // In other words:  9 April 2007 firmware should reside in YEARMONTHDAY=20070409
 //
 // The XXX in the ALCT firmware specification corresponds to the following structure:
-const std::string ALCT_FIRMWARE_FILENAME_ME11 = "alct_s6_288/alct_s6_288";
-const std::string ALCT_READBACK_FILENAME_ME11 = "alct_s6_288/alct_s6_288_verify";
+const std::string ALCT_FIRMWARE_FILENAME_ME11 = "alct_LX100_288/alct_LX100_288";
+const std::string ALCT_READBACK_FILENAME_ME11 = "alct_LX100_288/alct_LX100_288_verify";
 //
-const std::string ALCT_FIRMWARE_FILENAME_ME11_BACKWARD_NEGATIVE = "alct_s6_288bn/alct_s6_288bn";
-const std::string ALCT_READBACK_FILENAME_ME11_BACKWARD_NEGATIVE = "alct_s6_288bn/alct_s6_288bn_verify";
+const std::string ALCT_FIRMWARE_FILENAME_ME11_BACKWARD_NEGATIVE = "alct_LX100_288bn/alct_s6_288bn";
+const std::string ALCT_READBACK_FILENAME_ME11_BACKWARD_NEGATIVE = "alct_LX100_288bn/alct_s6_288bn_verify";
 //
-const std::string ALCT_FIRMWARE_FILENAME_ME11_BACKWARD_POSITIVE = "alct_s6_288bp/alct_s6_288bp";
-const std::string ALCT_READBACK_FILENAME_ME11_BACKWARD_POSITIVE = "alct_s6_288bp/alct_s6_288bp_verify";
+const std::string ALCT_FIRMWARE_FILENAME_ME11_BACKWARD_POSITIVE = "alct_LX100_288bp/alct_LX100_288bp";
+const std::string ALCT_READBACK_FILENAME_ME11_BACKWARD_POSITIVE = "alct_LX100_288bp/alct_LX100_288bp_verify";
 //
-const std::string ALCT_FIRMWARE_FILENAME_ME11_FORWARD_POSITIVE  = "alct_s6_288fp/alct_s6_288fp";
-const std::string ALCT_READBACK_FILENAME_ME11_FORWARD_POSITIVE  = "alct_s6_288fp/alct_s6_288fp_verify";
+const std::string ALCT_FIRMWARE_FILENAME_ME11_FORWARD_POSITIVE  = "alct_LX100_288fp/alct_LX100_288fp";
+const std::string ALCT_READBACK_FILENAME_ME11_FORWARD_POSITIVE  = "alct_LX100_288fp/alct_LX100_288fp_verify";
 //
 const std::string ALCT_FIRMWARE_FILENAME_ME12 = "alct384/alct384"; 
 const std::string ALCT_READBACK_FILENAME_ME12 = "alct384/alct384_verify";
@@ -434,6 +434,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBLinkReset, "DCFEBLinkReset");
   xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBShutdown,"DCFEBShutdown");
   xgi::bind(this,&EmuPeripheralCrateConfig::xDCFEBReadSwitch,"xDCFEBReadSwitch");
+  xgi::bind(this,&EmuPeripheralCrateConfig::xDCFEBReadVTTX,"xDCFEBReadVTTX");
   //
   //-----------------------------------------------
   // TMB tests
@@ -10473,7 +10474,10 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   }  // end of old ALCT
   else
   {  // begin new ALCT
-    *out << "firmware version = " << ALCTFirmware_[tmb].toString() << "_0.mcs" << cgicc::br() << std::endl;
+    if (alct->GetHardwareVersion()==4)
+        *out << "firmware version = " << ALCTFirmware_[tmb].toString() << ".mcs" << cgicc::br() << std::endl;
+    else
+        *out << "firmware version = " << ALCTFirmware_[tmb].toString() << "_0.mcs" << cgicc::br() << std::endl;      
     *out << "Step 1)  Disable DCS monitoring to crates" << cgicc::br() << std::endl;
     //
     std::string LoadSpartan6ALCTFirmware = toolbox::toString("/%s/LoadSpartan6ALCTFirmware",getApplicationDescriptor()->getURN().c_str());
@@ -11717,7 +11721,7 @@ void EmuPeripheralCrateConfig::LoadSpartan6ALCTFirmware(xgi::Input * in, xgi::Ou
     ALCTController * thisALCT = thisTMB->alctController();
     if(thisALCT && (thisALCT->GetHardwareVersion()>=2))
     {
-       std::string firmfile = ALCTFirmware_[tmb].toString() + "_0.mcs";
+       std::string firmfile = ALCTFirmware_[tmb].toString() + ((thisALCT->GetHardwareVersion()==4)?".mcs":"_0.mcs");
        // Put CCB in FPGA mode to make the CCB ignore TTC commands (such as hard reset)
        thisCCB->setCCBMode(CCB::VMEFPGA);
        thisTMB->disableALCTClock();

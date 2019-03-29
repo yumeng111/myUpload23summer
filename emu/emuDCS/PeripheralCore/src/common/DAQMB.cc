@@ -669,7 +669,6 @@ int DAQMB::CFEBversion()
 void DAQMB::end()
 {
   //std::cout << "calling DAQMB::end" << std::endl;
-  theController->send_last();
   VMEModule::end();
 }
 
@@ -740,14 +739,6 @@ void DAQMB::configure(int c)
    //
    //(*MyOutput_) << std::endl;
    (*MyOutput_) << "CFEB size="<<cfebs_.size()<<std::endl;
-  //
-   std::ostringstream dump, dump2, dump3, dump4;
-  dump2 << (int)this->crate();
-  dump3 << (int)this->slot();
-  dump  << "DAQMB: configure() for crate = " ;
-  dump4 << " and slot = " ;
-  //
-  SendOutput(dump.str()+dump2.str()+dump4.str()+dump3.str(),"INFO");
   //
   (*MyOutput_) << "DAQMB: configure() for crate " << this->crate() << " slot " << this->slot() << std::endl;
   //
@@ -13235,7 +13226,7 @@ void DAQMB::xdcfeb_read_vttx(CFEB & cfeb, char *data_out)
       char wf=0, tmp[10];
       for(int i=1; i<3; i++)
       {
-         wf= (1<<i) + 8 + (7<<7);  // read device i, total 7 bytes
+         wf= (1<<i) + 8 + (7<<4);  // read device i, total 7 bytes
          dcfeb_core(WRITE_I2C_FIFO, 8, &wf, tmp, NOW); 
          wf=0;    // starting register address
          dcfeb_core(WRITE_I2C_FIFO, 8, &wf, tmp, NOW); 

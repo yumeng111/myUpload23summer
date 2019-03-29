@@ -5281,17 +5281,8 @@ void EmuPeripheralCrateConfig::xDCFEBReadSwitch(xgi::Input * in, xgi::Output * o
      }
      std::cout << std::dec; 
      OutputStringDMBStatus[dmb] << std::dec; 
-
-//test I2C
-     std::cout << "I2C output" << std::endl;
-     char data[20];
-     thisDMB->xdcfeb_read_vttx(cfebs[icfeb],data);
-     for(int i=0;i<20;i++)
-     {
-       std::cout << i << " - " << std::hex << (int(data[i]) & 0xFF) << std::dec << std::endl;
-     }
-     this->CFEBUtils(in,out);           
   }
+  this->CFEBUtils(in,out);           
 }
 
 void EmuPeripheralCrateConfig::xDCFEBReadVTTX(xgi::Input * in, xgi::Output * out )
@@ -5335,9 +5326,8 @@ void EmuPeripheralCrateConfig::xDCFEBReadVTTX(xgi::Input * in, xgi::Output * out
      thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
      thisDMB->xdcfeb_print_vttx(cfebs[icfeb]);
      thisDMB->RedirectOutput(&std::cout);
-
-     this->CFEBUtils(in,out);           
   }
+  this->CFEBUtils(in,out);           
 }
 
  }  // namespace emu::pc

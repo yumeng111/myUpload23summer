@@ -331,7 +331,7 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
 
   int slot = 0;
   fillInt("slot", slot);
-  std::cout << "Inside TMBParser..."<<std::endl;
+//  std::cout << "Inside TMBParser..."<<std::endl;
   if(slot == 0) {
     std::cerr << "No slot specified for TMB! " << std::endl;
   } else {
@@ -1266,6 +1266,7 @@ void XMLParser::parseFile(const std::string name)
   //  Parse the XML file, catching any XML exceptions that might propogate
   //  out of it.
   //
+  std::cout << "Use XML file: " << name << std::endl;
   bool errorsOccured = false;
   try{
     parser->parse(name.c_str());

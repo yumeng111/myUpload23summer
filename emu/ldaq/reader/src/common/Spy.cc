@@ -14,7 +14,7 @@
 #include <sys/mman.h>
 #include <sys/user.h> // for PAGE_SIZE
 #include "schar.h"
-#include "eth_hook_2.h"
+#include "eth_hook_2_daq.h"
 #include <stdexcept>   // std::runtime_error
 
 // DEBUG START

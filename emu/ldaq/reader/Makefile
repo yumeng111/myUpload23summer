@@ -28,8 +28,8 @@ IncludeDirs = \
 	$(XDAQ_ROOT)/include \
 	$(XDAQ_ROOT)/include/$(XDAQ_OS) \
 	$(BUILD_HOME)/emu/ldaq/reader/include \
-        $(BUILD_HOME)/emu/drivers/e1000hook/eth_hook_2_nobigphysxxx
-
+	$(BUILD_HOME)/emu/base/include \
+        $(BUILD_HOME)/emu/drivers/e1000e_emu/eth_hook_2_daq
 
 LibraryDirs = $(XDAQ_ROOT)/lib
 

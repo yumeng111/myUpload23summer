@@ -35,7 +35,8 @@ Sources=\
 
 IncludeDirs = \
 	$(XDAQ_ROOT)/include \
-	$(XDAQ_ROOT)/include/xdaq
+	$(XDAQ_ROOT)/include/xdaq \
+	$(BUILD_HOME)/emu/base/include
 
 LibraryDirs = \
 	$(XDAQ_ROOT)/lib

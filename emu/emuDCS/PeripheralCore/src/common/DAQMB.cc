@@ -1611,6 +1611,8 @@ void DAQMB::set_comp_thresh(CFEB & cfeb, float thresh)
   dt[1]=dt[1]>>1;
   //
   (*MyOutput_) << "Set_comp_thresh.icfeb=" << cfeb.number() << " thresh=" << thresh << std::endl;
+  if(thresh<0.001)  (*MyOutput_) << "WARNING: set_comp_thresh too low, thresh = " << thresh << std::endl;
+  
   //
   if(CFEBversion()<=1)
   {
@@ -8495,7 +8497,7 @@ void DAQMB::dcfeb_configure(CFEB & cfeb)
    const int DCFEB_PARAMETERS=34;
    int number_ = cfeb.number();
    int real_block=-1;
-   bool changed=false;
+   bool changed=false, verify_failed=false;
    unsigned short int bufload[DCFEB_PARAMETERS], oldbuf[DCFEB_PARAMETERS];
 
    write_cfeb_selector(cfeb.SelectorBit());
@@ -8552,6 +8554,12 @@ void DAQMB::dcfeb_configure(CFEB & cfeb)
            ::sleep(1);
            // verify
            xdcfeb_read_eprom(readbuf, 1024, 2); 
+           for(int i=0; i<DCFEB_PARAMETERS*6; i++)
+           {
+               if(newbuf[i]!=readbuf[i]) { verify_failed=true; break; }
+           }     
+           if(verify_failed) std::cout << "Error: Verification failed!" << std::endl;
+           else std::cout << "Verification Successful!" << std::endl;
        }
    }
    // Liu, 2018-07-12 temporarily put here to configure xDCFEB. 

@@ -4690,15 +4690,20 @@ int ALCTController::erase_eprom(int chip, int broadcast)
        ::sleep((chip==1)?40:140);
     if(broadcast==0)
     {
-       comd=XCF_CLR_STATUS; 
-       prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
-       ::usleep(200);
-       comd=XCF_BLANK_CHECK; 
-       prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
-       ::sleep(2);
-       data=0;
-       prom_scan(1, (char *)&data, 8, rcvbuf, READ_YES, chip);
-       blank_state = rcvbuf[0] & block_mask & 0xFF;
+       int itry=0;
+       do 
+       {
+          comd=XCF_CLR_STATUS; 
+          prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+          ::usleep(200);
+          comd=XCF_BLANK_CHECK; 
+          prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+          ::sleep(1);
+          data=0;
+          prom_scan(1, (char *)&data, 8, rcvbuf, READ_YES, chip);
+          blank_state = rcvbuf[0] & block_mask & 0xFF;
+          itry++;
+       }  while (blank_state!=0 && itry<3);
        if(blank_state==0) std::cout << "Blank Check successful!" << std::endl;
        else std::cout << "Warning: Blank Check returned Non-Zero: " << std::hex << (rcvbuf[0] & 0xFF) << ". Could be a problem!"  << std::dec << std::endl;
        comd=XCF_CLR_STATUS; 
@@ -4917,7 +4922,7 @@ int ALCTController::load_firmware(const char *mcsfile, int broadcast)
       if(fin==NULL ) 
       { 
          free(bufin);  
-         std::cout << "WRANING: Unable to open 2nd MCS file :" << filename << std::endl;
+         std::cout << "WARNING: Unable to open 2nd MCS file :" << filename << std::endl;
       }
       else
       {
@@ -5005,7 +5010,7 @@ void ALCTController::read_firmware(const char *filename)
       fclose(mcsfile2);
    }
    free(buf);
-   std::cout << " Total " << FIRMWARE_SIZE << " bytes are read back from EPROM and saved in mcs-format file: " << filename << std::endl;
+   std::cout << " Total " << (PROM_SIZE+PROM2size) << " bytes are read back from EPROM and saved in mcs-format file: " << filename << std::endl;
    return;
 }
 

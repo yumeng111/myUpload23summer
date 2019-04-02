@@ -5261,8 +5261,8 @@ void EmuPeripheralCrateConfig::xDCFEBReadSwitch(xgi::Input * in, xgi::Output * o
      std::vector<CFEB> cfebs = thisDMB->cfebs() ;
      if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
      if (hversion != 3) {
-        std::cout << "DMB " << dmb << " CFEB#" + cfebs[icfeb].number()+1 << " hardware version is not 3 (it's not a xDCFEB).. Skipping.." << std::endl;
-        OutputStringDMBStatus[dmb] << "DMB " << dmb << " CFEB#" + cfebs[icfeb].number()+1 << " hardware version is not 3 (it's not a xDCFEB).. Skipping.." << std::endl;
+        std::cout << "DMB " << dmb << " CFEB#" << cfebs[icfeb].number()+1 << " hardware version is not 3 (it's not a xDCFEB).. Skipping.." << std::endl;
+        OutputStringDMBStatus[dmb] << "DMB " << dmb << " CFEB#" << cfebs[icfeb].number()+1 << " hardware version is not 3 (it's not a xDCFEB).. Skipping.." << std::endl;
         this->CFEBUtils(in,out);
         return;
      }

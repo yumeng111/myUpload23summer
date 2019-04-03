@@ -861,7 +861,7 @@ bool TMBTester::testRATidCodes(){
   //
   //
   // RAT PROM id can be 5034093 or 5024093....
-  int promidcode = rat_->GetRatIdCode(ChipLocationRatProm) & 0xfffeffff;
+  int promidcode = rat_->GetRatIdCode(ChipLocationRatProm) & 0xffeffff;
   //
   bool PROMidOK = compareValues("RAT PROM ID code",promidcode,EXPECTED_RAT_PROM_IDCODE,true);
   //

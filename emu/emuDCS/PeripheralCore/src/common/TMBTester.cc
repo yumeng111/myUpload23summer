@@ -880,6 +880,7 @@ bool TMBTester::testRATuserCodes(){
   //
   rat_->ReadRatUserCode();
   //
+/*
   int day   = rat_->GetReadRatFirmwareDay();
   int month = rat_->GetReadRatFirmwareMonth();
   int year  = rat_->GetReadRatFirmwareYear();
@@ -897,6 +898,14 @@ bool TMBTester::testRATuserCodes(){
 		 RatFirmwareYearOK  );
   //
   messageOK("RAT Firmware Date (User Code)",testOK);
+
+*/
+  int begin = rat_->GetReadRatBeginMarker();
+  int end   = rat_->GetReadRatEndMarker();
+  bool RatBeginOK = compareValues("RAT Begin Marker", begin, 0xB, true);
+  bool RatEndOK   = compareValues("RAT End Marker", end, 0xE, true);
+  bool testOK = RatBeginOK && RatEndOK;
+  messageOK("RAT User Codes",testOK);
   //
   ResultTestRATuserCodes_ = testOK ;
   return testOK;

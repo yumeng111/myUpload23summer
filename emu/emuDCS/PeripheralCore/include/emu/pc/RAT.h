@@ -136,6 +136,8 @@ class RAT : public EmuLogger {
   inline int GetReadRatFirmwareDay()   { return read_rat_firmware_day_;   }
   inline int GetReadRatFirmwareMonth() { return read_rat_firmware_month_; }
   inline int GetReadRatFirmwareYear()  { return read_rat_firmware_year_;  }
+  inline int GetReadRatBeginMarker()   { return read_rs_begin_;  }
+  inline int GetReadRatEndMarker()     { return read_rs_end_;  }
   //
   /////////////////////////////////////
   // User1 Register (read register):

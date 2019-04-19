@@ -8950,21 +8950,21 @@ void EmuPeripheralCrateConfig::RATStatus(xgi::Input * in, xgi::Output * out )
   //
   *out << cgicc::legend("RAT Status").set("style","color:blue") << std::endl ;
   //
-  *out << cgicc::br();
-  //
   *out << cgicc::pre();
   //
   rat->ReadRatIdCode();
   *out << std::hex << "IDCODE: FPGA=0x" << rat->GetRatIdCode(0) << "; PROM=0x" << rat->GetRatIdCode(1) << std::dec << std::endl;
+
+  rat->RedirectOutput(out);
+  rat->ReadRatUser1();
+  rat->RedirectOutput(&std::cout);
   tmbTestVector[tmb].testRATuserCodes();
-  //
   if ( tmbTestVector[tmb].GetResultTestRATuserCodes() == 1 ) {
     *out << cgicc::span().set("style","color:green");
   } else {
     *out << cgicc::span().set("style","color:red");
   }
   rat->RedirectOutput(out);
-  rat->ReadRatUser1();
   rat->PrintRatUser1();
   rat->RedirectOutput(&std::cout);
   //

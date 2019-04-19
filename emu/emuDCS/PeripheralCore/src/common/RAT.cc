@@ -413,6 +413,7 @@ void RAT::PrintRatUser1() {
   (*MyOutput_) << "RPC1 data (includes 16 pad bits + 3bxn) = " << read_rs_rpc1_pdata_ << std::endl;
   (*MyOutput_) << "Unused bits = " << read_rs_unused_ << std::endl;
   (*MyOutput_) << "End marker = " << read_rs_end_ << std::endl;
+  (*MyOutput_) << std::dec;
   //
   return;
 }

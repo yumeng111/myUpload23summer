@@ -8761,6 +8761,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //--------------------------------------------------------------
     (*MyOutput_) << " ->ALCT to TMB communication clock delay:" << std::endl;
     (*MyOutput_) << "    ALCT rx clock delay    = " << std::dec << read_alct_rx_clock_delay_ << std::endl;
+    (*MyOutput_) << "    ALCT rx posneg    = " << std::dec << read_alct_rx_posneg_ << std::endl;
     //
   } else if ( address == phaser_alct_txd_adr ) {
     //--------------------------------------------------------------
@@ -8768,6 +8769,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //--------------------------------------------------------------
     (*MyOutput_) << " ->TMB to ALCT communication clock delay:" << std::endl;
     (*MyOutput_) << "    ALCT tx clock delay    = " << std::dec << read_alct_tx_clock_delay_ << std::endl;
+    (*MyOutput_) << "    ALCT tx posneg    = " << std::dec << read_alct_tx_posneg_ << std::endl;
     //
   } else if ( address == phaser_cfeb0_rxd_adr ) {
     //--------------------------------------------------------------

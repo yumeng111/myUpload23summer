@@ -195,7 +195,7 @@
 	</form>
 
 	<hr/>
-	
+
 	<xsl:if test="/env:Envelope/env:reasonForFailure/node()">
 	  <div class="reasonForfailure">
 	    <xsl:value-of select="/env:Envelope/env:reasonForFailure"/>	    
@@ -345,6 +345,7 @@
   <xsl:template match="application[@class = 'emu::ldaq::rui::Application']"  mode="STEP">
     <tr>
       <!-- host -->
+      <xsl:variable name="HOST"><xsl:value-of select="@host"/></xsl:variable>
       <xsl:if test="not( @host = preceding-sibling::application[@class = 'emu::ldaq::rui::Application']/@host )">
 	<td>
 	  <xsl:attribute name="rowspan"><xsl:value-of select="count(../application[@host = $HOST])"/></xsl:attribute>

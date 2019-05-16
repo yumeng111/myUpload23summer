@@ -552,7 +552,24 @@ int Crate::configure(int c, int ID) {
     {  std::cout << "ERROR: Crate dead, stop!!" << std::endl;
        return -1;
     }
-    myDmbs[dmb]->lowv_onoff(0xff);
+    if((myDmbs[dmb]->DMBversion()==2) || (myDmbs[dmb]->DMBversion()==4))
+    {
+       // for ME1/1, first turn off everything, then turn on xDCFEB & ALCT one by one
+       
+       int m=0;
+       myDmbs[dmb]->lowv_onoff(m);
+       ::usleep(500000);
+       for(int i=0; i<8; i++)
+       {
+           m += (1<<i);
+           myDmbs[dmb]->lowv_onoff(m);
+           ::usleep(500000);
+       }
+    }
+    else
+    {
+        myDmbs[dmb]->lowv_onoff(0xff);
+    }
     //
     // The following is not needed, since DMB includes FIFO clear in hard reset
     //    std::cout << "DMB slot " << myDmbs[dmb]->slot() 

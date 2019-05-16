@@ -10369,8 +10369,25 @@ void DAQMB::odmb_dcfeb_tests()
   } // end loop for powering on DCFEBs
 
   // set the power mask back to all on, regardless of test result
-  this->lowv_onoff(0xFF);
-  usleep(3000000);
+    if((DMBversion()==2) || (DMBversion()==4))
+    {
+       // for ME1/1, first turn off everything, then turn on xDCFEB & ALCT one by one
+       
+       int m=0;
+       lowv_onoff(m);
+       ::usleep(500000);
+       for(int i=0; i<8; i++)
+       {
+           m += (1<<i);
+           lowv_onoff(m);
+           ::usleep(500000);
+       }
+    }
+    else
+    {
+        lowv_onoff(0xff);
+        ::sleep(1);
+    }
 	
   // print results
   if (!power_on_correct&&!power_on_others) {

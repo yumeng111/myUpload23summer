@@ -13251,6 +13251,26 @@ void DAQMB::xdcfeb_read_vttx(CFEB & cfeb, char *data_out)
       }
 } 
 
+void DAQMB::xdcfeb_write_vttx(CFEB & cfeb, int dev, int reg, int value)
+{
+      if(CFEBversion() <=1) return;
+
+      write_cfeb_selector(cfeb.SelectorBit());
+
+      char wf=0, tmp[10];
+      if(dev==1 || dev==2)
+      {
+         wf= (1<<dev) + (1<<4);  // write device dev, total 1 byte
+         dcfeb_core(WRITE_I2C_FIFO, 8, &wf, tmp, NOW);
+         wf=reg;    // register address
+         dcfeb_core(WRITE_I2C_FIFO, 8, &wf, tmp, NOW);
+         wf=value;    // value
+         dcfeb_core(WRITE_I2C_FIFO, 8, &wf, tmp, NOW);
+         dcfeb_core(START_I2C_PROC, 0, tmp, tmp, NOW);
+         ::sleep(1);
+      }
+}
+
 void DAQMB::xdcfeb_print_vttx(CFEB & cfeb)
 {
     if(CFEBversion() <=1) return;

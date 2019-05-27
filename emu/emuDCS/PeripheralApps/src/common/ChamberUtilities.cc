@@ -4521,14 +4521,14 @@ int ChamberUtilities::ALCT_TMB_TimingUsingRandomLoopback() {
   //
   //
   (*MyOutput_) << "Best value is alct_tx_clock_delay = " << std::dec << ALCTtxPhase_ << std::endl;
+  (*MyOutput_) << "Best value is alct_tx_posneg = " << std::dec << ALCTtxPosNeg_ << std::endl;
   (*MyOutput_) << "Best value is alct_rx_clock_delay = " << std::dec << ALCTrxPhase_ << std::endl;
   (*MyOutput_) << "Best value is alct_posneg = " << std::dec << ALCTrxPosNeg_ << std::endl;
-  (*MyOutput_) << "Best value is alct_tx_posneg = " << std::dec << ALCTtxPosNeg_ << std::endl;
   //
   std::cout    << "Best value is alct_tx_clock_delay = " << std::dec << ALCTtxPhase_ << std::endl;
+  std::cout    << "Best value is alct_tx_posneg = " << std::dec << ALCTtxPosNeg_ << std::endl;
   std::cout    << "Best value is alct_rx_clock_delay = " << std::dec << ALCTrxPhase_ << std::endl;
   std::cout    << "Best value is alct_posneg = " << std::dec << ALCTrxPosNeg_ << std::endl;
-  std::cout    << "Best value is alct_tx_posneg = " << std::dec << ALCTtxPosNeg_ << std::endl;
   //
   if (use_measured_values_) { 
     (*MyOutput_) << "Setting alct_rx/tx_clock_delays to measured values..." << std::endl;

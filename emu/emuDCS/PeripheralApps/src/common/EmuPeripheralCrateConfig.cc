@@ -49,8 +49,8 @@ const std::string	ALCT_SLOW_FIRMWARE_FILENAME_XC18V01 = "alct/slow/slow_control_
 const std::string ALCT_FIRMWARE_FILENAME_ME11 = "alct_LX100_288/alct_LX100_288";
 const std::string ALCT_READBACK_FILENAME_ME11 = "alct_LX100_288/alct_LX100_288_verify";
 //
-const std::string ALCT_FIRMWARE_FILENAME_ME11_BACKWARD_NEGATIVE = "alct_LX100_288bn/alct_s6_288bn";
-const std::string ALCT_READBACK_FILENAME_ME11_BACKWARD_NEGATIVE = "alct_LX100_288bn/alct_s6_288bn_verify";
+const std::string ALCT_FIRMWARE_FILENAME_ME11_BACKWARD_NEGATIVE = "alct_LX100_288bn/alct_LX100_288bn";
+const std::string ALCT_READBACK_FILENAME_ME11_BACKWARD_NEGATIVE = "alct_LX100_288bn/alct_LX100_288bn_verify";
 //
 const std::string ALCT_FIRMWARE_FILENAME_ME11_BACKWARD_POSITIVE = "alct_LX100_288bp/alct_LX100_288bp";
 const std::string ALCT_READBACK_FILENAME_ME11_BACKWARD_POSITIVE = "alct_LX100_288bp/alct_LX100_288bp_verify";
@@ -61,7 +61,7 @@ const std::string ALCT_READBACK_FILENAME_ME11_FORWARD_POSITIVE  = "alct_LX100_28
 const std::string ALCT_FIRMWARE_FILENAME_ME12 = "alct384/alct384"; 
 const std::string ALCT_READBACK_FILENAME_ME12 = "alct384/alct384_verify";
 //
-const std::string ALCT_FIRMWARE_FILENAME_ME13 = "alct192/alct192"; 
+const std::string ALCT_FIRMWARE_FILENAME_ME13 = "alct_LX150_192/alct_LX150_192"; 
 const std::string ALCT_READBACK_FILENAME_ME13 = "alct192/alct192_verify";
 //
 const std::string ALCT_FIRMWARE_FILENAME_ME21 = "alct672/alct672";
@@ -4540,12 +4540,14 @@ void EmuPeripheralCrateConfig::SetRadioactivityTrigger(xgi::Input * in, xgi::Out
 	  //	  thisTMB->WriteRegister(0x86);
 	  //
 	  //
+/* Liu 2019-05-16, the following makes the hardware and software mismatch:
 	  // Reset the software back to the initial values.  Leave the hardware in radioactivity mode...
 	  thisALCT->SetPretrigNumberOfLayers(initial_alct_nplanes_hit_pretrig);
 	  thisALCT->SetPretrigNumberOfPattern(initial_alct_nplanes_hit_pattern);
 	  //
 	  thisTMB->SetHsPretrigThresh(initial_clct_nplanes_hit_pretrig);
 	  thisTMB->SetMinHitsPattern(initial_clct_nplanes_hit_pattern);
+*/
 	  //
 	  thisTMB->SetCFEBBadBitsNbx(initial_cfeb_badbits_nbx);
 	  //
@@ -5986,14 +5988,14 @@ void EmuPeripheralCrateConfig::ALCT_TMB_communication(xgi::Input * in, xgi::Outp
   *out << "alct_tx_clock_delay = " << MyTest[tmb][current_crate_].GetALCTtxPhaseTest() 
        <<  " (" << MyTest[tmb][current_crate_].GetAlctTxClockDelay() << ") " << std::endl;
   *out << cgicc::br();
+  *out << "alct_tx_posneg = " << MyTest[tmb][current_crate_].GetAlctTxPosNegTest() 
+       <<  " (" << MyTest[tmb][current_crate_].GetAlctTxPosNeg() << ") " << std::endl;
+  *out << cgicc::br();
   *out << "alct_rx_clock_delay = " << MyTest[tmb][current_crate_].GetALCTrxPhaseTest() 
        <<  " (" << MyTest[tmb][current_crate_].GetAlctRxClockDelay() << ") " << std::endl;
   *out << cgicc::br();
   *out << "alct_posneg = " << MyTest[tmb][current_crate_].GetAlctRxPosNegTest() 
        <<  " (" << MyTest[tmb][current_crate_].GetAlctRxPosNeg() << ") " << std::endl;
-  *out << cgicc::br();
-  *out << "alct_tx_posneg = " << MyTest[tmb][current_crate_].GetAlctTxPosNegTest() 
-       <<  " (" << MyTest[tmb][current_crate_].GetAlctTxPosNeg() << ") " << std::endl;
   *out << cgicc::br();
   *out << cgicc::br();
   //
@@ -8715,6 +8717,7 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
   //
   *out << cgicc::br();
   //
+  *out << "Fast Control: ";
   alct->ReadFastControlId();
   alct->PrintFastControlId();
   alct->PrintFastControlChipCode();
@@ -8728,11 +8731,9 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
   } else {
     *out << cgicc::span().set("style","color:red");    
     alct->PrintFastControlId();
-    *out << " --->>  BAD  <<--- Should be (" 
-	 << std::dec << alct->GetExpectedFastControlDay() 
-	 << " "      << alct->GetExpectedFastControlMonth()
-	 << " "      << alct->GetExpectedFastControlYear()
-	 << ")";
+    *out << " --->>  BAD  <<---"; 
+    *out << cgicc::br() << " Should be......";
+    alct->PrintExpectedFastControlId();
   }
   *out << cgicc::span() << cgicc::br();
   alct->PrintFastControlChipCode();
@@ -9877,27 +9878,33 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
   *out << cgicc::fieldset();
   //
   //
-  if (thisTMB->GetHardwareVersion() >= 2) {
+  if (thisTMB->GetHardwareVersion() >= 2) 
+  {
+    int allcfebs=7; 
+    if(alct) 
+    {
+        if(alct->GetChamberType()!="ME11") allcfebs=5;
+    }
     *out << cgicc::fieldset();
     *out << cgicc::legend("Optical input status").set("style","color:blue") << std::endl ;
     *out << cgicc::pre();
     thisTMB->RedirectOutput(out);
     thisTMB->ReadDcfebGtxRxRegisters();
     *out << " ->CFEB GTX optical input control and monitoring:" << std::endl;
-    *out << "    Input enable [DCFEBs 0-6]: \t\t[ ";
-    for (int i=0; i < 7; i++) { *out << thisTMB->GetReadGtxRxEnable(i) << " "; }
+    *out << "    Input enable [DCFEB# 1-" << allcfebs << "]: \t\t[ ";
+    for (int i=0; i < allcfebs; i++) { *out << thisTMB->GetReadGtxRxEnable(i) << " "; }
     *out << "]" << std::endl;
-    *out << "    Input reset [DCFEBs 0-6]: \t\t[ ";
-    for (int i=0; i < 7; i++) { *out << thisTMB->GetReadGtxRxReset(i) << " "; }
+    *out << "    Input reset [DCFEB# 1-" <<  allcfebs << "]: \t\t[ ";
+    for (int i=0; i < allcfebs; i++) { *out << thisTMB->GetReadGtxRxReset(i) << " "; }
     *out << "]" << std::endl;
-    *out << "    PRBS test enable [DCFEBs 0-6]: \t[ ";
-    for (int i=0; i < 7; i++) { *out << thisTMB->GetReadGtxRxPrbsTestEnable(i) << " "; }
+    *out << "    PRBS test enable [DCFEB# 1-" << allcfebs << "]: \t[ ";
+    for (int i=0; i < allcfebs; i++) { *out << thisTMB->GetReadGtxRxPrbsTestEnable(i) << " "; }
     *out << "]" << std::endl;
-    *out << "    Input ready [DCFEBs 0-6]: \t\t[ ";
-    for (int i=0; i < 7; i++) { *out << thisTMB->GetReadGtxRxReady(i) << " "; }
+    *out << "    Input ready [DCFEB# 1-" << allcfebs << "]: \t\t[ ";
+    for (int i=0; i < allcfebs; i++) { *out << thisTMB->GetReadGtxRxReady(i) << " "; }
     *out << "]" << std::endl;
-    *out << "    Link good [DCFEBs 0-6]: \t\t[ ";
-    for (int i=0; i < 7; i++)
+    *out << "    Link good [DCFEB# 1-" << allcfebs << "]: \t\t[ ";
+    for (int i=0; i < allcfebs; i++)
     {
       int read_gtx_rx_link_good_temp = thisTMB->GetReadGtxRxLinkGood(i);
       if (read_gtx_rx_link_good_temp == 1)
@@ -9908,11 +9915,11 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
       *out << cgicc::span();
     }
     *out << "]" << std::endl;
-    *out << "    Link had errors [DCFEBs 0-6]: \t[ ";
-    for (int i=0; i < 7; i++) { *out << thisTMB->GetReadGtxRxLinkHadError(i) << " "; }
+    *out << "    Link had errors [DCFEB# 1-" << allcfebs << "]: \t[ ";
+    for (int i=0; i < allcfebs; i++) { *out << thisTMB->GetReadGtxRxLinkHadError(i) << " "; }
     *out << "]" << std::endl;
-    *out << "    Link unstable [DCFEBs 0-6]: \t[ ";
-    for (int i=0; i < 7; i++)
+    *out << "    Link unstable [DCFEB# 1-" << allcfebs << "]: \t[ ";
+    for (int i=0; i < allcfebs; i++)
       {
       int read_gtx_rx_link_bad_temp = thisTMB->GetReadGtxRxLinkBad(i);
       if (read_gtx_rx_link_bad_temp == 1)
@@ -9923,8 +9930,8 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
       *out << cgicc::span();
       }
     *out << "]" << std::endl;
-    *out << "    Link error count [DCFEBs 0-6]: \t[ ";
-    for (int i=0; i < 7; i++) { *out << thisTMB->GetReadGtxRxErrorCount(i) << " "; }
+    *out << "    Link error count [DCFEB# 1-" << allcfebs << "]: \t[ ";
+    for (int i=0; i < allcfebs; i++) { *out << thisTMB->GetReadGtxRxErrorCount(i) << " "; }
     *out << "]" << std::endl;
 //  thisTMB->PrintTMBRegister(dcfeb_gtx_rx0_adr);
 //  the above line of code is an alternative output without the colors

@@ -349,6 +349,7 @@ class ALCTController : public EmuLogger
   void SetExpectedFastControlFPGAIdCode(int code) { expected_alct_fpga_idcode_ = code; } 
   //
   void PrintFastControlId();                   // print out Read values				 
+  void PrintExpectedFastControlId();           // print out Expected values				 
   void PrintFastControlChipCode();             // print out FPGA and EPROMs IDCODE				 
   //
   void ReadFastControlId();   	                  //fills Read values with values read from ALCT	

@@ -1104,11 +1104,11 @@ void ALCTController::PrintSlowControlId() {
   //
   (*MyOutput_) << chamber_type_string_ 
 	       << " Slow Control chip ID = " << std::hex << GetSlowControlChipId()
-	       << " version " << GetSlowControlVersionId()
-	       << " (day month year) = (" 
-	       << GetSlowControlDay()   << " "
-	       << GetSlowControlMonth() << " "
-	       << GetSlowControlYear()  << ")"
+	       << " date " << GetSlowControlVersionId()
+	       << " (y-m-d) = (" 
+	       << GetSlowControlYear()   << "-"
+	       << GetSlowControlMonth() << "-"
+	       << GetSlowControlDay()  << ")"
 	       << std::dec << std::endl; 
   //
   //  (*MyOutput_) << " PROM ID code = 0x" << std::hex << alct_slow_prom_idcode_ << std::endl;
@@ -1969,15 +1969,67 @@ void ALCTController::PrintFastControlId() {
     }
   }
   //
-  (*MyOutput_) << " --> version (day month year) = (";
-  (*MyOutput_) << std::dec << GetFastControlDay() << " ";
-  (*MyOutput_) << std::dec << GetFastControlMonth() << " ";
-  (*MyOutput_) << std::dec << GetFastControlYear() << ")" << std::endl;
+  (*MyOutput_) << " --> date (y-m-d) = (";
+  (*MyOutput_) << std::dec << GetFastControlYear() << "-";
+  if(GetFastControlMonth()<10) (*MyOutput_) << "0";
+  (*MyOutput_) << GetFastControlMonth() << "-";
+  if(GetFastControlDay()<10) (*MyOutput_) << "0";
+  (*MyOutput_) << GetFastControlDay() << ")" << std::endl;
   //
   // pre-DAQ06 format:
   //(*MyOutput_) << std::hex << GetFastControlDay();
   //(*MyOutput_) << std::hex << GetFastControlMonth();
   //(*MyOutput_) << std::hex << GetFastControlYear() << ")" << std::dec << std::endl; 
+  //
+  return;
+}
+
+void ALCTController::PrintExpectedFastControlId() {
+  //
+  (*MyOutput_) << chamber_type_string_;
+  //
+  (*MyOutput_) << ", type "; 
+  if ( GetExpectedFastControlAlctType() == FIRMWARE_TYPE_192 ) {
+    (*MyOutput_) << "192";
+  } else if ( GetExpectedFastControlAlctType() == FIRMWARE_TYPE_288 ) {
+    (*MyOutput_) << "288";
+  } else if ( GetExpectedFastControlAlctType() == FIRMWARE_TYPE_384 ) {
+    (*MyOutput_) << "384";
+  } else if ( GetExpectedFastControlAlctType() == FIRMWARE_TYPE_576 ) {
+    (*MyOutput_) << "576";
+  } else if ( GetExpectedFastControlAlctType() == FIRMWARE_TYPE_672 ) {
+    (*MyOutput_) << "672";
+  } else {
+    (*MyOutput_) << "unknown";
+  }
+  // 
+  if ( GetExpectedFastControlRegularMirrorType() == REGULAR_FIRMWARE_TYPE ) {
+    (*MyOutput_) << " [non-mirrored] ";
+  } else  if ( GetExpectedFastControlRegularMirrorType() == MIRROR_FIRMWARE_TYPE ) {
+    (*MyOutput_) << " [mirrored] ";
+  } else {
+    (*MyOutput_) << " [unknown] ";
+  }
+  //
+  if (chamber_type_string_ == "ME11") {
+    if ( GetExpectedFastControlBackwardForwardType() == BACKWARD_FIRMWARE_TYPE ) {
+      (*MyOutput_) << "backward/";
+    } else if ( GetExpectedFastControlBackwardForwardType() == FORWARD_FIRMWARE_TYPE ) {
+      (*MyOutput_) << "forward/";
+    }
+    if ( GetExpectedFastControlNegativePositiveType() == NEGATIVE_FIRMWARE_TYPE ) {
+      (*MyOutput_) << "negative ";
+    } else if ( GetExpectedFastControlNegativePositiveType() == POSITIVE_FIRMWARE_TYPE ) {
+      (*MyOutput_) << "positive ";
+    }
+  }
+  //
+  (*MyOutput_) << " --> date (y-m-d) = (";
+  (*MyOutput_) << std::dec << GetExpectedFastControlYear() << "-";
+  if(GetExpectedFastControlMonth()<10) (*MyOutput_) << "0";
+  (*MyOutput_) << GetExpectedFastControlMonth() << "-";
+  if(GetExpectedFastControlDay()<10) (*MyOutput_) << "0";
+  (*MyOutput_) << GetExpectedFastControlDay() << ")" << std::endl;
   //
   return;
 }

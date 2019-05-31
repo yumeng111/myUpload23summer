@@ -2663,6 +2663,11 @@ void EmuPeripheralCrateConfig::LVMBStatus(xgi::Input * in, xgi::Output * out )
   {   
       if(ubuf[i]==0xBAAD || ubuf[i]==0xFFFF) fvalue[i]=0.0;
       else fvalue[i]=(ubuf[i]&0xFFF)*10.0/4096.0;
+      if(nadcs==5 && cversion>1)  /* for chambers with 5 (x)DCFEEBs */ 
+      {
+         if(i>=vstart) fvalue[i] = fvalue[i]*1.03;  /* correction for all voltages */
+         else if(i<15 && (i%3)==0) fvalue[i] = fvalue[i]*2;  /* DCFEB 3V currents multiply by 2 */    
+      }
   }
   *out << cgicc::br() << cgicc::b("ADC Channels") << std::endl;
   *out << cgicc::table().set("border","1").set("cellpadding","4") << std::endl;
@@ -4393,6 +4398,11 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
   {   
       if(ubuf[i]==0xBAAD || ubuf[i]==0xFFFF) fvalue[i]=0.0;
       else fvalue[i]=(ubuf[i]&0xFFF)*10.0/4096.0;
+      if(nadcs==5 && cversion>1)  /* for chambers with 5 (x)DCFEEBs */ 
+      {
+         if(i>=vstart) fvalue[i] = fvalue[i]*1.03;  /* correction for all voltages */
+         else if(i<15 && (i%3)==0) fvalue[i] = fvalue[i]*2;  /* DCFEB 3V currents multiply by 2 */    
+      }
   }
   int chn2pos[8];
   for (int i=0; i<8; i++) chn2pos[i]=thisDMB->LVDB_map(i);
@@ -4775,9 +4785,6 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
   //
   *out << cgicc::fieldset();
   *out << std::endl;
-  //
-  //thisDMB->dmb_readstatus();
-  //
 }
 //
   //

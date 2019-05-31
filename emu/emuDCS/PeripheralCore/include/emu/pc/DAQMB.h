@@ -355,8 +355,8 @@ public:
   int  memchk(int);
   int  memchk(DEVTYPE);
   //
-  void dmb_readstatus(char [11]);
-  void cfebs_readstatus();
+  void dmb_readstatus(char [11], bool verbose=false);
+  void cfebs_readstatus(bool verbose=false);
   // 
   void SFMWriteProtect();
   void LoadCFEBDelaySFM();
@@ -811,6 +811,7 @@ public:
   // code for ODMB
   void daqmb_do(int ncmd,void *cmd,int nbuf, void *inbuf,char *outbuf,int irdsnd, int dev);   
   void dlog_do(int ncmd, void *cmd,int nbuf, void *inbuf,char *outbuf,int irdsnd);
+  void mctrl_core(int jfunc, int nbit,void *inbuf, char *outbuf, int option);
   void odmb_fpga_call(int inst, unsigned data, char *outbuf);
   int DCSread2(char *data, int read_dcfeb=0);
   int read_cfeb_done();
@@ -837,7 +838,7 @@ public:
   inline void odmb_set_Cal_delay(int delay) { WriteRegister(CAL_DLY, delay&0xF); }   // 4 bits
   inline int odmb_read_LCT_L1A_delay() { return ReadRegister(LCT_L1A_DLY) & 0x3F; }  // 6 bits
   inline int odmb_read_TMB_delay() { return ReadRegister(TMB_DLY) & 0x3F; }  // 6 bits
-  inline int odmb_read_Push_delay() { return ReadRegister(PUSH_DLY) & 0x3F; }  // 6 bits
+  inline int odmb_read_Push_delay() { return ReadRegister(PUSH_DLY) & 0x1; }  // 1 bit
   inline int odmb_read_ALCT_delay() { return ReadRegister(ALCT_DLY) & 0x3F; }  // 6 bits
   inline int odmb_read_Inj_delay() { return ReadRegister(INJ_DLY) & 0x1F; }  // 5 bits
   inline int odmb_read_Ext_delay() { return ReadRegister(EXT_DLY) & 0x1F; }  // 5 bits

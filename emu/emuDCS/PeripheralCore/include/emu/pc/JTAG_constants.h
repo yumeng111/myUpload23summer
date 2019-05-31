@@ -280,48 +280,32 @@ enum DEVTYPE{ALLMUX=-3,ALLSCAM=-2,ALL=-1,NONE,F1PROM,F2PROM,F3PROM,F4PROM,F5PROM
 #define SPT6_ISC_DNA 0x30
 #define SPT6_BYPASS 0x3F
 
-/* CALCTRL modes */
-#define CAL_FIFOMRST 0xe
-#define CAL_GLOBAL 15
-#define CAL_FPGARST 7
-#define CAL_WRTFIFO 6
-#define CAL_THERMSET 17
-#define CAL_THERMREAD 18
-#define CAL_STATUS 0
-#define CAL_TOGGLE_CMODE 14
-#define CAL_DELAY 0x11
-#define CAL_PROGFEB 20
-/* TRGCTRL modes */
-#define TRG_STATUS 0
-#define TRG_READFIFO 2
-#define TRG_DAV_DELAY 0x0d
-#define FEB_DELAY 0x10
-#define FIFO_RD 0x0c
-#define CRATE_ID 0x0f
-#define GLOBAL_RST 0x01
-#define TRG_RATE 0x13
-#define RTRG_TGL 0x14
-/* DDU definitions */
-#define DCNTRL_RST 0x01
-#define ECNTRL_RST 0x01
 
-/* Chip testing modes */
+/* DMB Control FPGA JTAG functions */
 #define NOOP        0
-#define SHFT_CHIP   1
-#define PRG_DAC     2
+#define GLOBAL_RST  1
 #define INJECT      3
 #define PULSE       4
 #define PED_TRIG    5
-#define CHECK_STAT  10
-#define UNDEF_1     7
 #define LOAD_TRIG   6
 #define CYCLE_TRIG  7
 #define RUN_TRIG    8
-#define CYCLE_T_P  11
-#define RUN_T_P    12
 #define LOAD_STR    9
-#define EXT_OFF    14
-#define MB_JRST    15
+#define CHECK_STAT  10
+#define FIFO_RD 0x0c
+#define TRG_DAV_DELAY 0x0d
+#define CAL_FIFOMRST 0xe
+#define CRATE_ID 0x0f
+#define FEB_DELAY 0x10
+#define CAL_DELAY 0x11
+#define TRG_RATE 0x13
+#define RTRG_TGL 0x14
+#define CABLE_DELAY 28
+#define READ_COUNTER 36
+#define READ_SCOPE 38
+/* DDU definitions */
+#define DCNTRL_RST 0x01
+#define ECNTRL_RST 0x01
 
 
 /* Xilinx xcf128 BPI Prom */

@@ -2144,249 +2144,162 @@ float DAQMB::adc16(int ichp,int ichn){
 }
 
 
-void DAQMB::dmb_readstatus(char status[11])
+void DAQMB::dmb_readstatus(char status[11], bool verbose)
 {
-  if(DMBversion()<=1)
-  {
-  //
+  if(DMBversion()>=2) return;
+
   int i;
-  //
-  cmd[0]=VTX2_BYPASS;
-  devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,0);
+  mctrl_core(CHECK_STAT, 88, sndbuf, rcvbuf, READ_YES);  //F10 read DMB6CNTL status
+  for(i=0;i<11;i++) status[i]=rcvbuf[i];
 
-  cmd[0]=VTX2_USR1;
-  sndbuf[0]=10;    //F10 read DMB6CNTL status
-  devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX2_BYPASS;
-  devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,0);
-  //
-  cmd[0]=VTX2_USR2;
-  for (i=0;i<11;i++)  {rcvbuf[i]=0;sndbuf[i]=0;}
-  //
-  devdo(MCTRL,6,cmd,88,sndbuf,rcvbuf,1);
-  for(i=0;i<11;i++)status[i]=rcvbuf[i];
-//  for (i=0;i<11;i++)
-//    {printf(" i= %d, rcvbuf[i]= %02x, status[i]= %02x \n",i,rcvbuf[i]&0xFF,status[i]&0xFF);}
-
-  //
-  /* DMB6CNTL status: bit[14:7]: L1A buffer length
-                      bit[19:15]: CFEB_DAV_ERROR
-                      bit[26:20]: FIFO_EMPTY: 1 means empty
-                      bit[33:27]: FIFO_Full: 1 means full
-                      bit[40:34]: FIFO_HF: 1 means less than half_full
-                      bit[47:41]: FIFO_PAE: 1 means more than PAE words
-  */
+  if(verbose) (*MyOutput_) << std::endl << "DMB Status and Settings" << std::endl;
+  if(verbose) (*MyOutput_) << "--------------------------" << std::endl;
   i=((rcvbuf[1]<<1)&0xfe)+((rcvbuf[0]>>7)&0x01); 
-  printf(" L1A buffer length: %02x",i); printf("h \n");
+  printf(" L1A buffer length: %d\n",i);
+  if(verbose) (*MyOutput_) << "      L1A buffer length: " << i << std::endl;
   i=((rcvbuf[2]<<1)&0x1e)+((rcvbuf[1]>>7)&0x01); 
-  printf(" DAV Error: %02x",i); printf("h \n");
+  printf(" DAV Error: %d\n",i);
+  if(verbose) (*MyOutput_) << "      DAV Error: " << i << std::endl;
   i=((rcvbuf[3]<<4)&0x70)+((rcvbuf[2]>>4)&0x0f); 
   printf(" FIFO Empty: %02x",i); printf("h   1 means empty \n");
+  if(verbose) (*MyOutput_) << std::endl << "FIFO status flags (7 FIFOs):" << std::endl;
+  if(verbose) (*MyOutput_) << "      FIFO Empty:     0x" << std::hex << i <<", 1=empty" << std::endl;
   i=((rcvbuf[4]<<5)&0x60)+((rcvbuf[3]>>3)&0x1f); 
   printf(" FIFO Full: %02x",i); printf("h   1 means full\n");
+  if(verbose) (*MyOutput_) << "      FIFO Full:      0x" << i <<", 1=full" << std::endl;
   i=((rcvbuf[5]<<6)&0x40)+((rcvbuf[4]>>2)&0x03f); 
   printf(" FIFO half_full: %02x",i); printf("h 1 means less than half_full\n");
+  if(verbose) (*MyOutput_) << "      FIFO half_full: 0x" << i <<", 1=less than half_full" << std::endl;
   i=(rcvbuf[5]>>1)&0x7f; 
   printf(" FIFO PAE: %03x",i); printf("h  1 means more than PAE words\n");
+  if(verbose) (*MyOutput_) << "      FIFO PAE:       0x" << i << std::dec <<", 1=more than PAE words" << std::endl;
 
 //  printf(" GUs new 32 bits: %02x%02x%02x%02x\n",rcvbuf[9]&0xff,rcvbuf[8]&0xff,rcvbuf[7]&0xff,rcvbuf[6]&0xff);
+  if(verbose) (*MyOutput_) << std::endl << "Delays:" << std::endl;
   CableDelay_ =((rcvbuf[6]>>2)&0x3f)+((rcvbuf[7]<<6)&0xc0); 
   printf(" Cable_Delay: %02xh \n",CableDelay_);
-  CrateID_=((rcvbuf[7]>>2)&0x3f)+((rcvbuf[8]<<6)&0x40); 
-  printf(" Crate ID: %02xh \n",CrateID_);
+//  if(verbose) (*MyOutput_) << "      Cable Delays: 0x" << std::hex << CableDelay_  << std::dec << std::endl;
+  if(verbose) 
+  {
+     (*MyOutput_) << "      cfeb_cable_delay:     " << (CableDelay_ & 1) << std::endl;
+     (*MyOutput_) << "      tmb_lct_cable_delay:  " << ((CableDelay_>>1) & 7) << std::endl;
+     (*MyOutput_) << "      cfeb_dav_cable_delay: " << ((CableDelay_>>4) & 3) << std::endl;
+     (*MyOutput_) << "      alct_dav_cable_delay: " << ((CableDelay_>>6) & 3) << std::endl;
+  }
   CfebClkDelay_=((rcvbuf[8]>>1)&0x1f); 
   printf(" FEB_Delay: %02xh \n",CfebClkDelay_);
+  if(verbose) (*MyOutput_) << "      FEB Clock Delay: " << CfebClkDelay_ << std::endl;
   XLatency_=((rcvbuf[8]>>6)&0x03); 
   printf(" Extra L1A latency: %02xh \n",XLatency_);
+  if(verbose) (*MyOutput_) << "      Extra L1A latency: " << XLatency_ << std::endl;
   XFineLatency_=((rcvbuf[9])&0x0f);
   printf(" Extra Fine L1A latency: %02xh \n",XFineLatency_);
+  if(verbose) (*MyOutput_) << "      Extra Fine L1A latency: " << XFineLatency_ << std::endl;
   KillInput_=((rcvbuf[9]>>4)&0x07); 
   printf(" KillInput: %02xh \n",KillInput_);
-
-  cmd[0]=VTX2_BYPASS;
-  devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,0);
-  }
+  if(verbose) (*MyOutput_) << "      Kill Input: " << KillInput_ << std::endl;
+  CrateID_=((rcvbuf[7]>>2)&0x3f)+((rcvbuf[8]<<6)&0x40); 
+  printf(" Crate ID: %02xh \n",CrateID_);
+  if(verbose) (*MyOutput_) << "      Crate ID: " << CrateID_ << std::endl;
+  if(verbose) (*MyOutput_) << std::endl << "===========================" << std::endl;
 }
 
-void DAQMB::cfebs_readstatus()
+void DAQMB::cfebs_readstatus(bool verbose)
 {
- int i,nwrds;
- char febbuf[5][4];
- //int iuse[5]={0,0,0,0,0};
+  int i, nwrds;
+  char febbuf[5][4];
+  std::ostringstream output;
 
- //fxpreblkend(13);
-
-  std::cout << "DAQMB: cfebs_readstatus" << std::endl;
-  for(unsigned icfeb = 0; icfeb < cfebs_.size(); ++icfeb) {
- // Liu, Sept. 2012
- // disabled for DCFEBs for now 
- // TODO......
-    if(CFEBversion()<=1)
-    {            
-      DEVTYPE dv = cfebs_[icfeb].scamDevice();
-      int idv=(int)(dv-F1SCAM); 
-      //iuse[idv]=1;
-      febbuf[idv][0]='\0';
-      febbuf[idv][1]='\0';
-      febbuf[idv][2]='\0';
-      febbuf[idv][3]='\0';
-    //if(iuse[idv]==1){
-//      std::cout << " dv= " << dv << " STATUS_S " << STATUS_S << std::endl;
-      cmd[0]=VTX_USR1;
-      sndbuf[0]=STATUS_S;
-      devdo(dv,5,cmd,8,sndbuf,rcvbuf,0);
-      //      cmd[0]=VTX2_BYPASS;
-      //      devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
-      cmd[0]=VTX_USR2;
-      sndbuf[0]=0xd5;
-      sndbuf[1]=0xee;
-      sndbuf[2]=0xdf;
-      sndbuf[3]=0xba;
-      devdo(dv,5,cmd,32,sndbuf,rcvbuf,1);
-      //
-      febbuf[idv][0]=rcvbuf[0];
-      febbuf[idv][1]=rcvbuf[1];
-      febbuf[idv][2]=rcvbuf[2];
-      febbuf[idv][3]=rcvbuf[3];
-      //
-      febstat_[idv][0]=rcvbuf[0]&0xff;
-      febstat_[idv][1]=rcvbuf[1]&0xff;
-      febstat_[idv][2]=rcvbuf[2]&0xff;
-      febstat_[idv][3]=rcvbuf[3]&0xff;
-      //
-//      printf(" SCA rcvbuf *** %02x %02x %02x %02x \n",rcvbuf[0]&0xFF,rcvbuf[1]&0xFF,rcvbuf[2]&0xFF,rcvbuf[3]&0xFF);
-
-      // The following should return "BADFEED5"
-      /*      cmd[0]=VTX2_USR1;
-      sndbuf[0]=5-STATUS_CS;
-      devdo(dv,5,cmd,8,sndbuf,rcvbuf,0);
-      cmd[0]=VTX2_USR2;
-      sndbuf[0]=0xd5;
-      sndbuf[1]=0xee;
-      sndbuf[2]=0xdf;
-      sndbuf[3]=0xba;
-      devdo(dv,5,cmd,32,sndbuf,rcvbuf,1);
-      printf(" SCA rcvbuf shift *** %02x %02x %02x %02x \n",rcvbuf[3]&0xFF,rcvbuf[2]&0xFF,rcvbuf[1]&0xFF,rcvbuf[0]&0xFF);    */
-
-      cmd[0]=VTX_BYPASS;
-      devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
-      //}
-    }
-    else
-    {
-       unsigned st = dcfeb_read_status(cfebs_[icfeb]);
-       memcpy(&febstat_[icfeb][0],&st, 4);
-    }
+  output << std::endl << "CFEB Status" << std::endl;
+  output << "-----------" << std::endl;
+  for(unsigned icfeb = 0; icfeb < cfebs_.size(); ++icfeb) 
+  {
+       unsigned st = dcfeb_read_status(cfebs_[icfeb]);  // good for CFEB, DCFEB, xDCFEB 
+       char bbb[4];
+       memcpy(bbb, &st, 4);
+       for(i=0; i<4; i++) febstat_[icfeb][i]=febbuf[icfeb][i]=bbb[i];
   }
 
-  printf("Boards in use              ");
+  output << "CFEB#                      " << std::setw(2);
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
-      printf("  :  %d",i+1);
-      //}
+      output << "  :  " << (i+1);
   }
-  printf("\n");
-  printf("# Words in LCT FIFO        ");
+  output << std::endl;
+  output << "Words in LCT FIFO          ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
       nwrds=febbuf[i][0]&0xF;
-      printf("  : %2.2d",nwrds);
-      //}
+      output << "  :  " << nwrds ;
   }
-  printf("\n");
-  printf("LCT FIFO Empty             ");
+  output << std::endl;
+  output << "LCT FIFO Empty             ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
-      printf("  :  %d",(~febbuf[i][1]>>2)&1);
-      //}
+      output << "  :  " << ((~febbuf[i][1]>>2)&1);
   }
-  printf("\n");
-  printf("LCT FIFO full              ");
+  output << std::endl;
+  output << "LCT FIFO full              ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
-      printf("  :  %d",(febbuf[i][0]>>4)&1);
-      //}
+      output << "  :  " << ((febbuf[i][0]>>4)&1);
   }
-  printf("\n");
-  printf("# Words in L1Acc FIFO      ");
+  output << std::endl;
+  output << "Words in L1Acc FIFO        ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
       nwrds=febbuf[i][0]>>5&0x7;
       nwrds=nwrds|(febbuf[i][1]&1)<<3;
-      printf("  : %2.2d",nwrds);
-      //}
+      output << "  :  " << nwrds;
   }
-  printf("\n");
-  printf("L1Acc FIFO Empty           ");
+  output << std::endl;
+  output << "L1Acc FIFO Empty           ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
-      printf("  :  %d",(febbuf[i][1]>>3)&1);
-      //}
+      output << "  :  " << ((febbuf[i][1]>>3)&1);
   }
-  printf("\n");
-  printf("L1Acc FIFO Full            ");
+  output << std::endl;
+  output << "L1Acc FIFO Full            ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
-      printf("  :  %d",febbuf[i][1]>>1&1);
-      //}
+      output << "  :  " << (febbuf[i][1]>>1&1);
   }
-  printf("\n");
-  printf("Pop FIFO1                  ");
+  output << std::endl;
+  output << "Pop FIFO1                  ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
-      printf("  :  %d",(febbuf[i][1]>>4)&1);
-      //}
+      output << "  :  " << ((febbuf[i][1]>>4)&1);
   }
-  printf("\n");
-  printf("Push to CPLD               ");
+  output << std::endl;
+  output << "Push to CPLD               ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
-      printf("  :  %d",(febbuf[i][1]>>5)&1);
-      //}
+      output << "  :  " << ((febbuf[i][1]>>5)&1);
   }
-  printf("\n");
-  printf("SCA Overwrite              ");
+  output << std::endl;
+  output << "SCA Overwrite              ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
-      printf("  :  %d",(febbuf[i][1]>>6)&1);
-      //}
+      output << "  :  " << ((febbuf[i][1]>>6)&1);
   }
-  printf("\n");
-  printf("Busy (taking data)         ");
+  output << std::endl;
+  output << "Busy (taking data)         ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
-      printf("  :  %d",(febbuf[i][1]>>7)&1);
-      //}
+      output << "  :  " << ((febbuf[i][1]>>7)&1);
   }
-  printf("\n");
-  printf("Comparator Mode            ");
+  output << std::endl;
+  output << "Comparator Mode            ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
-      printf("  :  %d",(febbuf[i][2])&0x03);
-      //}
+      output << "  :  " << ((febbuf[i][2])&0x03);
   }
-  printf("\n");
-  printf("Comparator Timing          ");
+  output << std::endl;
+  output << "Comparator Timing          ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
-      printf("  :  %d",(febbuf[i][2]>>2)&0x07);
-      //}
+      output << "  :  " << ((febbuf[i][2]>>2)&0x07);
   }
-  printf("\n");
-  printf("Pre_block_end              ");
+  output << std::endl;
+  output << "Pre_block_end              ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
-      printf("  :  %d",((febbuf[i][2]>>5)&0x07) + ((febbuf[i][3]&0x01)<<3));
-      //}
+      output << "  :  " << (((febbuf[i][2]>>5)&0x07) + ((febbuf[i][3]&0x01)<<3));
   }
-  printf("\n");
-  printf("Extra_L1A_delay            ");
+  output << std::endl;
+  output << "Extra_L1A_delay            ";
   for(i=0;i<5;i++){
-    //if(iuse[i]==1){
-      printf("  :  %d",(febbuf[i][3]>>1)&0x03);
-      //}
+      output << "  :  " << ((febbuf[i][3]>>1)&0x03);
   }
-  printf("\n");
+  output << std::endl;
+  std::cout << output.str();
+  if(verbose) (*MyOutput_) << output.str();
 }
 
 /* Thermometers */
@@ -2749,7 +2662,7 @@ void DAQMB::vmefpgaid()
      fwrv_=(firmwareinfo&0xF);
  
      firmwareinfo=ReadRegister(4);
-     fwyear_=firmwareinfo&0x3F;
+     fwyear_=(firmwareinfo&0x3F) + 2000;
      fwmonth_=(firmwareinfo >> 12)&0xF;
      fwday_=(firmwareinfo>>6)&0x1F;
   }
@@ -5742,8 +5655,7 @@ void DAQMB::readtimingCounter()
   //printf(" Entered READ_TIMING \n");
   //
   cmd[0]=VTX2_USR1;
-  sndbuf[0]=CAL_STATUS;
-  sndbuf[0]=36;      //F36 in DMB6cntl, July 5, 2005
+  sndbuf[0]=READ_COUNTER;      //F36 in DMB6cntl, July 5, 2005
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   //
   cmd[0]=VTX2_BYPASS;
@@ -5779,8 +5691,7 @@ void DAQMB::readtimingScope()
   //printf(" Entered READ_TIMING \n");
   //
   cmd[0]=VTX2_USR1;
-  sndbuf[0]=CAL_STATUS;
-  sndbuf[0]=38;      //F38
+  sndbuf[0]=READ_SCOPE;      //F38
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   //
   cmd[0]=VTX2_BYPASS;
@@ -5827,8 +5738,7 @@ char * DAQMB::GetCounters()
   if(failed_checkvme_>0) return NULL;
 
   cmd[0]=VTX2_USR1;
-  sndbuf[0]=CAL_STATUS;
-  sndbuf[0]=36;      //F36 in DMB6cntl, July 5, 2005
+  sndbuf[0]=READ_COUNTER;      //F36 in DMB6cntl, July 5, 2005
   new_devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   //
   cmd[0]=VTX2_BYPASS;
@@ -5853,8 +5763,7 @@ char * DAQMB::GetCounters()
   //printf(" Entered READ_TIMING \n");
   //
   cmd[0]=VTX2_USR1;
-  sndbuf[0]=CAL_STATUS;
-  sndbuf[0]=38;      //F38
+  sndbuf[0]=READ_SCOPE;      //F38
   new_devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   //
   cmd[0]=VTX2_BYPASS;
@@ -6131,7 +6040,7 @@ void DAQMB::setcbldly(int dword)
   {
   //
   cmd[0]=VTX2_USR1;
-  sndbuf[0]=28;
+  sndbuf[0]=CABLE_DELAY;
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   cmd[0]=VTX2_USR2;
   sndbuf[0]=dword&0XFF; 
@@ -7781,6 +7690,8 @@ std::vector<float> DAQMB::dcfeb_fpga_monitor(CFEB & cfeb, bool inDCS)
   return readout;
 }
 
+// May 29, 2019, Liu, combine CFEB with (x)DCFEB, despite the name appears only for (x)DCFEB.
+//                    JTAG instructions for CFEB FPGA is just the lower 5 bits of those for (x)DCFEB FPGA.
 // July 3, 2018, Liu
 // dcfeb_core() and decfeb_hub(), and all methods using them, are exactly the same for DCFEB and xDCFEB.
 //
@@ -7798,20 +7709,21 @@ void DAQMB::dcfeb_core(int jfunc, int nbit,void *inbuf, char *outbuf, int option
 
   char buf[4]={0,0,0,0};
   int comd;
+  int cmdsize=(CFEBversion()<=1)?5:10;
 
      comd=VTX6_USR1;
      buf[0]=jfunc&0xFF;
-     cfeb_do(10, &comd, 8, buf, rcvbuf, (nbit>0)?LATER:NOW);
+     cfeb_do(cmdsize, &comd, 8, buf, rcvbuf, (nbit>0)?LATER:NOW);
      if(nbit>0)
      {
         vme_delay(10);
         comd=VTX6_USR2;
-        cfeb_do(10, &comd, nbit, inbuf, outbuf, option&0x3);
+        cfeb_do(cmdsize, &comd, nbit, inbuf, outbuf, option&0x3);
         if(option & NOOP_YES) 
         {
            comd=VTX6_USR1;
            buf[0]=NOOP;
-           cfeb_do(10, &comd, 8, buf, rcvbuf, (option & NO_BYPASS)?LATER:NOW);
+           cfeb_do(cmdsize, &comd, 8, buf, rcvbuf, (option & NO_BYPASS)?LATER:NOW);
            vme_delay(10);
            udelay(10);
         }
@@ -7819,7 +7731,7 @@ void DAQMB::dcfeb_core(int jfunc, int nbit,void *inbuf, char *outbuf, int option
      if((option & NO_BYPASS)==0)
      {
         comd=VTX6_BYPASS;
-        cfeb_do(10, &comd, 0, buf, rcvbuf, NOW);
+        cfeb_do(cmdsize, &comd, 0, buf, rcvbuf, NOW);
         udelay(10);
      }
   return;
@@ -9215,6 +9127,48 @@ void DAQMB::daqmb_do(int ncmd, void *cmd,int nbuf, void *inbuf,char *outbuf,int 
      } 
      return;
   }
+}
+
+// Firmware JTAG functions for DMB's Control FPGA
+void DAQMB::mctrl_core(int jfunc, int nbit,void *inbuf, char *outbuf, int option)
+{
+// option
+//    bit 0   = 0  later
+//            = 1  now
+//    bit 1   = 0  no read
+//            = 2  read
+//    bit 2   = 0  no NOOP
+//            = 4  NOOP
+//    bit 3   = 0  with BYPASS (normal)
+//            = 8  No BYPASS at the end
+
+  char buf[4]={0,0,0,0};
+  int comd;
+
+     comd=VTX2_USR1;
+     buf[0]=jfunc&0xFF;
+     daqmb_do(6, &comd, 8, buf, rcvbuf, (nbit>0)?LATER:NOW, CTRL_FPGA);
+     if(nbit>0)
+     {
+        vme_delay(10);
+        comd=VTX2_USR2;
+        daqmb_do(6, &comd, nbit, inbuf, outbuf, option&0x3, CTRL_FPGA);
+        if(option & NOOP_YES) 
+        {
+           comd=VTX2_USR1;
+           buf[0]=NOOP;
+           daqmb_do(6, &comd, 8, buf, rcvbuf, (option & NO_BYPASS)?LATER:NOW, CTRL_FPGA);
+           vme_delay(10);
+           udelay(10);
+        }
+     }
+     if((option & NO_BYPASS)==0)
+     {
+        comd=VTX2_BYPASS;
+        daqmb_do(6, &comd, 0, buf, rcvbuf, NOW, CTRL_FPGA);
+        udelay(10);
+     }
+  return;
 }
 
 std::vector<float> DAQMB::odmb_fpga_sysmon()
@@ -13304,5 +13258,7 @@ void DAQMB::xdcfeb_print_vttx(CFEB & cfeb)
        }
     }
 }                     
+
+
 } // namespace emu::pc
 } // namespace emu

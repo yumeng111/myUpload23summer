@@ -23,15 +23,12 @@ typedef std::vector<CFEB>::iterator CFEBItr;
 
 const std::string       CFEB_FIRMWARE_FILENAME = "cfeb/cfeb_pro.svf";
 const std::string       CFEB_VERIFY_FILENAME = "cfeb/cfeb_pro.mcs";
-const std::string       CFEB_COMPARE_FILENAME = "cfeb/eprom_cfeb.cmp";
 //
 const std::string       DMB_FIRMWARE_FILENAME   = "dmb/dmb6cntl_pro.svf";
 const std::string       DMB_VERIFY_FILENAME     = "dmb/dmb_mprom_verify.svf";
-const std::string       DMB_COMPARE_FILENAME    = "dmb/eprom_dmb_mprom.cmp";
 
 const std::string       DMBVME_FIRMWARE_FILENAME = "dmb/dmb6vme_pro.svf";
 const std::string       DMBVME_VERIFY_FILENAME   = "dmb/dmb_vprom_verify.svf";
-const std::string       DMBVME_COMPARE_FILENAME  = "dmb/eprom_dmb_vprom.cmp";
 
 const std::string	ALCT_SLOW_FIRMWARE_FILENAME_XC18V04 = "alct/slow/slow_control_xc18v04.svf";
 const std::string	ALCT_SLOW_FIRMWARE_FILENAME_XC18V01 = "alct/slow/slow_control_xc18v01.svf";
@@ -81,40 +78,6 @@ const std::string ALCT_READBACK_FILENAME_ME41 = "alct576mirror/alct576mirror_ver
 //
 const std::string ALCT_FIRMWARE_FILENAME_ME42 = "alct_s6_384mirror/alct_s6_384mirror";
 const std::string ALCT_READBACK_FILENAME_ME42 = "alct_s6_384mirror/alct_s6_384mirror_verify";
-//
-// Old svf files (to be deprecated once it is verified that the xsvf firmware is working...
-//const std::string ALCT_FIRMWARE_FILENAME_ME11 = "alct288/alct288.svf"; //
-//const std::string ALCT_READBACK_FILENAME_ME11 = "readback-192-288-384";//
-//
-//const std::string ALCT_FIRMWARE_FILENAME_ME11_BACKWARD_NEGATIVE = "alct288bn/alct288bn.svf";//
-//const std::string ALCT_READBACK_FILENAME_ME11_BACKWARD_NEGATIVE = "readback-192-288-384";   //
-//
-//const std::string ALCT_FIRMWARE_FILENAME_ME11_BACKWARD_POSITIVE = "alct288bp/alct288bp.svf";//
-//const std::string ALCT_READBACK_FILENAME_ME11_BACKWARD_POSITIVE = "readback-192-288-384";   //
-//
-//const std::string ALCT_FIRMWARE_FILENAME_ME11_FORWARD_POSITIVE  = "alct288fp/alct288fp.svf";//
-//const std::string ALCT_READBACK_FILENAME_ME11_FORWARD_POSITIVE  = "readback-192-288-384";   //
-//
-//const std::string ALCT_FIRMWARE_FILENAME_ME12 = "alct384/alct384.svf"; //
-//const std::string ALCT_READBACK_FILENAME_ME12 = "readback-192-288-384";//
-//
-//const std::string ALCT_FIRMWARE_FILENAME_ME13 = "alct192/alct192.svf"; //
-//const std::string ALCT_READBACK_FILENAME_ME13 = "readback-192-288-384";//
-//
-//const std::string ALCT_FIRMWARE_FILENAME_ME21 = "alct672/alct672.svf";//
-//const std::string ALCT_READBACK_FILENAME_ME21 = "readback-576-672";   //
-//
-//const std::string ALCT_FIRMWARE_FILENAME_ME22 = "alct384/alct384.svf"; //
-//const std::string ALCT_READBACK_FILENAME_ME22 = "readback-192-288-384";//
-//
-//const std::string ALCT_FIRMWARE_FILENAME_ME31 = "alct576mirror/alct576mirror.svf";//
-//const std::string ALCT_READBACK_FILENAME_ME31 = "readback-576-672";               //
-//
-//const std::string ALCT_FIRMWARE_FILENAME_ME32 = "alct384mirror/alct384mirror.svf";//
-//const std::string ALCT_READBACK_FILENAME_ME32 = "readback-192-288-384";           //
-//  
-//const std::string ALCT_FIRMWARE_FILENAME_ME41 = "alct576mirror/alct576mirror.svf";//
-//const std::string ALCT_READBACK_FILENAME_ME41 = "readback-576-672";               //
 //
 const int CCB_LABEL         = 0;
 const int MPC_LABEL         = 1;
@@ -201,7 +164,6 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::setConfFile, "setConfFile");
   //
   xgi::bind(this,&EmuPeripheralCrateConfig::ConfigOneCrate, "ConfigOneCrate");
-  xgi::bind(this,&EmuPeripheralCrateConfig::ConfigDCFEBs, "ConfigDCFEBs");
   //
   //------------------------------------------------------
   // bind buttons -> Crate Configuration pages
@@ -332,6 +294,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::CCBCheckConfig, "CCBCheckConfig");
   xgi::bind(this,&EmuPeripheralCrateConfig::MPCCheckConfig, "MPCCheckConfig"); 
   xgi::bind(this,&EmuPeripheralCrateConfig::MPCReadBC0, "MPCReadBC0"); 
+  xgi::bind(this,&EmuPeripheralCrateConfig::MPCMask, "MPCMask");
   xgi::bind(this,&EmuPeripheralCrateConfig::GEMreadFPGAid, "GEMreadFPGAid"); 
   xgi::bind(this,&EmuPeripheralCrateConfig::GEMreadFPGAsysmon, "GEMreadFPGAsysmon"); 
   xgi::bind(this,&EmuPeripheralCrateConfig::GEMProgramFPGA, "GEMProgramFPGA"); 
@@ -393,7 +356,6 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::DMBTurnOff, "DMBTurnOff");
   xgi::bind(this,&EmuPeripheralCrateConfig::DMBTurnOn, "DMBTurnOn");
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBTurnOn, "CFEBTurnOn");
-  xgi::bind(this,&EmuPeripheralCrateConfig::MPCMask, "MPCMask");
   xgi::bind(this,&EmuPeripheralCrateConfig::DMBLoadFirmware, "DMBLoadFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::DMBLoadFPGA, "DMBLoadFPGA");
   xgi::bind(this,&EmuPeripheralCrateConfig::DMBReadFirmware, "DMBReadFirmware");
@@ -405,8 +367,10 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBVerifyFirmware, "CFEBVerifyFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::RdVfyCFEBVirtexDMB, "RdVfyCFEBVirtexDMB");
   xgi::bind(this,&EmuPeripheralCrateConfig::RdVfyCFEBVirtexExpT, "RdVfyCFEBVirtexExpT");
+  xgi::bind(this,&EmuPeripheralCrateConfig::DMBReadConfiguration, "DMBReadConfiguration");
   xgi::bind(this,&EmuPeripheralCrateConfig::DMBCheckConfiguration, "DMBCheckConfiguration");
   xgi::bind(this,&EmuPeripheralCrateConfig::DMBConfigure, "DMBConfigure");
+  xgi::bind(this,&EmuPeripheralCrateConfig::ConfigDCFEBs, "ConfigDCFEBs");
   xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBTests, "DCFEBTests");
   xgi::bind(this,&EmuPeripheralCrateConfig::PipelineDepthScan, "PipelineDepthScan");
   xgi::bind(this,&EmuPeripheralCrateConfig::L1ALCTScan, "L1ALCTScan");
@@ -414,6 +378,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::ALCTDAVScan, "ALCTDAVScan");
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBUtils, "CFEBUtils");
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBFunction, "CFEBFunction");
+
   xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBPromTest, "DCFEBPromTest");
   xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBPromTestFast, "DCFEBPromTestFast");
   xgi::bind(this,&EmuPeripheralCrateConfig::AllDCFEBsPromTestFast, "AllDCFEBsPromTestFast");
@@ -11756,24 +11721,17 @@ void EmuPeripheralCrateConfig::DefineFirmwareFilenames() {
   //
   std::string DMBFirmware = FirmwareDir_+DMB_FIRMWARE_FILENAME;
   std::string DMBVerify   = FirmwareDir_+DMB_VERIFY_FILENAME;
-  std::string DMBCompare  = FirmwareDir_+DMB_COMPARE_FILENAME;
   DMBFirmware_ = DMBFirmware;
   DMBVerify_   = DMBVerify;
-  DMBCompare_  = DMBCompare;
   //
   std::string DMBVmeFirmware = FirmwareDir_+DMBVME_FIRMWARE_FILENAME;
   std::string DMBVmeVerify   = FirmwareDir_+DMBVME_VERIFY_FILENAME;
-  std::string DMBVmeCompare  = FirmwareDir_+DMBVME_COMPARE_FILENAME;
   DMBVmeFirmware_ = DMBVmeFirmware;
   DMBVmeVerify_   = DMBVmeVerify;
-  DMBVmeCompare_  = DMBVmeCompare;
   //
   std::string CFEBFirmware = FirmwareDir_+CFEB_FIRMWARE_FILENAME;
   std::string CFEBVerify = FirmwareDir_+CFEB_VERIFY_FILENAME;
-  std::string CFEBCompare = FirmwareDir_+CFEB_COMPARE_FILENAME;
   CFEBVerify_ = CFEBVerify;
-  CFEBCompare_ = CFEBCompare;
-  CFEBFirmware_ = CFEBFirmware;
 
   //  create filename for CCB & MPC
     int year  = (thisCCB->GetExpectedFirmwareYear())%100;

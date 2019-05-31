@@ -2816,6 +2816,7 @@ void EmuPeripheralCrateConfig::DMBUtils(xgi::Input * in, xgi::Output * out )
   std::vector<CFEB> cfebs = thisDMB->cfebs() ;
   //
   int D_hversion=thisDMB->DMBversion();
+  int C_hversion=thisDMB->CFEBversion();
   int tot_p_chans; // total power channels on LVDB
   int allmask;
   char Name[100];
@@ -3045,6 +3046,21 @@ std::cout << "Power Read: " << std::hex << power_read << std::dec <<std::endl;
   *out << cgicc::form() << std::endl ;
   //
   *out << cgicc::br();
+  //
+if(D_hversion<=1)
+{
+  std::string DMBReadConfiguration = toolbox::toString("/%s/DMBReadConfiguration",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBReadConfiguration) << std::endl ;
+  if(C_hversion<=1)
+     *out << cgicc::input().set("type","submit").set("value","Read DMB+CFEB Status and Settings") << std::endl ;
+  else
+     *out << cgicc::input().set("type","submit").set("value","Read DMB Status and Settings") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::br();
+}
   //
   std::string DMBCheckConfiguration = toolbox::toString("/%s/DMBCheckConfiguration",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",DMBCheckConfiguration) << std::endl ;
@@ -3822,6 +3838,33 @@ void EmuPeripheralCrateConfig::DMBTurnOn(xgi::Input * in, xgi::Output * out )
   //
 }
 //
+void EmuPeripheralCrateConfig::DMBReadConfiguration(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMBReadConfiguration  DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  OutputStringDMBStatus[dmb].str("");
+  //
+  thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+  char buf[16];
+  thisDMB->dmb_readstatus(buf,true);
+  if(thisDMB->CFEBversion()<=1) thisDMB->cfebs_readstatus(true);
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBUtils(in,out);
+  //
+}
+
 void EmuPeripheralCrateConfig::DMBCheckConfiguration(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {
   //
@@ -4250,12 +4293,13 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
      *out << cgicc::td() << "LCT_L1A delay: " << thisDMB->odmb_read_LCT_L1A_delay() << cgicc::td();      
      *out << cgicc::td() << "TMB delay: " << thisDMB->odmb_read_TMB_delay() << cgicc::td();      
      *out << cgicc::td() << "ALCT delay: " << thisDMB->odmb_read_ALCT_delay() << cgicc::td();      
-     *out << cgicc::td() << "Cal delay: " << thisDMB->odmb_read_Cal_delay() << cgicc::td();      
+     *out << cgicc::td() << "CAL_LCT delay: " << thisDMB->odmb_read_Cal_delay() << cgicc::td();      
+     *out << cgicc::td() << "Kill mask (Hex): " << std::hex << thisDMB->odmb_read_kill_mask() << std::dec << cgicc::td();      
      *out << cgicc::tr() << std::endl;
      *out << cgicc::tr();
      *out << cgicc::td() << "Inj delay: " << thisDMB->odmb_read_Inj_delay() << cgicc::td();      
      *out << cgicc::td() << "Ext delay: " << thisDMB->odmb_read_Ext_delay() << cgicc::td();      
-     *out << cgicc::td() << "Kill mask (in Hex): " << std::hex << thisDMB->odmb_read_kill_mask() << std::dec << cgicc::td();      
+     *out << cgicc::td() << "Push delay: " << thisDMB->odmb_read_Push_delay() << cgicc::td();      
      *out << cgicc::td() << "Crate ID: " << thisDMB->odmb_read_CrateID() << cgicc::td();      
      *out << cgicc::tr() << std::endl;
      *out << cgicc::table();

@@ -407,6 +407,7 @@ private:
   void ReadDMBRegister(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void WriteDMBRegister(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void DMBConfigure(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void DMBReadConfiguration(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void DMBCheckConfiguration(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void DCFEBTests(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void PipelineDepthScan(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);

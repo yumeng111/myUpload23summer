@@ -2434,170 +2434,82 @@ bool DAQMB::CheckCFEBFirmwareVersion(CFEB & cfeb) {
 }
 //
 unsigned int DAQMB::febpromuser(CFEB & cfeb)
-{ unsigned int ibrd=0;
-if(CFEBversion()<=1)
-{
-  DEVTYPE dv = cfeb.promDevice();
-  printf("%d \n",dv);
-  cmd[0]=PROM_USERCODE;
-  sndbuf[0]=0xFF;
-  sndbuf[1]=0xFF;
-  sndbuf[2]=0xFF;
-  sndbuf[3]=0xFF;
-  sndbuf[4]=0xFF;
-  for (int i=0;i<3;i++) {
-    devdo(dv,8,cmd,33,sndbuf,rcvbuf,1);
-    rcvbuf[0]=((rcvbuf[0]>>1)&0x7f)+((rcvbuf[1]<<7)&0x80);
-    rcvbuf[1]=((rcvbuf[1]>>1)&0x7f)+((rcvbuf[2]<<7)&0x80);
-    rcvbuf[2]=((rcvbuf[2]>>1)&0x7f)+((rcvbuf[3]<<7)&0x80);
-    rcvbuf[3]=((rcvbuf[3]>>1)&0x7f)+((rcvbuf[4]<<7)&0x80);
-    ibrd=unpack_ibrd();
-    cmd[0]=PROM_BYPASS;
-    sndbuf[0]=0;
-    devdo(dv,8,cmd,0,sndbuf,rcvbuf,0);
-    usleep(100);
-    if (((0xff&rcvbuf[0])!=0xff)||((0xff&rcvbuf[1])!=0xff)||
-        ((0xff&rcvbuf[2])!=0xff)||((0xff&rcvbuf[3])!=0xff)) return ibrd;
+{ 
+  unsigned int ibrd=0;
+  write_cfeb_selector(cfeb.SelectorBit());  
+  if(CFEBversion()<=1)
+  {
+     char comd[4];
+     comd[0]=PROM_USERCODE;
+     daqmb_do(8,comd,32,sndbuf,(char *)&ibrd,NOW|READ_YES, CFEB_PROM);
+     comd[0]=PROM_BYPASS;
+     daqmb_do(8,comd,0,NULL,NULL,NOW, CFEB_PROM);
   }
-}
   return ibrd;
 }
 
 unsigned int  DAQMB::febpromid(CFEB & cfeb)
 {
   unsigned int ibrd=0;
-if(CFEBversion()<=1)
-{
-  DEVTYPE dv = cfeb.promDevice();
-  cmd[0]=PROM_IDCODE;
-  sndbuf[0]=0xFF;
-  sndbuf[1]=0xFF;
-  sndbuf[2]=0xFF;
-  sndbuf[3]=0xFF;
-  sndbuf[4]=0xFF;
-  devdo(dv,8,cmd,33,sndbuf,rcvbuf,1);
-  rcvbuf[0]=((rcvbuf[0]>>1)&0x7f)+((rcvbuf[1]<<7)&0x80);
-  rcvbuf[1]=((rcvbuf[1]>>1)&0x7f)+((rcvbuf[2]<<7)&0x80);
-  rcvbuf[2]=((rcvbuf[2]>>1)&0x7f)+((rcvbuf[3]<<7)&0x80);
-  rcvbuf[3]=((rcvbuf[3]>>1)&0x7f)+((rcvbuf[4]<<7)&0x80);
-  ibrd=unpack_ibrd();
-  cmd[0]=PROM_BYPASS;
-  sndbuf[0]=0;
-  devdo(dv,8,cmd,0,sndbuf,rcvbuf,0);
-}
+  write_cfeb_selector(cfeb.SelectorBit());  
+  if(CFEBversion()<=1)
+  {
+     char comd[4];
+     comd[0]=PROM_IDCODE;
+     daqmb_do(8,comd,32,sndbuf,(char *)&ibrd,NOW|READ_YES, CFEB_PROM);
+     comd[0]=PROM_BYPASS;
+     daqmb_do(8,comd,0,NULL,NULL,NOW, CFEB_PROM);
+  }
   return ibrd;
 }
 
 unsigned int  DAQMB::febfpgauser(CFEB & cfeb)
 {
   unsigned int ibrd=0;
-if(CFEBversion()<=1)
-{
-  DEVTYPE dv = cfeb.scamDevice();
-  cmd[0]=VTX_USERCODE;
-  sndbuf[0]=0xFF;
-  sndbuf[1]=0xFF;
-  sndbuf[2]=0xFF;
-  sndbuf[3]=0xFF;
-  devdo(dv,5,cmd,32,sndbuf,rcvbuf,1);
-  // RPW not sure about this
-  //printf(" The FPGA USERCODE is %02x%02x%02x%02x \n",0xff&rcvbuf[3],0xff&rcvbuf[2],0xff&rcvbuf[1],0xff&rcvbuf[0]);
-  ibrd = unpack_ibrd();
-  cmd[0]=VTX_BYPASS;
-  sndbuf[0]=0;
-  devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
-}
-else
-{
   write_cfeb_selector(cfeb.SelectorBit());
   dcfeb_fpga_call(VTX6_USERCODE, 0, (char *)&ibrd);
-}
   return ibrd;
 }
 
 unsigned int  DAQMB::febfpgaid(CFEB & cfeb)
 {
   unsigned ibrd=0;
-if(CFEBversion()<=1)
-{
-  DEVTYPE dv = cfeb.scamDevice();
-  cmd[0]=VTX_IDCODE;
-  sndbuf[0]=0xFF;
-  sndbuf[1]=0xFF;
-  sndbuf[2]=0xFF;
-  sndbuf[3]=0xFF;
-  devdo(dv,5,cmd,32,sndbuf,rcvbuf,1);
-  char sbuf[100];
-  (*MyOutput_) << " The FEB " << dv-F1SCAM+1 << " FPGA Chip should be 610093 (last 6 digits) "  << std::endl;
-  sprintf(sbuf, "%02X%02X%02X%02X", 0xff&rcvbuf[3], 0xff&rcvbuf[2], 0xff&rcvbuf[1], 0xff&rcvbuf[0]);
-  (*MyOutput_) << " The FPGA Chip IDCODE is " << sbuf << std::endl;
-  ibrd = unpack_ibrd();
-  cmd[0]=VTX_BYPASS;
-  sndbuf[0]=0;
-  devdo(dv,5,cmd,0,sndbuf,rcvbuf,0);
-}
-else
-{
   write_cfeb_selector(cfeb.SelectorBit());
   dcfeb_fpga_call(VTX6_IDCODE, 0, (char *)&ibrd);
-}
   return ibrd;
 }
 
 unsigned int DAQMB::mbpromuser(int prom)
 {
+  unsigned ibrd=0;
   if(DMBversion()<=1)
   {
-  unsigned int ibrd;
-  DEVTYPE dv;
-
-  if(prom==0){dv=VPROM;}else{dv=MPROM;}
-  for (int i=0;i<3;i++) {
-      cmd[0]=PROM_USERCODE;
-      sndbuf[0]=0xFF;
-      sndbuf[1]=0xFF;
-      sndbuf[2]=0xFF;
-      sndbuf[3]=0xFF;
-      sndbuf[4]=0xFF;
-      devdo(dv,8,cmd,32,sndbuf,rcvbuf,1);
-      ibrd=unpack_ibrd();
-      cmd[0]=PROM_BYPASS;
-      sndbuf[0]=0;
-      devdo(dv,8,cmd,0,sndbuf,rcvbuf,0);
-
-//      printf("from mbpromuser: %08X %02X %02X %02X %02X\n",ibrd,rcvbuf[0],rcvbuf[1],rcvbuf[2],rcvbuf[3]);
-      if (((0xff&rcvbuf[0])!=0xff)||((0xff&rcvbuf[1])!=0xff)||
-          ((0xff&rcvbuf[2])!=0xff)||((0xff&rcvbuf[3])!=0xff)) return ibrd;
+      int dv;
+      char comd[4];
+      dv=(prom==0)?VME_PROM:CTRL_PROM;
+      comd[0]=PROM_USERCODE;
+      daqmb_do(8,comd,32,sndbuf,(char *)&ibrd, NOW|READ_YES, dv);
+      comd[0]=PROM_BYPASS;
+      daqmb_do(8,comd,0,NULL,NULL,NOW, dv);
   }
-      return ibrd;
-  }
-  else return 0;
+  return ibrd;
 }
 
 unsigned int  DAQMB::mbpromid(int prom)
 {
+  unsigned ibrd=0;
   if(DMBversion()<=1)
   {
-      unsigned int ibrd;
-      DEVTYPE dv;
-
-      if(prom==0){dv=VPROM;}else{dv=MPROM;}
-      cmd[0]=PROM_IDCODE;
-      sndbuf[0]=0xFF;
-      sndbuf[1]=0xFF;
-      sndbuf[2]=0xFF;
-      sndbuf[3]=0xFF;
-      sndbuf[4]=0xFF;
-      devdo(dv,8,cmd,32,sndbuf,rcvbuf,1);
-      ibrd=unpack_ibrd();
-      cmd[0]=PROM_BYPASS;
-      sndbuf[0]=0;
-      devdo(dv,8,cmd,0,sndbuf,rcvbuf,0);
-      return ibrd;
+      int dv;
+      char comd[4];
+      dv=(prom==0)?VME_PROM:CTRL_PROM;
+      comd[0]=PROM_IDCODE;
+      daqmb_do(8,comd,32,sndbuf,(char *)&ibrd, NOW|READ_YES, dv);
+      comd[0]=PROM_BYPASS;
+      daqmb_do(8,comd,0,NULL,NULL,NOW, dv);
   }
-  else return 0;
+  return ibrd;
 }
-
 
 unsigned int  DAQMB::mbfpgauser()
 {
@@ -2605,18 +2517,11 @@ unsigned int  DAQMB::mbfpgauser()
 
   if(DMBversion()<=1)
   {
-  DEVTYPE dv=MCTRL;
-  cmd[0]=VTX2_USERCODE;
-  sndbuf[0]=0xFF;
-  sndbuf[1]=0xFF;
-  sndbuf[2]=0xFF;
-  sndbuf[3]=0xFF;
-  sndbuf[4]=0xFF;
-  devdo(dv,6,cmd,32,sndbuf,rcvbuf,1);
-  ibrd=unpack_ibrd();
-  cmd[0]=VTX2_BYPASS;
-  sndbuf[0]=0;
-  devdo(dv,6,cmd,0,sndbuf,rcvbuf,0);
+      char comd[4];
+      comd[0]=VTX2_USERCODE;
+      daqmb_do(6,comd,32,sndbuf,(char *)&ibrd, NOW|READ_YES, CTRL_FPGA);
+      comd[0]=VTX2_BYPASS;
+      daqmb_do(6,comd,0,NULL,NULL,NOW, CTRL_FPGA);
   }
   else if(DMBversion()==2)
   {
@@ -2632,18 +2537,11 @@ unsigned int  DAQMB::mbfpgaid()
 
   if(DMBversion()<=1)
   {
-  DEVTYPE dv=MCTRL;
-  cmd[0]=VTX2_IDCODE;
-  sndbuf[0]=0xFF;
-  sndbuf[1]=0xFF;
-  sndbuf[2]=0xFF;
-  sndbuf[3]=0xFF;
-  sndbuf[4]=0xFF;
-  devdo(dv,6,cmd,32,sndbuf,rcvbuf,1);
-  ibrd=unpack_ibrd();
-  cmd[0]=VTX2_BYPASS;
-  sndbuf[0]=0;
-  devdo(dv,6,cmd,0,sndbuf,rcvbuf,0);
+      char comd[4];
+      comd[0]=VTX2_IDCODE;
+      daqmb_do(6,comd,32,sndbuf,(char *)&ibrd, NOW|READ_YES, CTRL_FPGA);
+      comd[0]=VTX2_BYPASS;
+      daqmb_do(6,comd,0,NULL,NULL,NOW, CTRL_FPGA);
   }
   else if(DMBversion()==2)
   {
@@ -3148,36 +3046,25 @@ void DAQMB::inject(int Num_pulse,unsigned int pulse_delay)
 
 void DAQMB::wrtfifo(int fifo,int nsndfifo,char* sndfifo)
 {
-  int i=fifo+FIFO1;
-  DEVTYPE devnum=(DEVTYPE)i;
-  //
-  printf(" sndfifo: %d %02x %02x \n",nsndfifo,sndfifo[0]&0xff,sndfifo[1]&0xff);
-  /* fifo write */  
-  cmd[0]=4;
-  //(*MyOutput_) << "wrtfifo devnum FIFO7 " << devnum << " " << FIFO7 << std::endl;
-  if(devnum-FIFO7!=0){
-    //(*MyOutput_) << "devdo1" << std::endl;
+  // fifo=0  ==>> FIFO1
+  if(DMBversion()<=1)
+  {
+    int i=fifo+FIFO1;
+    DEVTYPE devnum=(DEVTYPE)i;
+    
+    /* fifo write */  
+    cmd[0]=4;
     devdo(devnum,1,cmd,nsndfifo*2,sndfifo,rcvbuf,2);
-    //(*MyOutput_) << "devdo1back" << std::endl;
-  }
-  else{
-    //(*MyOutput_) << "devdo2" << std::endl;
-    devdo(devnum,1,cmd,nsndfifo,sndfifo,rcvbuf,2);
-    //(*MyOutput_) << "devdo2back" << std::endl;
   } 
 }
 //
 void DAQMB::readfifo(int fifo,int nrcvfifo,char* rcvfifo)
 {  
+  // fifo=0  ==>> FIFO1
   if(DMBversion()<=1)
   {
   //
   //(*MyOutput_) << "readfifo" << std::endl;
-  //
-  PRINTSTRING(OVAL: before start routine in readfifo);
-  PRINTSTRING(OVAL: after start routine in readfifo);
-  //
-  //(*MyOutput_) << "readfifo2" << std::endl;
   //
   int i=fifo+FIFO1;
   DEVTYPE devnum=(DEVTYPE)i;
@@ -3214,7 +3101,7 @@ void DAQMB::readfifo(int fifo,int nrcvfifo,char* rcvfifo)
   sndbuf[0]=0;
   devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,0);
   //
-  printf("readfifo: %d %02x %02x \n",nrcvfifo,rcvfifo[0]&0xff,rcvfifo[1]&0xff); 
+  // printf("readfifo: %d %02x %02x \n",nrcvfifo,rcvfifo[0]&0xff,rcvfifo[1]&0xff); 
   //
   }
 }
@@ -6303,402 +6190,112 @@ void DAQMB::PrintCounters(int user_option){
 //
 void DAQMB::test3()
 {
-  int errs,err[8];
-  int pass;
+  int errs=0,err[8];
   //
-  calctrl_fifomrst(); 
-  usleep(5000);
-  /*
-  errs=0;
-  printf("Running Memchk\n");
-  (*MyOutput_) << "FIFO1 " << std::endl ;
-  err[1]=memchk(FIFO1);
-  errs+=err[1];
-  (*MyOutput_) << "FIFO2 " << std::endl ;
-  err[2]=memchk(FIFO2);
-  errs+=err[2];
-  (*MyOutput_) << "FIFO3 " << std::endl ;
-  err[3]=memchk(FIFO3);
-  errs+=err[3];
-  (*MyOutput_) << "FIFO4 " << std::endl ;
-  err[4]=memchk(FIFO4);
-  errs+=err[4];
-  (*MyOutput_) << "FIFO5 " << std::endl ;
-  err[5]=memchk(FIFO5);
-  errs+=err[5];
-  (*MyOutput_) << "FIFO7 " << std::endl ;
-  err[7]=memchk(FIFO7);
-  errs+=err[7];
-  //
-  calctrl_fifomrst(); 
-  usleep(5000);
-  */
-  //
-  pass=1;
-  errs=0; 
-  //
+  theController->SetUseDelay(true);  
   calctrl_fifomrst(); 
   usleep(5000);
   //
-  (*MyOutput_) << "Running Memchk" << std::endl;
-  err[1]=memchk(FIFO1);
-  errs+=err[1];
-  if(err[1]==0){
-    (*MyOutput_) << " FIFO1 is OK  " << std::endl;
-  }else{
-    (*MyOutput_) << " FIFO1 is Bad " << err[1] << std::endl;
+  (*MyOutput_) << "Running FIFO Tests" << std::endl;
+  for(int i=0; i<7; i++)
+  {
+     err[i]=memchk(i);
+     if(err[i]==0)
+       (*MyOutput_) << " FIFO" << (i+1) << " is OK  " << std::endl;
+     else 
+       (*MyOutput_) << " FIFO" << (i+1) << " is Bad: " << err[i] << std::endl;
+     errs += err[i];
   }
-  //
-  err[2]= memchk(FIFO2);
-  errs+=err[2];
-  if(err[2]==0){
-    (*MyOutput_) << " FIFO2 is OK " << std::endl ;
-  }else{
-    (*MyOutput_) << " FIFO2 is Bad " << err[2] << std::endl;
-  }
-  err[3]= memchk(FIFO3);
-  errs+=err[3];
-  if(err[3]==0){
-    (*MyOutput_) << " FIFO3 is OK " << std::endl;
-  }else{
-    (*MyOutput_) << " FIFO3 is Bad " << err[3] << std::endl;
-  }
-  err[4]= memchk(FIFO4);
-  errs+=err[4];
-  if(err[4]==0){
-    (*MyOutput_) << " FIFO4 is OK " << std::endl;
-  }else{
-    (*MyOutput_) << " FIFO4 is Bad " << err[4] << std::endl;
-  }
-  err[5]= memchk(FIFO5);
-  errs+=err[5];
-  if(err[5]==0){
-    (*MyOutput_) << " FIFO5 is OK " << std::endl;
-  }else{
-    (*MyOutput_) << " FIFO5 is Bad " << err[5] << std::endl;
-  }
-  err[6]= memchk(FIFO6);
-  if(err[6]==0){
-    (*MyOutput_) << " FIFO6 is OK " << std::endl;
-  }else{
-    (*MyOutput_) << " FIFO6 is Bad " << err[6] << std::endl;
-  }
-  errs+=err[6];
-  //
-  err[7]= memchk(FIFO7);
-  errs+=err[7];
-  if(err[7]==0){
-    (*MyOutput_) << " FIFO7 is OK " << std::endl;
-  }else{
-    (*MyOutput_) << " FIFO7 is Bad " << err[7] << std::endl;
-  }
-  errs+=err[7];
   calctrl_fifomrst();
-  if(errs!=0)pass=0;
   //
   TestStatus_[3] = errs;
   //
 }
-//
-void DAQMB::wrtfifox(enum DEVTYPE devnum,unsigned short int pass)
-{ 
-  if(DMBversion()<=1)
-  {
-
- if(devnum<FIFO1||devnum>FIFO7){
-    printf(" Device is not a FIFO \n");
-    return;
- }
- //
- /* fifo write */  
- cmd[0]=0;
- sndbuf[0]=pass&0xff;
- sndbuf[1]=((pass>>8)&0xff);
- for(int i=0;i<16;i++){sndbuf[0+2*i]=sndbuf[0];sndbuf[1+2*i]=sndbuf[1];};
- //  printf(" wrtfifox 16384 %02x %02x \n",sndbuf[1]&0xff,sndbuf[0]&0xff);
- if(devnum-FIFO7!=0){
-    devdo(devnum,1,cmd,16*2,sndbuf,rcvbuf,2);} 
-   // devdo(devnum,1,cmd,16380*2,sndbuf,rcvbuf,2);}
- else{
-   devdo(devnum,1,cmd,8190*2,sndbuf,rcvbuf,2);}
-  }
-}
-
-int DAQMB::readfifox_chk(enum DEVTYPE devnum,unsigned int short memchk)
-{
-  if(DMBversion()<=1)
-  {
- int bad;
- if(devnum<FIFO1||devnum>FIFO7){
-    printf(" Device is not a FIFO \n");
-    return -1;
- }
- //
- cmd[0]=VTX2_USR1;
- sndbuf[0]=FIFO_RD;
- devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
- cmd[0]=VTX2_USR2;
- sndbuf[0]=devnum-FIFO1+1; 
- devdo(MCTRL,6,cmd,3,sndbuf,rcvbuf,0); 
- cmd[0]=VTX2_USR1;
- sndbuf[0]=0;
- devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,2);
- cmd[0]=VTX2_BYPASS;
- sndbuf[0]=0;
- devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,2);
- //
- /* fifo read check */  
- cmd[0]=1;
- sndbuf[0]=memchk&0xff;
- sndbuf[1]=((memchk>>8)&0xff);
- // devdo(devnum,1,cmd,16380*2,sndbuf,rcvbuf,1);
- devdo(devnum,1,cmd,16*2,sndbuf,rcvbuf,1);
- //
- (*MyOutput_) << " Number Bad: rcvbuf " << std::hex << rcvbuf[1] << " " << rcvbuf[0] << std::endl; 
- //
- bad=256*rcvbuf[1]+rcvbuf[0];
- //
- cmd[0]=VTX2_USR1;
- sndbuf[0]=FIFO_RD;
- devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
- cmd[0]=VTX2_USR2;
- sndbuf[0]=0; 
- devdo(MCTRL,6,cmd,3,sndbuf,rcvbuf,0); 
- cmd[0]=VTX2_BYPASS;
- sndbuf[0]=0;
- devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,2);
- //
- return bad;
- //
-  }
-  else return 0;
-}
-//
-int DAQMB::memchk(enum DEVTYPE devnum)
-{
-  int ierr,ierr2;
-
-  //
-  if(devnum<FIFO1||devnum>FIFO7){
-    (*MyOutput_) << " Device is not a FIFO " << std::endl;
-    return -1;
-  }
-  //
-  for (unsigned i=0; i<sizeof(rcvbuf);i++) {
-    rcvbuf[i] = 0;
-  }
-  //
-  ierr=0;
-  ierr2=0;
-  char snd[40];
-  for(int j=0;j<32;j++)snd[j]=0xff;
-  wrtfifo(1,16,snd);
-  char rcv[40];
-  readfifo(1,16,rcv);
-  ierr2+=ierr;   /* this doesn't make any sense! ierr never got value before */
-  (*MyOutput_) << " ierr " << ierr << ierr2 << std::endl;
-  wrtfifox(devnum,0x0000);
-  ierr=readfifox_chk(devnum,0x0000);
-  (*MyOutput_) << " ierr "  << ierr << std::endl;
-  ierr2+=ierr;
-  wrtfifox(devnum,0xaaaa);
-  ierr=readfifox_chk(devnum,0xaaaa);
-  (*MyOutput_) << " ierr " << ierr << std::endl;
-  ierr2+=ierr; 
-  wrtfifox(devnum,0x5555);
-  ierr=readfifox_chk(devnum,0x5555);
-  (*MyOutput_) << " ierr " << ierr << std::endl ;
-  ierr2+=ierr;  
-  wrtfifo_123(devnum);
-  ierr=readfifox_123chk(devnum);
-  (*MyOutput_) << " ierr " << ierr << std::endl;
-  ierr2+=ierr; 
-  wrtfifo_toggle(devnum);
-  ierr=readfifox_togglechk(devnum);
-  (*MyOutput_) << " ierr " << ierr << std::endl ;
-  ierr2+=ierr;   
-  (*MyOutput_) << " ierr2 " << ierr2 << std::endl;
-  return ierr2;
-}
-//
-int DAQMB::readfifox_togglechk(enum DEVTYPE devnum)
-{
-  if(DMBversion()<=1)
-  {
- int bad;
- if(devnum<FIFO1||devnum>FIFO7){
-    printf(" Device is not a FIFO \n");
-    return -1;
- }
-
- /* fifo read  */  
- 
- cmd[0]=VTX2_USR1;
- sndbuf[0]=FIFO_RD;
- devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
- cmd[0]=VTX2_USR2;
- sndbuf[0]=devnum-FIFO1+1; 
- devdo(MCTRL,6,cmd,3,sndbuf,rcvbuf,0); 
- cmd[0]=VTX2_USR1;
- sndbuf[0]=0;
- devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,2);
- cmd[0]=VTX2_BYPASS;
- sndbuf[0]=0;
- devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,2);
- 
- cmd[0]=3;
- sndbuf[0]=0;
- devdo(devnum,1,cmd,16380*2,sndbuf,rcvbuf,2);
- //  printf(" Number Bad: rcvbuf %02x %02x \n",rcvbuf[1],rcvbuf[0]); 
- bad=256*rcvbuf[1]+rcvbuf[0];
-
- cmd[0]=VTX2_USR1;
- sndbuf[0]=FIFO_RD;
- devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
- cmd[0]=VTX2_USR2;
- sndbuf[0]=0; 
- devdo(MCTRL,6,cmd,3,sndbuf,rcvbuf,0); 
- cmd[0]=VTX2_BYPASS;
- sndbuf[0]=0;
- devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,2);
- 
- return bad;
-  }
-  else return 0;
-}
-//
-void DAQMB::wrtfifo_toggle(enum DEVTYPE devnum)
-{
-  if(DMBversion()<=1)
-  {
-    if(devnum<FIFO1||devnum>FIFO7){
-    printf(" Device is not a FIFO \n");
-    return;
-    }
-
-   /* fifo write */  
-    cmd[0]=2;
-    sndbuf[0]=0;
-    if(devnum-FIFO7!=0){
-       devdo(devnum,1,cmd,16380*2,sndbuf,rcvbuf,2);}
-    else{ 
-       devdo(devnum,1,cmd,8190*2,sndbuf,rcvbuf,2);}
-  }
-}
-//
-void DAQMB::wrtfifo_123(enum DEVTYPE devnum)
-{
-  if(DMBversion()<=1)
-  {
-     if(devnum<FIFO1||devnum>FIFO7){
-       printf(" Device is not a FIFO \n");
-       return;
-     }
-     //
-     /* fifo write */  
-     cmd[0]=2;
-     sndbuf[0]=2;
-     if(devnum-FIFO7!=0){
-       devdo(devnum,1,cmd,16380*2,sndbuf,rcvbuf,2);}
-     else{
-       devdo(devnum,1,cmd,8190*2,sndbuf,rcvbuf,2);}
-  }
-}
-
-//
-int DAQMB::readfifox_123chk(enum DEVTYPE devnum)
-{
-  if(DMBversion()<=1)
-  {
- int bad;
- if(devnum<FIFO1||devnum>FIFO7){
-    printf(" Device is not a FIFO \n");
-    return -1;
- }
-
-   /* fifo read */
-    cmd[0]=VTX2_USR1;
-  sndbuf[0]=FIFO_RD;
-  devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX2_USR2;
-  sndbuf[0]=devnum-FIFO1+1; 
-  devdo(MCTRL,6,cmd,3,sndbuf,rcvbuf,0); 
-  cmd[0]=VTX2_USR1;
-  sndbuf[0]=0;
-  devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,2);
-  cmd[0]=VTX2_BYPASS;
-  sndbuf[0]=0;
-  devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,2);
-
- cmd[0]=3;
- sndbuf[0]=2;
- devdo(devnum,1,cmd,16380*2,sndbuf,rcvbuf,2);
- // printf(" Number Bad: rcvbuf %02x %02x \n",rcvbuf[1],rcvbuf[0]); 
- bad=256*rcvbuf[1]+rcvbuf[0];
-
-  cmd[0]=VTX2_USR1;
-  sndbuf[0]=FIFO_RD;
-  devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX2_USR2;
-  sndbuf[0]=0; 
-  devdo(MCTRL,6,cmd,3,sndbuf,rcvbuf,0); 
-  cmd[0]=VTX2_BYPASS;
-  sndbuf[0]=0;
-  devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,2);
-
- return bad;
-  }
-  else return 0;
-}
-
-//
 
 int DAQMB::memchk(int fifo)
 {
-  static int fifosize=16380;
+  // fifo=0  ==>> FIFO1
+  if(DMBversion()>1) return 0;
+  int fifosize=16380;
+  if(fifo==6) fifosize=fifosize/2;
   int err,err1=0;
   char *sndfifo;
   char *rcvfifo;
-  sndfifo=(char *)malloc(33000);
-  rcvfifo=(char *)malloc(33000);
+  sndfifo=(char *)malloc(34000);
+  rcvfifo=(char *)malloc(34000);
   //
-  (*MyOutput_) << " MEMCHK for FIFO"<<fifo<<std::endl;
-  calctrl_fifomrst(); usleep(5000);
+  (*MyOutput_) << " MEMCHK for FIFO"<<(fifo+1)<<std::endl;
+  std::cout << " MEMCHK for FIFO"<<(fifo+1)<<std::endl;
+
+
   // 0xffff
   for(int i=0;i<fifosize*2;i++)sndfifo[i]=0xff;
   wrtfifo(fifo,fifosize,sndfifo);
-  readfifo(fifo,fifosize,rcvfifo);
-  err=0;for(int i=0;i<fifosize*2;i++)if(sndfifo[i]!=rcvfifo[i])err=err+1;err1=err1+err;
-  (*MyOutput_) << " Error 0xffff "<< err << std::endl;
-  /* 
+  usleep(50000);
+  readfifo(fifo,fifosize+4,rcvfifo);
+  err=0;
+  for(int i=0;i<fifosize*2;i++) 
+    if(sndfifo[i]!=rcvfifo[i])
+    {  err=err+1;
+//       std::cout << std::hex << " at " << i << ": " << (0xff&sndfifo[i]) << " - " << (0xff & rcvfifo[i]) << std::endl;
+    }
+  err1=err1+err;
+  (*MyOutput_) << " Error in 0xffff test: "<< err << std::endl;
+  
   // 0x0000
   for(int i=0;i<fifosize*2;i++)sndfifo[i]=0x00;
   wrtfifo(fifo,fifosize,sndfifo);
-  readfifo(fifo,fifosize,rcvfifo);
-  err=0;for(int i=0;i<fifosize*2;i++)if(sndfifo[i]!=rcvfifo[i])err=err+1;err1=err1+err;
-  (*MyOutput_) << " Error 0x0000 " << err << std::endl; 
+  readfifo(fifo,fifosize+4,rcvfifo);
+  err=0;
+  for(int i=0;i<fifosize*2;i++)
+    if(sndfifo[i]!=rcvfifo[i])
+    {  err=err+1;
+//       std::cout << std::hex << " at " << i << ": " << (0xff&sndfifo[i]) << " - " << (0xff & rcvfifo[i]) << std::endl;
+    }
+  err1=err1+err;
+  (*MyOutput_) << " Error in 0x0000 test: " << err << std::endl; 
+
   // 0x5555
   for(int i=0;i<fifosize*2;i++)sndfifo[i]=0x55;
   wrtfifo(fifo,fifosize,sndfifo);
-  readfifo(fifo,fifosize,rcvfifo);
-  err=0;for(int i=0;i<fifosize*2;i++)if(sndfifo[i]!=rcvfifo[i])err=err+1;err1=err1+err;
-  (*MyOutput_) << " Error 0x5555 "<< err << std::endl; 
+  readfifo(fifo,fifosize+4,rcvfifo);
+  err=0;
+  for(int i=0;i<fifosize*2;i++)
+    if(sndfifo[i]!=rcvfifo[i])
+    {  err=err+1;
+//       std::cout << std::hex << " at " << i << ": " << (0xff&sndfifo[i]) << " - " << (0xff & rcvfifo[i]) << std::endl;
+    }
+  err1=err1+err;
+  (*MyOutput_) << " Error in 0x5555 test: "<< err << std::endl; 
+
 // 0xaaaa
   for(int i=0;i<fifosize*2;i++)sndfifo[i]=0xaa;
   wrtfifo(fifo,fifosize,sndfifo);
-  readfifo(fifo,fifosize,rcvfifo);
-  err=0;for(int i=0;i<fifosize*2;i++)if(sndfifo[i]!=rcvfifo[i])err=err+1;err1=err1+err;
-  (*MyOutput_) << " Error 0xaaaa "<< err << std::endl; 
+  readfifo(fifo,fifosize+4,rcvfifo);
+  err=0;
+  for(int i=0;i<fifosize*2;i++)
+    if(sndfifo[i]!=rcvfifo[i])
+    {  err=err+1;
+//       std::cout << std::hex << " at " << i << ": " << (0xff&sndfifo[i]) << " - " << (0xff & rcvfifo[i]) << std::endl;
+    }
+  err1=err1+err;
+  (*MyOutput_) << " Error in 0xaaaa test: "<< err << std::endl; 
+
   // 0,1,2,3,... 
   for(int i=0;i<fifosize*2;i++)sndfifo[i]=(i&0xff);
   wrtfifo(fifo,fifosize,sndfifo);
-  readfifo(fifo,fifosize,rcvfifo);
-  err=0;for(int i=0;i<fifosize*2;i++)if(sndfifo[i]!=rcvfifo[i])err=err+1;err1=err1+err;
-  (*MyOutput_) << " Error 0x1234 " << err << std::endl; 
+  readfifo(fifo,fifosize+4,rcvfifo);
+  err=0;
+  for(int i=0;i<fifosize*2;i++)
+    if(sndfifo[i]!=rcvfifo[i])
+    {  err=err+1;
+//       std::cout << std::hex << " at " << i << ": " << (0xff&sndfifo[i]) << " - " << (0xff & rcvfifo[i]) << std::endl;
+    }
+  err1=err1+err;
+  (*MyOutput_) << " Error in 0x1234 test: " << err << std::endl; 
   free(sndfifo);
   free(rcvfifo);
   //
-  */
   return err1;
   //
 }
@@ -7599,10 +7196,11 @@ void DAQMB::cfeb_do(int ncmd, void *cmd,int nbuf, void *inbuf,char *outbuf,int i
 
 void DAQMB::dcfeb_fpga_call(int inst, unsigned data, char *outbuf)
 {
+  int cmdsize=(CFEBversion()<=1)?5:10;
   char temp[4];
-  cfeb_do(10, &inst, 32, &data, outbuf, NOW|READ_YES);
+  cfeb_do(cmdsize, &inst, 32, &data, outbuf, NOW|READ_YES);
   int comd=VTX6_BYPASS;
-  cfeb_do(10, &comd, 0, &data, temp, NOW);
+  cfeb_do(cmdsize, &comd, 0, &data, temp, NOW);
   udelay(10);
 }
 

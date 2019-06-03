@@ -331,12 +331,6 @@ public:
   void restoreCFEBIdle();
   void restoreMotherboardIdle();
   void PrintCounters(int);
-  int readfifox_chk(enum DEVTYPE,unsigned int short);
-  void wrtfifox(enum DEVTYPE,unsigned short int);
-  int readfifox_123chk(enum DEVTYPE devnum);
-  void wrtfifo_123(enum DEVTYPE devnum);
-  void wrtfifo_toggle(enum DEVTYPE devnum);
-  int readfifox_togglechk(enum DEVTYPE devnum);
   //
   void lowv_dump();
   void daqmb_adc_dump();
@@ -353,7 +347,6 @@ public:
   int  test10();
   int  test11();
   int  memchk(int);
-  int  memchk(DEVTYPE);
   //
   void dmb_readstatus(char [11], bool verbose=false);
   void cfebs_readstatus(bool verbose=false);

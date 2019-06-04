@@ -25,9 +25,11 @@ const std::string       CFEB_FIRMWARE_FILENAME = "cfeb/cfeb_pro.svf";
 const std::string       CFEB_VERIFY_FILENAME = "cfeb/cfeb_pro.mcs";
 //
 const std::string       DMB_FIRMWARE_FILENAME   = "dmb/dmb6cntl_pro.svf";
+const std::string       MEX1_DMB_FIRMWARE_FILENAME   = "dmb/mex1_dmbcontrol_pro.svf";
 const std::string       DMB_VERIFY_FILENAME     = "dmb/dmb_mprom_verify.svf";
 
 const std::string       DMBVME_FIRMWARE_FILENAME = "dmb/dmb6vme_pro.svf";
+const std::string       MEX1_DMBVME_FIRMWARE_FILENAME = "dmb/mex1_dmbvme_pro.svf";
 const std::string       DMBVME_VERIFY_FILENAME   = "dmb/dmb_vprom_verify.svf";
 
 const std::string	ALCT_SLOW_FIRMWARE_FILENAME_XC18V04 = "alct/slow/slow_control_xc18v04.svf";
@@ -11719,19 +11721,16 @@ this->TMBUtils(in,out);
 //
 void EmuPeripheralCrateConfig::DefineFirmwareFilenames() {
   //
-  std::string DMBFirmware = FirmwareDir_+DMB_FIRMWARE_FILENAME;
-  std::string DMBVerify   = FirmwareDir_+DMB_VERIFY_FILENAME;
-  DMBFirmware_ = DMBFirmware;
-  DMBVerify_   = DMBVerify;
+  DMBFirmware_ = FirmwareDir_+DMB_FIRMWARE_FILENAME;
+  MEX1DMBFirmware_ = FirmwareDir_+MEX1_DMB_FIRMWARE_FILENAME;
+  DMBVerify_   = FirmwareDir_+DMB_VERIFY_FILENAME;
   //
-  std::string DMBVmeFirmware = FirmwareDir_+DMBVME_FIRMWARE_FILENAME;
-  std::string DMBVmeVerify   = FirmwareDir_+DMBVME_VERIFY_FILENAME;
-  DMBVmeFirmware_ = DMBVmeFirmware;
-  DMBVmeVerify_   = DMBVmeVerify;
+  DMBVmeFirmware_ = FirmwareDir_+DMBVME_FIRMWARE_FILENAME;
+  MEX1DMBVmeFirmware_ = FirmwareDir_+MEX1_DMBVME_FIRMWARE_FILENAME;
+  DMBVmeVerify_   = FirmwareDir_+DMBVME_VERIFY_FILENAME;
   //
-  std::string CFEBFirmware = FirmwareDir_+CFEB_FIRMWARE_FILENAME;
-  std::string CFEBVerify = FirmwareDir_+CFEB_VERIFY_FILENAME;
-  CFEBVerify_ = CFEBVerify;
+  CFEBFirmware_ = FirmwareDir_+CFEB_FIRMWARE_FILENAME;
+  CFEBVerify_ = FirmwareDir_+CFEB_VERIFY_FILENAME;
 
   //  create filename for CCB & MPC
     int year  = (thisCCB->GetExpectedFirmwareYear())%100;

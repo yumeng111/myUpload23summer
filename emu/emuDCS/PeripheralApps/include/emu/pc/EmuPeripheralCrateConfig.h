@@ -89,9 +89,11 @@ protected:
   std::string MPCFirmware_;
   xdata::String TMBFirmware_[10];
   xdata::String DMBFirmware_;
+  xdata::String MEX1DMBFirmware_;
   xdata::String DMBVerify_;
   xdata::String DMBCompare_;
   xdata::String DMBVmeFirmware_;
+  xdata::String MEX1DMBVmeFirmware_;
   xdata::String DMBVmeVerify_;
   xdata::String DMBVmeCompare_;
   xdata::String RATFirmware_[10];

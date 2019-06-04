@@ -2666,7 +2666,7 @@ void EmuPeripheralCrateConfig::LVMBStatus(xgi::Input * in, xgi::Output * out )
       if(nadcs==5 && cversion>1)  /* for chambers with 5 (x)DCFEEBs */ 
       {
          if(i>=vstart) fvalue[i] = fvalue[i]*1.03;  /* correction for all voltages */
-         else if(i<15 && (i%3)==0) fvalue[i] = fvalue[i]*2;  /* DCFEB 3V currents multiply by 2 */    
+         else if(i<15 && (i%3)==1) fvalue[i] = fvalue[i]*2;  /* DCFEB 4V currents multiply by 2 */    
       }
   }
   *out << cgicc::br() << cgicc::b("ADC Channels") << std::endl;
@@ -3166,7 +3166,10 @@ if(D_hversion<=1)
   *out << cgicc::input().set("type","submit").set("value","DMB CONTROL Load Firmware") << std::endl ;
   sprintf(buf,"%d",dmb);
   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
-  *out << DMBFirmware_.toString();
+  if(C_hversion>1)
+     *out << MEX1DMBFirmware_.toString();
+  else
+     *out << DMBFirmware_.toString();
   *out << cgicc::form() << std::endl ;
   //
   *out << cgicc::br();
@@ -3176,7 +3179,10 @@ if(D_hversion<=1)
   *out << cgicc::input().set("type","submit").set("value","DMB VME Load Firmware") << std::endl ;
   sprintf(buf,"%d",dmb);
   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
-  *out << DMBVmeFirmware_.toString();
+  if(C_hversion>1)
+     *out << MEX1DMBVmeFirmware_.toString();
+  else
+     *out << DMBVmeFirmware_.toString();
   *out << cgicc::form() << std::endl ;
   //
   *out << cgicc::br();
@@ -3190,7 +3196,7 @@ if(D_hversion<=1)
   //
   *out << cgicc::br();
   //
-  if(thisDMB->CFEBversion()<=1)
+  if(C_hversion<=1)
   {
      std::string CFEBLoadFirmware = toolbox::toString("/%s/CFEBLoadFirmware",getApplicationDescriptor()->getURN().c_str());
      *out << cgicc::form().set("method","GET").set("action",CFEBLoadFirmware) << std::endl ;
@@ -3423,23 +3429,27 @@ void EmuPeripheralCrateConfig::DMBLoadFirmware(xgi::Input * in, xgi::Output * ou
   {
    
     int hversion=thisDMB->DMBversion();
+    int cversion=thisDMB->CFEBversion();
     if(hversion<=1)
     {
-//    thisCCB->hardReset();
-    //
-    std::cout << "DMBLoadFirmware in slot " << thisDMB->slot() << std::endl;
-    if (thisDMB->slot()==25) std::cout <<" Broadcast Loading the control FPGA insode one crate"<<std::endl;
-    //
-    ::sleep(1);
-    unsigned short int dword[2];
-    dword[0]=0;
-    //
-    char *outp=(char *)dword;
-    //char *name = DMBFirmware_.toString().c_str() ;
-    thisDMB->epromload(MPROM,DMBFirmware_.toString().c_str(),1,outp);  // load mprom
-    //
-    ::sleep(1);
-//    thisCCB->hardReset();
+    
+       std::cout << "DMBLoadFirmware in slot " << thisDMB->slot() << std::endl;
+       if (thisDMB->slot()==25) std::cout <<" Broadcast Loading the control FPGA insode one crate"<<std::endl;
+       //
+       ::sleep(1);
+       unsigned short int dword[2];
+       dword[0]=0;
+       //
+       char *outp=(char *)dword;
+       std::string fwname;
+       if(cversion>1)
+          fwname=MEX1DMBFirmware_.toString();
+       else
+          fwname=DMBFirmware_.toString();
+//       thisDMB->epromload(MPROM,fwname.c_str(),1,outp);  // load mprom
+       thisDMB->SVFLoad(CTRL_PROM, fwname.c_str(),0,1);
+       //
+       ::sleep(1);
     }
     else if(hversion==2)
     {
@@ -3601,41 +3611,30 @@ void EmuPeripheralCrateConfig::DMBVmeLoadFirmware(xgi::Input * in, xgi::Output *
   //
   DAQMB * thisDMB = dmbVector[dmb];
   //
-  int mindmb = dmb;
-  int maxdmb = dmb+1;
-  if (thisDMB->slot() == 25) { //if DMB slot = 25, loop over each dmb
-    mindmb = 0;
-    maxdmb = dmbVector.size()-1;
-  }
-  //
-//  thisCCB->hardReset();
-  //
-  for (dmb=mindmb; dmb<maxdmb; dmb++) {
-    //
-    thisDMB = dmbVector[dmb];
-    //
-    if (thisDMB) {
+  if (thisDMB) 
+  {
       //
       std::cout << "DMBVmeLoadFirmware in slot " << thisDMB->slot() << std::endl;
       //
-//      ::sleep(1);
-      //
+      int cversion=thisDMB->CFEBversion();
+      std::string fwname;
+      if(cversion>1)
+         fwname=MEX1DMBVmeFirmware_.toString();
+      else
+         fwname=DMBVmeFirmware_.toString();      
+/*
       unsigned short int dword[2];
       dword[0]=thisDMB->mbpromuser(0);
       dword[1]=0xdb00;
       // dword[0] = 0x01bd;
       // dword[1] = 0xff00;  to manually change the DMB ID.
       char * outp=(char *)dword;   // recast dword
-      thisDMB->epromload(VPROM,DMBVmeFirmware_.toString().c_str(),1,outp);  // load mprom
-      //Test the random trigger
-      //	thisDMB->set_rndmtrg_rate(-1);
-      //	thisDMB->set_rndmtrg_rate(-1);
-      //	thisDMB->toggle_rndmtrg_start();  
-    }
-    //
+      thisDMB->epromload(VPROM,fwname.c_str(),1,outp);  // load mprom
+*/
+      thisDMB->SVFLoad(VME_PROM, fwname.c_str(), 0, 1);
   }
+    //
   ::sleep(1);
-//  thisCCB->hardReset(); //disable this when testing the random_trigger
   //
   this->DMBUtils(in,out);
   //
@@ -3657,32 +3656,25 @@ void EmuPeripheralCrateConfig::DMBVmeLoadFirmwareEmergency(xgi::Input * in, xgi:
   //
   DAQMB * thisDMB = dmbVector[dmb];
   //
-  if (thisDMB->slot() == 25) { 
-    std::cout <<" The emergency load is NOT available for DMB slot25"<<std::endl;
-    std::cout <<" Please use individual slot loading !!!"<<std::endl;
-    return;
-  }
-  //
-//  thisCCB->hardReset();
-  if (thisDMB) {
+  if (thisDMB) 
+  {
     //
-    std::cout << "DMB Vme Load Firmware Emergency in slot " << thisDMB->slot() << std::endl;
-    LOG4CPLUS_INFO(getApplicationLogger(),"Started DMB Vme Load Firmware Emergency");
+      std::cout << "DMB Vme Load Firmware Emergency in slot " << thisDMB->slot() << std::endl;
     //
-    ::sleep(1);
-    //
-    unsigned short int dword[2];
+      int cversion=thisDMB->CFEBversion();
+      std::string fwname;
+      if(cversion>1)
+         fwname=MEX1DMBVmeFirmware_.toString();
+      else
+         fwname=DMBVmeFirmware_.toString();      
+      unsigned short int dword[2];
 
-    std::string crate=thisCrate->GetLabel();
-    int slot=thisDMB->slot();
-    dword[0]=0;
-    dword[1]=0xDB00;
-    char * outp=(char *)dword;  
-    thisDMB->epromload(RESET,DMBVmeFirmware_.toString().c_str(),1,outp);  // load mprom
+      dword[0]=0;
+      dword[1]=0xDB00;
+      char * outp=(char *)dword;  
+      thisDMB->epromload(RESET,fwname.c_str(),1,outp);  // load mprom
   }
   ::sleep(1);
-//  thisCCB->hardReset();
-  //
   this->DMBUtils(in,out);
   //
 }
@@ -4401,7 +4393,7 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
       if(nadcs==5 && cversion>1)  /* for chambers with 5 (x)DCFEEBs */ 
       {
          if(i>=vstart) fvalue[i] = fvalue[i]*1.03;  /* correction for all voltages */
-         else if(i<15 && (i%3)==0) fvalue[i] = fvalue[i]*2;  /* DCFEB 3V currents multiply by 2 */    
+         else if(i<15 && (i%3)==1) fvalue[i] = fvalue[i]*2;  /* DCFEB 4V currents multiply by 2 */    
       }
   }
   int chn2pos[8];

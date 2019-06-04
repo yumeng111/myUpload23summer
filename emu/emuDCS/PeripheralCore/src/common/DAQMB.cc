@@ -1072,7 +1072,7 @@ bool DAQMB::checkDAQMBXMLValues() {
        if(CFEBversion() <= 1) continue;
        cfebdone=(donebits>>cfeb_index)&1;
 
-       confmatch &= compareValues(cfeb_name[cfeb_index]+"FPGA Done", cfebdone, 1, print_errors);
+       if(DMBversion()>1) confmatch &= compareValues(cfeb_name[cfeb_index]+"FPGA Done", cfebdone, 1, print_errors);
        confmatch &= compareValues(cfeb_name[cfeb_index]+"FPGA ID code", febfpgaid(*cfebItr) & 0xFFFFFFF, 0x8424A093 & 0xFFFFFFF, print_errors);
        confmatch &= compareValues(cfeb_name[cfeb_index]+"firmware version", febfpgauser(*cfebItr), GetExpectedCFEBFirmwareTag(cfeb_index), print_errors);
 

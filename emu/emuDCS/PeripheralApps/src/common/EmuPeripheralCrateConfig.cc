@@ -63,19 +63,19 @@ const std::string ALCT_READBACK_FILENAME_ME12 = "alct384/alct384_verify";
 const std::string ALCT_FIRMWARE_FILENAME_ME13 = "alct_LX150_192/alct_LX150_192"; 
 const std::string ALCT_READBACK_FILENAME_ME13 = "alct192/alct192_verify";
 //
-const std::string ALCT_FIRMWARE_FILENAME_ME21 = "alct672/alct672";
+const std::string ALCT_FIRMWARE_FILENAME_ME21 = "alct_LX150T_672/alct_LX150T_672";
 const std::string ALCT_READBACK_FILENAME_ME21 = "alct672/alct672_verify";
 //
 const std::string ALCT_FIRMWARE_FILENAME_ME22 = "alct384/alct384";
 const std::string ALCT_READBACK_FILENAME_ME22 = "alct384/alct384_verify";
 //
-const std::string ALCT_FIRMWARE_FILENAME_ME31 = "alct576mirror/alct576mirror";
+const std::string ALCT_FIRMWARE_FILENAME_ME31 = "alct_LX150T_576mirror/alct_LX150T_576mirror";
 const std::string ALCT_READBACK_FILENAME_ME31 = "alct576mirror/alct576mirror_verify";
 //
 const std::string ALCT_FIRMWARE_FILENAME_ME32 = "alct384mirror/alct384mirror";
 const std::string ALCT_READBACK_FILENAME_ME32 = "alct384mirror/alct384mirror_verify";
 //
-const std::string ALCT_FIRMWARE_FILENAME_ME41 = "alct576mirror/alct576mirror";
+const std::string ALCT_FIRMWARE_FILENAME_ME41 = "alct_LX150T_576mirror/alct_LX150T_576mirror";
 const std::string ALCT_READBACK_FILENAME_ME41 = "alct576mirror/alct576mirror_verify";
 //
 const std::string ALCT_FIRMWARE_FILENAME_ME42 = "alct_s6_384mirror/alct_s6_384mirror";

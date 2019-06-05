@@ -484,9 +484,9 @@ void EmuPeripheralCrateMonitor::PublishEmuInfospace(int cycle)
                        if(myDmbs[boardid]) dversion=myDmbs[boardid]->DMBversion();
                      if(dversion<=1)
                      {  
-                       if(rdv >= 0xFFF) rdv = 0;
                        if(idx<40)
                        {
+                          if(rdv >= 0xFFF) rdv = 0;
                           (*dmbdata)[ii] = 10.0/4096.0*rdv;
 
                           // for Voltage & Current reading error handling
@@ -1686,7 +1686,8 @@ void EmuPeripheralCrateMonitor::DCSCrateLV(xgi::Input * in, xgi::Output * out )
     //
     for(unsigned int dmb=0; dmb<myVector.size(); dmb++) 
     {
-      int DHversion=myVector[dmb]->GetHardwareVersion();
+      int DHversion=myVector[dmb]->DMBversion();
+      int CHversion=myVector[dmb]->CFEBversion();
       *out <<cgicc::td();
       //
       if(dmb==0) {
@@ -1697,7 +1698,7 @@ void EmuPeripheralCrateMonitor::DCSCrateLV(xgi::Input * in, xgi::Output * out )
       val=(*dcsdata)[dmb*TOTAL_DCS_COUNTERS+19+((DHversion>=2)?6:0)+((DHversion>=2 && count>=15)?6:0)+count];
       if(val<0.)    
          *out << cgicc::span().set("style","color:magenta") << val << cgicc::span();
-      else if(DHversion<=1 && (val > lv_max[count] || val < lv_min[count]))
+      else if(CHversion<=1 && (val > lv_max[count] || val < lv_min[count]))
          *out << cgicc::span().set("style","color:red") << val << cgicc::span();
       else 
          *out << val;  
@@ -1775,7 +1776,7 @@ void EmuPeripheralCrateMonitor::DCSCrateCUR(xgi::Input * in, xgi::Output * out )
     //
     for(unsigned int dmb=0; dmb<myVector.size(); dmb++) 
     {
-      int DHversion=myVector[dmb]->GetHardwareVersion();
+      int DHversion=myVector[dmb]->DMBversion();
       *out <<cgicc::td();
       //
       if(dmb==0) {
@@ -1859,12 +1860,11 @@ void EmuPeripheralCrateMonitor::DCSCrateTemp(xgi::Input * in, xgi::Output * out 
   *out <<cgicc::td();
   //
   for(unsigned int dmb=0; dmb<myVector.size(); dmb++) {
-    if(myVector[dmb]->CFEBversion()>=2) upgraded=true;
+    if(myVector[dmb]->DMBversion()==2 || myVector[dmb]->DMBversion()==4) Total_Temps = 10;
     *out <<cgicc::td();
     *out << myVector[dmb]->GetLabel();
     *out <<cgicc::td();
   }
-  if(upgraded) Total_Temps += 2;
   //
   *out <<cgicc::tr();
   //
@@ -1879,7 +1879,12 @@ void EmuPeripheralCrateMonitor::DCSCrateTemp(xgi::Input * in, xgi::Output * out 
 	*out <<cgicc::td() << cgicc::td();
       }
       *out << std::setprecision(1) << std::fixed;
-      if(count==6)
+      if(count==0)
+      {
+         if(Total_Temps==10) val=(*dcfebdata)[dmb*TOTAL_DCFEB_MONS+210];  // for ME1/1 with ODMB  
+         else val=(*dcsdata)[dmb*TOTAL_DCS_COUNTERS+40]; // DMB temp
+      }
+      else if(count==6)
          val=(*dcsdata)[dmb*TOTAL_DCS_COUNTERS+56];  // ALCT temp is at position 56  
       else if(count==7)
          val=(*dcsdata)[dmb*TOTAL_DCS_COUNTERS+57];  // TMB temp is at position 57  
@@ -1887,13 +1892,9 @@ void EmuPeripheralCrateMonitor::DCSCrateTemp(xgi::Input * in, xgi::Output * out 
       {
          if(myVector[dmb]->CFEBversion()>=2)
          {
-            if(count==0) val=(*dcfebdata)[dmb*TOTAL_DCFEB_MONS+210];
-            else
-            {
-              int idx=count-1;
-              if(idx>6) idx -=2;
-              val=(*dcfebdata)[dmb*TOTAL_DCFEB_MONS+30*idx];
-            }
+            int idx=count-1;
+            if(idx>6) idx -=2;
+            val=(*dcfebdata)[dmb*TOTAL_DCFEB_MONS+30*idx];
          }
          else
          {

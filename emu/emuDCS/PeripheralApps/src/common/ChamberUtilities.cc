@@ -554,7 +554,7 @@ void ChamberUtilities::CFEBTiming_Configure(int * tof) {
   thisTMB->RedirectOutput(&std::cout);
   thisDMB->RedirectOutput(&std::cout);
   thisCCB_->RedirectOutput(&std::cout);
-  thisMPC->RedirectOutput(&std::cout);
+  if(thisMPC) thisMPC->RedirectOutput(&std::cout);
   //
   // Get initial values, so we can go back to them at the end if we want....
   // -> Hard Reset to put all the values from the userPROM onto the TMB
@@ -2638,7 +2638,7 @@ void ChamberUtilities::CFEBTiming_with_Posnegs(CFEBTiming_scanType scanType) {
   thisTMB->RedirectOutput(&std::cout);
   thisDMB->RedirectOutput(&std::cout);
   thisCCB_->RedirectOutput(&std::cout);
-  thisMPC->RedirectOutput(&std::cout);
+  if(thisMPC) thisMPC->RedirectOutput(&std::cout);
   //
   // Get initial values, so we can go back to them at the end if we want....  
   // -> Hard Reset to put all the values from the userPROM onto the TMB
@@ -3231,7 +3231,7 @@ void ChamberUtilities::CFEBTiming_with_Posnegs(CFEBTiming_scanType scanType) {
   thisTMB->RedirectOutput(MyOutput_);
   thisDMB->RedirectOutput(MyOutput_);
   thisCCB_->RedirectOutput(MyOutput_);
-  thisMPC->RedirectOutput(MyOutput_);
+  if(thisMPC) thisMPC->RedirectOutput(MyOutput_);
   //
   return;
 }
@@ -3424,7 +3424,7 @@ void ChamberUtilities::CFEBTiming_without_Posnegs(){
   thisTMB->RedirectOutput(&std::cout);
   thisDMB->RedirectOutput(&std::cout);
   thisCCB_->RedirectOutput(&std::cout);
-  thisMPC->RedirectOutput(&std::cout);
+  if(thisMPC) thisMPC->RedirectOutput(&std::cout);
   //
   // Set up for this test...
   // Get initial values:
@@ -3726,7 +3726,7 @@ void ChamberUtilities::CFEBTiming_without_Posnegs(){
   thisTMB->RedirectOutput(MyOutput_);
   thisDMB->RedirectOutput(MyOutput_);
   thisCCB_->RedirectOutput(MyOutput_);
-  thisMPC->RedirectOutput(MyOutput_);
+  if(thisMPC) thisMPC->RedirectOutput(MyOutput_);
   //
   return;
 }
@@ -5975,7 +5975,7 @@ int ChamberUtilities::FindWinner(){
   thisTMB->RedirectOutput(&std::cout);
   thisDMB->RedirectOutput(&std::cout);
   thisCCB_->RedirectOutput(&std::cout);
-  thisMPC->RedirectOutput(&std::cout);
+  if(thisMPC) thisMPC->RedirectOutput(&std::cout);
   //
   if (debug_) {
     std::cout << "******************" << std::endl;
@@ -6058,7 +6058,7 @@ int ChamberUtilities::FindWinner(){
   thisTMB->RedirectOutput(MyOutput_);
   thisDMB->RedirectOutput(MyOutput_);
   thisCCB_->RedirectOutput(MyOutput_);
-  thisMPC->RedirectOutput(MyOutput_);
+  if(thisMPC) thisMPC->RedirectOutput(MyOutput_);
   //
   return MPCdelay_;
 }
@@ -6143,7 +6143,7 @@ int ChamberUtilities::FindWinner(int npulses){
     //
     while (iterations < npulses) {
       //
-      thisMPC->SoftReset();
+      if(thisMPC) thisMPC->SoftReset();
       //
       PulseCFEB(-1,0xa);
       //
@@ -6152,10 +6152,10 @@ int ChamberUtilities::FindWinner(int npulses){
 	//thisMPC->firmwareVersion();
 	//(*MyOutput_) << std::endl;
 	//
-	thisMPC->read_fifos();
+	if(thisMPC) thisMPC->read_fifos();
 	(*MyOutput_) << std::endl;
 	//
-	thisMPC->read_csr0();
+	if(thisMPC) thisMPC->read_csr0();
 	//
 	thisTMB->DataSendMPC();
 	thisTMB->GetCounters();
@@ -6673,7 +6673,7 @@ int ChamberUtilities::FindTmbAndAlctL1aDelay(){
   thisTMB->RedirectOutput(&std::cout);
   thisDMB->RedirectOutput(&std::cout);
   thisCCB_->RedirectOutput(&std::cout);
-  thisMPC->RedirectOutput(&std::cout);
+  if(thisMPC) thisMPC->RedirectOutput(&std::cout);
   //
   int tmb_in_l1a_window[255] = {}; memset(tmb_in_l1a_window, 0, sizeof(tmb_in_l1a_window));
   int alct_in_l1a_window[255] = {}; memset(alct_in_l1a_window, 0, sizeof(alct_in_l1a_window));
@@ -6780,7 +6780,7 @@ int ChamberUtilities::FindTmbAndAlctL1aDelay(){
   thisTMB->RedirectOutput(MyOutput_);
   thisDMB->RedirectOutput(MyOutput_);
   thisCCB_->RedirectOutput(MyOutput_);
-  thisMPC->RedirectOutput(MyOutput_);
+  if(thisMPC) thisMPC->RedirectOutput(MyOutput_);
   //
   int return_value = (TMBL1aTiming_ < ALCTL1aDelay_ ? TMBL1aTiming_ : ALCTL1aDelay_);
   return return_value;
@@ -6820,7 +6820,7 @@ int ChamberUtilities::FindTMB_L1A_delay(int delay_min, int delay_max){
   thisTMB->RedirectOutput(&std::cout);
   thisDMB->RedirectOutput(&std::cout);
   thisCCB_->RedirectOutput(&std::cout);
-  thisMPC->RedirectOutput(&std::cout);
+  if(thisMPC) thisMPC->RedirectOutput(&std::cout);
   //
   int tmb_in_l1a_window[255] = {}; memset(tmb_in_l1a_window, 0, sizeof(tmb_in_l1a_window));
   //
@@ -6871,7 +6871,7 @@ int ChamberUtilities::FindTMB_L1A_delay(int delay_min, int delay_max){
   thisTMB->RedirectOutput(MyOutput_);
   thisDMB->RedirectOutput(MyOutput_);
   thisCCB_->RedirectOutput(MyOutput_);
-  thisMPC->RedirectOutput(MyOutput_);
+  if(thisMPC) thisMPC->RedirectOutput(MyOutput_);
   //
   return TMBL1aTiming_ ;
 }
@@ -6910,7 +6910,7 @@ int ChamberUtilities::FindALCT_L1A_delay(int minlimit, int maxlimit){
   thisTMB->RedirectOutput(&std::cout);
   thisDMB->RedirectOutput(&std::cout);
   thisCCB_->RedirectOutput(&std::cout);
-  thisMPC->RedirectOutput(&std::cout);
+  if(thisMPC) thisMPC->RedirectOutput(&std::cout);
   //
   int ALCT_l1a_accepted[256] = {}; memset(ALCT_l1a_accepted, 0, sizeof(ALCT_l1a_accepted));
   //
@@ -6971,7 +6971,7 @@ int ChamberUtilities::FindALCT_L1A_delay(int minlimit, int maxlimit){
   thisTMB->RedirectOutput(MyOutput_);
   thisDMB->RedirectOutput(MyOutput_);
   thisCCB_->RedirectOutput(MyOutput_);
-  thisMPC->RedirectOutput(MyOutput_);
+  if(thisMPC) thisMPC->RedirectOutput(MyOutput_);
   //
   return ALCTL1aDelay_;
 }
@@ -6996,7 +6996,7 @@ void ChamberUtilities::ALCTChamberScan(){
   thisTMB->RedirectOutput(&std::cout);
   thisDMB->RedirectOutput(&std::cout);
   thisCCB_->RedirectOutput(&std::cout);
-  thisMPC->RedirectOutput(&std::cout);
+  if(thisMPC) thisMPC->RedirectOutput(&std::cout);
   //
   // read initial values:
   int initial_alct_trigger_mode    = alct->GetTriggerMode();
@@ -7114,7 +7114,7 @@ void ChamberUtilities::ALCTChamberScan(){
   thisTMB->RedirectOutput(MyOutput_);
   thisDMB->RedirectOutput(MyOutput_);
   thisCCB_->RedirectOutput(MyOutput_);
-  thisMPC->RedirectOutput(MyOutput_);
+  if(thisMPC) thisMPC->RedirectOutput(MyOutput_);
   //
   return;
 }
@@ -7135,7 +7135,7 @@ void ChamberUtilities::CFEBChamberScan(){
   thisTMB->RedirectOutput(&std::cout);
   thisDMB->RedirectOutput(&std::cout);
   thisCCB_->RedirectOutput(&std::cout);
-  thisMPC->RedirectOutput(&std::cout);
+  if(thisMPC) thisMPC->RedirectOutput(&std::cout);
   //
   // Set up for this test...
   // Get initial values:
@@ -7266,7 +7266,7 @@ void ChamberUtilities::CFEBChamberScan(){
   thisTMB->RedirectOutput(MyOutput_);
   thisDMB->RedirectOutput(MyOutput_);
   thisCCB_->RedirectOutput(MyOutput_);
-  thisMPC->RedirectOutput(MyOutput_);
+  if(thisMPC) thisMPC->RedirectOutput(MyOutput_);
   //
   return;
 }
@@ -7300,7 +7300,7 @@ void ChamberUtilities::FindDistripHotChannels(){
   thisTMB->RedirectOutput(&std::cout);
   thisDMB->RedirectOutput(&std::cout);
   thisCCB_->RedirectOutput(&std::cout);
-  thisMPC->RedirectOutput(&std::cout);
+  if(thisMPC) thisMPC->RedirectOutput(&std::cout);
   //
   // Set up for this test...
   // Get initial values:
@@ -7462,7 +7462,7 @@ void ChamberUtilities::FindDistripHotChannels(){
   thisTMB->RedirectOutput(MyOutput_);
   thisDMB->RedirectOutput(MyOutput_);
   thisCCB_->RedirectOutput(MyOutput_);
-  thisMPC->RedirectOutput(MyOutput_);
+  if(thisMPC) thisMPC->RedirectOutput(MyOutput_);
   //
   return;
 }
@@ -7852,9 +7852,9 @@ void ChamberUtilities::InjectMPCData(){
       //
       std::cout << "mpc_delay_ =  " << std::dec << i << std::endl;
       //
-      thisMPC->SoftReset();
-      thisMPC->init();
-      thisMPC->read_fifos();
+      if(thisMPC) thisMPC->SoftReset();
+      if(thisMPC) thisMPC->init();
+      if(thisMPC) thisMPC->read_fifos();
       //
       thisTMB->InjectMPCData(1,0,0);
       //
@@ -7864,7 +7864,7 @@ void ChamberUtilities::InjectMPCData(){
       //
       thisCCB_->FireCCBMpcInjector();
       //
-      thisMPC->read_fifos();
+      if(thisMPC) thisMPC->read_fifos();
       //
       thisTMB->ReadRegister(0x86);
       thisTMB->ReadRegister(0x92);

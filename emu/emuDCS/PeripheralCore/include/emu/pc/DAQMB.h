@@ -437,6 +437,7 @@ public:
   inline std::string GetLabel(){return label_;}
   //
   void set_cal_tim_pulse(int ntim);
+  void dcfeb_set_pipeline_for_pulse(int itim);
   void set_cal_tim_inject(int ntim);
   //
   inline void SetLVDBMapping(int map) { lvdb_mapping_ = map; }

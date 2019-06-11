@@ -2899,11 +2899,12 @@ for(CFEBItr cfebItr = cfebs_.begin(); cfebItr != cfebs_.end(); ++cfebItr)
 
 
 void DAQMB::set_cal_tim_pulse(int itim)
-{
-  if(CFEBversion()<=1)
+{ 
+  // set pulse_delay, aka EXT_delay
+  if(DMBversion()<=1)
   {
     //
-    //(*MyOutput_)<< "setting pulse timing to " << itim << std::endl; 
+    (*MyOutput_)<< "setting pulse timing (EXT_delay) to " << itim << std::endl; 
     int cal_delay_bits = (calibration_LCT_delay_ & 0xF)
       | (calibration_l1acc_delay_ & 0x1F) << 4
       | (itim & 0x1F) << 9
@@ -2917,6 +2918,14 @@ void DAQMB::set_cal_tim_pulse(int itim)
     //
   }
   else
+  {
+    odmb_set_Ext_delay(itim);
+  }
+}
+
+void DAQMB::dcfeb_set_pipeline_for_pulse(int itim)
+{ 
+  if(CFEBversion()>1)
   {
      int depth;
      int tfine;
@@ -2938,21 +2947,26 @@ void DAQMB::set_cal_tim_pulse(int itim)
          udelay(100000);
      }     
   }
-
 }
-
 
 void DAQMB::set_cal_tim_inject(int ntim)
 {
-  (*MyOutput_)<< "setting inject timing to " << ntim << std::endl;
-  int cal_delay_bits = (calibration_LCT_delay_ & 0xF)
-    | (calibration_l1acc_delay_ & 0x1F) << 4
-    | (pulse_delay_ & 0x1F) << 9
-    | (inject_delay_ & 0x1F) << 14;
-  int dword;
-  dword=(cal_delay_bits)&0x3fff;
-  dword=dword|((ntim&0x1f)<<14);
-  setcaldelay(dword);
+  if(DMBversion()<=1)
+  {
+     (*MyOutput_)<< "setting inject timing (INJ_delay) to " << ntim << std::endl;
+     int cal_delay_bits = (calibration_LCT_delay_ & 0xF)
+       | (calibration_l1acc_delay_ & 0x1F) << 4
+       | (pulse_delay_ & 0x1F) << 9
+       | (inject_delay_ & 0x1F) << 14;
+     int dword;
+     dword=(cal_delay_bits)&0x3fff;
+     dword=dword|((ntim&0x1f)<<14);
+     setcaldelay(dword);
+  }
+  else
+  {
+    odmb_set_Inj_delay(ntim);
+  }
 }
   
 

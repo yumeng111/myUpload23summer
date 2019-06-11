@@ -3627,7 +3627,7 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
             V7=(*dmbdata)[j*TOTAL_DCS_COUNTERS+((dversion<2)?38:50)];
             if(V7<3.0) ch_state |= 512;
             /* Digital power */
-            V7=(*dmbdata)[j*TOTAL_DCS_COUNTERS+((dversion<2)?49:51)];
+            V7=(*dmbdata)[j*TOTAL_DCS_COUNTERS+((dversion<2)?39:51)];
             if(V7<3.0) ch_state |= 1024;
           } 
           else

@@ -578,7 +578,7 @@ DAQMB::DAQMB(Crate * theCrate, Chamber * theChamber, int newslot):
   pul_dac_set_(1.0), inj_dac_set_(1.0),
   set_comp_thresh_(0.03),
   comp_timing_(1), comp_mode_(2), pre_block_end_(7),
-  cable_delay_(0), crate_id_(0xfe), toogle_bxn_(1), ALCT_dav_delay_(2),
+  cable_delay_(0), crate_id_(0xfe), ALCT_dav_delay_(2),
   killflatclk_(5183),
   l1a_lct_counter_(-1), cfeb_dav_counter_(-1), 
   tmb_dav_counter_(-1), alct_dav_counter_(-1),
@@ -715,7 +715,6 @@ std::ostream & operator<<(std::ostream & os, DAQMB & daqmb) {
      << "alct_dav_counter_ " << daqmb.alct_dav_counter_ << std::endl
      << "cable_delay_ "<<daqmb.cable_delay_ << std::endl
      << "crate_id_ " << daqmb.crate_id_ << std::endl
-     << "toogle_bxn_ " << daqmb.toogle_bxn_ << std::endl
      << "xlatency, cfebclk etc " << daqmb.killflatclk_ << std::endl;
   return os;
 }
@@ -733,8 +732,6 @@ void DAQMB::configure(int c)
   //   ::sleep(2);
   //   calctrl_fifomrst();
   //   ::sleep(1);
-   (*MyOutput_) << "Toogle bxn " << crate_id_ << std::endl ;
-   if (toogle_bxn_) ToogleBXN();
 
    //
    //(*MyOutput_) << std::endl;
@@ -5893,22 +5890,6 @@ void DAQMB::SFMWriteProtect(){
   (*MyOutput_) << " SFM Write Protect" << std::endl;
   cmd[0]=VTX2_USR1; 
   sndbuf[0]=0x1e; 
-  devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX2_USR1;
-  sndbuf[0]=NOOP;
-  devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
-  cmd[0]=VTX2_BYPASS;
-  devdo(MCTRL,6,cmd,0,sndbuf,rcvbuf,2);
-  //
-  }
-}
-//
-void DAQMB::ToogleBXN(){
-  if(DMBversion()<=1)
-  {
-  //
-  cmd[0]=VTX2_USR1; 
-  sndbuf[0]=34; 
   devdo(MCTRL,6,cmd,8,sndbuf,rcvbuf,0);
   cmd[0]=VTX2_USR1;
   sndbuf[0]=NOOP;
@@ -12871,6 +12852,16 @@ void DAQMB::xdcfeb_print_vttx(CFEB & cfeb)
     }
 }                     
 
+int DAQMB::dcfeb_read_counter(CFEB & cfeb, int counter)
+{
+    if(CFEBversion() <=1 || counter <=0 || counter>5) return 0;
+    int cmd[6]={0, READ_L1A_COUNT, READ_L1A_MATCH, READ_INJPLS, READ_EXTPLS, READ_BC0};
+    int csize[6]={0, 24, 12, 12, 12, 12};
+    int data=0;
+    char buf[4]={0,0,0,0};
+    dcfeb_hub(cfeb, cmd[counter], csize[counter], buf, (char *)&data, NOW|READ_YES);
+    return data;
+}
 
 } // namespace emu::pc
 } // namespace emu

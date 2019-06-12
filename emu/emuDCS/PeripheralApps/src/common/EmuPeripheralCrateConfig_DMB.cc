@@ -3326,7 +3326,7 @@ else if(D_hversion==2)
      *out << FirmwareDir_+"odmb/me11_odmb.mcs";
      *out << cgicc::form() << std::endl ;
      //
-     *out << cgicc::br();
+     *out << cgicc::br() <<cgicc::hr() << std::endl;
 }
 	//
   std::string CCBHardResetFromDMBPage = toolbox::toString("/%s/CCBHardResetFromDMBPage",getApplicationDescriptor()->getURN().c_str());
@@ -4136,6 +4136,13 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
   std::string LVMBStatus =
       toolbox::toString("/%s/LVMBStatus?dmb=%d",getApplicationDescriptor()->getURN().c_str(),dmb);
   *out << cgicc::a("LVMB Status").set("href",LVMBStatus) << std::endl;
+  if(cversion==2 || cversion==3 )
+  {
+     std::string DCFEBCount =
+         toolbox::toString("/%s/DCFEBCounters?dmb=%d",getApplicationDescriptor()->getURN().c_str(),dmb);
+     *out << cgicc::a("DCFEB Counters").set("href",DCFEBCount) << std::endl;
+
+  }
   if(hversion==2 || hversion==4 || hversion==5 || hversion==7 || hversion==8)
   {
      std::string ODMBCount =
@@ -5155,6 +5162,74 @@ void EmuPeripheralCrateConfig::RestoreCfebJtagIdle(xgi::Input * in, xgi::Output 
     //
   }
   
+void EmuPeripheralCrateConfig::DCFEBCounters(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  Chamber * thisChamber = chamberVector[dmb];
+  typedef std::vector<CFEB>::iterator CFEBItr;
+  //
+  char Name[100];
+  sprintf(Name,"%s DCFEB Counters, crate=%s, slot=%d",
+	  (thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),thisDMB->slot());
+  //
+  MyHeader(in,out,Name);
+  //
+  if(thisDMB)
+  {
+     int hversion=thisDMB->DMBversion();
+     int cversion=thisDMB->CFEBversion();
+     if (cversion<2) return;
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     std::vector<std::string> parname;
+     parname.clear();
+     parname.push_back("Counter");
+     parname.push_back("L1A");
+     parname.push_back("L1A Match");
+     parname.push_back("INJ Pulse");
+     parname.push_back("EXT Pulse");
+     parname.push_back("BC0");
+
+     *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+     *out << std::endl;
+     //
+     *out << cgicc::legend("DCFEB Counters").set("style","color:blue") << std::endl ;
+     *out << cgicc::table().set("border","1");
+     for (int par=0; par<parname.size(); par++)
+     {
+       *out << cgicc::td();
+       *out << parname[par];
+       *out << cgicc::td();
+
+       for(CFEBItr cfebItr = cfebs.begin(); cfebItr != cfebs.end(); ++cfebItr)
+       {
+         *out << cgicc::td();
+         int i = 1 + cfebItr->number();
+         if(par==0)
+            *out << "CFEB " << i;
+         else
+            *out << thisDMB->dcfeb_read_counter(*cfebItr, par);
+         *out << cgicc::td();
+       }
+       *out << cgicc::tr() << cgicc::tr() << std::endl;
+     }
+     *out << cgicc::table() << cgicc::fieldset() << std::endl;
+  }
+}
+    
 void EmuPeripheralCrateConfig::ODMBCounters(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {
   //
@@ -5185,7 +5260,7 @@ void EmuPeripheralCrateConfig::ODMBCounters(xgi::Input * in, xgi::Output * out )
   int hversion=thisDMB->DMBversion();
   int indx, cfebs;
   //
-  if (hversion!=2) return;
+  if (hversion<2) return;
   thisDMB->GetCounters();
 
   cfebs=9;

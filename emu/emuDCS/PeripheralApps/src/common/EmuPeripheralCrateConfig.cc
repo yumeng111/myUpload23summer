@@ -394,6 +394,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBProgramEpromXilinx, "DCFEBProgramEpromXilinx");
   xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBProgramEpromAll, "DCFEBProgramEpromAll");
   xgi::bind(this,&EmuPeripheralCrateConfig::LVMBStatus, "LVMBStatus");
+  xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBCounters, "DCFEBCounters");
   xgi::bind(this,&EmuPeripheralCrateConfig::ODMBCounters, "ODMBCounters");
   xgi::bind(this,&EmuPeripheralCrateConfig::ODMBLoadFirmwarePoll, "ODMBLoadFirmwarePoll");
   xgi::bind(this,&EmuPeripheralCrateConfig::RestoreCfebJtagIdle, "RestoreCfebJtagIdle");

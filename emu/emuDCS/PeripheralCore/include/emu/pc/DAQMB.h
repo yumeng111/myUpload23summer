@@ -358,10 +358,6 @@ public:
   void ProgramSFM();
   void WriteSFM();
   void PrintCounters();
-  //  
-  // DAQMB trigger primitives
-  //
-  void ToogleBXN();
 
 // DAQMB trigger primitives
 
@@ -966,6 +962,7 @@ public:
   void xdcfeb_read_vttx(CFEB & cfeb, char *data_out);
   void xdcfeb_write_vttx(CFEB & cfeb, int dev, int reg, int value);
   void xdcfeb_print_vttx(CFEB & cfeb);
+  int dcfeb_read_counter(CFEB & cfeb, int counter);
 
   // 2018-08-15 Liu, moved the following ODMB constats into Public block
   // 
@@ -1121,7 +1118,6 @@ public:
   int pre_block_end_;
   int cable_delay_;
   int crate_id_;
-  int toogle_bxn_;
   int ALCT_dav_delay_;
   //
   int CableDelay_, CrateID_, CfebClkDelay_, XLatency_, XFineLatency_,KillInput_,killflatclk_;

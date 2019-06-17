@@ -40,6 +40,7 @@ Sources=\
 
 IncludeDirs = \
 	$(BUILD_HOME)/emu/base/include \
+	$(BUILD_HOME)/emu/soap/include \
 	$(BUILD_HOME)/emu/emuDCS/FEDCore/include \
 	$(BUILD_HOME)/emu/emuDCS/FEDUtils/include \
 	$(BUILD_HOME)/emu/emuDCS/FEDApps/include \

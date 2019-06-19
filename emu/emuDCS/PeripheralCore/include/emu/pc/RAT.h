@@ -154,7 +154,7 @@ class RAT : public EmuLogger {
   void PrintRatUser1();
   //
   // Methods used to program RAT prom:
-  int SVFLoad(int *, const char *, int);
+  int svfLoad(const char * arg1, int arg2, int arg3);
   //
 protected:
   //

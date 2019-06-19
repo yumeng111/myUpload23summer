@@ -2475,7 +2475,7 @@ void EmuPeripheralCrateConfig::DCFEBProgramEpromSVF(xgi::Input * in, xgi::Output
      std::cout << "Use SVF file: " << svffile << std::endl;
 
      thisDMB->write_cfeb_selector(cfebs[icfeb].SelectorBit());
-     thisDMB->SVFLoad(5, svffile.c_str(), 0 ,0);
+     thisDMB->SVFLoad(CFEB_PROM, svffile.c_str(), 0 ,0);
      
      std::cout << getLocalDateTime() << " CFEB program EPROM finished." << std::endl;
   }
@@ -2487,7 +2487,7 @@ void EmuPeripheralCrateConfig::DCFEBProgramEpromSVF(xgi::Input * in, xgi::Output
      std::cout << "Use SVF file: " << svffile << std::endl;
 
      thisDMB->write_cfeb_selector(cfebs[icfeb].SelectorBit());
-     thisDMB->SVFLoad(1, svffile.c_str(), 0 ,0);
+     thisDMB->SVFLoad(D_CFEB, svffile.c_str(), 0 ,0);
      
      std::cout << getLocalDateTime() << " DCFEB program EPROM finished." << std::endl;
   }
@@ -2535,13 +2535,13 @@ void EmuPeripheralCrateConfig::DCFEBProgramEpromXilinx(xgi::Input * in, xgi::Out
     std::cout << "Step #2, erasing EPROM..."  << std::endl;    
     ::sleep(2);
     thisDMB->write_cfeb_selector(cfebs[icfeb].SelectorBit());
-    thisDMB->SVFLoad(1, svffile1.c_str(), 0, 1);
+    thisDMB->SVFLoad(D_CFEB, svffile1.c_str(), 0, 1);
     std::cout << "Step #3, programming EPROM with content from MCS file..."  << std::endl;
     thisDMB->dcfeb_program_eprom_Xilinx(cfebs[icfeb], mcsfile.c_str());
     std::cout << "Done!"  << std::endl;  
     std::cout << "Step #4, finalizing..." << std::endl;
     thisDMB->write_cfeb_selector(cfebs[icfeb].SelectorBit());
-    thisDMB->SVFLoad(1, svffile2.c_str(), 0, 1);
+    thisDMB->SVFLoad(D_CFEB, svffile2.c_str(), 0, 1);
     std::cout << getLocalDateTime() << " Finished loading firmware to EPROM." << std::endl;
   //
   this->CFEBUtils(in,out);

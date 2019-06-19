@@ -4475,29 +4475,6 @@ int ALCTController::UserIndexToHardwareIndex_(int index) {
 //
 // Methods used to program ALCT prom: 
 //
-int ALCTController::SVFLoad(int * arg1, const char * arg2, int arg3) { 
-  //
-  // in concert with the return codes for CheckFirmwareConfiguration():
-  // ALCTController::SVFLoad return codes:
-  //  >= 0 = number of errors detected from EMUjtag::SVFLoad during the loading of ALCT firmware
-  //    -1 = ALCT firmware NOT loaded due to database check failure
-  //  < -1 = Number of database errors - 1.  Yell at expert.
-  //
-  int check_value = CheckFirmwareConfiguration();
-  //
-  if ( check_value ==  1 ||
-       check_value == -1 ) {
-    //
-    return tmb_->SVFLoad(arg1,arg2,arg3); 
-    //
-  } 
-  //
-  check_value = -check_value - 1;
-  //
-  return check_value;
-  //
-}
-//
 void ALCTController::ProgramALCTProms() { 
   //
   int check_value = CheckFirmwareConfiguration();

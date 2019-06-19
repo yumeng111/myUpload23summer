@@ -926,16 +926,16 @@ void EmuPeripheralCrateBroadcast::LoadRATFirmware(xgi::Input * in, xgi::Output *
   std::cout <<" Loading all RATs with firmware from " << RATFirmwareFile_ << std::endl;
   //
   int debugMode(0);
-  int jch(7);
+  int verify(0);
   //
   if ( broadcastTMB ){
     broadcastTMB->disableAllClocks();
-    broadcastRAT->SVFLoad(&jch,RATFirmwareFile_.c_str(),debugMode);
+    broadcastRAT->svfLoad(RATFirmwareFile_.c_str(),debugMode,verify);
     broadcastTMB->enableAllClocks();
   }
   if ( broadcastOTMB ){
     broadcastOTMB->disableAllClocks();
-    broadcastRAT->SVFLoad(&jch,RATFirmwareFile_.c_str(),debugMode);
+    broadcastRAT->svfLoad(RATFirmwareFile_.c_str(),debugMode,verify);
     broadcastOTMB->enableAllClocks();
   }
   //

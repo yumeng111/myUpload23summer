@@ -12364,6 +12364,7 @@ void TMB::new_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chain)
        lowb=jchain & 3;  
        highb=0; 
    }
+   else if(jchain==3) lowb=1;
    unsigned long vmeaddr = 0x10;
    unsigned long regV = (lowb << 3) + (highb << 5);
    if(useboot)

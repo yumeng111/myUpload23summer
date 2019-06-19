@@ -690,7 +690,6 @@ class ALCTController : public EmuLogger
   // Methods used to program ALCT prom:
   int CheckFirmwareConfiguration();
   void ProgramALCTProms();
-  int SVFLoad(int *, const char *, int);  //this method is to be deprecated...
   //
   // new JTAG routines for new ALCT Mezzanines
   void fpga_scan(int reg, char *snd,int cnt,char *rcv,int ird);

@@ -835,9 +835,10 @@ int RAT::ReadRATtCritHSink() {
 //
 // Methods used to program RAT prom: 
 //
-int RAT::SVFLoad(int * arg1, const char * arg2, int arg3) { 
+int RAT::svfLoad(const char * arg1, int arg2, int arg3) { 
   //
-  return tmb_->SVFLoad(arg1,arg2,arg3); 
+    tmb_->setup_jtag(ChainRat);
+    return tmb_->svfLoad(0,  arg1, arg2, arg3); 
 }
 //
 void RAT::SetExpectedRatFirmwareDay(int day) { 

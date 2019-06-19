@@ -471,6 +471,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBBPIPromBlockErase, "TMBBPIPromBlockErase");
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBBPIPromBlockLock, "TMBBPIPromBlockLock");
   xgi::bind(this,&EmuPeripheralCrateConfig::ALCTReadFirmware, "ALCTReadFirmware");
+  xgi::bind(this,&EmuPeripheralCrateConfig::RATReadFirmware, "RATReadFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::LoadALCTSlowFirmware, "LoadALCTSlowFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::LoadSpartan6ALCTFirmware, "LoadSpartan6ALCTFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::LoadVirtex6TMBFirmware, "LoadVirtex6TMBFirmware");
@@ -10895,6 +10896,16 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::form() ;
   *out << cgicc::td();
   //
+  //
+  *out << cgicc::td().set("ALIGN","left");
+  std::string RatreadFirmware = toolbox::toString("/%s/RATReadFirmware",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",RatreadFirmware) ;
+  *out << cgicc::input().set("type","submit").set("value","Read back RAT firmware") ;
+  sprintf(buf,"%d",tmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+  *out << cgicc::form() ;
+  *out << cgicc::td();
+  //
   //////////////////////////////////////////////
   //
   *out << cgicc::tr();
@@ -11501,6 +11512,50 @@ void EmuPeripheralCrateConfig::ALCTReadFirmware(xgi::Input * in, xgi::Output * o
        thisTMB->setup_jtag(ChainAlctFastMezz);
        thisTMB->read_prom(jtagfile.c_str(),mcsfile.c_str());
     }
+    // Put CCB back into DLOG mode to listen to TTC commands...
+    thisCCB->setCCBMode(CCB::DLOG);
+  }
+  //
+  this->TMBUtils(in,out);
+}
+//
+void EmuPeripheralCrateConfig::RATReadFirmware(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name2 = cgi.getElement("tmb");
+  int tmb;
+  if(name2 != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "Select TMB " << tmb << std::endl;
+  } else {
+    std::cout << "No TMB" << std::endl ;
+    tmb=-1;
+  }
+  //
+  TMB * thisTMB=NULL;
+  if(tmb>=0 && (unsigned)tmb<tmbVector.size())  thisTMB = tmbVector[tmb];
+  if(thisTMB)
+  {
+    std::string chambername= thisTMB->GetLabel();
+    unsigned t = chambername.find('/');
+    unsigned s = chambername.size();
+    while(t<=s )
+    {
+        chambername.replace(t,1,"_");
+        t = chambername.find('/');
+    }
+    std::string mcsfile="/tmp/RAT_"+ chambername + ".mcs";
+    std::string jtagfile;
+    jtagfile=XMLDIR+"/rat.vrf";
+    // Put CCB in FPGA mode to make the CCB ignore TTC commands (such as hard reset)
+    thisCCB->setCCBMode(CCB::VMEFPGA);
+      //
+    std::cout  << getLocalDateTime() << " Reading back RAT firmware from slot " << thisTMB->slot() << std::endl;
+      //
+       thisTMB->setup_jtag(ChainRat);
+       thisTMB->read_prom(jtagfile.c_str(),mcsfile.c_str());
     // Put CCB back into DLOG mode to listen to TTC commands...
     thisCCB->setCCBMode(CCB::DLOG);
   }
@@ -12326,11 +12381,6 @@ void EmuPeripheralCrateConfig::LoadALCTFirmware(xgi::Input * in, xgi::Output * o
   thisTMB->ClearXsvfFilename();
   number_of_alct_firmware_errors[tmb] = thisTMB->GetNumberOfVerifyErrors();
   //
-  // programming with svf file to be deprecated, since it cannot verify...
-  //  int debugMode(0);
-  //  int jch(3);
-  //  int status = thisALCT->SVFLoad(&jch,ALCTFirmware_[tmb].toString().c_str(),debugMode);
-  //
   thisTMB->enableAllClocks();
   //
   if (number_of_alct_firmware_errors[tmb] >= 0){
@@ -12412,11 +12462,6 @@ void EmuPeripheralCrateConfig::LoadCrateALCTFirmware(xgi::Input * in, xgi::Outpu
     thisTMB->ClearXsvfFilename();
     number_of_alct_firmware_errors[i] = thisTMB->GetNumberOfVerifyErrors();
     //
-    // programming with svf file to be deprecated, since it cannot verify...
-    //    int debugMode(0);
-    //    int jch(3);
-    //    int status = thisALCT->SVFLoad(&jch,ALCTFirmware_[i].toString().c_str(),debugMode);
-    //
     thisTMB->enableAllClocks();
     //
     if (number_of_alct_firmware_errors[i] >= 0){
@@ -12464,8 +12509,8 @@ void EmuPeripheralCrateConfig::LoadRATFirmware(xgi::Input * in, xgi::Output * ou
   thisTMB->disableAllClocks();
   //
   int debugMode(0);
-  int jch(7);
-  int status = rat->SVFLoad(&jch,RATFirmware_[tmb].toString().c_str(),debugMode);
+  int verify(0);
+  int status = rat->svfLoad(RATFirmware_[tmb].toString().c_str(),debugMode,verify);
   //
   thisTMB->enableAllClocks();
   //
@@ -12510,8 +12555,8 @@ void EmuPeripheralCrateConfig::EraseRATFirmware(xgi::Input * in, xgi::Output * o
   thisTMB->disableAllClocks();
   //
   int debugMode(0);
-  int jch(7);
-  int status = rat->SVFLoad(&jch,RATFirmwareErase_.toString().c_str(),debugMode);
+  int verify(0);
+  int status = rat->svfLoad(RATFirmwareErase_.toString().c_str(), debugMode, verify);
   //
   thisTMB->enableAllClocks();
   //

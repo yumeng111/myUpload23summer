@@ -139,14 +139,6 @@ public:
   //
   inline int GetNumberOfVerifyErrors() { return verify_error_; }
   //
-  //
-  ////////////////////////////////////////////////////////////////////////
-  // SVF programming:
-  ////////////////////////////////////////////////////////////////////////
-  void Parse(char *buf,int *Count,char **Word);
-  int  SVFLoad(int*, const char *, int);
-  //
-  //
 protected:
   //
   inline void SetNumberOfChipsAlctFastMezz(int number_of_chips) { NumberChipsAlctFastMezz = number_of_chips; }

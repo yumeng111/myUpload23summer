@@ -520,6 +520,7 @@ private:
   void TMBBPIPromBlockLock(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   
   void ALCTReadFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void RATReadFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void LoadALCTSlowFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void LoadVirtex6TMBFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);  
   void LoadVirtex6TMBFPGA(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);  

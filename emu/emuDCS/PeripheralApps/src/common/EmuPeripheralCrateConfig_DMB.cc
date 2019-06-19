@@ -2630,11 +2630,6 @@ void EmuPeripheralCrateConfig::LVMBStatus(xgi::Input * in, xgi::Output * out )
   //
   MyHeader(in,out,Name);
   //
-  *out << cgicc::fieldset().set("style","font-size: 12pt; font-family: arial;");
-  *out << std::endl;
-  //
-  *out << cgicc::legend("LVMB Readback").set("style","color:blue") << std::endl ;
-  //
   char buf[2000], sbuf[100];
   int hversion=thisDMB->DMBversion();
   int cversion=thisDMB->CFEBversion();
@@ -2648,6 +2643,11 @@ void EmuPeripheralCrateConfig::LVMBStatus(xgi::Input * in, xgi::Output * out )
      *out << "ERROR: Failed to read LVMB!!!" << cgicc::br() << std::endl;
      return;
   }
+  *out << cgicc::fieldset().set("style","font-size: 12pt; font-family: arial;");
+  *out << std::endl;
+  //
+  *out << cgicc::legend("LVMB Readback").set("style","color:blue") << std::endl ;
+  //
   nadcs=5;
   cfebs=5;
   vstart=19;

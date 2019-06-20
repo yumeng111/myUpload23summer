@@ -1431,7 +1431,7 @@ void emu::step::Test::configure_17(){ // OK
       else{
 	tmb->DisableALCTInputs(); // Asserts alct_clear (blanking ALCT received data)
 	tmb->DisableCLCTInputs(); // Sets all 5 CFEBs' bits in enableCLCTInputs to 0. TODO: 7 DCFEBs
-	tmb->EnableClctExtTrig(); // Allow CLCT external triggers from CCB
+	tmb->EnableClctExtTrig(); // Seems to have no effect. (?!) Only TMB/@clct_ext_pretrig_enable in the XML does...
       }
 
       setUpDMB( *dmb );

@@ -1924,7 +1924,8 @@ void DAQMB::dcfeb_buck_shift_comp_bc(int nstrip)
   ::usleep(200);
 }
 
-void DAQMB::chan2shift(int chan[5][6][16], bool debug)
+// void DAQMB::chan2shift(int chan[5][6][16], bool debug)
+void DAQMB::chan2shift(int chan[][6][16], bool debug)
 {
    
    int i,j;
@@ -7125,8 +7126,12 @@ void DAQMB::trighalfx(int ihalf)
     }
     for(i=0;i<6;i+=2)
     {
+      // straight
 		hs[i]=ihalf;
 		hs[i+1]=ihalf;
+      // staggered
+		// hs[i]=ihalf+1;
+		// hs[i+1]=ihalf;
     }
     for(crd=0;crd<7;crd++)
     {

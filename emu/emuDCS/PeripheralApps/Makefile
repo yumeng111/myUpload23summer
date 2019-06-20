@@ -36,7 +36,9 @@ Sources=\
         EmuPeripheralCrateService.cc \
         EmuCompareMcsFiles.cc \
         EmuEndcapConfigWrapper.cc \
-	LocalDAQInterface.cc 
+	LocalDAQInterface.cc \
+	FEDInterface.cc \
+	PipelineDepthScan.cc
 
 IncludeDirs = \
         $(XDAQ_ROOT)/include \

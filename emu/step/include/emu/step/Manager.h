@@ -73,6 +73,7 @@ namespace emu { namespace step {
       xdata::String specialVMESettingsFileName_;
       xdata::String analysisScriptName_; ///< full path to the analysis script
       xdata::String analysisExeName_; ///< full path to the analysis executable
+      xdata::String currentRunType_; ///< the type of the local run being taken
       emu::step::Configuration* configuration_;  ///< configuration
       xdata::Vector<xdata::String> crateIds_;
       xdata::Vector<xdata::String> testSequence_;

@@ -19,9 +19,11 @@ namespace emu { namespace pc {
     public:
       LocalDAQInterface( xdaq::Application *parent );
       ~LocalDAQInterface();
-      void takeRun( string type, unsigned int durationInSec );
-      bool waitForDAQToExecute( const string command, const uint64_t seconds );      
+      void startRun( string type );
+      void endRun();
+      bool successfullyExecuted( const string command, const uint64_t timeoutInSeconds );
       void updateDataFileNames();
+      set<string> getDataFileNames(){ return dataFileNames_; }
     private:
       xdaq::Application *parent_;
       emu::soap::Messenger *messenger_;

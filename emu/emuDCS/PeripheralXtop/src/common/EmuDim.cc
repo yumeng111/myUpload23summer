@@ -833,14 +833,21 @@ void EmuDim::CheckCommand()
       else if(cmnd.substr(0,15)=="TURN_CHAMBER_OFF")
       {
          int cr=CrateToNumber(cmnd.substr(16).c_str());
-         if(cr>=0 && cr<TOTAL_CRATES) crate_state[cr] = -1;
-         BlueLoader->reload(blue_info+"?CHAMBEROFF="+crate_name[cr]);
+         if(cr>=0 && cr<TOTAL_CRATES)
+         {
+            crate_state[cr] = -1;
+            BlueLoader->reload(blue_info+"?CHAMBEROFF="+crate_name[cr]);
+         }
       }
       else if(cmnd.substr(0,15)=="CRATE_POWER_OFF")
       {
          int cr=CrateToNumber(cmnd.substr(16).c_str());
-         if(cr>=0 && cr<TOTAL_CRATES) crate_state[cr] = -1;
-         XmasLoader->reload(xmas_info+"?CRATEOFF="+crate_name[cr]);
+         if(cr>=0 && cr<TOTAL_CRATES)
+         { 
+            crate_state[cr] = -1;
+            XmasLoader->reload(xmas_info+"?CRATEOFF="+crate_name[cr]);
+            BlueLoader->reload(blue_info+"?CRATEOFF="+crate_name[cr]);
+         }
       }
       else if(cmnd.substr(0,13)=="PREPARE_POWER")
       {

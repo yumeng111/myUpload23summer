@@ -26,7 +26,8 @@ public:
   inline int GetStatus() { return states[0]; }
   inline int GetTime() { return states[1]; }
   inline int GetCrate() { return states[2] & 0xFF; }
-  inline int GetSlot() { return (states[2]>>8) & 0xFF; }
+  inline int GetSlot() { return (states[2]>>8) & 0x3F; }
+  inline int GetLVDB() { return (states[2]>>14) & 3; }
   inline int GetType() { return type_; }
   //
   bool GetDimLV(int hint, LV_1_DimBroker *dim_lv);

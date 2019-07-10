@@ -216,6 +216,10 @@ bool Chamber::GetDimLV2(int hint, LV_2_DimBroker *dim_lv )
 {
    if(type_<=1) return false;
 
+   int lvdbmap[4][8]={{0,1,2,3,4,5,6,7},
+                      {5,6,4,0,3,2,1,7},
+                      {3,2,1,0,4,5,6,7},
+                      {0,1,2,3,4,5,6,7}};
    int *info, this_st;
    float *data;
    //   float V33, V50, V60, C33, C50, C60, V18, V55, V56, C18, C55, C56;
@@ -232,12 +236,26 @@ bool Chamber::GetDimLV2(int hint, LV_2_DimBroker *dim_lv )
 
    for(int i=0; i<DCFEB_NUMBER; i++)
    {
-      dim_lv->dcfeb.v30[i] = data[25+3*i];
-      dim_lv->dcfeb.v40[i] = data[26+3*i];
-      dim_lv->dcfeb.v55[i] = data[27+3*i];
-      dim_lv->dcfeb.c30[i] = data[ 0+3*i];
-      dim_lv->dcfeb.c40[i] = data[ 1+3*i];
-      dim_lv->dcfeb.c55[i] = data[ 2+3*i];
+      int m=(type_==2)?GetLVDB():0;
+      if(type_==2 || (type_==3 && i<5))
+      {
+         dim_lv->dcfeb.v30[i] = data[25+3*lvdbmap[m][i]];
+         dim_lv->dcfeb.v40[i] = data[26+3*lvdbmap[m][i]];
+         dim_lv->dcfeb.v55[i] = data[27+3*lvdbmap[m][i]];
+         dim_lv->dcfeb.c30[i] = data[ 0+3*lvdbmap[m][i]];
+         dim_lv->dcfeb.c40[i] = data[ 1+3*lvdbmap[m][i]];
+         dim_lv->dcfeb.c55[i] = data[ 2+3*lvdbmap[m][i]];
+      }
+      else
+      {
+         // fake data on non-existent DCFEBs to avoid DCS alarm
+         dim_lv->dcfeb.v30[i] = 3.0;
+         dim_lv->dcfeb.v40[i] = 4.0;
+         dim_lv->dcfeb.v55[i] = 5.5;
+         dim_lv->dcfeb.c30[i] = 0.5;
+         dim_lv->dcfeb.c40[i] = 0.5;
+         dim_lv->dcfeb.c55[i] = 0.5;
+      }
    }
 
       dim_lv->alct.v18 = data[47];
@@ -360,9 +378,19 @@ bool Chamber::GetDimTEMP2(int hint, TEMP_2_DimBroker *dim_temp )
       
       for(int i=0; i<DCFEB_NUMBER; i++)
       {
-         dim_temp->t_fpga[i] = data[80+30*i];      //  #0 in DCFEB block
-         dim_temp->t_pcb1[i] = data[80+30*i+22];   // #22 in DCFEB block
-         dim_temp->t_pcb2[i] = data[80+30*i+23];   // #23 in DCFEB block
+         if(type_==2 || (type_==3 && i<5))
+         {
+            dim_temp->t_fpga[i] = data[80+30*i];      //  #0 in DCFEB block
+            dim_temp->t_pcb1[i] = data[80+30*i+22];   // #22 in DCFEB block
+            dim_temp->t_pcb2[i] = data[80+30*i+23];   // #23 in DCFEB block
+         }
+         else
+         {
+         // fake data on non-existent DCFEBs to avoid DCS alarm
+            dim_temp->t_fpga[i] = 18.;
+            dim_temp->t_pcb1[i] = 18.;
+            dim_temp->t_pcb2[i] = 18.;
+         }
       }
 
    dim_temp->update_time = info[1];

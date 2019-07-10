@@ -3601,6 +3601,7 @@ void EmuPeripheralCrateMonitor::DCSOutput2(xgi::Input * in, xgi::Output * out )
         slot = myVector[j]->slot();
         int dmbN = slot/2;
         if(dmbN>5) dmbN--;
+        slot += (myVector[j]->GetLVDBMapping())<<6;  // LVDB mapping at highest 2 bits 
         ip = (ip & 0xff) + slot*256;
         std::string cscname=myVector[j]->GetLabel();
         *out << cscname;

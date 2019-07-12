@@ -1696,6 +1696,7 @@ void EmuPeripheralCrateMonitor::DCSCrateLV(xgi::Input * in, xgi::Output * out )
       }
       *out << std::setprecision(2) << std::fixed;
       val=(*dcsdata)[dmb*TOTAL_DCS_COUNTERS+19+((DHversion>=2)?6:0)+((DHversion>=2 && count>=15)?6:0)+count];
+      if((DHversion==1 || DHversion==3) && CHversion>1) val *= 1.03;   // voltage correction for LVDB5
       if(val<0.)    
          *out << cgicc::span().set("style","color:magenta") << val << cgicc::span();
       else if(CHversion<=1 && (val > lv_max[count] || val < lv_min[count]))
@@ -1785,6 +1786,7 @@ void EmuPeripheralCrateMonitor::DCSCrateCUR(xgi::Input * in, xgi::Output * out )
       }
       *out << std::setprecision(2) << std::fixed ;
       val=(*dcsdata)[dmb*TOTAL_DCS_COUNTERS+((DHversion>=2 && count>=15)?6:0)+count];
+      if((DHversion==1 || DHversion==3) && CHversion>1 && (count/3<5) && (count%3==0)) val *= 2;   // 3V current correction for LVDB5
       if(val<0.)    
          *out << cgicc::span().set("style","color:magenta") << val << cgicc::span();
 //

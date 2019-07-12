@@ -392,11 +392,11 @@ int EmuDim::ReadFromFile(const char *filename)
    if(buffer==NULL) return 0;
    // then fill the structure
    readsize=fread(buffer, 1, 100000, fl);
-   if(readsize>40) ch=ParseTXT(buffer, readsize, 1, 0);
+   if(readsize>20) ch=ParseTXT(buffer, readsize, 1, 0);
    std::cout << ch << " Chambers read from file " << filename << std::endl;
    fseek(fl,0,SEEK_SET);
    readsize=fread(buffer, 1, 100000, fl);
-   if(readsize>40) chd=ParseDDU(buffer, readsize, 1);
+   if(readsize>20) chd=ParseDDU(buffer, readsize, 1);
    std::cout << chd << " DDUs read from file " << filename << std::endl;
    free(buffer);
    fclose(fl);

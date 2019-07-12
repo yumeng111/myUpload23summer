@@ -9638,7 +9638,7 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
   }
   sprintf(buf,"Power Comparator          : %02x ",power_status);       
   *out << buf ;
-  *out << cgicc::br();
+  *out << cgicc::span() << cgicc::br();
   //
   //
   int uptime = thisTMB->ReadRegister(uptime_adr);
@@ -9648,9 +9648,9 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
   int minutes = (int) (( uptime % 3600) / 60);
   int seconds = (int) (((uptime % 3600) % 60));
 
-  sprintf(buf,"Uptime                    : %02d:%02d:%02d ", hours,minutes,seconds);
+  sprintf(buf,"Time since Hard-Reset     : %02d:%02d:%02d ", hours,minutes,seconds);
   *out << buf ;
-  *out << cgicc::span();
+  *out << cgicc::br();
   //
   //
   *out << cgicc::pre();

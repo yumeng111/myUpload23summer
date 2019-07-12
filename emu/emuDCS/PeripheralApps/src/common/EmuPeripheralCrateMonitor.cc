@@ -1778,6 +1778,7 @@ void EmuPeripheralCrateMonitor::DCSCrateCUR(xgi::Input * in, xgi::Output * out )
     for(unsigned int dmb=0; dmb<myVector.size(); dmb++) 
     {
       int DHversion=myVector[dmb]->DMBversion();
+      int CHversion=myVector[dmb]->CFEBversion();
       *out <<cgicc::td();
       //
       if(dmb==0) {

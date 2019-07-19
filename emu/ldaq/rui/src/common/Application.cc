@@ -2661,7 +2661,7 @@ int32_t emu::ldaq::rui::Application::continueConstructionOfFragment()
 	 << " Header: " << header
 	 << " Trailer: " << trailer;
       if ( inputDeviceType_ == "spy"  ){
-	ss << " Packets: " << ( ( errorFlag_ && 0x0F00 ) >> 8 );
+	ss << " Packets: " << ( ( errorFlag_ & 0x0F00 ) >> 8 );
 	if ( errorFlag_ & 0x00ff ){
 	  ss << " Errors: "
 	     << (errorFlag_ & emu::ldaq::reader::Spy::EndOfEventMissing ? "EndOfEventMissing " : "" )
@@ -2915,7 +2915,7 @@ int32_t emu::ldaq::rui::Application::continueSTEPRun()
 // 	 << " Trailer: " << trailer
 // 	 << " STEP counts: " << STEPEventCounter_.print();
 //       if ( inputDeviceType_ == "spy"  ){
-// 	ss << " Packets: " << ( ( errorFlag_ && 0x0F00 ) >> 8 );
+// 	ss << " Packets: " << ( ( errorFlag_ & 0x0F00 ) >> 8 );
 // 	if ( errorFlag_ & 0x00ff ){
 // 	  ss << " Errors: "
 // 	     << (errorFlag_ & emu::ldaq::reader::Spy::EndOfEventMissing ? "EndOfEventMissing " : "" )

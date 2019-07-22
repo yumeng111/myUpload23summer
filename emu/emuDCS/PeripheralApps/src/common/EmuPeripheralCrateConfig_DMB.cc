@@ -5394,11 +5394,16 @@ void EmuPeripheralCrateConfig::xDCFEBReadSwitch(xgi::Input * in, xgi::Output * o
      std::cout << std::hex; 
      for(int i=0; i<16; i++)
      {
-         std::cout << std::hex << 0xf0+i << " = " << int(dbuf[i]) << std::endl;
-         OutputStringDMBStatus[dmb] << std::hex << 0xf0+i << " = " << int(dbuf[i]) << std::endl;
+         std::cout << std::hex << 0xf0+i << " = " << (int(dbuf[i])&0xFF) << std::endl;
+         OutputStringDMBStatus[dmb] << std::hex << 0xf0+i << " = " << (int(dbuf[i])&0xff) << std::endl;
      }
      std::cout << std::dec; 
      OutputStringDMBStatus[dmb] << std::dec; 
+     // read xDCFEB Serial Number at f5-f7
+     unsigned xdcfeb_sn=0;  
+     memcpy(&xdcfeb_sn, dbuf+5, 3);
+     std::cout << "Serial Number: " << xdcfeb_sn << std::endl;
+     OutputStringDMBStatus[dmb] << "Serial Number: " << xdcfeb_sn << std::endl;
   }
   this->CFEBUtils(in,out);           
 }

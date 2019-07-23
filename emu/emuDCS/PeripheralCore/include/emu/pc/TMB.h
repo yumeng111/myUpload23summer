@@ -406,7 +406,6 @@
 #include "emu/pc/VMEModule.h"
 #include "emu/pc/JTAG_constants.h"
 #include <cstdio>
-#include <cassert>
 #include <vector>
 #include <string>
 #include <bitset>
@@ -782,7 +781,7 @@ public:
   int tmb_read_delays(int);
   //
   inline int  GetCfebRxClockDelay(int CFEB) {
-    assert(CFEB < 5 || (CFEB < 7 && GetHardwareVersion() == 2));
+    if(!(CFEB < 5 || (CFEB < 7 && GetHardwareVersion() == 2))) return 0;
     
     int tmp[5] = { cfeb0_rx_clock_delay_, cfeb1_rx_clock_delay_, cfeb2_rx_clock_delay_, cfeb3_rx_clock_delay_, cfeb4_rx_clock_delay_};
     if (CFEB < 5) return tmp[CFEB];
@@ -791,7 +790,7 @@ public:
   }
   //
   inline int  GetCfebRxPosNeg(int CFEB) {
-    assert(CFEB < 5 || (CFEB < 7 && GetHardwareVersion() == 2));
+    if(!(CFEB < 5 || (CFEB < 7 && GetHardwareVersion() == 2))) return 0;
     
     int tmp[5] = { cfeb0_rx_posneg_, cfeb1_rx_posneg_, cfeb2_rx_posneg_, cfeb3_rx_posneg_, cfeb4_rx_posneg_};
     if (CFEB < 5) return tmp[CFEB];
@@ -2165,38 +2164,27 @@ public:
   //! set is only for the special version
   inline void SetCFEB5RxdIntDelay(int cfeb5_rxd_int_delay) { cfeb5_rxd_int_delay_ = cfeb5_rxd_int_delay; }
   inline int  GetCFEB5RxdIntDelay() { 
-    assert(HasGroupedME11ABCFEBRxValues()>=0); 
     return HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rxd_int_delay_ : cfeb5_rxd_int_delay_; }
   inline int  GetReadCFEB5RxdIntDelay() { 
-    assert(HasGroupedME11ABCFEBRxValues()>=0); 
     return HasGroupedME11ABCFEBRxValues() == 1 ? read_cfeb456_rxd_int_delay_ : read_cfeb5_rxd_int_delay_; }
   //
   inline void SetCFEB6RxdIntDelay(int cfeb6_rxd_int_delay) { 
     cfeb6_rxd_int_delay_ = cfeb6_rxd_int_delay; }
   inline int  GetCFEB6RxdIntDelay() { 
-    assert(HasGroupedME11ABCFEBRxValues()>=0); 
     return HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rxd_int_delay_ : cfeb6_rxd_int_delay_; }
   inline int  GetReadCFEB6RxdIntDelay() { 
-    assert(HasGroupedME11ABCFEBRxValues()>=0); 
     return HasGroupedME11ABCFEBRxValues() == 1 ? read_cfeb456_rxd_int_delay_ : read_cfeb6_rxd_int_delay_; }
   //
   inline void SetCFEB0123RxdIntDelay(int cfeb0123_rxd_int_delay) { 
-    assert(HasGroupedME11ABCFEBRxValues()>0); 
     cfeb0123_rxd_int_delay_ = cfeb0123_rxd_int_delay; 
   }
-  inline int  GetCFEB0123RxdIntDelay() { 
-    assert(HasGroupedME11ABCFEBRxValues()>0); return  cfeb0123_rxd_int_delay_; }
-  inline int  GetReadCFEB0123RxdIntDelay() { 
-    assert(HasGroupedME11ABCFEBRxValues()>0); return  read_cfeb0123_rxd_int_delay_; }
+  inline int  GetCFEB0123RxdIntDelay() { return  cfeb0123_rxd_int_delay_; }
+  inline int  GetReadCFEB0123RxdIntDelay() { return  read_cfeb0123_rxd_int_delay_; }
   //
-  inline void SetCFEB456RxdIntDelay(int cfeb456_rxd_int_delay) { 
-    assert(HasGroupedME11ABCFEBRxValues()>0); 
-    cfeb456_rxd_int_delay_ = cfeb456_rxd_int_delay; 
+  inline void SetCFEB456RxdIntDelay(int cfeb456_rxd_int_delay) { cfeb456_rxd_int_delay_ = cfeb456_rxd_int_delay; 
   }
-  inline int  GetCFEB456RxdIntDelay() { 
-    assert(HasGroupedME11ABCFEBRxValues()>0); return  cfeb456_rxd_int_delay_; }
-  inline int  GetReadCFEB456RxdIntDelay() { 
-    assert(HasGroupedME11ABCFEBRxValues()>0); return  read_cfeb456_rxd_int_delay_; }
+  inline int  GetCFEB456RxdIntDelay() { return  cfeb456_rxd_int_delay_; }
+  inline int  GetReadCFEB456RxdIntDelay() { return  read_cfeb456_rxd_int_delay_; }
 
   //
   //---------------------------------------------------------------------
@@ -2642,8 +2630,8 @@ public:
       gemB_rxd_int_delay_ = gem_rxd_int_delay;
   }
   inline int  GetReadGemRxdIntDelay() {
-    assert(HasGroupedGemRxValues()>0);
-    return GetReadGemARxdIntDelay();
+    if (HasGroupedGemRxValues()>0) return GetReadGemARxdIntDelay();
+    else return 0;
   }
 
   inline int  GetDecoupleGemRxdIntDelay ()                               { return decouple_gem_rxd_int_delay_ ;}

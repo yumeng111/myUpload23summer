@@ -67,22 +67,31 @@ fi
 
 print "Using sqlite3 at $(which sqlite3) of version $(sqlite3 --version)"
 
-P5_DB_FILE=csc_map_P5.db
-DB_FILE=csc_map.db
+MAP_P5_DB=csc_map_P5.db
+MAP_DB=csc_map.db
+# runEmuCSCAnalyzer.exe uses the .txt map file instead of the .db file. We need to change that, too.
+MAP_P5_TXT=csc_map_P5.txt
+MAP_TXT=csc_map.txt
+
 
 # If we have more than two arguments, those beyond the second one are mappings of the form 'crateId dmbSlot chamberLabel'
 if [[ $# -gt 2 ]]; then
 
     cd $DQMCONFIG
 
-    [[ -e $P5_DB_FILE ]] || { print "*** Error: P5 db file $P5_DB_FILE not found. Exiting."; exit 1 }
+    [[ -e $MAP_P5_DB ]] || { print "*** Error: P5 mapping db file $MAP_P5_DB not found. Exiting."; exit 1 }
+    [[ -e $MAP_DB    ]] && { print "Removing old $DQMCONFIG/$MAP_DB"; rm $MAP_DB }
 
-    [[ -e $DB_FILE ]] && { print "Removing old $DQMCONFIG/$DB_FILE"; rm $DB_FILE }
+    [[ -e $MAP_P5_TXT ]] || { print "*** Error: P5 mapping txt file $MAP_P5_TXT not found. Exiting."; exit 1 }
+    [[ -e $MAP_TXT    ]] && { print "Removing old $DQMCONFIG/$MAP_TXT"; rm $MAP_TXT }
 
     # Copy csc_map table definition from P5 db into test stand db
     # LIMIT 0 prevents the records from being copied in sqlite3 3.7.13. It prevents the table from being created altogether in sqlite3 v3.3.6 ...
-    # sqlite3 -line $DB_FILE "ATTACH ${(qq)P5_DB_FILE} AS P5; CREATE TABLE main.csc_map AS SELECT * FROM P5.csc_map LIMIT 0;"
-    sqlite3 -line $DB_FILE "ATTACH ${(qq)P5_DB_FILE} AS P5; CREATE TABLE main.csc_map AS SELECT * FROM P5.csc_map WHERE chamberLabel='nonexistent';"
+    # sqlite3 -line $MAP_DB "ATTACH ${(qq)MAP_P5_DB} AS P5; CREATE TABLE main.csc_map AS SELECT * FROM P5.csc_map LIMIT 0;"
+    sqlite3 -line $MAP_DB "ATTACH ${(qq)MAP_P5_DB} AS P5; CREATE TABLE main.csc_map AS SELECT * FROM P5.csc_map WHERE chamberLabel='nonexistent';"
+
+    # Copy the .txt mapping, too
+    [[ -e $DQMCONFIG/$MAP_P5_TXT ]] && cp $DQMCONFIG/$MAP_P5_TXT $DQMCONFIG/$MAP_TXT
 
     # DMB slot --> DMB id associative array
     typeset -A dmbSlotToId 
@@ -116,9 +125,22 @@ if [[ $# -gt 2 ]]; then
 
 	    print "Canonical chamber label ${(qq)CHAMBER} is added to test stand mapping db."
 	    # Copy this chamber's row from the P5 CSC mapping db
-	    sqlite3 -line $DB_FILE "ATTACH ${(qq)P5_DB_FILE} AS P5; INSERT INTO main.csc_map SELECT * FROM P5.csc_map WHERE chamberLabel=${(qq)CHAMBER};"
+	    sqlite3 -line $MAP_DB "ATTACH ${(qq)MAP_P5_DB} AS P5; INSERT INTO main.csc_map SELECT * FROM P5.csc_map WHERE chamberLabel=${(qq)CHAMBER};"
 	    # Change the crate id, csc id, csc index and DMB id to those of the test stand in order for the analysis program to know to what chamber the data containing these ids belong to
-	    sqlite3 -line $DB_FILE "UPDATE csc_map SET crateid=${(qq)CRATEID}, cscid=${(qq)CSCID}, dmb=${(qq)DMB}, cscIndex=${(qq)$(( 10*$CRATEID+$CSCID ))} WHERE chamberLabel=${(qq)CHAMBER};"
+	    sqlite3 -line $MAP_DB "UPDATE csc_map SET crateid=${(qq)CRATEID}, cscid=${(qq)CSCID}, dmb=${(qq)DMB}, cscIndex=${(qq)$(( 10*$CRATEID+$CSCID ))} WHERE chamberLabel=${(qq)CHAMBER};"
+
+	    # Modify the .txt mapping file, too. Replace endcap, station, ring, chamber number with $CHAMBER for $CRATEID (i.e. vme) $DMB
+	    # Its entries look like this:
+	    #   endcap  station ring  chamber     vme    dmb     tmb    sector   cscid   ddu   input     dcc
+	    #       1       1       1       1       1       2      -1       1       2      17       8     752
+	    typeset -A ENDCAP
+	    ENDCAP=( '+' 1 '-' 2 )
+	    EC=${ENDCAP[${CHAMBER[3]}]}
+	    ST=${CHAMBER[4]}]
+	    RG=${CHAMBER[6]}]
+	    CH=${CHAMBER[8,-1]}]
+	    print "${(l:8:)EC}${(l:8:)ST}${(l:8:)RG}${(l:8:)$((CH))}"
+	    sed -i -e 's/^\([ ]\+[0-9]\+\)\{4\}\([ ]\+'${CRATEID}'[ ]\+'${DMB}'[ ]\+\)\([[:print:]]\+\)/'${(l:8:)EC}${(l:8:)ST}${(l:8:)RG}${(l:8:)$((CH))}'\2\3/g' $DQMCONFIG/$MAP_TXT
 	    ;;
 
 
@@ -127,9 +149,22 @@ if [[ $# -gt 2 ]]; then
 	    print "Non-canonical chamber label ${(qq)CHAMBER} is added to test stand mapping db."
 	    # Copy from the P5 CSC mapping db a row that corresponds to an existing chamber in this ring (say, chamber 01)
 	    EXISTINGCHAMBER="${CHAMBER[1,7]}01"
-	    sqlite3 -line $DB_FILE "ATTACH ${(qq)P5_DB_FILE} AS P5; INSERT INTO main.csc_map SELECT * FROM P5.csc_map WHERE chamberLabel=${(qq)EXISTINGCHAMBER};"
+	    sqlite3 -line $MAP_DB "ATTACH ${(qq)MAP_P5_DB} AS P5; INSERT INTO main.csc_map SELECT * FROM P5.csc_map WHERE chamberLabel=${(qq)EXISTINGCHAMBER};"
 	    # Change the crate id, csc id, csc index and DMB id to those of the test stand in order for the analysis program to know to what chamber the data containing these ids belong to. Change the chamber label, too (to the dummy one).
-	    sqlite3 -line $DB_FILE "UPDATE csc_map SET crateid=${(qq)CRATEID}, cscid=${(qq)CSCID}, dmb=${(qq)DMB}, cscIndex=${(qq)$(( 10*$CRATEID+$CSCID ))}, chamberLabel=${(qq)CHAMBER} WHERE chamberLabel=${(qq)EXISTINGCHAMBER};"
+	    sqlite3 -line $MAP_DB "UPDATE csc_map SET crateid=${(qq)CRATEID}, cscid=${(qq)CSCID}, dmb=${(qq)DMB}, cscIndex=${(qq)$(( 10*$CRATEID+$CSCID ))}, chamberLabel=${(qq)CHAMBER} WHERE chamberLabel=${(qq)EXISTINGCHAMBER};"
+
+	    # Modify the .txt mapping file, too. Replace endcap, station, ring, chamber number with $EXISTINGCHAMBER for $CRATEID (i.e. vme) $DMB
+	    # Its entries look like this:
+	    #   endcap  station ring  chamber     vme    dmb     tmb    sector   cscid   ddu   input     dcc
+	    #       1       1       1       1       1       2      -1       1       2      17       8     752
+	    typeset -A ENDCAP
+	    ENDCAP=( '+' 1 '-' 2 )
+	    EC=${ENDCAP[${CHAMBER[3]}]}
+	    ST=${CHAMBER[4]}
+	    RG=${CHAMBER[6]}
+	    CH=${EXISTINGCHAMBER[8,-1]}
+	    print "${(l:8:)EC}${(l:8:)ST}${(l:8:)RG}${(l:8:)$((CH))}"
+	    sed -i -e 's/^\([ ]\+[0-9]\+\)\{4\}\([ ]\+'${CRATEID}'[ ]\+'${DMB}'[ ]\+\)\([[:print:]]\+\)/'${(l:8:)EC}${(l:8:)ST}${(l:8:)RG}${(l:8:)$((CH))}'\2\3/g' $DQMCONFIG/$MAP_TXT
 	    ;;
 
 
@@ -145,7 +180,8 @@ if [[ $# -gt 2 ]]; then
 
 else
     # No explicit chamber mappings specified. Use the canonical one of P5.
-    [[ -e $DQMCONFIG/$P5_DB_FILE ]] && cp $DQMCONFIG/$P5_DB_FILE $DQMCONFIG/$DB_FILE
+    [[ -e $DQMCONFIG/$MAP_P5_DB  ]] && cp $DQMCONFIG/$MAP_P5_DB  $DQMCONFIG/$MAP_DB
+    [[ -e $DQMCONFIG/$MAP_P5_TXT ]] && cp $DQMCONFIG/$MAP_P5_TXT $DQMCONFIG/$MAP_TXT
 fi
 
 

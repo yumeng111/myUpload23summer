@@ -390,7 +390,6 @@ void emu::step::Test::setUpDMB( emu::pc::DAQMB *dmb ){
 void emu::step::Test::setUpODMBPulsing( emu::pc::DAQMB *dmb, ODMBMode_t mode, ODMBInputKill_t killInput ){
   if( dmb->DMBversion() < 2 ) return;
 
-  char rcv[2];
   unsigned int addr;
   unsigned short int data;
 
@@ -450,10 +449,11 @@ void emu::step::Test::setAllDCFEBsPipelineDepth( emu::pc::DAQMB* dmb, const shor
     dmb->Pipeline_Restart( *cfeb ); // and then restart the pipeline
     usleep( 100000 );
 
-    if( dmb->DMBversion() <= 1  &&  dmb->CFEBversion() > 1 ) {
-      // set DCFEBs to behave like CFEBs and send data on any L1A, required when not using ODMB
-      dmb->dcfeb_Set_ReadAnyL1a( *cfeb );
-    }
+    // This is no longer required with DCFEB-aware DMB firmware:
+    // if( dmb->DMBversion() <= 1  &&  dmb->CFEBversion() > 1 ) {
+    //   // set DCFEBs to behave like CFEBs and send data on any L1A, required when not using ODMB
+    //   dmb->dcfeb_Set_ReadAnyL1a( *cfeb );
+    // }
 
     dmb->shift_all( NORM_RUN );
     dmb->buck_shift();
@@ -774,6 +774,9 @@ void emu::step::Test::enable_12(){
   const uint64_t nStrips = 6; // strips to scan, never changes
   uint64_t events_per_strip    = parameters_["events_per_strip"];
   uint64_t msec_between_pulses = parameters_["msec_between_pulses"];
+  // single_layer is the only layer [1-6] to be pulsed throughout the test (for debugging).
+  // Omit, or set to 0, this parameter in the XML to revert to the normal behavior.
+  uint64_t single_layer        = ( parameters_.find("single_layer") == parameters_.end() ? 0 : parameters_["single_layer"] );
   const string pulseAmpNameBase( "alct_test_pulse_amp_" );
   ostream noBuffer( NULL );
 
@@ -804,9 +807,8 @@ void emu::step::Test::enable_12(){
 
     vector<emu::pc::TMB*> tmbs = (*crate)->tmbs();
 
-    for ( uint64_t iStrip = 0; iStrip < nStrips; ++iStrip ){
-    // uint64_t single_layer = parameters_["single_layer"];
-    // for ( uint64_t i = 0; i < nStrips; ++i ){ uint64_t iStrip = single_layer;
+    for ( uint64_t i = 0; i < nStrips; ++i ){ 
+      uint64_t iStrip = ( single_layer == 0 ? i : single_layer-1 ); // if single_layer is nonzero, we're to pulse that layer only
 
       uint64_t stripMask = ( uint64_t(1) << iStrip );
       for ( vector<emu::pc::TMB*>::iterator tmb = tmbs.begin(); tmb != tmbs.end(); ++tmb ){
@@ -1807,8 +1809,8 @@ void emu::step::Test::configure_19(){
     if ( pLogger_ ){ LOG4CPLUS_INFO( *pLogger_, "ext_trig_delay set to " << extTrigDelay ); }
 
     for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
-      emu::pc::TMB* tmb = (*crate)->GetChamber( *dmb )->GetTMB();
 
+      // emu::pc::TMB* tmb = (*crate)->GetChamber( *dmb )->GetTMB();
       // use TMB/@clct_ext_pretrig_enable in the XML instead // if (tmb) tmb->EnableClctExtTrig();
 
       setUpODMBPulsing( *dmb, emu::step::ODMBPedestalMode, kill_ALCT );
@@ -2016,8 +2018,9 @@ void emu::step::Test::configure_21(){
       // if( (*dmb)->GetHardwareVersion() < 2 ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT
       if( is_DMB( (*dmb)->GetHardwareVersion() ) ) (*dmb)->settrgsrc(0); // disable DMB's own trigger, LCT
 
-      emu::pc::TMB* tmb = (*crate)->GetChamber( *dmb )->GetTMB();
+      // emu::pc::TMB* tmb = (*crate)->GetChamber( *dmb )->GetTMB();
       // use TMB/@clct_ext_pretrig_enable in the XML instead // if (tmb) tmb->EnableClctExtTrig();
+
     } // for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb )
 
   } // for ( vector<emu::pc::Crate*>::iterator crate = crates.begin(); crate != crates.end(); ++crate )

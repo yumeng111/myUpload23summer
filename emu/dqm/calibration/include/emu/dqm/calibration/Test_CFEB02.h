@@ -31,6 +31,7 @@ protected:
 
   cscCFEBSCAData sdata;
   bool isME11;
+  bool isDCFEB;
   bool accept_all_events;;
 
 };

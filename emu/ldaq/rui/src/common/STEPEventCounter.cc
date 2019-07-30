@@ -115,8 +115,7 @@ uint64_t emu::ldaq::rui::STEPEventCounter::getLowestCount() const {
 	if ( count_[i] < lowestCount ) lowestCount = count_[i];
     }
     if ( allExcluded ){
-      // std::cout << "All DDU inputs excluded, returning lowest count=" << std::numeric_limits<int64_t>::max() << std::endl; 
-      return std::numeric_limits<int64_t>::max(); // When cast to signed int, this should still be positive.
+      return 0;
     }
     return lowestCount;
   }

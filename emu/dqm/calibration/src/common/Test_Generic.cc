@@ -974,7 +974,7 @@ int applyParameters(TH1* object, bookParams& params)
   return 0;
 }
 
-void Test_Generic::bookCommonHistos( std::string cscID )
+void Test_Generic::bookCommonHistos( std::string cscID, bool with_dcfebs )
 {
   MonHistos emuhistos;
   emucnvs.clear();
@@ -1079,9 +1079,9 @@ void Test_Generic::bookCommonHistos( std::string cscID )
                   high1limit = atof(params["High1Limit"].c_str());
                 }
 
-              if(emu::dqm::utils::isME11(cscID))
+              if(emu::dqm::utils::isME11(cscID) || with_dcfebs)
                 {
-// 		  LOG4CPLUS_INFO(logger, "Using limit parameters '*_ME11'");
+ 		  // LOG4CPLUS_INFO(logger, "Using limit parameters '*_ME11'");
                   if (params["Low0Limit_ME11"] != "")
                     {
                       low0limit = atof(params["Low0Limit_ME11"].c_str());
@@ -1150,9 +1150,9 @@ void Test_Generic::bookCommonHistos( std::string cscID )
 
 }
 
-void Test_Generic::bookTestsForCSC(std::string cscID)
+void Test_Generic::bookTestsForCSC(std::string cscID, bool with_dcfebs)
 {
-  bookCommonHistos( cscID );
+  bookCommonHistos( cscID, with_dcfebs );
 
   MonHistos cschistos;
   cschistos.clear();
@@ -1219,7 +1219,7 @@ void Test_Generic::bookTestsForCSC(std::string cscID)
 
           if(emu::dqm::utils::isME11(cscID))
             {
-// 	      LOG4CPLUS_INFO(logger, "Using parameters '*_ME11'");
+ 	      LOG4CPLUS_INFO(logger, "Using parameters '*_ME11'");
               if (params["XMin_ME11"] != "")
                 {
                   xmin = atof(params["XMin_ME11"].c_str());
@@ -1375,7 +1375,7 @@ void Test_Generic::bookTestsForCSC(std::string cscID)
               else high1limit2 = 0;
 
 
-              if(emu::dqm::utils::isME11(cscID))
+              if(emu::dqm::utils::isME11(cscID) || with_dcfebs)
                 {
 // 		  LOG4CPLUS_INFO(logger, "Using limit parameters '*_ME11'");
                   if (params["Low0Limit_ME11"] != "")

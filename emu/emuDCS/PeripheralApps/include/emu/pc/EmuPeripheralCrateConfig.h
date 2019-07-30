@@ -414,6 +414,7 @@ private:
   void DMBCheckConfiguration(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void DCFEBTests(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void PipelineDepthScan(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void PipelineDepthScanWithDAQ(xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception);
   void L1ALCTScan(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void OTMBDAVScan(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void ALCTDAVScan(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
@@ -642,6 +643,8 @@ private:
   void MeasurePipelineDepthForEndcap(xgi::Input* in, xgi::Output* out) throw(xgi::exception::Exception);
   void PipelineDepthScanForCrate (xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);  
   void PipelineDepthScanForSystem(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);  
+  void PipelineDepthScanWithDAQForCrate (xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception);  
+  void PipelineDepthScanWithDAQForSystem(xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception);  
   void CFEBTimingSimpleScanSystem_me11(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void CFEBTimingSimpleScanSystem_non_me11(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
 
@@ -722,6 +725,7 @@ private:
 	int total_bad_cfeb_bits;
 	int total_good_cfeb_bits;
   //
+  std::string pipelineDepthScanWithDAQResults_;
   std::string pipelineDepthScanResults_;
   void PipelineDepthScan( xgi::Input * in, xgi::Output * out, bool allCrates ) throw (xgi::exception::Exception);
   std::string pipelineDepthDataDir( const std::string& dateTime, Crate* crate, DAQMB* dmb, int depth );

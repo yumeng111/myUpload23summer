@@ -160,7 +160,7 @@ void Test_CFEB02::initCSC(std::string cscID)
 
   tdata[cscID] = cscdata;;
 
-  bookTestsForCSC(cscID);
+  bookTestsForCSC(cscID, isDCFEB);
 }
 
 void Test_CFEB02::analyze(const char * data, int32_t dataSize, uint32_t errorStat, int32_t nodeNumber)
@@ -227,6 +227,8 @@ void Test_CFEB02::analyzeCSC(const CSCEventData& data)
   if (cscID == "") return;
 
 
+  isDCFEB = (dmbHeader->format_version() == 2)?true:false;
+
   cscTestData::iterator td_itr = tdata.find(cscID);
   if ( (td_itr == tdata.end()) || (tdata.size() == 0) )
     {
@@ -237,6 +239,7 @@ void Test_CFEB02::analyzeCSC(const CSCEventData& data)
   nCSCEvents[cscID]++;
 
   isME11 = emu::dqm::utils::isME11(cscID);
+  
 
   // std::cout << nCSCEvents[cscID] << " " << cscID << std::endl;
   // == Define aliases to access chamber specific data
@@ -449,7 +452,7 @@ void Test_CFEB02::analyzeCSC(const CSCEventData& data)
 
                               if(scaNumber < 0)
                                 {
-                                  if(isME11)
+                                  if(isME11 || isDCFEB)
                                     {
                                       scaNumber = 0;
                                     }
@@ -1164,7 +1167,7 @@ bool Test_CFEB02::checkResults(std::string cscID)
         {
           for (int j=0; j<r01.Nbins; j++)
             {
-              if ( emu::dqm::utils::isME11(cscID) && (theFormatVersion >= 2013))
+              if ( (emu::dqm::utils::isME11(cscID) || isDCFEB) && (theFormatVersion >= 2013))
                 {
                   if ((r01.content[i][j] > 1300) || (r01.content[i][j] < 800)) badChannels++;
                 }

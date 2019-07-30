@@ -376,12 +376,12 @@ bool emu::step::Manager::testSequenceInWorkLoop( toolbox::task::WorkLoop *wl ){
       if ( ! waitForDAQToExecute( "Halt", daqTimeOutInSeconds ) ){
 	XCEPT_RAISE( xcept::Exception, string( "DAQ failed to execute 'Halt' in ") + utils::stringFrom<uint64_t>( daqTimeOutInSeconds ) + " seconds." );
       }
-      xdata::String             runType = string( ( (bool) isCurrentTestDurationUndefined_ ) ? "STEP_" : "Test_" ) + testId.toString();
+      currentRunType_ = string( ( (bool) isCurrentTestDurationUndefined_ ) ? "STEP_" : "Test_" ) + testId.toString();
       xdata::Integer64  maxNumberOfEvents = ( ( (bool) isCurrentTestDurationUndefined_ ) ? (int) testParameters.getNEvents() : -1 ); // unlimited if negative
       xdata::Boolean writeBadEventsOnly = false;
       m.setParameters( "emu::ldaq::manager::Application", 
 		       emu::soap::Parameters()
-		       .add( "runType"           , &runType            )
+		       .add( "runType"           , &currentRunType_    )
 		       .add( "maxNumberOfEvents" , &maxNumberOfEvents  )
 		       .add( "writeBadEventsOnly", &writeBadEventsOnly ) );
       m.sendCommand( "emu::ldaq::manager::Application", "Configure" );      
@@ -839,26 +839,34 @@ void emu::step::Manager::waitForTestsToFinish( const bool isTestDurationUndefine
     bool allFinished = true;
     if ( isTestDurationUndefined ){
       // Query the local DAQ
-      xdata::String  reasonForFailure;
+      xdata::String runType;
+      xdata::String reasonForFailure;
       xdata::Integer64 maxNumberOfEvents;
       xdata::UnsignedInteger64 STEPCount;
       m.getParameters( "emu::ldaq::manager::Application", 0, 
 		       emu::soap::Parameters()
+		       .add( "runType"          , &runType           )
 		       .add( "reasonForFailure" , &reasonForFailure  ) // empty if not in failed state
 		       .add( "maxNumberOfEvents", &maxNumberOfEvents )
 		       .add( "STEPCount"        , &STEPCount         ) );
-      LOG4CPLUS_INFO( logger_, "Queried emu::ldaq::manager::Application:: reasonForFailure='" << reasonForFailure.toString() << "' STEPCount=" << STEPCount.toString() << " maxNumberOfEvents=" << maxNumberOfEvents.toString() );
-      if ( (uint64_t) maxNumberOfEvents > 0 ){
-	double progress = 100. * double( STEPCount.value_ ) / double( maxNumberOfEvents.value_ ); // in %
-	// Assign every group the same progress. It would be complicated to attribute, and it wouldn't make much sense anyway.
-	map<string,pair<double,string> > groupsProgress; // group -> ( progress, message )
-	map<string,const xdaq::ApplicationDescriptor*>::iterator app;
-	for ( app = testerDescriptors_.begin(); app != testerDescriptors_.end(); ++app ){
-	  groupsProgress[app->first] = make_pair<double,string>( progress, reasonForFailure );
-	}
-	configuration_->setTestProgress( groupsProgress );
+      LOG4CPLUS_INFO( logger_, "Queried emu::ldaq::manager::Application: runType='" << runType.toString() << "' reasonForFailure='" << reasonForFailure.toString() << "' STEPCount=" << STEPCount.toString() << " maxNumberOfEvents=" << maxNumberOfEvents.toString() );
+      if ( runType != currentRunType_ ){
+	LOG4CPLUS_WARN( logger_, "Local DAQ run type changed from '" << currentRunType_.toString() << "' to '" << runType.toString() << "'. We will no longer stop the local DAQ upon its completion. (This is expected if a pipeline depth scan is being performed, in which case the local DAQ is controlled by the YellowPage.)");
+	allFinished = false;
       }
-      allFinished = ( (int64_t) STEPCount.value_ >= maxNumberOfEvents.value_ );
+      else{
+	if ( (uint64_t) maxNumberOfEvents > 0 ){
+	  double progress = 100. * double( STEPCount.value_ ) / double( maxNumberOfEvents.value_ ); // in %
+	  // Assign every group the same progress. It would be complicated to attribute, and it wouldn't make much sense anyway.
+	  map<string,pair<double,string> > groupsProgress; // group -> ( progress, message )
+	  map<string,const xdaq::ApplicationDescriptor*>::iterator app;
+	  for ( app = testerDescriptors_.begin(); app != testerDescriptors_.end(); ++app ){
+	    groupsProgress[app->first] = make_pair<double,string>( progress, reasonForFailure );
+	  }
+	  configuration_->setTestProgress( groupsProgress );
+	}
+	allFinished = ( (int64_t) STEPCount.value_ >= maxNumberOfEvents.value_ );
+      }
       if ( allFinished ){ LOG4CPLUS_INFO( logger_, "STEP is done. Requested " << maxNumberOfEvents.toString() << ", collected " << STEPCount.toString() << " events."); }
     }
     else{

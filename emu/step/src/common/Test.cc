@@ -1104,6 +1104,15 @@ void emu::step::Test::configure_15(){ // OK
  	(*dmb)->set_comp_thresh( (*dmb)->GetCompThresh() ); // set cfeb thresholds (for the entire test)      
 	usleep(10000);
 	setAllDCFEBsPipelineDepth( *dmb );
+
+	if( (*dmb)->DMBversion() <= 1  &&  (*dmb)->CFEBversion() > 1 ){
+	  // Looks like tmb/@all_cfeb_active=1 has no effect with DCFEB+DMB.
+	  // We therefore invoke this instead:
+	  vector <emu::pc::CFEB> cfebs = (*dmb)->cfebs();
+	  for ( vector<emu::pc::CFEB>::iterator cfeb = cfebs.begin(); cfeb != cfebs.end(); ++cfeb){
+	    (*dmb)->dcfeb_Set_ReadAnyL1a( *cfeb );
+	  }
+	}
       }
 
       hardResetOTMBs( *crate );
@@ -1221,6 +1230,15 @@ void emu::step::Test::configure_16(){
       (*dmb)->set_comp_thresh( (*dmb)->GetCompThresh() ); // set cfeb thresholds (for the entire test)      
       usleep(10000);
       setAllDCFEBsPipelineDepth( *dmb );
+
+      if( (*dmb)->DMBversion() <= 1  &&  (*dmb)->CFEBversion() > 1 ){
+	// Looks like tmb/@all_cfeb_active=1 has no effect with DCFEB+DMB.
+	// We therefore invoke this instead:
+	vector <emu::pc::CFEB> cfebs = (*dmb)->cfebs();
+	for ( vector<emu::pc::CFEB>::iterator cfeb = cfebs.begin(); cfeb != cfebs.end(); ++cfeb){
+	  (*dmb)->dcfeb_Set_ReadAnyL1a( *cfeb );
+	}
+      }
     }
     
     hardResetOTMBs( *crate );
@@ -1381,6 +1399,15 @@ void emu::step::Test::configure_17(){ // OK
     vector<emu::pc::DAQMB *> dmbs = (*crate)->daqmbs();    
     for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
       setAllDCFEBsPipelineDepth( *dmb );
+
+      if( (*dmb)->DMBversion() <= 1  &&  (*dmb)->CFEBversion() > 1 ){
+	// Looks like tmb/@all_cfeb_active=1 has no effect with DCFEB+DMB.
+	// We therefore invoke this instead:
+	vector <emu::pc::CFEB> cfebs = (*dmb)->cfebs();
+	for ( vector<emu::pc::CFEB>::iterator cfeb = cfebs.begin(); cfeb != cfebs.end(); ++cfeb){
+	  (*dmb)->dcfeb_Set_ReadAnyL1a( *cfeb );
+	}
+      }
     }
     
     hardResetOTMBs( *crate );
@@ -1568,6 +1595,15 @@ void emu::step::Test::configure_17b(){ // OK
     vector<emu::pc::DAQMB *> dmbs = (*crate)->daqmbs();    
     for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb ){
       setAllDCFEBsPipelineDepth( *dmb );
+
+      if( (*dmb)->DMBversion() <= 1  &&  (*dmb)->CFEBversion() > 1 ){
+	// Looks like tmb/@all_cfeb_active=1 has no effect with DCFEB+DMB.
+	// We therefore invoke this instead:
+	vector <emu::pc::CFEB> cfebs = (*dmb)->cfebs();
+	for ( vector<emu::pc::CFEB>::iterator cfeb = cfebs.begin(); cfeb != cfebs.end(); ++cfeb){
+	  (*dmb)->dcfeb_Set_ReadAnyL1a( *cfeb );
+	}
+      }
     }
     
     hardResetOTMBs( *crate );

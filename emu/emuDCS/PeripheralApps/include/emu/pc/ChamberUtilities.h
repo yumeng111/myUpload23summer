@@ -381,6 +381,7 @@ public:
     thisTMB = myTMB; alct = myTMB->alctController(); thisRAT_ = myTMB->getRAT(); 
     int compile_type = thisTMB->GetTMBFirmwareCompileType(); 
     is_me11_ = (compile_type == 0xc || compile_type == 0xd);
+    is_otmb_ = (thisTMB->GetHardwareVersion()>1);
   }
 	//
   inline TMB * GetTMB() { return thisTMB; }
@@ -513,6 +514,7 @@ private:
   bool comparing_with_clct_;
   int me11_pulsing_;
   bool is_me11_;
+  bool is_otmb_;
   //
   bool UsePulsing_;
   //

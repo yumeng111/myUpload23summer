@@ -910,7 +910,7 @@ inline bool ChamberUtilities::CFEBTiming_CheckCLCT(int cfeb, unsigned int layer_
 }
     //
 inline void ChamberUtilities::CFEBTiming_ReadConfiguration(CFEBTiming_Configuration & config) {
-  if(is_me11_) {
+  if(is_otmb_) {
     thisTMB->ReadRegister(seq_l1a_adr);
     config.tmb_internal_l1a = thisTMB->GetInternalL1a();
     
@@ -940,7 +940,7 @@ inline void ChamberUtilities::CFEBTiming_ReadConfiguration(CFEBTiming_Configurat
   config.fifo_pretrig = thisTMB->GetReadFifoPreTrig();
   config.fifo_no_hits_raw = thisTMB->GetReadFifoNoRawHits();
   
-  if(is_me11_) {
+  if(is_otmb_) {
     unsigned csrb5 = thisCCB_->ReadRegister(CCB::CSRB5);
     config.ccb_ext_trig_delay = (csrb5 >> 8) & 0xff;
     
@@ -965,15 +965,15 @@ inline bool ChamberUtilities::CFEBTiming_CheckConfiguration(const CFEBTiming_Con
   CFEBTiming_ReadConfiguration(read);
   CFEBTiming_PrintConfiguration(read);
   std::cout << std::dec;
-  if(is_me11_ && (read.tmb_internal_l1a != orig.tmb_internal_l1a)) {
+  if(is_otmb_ && (read.tmb_internal_l1a != orig.tmb_internal_l1a)) {
     (*MyOutput_) << std::setw(37) << "BAD tmb_internal_l1a: EXPECTED: " << std::setw(4) << orig.tmb_internal_l1a << " | READ: " << std::setw(4) << read.tmb_internal_l1a << std::endl;
     same = false;
   }
-  if(is_me11_ && (read.clct_pattern_trig_en != orig.clct_pattern_trig_en)) {
+  if(is_otmb_ && (read.clct_pattern_trig_en != orig.clct_pattern_trig_en)) {
     (*MyOutput_) << std::setw(37) << "BAD clct_pattern_trig_en: EXPECTED: " << std::setw(4) << orig.clct_pattern_trig_en << " | READ: " << std::setw(4) << read.clct_pattern_trig_en << std::endl;
     same = false;
   }
-  if(is_me11_ && (read.clct_ext_trig_en != orig.clct_ext_trig_en)) {
+  if(is_otmb_ && (read.clct_ext_trig_en != orig.clct_ext_trig_en)) {
     (*MyOutput_) << std::setw(37) << "BAD clct_ext_trig_en: EXPECTED: " << std::setw(4) << orig.clct_ext_trig_en << " | READ: " << std::setw(4) << read.clct_ext_trig_en << std::endl;
     same = false;
   }
@@ -1013,11 +1013,11 @@ inline bool ChamberUtilities::CFEBTiming_CheckConfiguration(const CFEBTiming_Con
     (*MyOutput_) << std::setw(37) << "BAD fifo_no_hits_raw: EXPECTED: " << std::setw(4) << orig.fifo_no_hits_raw << " | READ: " << std::setw(4) << read.fifo_no_hits_raw << std::endl;
     same = false;
   }
-  if(is_me11_ && (read.ccb_ext_trig_delay != orig.ccb_ext_trig_delay)) {
+  if(is_otmb_ && (read.ccb_ext_trig_delay != orig.ccb_ext_trig_delay)) {
     (*MyOutput_) << std::setw(37) << "BAD ccb_ext_trig_delay: EXPECTED: " << std::setw(4) << orig.ccb_ext_trig_delay << " | READ: " << std::setw(4) << read.ccb_ext_trig_delay << std::endl;
     same = false;
   }
-  if(is_me11_ && (read.tmb_l1a_delay != orig.tmb_l1a_delay)) {
+  if(is_otmb_ && (read.tmb_l1a_delay != orig.tmb_l1a_delay)) {
     (*MyOutput_) << std::setw(37) << "BAD tmb_l1a_delay: EXPECTED: " << std::setw(4) << orig.tmb_l1a_delay << " | READ: " << std::setw(4) << read.tmb_l1a_delay << std::endl;
     same = false;
   }
@@ -1035,9 +1035,9 @@ inline bool ChamberUtilities::CFEBTiming_CheckConfiguration(const CFEBTiming_Con
 inline void ChamberUtilities::ConfigureTMB(const CFEBTiming_Configuration & config, int * cfeb_tof_delay) {
   
   usleep(1000);
-  
+
   // Set up for this test...
-  if(is_me11_) thisTMB->SetClctPatternTrigEnable(config.clct_pattern_trig_en);
+  if(is_otmb_) thisTMB->SetClctPatternTrigEnable(config.clct_pattern_trig_en);
   thisTMB->SetClctExtTrigEnable(config.clct_ext_trig_en);
   thisTMB->WriteRegister(seq_trig_en_adr);
   
@@ -1084,7 +1084,7 @@ inline void ChamberUtilities::ConfigureTMB(const CFEBTiming_Configuration & conf
   thisTMB->WriteRegister(vme_ddd2_adr); //
   usleep(1000);
   
-  if(is_me11_) {
+  if(is_otmb_) {
     // Begin new lines from Stan's code
     thisTMB->SetFifoMode(config.fifo_mode);
     thisTMB->SetFifoTbins(config.fifo_tbins);
@@ -1109,26 +1109,27 @@ inline void ChamberUtilities::ConfigureTMB(const CFEBTiming_Configuration & conf
     //
 inline void ChamberUtilities::CFEBTiming_ConfigureLevel(CFEBTiming_Configuration & config, int level, int after) {
   //(*MyOutput_) << "CFEBTiming Configure Level " << level << std::endl;
-  
+
   if(level < 0 || level == 0 || (after && level <= 0)) {
 //    thisCCB_->setCCBMode(CCB::VMEFPGA);
     thisCCB_->hardReset();
 //    thisCCB_->setCCBMode(CCB::DLOG);
-    
+    ::sleep(1);   
     SetDCFEBsPipelineDepth(config.cfeb_pipeline_depth); // Set pipeline depth, does not have to be exact (~60)
-    usleep(100);
+    ::sleep(1);
     thisTMB->tmb_hard_reset_tmb_fpga(); // Hard reset the tmb to return to default settings
     usleep(100);
     CFEBTiming_ConfigureODMB(); // Do some odmb configuration?
-    usleep(100);
+    ::sleep(1);
     thisCCB_->l1aReset(); // Send a reset?
     usleep(100);
-    thisDMB->odmb_resync_dcfebs(); // Resync the dcfebs, apparently this is needed after the odmb config
-    usleep(100);
+//    thisDMB->odmb_resync_dcfebs(); // Resync the dcfebs, apparently this is needed after the odmb config
+//    usleep(100);
     thisCCB_->EnableL1aFromDmbCfebCalibX(); // Enable pulsing of the dcfebs
     usleep(100);
     //SetODMBPedestalMode(); // Tell the odmb to always accept data, regardless of timing
     usleep(100);
+
     thisDMB->set_dac(config.dac, 0); // Set the pulse height
     usleep(100);
     thisDMB->set_comp_thresh(config.comp_thresh); // Set the comparator chip threshold
@@ -1143,7 +1144,7 @@ inline void ChamberUtilities::CFEBTiming_ConfigureLevel(CFEBTiming_Configuration
     usleep(1000);
   }
   if(level == 2) {
-    if(is_me11_) {
+    if(is_otmb_) {
       for(int cfeb=0, ncfeb=thisDMB->cfebs_.size(); cfeb<ncfeb; ++cfeb) {
 	if((config.cfeb_mask & 0x7f) >> thisDMB->cfebs_[cfeb].number()) {
 	  
@@ -1175,7 +1176,7 @@ inline void ChamberUtilities::CFEBTiming_ConfigureLevel(CFEBTiming_Configuration
     }
   }
   if(level < 0 || level == 3 || (after && level <= 3)) {
-    if(is_me11_) {
+    if(is_otmb_) {
       SetTMBInternalL1A(config.tmb_internal_l1a); // Disable the tmb's internal l1a
       usleep(1000);
       if(config.clct_ext_trig_en)
@@ -1287,10 +1288,10 @@ int ChamberUtilities::GetTMBInternalL1ADelay() {
 }
 
 void ChamberUtilities::SetDCFEBsPipelineDepth(int depth) {
-  if(thisDMB->CFEBversion() == 1)
+  if(thisDMB->CFEBversion() <= 1)
     return;
   
-  thisDMB->odmb_reprogram_dcfebs();
+  // thisDMB->odmb_reprogram_dcfebs();
   
   std::vector<emu::pc::CFEB> cfebs = thisDMB->cfebs();
   for(std::vector<emu::pc::CFEB>::reverse_iterator cfeb = cfebs.rbegin(); cfeb != cfebs.rend(); ++cfeb) {
@@ -1316,7 +1317,7 @@ void ChamberUtilities::SetDCFEBsPipelineDepth(int depth) {
     thisDMB->getCrate()->ccb()->l1aReset(); // need to do this after restarting DCFEB pipelines
     usleep(1000);
     //resyncDCFEBs(thisDMB->getCrate()); // TODO: remove once firmware takes care of it
-    thisDMB->odmb_resync_dcfebs();
+    //thisDMB->odmb_resync_dcfebs();
     usleep(1000);
   }
 }
@@ -1447,8 +1448,8 @@ void ChamberUtilities::Print_CFEB_Masks() {
 }
     //
 void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, int cfeb_num, unsigned int layers, unsigned int pattern, 
-							      int halfstrip, bool print_data, int cfeb_clock_phase) {
-  
+							      int halfstrip, bool print_data, int cfeb_clock_phase) 
+{
   std::time_t init_time=time(0);
   
   CFEBTiming_log_dir_ = "/tmp/";
@@ -1493,8 +1494,8 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
   const int MaxHalfStrip = 32;
   const int MaxLayers = 6;
   const int MaxCFEBClockPhase = 32;
-  const int pulse_max = (is_me11_)?11:1;
-  const int ihs_max = (is_me11_)?2:2;
+  const int pulse_max = (is_me11_)?11:11;
+  const int ihs_max = 2;
   const bool is_timing_scan = time_delay < 0;
   const bool is_cfeb_scan = cfeb_num < 0;
   const bool is_random_halfstrip = halfstrip < 0;
@@ -1563,7 +1564,7 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
   
   CFEBTiming_PrintConfiguration(config);
   
-  if(is_me11_) {
+  if(is_otmb_) {
     
     CFEBTiming_ConfigureLevel(config);
     usleep(1000000);
@@ -1584,50 +1585,10 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
       web_backup << "DCFEB " << cfeb << " clock phase = " << config.cfeb_clock_phase << std::endl;
     }
 
-    if (thisTMB->HasGroupedME11ABCFEBRxValues()<=0){
-      thisTMB->ReadRegister(phaser_cfeb0_rxd_adr); // Get phaser information
-      thisTMB->ReadRegister(phaser_cfeb1_rxd_adr);
-      thisTMB->ReadRegister(phaser_cfeb2_rxd_adr);
-      thisTMB->ReadRegister(phaser_cfeb3_rxd_adr);
-      thisTMB->ReadRegister(phaser_cfeb4_rxd_adr);
-      thisTMB->ReadRegister(phaser_cfeb5_rxd_adr);
-      thisTMB->ReadRegister(phaser_cfeb6_rxd_adr);
-    } else {
+      thisTMB->ReadRegister(cfeb4_6_interstage_adr);
       thisTMB->ReadRegister(phaser_cfeb456_rxd_adr);
       thisTMB->ReadRegister(phaser_cfeb0123_rxd_adr);
-    }
     //
-    if (thisTMB->HasGroupedME11ABCFEBRxValues()<=0){
-      initial_cfeb_phase[0] = thisTMB->GetReadCfeb0RxClockDelay();
-      initial_cfeb_phase[1] = thisTMB->GetReadCfeb1RxClockDelay();
-      initial_cfeb_phase[2] = thisTMB->GetReadCfeb2RxClockDelay();
-      initial_cfeb_phase[3] = thisTMB->GetReadCfeb3RxClockDelay();
-      initial_cfeb_phase[4] = thisTMB->GetReadCfeb4RxClockDelay();
-      if (thisTMB->HasGroupedME11ABCFEBRxValues() == 0){
-	initial_cfeb_phase[5] = thisTMB->GetReadCfeb5RxClockDelay();
-	initial_cfeb_phase[6] = thisTMB->GetReadCfeb6RxClockDelay();
-      }
-      //
-      initial_cfeb_posneg[0] = thisTMB->GetReadCfeb0RxPosNeg();
-      initial_cfeb_posneg[1] = thisTMB->GetReadCfeb1RxPosNeg();
-      initial_cfeb_posneg[2] = thisTMB->GetReadCfeb2RxPosNeg();
-      initial_cfeb_posneg[3] = thisTMB->GetReadCfeb3RxPosNeg();
-      initial_cfeb_posneg[4] = thisTMB->GetReadCfeb4RxPosNeg();
-      if (thisTMB->HasGroupedME11ABCFEBRxValues() == 0){
-	initial_cfeb_posneg[5] = thisTMB->GetReadCfeb5RxPosNeg();
-	initial_cfeb_posneg[6] = thisTMB->GetReadCfeb6RxPosNeg();
-      }
-
-      initial_cfeb_rxd_int_delay[0] = thisTMB->GetCFEB0RxdIntDelay();
-      initial_cfeb_rxd_int_delay[1] = thisTMB->GetCFEB1RxdIntDelay();
-      initial_cfeb_rxd_int_delay[2] = thisTMB->GetCFEB2RxdIntDelay();
-      initial_cfeb_rxd_int_delay[3] = thisTMB->GetCFEB3RxdIntDelay();
-      initial_cfeb_rxd_int_delay[4] = thisTMB->GetCFEB4RxdIntDelay();
-      if (thisTMB->HasGroupedME11ABCFEBRxValues() == 0){
-	initial_cfeb_rxd_int_delay[5] = thisTMB->GetCFEB5RxdIntDelay();
-	initial_cfeb_rxd_int_delay[6] = thisTMB->GetCFEB6RxdIntDelay();
-      }
-    } else {
       int initialPhase0123 = thisTMB->GetReadCfeb0123RxClockDelay();
       int initialPhase456 = thisTMB->GetReadCfeb456RxClockDelay();
 
@@ -1647,15 +1608,14 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 	initial_cfeb_posneg[i] = initialPosneg456;
 	initial_cfeb_rxd_int_delay[i] = initialRxdInt456;
       }
-    }
-    //
     //
     
   }
-  else { //not is_me11_
+  else { //not is_otmb_
 //    thisCCB_->setCCBMode(CCB::VMEFPGA);
     thisCCB_->hardReset();
 //    thisCCB_->setCCBMode(CCB::DLOG);
+
     ConfigureTMB(config);
     
     thisTMB->ReadRegister(vme_ddd1_adr); // Get phase and TOF delay from hardware
@@ -2203,6 +2163,11 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
       (*MyOutput_) << "Best values for cfeb " << cfeb << " are rx delay = " << CFEBrxPhase_[cfeb] << " and posneg = " << CFEBrxPosneg_[cfeb] << std::endl;
       web_backup << "Best values for cfeb " << cfeb << " are rx delay = " << CFEBrxPhase_[cfeb] << " and posneg = " << CFEBrxPosneg_[cfeb] << std::endl;
     }
+
+// Liu 2019-07-23: this part only valid for TMB
+// ==> TODO: for OTMB with MEx/1, the special region transition handling
+if(!is_otmb_)
+{
     //
     thisTMB->ReadRegister(vme_ddd1_adr); // Get phase and TOF delay from hardware
     thisTMB->ReadRegister(vme_ddd2_adr); // 
@@ -2255,54 +2220,14 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 		     << " -> " << cfeb_rxd_int_delay[i] << std::endl;
       }
     }
-  }
+}  // end of special region transition
+  }  // end of non-ME11 Case
   //
   (*MyOutput_) << "Reverting back to original cfeb delay phase values..." << std::endl << std::endl;
   web_backup << "Reverting back to original cfeb delay phase values..." << std::endl << std::endl;
   //
-  if(is_me11_) {
+  if(is_otmb_) {
     //
-    if (thisTMB->HasGroupedME11ABCFEBRxValues() <=0){
-      thisTMB->SetCfeb0RxClockDelay(initial_cfeb_phase[0]);
-      thisTMB->SetCfeb0RxPosNeg(initial_cfeb_posneg[0]);
-      thisTMB->WriteRegister(phaser_cfeb0_rxd_adr);
-      thisTMB->FirePhaser(phaser_cfeb0_rxd_adr);
-      //
-      thisTMB->SetCfeb1RxClockDelay(initial_cfeb_phase[1]);
-      thisTMB->SetCfeb1RxPosNeg(initial_cfeb_posneg[1]);
-      thisTMB->WriteRegister(phaser_cfeb1_rxd_adr);
-      thisTMB->FirePhaser(phaser_cfeb1_rxd_adr);
-      //
-      thisTMB->SetCfeb2RxClockDelay(initial_cfeb_phase[2]);
-      thisTMB->SetCfeb2RxPosNeg(initial_cfeb_posneg[2]);
-      thisTMB->WriteRegister(phaser_cfeb2_rxd_adr);
-      thisTMB->FirePhaser(phaser_cfeb2_rxd_adr);
-      //
-      thisTMB->SetCfeb3RxClockDelay(initial_cfeb_phase[3]);
-      thisTMB->SetCfeb3RxPosNeg(initial_cfeb_posneg[3]);
-      thisTMB->WriteRegister(phaser_cfeb3_rxd_adr);
-      thisTMB->FirePhaser(phaser_cfeb3_rxd_adr);
-      //
-      thisTMB->SetCfeb4RxClockDelay(initial_cfeb_phase[4]);
-      thisTMB->SetCfeb4RxPosNeg(initial_cfeb_posneg[4]);
-      thisTMB->WriteRegister(phaser_cfeb4_rxd_adr);
-      thisTMB->FirePhaser(phaser_cfeb4_rxd_adr);
-    }
-    if (thisTMB->HasGroupedME11ABCFEBRxValues() == 0){//ungrouped ME11
-      //
-      thisTMB->SetCfeb5RxClockDelay(initial_cfeb_phase[5]);
-      thisTMB->SetCfeb5RxPosNeg(initial_cfeb_posneg[5]);
-      thisTMB->WriteRegister(phaser_cfeb5_rxd_adr);
-      thisTMB->FirePhaser(phaser_cfeb5_rxd_adr);
-      //
-      thisTMB->SetCfeb6RxClockDelay(initial_cfeb_phase[6]);
-      thisTMB->SetCfeb6RxPosNeg(initial_cfeb_posneg[6]);
-      thisTMB->WriteRegister(phaser_cfeb6_rxd_adr);
-      thisTMB->FirePhaser(phaser_cfeb6_rxd_adr);
-
-    }
-    if (thisTMB->HasGroupedME11ABCFEBRxValues() == 1){//grouped ME11
-      //
       thisTMB->SetCfeb456RxClockDelay(initial_cfeb_phase[4]);
       thisTMB->SetCfeb456RxPosNeg(initial_cfeb_posneg[4]);
       thisTMB->WriteRegister(phaser_cfeb456_rxd_adr);
@@ -2312,8 +2237,6 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
       thisTMB->SetCfeb0123RxPosNeg(initial_cfeb_posneg[0]);
       thisTMB->WriteRegister(phaser_cfeb0123_rxd_adr);
       thisTMB->FirePhaser(phaser_cfeb0123_rxd_adr);
-    }
-
     //
     if(!is_cfeb_clock_phase_inherited) {
       //
@@ -2331,7 +2254,7 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
     }
   }
   //
-  else {//not is_me11_
+  else {//not is_otmb_
     thisTMB->SetCfeb0RxClockDelay(initial_cfeb_phase[0]);
     thisTMB->SetCfeb0RxPosNeg(initial_cfeb_posneg[0]);
     thisTMB->WriteRegister(phaser_cfeb0_rxd_adr);
@@ -7167,7 +7090,7 @@ void ChamberUtilities::CFEBChamberScan(){
   thisTMB->StartTTC();
   ::sleep(1);
   //
-  bool has7CFEBs = is_me11_ && thisTMB->GetHardwareVersion() >= 2;
+  bool has7CFEBs = is_otmb_ && thisTMB->GetHardwareVersion() >= 2;
   const int MaxCFEBs = has7CFEBs ? 7 : 5;
   const int MaxStrip = has7CFEBs ? 224 : 160;
   const int MaxStripWithinCFEB = 32;
@@ -7773,7 +7696,7 @@ void ChamberUtilities::PulseHalfstrips(int * hs_normal, bool enableL1aEmulator) 
   // thisCCB_->setCCBMode(CCB::VMEFPGA);
   //thisCCB_->WriteRegister(0x28,0x7878);  //4Aug05 DM changed 0x789b to 0x7862
   //
-  if(is_me11_) {
+  if(is_otmb_) {
     thisCCB_->inject(1,0x4f);
   }
   else {

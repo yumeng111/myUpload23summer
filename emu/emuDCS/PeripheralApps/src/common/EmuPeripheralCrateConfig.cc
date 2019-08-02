@@ -1,9 +1,7 @@
 #include "emu/pc/EmuPeripheralCrateConfig.h"
-#include "emu/pc/PipelineDepthScan.h"
 #include "emu/utils/System.h"
 #include "emu/utils/String.h"
 #include "emu/utils/Chamber.h"
-#include "emu/utils/IO.h"
 
 #include <string>
 #include <vector>
@@ -59,7 +57,7 @@ const std::string ALCT_READBACK_FILENAME_ME11_BACKWARD_POSITIVE = "alct_LX100_28
 const std::string ALCT_FIRMWARE_FILENAME_ME11_FORWARD_POSITIVE  = "alct_LX100_288fp/alct_LX100_288fp";
 const std::string ALCT_READBACK_FILENAME_ME11_FORWARD_POSITIVE  = "alct_LX100_288fp/alct_LX100_288fp_verify";
 //
-const std::string ALCT_FIRMWARE_FILENAME_ME12 = "alct384/alct384"; 
+const std::string ALCT_FIRMWARE_FILENAME_ME12 = "alct_LX100_384/alct_LX100_384"; 
 const std::string ALCT_READBACK_FILENAME_ME12 = "alct384/alct384_verify";
 //
 const std::string ALCT_FIRMWARE_FILENAME_ME13 = "alct_LX150_192/alct_LX150_192"; 
@@ -68,13 +66,13 @@ const std::string ALCT_READBACK_FILENAME_ME13 = "alct192/alct192_verify";
 const std::string ALCT_FIRMWARE_FILENAME_ME21 = "alct_LX150T_672/alct_LX150T_672";
 const std::string ALCT_READBACK_FILENAME_ME21 = "alct672/alct672_verify";
 //
-const std::string ALCT_FIRMWARE_FILENAME_ME22 = "alct384/alct384";
+const std::string ALCT_FIRMWARE_FILENAME_ME22 = "alct_LX100_384/alct_LX100_384";
 const std::string ALCT_READBACK_FILENAME_ME22 = "alct384/alct384_verify";
 //
 const std::string ALCT_FIRMWARE_FILENAME_ME31 = "alct_LX150T_576mirror/alct_LX150T_576mirror";
 const std::string ALCT_READBACK_FILENAME_ME31 = "alct576mirror/alct576mirror_verify";
 //
-const std::string ALCT_FIRMWARE_FILENAME_ME32 = "alct384mirror/alct384mirror";
+const std::string ALCT_FIRMWARE_FILENAME_ME32 = "alct_LX100_384mirror/alct_LX100_384mirror";
 const std::string ALCT_READBACK_FILENAME_ME32 = "alct384mirror/alct384mirror_verify";
 //
 const std::string ALCT_FIRMWARE_FILENAME_ME41 = "alct_LX150T_576mirror/alct_LX150T_576mirror";
@@ -269,7 +267,6 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::MeasureODMBDelaysForEndcap,"MeasureODMBDelaysForEndcap");
   xgi::bind(this,&EmuPeripheralCrateConfig::MeasurePipelineDepthForEndcap,"MeasurePipelineDepthForEndcap");
   xgi::bind(this,&EmuPeripheralCrateConfig::PipelineDepthScanForCrate,"PipelineDepthScanForCrate");
-  xgi::bind(this,&EmuPeripheralCrateConfig::PipelineDepthScanWithDAQForCrate,"PipelineDepthScanWithDAQForCrate");
   //
   //-----------------------------------------------
   // CCB & MPC routines
@@ -378,7 +375,6 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::ConfigDCFEBs, "ConfigDCFEBs");
   xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBTests, "DCFEBTests");
   xgi::bind(this,&EmuPeripheralCrateConfig::PipelineDepthScan, "PipelineDepthScan");
-  xgi::bind(this,&EmuPeripheralCrateConfig::PipelineDepthScanWithDAQ, "PipelineDepthScanWithDAQ");
   xgi::bind(this,&EmuPeripheralCrateConfig::L1ALCTScan, "L1ALCTScan");
   xgi::bind(this,&EmuPeripheralCrateConfig::OTMBDAVScan, "OTMBDAVScan");
   xgi::bind(this,&EmuPeripheralCrateConfig::ALCTDAVScan, "ALCTDAVScan");
@@ -1864,26 +1860,7 @@ void EmuPeripheralCrateConfig::CrateConfiguration(xgi::Input * in, xgi::Output *
   *out << cgicc::td();
   //
   *out << cgicc::td();
-  std::string PipelineDepthScanWithDAQForCrate = "/" + getApplicationDescriptor()->getURN() + "/PipelineDepthScanWithDAQForCrate";
-  *out << cgicc::form().set("method","GET").set("action",PipelineDepthScanWithDAQForCrate) << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","Crate-wide pipeline depth scan with local DAQ").set("title","Scan pipeline depth for all digital CFEBs of the selected crate using the local DAQ, and find its best value with the unpacker.")
-       << "for h/w versions ";
-  set<unsigned int> hwVersions;
-  for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbVector.begin(); dmb != dmbVector.end(); ++dmb ){
-    if ( (*dmb)->CFEBversion() > 1 ) hwVersions.insert( (*dmb)->GetHardwareVersion() ); // i.e. any digital CFEB
-  }
-  *out << cgicc::select().set("name","hwVersions").set("required","required").set("multiple","multiple").set("size",utils::stringFrom<unsigned int>(hwVersions.size()));
-  for ( set<unsigned int>::iterator hwv = hwVersions.begin(); hwv != hwVersions.end(); ++hwv ){
-    *out << cgicc::option().set("selected","selected").set("value",utils::stringFrom<unsigned int>(*hwv)) << *hwv << cgicc::option(); // TODO: replace h/w version number with a human readable name
-  }
-  *out << cgicc::select()
-       << "from "          << cgicc::input().set("type","text").set("size","3").set("value","55").set("name","from")
-       << " to "           << cgicc::input().set("type","text").set("size","3").set("value","75").set("name","to"  )
-       << " in steps of "  << cgicc::input().set("type","text").set("size","3").set("value", "1").set("name","increment" )
-       << " for "          << cgicc::input().set("type","text").set("size","3").set("value","30").set("name","duration"  ) << " seconds" << std::endl
-       << pipelineDepthScanWithDAQResults_ << std::endl
-       << cgicc::form() << std::endl
-       << cgicc::td();
+  *out << cgicc::td();
   //
   *out << cgicc::tr();
   //
@@ -5361,7 +5338,7 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   *out << cgicc::tr();
   //
   *out << cgicc::td().set("ALIGN", "left") << "RX Delay" << cgicc::td() << std::endl;
-  *out << cgicc::td().set("ALIGN", "left") << "CFEB Clock Phase" << cgicc::td() << std::endl;
+  *out << cgicc::td().set("ALIGN", "left") << "Comp Clock Phase" << cgicc::td() << std::endl;
   *out << cgicc::td().set("ALIGN", "left") << "CFEB" << cgicc::td() << std::endl;
   *out << cgicc::td().set("ALIGN", "left") << "Pattern Type" << cgicc::td() << std::endl;
   *out << cgicc::td().set("ALIGN", "left") << "Half-Strip" << cgicc::td() << std::endl;
@@ -5419,7 +5396,7 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   //
   *out << cgicc::td();
   //
-  int maxCFEB = thisTMB->GetHardwareVersion() >= 2 ? 7 : 5;
+  int maxCFEB = (thisDMB->DMBversion() == 2  || thisDMB->DMBversion() == 4)? 7 : 5;  
   for(int i=0;i<maxCFEB;i++) {
     *out << "cfeb" << i << "delay = " << MyTest[tmb][current_crate_].GetCFEBrxPhaseTest(i) 
 	 << " ("  << MyTest[tmb][current_crate_].GetCfebRxClockDelay(i) << ") "
@@ -5869,8 +5846,7 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   *out << cgicc::input().set("type","submit").set("value","CFEB Scan") << std::endl ;
   *out << cgicc::form() << std::endl ;
   //
-  int MaxCFEBs = thisTMB->GetHardwareVersion() >= 2 ? 7 : 5;
-  for (int CFEBs = 0; CFEBs<MaxCFEBs; CFEBs++) {
+  for (int CFEBs = 0; CFEBs<maxCFEB; CFEBs++) {
     *out << "CFEB Id="<<CFEBs<< " " ;
     for (int HalfStrip = 0; HalfStrip<32; HalfStrip++) {
       *out << MyTest[tmb][current_crate_].GetCFEBStripScan(CFEBs,HalfStrip) ;
@@ -6149,7 +6125,7 @@ void EmuPeripheralCrateConfig::CFEBTimingSimpleScan(xgi::Input * in, xgi::Output
   std::cout << "cfeb_phase: " << cfeb_phase << std::endl;
   //
   MyTest[tmb][current_crate_].RedirectOutput(&ChamberTestsOutput[tmb][current_crate_]);
-  if(thisCrate->GetTMB(tmbVector[tmb]->slot())->GetHardwareVersion() != 2) 
+  if(tmbVector[tmb]->GetHardwareVersion() <= 1) 
       MyTest[tmb][current_crate_].CFEBTiming();   
   else
       MyTest[tmb][current_crate_].CFEBTiming_with_Posnegs_simple_routine(time_delay, cfeb_num, layers, pattern, halfstrip, print_data, cfeb_phase);
@@ -7171,115 +7147,6 @@ void EmuPeripheralCrateConfig::PipelineDepthScanForSystem( xgi::Input * in, xgi:
   PipelineDepthScan( in, out, true );
   this->ExpertToolsPage(in,out);
 }
-
-// Pipeline depth scans with local DAQ
-void EmuPeripheralCrateConfig::PipelineDepthScanWithDAQ( xgi::Input * in, xgi::Output * out )
-  throw (xgi::exception::Exception){
-  // Default values  
-  int fromDepth = 60;
-  int toDepth   = 70;
-  int increment = 1;
-  int duration  = 60;
-
-  cgicc::Cgicc cgi(in);
-  cgicc::form_iterator from = cgi.getElement( "from"      );
-  cgicc::form_iterator to   = cgi.getElement( "to"        );
-  cgicc::form_iterator incr = cgi.getElement( "increment" );
-  cgicc::form_iterator t    = cgi.getElement( "duration"  );
-  if ( from != cgi.getElements().end() ) fromDepth = utils::stringTo<int>( from->getValue() );
-  if ( to   != cgi.getElements().end() )   toDepth = utils::stringTo<int>( to  ->getValue() );
-  if ( incr != cgi.getElements().end() ) increment = utils::stringTo<int>( incr->getValue() );
-  if ( t    != cgi.getElements().end() )  duration = utils::stringTo<int>( t   ->getValue() );
-
-  LOG4CPLUS_INFO(getApplicationLogger(),
-		 "Pipeline depth scan with local DAQ from " << fromDepth <<
-		 " to " << toDepth <<
-		 " in steps of " << increment <<
-		 "for " << dmbVector.at( DMB_ )->GetLabel() );
-
-  emu::pc::PipelineDepthScan scan( this, dmbVector.at( DMB_ ) );
-  scan.run( fromDepth, toDepth, increment, duration );
-  this->DMBUtils(in,out);
-}
-
-void EmuPeripheralCrateConfig::PipelineDepthScanWithDAQForCrate( xgi::Input * in, xgi::Output * out )
-  throw (xgi::exception::Exception){
-
-  // Default values  
-  int fromDepth = 60;
-  int toDepth   = 70;
-  int increment = 1;
-  int duration  = 60;
-  set<unsigned int> hwVersions;
-  hwVersions.insert(2); //   2             ODMB (2) + PPIB + DCFEB (2)
-  hwVersions.insert(3); //   3             DMB (1)+ DCFEB (2)
-  hwVersions.insert(4); //   4             ODMB (2)+ PPIB + xDCFEB (3)
-  hwVersions.insert(5); //   5             DMB (1)+ xDCFEB (3)
-
-  cgicc::Cgicc cgi(in);
-  cgicc::form_iterator from = cgi.getElement( "from"     );
-  cgicc::form_iterator to   = cgi.getElement( "to"       );
-  cgicc::form_iterator t    = cgi.getElement( "duration" );
-  vector<cgicc::FormEntry> hwVersionsFE;
-  if ( from != cgi.getElements().end() ) fromDepth = utils::stringTo<int>( from->getValue() );
-  if ( to   != cgi.getElements().end() )   toDepth = utils::stringTo<int>( to  ->getValue() );
-  if ( t    != cgi.getElements().end() )  duration = utils::stringTo<int>( t   ->getValue() );
-  cgi.getElement( "hwVersions", hwVersionsFE );
-  if( ! hwVersionsFE.empty() ) {
-    hwVersions.clear();
-    for( vector<cgicc::FormEntry>::iterator hwv = hwVersionsFE.begin(); hwv != hwVersionsFE.end(); ++hwv ) {
-      hwVersions.insert( utils::stringTo<unsigned int>( hwv->getValue() ) );
-    }
-  }
-
-  LOG4CPLUS_INFO(getApplicationLogger(),
-		 "Crate-wide pipeline depth scan with local DAQ from " << fromDepth <<
-		 " to " << toDepth <<
-		 "for h/w versions " << hwVersions );
-
-  emu::pc::PipelineDepthScan scan( this, thisCrate, hwVersions );
-  scan.run( fromDepth, toDepth, increment, duration );
-  this->CrateConfiguration(in,out);
-}
-
-void EmuPeripheralCrateConfig::PipelineDepthScanWithDAQForSystem( xgi::Input * in, xgi::Output * out )
-  throw (xgi::exception::Exception){
-
-  // Default values  
-  int fromDepth = 60;
-  int toDepth   = 70;
-  int increment = 1;
-  int duration  = 60;
-  set<unsigned int> hwVersions;
-  hwVersions.insert(2); //   2             ODMB (2) + PPIB + DCFEB (2)
-  hwVersions.insert(3); //   3             DMB (1)+ DCFEB (2)
-  hwVersions.insert(4); //   4             ODMB (2)+ PPIB + xDCFEB (3)
-  hwVersions.insert(5); //   5             DMB (1)+ xDCFEB (3)
-
-  cgicc::Cgicc cgi(in);
-  cgicc::form_iterator from = cgi.getElement( "from"     );
-  cgicc::form_iterator to   = cgi.getElement( "to"       );
-  cgicc::form_iterator t    = cgi.getElement( "duration" );
-  vector<cgicc::FormEntry> hwVersionsFE;
-  if ( from != cgi.getElements().end() ) fromDepth = utils::stringTo<int>( from->getValue() );
-  if ( to   != cgi.getElements().end() )   toDepth = utils::stringTo<int>( to  ->getValue() );
-  if ( t    != cgi.getElements().end() )  duration = utils::stringTo<int>( t   ->getValue() );
-  cgi.getElement( "hwVersions", hwVersionsFE );
-  if( ! hwVersionsFE.empty() ) {
-    hwVersions.clear();
-    for( vector<cgicc::FormEntry>::iterator hwv = hwVersionsFE.begin(); hwv != hwVersionsFE.end(); ++hwv ) {
-      hwVersions.insert( utils::stringTo<unsigned int>( hwv->getValue() ) );
-    }
-  }
-
-  LOG4CPLUS_INFO(getApplicationLogger(), "Endcap-wide pipeline depth scan with local DAQ from " << fromDepth << " to " << toDepth << "for h/w versions " << hwVersions );
-
-  emu::pc::PipelineDepthScan scan( this, emuEndcap_, hwVersions );
-  scan.run( fromDepth, toDepth, increment, duration );
-
-  this->ExpertToolsPage(in,out);
-}
-
 //
 void EmuPeripheralCrateConfig::setTMBCounterReadValues(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {

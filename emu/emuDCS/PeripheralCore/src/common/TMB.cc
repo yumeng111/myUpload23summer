@@ -6757,7 +6757,10 @@ void TMB::SetTMBRegisterDefaults() {
   //--------------------------------------------------------------
   //[0X11A] = ADR_PHASER6:  values in the xml file for cfeb4_rx
   //--------------------------------------------------------------
-  cfeb4_rx_clock_delay_ = HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rx_clock_delay_default : cfeb4_rx_clock_delay_default;
+  if(GetHardwareVersion()>1 && (GetTMBFirmwareCompileType()==0xA || GetTMBFirmwareCompileType()==0xB)) 
+     cfeb4_rx_clock_delay_ = cfeb0123_rx_clock_delay_default;
+  else
+     cfeb4_rx_clock_delay_ = HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rx_clock_delay_default : cfeb4_rx_clock_delay_default;
   cfeb4_rx_fine_delay_  = HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rx_fine_delay_default : cfeb4_rx_fine_delay_default;
   cfeb4_rx_posneg_      = HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rx_posneg_default : cfeb4_rx_posneg_default     ;
   //
@@ -6810,7 +6813,10 @@ void TMB::SetTMBRegisterDefaults() {
   //--------------------------------------------------------------
   // 0X11E = ADR_DELAY1_INT:  CFEB to TMB "interstage" delays
   //--------------------------------------------------------------
-  cfeb4_rxd_int_delay_ = HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rxd_int_delay_default : cfeb4_rxd_int_delay_default;
+  if(GetHardwareVersion()>1 && (GetTMBFirmwareCompileType()==0xA || GetTMBFirmwareCompileType()==0xB)) 
+     cfeb4_rxd_int_delay_ = cfeb0123_rxd_int_delay_default;        // for OTMB with MEx/1
+  else
+     cfeb4_rxd_int_delay_ = HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rxd_int_delay_default : cfeb4_rxd_int_delay_default;
   cfeb5_rxd_int_delay_ = HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rxd_int_delay_default : cfeb5_rxd_int_delay_default;
   cfeb6_rxd_int_delay_ = HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rxd_int_delay_default : cfeb6_rxd_int_delay_default;
   cfeb456_rxd_int_delay_ = cfeb456_rxd_int_delay_default;
@@ -9936,8 +9942,11 @@ void TMB::ConvertVMERegisterValuesToDigitalPhases_(unsigned long int vme_address
     //
   } else if ( vme_address == phaser_cfeb456_rxd_adr ) {
     //
-    read_cfeb4_rx_posneg_      = posneg       ;
-    read_cfeb4_rx_clock_delay_ = read_digital_phase;
+    if(GetHardwareVersion()>1 && (GetTMBFirmwareCompileType()==0xC || GetTMBFirmwareCompileType()==0xD)) 
+    {  // OTMB with ME1/1
+       read_cfeb4_rx_posneg_      = posneg       ;
+       read_cfeb4_rx_clock_delay_ = read_digital_phase;
+    } 
     read_cfeb5_rx_posneg_      = posneg       ;
     read_cfeb5_rx_clock_delay_ = read_digital_phase;
     read_cfeb6_rx_posneg_      = posneg       ;
@@ -9955,6 +9964,11 @@ void TMB::ConvertVMERegisterValuesToDigitalPhases_(unsigned long int vme_address
     read_cfeb2_rx_clock_delay_ = read_digital_phase;
     read_cfeb3_rx_posneg_      = posneg       ;
     read_cfeb3_rx_clock_delay_ = read_digital_phase;
+    if(GetHardwareVersion()>1 && (GetTMBFirmwareCompileType()==0xA || GetTMBFirmwareCompileType()==0xB)) 
+    {  // OTMB with MEx/1
+       read_cfeb4_rx_posneg_      = posneg       ;
+       read_cfeb4_rx_clock_delay_ = read_digital_phase;
+    } 
     read_cfeb0123_rx_posneg_      = posneg       ;
     read_cfeb0123_rx_clock_delay_ = read_digital_phase;
     //

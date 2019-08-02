@@ -424,8 +424,8 @@ void CCB::pulse(int Num_pulse,unsigned int pulse_delay, char vme)
     switchedMode=true;
     if (mDebug) (*MyOutput_) << "CCB: NOTE -- switching from DLOG to FPGA mode for pulse" << std::endl; 
   }
+  if (mDebug) (*MyOutput_) << "Sending " << Num_pulse << " pulses..."<<std::endl;
   for(int j=0;j<Num_pulse;j++){
-    (*MyOutput_) << "Pulsing..."<<std::endl;
     if(pulse_delay>0) theController->sleep_vme(pulse_delay);
     //
     sndbuf[0]=0x00;
@@ -1452,7 +1452,7 @@ void CCB::bc0() {
   if(mCCBMode!=VMEFPGA) setCCBMode(CCB::VMEFPGA);
   //
   /// Send "bc0" command on the Fast Control Bus
-  (*MyOutput_) << "CCB: bc0 Trigger" << std::endl;
+  if(mDebug) (*MyOutput_) << "CCB: bc0 Trigger" << std::endl;
   sndbuf[0]=0x00;
   sndbuf[1]=0x4; 
   do_vme(VME_WRITE,CSRB2,sndbuf,rcvbuf,NOW);

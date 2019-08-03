@@ -4782,6 +4782,10 @@ int ALCTController::write_eprom(char *bufin, int dsize, int chip, int broadcast)
      prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      data=0x03;
      prom_scan(1, (char *)&data, 8, rcvbuf, READ_YES, chip);
+     comd=XCF_ISC_ENABLE; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0x03;
+     prom_scan(1, (char *)&data, 8, rcvbuf, READ_YES, chip);
      comd=XCF_XSC_UNLOCK; 
      prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      data=0x0F;
@@ -4790,7 +4794,7 @@ int ALCTController::write_eprom(char *bufin, int dsize, int chip, int broadcast)
      comd=XCF_DATA_BTC; 
      prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      data=0xFFFFFFEC;
-     prom_scan(1, (char *)&data, 32, rcvbuf, 0, chip);
+     prom_scan(1, (char *)&data, 32, rcvbuf, READ_YES, chip);
 
      comd=XCF_ISC_PROGRAM; 
      prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
@@ -4798,7 +4802,7 @@ int ALCTController::write_eprom(char *bufin, int dsize, int chip, int broadcast)
      for(int i=0; i<blocks; i++)
      {
 
-        if(i==2) tmb_->getTheController()->Debug(0);
+//        if(i==2) tmb_->getTheController()->Debug(0);
         if((i%0x8000)==0)   
         {  /* At beginning of each big block, send (byte) address. */
            comd=XCF_ADD_SHIFT; 
@@ -4819,7 +4823,14 @@ int ALCTController::write_eprom(char *bufin, int dsize, int chip, int broadcast)
           j=0;
        }   
      }
+     comd=XCF_BYPASS; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     ::usleep(100);
 
+     comd=XCF_ISC_ENABLE; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     data=0x03;
+     prom_scan(1, (char *)&data, 8, rcvbuf, READ_YES, chip);
      comd=XCF_DATA_SUCR; 
      prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      data=0xFFFC;
@@ -4851,6 +4862,9 @@ int ALCTController::write_eprom(char *bufin, int dsize, int chip, int broadcast)
      comd=XCF_ISC_DISABLE; 
      prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      ::usleep(200);
+     comd=XCF_BYPASS; 
+     prom_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     ::usleep(100);
      return 0;
 }
 
@@ -4971,6 +4985,7 @@ int ALCTController::load_firmware(const char *mcsfile, int broadcast)
 */
 //    tmb_->getTheController()->Debug(2);
      tmb_->getTheController()->SetUseDelay(true);
+     tmb_->new_RestoreIdle(7+ALCTversion());
      std::cout << "Loading firmware to EPROM(s)......" << std::endl;
      erase_eprom(0, broadcast);    
      if(mcssize2) erase_eprom(1, broadcast);    
@@ -5020,6 +5035,7 @@ void ALCTController::read_firmware(const char *filename)
          free(buf); 
          return;
       }
+   tmb_->new_RestoreIdle(7+ALCTversion());
    read_eprom(buf, PROM_SIZE, 0);
    tmb_->write_mcs(buf, PROM_SIZE, mcsfile);
    fclose(mcsfile);

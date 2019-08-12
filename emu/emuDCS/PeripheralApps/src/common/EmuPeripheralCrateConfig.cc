@@ -4965,25 +4965,22 @@ void EmuPeripheralCrateConfig::TestDcfebEpromsForCrate(xgi::Input * in, xgi::Out
   //  
   std::cout << "Button: Test EEPROMs of all DCFEBs in one crate sequentially" << std::endl;
 
-  if ( crateVector[current_crate_]->IsAlive() ) {
+  if ( crateVector[current_crate_]->IsAlive() ) 
+  {
     //
-    for (unsigned int dmb=0; dmb < dmbVector.size() ; dmb++) {
+    for (unsigned int dmb=0; dmb < dmbVector.size() ; dmb++) 
+    {
       //
       DAQMB * thisDMB = dmbVector[dmb];
-      if (thisDMB->GetHardwareVersion() == 2) {
+      if (thisDMB->CFEBversion() == 2) 
+      {
 
         std::vector<CFEB> cfebs = thisDMB->cfebs() ;
         typedef std::vector<CFEB>::iterator CFEBItr;
         for(CFEBItr cfebItr = cfebs.begin(); cfebItr != cfebs.end(); ++cfebItr) {
-          int hversion = cfebItr->GetHardwareVersion();
           int cfeb_index = (*cfebItr).number() + 1;
           char cfeb_index_str[1];
           sprintf(cfeb_index_str, "%d", cfeb_index);
-
-          if(hversion != 2) {
-            std::cout << "DMB " << dmb << " CFEB" + cfeb_index << " hardware version is not 2 (it's not a DCFEB).. Skipping.." << std::endl;
-            continue;
-          }
 
           std::string chambername= thisDMB->GetLabel();
           unsigned t = chambername.find('/');
@@ -5020,7 +5017,13 @@ void EmuPeripheralCrateConfig::TestDcfebEpromsForCrate(xgi::Input * in, xgi::Out
           }
  
         } // close loop through CFEBs
-      } // close if hw version 2
+      }       
+      else
+      {
+            std::cout << "DMB " << dmb << " CFEB hardware version is not 2 (it's not a DCFEB).. Skipping.." << std::endl;
+            continue;
+      } // close if CFEBversion 2
+
     } // close loop through DMBs
     std::cout << getLocalDateTime() << " DCFEB fast EEPROM test finished." << std::endl;
   } // close crate alive

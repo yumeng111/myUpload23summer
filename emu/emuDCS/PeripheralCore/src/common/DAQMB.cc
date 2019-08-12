@@ -12575,7 +12575,7 @@ int DAQMB::xdcfeb_load_firmware(CFEB & cfeb, const char *mcsfile, int broadcast)
 // Liu 2019-03-20, add the following to make sure the switches are correct. 
 // Will be removed later once all switches are correctly set.
      std::cout << "Set DS4550 switches to 8-bit programming mode." << std::endl;     
-     char wbuf[5]={2,0,2,0,0};
+     char wbuf[5]={0,0,2,0,0};
      ds4550_write(wbuf+4, 0xf4, 1);  // clear the SEE bit
      ::sleep(1);
      ds4550_write(wbuf, 0xf0, 3);  

@@ -4636,15 +4636,17 @@ void EmuPeripheralCrateMonitor::DCFEBProblems(xgi::Input * in, xgi::Output * out
      int upgraded=0;
      for(unsigned int j=0; j<myVector.size(); j++) 
      {
-        int dversion=myVector[j]->GetHardwareVersion();
-        if(dversion!=2) continue;
+        int cversion=myVector[j]->CFEBversion();
+        if(cversion<2) continue;
+        int dversion=myVector[j]->DMBversion();
+        int tversion=mytmbs[j]->GetHardwareVersion();
         int imask= 0xFF & (myVector[j]->GetPowerMask());
         bool chamber_off = (imask==0xFF);
         std::string cscname=myVector[j]->GetLabel();
 
         for(int k=0; k<TOTAL_TMB_VOLTAGES; k++) 
         {  
-           if(goodtmb)
+           if(goodtmb && tversion>1)
            { 
               val= (*tmbdata)[j*TOTAL_TMB_VOLTAGES+k];
               if(k==14)  // DCFEB dead links, this is an integer
@@ -4667,7 +4669,7 @@ void EmuPeripheralCrateMonitor::DCFEBProblems(xgi::Input * in, xgi::Output * out
         }
         for(int k=0; k<TOTAL_DCFEB_MONS; k++) 
         {  
-           if(goodfeb)
+           if(goodfeb && dversion>1)
            { 
               int cnt_idx=k%30;
               int dcfebn=k/30;

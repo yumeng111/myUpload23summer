@@ -5507,42 +5507,82 @@ void DAQMB::PrintCounters(){
   //
  if(DMBversion()<=1)
  {
+  bool dmbupgrade = (CFEBversion()>1)?true:false;
   readtimingCounter();
   //
   readtimingScope();
   //
-  printf("  L1A to LCT delay: %d", GetL1aLctCounter()  ); printf(" CMS clock cycles \n");
-  printf("  CFEB DAV delay:   %d", GetCfebDavCounter() ); printf(" CMS clock cycles \n");
-  printf("  TMB DAV delay:    %d", GetTmbDavCounter()  ); printf(" CMS clock cycles \n");
-  printf("  ALCT DAV delay:   %d", GetAlctDavCounter() ); printf(" CMS clock cycles \n");
+  printf("  L1A to LCT delay: %3d", GetL1aLctCounter()  ); printf(" CMS clock cycles \n");
+  printf("  CFEB DAV delay  : %3d", GetCfebDavCounter() ); printf(" CMS clock cycles ");
+  if(GetCfebDavCounter()>0 && dmbupgrade){
+    printf("(set febdavdelay  to %3d) \n",GetCfebDavCounter()-1);
+  }else{
+    printf("\n");
+  }
+  printf("  TMB DAV delay   : %3d", GetTmbDavCounter()  ); printf(" CMS clock cycles ");
+  if(GetTmbDavCounter()>0 && dmbupgrade){
+    printf("(set TmbDavDelay  to %3d) \n",GetTmbDavCounter()-2);
+  }else{
+    printf("\n");
+  }
+  printf("  ALCT DAV delay  : %3d", GetAlctDavCounter() ); printf(" CMS clock cycles ");
+  if(GetAlctDavCounter()>0 && dmbupgrade){
+    printf("(set AlctDavDelay to %3d) \n",GetAlctDavCounter()-1);
+  }else{
+    printf("\n");
+  }
   //
   std::cout << std::endl ;
   //
-  std::cout << "  L1A to LCT Scope: " ;
+  //  std::cout << "  L1A to LCT Scope: " ;
+  std::cout << " AFF(OR of 5)Scope: " ;
   std::cout << std::setw(3) << GetL1aLctScope() << " " ;
-  for( int i=4; i>-1; i--) std::cout << ((GetL1aLctScope()>>i)&0x1) ;
+  if(dmbupgrade){
+    for( int i=0; i<5; i++) std::cout << ((GetL1aLctScope()>>i)&0x1) ;
+  } else {
+    for( int i=4; i>-1; i--) std::cout << ((GetL1aLctScope()>>i)&0x1) ;
+  }
   std::cout << std::endl ;
   //
-  std::cout << "  CFEB DAV Scope:   " ;
+  std::cout << " CFEB DAV Scope   : " ;
   std::cout << std::setw(3) << GetCfebDavScope() << " " ;
-  for( int i=4; i>-1; i--) std::cout << ((GetCfebDavScope()>>i)&0x1) ;
+  if(dmbupgrade){
+    for( int i=0; i<5; i++) std::cout << ((GetCfebDavScope()>>i)&0x1) ;
+  } else {
+    for( int i=4; i>-1; i--) std::cout << ((GetCfebDavScope()>>i)&0x1) ;
+  }
   std::cout << std::endl ;
   //
-  std::cout << "  TMB DAV Scope:    " ;
+  std::cout << " TMB DAV Scope    : " ;
   std::cout << std::setw(3) << GetTmbDavScope() << " " ;
-  for( int i=4; i>-1; i--) std::cout << ((GetTmbDavScope()>>i)&0x1) ;
+  if(dmbupgrade){
+    for( int i=0; i<5; i++) std::cout << ((GetTmbDavScope()>>i)&0x1) ;
+  } else {
+    for( int i=4; i>-1; i--) std::cout << ((GetTmbDavScope()>>i)&0x1) ;
+  }
   std::cout << std::endl ;
   //
-  std::cout << "  ALCT DAV Scope:   " ;
+  std::cout << " ALCT DAV Scope   : " ;
   std::cout << std::setw(3) << GetAlctDavScope() << " " ;
-  for( int i=4; i>-1; i--) std::cout << ((GetAlctDavScope()>>i)&0x1) ;
+  if(dmbupgrade){
+    for( int i=0; i<5; i++) std::cout << ((GetAlctDavScope()>>i)&0x1) ;
+  } else {
+    for( int i=4; i>-1; i--) std::cout << ((GetAlctDavScope()>>i)&0x1) ;
+  }
   std::cout << std::endl ;
   //
-  std::cout << "  Active DAV Scope: " ;
+  std::cout << " AFF(cfeb3) Scope : " ;
   std::cout << std::setw(3) << GetActiveDavScope() << " " ;
-  for( int i=4; i>-1; i--) std::cout << ((GetActiveDavScope()>>i)&0x1) ;
+  if(dmbupgrade){
+    for( int i=0; i<5; i++) std::cout << ((GetActiveDavScope()>>i)&0x1) ;
+  } else {
+    for( int i=4; i>-1; i--) std::cout << ((GetActiveDavScope()>>i)&0x1) ;
+  }
   std::cout << std::endl ;
-  //
+  if(dmbupgrade){
+    std::cout << "  Line up to arrow:      ^"  << std::endl ;
+    std::cout << "                         |"  << std::endl ;
+  }
  }
 }
 
@@ -5971,81 +6011,126 @@ void DAQMB::WriteSFM(){
 //
 void DAQMB::PrintCounters(int user_option){
   //
+  //  1 for simple print-out
+  //  2 for print most frequent values
+  //  3 for cuts by TMB DAV and/or same DAV, then print most frequent
+
   if(DMBversion()<=1){
     //
+    bool dmbupgrade = (CFEBversion()>1)?true:false;
     if( (user_option<1) | (user_option>3) ) (*MyOutput_) << "Invalid option entered" << std::endl;
     //
     //Simple read counters option:
     //
-    if(user_option==1) {
-      //
-      readtimingCounter();
-      //
-      readtimingScope();
-      //
-      (*MyOutput_) << "  Counters " << std::endl ;
-      //
-      (*MyOutput_) << "  L1A to LCT delay: " << GetL1aLctCounter()  << std::endl ;
-      (*MyOutput_) << "  CFEB DAV delay:   " << GetCfebDavCounter() << std::endl ;
-      (*MyOutput_) << "  TMB DAV delay:    " << GetTmbDavCounter()  << std::endl ;
-      (*MyOutput_) << "  ALCT DAV delay:   " << GetAlctDavCounter() << std::endl ;
-      //
+  if(user_option==1) {
+    //
+    readtimingCounter();
+    //
+    readtimingScope();
+    //
+    (*MyOutput_) << "  Counters " << std::endl ;
+    //
+    (*MyOutput_) << std::setw(3) << "  L1A to LCT delay: " << GetL1aLctCounter()  << " CMS clock cycles " << std::endl ;
+    (*MyOutput_) << std::setw(3) << "  CFEB DAV delay:   " << GetCfebDavCounter() << " CMS clock cycles ";
+    if(GetCfebDavCounter()>0 && dmbupgrade){
+      (*MyOutput_) << std::setw(3) << "(set febdavdelay  to " << GetCfebDavCounter()-1 << ")" << std::endl; 
+    }else{
       (*MyOutput_) << std::endl ;
-      //
-      int trials = 0;
-      while ( GetL1aLctScope() == 0 && trials < 10 ) {
-	readtimingScope();
-	trials++;
-      }
-      //
-      (*MyOutput_) << "  L1A to LCT Scope: " ;
-      (*MyOutput_) << std::setw(5) << GetL1aLctScope() << " " ;
-      for( int i=4; i>-1; i--) (*MyOutput_) << ((GetL1aLctScope()>>i)&0x1) ;
-      (*MyOutput_) << std::endl ;
-      //
-      trials = 0;
-      while ( GetCfebDavScope() == 0 && trials < 10 ) {
-	readtimingScope();
-	trials++;
-      }
-      //
-      (*MyOutput_) << "  CFEB DAV Scope:   " ;
-      (*MyOutput_) << std::setw(5) << GetCfebDavScope() << " " ;
-      for( int i=4; i>-1; i--) (*MyOutput_) << ((GetCfebDavScope()>>i)&0x1) ;
-      (*MyOutput_) << std::endl ;
-      //
-      trials = 0;
-      while ( GetTmbDavScope() == 0 && trials < 10 ) {
-	readtimingScope();
-	trials++;
-      }
-      //
-      (*MyOutput_) << "  TMB DAV Scope:    " ;
-      (*MyOutput_) << std::setw(5) << GetTmbDavScope() << " " ;
-      for( int i=4; i>-1; i--) (*MyOutput_) << ((GetTmbDavScope()>>i)&0x1) ;
-      (*MyOutput_) << std::endl ;
-      //
-      trials = 0;
-      while ( GetAlctDavScope() == 0 && trials < 10 ) {
-	readtimingScope();
-	trials++;
-      }
-      //
-      (*MyOutput_) << "  ALCT DAV Scope:   " ;
-      (*MyOutput_) << std::setw(5) << GetAlctDavScope() << " " ;
-      for( int i=4; i>-1; i--) (*MyOutput_) << ((GetAlctDavScope()>>i)&0x1) ;
-      (*MyOutput_) << std::endl ;
-      //
-      (*MyOutput_) << "  Active DAV Scope: " ;
-      (*MyOutput_) << std::setw(5) << GetActiveDavScope() << " " ;
-      for( int i=4; i>-1; i--) (*MyOutput_) << ((GetActiveDavScope()>>i)&0x1) ;
-      (*MyOutput_) << std::endl ;
-      //
-      (*MyOutput_) << std::endl ;
-      //
     }
-    //Loop and choose "best" option:
-    else {
+    (*MyOutput_) << "  TMB DAV delay:    " << GetTmbDavCounter()  << " CMS clock cycles ";
+    if(GetTmbDavCounter()>0 && dmbupgrade){
+      (*MyOutput_) << std::setw(3) << "(set TmbDavDelay  to " << GetTmbDavCounter()-2 << ")" << std::endl; 
+    }else{
+      (*MyOutput_) << std::endl ;
+    }
+    (*MyOutput_) << "  ALCT DAV delay:   " << GetAlctDavCounter() << " CMS clock cycles ";
+    if(GetTmbDavCounter()>0 && dmbupgrade){
+      (*MyOutput_) << std::setw(3) << "(set AlctDavDelay to " << GetAlctDavCounter()-1 << ")" << std::endl; 
+    }else{
+      (*MyOutput_) << std::endl ;
+    }
+   //
+    (*MyOutput_) << std::endl ;
+    //
+    int trials = 0;
+    while ( GetL1aLctScope() == 0 && trials < 10 ) {
+      readtimingScope();
+      trials++;
+    }
+    //
+    //    (*MyOutput_) << "  L1A to LCT Scope: " ;
+    (*MyOutput_) << " AFF(OR of 5)Scope: " ;
+    (*MyOutput_) << std::setw(5) << GetL1aLctScope() << " " ;
+    if(dmbupgrade){
+      for( int i=0; i<5; i++) (*MyOutput_) << ((GetL1aLctScope()>>i)&0x1) ;
+    } else {
+      for( int i=4; i>-1; i--) (*MyOutput_) << ((GetL1aLctScope()>>i)&0x1) ;
+    }
+    (*MyOutput_) << std::endl ;
+    //
+    trials = 0;
+    while ( GetCfebDavScope() == 0 && trials < 10 ) {
+      readtimingScope();
+      trials++;
+    }
+    //
+    (*MyOutput_) << " CFEB DAV Scope   : " ;
+    (*MyOutput_) << std::setw(5) << GetCfebDavScope() << " " ;
+    if(dmbupgrade){
+      for( int i=0; i<5; i++) (*MyOutput_) << ((GetCfebDavScope()>>i)&0x1) ;
+    } else {
+      for( int i=4; i>-1; i--) (*MyOutput_) << ((GetCfebDavScope()>>i)&0x1) ;
+    }
+    (*MyOutput_) << std::endl ;
+    //
+    trials = 0;
+    while ( GetTmbDavScope() == 0 && trials < 10 ) {
+      readtimingScope();
+      trials++;
+    }
+    //
+    (*MyOutput_) << " TMB DAV Scope    : " ;
+    (*MyOutput_) << std::setw(5) << GetTmbDavScope() << " " ;
+    if(dmbupgrade){
+      for( int i=0; i<5; i++) (*MyOutput_) << ((GetTmbDavScope()>>i)&0x1) ;
+    } else {
+      for( int i=4; i>-1; i--) (*MyOutput_) << ((GetTmbDavScope()>>i)&0x1) ;
+    }
+    (*MyOutput_) << std::endl ;
+    //
+    trials = 0;
+    while ( GetAlctDavScope() == 0 && trials < 10 ) {
+      readtimingScope();
+      trials++;
+    }
+    //
+    (*MyOutput_) << " ALCT DAV Scope   : " ;
+    (*MyOutput_) << std::setw(5) << GetAlctDavScope() << " " ;
+    if(dmbupgrade){
+      for( int i=0; i<5; i++) (*MyOutput_) << ((GetAlctDavScope()>>i)&0x1) ;
+    } else {
+      for( int i=4; i>-1; i--) (*MyOutput_) << ((GetAlctDavScope()>>i)&0x1) ;
+    }
+    (*MyOutput_) << std::endl ;
+    //
+    (*MyOutput_) << " AFF(cfeb3) Scope : " ;
+    (*MyOutput_) << std::setw(5) << GetActiveDavScope() << " " ;
+    if(dmbupgrade){
+      for( int i=0; i<5; i++) (*MyOutput_) << ((GetActiveDavScope()>>i)&0x1) ;
+    } else {
+      for( int i=4; i>-1; i--) (*MyOutput_) << ((GetActiveDavScope()>>i)&0x1) ;
+    }
+    (*MyOutput_) << std::endl ;
+    //
+    if(dmbupgrade){
+      (*MyOutput_) << "  Line up to arrow:      ^"  << std::endl ;
+      (*MyOutput_) << "                         |"  << std::endl ;
+    }
+    (*MyOutput_) << std::endl ;
+    //
+  }
+  //Loop and choose "best" option:
+  else {
       //
       int nloop = 100;
       //

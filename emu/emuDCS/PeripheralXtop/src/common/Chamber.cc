@@ -251,8 +251,8 @@ bool Chamber::GetDimLV2(int hint, LV_2_DimBroker *dim_lv )
          dim_lv->dcfeb.v30[i] = data[19+3*i]*1.03;  // correction for LVDB5
          dim_lv->dcfeb.v40[i] = data[20+3*i]*1.03;  // correction for LVDB5
          dim_lv->dcfeb.v55[i] = data[21+3*i]*1.03;  // correction for LVDB5
-         dim_lv->dcfeb.c30[i] = data[ 0+3*i]*2;     // correction for LVDB5
-         dim_lv->dcfeb.c40[i] = data[ 1+3*i];
+         dim_lv->dcfeb.c30[i] = data[ 0+3*i];    
+         dim_lv->dcfeb.c40[i] = data[ 1+3*i]*2;     // correction for LVDB5
          dim_lv->dcfeb.c55[i] = data[ 2+3*i];
       }
       else

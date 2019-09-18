@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <?xml-stylesheet type="text/xml" href="RUI-to-computer_mapping_XSLT.xml"?>
 <RUI-to-computer_mapping date="2018-03-03">
+  <computer host="srv-c2d08-07-01.cms" alias="csc-daq10.cms">
+    <RUI instance="16" fedId="837" schar="2" status='in'/>
+  </computer>
   <computer host="srv-c2d08-08-01.cms" alias="csc-daq01.cms">
     <RUI instance="1" fedId="841" schar="2" status='in'/>
     <RUI instance="2" fedId="842" schar="3" status='in'/>
@@ -23,7 +26,7 @@
     <RUI instance="13" fedId="834" schar="2" status='in'/>
     <RUI instance="14" fedId="835" schar="3" status='in'/>
     <RUI instance="15" fedId="836" schar="4" status='in'/>
-    <RUI instance="16" fedId="837" schar="5" status='in'/>
+    <!-- <RUI instance="16" fedId="837" schar="5" status='in'/> -->
   </computer>
   <computer host="srv-c2d08-12-01.cms" alias="csc-daq05.cms">
     <RUI instance="17" fedId="838" schar="2" status='in'/>

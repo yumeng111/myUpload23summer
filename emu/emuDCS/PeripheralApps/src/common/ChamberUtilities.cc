@@ -2102,8 +2102,126 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
     (*MyOutput_) << std::endl;
     web_backup << std::endl;
   }
+  // MEx/1 Case
+  else if(is_otmb_) {
+    
+    int side=0;
+    // Checks individual DCFEB windows to see how many need to be excluded from calculation
+    for(int posneg=0; posneg<2; ++posneg) {
+      
+      good_cfebs[0]=0;
+      
+      for(int cfeb=0; cfeb<MaxCFEB; ++cfeb) {
+	
+	bad_cfeb=0;
+	
+	if(me11_wraparound_best_center(pulse_count_cfeb_rx[cfeb][posneg]) < 0) {
+	  
+	  for(int rx=0; rx<25; ++rx) {
+	    
+	    if(pulse_count_cfeb_rx[cfeb][posneg][rx] > 0) { // Checks to make sure there are errors for some rx values
+	      
+	      bad_cfeb++;
+	      break;
+	    }
+	  }
+	  
+	  if(bad_cfeb > 0 ) bad_cfeb_b = cfeb;
+	  else good_cfebs[0]++;
+	}
+	else good_cfebs[0]++;
+      }
+      
+      
+      // At most we should have one failed DCFEB on a side -- failed meaning that at least one rx value has an error and no window could be found
+      // ME1/1b nCfebs = 4, ME1/1a nCfebs = 3
+      //
+      // Best = nCfebs do not fail
+      // Okay = nCfebs - 1 do not fail
+      // Fail = < nCfebs - 1 do not fail
+	if(good_cfebs[0] == MaxCFEB) {
+	    for(int rx=0; rx<25; ++rx){
+	      for(int cfeb=0; cfeb<MaxCFEB; ++cfeb) total_error_count_rx[side][posneg][rx] += pulse_count_cfeb_rx[cfeb][posneg][rx]; 
+	    }
+	}
+	// Okay Case
+	else if(good_cfebs[0] == MaxCFEB - 1) {	  
+	  (*MyOutput_) << "One bad DCFEB, removing DCFEB " << bad_cfeb_b << " from window analysis for posneg=" << posneg << "." << std::endl;
+	  web_backup   << "One bad DCFEB, removing DCFEB " << bad_cfeb_b << " from window analysis for posneg=" << posneg << "." << std::endl;
+	    for(int rx=0; rx<25; ++rx){
+	      for(int cfeb=0; cfeb<MaxCFEB; ++cfeb) total_error_count_rx[side][posneg][rx] += (cfeb==bad_cfeb_b)?0:pulse_count_cfeb_rx[cfeb][posneg][rx];
+	    }
+	}
+	// Fail Case
+	else {
+	  
+	  (*MyOutput_) << "Scan failed on posneg " << posneg << "!" << std::endl;
+	  web_backup << "Scan failed on posneg " << posneg << "!" << std::endl;
+	  
+	  for(int rx=0; rx<25; ++rx) total_error_count_rx[side][posneg][rx] = -1;
+	}
+
+    // Calculates best rx values	
+      
+      best_rx_b[posneg] = me11_wraparound_best_center(total_error_count_rx[side][posneg]);
+      
+      (*MyOutput_) << "Posneg: " << posneg << std::endl;
+      web_backup << "Posneg: " << posneg << std::endl;
+      
+      (*MyOutput_) << std::setw(5) << "CFEB" << std::setw(2) << "|" << std::setw(7) << "Best RX" << std::setw(10) << "Ind. RX" << std::endl;
+      web_backup << std::setw(5) << "CFEB" << std::setw(2) << "|" << std::setw(7) << "Best RX" << std::setw(10) << "Ind. RX" << std::endl;
+      for(int cfeb = (is_cfeb_scan)?(0):(cfeb_num); (is_cfeb_scan)?(cfeb<MaxCFEB):(cfeb==cfeb_num); ++cfeb) {
+	
+	(*MyOutput_) << std::setw(5) << cfeb << std::setw(2) << "|" << std::setw(7) << best_rx_b[posneg] << std::setw(10) << me11_wraparound_best_center(pulse_count_cfeb_rx[cfeb][posneg]) << std::endl;
+	web_backup   << std::setw(5) << cfeb << std::setw(2) << "|" << std::setw(7) << best_rx_b[posneg] << std::setw(10) << me11_wraparound_best_center(pulse_count_cfeb_rx[cfeb][posneg]) << std::endl;
+	
+      }
+      (*MyOutput_) << std::endl;
+      web_backup << std::endl;
+    }//over posneg
+    
+    // Chooses best posneg and then assigns corresponding best rx value and posneg
+      side_low = 0;
+      side_high = 5;
+      
+      // Chooses posneg giving largest good window or defaults to posneg = 0		
+      if(me11_window_width(best_rx_b[0], total_error_count_rx[side][0]) >= me11_window_width(best_rx_b[1], total_error_count_rx[side][1])) {
+	// Checks if neither side was able to find a well-defined window
+	if(best_rx_b[0] < 0) {
+	  (*MyOutput_) << "ERROR: COULD NOT FIND GOOD WINDOW ON EITHER POSNEG!" << std::endl;
+	  web_backup << "ERROR: COULD NOT FIND GOOD WINDOW ON EITHER POSNEG!" << std::endl;
+	}				
+	
+	for(int cfeb = side_low; cfeb<side_high; ++cfeb) {
+	  CFEBrxPhase_[cfeb] = best_rx_b[0];
+	  CFEBrxPosneg_[cfeb] = 0;
+	}
+      }
+      else {
+	
+	for(int cfeb = side_low; cfeb<side_high; ++cfeb) {
+	  CFEBrxPhase_[cfeb] = best_rx_b[1];
+	  CFEBrxPosneg_[cfeb] = 1;
+	}
+      }
+    
+    (*MyOutput_) << "Using parameters: " << std::endl << std::endl;
+    web_backup << "Using parameters: " << std::endl << std::endl;
+    
+    (*MyOutput_) << std::setw(5) << "DCFEB" << std::setw(2) << "|" << std::setw(5) << "RX" << std::setw(7) << "Posneg" << std::endl;
+    web_backup << std::setw(5) << "DCFEB" << std::setw(2) << "|" << std::setw(5) << "RX" << std::setw(7) << "Posneg" << std::endl;
+    
+    for(int cfeb=0; cfeb<MaxCFEB; ++cfeb) {
+      
+      (*MyOutput_) << std::setw(5) << cfeb << std::setw(2) << "|" << std::setw(5) << CFEBrxPhase_[cfeb] << std::setw(7) << CFEBrxPosneg_[cfeb] << std::endl;
+      web_backup << std::setw(5) << cfeb << std::setw(2) << "|" << std::setw(5) << CFEBrxPhase_[cfeb] << std::setw(7) << CFEBrxPosneg_[cfeb] << std::endl;
+    }
+    
+    (*MyOutput_) << std::endl;
+    web_backup << std::endl;
+  }
   
-  // Non-ME1/1 Case
+  // non-OTMB Case
   else {
     
     for(int posneg=0; posneg<2; ++posneg) {

@@ -3153,6 +3153,22 @@ if(D_hversion>=2)
   *out << cgicc::form() << std::endl ;
   //
   *out << cgicc::fieldset() << cgicc::br();
+ }
+
+ if ( C_hversion > 1 ){
+   std::string PipelineDepthScanWithDAQ = "/" + getApplicationDescriptor()->getURN() + "/PipelineDepthScanWithDAQ";
+   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl
+	<< cgicc::legend("Pipeline depth scan with local DAQ").set("style","color:blue")
+	<< cgicc::form().set("method","GET").set("action",PipelineDepthScanWithDAQ) << std::endl
+	<< cgicc::input().set("type","submit").set("value","Pipeline depth scan with local DAQ").set("title","Scan pipeline depth using the local DAQ, and find its best value with the unpacker.")
+	<< "from "          << cgicc::input().set("type","text").set("size","3").set("value","55").set("name","from"     )
+	<< " to "           << cgicc::input().set("type","text").set("size","3").set("value","75").set("name","to"       )
+	<< " in steps of "  << cgicc::input().set("type","text").set("size","3").set("value", "1").set("name","increment" )
+	<< " for "          << cgicc::input().set("type","text").set("size","3").set("value","30").set("name","duration" ) 
+	<< " seconds"       << std::endl
+	<< pipelineDepthScanWithDAQResults_ << std::endl
+	<< cgicc::form() << std::endl
+	<< cgicc::fieldset() << cgicc::br();
 }
   //  
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl ;

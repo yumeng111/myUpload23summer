@@ -4159,7 +4159,7 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
      *out << cgicc::a("DCFEB Counters").set("href",DCFEBCount) << std::endl;
 
   }
-  if(hversion==2 || hversion==3 || hversion==4))
+  if(hversion==2 || hversion==3 || hversion==4)
   {
      std::string ODMBCount =
          toolbox::toString("/%s/ODMBCounters?dmb=%d",getApplicationDescriptor()->getURN().c_str(),dmb);

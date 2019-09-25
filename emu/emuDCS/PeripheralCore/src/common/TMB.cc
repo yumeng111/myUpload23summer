@@ -10186,7 +10186,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     //0x174,176,178 = ADR_HCM401,HCM423,HCM445 = CFEB6 Hot Channel Masks  --- added on OTMB
     //------------------------------------------------------------------
     int DISTRIPS_PER_LAYER;
-    if (hardware_version_ >= 2){
+    if (hardware_version_ >= 2 && (tmb_firmware_compile_type_ == 0xC || tmb_firmware_compile_type_ == 0xD)) {
       DISTRIPS_PER_LAYER = MAX_NUM_DISTRIPS_PER_LAYER_EXT;
     }
     else {

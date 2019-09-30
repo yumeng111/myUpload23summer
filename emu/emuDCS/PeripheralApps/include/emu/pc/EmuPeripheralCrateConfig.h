@@ -526,6 +526,7 @@ private:
   void LoadVirtex6TMBFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);  
   void LoadVirtex6TMBFPGA(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);  
   void LoadSpartan6ALCTFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void VerifySpartan6ALCTFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void ReadOTMBVirtex6Reg(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   //
   // VCC utils

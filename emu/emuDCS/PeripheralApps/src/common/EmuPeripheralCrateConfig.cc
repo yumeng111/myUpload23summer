@@ -478,6 +478,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::RATReadFirmware, "RATReadFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::LoadALCTSlowFirmware, "LoadALCTSlowFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::LoadSpartan6ALCTFirmware, "LoadSpartan6ALCTFirmware");
+  xgi::bind(this,&EmuPeripheralCrateConfig::VerifySpartan6ALCTFirmware, "VerifySpartan6ALCTFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::LoadVirtex6TMBFirmware, "LoadVirtex6TMBFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::LoadVirtex6TMBFPGA, "LoadVirtex6TMBFPGA");
   xgi::bind(this,&EmuPeripheralCrateConfig::ReadOTMBVirtex6Reg, "ReadOTMBVirtex6Reg");
@@ -10600,6 +10601,14 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
     *out << cgicc::form() << std::endl ;
     //
+    std::string VerifySpartan6ALCTFirmware = toolbox::toString("/%s/VerifySpartan6ALCTFirmware",getApplicationDescriptor()->getURN().c_str());
+    *out << cgicc::form().set("method","GET").set("action",VerifySpartan6ALCTFirmware) << std::endl ;
+    sprintf(buf,"Step 2.5) Verify ALCT Spartan-6 Firmware in slot %d",tmbVector[tmb]->slot());
+    *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
+    sprintf(buf,"%d",tmb);
+    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+    *out << cgicc::form() << std::endl ;
+    //
     *out << cgicc::form().set("method","GET").set("action",CCBHardResetFromTMBPage) << std::endl ;
     *out << cgicc::input().set("type","submit").set("value","Step 3) CCB hard reset") << std::endl ;
     *out << cgicc::form() << std::endl ;
@@ -11902,6 +11911,39 @@ void EmuPeripheralCrateConfig::LoadSpartan6ALCTFirmware(xgi::Input * in, xgi::Ou
        thisTMB->enableAllClocks();
        // Put CCB back into DLOG mode to listen to TTC commands...
        thisCCB->setCCBMode(CCB::DLOG);
+    }
+  }
+  //
+this->TMBUtils(in,out);
+}
+//
+void EmuPeripheralCrateConfig::VerifySpartan6ALCTFirmware(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name2 = cgi.getElement("tmb");
+  int tmb;
+  if(name2 != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "Select TMB " << tmb << std::endl;
+  } else {
+    std::cout << "No TMB" << std::endl ;
+    tmb=-1;
+  }
+  //
+  TMB * thisTMB=NULL;
+  if(tmb>=0 && (unsigned)tmb<tmbVector.size())  thisTMB = tmbVector[tmb];
+  if(thisTMB)
+  {
+    ALCTController * thisALCT = thisTMB->alctController();
+    if(thisALCT && (thisALCT->GetHardwareVersion()>=2))
+    {
+       std::string firmfile = ALCTFirmware_[tmb].toString() + ((thisALCT->GetHardwareVersion()==4)?".mcs":"_0.mcs");
+       //
+       std::cout  << getLocalDateTime() <<  " Read and Verify new ALCT Mezzanine (Spartan-6) firmware to slot " << thisTMB->slot() << std::endl;
+       thisALCT->verify_firmware(firmfile.c_str());
+       std::cout  << getLocalDateTime() <<  " Finished." << std::endl;
     }
   }
   //

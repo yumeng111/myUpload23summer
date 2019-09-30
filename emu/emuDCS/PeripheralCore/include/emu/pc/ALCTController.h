@@ -702,6 +702,7 @@ class ALCTController : public EmuLogger
   int write_eprom(char *bufin, int dsize, int chip, int broadcast);
   int read_eprom(char *bufout, int dsize, int chip);
   int load_firmware(const char *mcsfile, int broadcast);
+  int verify_firmware(const char *mcsfile);
   void read_firmware(const char *filename);
 
 protected:

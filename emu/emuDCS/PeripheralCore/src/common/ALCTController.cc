@@ -4992,9 +4992,69 @@ int ALCTController::load_firmware(const char *mcsfile, int broadcast)
      write_eprom(buf0, mcssize, 0, broadcast);
      if(mcssize2) write_eprom(buf1, mcssize2, 1, broadcast);  
      std::cout << "Done."<< std::endl;
-     if(broadcast==0)
-     {
-        std::cout << "Read back and Verify..." << std::endl; 
+
+// Liu 2019-09-30: split verification into a separate method
+
+     free(bufin);
+     return 0;
+}
+
+int ALCTController::verify_firmware(const char *mcsfile)
+{
+   unsigned comd, data;
+   const int PROM_SIZE=4194304; // in bytes
+   int FIRMWARE_SIZE=0;
+   char filename[1000];
+
+   char *bufin, c;
+   bufin=(char *)malloc(4*PROM_SIZE);
+   if(bufin==NULL)  return -2;
+   char *buf0=bufin;
+   char *buf1=bufin+PROM_SIZE;
+   char *rbuf=bufin+2*PROM_SIZE;
+   char *rbuf1=rbuf+PROM_SIZE;
+
+   strncpy(filename, mcsfile, 980);
+   FILE *fin=fopen(filename,"r");
+   if(fin==NULL ) 
+   { 
+      free(bufin);  
+      std::cout << "ERROR: Unable to open MCS file :" << filename << std::endl;
+      return -3; 
+   }
+   int mcssize=tmb_->read_mcs(bufin, fin);
+   fclose(fin);
+   FIRMWARE_SIZE=mcssize;
+   int mcssize2=0;
+   if(mcssize==PROM_SIZE)
+   {   // need to read a 2nd file
+      filename[strlen(filename)-5]++;
+      fin=fopen(filename,"r");
+      if(fin==NULL ) 
+      { 
+         free(bufin);  
+         std::cout << "WARNING: Unable to open 2nd MCS file :" << filename << std::endl;
+      }
+      else
+      {
+         mcssize2=tmb_->read_mcs(bufin+PROM_SIZE, fin);
+         fclose(fin);
+      }
+      FIRMWARE_SIZE += mcssize2;                   
+   }
+   std::cout << "Read MCS size: " << std::dec << FIRMWARE_SIZE << " bytes" << std::endl;
+/*
+// byte swap
+   for(int i=0; i<FIRMWARE_SIZE/2; i++)
+   {  c=bufin[i*2];
+      bufin[i*2]=bufin[i*2+1];
+      bufin[i*2+1]=c;
+   }
+*/
+//    tmb_->getTheController()->Debug(2);
+     tmb_->getTheController()->SetUseDelay(true);
+     tmb_->new_RestoreIdle(7+ALCTversion());
+        std::cout << "Read back EPROM(s) and Verify..." << std::endl; 
         read_eprom(rbuf, PROM_SIZE, 0);
         if(mcssize2) read_eprom(rbuf1, mcssize2, 1);
         int err_count=0;
@@ -5004,7 +5064,6 @@ int ALCTController::load_firmware(const char *mcsfile, int broadcast)
         }
         if(err_count) std::cout << "Verification failed! Error count: " << err_count << " byte(s)."<< std::endl;
         else std::cout << "Verification successful! No error." << std::endl;
-     }
      free(bufin);
      return 0;
 }

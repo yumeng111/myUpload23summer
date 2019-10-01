@@ -232,6 +232,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBTimingSimpleScanSystem_non_me11, "CFEBTimingSimpleScanSystem_non_me11");
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBTimingSimpleScanSystem_me11, "CFEBTimingSimpleScanSystem_me11");
   xgi::bind(this,&EmuPeripheralCrateConfig::OTMBConfigBits, "OTMBConfigBits");
+  xgi::bind(this,&EmuPeripheralCrateConfig::ConfigCCBViaTCDS, "ConfigCCBViaTCDS");
   //
   //------------------------------
   // bind crate utilities
@@ -617,6 +618,9 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   //standalone_ = false;
   standalone_ = true;
   //
+  TCDSCIConf_ = "";
+  TCDSPIConf_ = "";
+  //
   for (int i=0; i<9; i++) {
     able_to_load_alct[i] = -1;  
     number_of_tmb_firmware_errors[i] = -1;
@@ -640,6 +644,8 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   this->getApplicationInfoSpace()->fireItemAvailable("Calibtype", &CalibType_);
   this->getApplicationInfoSpace()->fireItemAvailable("Calibnumber", &CalibNumber_);
   this->getApplicationInfoSpace()->fireItemAvailable("Standalone", &standalone);
+  this->getApplicationInfoSpace()->fireItemAvailable("TCDSCIConf", &TCDSCIConf_);
+  this->getApplicationInfoSpace()->fireItemAvailable("TCDSPIConf", &TCDSPIConf_);
   
   // for XMAS minotoring:
 
@@ -1881,7 +1887,9 @@ void EmuPeripheralCrateConfig::CrateConfiguration(xgi::Input * in, xgi::Output *
        << "from "          << cgicc::input().set("type","text").set("size","3").set("value","55").set("name","from")
        << " to "           << cgicc::input().set("type","text").set("size","3").set("value","75").set("name","to"  )
        << " in steps of "  << cgicc::input().set("type","text").set("size","3").set("value", "1").set("name","increment" )
-       << " for "          << cgicc::input().set("type","text").set("size","3").set("value","30").set("name","duration"  ) << " seconds" << std::endl
+       << " for "          << cgicc::input().set("type","text").set("size","3").set("value","30").set("name","duration"  ) << " seconds" 
+       << " in "           << cgicc::input().set("type","checkbox").set("value","true").set("name","single layer" ) << " trigger mode"
+       << std::endl
        << pipelineDepthScanWithDAQResults_ << std::endl
        << cgicc::form() << std::endl
        << cgicc::td();
@@ -4243,6 +4251,8 @@ void EmuPeripheralCrateConfig::ExpertToolsPage(xgi::Input * in, xgi::Output * ou
   //
   *out << cgicc::table().set("border","0");
   //
+  *out << cgicc::tr();
+  //
   *out << cgicc::td();
   std::string MeasureAllTMBVoltages = toolbox::toString("/%s/MeasureAllTMBVoltages",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",MeasureAllTMBVoltages) << std::endl ;
@@ -4270,7 +4280,10 @@ void EmuPeripheralCrateConfig::ExpertToolsPage(xgi::Input * in, xgi::Output * ou
   *out << cgicc::input().set("type","submit").set("value","DCFEB-OTMB fiber test") << std::endl ;
   *out << cgicc::form() << std::endl ;
   *out << cgicc::td();
-  *out << "<tr>";
+  //
+  *out << cgicc::tr();
+  //
+  *out << cgicc::tr();
   //
   *out << cgicc::td();
   std::string OtmbConfigB = toolbox::toString("/%s/OTMBConfigBits",getApplicationDescriptor()->getURN().c_str());
@@ -4278,6 +4291,16 @@ void EmuPeripheralCrateConfig::ExpertToolsPage(xgi::Input * in, xgi::Output * ou
   *out << cgicc::input().set("type","submit").set("value","Read all ME1/1 OTMB-ALCT Configuration Done bits") << std::endl ;
   *out << cgicc::form() << std::endl ;
   *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  std::string ConfigCCBViaTCDS = toolbox::toString("/%s/ConfigCCBViaTCDS",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",ConfigCCBViaTCDS) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Configure all CCBs of this endcap via TCDS")
+    .set("title","Do _not_ do this during an ongoing run!")
+       << std::endl ;
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::td();
+  //  *out << cgicc::tr();
   //
   *out << cgicc::table() << std::endl ;
   //
@@ -7183,25 +7206,29 @@ void EmuPeripheralCrateConfig::PipelineDepthScanWithDAQ( xgi::Input * in, xgi::O
   int toDepth   = 70;
   int increment = 1;
   int duration  = 60;
+  bool isSingleLayer = false;
 
   cgicc::Cgicc cgi(in);
   cgicc::form_iterator from = cgi.getElement( "from"      );
   cgicc::form_iterator to   = cgi.getElement( "to"        );
   cgicc::form_iterator incr = cgi.getElement( "increment" );
   cgicc::form_iterator t    = cgi.getElement( "duration"  );
-  if ( from != cgi.getElements().end() ) fromDepth = utils::stringTo<int>( from->getValue() );
-  if ( to   != cgi.getElements().end() )   toDepth = utils::stringTo<int>( to  ->getValue() );
-  if ( incr != cgi.getElements().end() ) increment = utils::stringTo<int>( incr->getValue() );
-  if ( t    != cgi.getElements().end() )  duration = utils::stringTo<int>( t   ->getValue() );
+  cgicc::form_iterator sl   = cgi.getElement( "single layer" );
+  if ( from != cgi.getElements().end() )     fromDepth = utils::stringTo<int> ( from->getValue() );
+  if ( to   != cgi.getElements().end() )       toDepth = utils::stringTo<int> ( to  ->getValue() );
+  if ( incr != cgi.getElements().end() )     increment = utils::stringTo<int> ( incr->getValue() );
+  if ( t    != cgi.getElements().end() )      duration = utils::stringTo<int> ( t   ->getValue() );
+  if ( sl   != cgi.getElements().end() ) isSingleLayer = utils::stringTo<bool>( sl  ->getValue() );
 
   LOG4CPLUS_INFO(getApplicationLogger(),
 		 "Pipeline depth scan with local DAQ from " << fromDepth <<
 		 " to " << toDepth <<
 		 " in steps of " << increment <<
-		 "for " << dmbVector.at( DMB_ )->GetLabel() );
+		 " for " << dmbVector.at( DMB_ )->GetLabel() <<
+		 " in " << ( isSingleLayer ? "single-layer" : "normal" ) << " trigger mode." );
 
   emu::pc::PipelineDepthScan scan( this, dmbVector.at( DMB_ ) );
-  scan.run( fromDepth, toDepth, increment, duration );
+  scan.run( fromDepth, toDepth, increment, duration, isSingleLayer );
   this->DMBUtils(in,out);
 }
 
@@ -7213,6 +7240,7 @@ void EmuPeripheralCrateConfig::PipelineDepthScanWithDAQForCrate( xgi::Input * in
   int toDepth   = 70;
   int increment = 1;
   int duration  = 60;
+  bool isSingleLayer = false;
   set<unsigned int> hwVersions;
   hwVersions.insert(2); //   2             ODMB (2) + PPIB + DCFEB (2)
   hwVersions.insert(3); //   3             DMB (1)+ DCFEB (2)
@@ -7223,10 +7251,12 @@ void EmuPeripheralCrateConfig::PipelineDepthScanWithDAQForCrate( xgi::Input * in
   cgicc::form_iterator from = cgi.getElement( "from"     );
   cgicc::form_iterator to   = cgi.getElement( "to"       );
   cgicc::form_iterator t    = cgi.getElement( "duration" );
+  cgicc::form_iterator sl   = cgi.getElement( "single layer" );
   vector<cgicc::FormEntry> hwVersionsFE;
-  if ( from != cgi.getElements().end() ) fromDepth = utils::stringTo<int>( from->getValue() );
-  if ( to   != cgi.getElements().end() )   toDepth = utils::stringTo<int>( to  ->getValue() );
-  if ( t    != cgi.getElements().end() )  duration = utils::stringTo<int>( t   ->getValue() );
+  if ( from != cgi.getElements().end() ) fromDepth     = utils::stringTo<int> ( from->getValue() );
+  if ( to   != cgi.getElements().end() )   toDepth     = utils::stringTo<int> ( to  ->getValue() );
+  if ( t    != cgi.getElements().end() )  duration     = utils::stringTo<int> ( t   ->getValue() );
+  if ( sl   != cgi.getElements().end() ) isSingleLayer = utils::stringTo<bool>( sl  ->getValue() );
   cgi.getElement( "hwVersions", hwVersionsFE );
   if( ! hwVersionsFE.empty() ) {
     hwVersions.clear();
@@ -7238,10 +7268,11 @@ void EmuPeripheralCrateConfig::PipelineDepthScanWithDAQForCrate( xgi::Input * in
   LOG4CPLUS_INFO(getApplicationLogger(),
 		 "Crate-wide pipeline depth scan with local DAQ from " << fromDepth <<
 		 " to " << toDepth <<
-		 "for h/w versions " << hwVersions );
+		 " for h/w versions " << hwVersions <<
+		 " in " << ( isSingleLayer ? "single-layer" : "normal" ) << " trigger mode." );
 
   emu::pc::PipelineDepthScan scan( this, thisCrate, hwVersions );
-  scan.run( fromDepth, toDepth, increment, duration );
+  scan.run( fromDepth, toDepth, increment, duration, isSingleLayer );
   this->CrateConfiguration(in,out);
 }
 
@@ -7253,6 +7284,7 @@ void EmuPeripheralCrateConfig::PipelineDepthScanWithDAQForSystem( xgi::Input * i
   int toDepth   = 70;
   int increment = 1;
   int duration  = 60;
+  bool isSingleLayer = false;
   set<unsigned int> hwVersions;
   hwVersions.insert(2); //   2             ODMB (2) + PPIB + DCFEB (2)
   hwVersions.insert(3); //   3             DMB (1)+ DCFEB (2)
@@ -7263,10 +7295,12 @@ void EmuPeripheralCrateConfig::PipelineDepthScanWithDAQForSystem( xgi::Input * i
   cgicc::form_iterator from = cgi.getElement( "from"     );
   cgicc::form_iterator to   = cgi.getElement( "to"       );
   cgicc::form_iterator t    = cgi.getElement( "duration" );
+  cgicc::form_iterator sl   = cgi.getElement( "single layer" );
   vector<cgicc::FormEntry> hwVersionsFE;
-  if ( from != cgi.getElements().end() ) fromDepth = utils::stringTo<int>( from->getValue() );
-  if ( to   != cgi.getElements().end() )   toDepth = utils::stringTo<int>( to  ->getValue() );
-  if ( t    != cgi.getElements().end() )  duration = utils::stringTo<int>( t   ->getValue() );
+  if ( from != cgi.getElements().end() ) fromDepth     = utils::stringTo<int> ( from->getValue() );
+  if ( to   != cgi.getElements().end() )   toDepth     = utils::stringTo<int> ( to  ->getValue() );
+  if ( t    != cgi.getElements().end() )  duration     = utils::stringTo<int> ( t   ->getValue() );
+  if ( sl   != cgi.getElements().end() ) isSingleLayer = utils::stringTo<bool>( sl  ->getValue() );
   cgi.getElement( "hwVersions", hwVersionsFE );
   if( ! hwVersionsFE.empty() ) {
     hwVersions.clear();
@@ -7275,10 +7309,14 @@ void EmuPeripheralCrateConfig::PipelineDepthScanWithDAQForSystem( xgi::Input * i
     }
   }
 
-  LOG4CPLUS_INFO(getApplicationLogger(), "Endcap-wide pipeline depth scan with local DAQ from " << fromDepth << " to " << toDepth << "for h/w versions " << hwVersions );
+  LOG4CPLUS_INFO(getApplicationLogger(), 
+		 "Endcap-wide pipeline depth scan with local DAQ from " << fromDepth << 
+		 " to " << toDepth << 
+		 "for h/w versions " << hwVersions <<
+		 " in " << ( isSingleLayer ? "single-layer" : "normal" ) << " trigger mode." );
 
   emu::pc::PipelineDepthScan scan( this, emuEndcap_, hwVersions );
-  scan.run( fromDepth, toDepth, increment, duration );
+  scan.run( fromDepth, toDepth, increment, duration, isSingleLayer );
 
   this->ExpertToolsPage(in,out);
 }
@@ -13561,6 +13599,29 @@ throw (xgi::exception::Exception)
      }       
      *out << cgicc::table() << std::endl;
   }
+
+  //
+void EmuPeripheralCrateConfig::ConfigCCBViaTCDS(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception)
+{
+  if(!parsed) ParsingXML();  
+
+  try{
+    TCDSInterface( this ).configureCCB();
+  } 
+  catch ( xcept::Exception& e ){
+    LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to configure CCBs via TCDS: " << stdformat_exception_history( e ) );
+  }
+  catch ( std::exception& e ){
+    LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to configure CCBs via TCDS: " << e.what() );
+  }
+  catch (...){
+    LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to configure CCBs via TCDS: Unknown exception caught." );
+  }
+     
+
+  this->ExpertToolsPage(in,out);
+}
 
 void EmuPeripheralCrateConfig::ReadOTMBVirtex6Reg(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {

@@ -36,6 +36,7 @@ Sources=\
         EmuPeripheralCrateService.cc \
         EmuCompareMcsFiles.cc \
         EmuEndcapConfigWrapper.cc \
+	TCDSInterface.cc \
 	LocalDAQInterface.cc \
 	FEDInterface.cc \
 	PipelineDepthScan.cc

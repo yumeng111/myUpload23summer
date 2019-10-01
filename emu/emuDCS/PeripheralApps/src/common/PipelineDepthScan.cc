@@ -55,7 +55,7 @@ emu::pc::PipelineDepthScan::PipelineDepthScan( xdaq::Application *parent, emu::p
 emu::pc::PipelineDepthScan::~PipelineDepthScan(){
 }
 
-void emu::pc::PipelineDepthScan::run( int fromDepth, int toDepth, int incrementDepth, unsigned int durationInSec ){
+void emu::pc::PipelineDepthScan::run( int fromDepth, int toDepth, int incrementDepth, unsigned int durationInSec, bool isSingleLayerTrigger ){
   if ( fromDepth > toDepth ||
        fromDepth > 0xff    ||
        fromDepth < 0       ||
@@ -84,7 +84,7 @@ void emu::pc::PipelineDepthScan::run( int fromDepth, int toDepth, int incrementD
   FEDInterface fed( parent_, chamberLabels );
   fed.startFED( true );
 
-  // setSingleLayerTrigger(); // TODO: not in pulsed STEP runs!
+  if ( isSingleLayerTrigger ) setSingleLayerTrigger();
   
   LocalDAQInterface ldaq( parent_ );
 
@@ -114,6 +114,13 @@ void emu::pc::PipelineDepthScan::run( int fromDepth, int toDepth, int incrementD
       dataList << *dfn << endl;
     }
     dataList.close();
+  }
+
+  // Return to normal trigger mode if we've been in single layer mode
+  if ( isSingleLayerTrigger ){
+    for ( std::set<Crate*>::iterator iCrate = crates_.begin(); iCrate != crates_.end(); ++iCrate ){
+      (*iCrate)->ccb()->hardReset(); // to go back to normal (multilayer) trigger mode
+    }
   }
 
   fed.haltFED();

@@ -60,6 +60,8 @@
 // #include "emu/pc/EMU_CC_constants.h"
 #include "emu/pc/DDU.h"
 //
+#include "emu/pc/TCDSInterface.h"
+//
 #include "emu/pc/EmuPeripheralCrateBase.h"
 
 namespace emu {
@@ -67,6 +69,8 @@ namespace emu {
 
 class EmuPeripheralCrateConfig: public EmuPeripheralCrateBase
 {
+  //
+  friend class emu::pc::TCDSInterface;
   //
 protected:
   //
@@ -84,6 +88,8 @@ protected:
   xdata::String CalibrationState_;
   xdata::String standalone;
   bool standalone_;
+  xdata::String TCDSCIConf_;
+  xdata::String TCDSPIConf_;
   //
   std::string CCBFirmware_;
   std::string MPCFirmware_;
@@ -700,6 +706,7 @@ private:
   void OtmbFiberTest(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void UpdateInFlashKey(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void OTMBConfigBits(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void ConfigCCBViaTCDS(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   //
   void SetTwoLayerTrigger(int tmb);
   //

@@ -22,7 +22,7 @@ namespace emu { namespace pc {
       PipelineDepthScan( xdaq::Application *parent, emu::pc::Crate*     crate , set<unsigned int> hwVersions );
       PipelineDepthScan( xdaq::Application *parent, emu::pc::EmuEndcap* endcap, set<unsigned int> hwVersions );
       ~PipelineDepthScan();
-      void run( int fromDepth, int toDepth, int incrementDepth, unsigned int durationInSec );
+      void run( int fromDepth, int toDepth, int incrementDepth, unsigned int durationInSec, bool isSingleLayerTrigger );
       
     private:
       xdaq::Application *parent_;

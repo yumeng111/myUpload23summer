@@ -3161,11 +3161,12 @@ if(D_hversion>=2)
 	<< cgicc::legend("Pipeline depth scan with local DAQ").set("style","color:blue")
 	<< cgicc::form().set("method","GET").set("action",PipelineDepthScanWithDAQ) << std::endl
 	<< cgicc::input().set("type","submit").set("value","Pipeline depth scan with local DAQ").set("title","Scan pipeline depth using the local DAQ, and find its best value with the unpacker.")
-	<< "from "          << cgicc::input().set("type","text").set("size","3").set("value","55").set("name","from"     )
-	<< " to "           << cgicc::input().set("type","text").set("size","3").set("value","75").set("name","to"       )
+	<< "from "          << cgicc::input().set("type","text").set("size","3").set("value","55").set("name","from"      )
+	<< " to "           << cgicc::input().set("type","text").set("size","3").set("value","75").set("name","to"        )
 	<< " in steps of "  << cgicc::input().set("type","text").set("size","3").set("value", "1").set("name","increment" )
-	<< " for "          << cgicc::input().set("type","text").set("size","3").set("value","30").set("name","duration" ) 
-	<< " seconds"       << std::endl
+	<< " for "          << cgicc::input().set("type","text").set("size","3").set("value","30").set("name","duration"  ) << " seconds"
+	<< " in "           << cgicc::input().set("type","checkbox").set("value","true").set("name","single layer" ) << " trigger mode"
+	<< std::endl
 	<< pipelineDepthScanWithDAQResults_ << std::endl
 	<< cgicc::form() << std::endl
 	<< cgicc::fieldset() << cgicc::br();
@@ -4159,7 +4160,7 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
      *out << cgicc::a("DCFEB Counters").set("href",DCFEBCount) << std::endl;
 
   }
-  if(hversion==2 || hversion==3 || hversion==4))
+  if(hversion==2 || hversion==3 || hversion==4)
   {
      std::string ODMBCount =
          toolbox::toString("/%s/ODMBCounters?dmb=%d",getApplicationDescriptor()->getURN().c_str(),dmb);

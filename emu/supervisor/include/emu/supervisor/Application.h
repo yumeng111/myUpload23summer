@@ -53,6 +53,8 @@ public:
 			throw (xoap::exception::Exception);
 	xoap::MessageReference onRunSequence(xoap::MessageReference message)
 			throw (xoap::exception::Exception);
+	xoap::MessageReference onConfCCBsViaTCDS(xoap::MessageReference message)
+			throw (xoap::exception::Exception);
 
 	// HyperDAQ interface
 	void webDefault(xgi::Input *in, xgi::Output *out)
@@ -80,6 +82,10 @@ public:
 	void webResyncBgoTrainViaTCDS(xgi::Input *in, xgi::Output *out)
 			throw (xgi::exception::Exception);
 	void webHardResetBgoTrainViaTCDS(xgi::Input *in, xgi::Output *out)
+			throw (xgi::exception::Exception);
+	void webConfPlusCCBsViaTCDS(xgi::Input *in, xgi::Output *out)
+			throw (xgi::exception::Exception);
+	void webConfMinusCCBsViaTCDS(xgi::Input *in, xgi::Output *out)
 			throw (xgi::exception::Exception);
 	void webCalibPC(xgi::Input *in, xgi::Output *out)
 			throw (xgi::exception::Exception);
@@ -207,6 +213,8 @@ private: // XDAQ parameters
         void getTFAppDescriptor();
         void getTCDSAppDescriptors();
         bool getTCDSAppDescriptors( bool useSystemSwitchTag );
+
+  void confCCBsViaTCDS( CIControl *ci, PIControl *pi );
 
   void setUpLogger();
 

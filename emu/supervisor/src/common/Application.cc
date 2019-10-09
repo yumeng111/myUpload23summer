@@ -196,6 +196,8 @@ emu::supervisor::Application::Application(xdaq::ApplicationStub *stub)
   xgi::bind(this, &emu::supervisor::Application::webHardResetViaTCDS        , "HardResetViaTCDS"        );
   xgi::bind(this, &emu::supervisor::Application::webResyncBgoTrainViaTCDS   , "ResyncBgoTrainViaTCDS"   );
   xgi::bind(this, &emu::supervisor::Application::webHardResetBgoTrainViaTCDS, "HardResetBgoTrainViaTCDS");
+  xgi::bind(this, &emu::supervisor::Application::webConfPlusCCBsViaTCDS     , "ConfPlusCCBsViaTCDS"     );
+  xgi::bind(this, &emu::supervisor::Application::webConfMinusCCBsViaTCDS    , "ConfMinusCCBsViaTCDS"    );
   
   xoap::bind(this, &emu::supervisor::Application::onConfigure,   "Configure",   XDAQ_NS_URI);
   xoap::bind(this, &emu::supervisor::Application::onStart,       "Start",       XDAQ_NS_URI);
@@ -204,6 +206,7 @@ emu::supervisor::Application::Application(xdaq::ApplicationStub *stub)
   xoap::bind(this, &emu::supervisor::Application::onReset,       "Reset",       XDAQ_NS_URI);
   xoap::bind(this, &emu::supervisor::Application::onSetTTS,      "SetTTS",      XDAQ_NS_URI);
   xoap::bind(this, &emu::supervisor::Application::onRunSequence, "RunSequence", XDAQ_NS_URI);
+  xoap::bind(this, &emu::supervisor::Application::onConfCCBsViaTCDS, "ConfCCBsViaTCDS", XDAQ_NS_URI);
   
   calib_wl_ = toolbox::task::getWorkLoopFactory()->getWorkLoop("CSC SV Calib", "waiting");
   calib_wl_->activate();
@@ -607,6 +610,54 @@ xoap::MessageReference emu::supervisor::Application::onRunSequence(xoap::Message
   return createReply(message);
 }
 
+xoap::MessageReference emu::supervisor::Application::onConfCCBsViaTCDS(xoap::MessageReference message)
+  throw (xoap::exception::Exception)
+{
+  isCommandFromWeb_ = false;
+
+  LOG4CPLUS_INFO( getApplicationLogger(), "Received SOAP command to configure CCBs via TCDS." );
+
+  if ( ! isUsingTCDS_ ){
+    XCEPT_RAISE( xoap::exception::Exception, "Failed to configure CCBs via TCDS as TCDS is not in use in this configuration." );
+  }
+
+  xdata::String endcap( "" );
+  try{
+    emu::soap::extractCommandAttributes( message, emu::soap::Attributes().add( "endcap", &endcap ) );
+  } catch( xcept::Exception& e ){
+    //LOG4CPLUS_WARN( getApplicationLogger(), "No endcap specified in SOAP command ConfCCBsViaTCDS." << xcept::stdformat_exception_history(e) );
+    XCEPT_RETHROW( xoap::exception::Exception, "No endcap specified in SOAP command ConfCCBsViaTCDS.", e );
+  }
+
+  try{
+    if ( endcap.toString() == "" ){
+      // Configure all endcaps that are present.
+      if ( ci_plus_  && pi_plus_  ){
+	LOG4CPLUS_INFO( getApplicationLogger(), "Configuring plus endcap's CCBs via TCDS." );
+	confCCBsViaTCDS( ci_plus_ , pi_plus_  );
+      }
+      if ( ci_minus_ && pi_minus_ ){
+	LOG4CPLUS_INFO( getApplicationLogger(), "Configuring minus endcap's CCBs via TCDS." );
+	confCCBsViaTCDS( ci_minus_, pi_minus_ );
+      }
+    }
+    else if ( endcap.toString() == "+" ){
+      // Configure plus endcap.
+      LOG4CPLUS_INFO( getApplicationLogger(), "Configuring plus endcap's CCBs via TCDS." );
+      confCCBsViaTCDS( ci_plus_, pi_plus_ );
+    }
+    else if ( endcap.toString() == "-" ){
+      // Configure minus endcap.
+      LOG4CPLUS_INFO( getApplicationLogger(), "Configuring minus endcap's CCBs via TCDS." );
+      confCCBsViaTCDS( ci_minus_, pi_minus_ );
+    }
+  } catch( xcept::Exception& e ){
+    XCEPT_RETHROW( xoap::exception::Exception, "Failed to configure CCBs via TCDS.", e );
+  }
+
+  return createReply(message);
+}
+
 
 void emu::supervisor::Application::webDefault(xgi::Input *in, xgi::Output *out)
   throw (xgi::exception::Exception)
@@ -839,7 +890,7 @@ void emu::supervisor::Application::webDefault(xgi::Input *in, xgi::Output *out)
   *out << hr() << endl;
   state_table_.webOutput(out, (string)state_);
   
-    // Single TCDS commands, available only with LPM
+  // Single TCDS commands, available only with LPM
   *out << hr() << endl;
   if ( pm_ ){
     char state = fsm_.getCurrentState();
@@ -871,16 +922,46 @@ void emu::supervisor::Application::webDefault(xgi::Input *in, xgi::Output *out)
     *out << table(); 
   }  
 
+  *out << hr() << endl;
+
+  // TCDS commands that only require iCI (and PI).
+
+  if ( isUsingTCDS_ ){
+    bool isDisabled = false;
+    char state = fsm_.getCurrentState();
+    if ( toolbox::tolower( run_type_.toString() ) == "global" ){
+      // In GLOBAL run, these buttonns are to be disabled
+      if ( state == 'C' || state == 'E' ) isDisabled = true;
+    }
+    *out << table(); 
+    *out << tr();
+    // Plus side
+    if ( ci_plus_ && pi_plus_ ){
+      *out << td() << form().set("action", "/" + getApplicationDescriptor()->getURN() + "/ConfPlusCCBsViaTCDS");
+      *out << "<input type='submit' name='command' value='Configure plus-side CCBs via TCDS' title='This will clear the CCBs discrete logic decoder on the plus side to ensure that TCDS commands are correctly interpreted.'" 
+	   << ( isDisabled ? " disabled='disabled'" : "" ) << "/>";
+      *out << form() << td();
+    }
+    // Minus side
+    if ( ci_minus_ && pi_minus_ ){
+      *out << td() << form().set("action", "/" + getApplicationDescriptor()->getURN() + "/ConfMinusCCBsViaTCDS");
+      *out << "<input type='submit' name='command' value='Configure minus-side CCBs via TCDS' title='This will clear the CCBs discrete logic decoder on the minus side to ensure that TCDS commands are correctly interpreted.'" 
+	   << ( isDisabled ? " disabled='disabled'" : "" ) << "/>";
+      *out << form() << td();
+    }
+    *out << tr();
+    *out << table(); 
+  } // if ( isUsingTCDS_ )
+
   // Reason for failure
   if ( reasonForFailure_.toString().length() > 0 ){
+    *out << hr() << endl;
     *out << hr()
 	 << p()<< "Reason for failure:" << p() 
 	 << code() << span().set("style", "color: red;") << withoutString( "<![CDATA[", withoutString( "]]>", reasonForFailure_.toString() ) ) << span() << code() << "\n";
   }
 
-  // Message logs
-  *out << hr() << endl;
-  
+  *out << hr() << endl;  
   *out << body() << html() << endl;
 }
 
@@ -1102,6 +1183,42 @@ void emu::supervisor::Application::webResyncBgoTrainViaTCDS(xgi::Input *in, xgi:
   }
 
   keep_refresh_ = true;
+  webRedirect(in, out);
+}
+
+void emu::supervisor::Application::webConfPlusCCBsViaTCDS(xgi::Input *in, xgi::Output *out)
+  throw (xgi::exception::Exception)
+{
+  isCommandFromWeb_ = true;
+  
+  LOG4CPLUS_INFO( getApplicationLogger(), "Received command from web page to configure plus side's CCBs via TCDS." );
+
+  try{
+    confCCBsViaTCDS( ci_plus_, pi_plus_ );
+  }
+  catch( xcept::Exception& e ){
+    XCEPT_RETHROW( xgi::exception::Exception, "Failed to configure plus-side CCBs' discrete logic decoder via TCDS.", e );
+  }
+
+  // keep_refresh_ = true;
+  webRedirect(in, out);
+}
+
+void emu::supervisor::Application::webConfMinusCCBsViaTCDS(xgi::Input *in, xgi::Output *out)
+  throw (xgi::exception::Exception)
+{
+  isCommandFromWeb_ = true;
+
+  LOG4CPLUS_INFO( getApplicationLogger(), "Received command from web page to configure minus side's CCBs via TCDS." );
+  
+  try{
+    confCCBsViaTCDS( ci_minus_, pi_minus_ );
+  }
+  catch( xcept::Exception& e ){
+    XCEPT_RETHROW( xgi::exception::Exception, "Failed to configure minus-side CCBs' discrete logic decoder via TCDS.", e );
+  }
+
+  // keep_refresh_ = true;
   webRedirect(in, out);
 }
 
@@ -2614,7 +2731,7 @@ int emu::supervisor::Application::keyToIndex(const string name)
 		}
 	}
 
-	LOG4CPLUS_INFO( getApplicationLogger(), "Run type " << name << " has index " << result ); 
+	LOG4CPLUS_DEBUG( getApplicationLogger(), "Run type " << name << " has index " << result ); 
 
 	return result;
 }
@@ -2800,6 +2917,148 @@ bool emu::supervisor::Application::waitForAppsToReach( const string targetState,
   XCEPT_DECLARE( emu::supervisor::exception::Exception, eObj, ss.str() );
   this->notifyQualified( "error", eObj );
   return false;
+}
+
+void emu::supervisor::Application::confCCBsViaTCDS( CIControl *ci, PIControl *pi ){
+  //
+  // Sanity check
+  //
+  if ( !ci || !pi ){
+    XCEPT_RAISE( xcept::Exception, "Failed to configure CCBs' discrete logic decoder via TCDS as no iCI and PI appliations were found." );
+  }
+  //
+  // Get state of TCDS
+  //
+  string pi_state, ci_state;
+  try{
+    pi_state = pi->getSteadyState();
+    ci_state = ci->getSteadyState();
+  } catch( xcept::Exception &e ){
+    XCEPT_RETHROW( xcept::Exception, "Failed to get state of TCDS app.", e );
+  }
+  //
+  // Try to halt if in Failed state
+  //
+  try{
+    if ( ci_state == "Failed" ){
+      LOG4CPLUS_WARN( getApplicationLogger(), "TCDS iCI was found in 'Failed' state. Trying to halt it.");
+      if ( ! ci->halt().waitForState( "Halted", 10 ) ){
+	XCEPT_RAISE( xcept::Exception, "Failed to halt 'failed' TCDS iCI." );
+      }
+      ci_state = ci->getSteadyState();
+    }
+    if ( pi_state == "Failed" ){
+      LOG4CPLUS_WARN( getApplicationLogger(), "TCDS PI was found in 'Failed' state. Trying to halt it.");
+      if ( ! pi->halt().waitForState( "Halted", 10 ) ){
+	XCEPT_RAISE( xcept::Exception, "Failed to halt 'failed' TCDS PI." );
+      }
+      pi_state = pi->getSteadyState();
+    }
+  } catch( xcept::Exception &e ){
+    XCEPT_RETHROW( xcept::Exception, "Failed to halt 'failed' TCDS.", e );
+  }
+  //
+  // Check the HW lease. If it has expired or is not ours, halt the app so that we can get it anew when configuring it.
+  //
+  try{
+    if ( ! ci->isHwLeaseOurs() ){
+      LOG4CPLUS_WARN( getApplicationLogger(), "The iCI HW lease owner (" << ci->getHwLeaseOwnerId().toString()
+		      << ") is apparently not us (" << ci->getActionRequestorId().toString()
+		      << "). Halting iCI so that we can get the HW lease when reconfiguring it." );
+      if ( ! ci->halt().waitForState( "Halted", 10 ) ){
+	XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS iCI." );
+      }
+      ci_state = ci->getSteadyState();
+    }
+    if ( ! pi->isHwLeaseOurs() ){
+      LOG4CPLUS_WARN( getApplicationLogger(), "The PI HW lease owner (" << pi->getHwLeaseOwnerId().toString()
+		      << ") is apparently not us (" << pi->getActionRequestorId().toString()
+		      << "). Halting PI so that we can get the HW lease when reconfiguring it." );
+      if ( ! pi->halt().waitForState( "Halted", 10 ) ){
+	XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS PI." );
+      }
+      pi_state = pi->getSteadyState();
+    }
+  } catch( xcept::Exception &e ){
+    XCEPT_RETHROW( xcept::Exception, "Failed to verify TCDS HW lease.", e );
+  }
+  //
+  // Configure if not yet configured
+  //
+  bool isPIToHalt = false;
+  bool isCIToHalt = false;
+  try{
+    // First the TCDS PI...
+    if ( pi_state == "Halted" ){
+      LOG4CPLUS_INFO( getApplicationLogger(), "Configuring TCDS PI");
+      // If there's more than one run type defined, take the first one. It can be any valid configuration, the PI will be halted right after the command anyway.
+      xdata::String  PIConfig( RegDumpPreprocessor().process( runParameters_[0].bag.pi_.toString() ) );
+      xdata::Boolean usePrimaryTCDS( true );
+      if ( ! pi->configure( PIConfig, usePrimaryTCDS ).waitForState( "Configured", 10 ) ){
+	XCEPT_RAISE( xcept::Exception, "Failed to configure TCDS PI." );
+      }
+      isPIToHalt = true;
+    }
+    // ...then the TCDS iCI
+    if ( ci_state == "Halted" ){
+      LOG4CPLUS_INFO( getApplicationLogger(), "Configuring TCDS iCI");
+      // If there's more than one run type defined, take the first one. It can be any valid configuration, the iCI will be halted right after the command anyway.
+      xdata::String  CIConfig( RegDumpPreprocessor().process( runParameters_[0].bag.ci_.toString() ) );
+      if ( ! ci->setRunType( runParameters_[0].bag.key_ ).configure( CIConfig ).waitForState( "Configured", 10 ) ){
+	XCEPT_RAISE( xcept::Exception, "Failed to configure TCDS iCI." );
+      }
+      isCIToHalt = true;
+    }
+  } catch( xcept::Exception &e ){
+    XCEPT_RETHROW( xcept::Exception, "Failed to halt TCDS.", e );
+  }
+  //
+  // Executing TCDS iCI configure sequence including a command to clear the CCBs' discrete logic decoder
+  //
+  try{
+    if ( ! pi->waitForState( "Configured|Enabled|Paused", 30 ) ){
+      XCEPT_RAISE( xcept::Exception, "TCDS PI failed to reach Configured|Enabled|Paused state." );
+    }
+    if ( ci->waitForState( "Configured|Enabled|Paused", 30 ) ){
+      LOG4CPLUS_INFO( getApplicationLogger(), "Executing TCDS iCI configure sequence including a command to clear the CCBs' discrete logic decoder");
+      ci->setRunType( runParameters_[0].bag.key_ ).configureSequence();
+    }
+    else{
+      XCEPT_RAISE( xcept::Exception, "TCDS iCI failed to reach Configured|Enabled|Paused state." );
+    }
+  } catch( xcept::Exception &e ){
+    XCEPT_RETHROW( xcept::Exception, "Failed to execute iCI configure sequence.", e );
+  }
+  //
+  // Halt them if they were originally halted in order not to go on holding the hardware lease.
+  //
+  bool CIFailedToHalt = isCIToHalt;
+  bool PIFailedToHalt = isPIToHalt;
+  try{
+    if ( isCIToHalt ){
+      LOG4CPLUS_INFO( getApplicationLogger(), "Halting TCDS iCI.");
+      if ( ci->halt().waitForState( "Halted", 10 ) ) CIFailedToHalt = false;
+    }
+    if ( isPIToHalt ){
+      LOG4CPLUS_INFO( getApplicationLogger(), "Halting TCDS PI.");
+      if ( pi->halt().waitForState( "Halted", 10 ) ) PIFailedToHalt = false;
+    }
+    if ( CIFailedToHalt || PIFailedToHalt ){
+      ostringstream msg;
+      msg << "Failed to halt TCDS " 
+	  << ( CIFailedToHalt ? "iCI" : "" ) 
+	  << ( CIFailedToHalt && PIFailedToHalt ? " and " : "" ) 
+	  << ( PIFailedToHalt ? "PI" : "" ) << " due to timeout.";
+      XCEPT_RAISE( xcept::Exception, msg.str() );
+    }
+  } catch( xcept::Exception &e ){
+      ostringstream msg;
+      msg << "Failed to halt TCDS " 
+	  << ( CIFailedToHalt ? "iCI" : "" ) 
+	  << ( CIFailedToHalt && PIFailedToHalt ? " and " : "" ) 
+	  << ( PIFailedToHalt ? "PI" : "" ) << ".";
+    XCEPT_RETHROW( xcept::Exception, msg.str(), e );
+  }
 }
 
 void emu::supervisor::Application::onException( xcept::Exception& e ){ // callback for toolbox::exception::Listener

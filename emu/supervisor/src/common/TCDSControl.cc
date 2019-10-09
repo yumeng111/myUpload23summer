@@ -240,3 +240,13 @@ bool emu::supervisor::TCDSControl::isSteadyState( const string& state ){
   if ( state == "Failed"     ) return true;
   return false;
 }
+
+xdata::String emu::supervisor::TCDSControl::getHwLeaseOwnerId(){
+  xdata::String hwLeaseOwnerId;
+  messenger_->getParameters( tcdsApplicationDescriptor_, emu::soap::Parameters().add( "hwLeaseOwnerId", &hwLeaseOwnerId ) );
+  return hwLeaseOwnerId;
+}
+
+bool emu::supervisor::TCDSControl::isHwLeaseOurs(){
+  return ( getHwLeaseOwnerId().toString() == actionRequestorId_.toString() );
+}

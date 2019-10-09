@@ -50,6 +50,11 @@ namespace emu{
       string getSteadyState();
       bool waitForState( const string& targetState, const int timeoutSeconds );
       static bool isSteadyState( const string& state );
+      // Queries
+      xdata::String getHwLeaseOwnerId();
+      bool isHwLeaseOurs();
+      // Accessors
+      xdata::String getActionRequestorId(){ return actionRequestorId_; }
     protected:
       TCDSControl();
       string waitForASteadyState( const int timeoutSeconds );

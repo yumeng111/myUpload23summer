@@ -1,3 +1,4 @@
+#ifdef TCDS
 #ifndef __emu_pc_TCDSInterface_h__
 #define __emu_pc_TCDSInterface_h__
 
@@ -25,4 +26,5 @@ namespace emu { namespace pc {
 
   }
 }
+#endif
 #endif

@@ -28,14 +28,18 @@ void emu::pc::LocalDAQInterface::startRun( string type ){
   //
   // Configure
   //
-  xdata::String             runType   = type;
+  xdata::String               runType = type;
   xdata::Integer64  maxNumberOfEvents = -1; // unlimited if negative
-  xdata::Boolean writeBadEventsOnly   = false;
+  // xdata::Boolean          writeEvents = true; // TODO: modify lDAQ
+  xdata::Boolean   writeBadEventsOnly = false;
   messenger_->setParameters( "emu::ldaq::manager::Application", 
 			     emu::soap::Parameters()
-			     .add( "runType"           , &runType            )
-			     .add( "maxNumberOfEvents" , &maxNumberOfEvents  )
-			     .add( "writeBadEventsOnly", &writeBadEventsOnly ) );
+			     .add( "runType"               , &runType                )
+			     .add( "maxNumberOfEvents"     , &maxNumberOfEvents      )
+			     // .add( "writeEvents"           , &writeEvents            )
+			     .add( "writeBadEventsOnly"    , &writeBadEventsOnly     )
+			    );
+
   messenger_->sendCommand( "emu::ldaq::manager::Application", "Configure" );      
   if ( ! successfullyExecuted( "Configure", daqTimeOutInSeconds ) ){
     XCEPT_RAISE( xcept::Exception, string( "DAQ failed to execute 'Configure' in ") + utils::stringFrom<uint64_t>( daqTimeOutInSeconds ) + " seconds." );

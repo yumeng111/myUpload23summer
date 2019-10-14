@@ -3165,7 +3165,7 @@ if(D_hversion>=2)
 	<< " to "           << cgicc::input().set("type","text").set("size","3").set("value","75").set("name","to"        )
 	<< " in steps of "  << cgicc::input().set("type","text").set("size","3").set("value", "1").set("name","increment" )
 	<< " for "          << cgicc::input().set("type","text").set("size","3").set("value","30").set("name","duration"  ) << " seconds"
-	<< " in "           << cgicc::input().set("type","checkbox").set("value","true").set("name","single layer" ) << " trigger mode"
+	<< " "              << cgicc::input().set("type","checkbox").set("name","singleLayer" ) << " in single-layer trigger mode"
 	<< std::endl
 	<< pipelineDepthScanWithDAQResults_ << std::endl
 	<< cgicc::form() << std::endl

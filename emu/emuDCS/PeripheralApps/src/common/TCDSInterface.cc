@@ -1,3 +1,4 @@
+#ifdef TCDS
 #include "emu/pc/TCDSInterface.h"
 
 #include "emu/pc/EmuPeripheralCrateConfig.h"
@@ -96,6 +97,31 @@ emu::pc::TCDSInterface& emu::pc::TCDSInterface::configureCCB(){
     XCEPT_RETHROW( xcept::Exception, "Failed to halt 'failed' TCDS.", e );
   }
   //
+  // Check the HW lease. If it has expired or is not ours, halt the app so that we can get it anew when configuring it.
+  //
+  try{
+    if ( ! ci_->isHwLeaseOurs() ){
+      LOG4CPLUS_WARN( parent_->getApplicationLogger(), "The iCI HW lease owner (" << ci_->getHwLeaseOwnerId().toString()
+		      << ") is apparently not us (" << ci_->getActionRequestorId().toString()
+		      << "). Halting iCI so that we can get the HW lease when reconfiguring it." );
+      if ( ! ci_->halt().waitForState( "Halted", 10 ) ){
+	XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS iCI." );
+      }
+      ci_state = ci_->getSteadyState();
+    }
+    if ( ! pi_->isHwLeaseOurs() ){
+      LOG4CPLUS_WARN( parent_->getApplicationLogger(), "The PI HW lease owner (" << pi_->getHwLeaseOwnerId().toString()
+		      << ") is apparently not us (" << pi_->getActionRequestorId().toString()
+		      << "). Halting PI so that we can get the HW lease when reconfiguring it." );
+      if ( ! pi_->halt().waitForState( "Halted", 10 ) ){
+	XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS PI." );
+      }
+      pi_state = pi_->getSteadyState();
+    }
+  } catch( xcept::Exception &e ){
+    XCEPT_RETHROW( xcept::Exception, "Failed to verify TCDS HW lease.", e );
+  }
+  //
   // Configure if not yet configured
   //
   bool isPIToHalt = false;
@@ -172,3 +198,4 @@ emu::pc::TCDSInterface& emu::pc::TCDSInterface::configureCCB(){
   }
   return *this;
 }
+#endif

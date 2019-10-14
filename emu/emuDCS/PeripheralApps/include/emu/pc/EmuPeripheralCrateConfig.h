@@ -70,7 +70,9 @@ namespace emu {
 class EmuPeripheralCrateConfig: public EmuPeripheralCrateBase
 {
   //
+#ifdef TCDS
   friend class emu::pc::TCDSInterface;
+#endif
   //
 protected:
   //
@@ -88,8 +90,10 @@ protected:
   xdata::String CalibrationState_;
   xdata::String standalone;
   bool standalone_;
+#ifdef TCDS
   xdata::String TCDSCIConf_;
   xdata::String TCDSPIConf_;
+#endif
   //
   std::string CCBFirmware_;
   std::string MPCFirmware_;
@@ -707,7 +711,9 @@ private:
   void OtmbFiberTest(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void UpdateInFlashKey(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void OTMBConfigBits(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+#ifdef TCDS
   void ConfigCCBViaTCDS(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+#endif
   //
   void SetTwoLayerTrigger(int tmb);
   //

@@ -419,6 +419,8 @@ void emu::step::Test::setUpODMBPulsing( emu::pc::DAQMB *dmb, ODMBMode_t mode, OD
     LOG4CPLUS_INFO( *pLogger_, "ODMB kill mask changed from 0x" << hex << oldKillMask << " to 0x" << newKillMask << dec );
   }
 
+  float dac=1.00;
+  dmb->set_cal_dac(dac,dac); // Write default pulse dac values. May be overwritten later as needed.
 }
 
 // One pipeline fuction to rule them all.

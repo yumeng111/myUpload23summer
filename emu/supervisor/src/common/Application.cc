@@ -3013,21 +3013,21 @@ void emu::supervisor::Application::confCCBsViaTCDS( CIControl *ci, PIControl *pi
     XCEPT_RETHROW( xcept::Exception, "Failed to halt TCDS.", e );
   }
   //
-  // Executing TCDS iCI configure sequence including a command to clear the CCBs' discrete logic decoder
+  // Executing TCDS iCI command to clear the CCBs' discrete logic decoder
   //
   try{
     if ( ! pi->waitForState( "Configured|Enabled|Paused", 30 ) ){
       XCEPT_RAISE( xcept::Exception, "TCDS PI failed to reach Configured|Enabled|Paused state." );
     }
     if ( ci->waitForState( "Configured|Enabled|Paused", 30 ) ){
-      LOG4CPLUS_INFO( getApplicationLogger(), "Executing TCDS iCI configure sequence including a command to clear the CCBs' discrete logic decoder");
-      ci->setRunType( runParameters_[0].bag.key_ ).configureSequence();
+      LOG4CPLUS_INFO( getApplicationLogger(), "Executing TCDS iCI command to clear the CCBs' discrete logic decoder");
+      ci->clearCCBDecoder();
     }
     else{
       XCEPT_RAISE( xcept::Exception, "TCDS iCI failed to reach Configured|Enabled|Paused state." );
     }
   } catch( xcept::Exception &e ){
-    XCEPT_RETHROW( xcept::Exception, "Failed to execute iCI configure sequence.", e );
+    XCEPT_RETHROW( xcept::Exception, "Failed to execute iCI command to clear the CCBs' discrete logic decoder.", e );
   }
   //
   // Halt them if they were originally halted in order not to go on holding the hardware lease.
@@ -3036,11 +3036,11 @@ void emu::supervisor::Application::confCCBsViaTCDS( CIControl *ci, PIControl *pi
   bool PIFailedToHalt = isPIToHalt;
   try{
     if ( isCIToHalt ){
-      LOG4CPLUS_INFO( getApplicationLogger(), "Halting TCDS iCI.");
+      LOG4CPLUS_INFO( getApplicationLogger(), "Halting TCDS iCI");
       if ( ci->halt().waitForState( "Halted", 10 ) ) CIFailedToHalt = false;
     }
     if ( isPIToHalt ){
-      LOG4CPLUS_INFO( getApplicationLogger(), "Halting TCDS PI.");
+      LOG4CPLUS_INFO( getApplicationLogger(), "Halting TCDS PI");
       if ( pi->halt().waitForState( "Halted", 10 ) ) PIFailedToHalt = false;
     }
     if ( CIFailedToHalt || PIFailedToHalt ){

@@ -14,6 +14,7 @@ namespace emu{
       CIControl& configureSequence();
       CIControl& enableSequence   ();
       CIControl& stopSequence     ();
+      CIControl& clearCCBDecoder  ();
     };
   }
 }

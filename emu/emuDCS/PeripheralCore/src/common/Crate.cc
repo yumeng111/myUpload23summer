@@ -528,7 +528,9 @@ void Crate::PowerOff()
 int Crate::configure(int c, int ID) {
   // c=0: same as 1
   // c=1: (power-on chambers if not already on) & write flash
-  // c=2: FAST configure, power-on chambers & configure CCB & MPC
+  // c=2: FAST configure, both part 1 & part 2.
+  // c=3: FAST configure part 1, configure CCB & MPC, power off chambers
+  // c=4: FAST configure part 2, power on chambers, hard-reset
   // return <0 ERROR, failed and the crate is not accessible
   // return 0 successful
 
@@ -541,51 +543,8 @@ int Crate::configure(int c, int ID) {
   alive_ = true;
   vmeController()->SetLife(true);
 
-  std::vector<DAQMB*> myDmbs = this->daqmbs();
-
-  std::cout << " Lowv_onoff, then hard reset " << std::endl;
-  for (unsigned dmb=0; dmb<myDmbs.size(); dmb++) 
+  if(c!=4)  // part 1
   {
-    std::cout << "DMB slot " << myDmbs[dmb]->slot() 
-	      << " turn ON chamber..." << std::endl;
-    if(!IsAlive())
-    {  std::cout << "ERROR: Crate dead, stop!!" << std::endl;
-       return -1;
-    }
-    if((myDmbs[dmb]->DMBversion()==2) || (myDmbs[dmb]->DMBversion()==4))
-    {
-       // for ME1/1, first turn off everything, then turn on xDCFEB & ALCT one by one
-       
-       int m=0;
-       myDmbs[dmb]->lowv_onoff(m);
-       ::usleep(500000);
-       for(int i=0; i<8; i++)
-       {
-           m += (1<<i);
-           myDmbs[dmb]->lowv_onoff(m);
-           ::usleep(500000);
-       }
-    }
-    else
-    {
-        myDmbs[dmb]->lowv_onoff(0xff);
-    }
-    //
-    // The following is not needed, since DMB includes FIFO clear in hard reset
-    //    std::cout << "DMB slot " << myDmbs[dmb]->slot() 
-    //	      << " call calctrl_fifomrst " << std::endl;
-    //    myDmbs[dmb]->calctrl_fifomrst();
-    myDmbs[dmb]->restoreMotherboardIdle();
-  }
-  ::sleep(2);
-  ccb->hardReset();
-  ::sleep(1);
-
-  if(!IsAlive())
-  {  std::cout << "ERROR: Crate dead, stop!!" << std::endl;
-     return -1;
-  }
-
      // for power-up init
      ccb->configure();
      
@@ -594,7 +553,59 @@ int Crate::configure(int c, int ID) {
         return -1;
      }
      if(mpc) mpc->configure();
-     if(c>1)   return 0; 
+  }
+  std::vector<DAQMB*> myDmbs = this->daqmbs();
+
+  for (unsigned dmb=0; dmb<myDmbs.size(); dmb++) 
+  {
+    if(!IsAlive())
+    {  std::cout << "ERROR: Crate dead, stop!!" << std::endl;
+       return -1;
+    }
+    if(c!=4)  // part 1
+    {
+       std::cout << " Chamber LowV Off." << std::endl;
+       myDmbs[dmb]->lowv_onoff(0);
+       ::usleep(500000);
+    }
+    if(c!=3)  // part 2
+    {
+       std::cout << "DMB slot " << myDmbs[dmb]->slot() << " turn ON chamber..." << std::endl;
+  
+     if(myDmbs[dmb]->CFEBversion()>1)
+       {
+          // for ME1/1 & MEx/1, turn on (x)DCFEB & ALCT one by one
+          int bd=6;  // total number of on-chamber boards
+          if((myDmbs[dmb]->DMBversion()==2) || (myDmbs[dmb]->DMBversion()==4)) bd=8;       
+          int m=0;
+          for(int i=0; i<bd; i++)
+          {
+              m += (1<<i);
+              myDmbs[dmb]->lowv_onoff(m);
+              ::usleep(500000);
+          }
+       }
+       else
+       {
+           myDmbs[dmb]->lowv_onoff(0xff);
+           ::usleep(500000);
+       }
+       myDmbs[dmb]->restoreMotherboardIdle();
+    }
+  }
+  ::sleep(1);
+  if(c!=3)  // part 2
+  {
+     ccb->hardReset();
+     ::sleep(1);
+  }
+
+  if(!IsAlive())
+  {  std::cout << "ERROR: Crate dead, stop!!" << std::endl;
+     return -1;
+  }
+
+  if(c>1)   return 0; 
 
   // to write flash memory
   std::vector<TMB*> myTmbs = this->tmbs();

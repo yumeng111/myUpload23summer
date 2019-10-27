@@ -1,6 +1,8 @@
 // $Id: EmuDim.cc,v 1.49 2012/06/11 03:30:45 liu Exp $
 
 #include "emu/x2p/EmuDim.h"
+#include "emu/soap/Messenger.h"
+#include "xdata/String.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,6 +33,7 @@ EmuDim::EmuDim(xdaq::ApplicationStub * s): xdaq::WebApplication(s)
   XmasDcsUrl_ = "";
   BlueDcsUrl_ = "";
   FedcDcsUrl_ = "";
+  TcdsDcsUrl_ = "";
   TestPrefix_ = "";
   OpMode_ = 0;
   EndCap_ = 0;
@@ -55,6 +58,7 @@ EmuDim::EmuDim(xdaq::ApplicationStub * s): xdaq::WebApplication(s)
   getApplicationInfoSpace()->fireItemAvailable("XmasDcsUrl", &XmasDcsUrl_ );
   getApplicationInfoSpace()->fireItemAvailable("BlueDcsUrl", &BlueDcsUrl_ );
   getApplicationInfoSpace()->fireItemAvailable("FedcDcsUrl", &FedcDcsUrl_ );
+  getApplicationInfoSpace()->fireItemAvailable("TcdsDcsUrl", &TcdsDcsUrl_ );
   getApplicationInfoSpace()->fireItemAvailable("TestPrefix", &TestPrefix_ );
   getApplicationInfoSpace()->fireItemAvailable("OperationMode", &OpMode_ );
   getApplicationInfoSpace()->fireItemAvailable("EndCap", &EndCap_ );
@@ -290,14 +294,14 @@ void EmuDim::MainPage(xgi::Input * in, xgi::Output * out ) throw (xgi::exception
    int endcap = EndCap_;
    if(endcap > 0)
    {
-      MyHeader(in,out,"EmuDim -- Plus Endcap");
+      MyHeader(in,out,"EmuDim (X2P) -- Plus Endcap");
    }
    else if(endcap < 0)
    {
-      MyHeader(in,out,"EmuDim -- Minus Endcap");
+      MyHeader(in,out,"EmuDim (X2P)-- Minus Endcap");
    }
    else
-      MyHeader(in,out,"EmuDim");
+      MyHeader(in,out,"EmuDim (X2P)");
   //
   if(Monitor_On_)
   {
@@ -324,18 +328,26 @@ void EmuDim::MainPage(xgi::Input * in, xgi::Output * out ) throw (xgi::exception
 }
 //
 void EmuDim::MyHeader(xgi::Input * in, xgi::Output * out, std::string title ) 
-  throw (xgi::exception::Exception) {
-  //
-  *out << cgicc::HTMLDoctype(cgicc::HTMLDoctype::eStrict) << std::endl;
-  *out << cgicc::html().set("lang", "en").set("dir","ltr") << std::endl;
-  //
-  cgicc::Cgicc cgi(in);
-  //
-  //const CgiEnvironment& env = cgi.getEnvironment();
-  //
-  std::string myUrl = getApplicationDescriptor()->getContextDescriptor()->getURL();
-  std::string myUrn = getApplicationDescriptor()->getURN();
-  //
+  throw (xgi::exception::Exception) 
+{
+    *out << " <head>" << std::endl << " <style type=\"text/css\"> " << std::endl;
+    *out << " form" << std::endl;
+    *out << " {  margin-bottom: 2px; }" << std::endl;  
+    *out << " input, select, button, input[type=submit]" << std::endl;
+    *out << " { font-size: 90%; border: 1px solid black; padding: 0.5em 0.5em; margin: 1px 5px 1px 5px; }" << std::endl;
+    *out << " button, input[type=submit]" << std::endl;
+    *out << " { background-color: #E6E6E6; border-radius: 6px; }" << std::endl;
+    *out << " select" << std::endl;
+    *out << " {  background-color: white; }" << std::endl;  
+    *out << " fieldset" << std::endl;
+    *out << " {  border-style: solid; border-width: thin; border-color: black; padding: 0.5em; }" << std::endl;  
+    *out << " textarea" << std::endl;
+    *out << " {  margin: 1px 1px 1px 1px; }" << std::endl;  
+    *out << " legend" << std::endl;
+    *out << " {  border: none; width: auto; padding: 0.35em; }" << std::endl;  
+    *out << " </style>" << std::endl << " </head> " << std::endl;
+    *out << "<h1 style=\"text-align: center\"> " << title << "</h1>" << std::endl;
+    *out << "<h5 style=\" font-weight: regular; text-align: center\"> " << "( time stamp: " << getLocalDateTime()  << " ) </h5>" << std::endl;
 }
 
 void EmuDim::Setup()
@@ -343,6 +355,7 @@ void EmuDim::Setup()
    XmasLoader = new LOAD();
    BlueLoader = new LOAD();
    FedcLoader = new LOAD();
+   TcdsLoader = new LOAD();
 
    xmas_root=XmasDcsUrl_;
    xmas_load=xmas_root + "/DCSOutput";
@@ -360,6 +373,9 @@ void EmuDim::Setup()
    fedc_load=fedc_root + "/DCSOutput";
    FedcLoader->init(fedc_load.c_str());
    FedcLoader->settimeout(60);
+
+   tcds_load=TcdsDcsUrl_;
+   TcdsLoader->init(tcds_load.c_str());
 
    std::string fn=PeripheralCrateDimFile_;
    int ch=ReadFromFile(fn.c_str());
@@ -892,19 +908,60 @@ int EmuDim::PowerUp()
    // make sure Xmas stopped before power-up
    XmasLoader->reload(xmas_stop);
    for(int i=0; i<TOTAL_CRATES; i++)
-   {  
+   {  // Step 1
       if(crate_state[i]==1) 
       {  
          // start initializing
          std::string confirm = "INITIALIZING;" + crate_name[i];              
          strcpy(pvssrespond.command, confirm.c_str());
          Confirmation_Service->updateService();
-         std::cout << getLocalDateTime() << " Start Power-up Init crate " << crate_name[i] << std::endl;
+         std::cout << getLocalDateTime() << " Start Power-up crate " << crate_name[i] << std::endl;
          BlueLoader->reload(blue_info+"?POWERUP="+crate_name[i]);
          // check return message
          if(BlueLoader->Content_Size() > 27)
          {
            if(strncmp(BlueLoader->Content(), "Power Up Successful",19)==0)
+           {
+              crate_state[i] = 2;
+              confirm = "POWER_UP_DONE;" + crate_name[i];              
+              std::cout << getLocalDateTime() << " Return: " << confirm << std::endl;
+           }
+           else
+           {
+              confirm = "INIT_FAILED;" + crate_name[i];              
+              std::cout << getLocalDateTime() << " Init failed: " << crate_name[i] << std::endl;
+           }
+         }
+         else
+         {
+            std::cout << "Blue Page returns bad message with total length: " << BlueLoader->Content_Size() << std::endl;
+            confirm = "INIT_FAILED;" + crate_name[i];              
+            std::cout << getLocalDateTime() << " Init failed: " << crate_name[i] << std::endl;
+         }
+         if(crate_state[i]==1)  // state didn't change into 2, failed
+         {
+            strcpy(pvssrespond.command, confirm.c_str());
+            Confirmation_Service->updateService();
+         }
+      }
+   }
+
+   // ask supervisor to control TCDS
+   int sv_rt=ConfigureCCB(EndCap_);
+   // TODO: if this one fails, need a mechanism to report to DCS.
+   std::cout << getLocalDateTime() << " Return from Supervisor: " << sv_rt << std::endl;
+
+   for(int i=0; i<TOTAL_CRATES; i++)
+   {  // Step 2
+      if(crate_state[i]==2)  // only for those crates passed Step 1
+      {  
+         std::string confirm;            
+         std::cout << getLocalDateTime() << " Start Power-up Init crate " << crate_name[i] << std::endl;
+         BlueLoader->reload(blue_info+"?POWERINIT="+crate_name[i]);
+         // check return message
+         if(BlueLoader->Content_Size() > 29)
+         {
+           if(strncmp(BlueLoader->Content(), "Power Init Successful",21)==0)
            {
               crate_state[i] = 0;
               upcrates--;
@@ -924,8 +981,11 @@ int EmuDim::PowerUp()
             confirm = "INIT_FAILED;" + crate_name[i];              
             std::cout << getLocalDateTime() << " Init failed: " << crate_name[i] << std::endl;
          }
+
+         // send confirmation back, regardless the result
          strcpy(pvssrespond.command, confirm.c_str());
          Confirmation_Service->updateService();
+
       }
    }
    // if Xmas was on before power-up, then resume it after all crates finished
@@ -983,6 +1043,26 @@ std::string EmuDim::getLocalDateTime(){
      << std::setfill('0') << std::setw(2) << tm->tm_sec;
 
   return ss.str();
+}
+
+int EmuDim::ConfigureCCB(int side)
+{
+   int rt=0;
+
+/* 
+   // SOAP method
+   xdata::String endcap((side>0)?"p":"m");
+   try{
+     emu::soap::Messenger( this ).sendCommand( "emu::supervisor::Application", "ConfCCBsViaTCDS", emu::soap::Parameters::none, emu::soap::Attributes().add( "endcap", &endcap ) );
+   } catch( xcept::Exception &e ){
+     rt=1;
+   }
+*/
+   // HTTP method
+   TcdsLoader->reload(tcds_load);
+
+   return rt;
+   
 }
 
   }  // namespace emu::x2p

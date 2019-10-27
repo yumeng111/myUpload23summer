@@ -689,7 +689,7 @@ void EmuPeripheralCrateConfig::MainPage(xgi::Input * in, xgi::Output * out )
 
   if(!parsed) 
   {  
-     if(Valid_config_ID=="" && (XML_or_DB_.toString() == "db" || XML_or_DB_.toString() == "db"))
+     if(Valid_config_ID=="" && (XML_or_DB_.toString() == "db" || XML_or_DB_.toString() == "DB"))
         Valid_config_ID = EMU_config_ID_.toString();
      if(Valid_config_ID=="-1" || Valid_config_ID=="-2")
      {

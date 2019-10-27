@@ -856,8 +856,34 @@ void EmuPeripheralCrateService::SwitchBoard(xgi::Input * in, xgi::Output * out )
   {
      if(command_argu=="ALL")
      {
-        if(!Simulation_) ConfigureInit(2);
+        if(!Simulation_) ConfigureInit(3);
         *out << "Power Up Successful " <<  command_argu << std::endl;
+        msgHandler("Message: Power-Up All Crates");
+     }
+     else for ( unsigned int i = 0; i < crateVector.size(); i++ )
+     {
+        if(command_argu==crateVector[i]->GetLabel()) 
+        {  
+           int rt=0;
+           if(!Simulation_) rt=crateVector[i]->configure(3);
+           if(rt==0)
+           {   *out << "Power Up Successful " <<  command_argu << std::endl;
+               msgHandler("Message: Power-Up Crate " + command_argu + " done");
+               crate_state[i] = 2;
+           } else
+           {   *out << "FAILED Power Up " <<  command_argu << " with code: " << rt << std::endl;
+               msgHandler("Message: Power-Up Crate " + command_argu + " FAILED");
+               crate_state[i] = 0;
+           }
+        }
+     }
+  }
+  else if (command_name=="POWERINIT")
+  {
+     if(command_argu=="ALL")
+     {
+        if(!Simulation_) ConfigureInit(4);
+        *out << "Power Init Successful " <<  command_argu << std::endl;
         msgHandler("Message: Power-Up-Init All Crates");
      }
      else for ( unsigned int i = 0; i < crateVector.size(); i++ )
@@ -865,11 +891,11 @@ void EmuPeripheralCrateService::SwitchBoard(xgi::Input * in, xgi::Output * out )
         if(command_argu==crateVector[i]->GetLabel()) 
         {  
            int rt=0;
-           if(!Simulation_) rt=crateVector[i]->configure(2);
+           if(!Simulation_) rt=crateVector[i]->configure(4);
            if(rt==0)
-           {   *out << "Power Up Successful " <<  command_argu << std::endl;
+           {   *out << "Power Init Successful " <<  command_argu << std::endl;
                msgHandler("Message: Power-Up-Init Crate " + command_argu + " done");
-               crate_state[i] = 1;
+               crate_state[i] = 3;
            } else
            {   *out << "FAILED Power Up " <<  command_argu << " with code: " << rt << std::endl;
                msgHandler("Message: Power-Up-Init Crate " + command_argu + " FAILED");

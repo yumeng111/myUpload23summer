@@ -78,6 +78,7 @@ public:
   xdata::String XmasDcsUrl_;
   xdata::String BlueDcsUrl_;
   xdata::String FedcDcsUrl_;
+  xdata::String TcdsDcsUrl_;
   xdata::String TestPrefix_;
   xdata::Integer OpMode_;
   xdata::Integer EndCap_;
@@ -119,10 +120,11 @@ public:
   int CrateToNumber(const char *chname);
   int PowerUp();
   std::string getLocalDateTime();
-  
+  int ConfigureCCB(int side);
+
 private:
 
-  LOAD *XmasLoader, *BlueLoader, *FedcLoader;
+  LOAD *XmasLoader, *BlueLoader, *FedcLoader, *TcdsLoader;
   bool inited;
   Chamber chamb[TOTAL_CHAMBERS];
   DDU ddumb[TOTAL_DDUS];
@@ -160,7 +162,7 @@ private:
 
 
   std::string xmas_root, xmas_load, xmas_load2, xmas_start, xmas_stop, xmas_info;
-  std::string blue_root, blue_info, fedc_root, fedc_load;
+  std::string blue_root, blue_info, fedc_root, fedc_load, tcds_load;
              
   int crate_state[TOTAL_CRATES];
   std::string crate_name[TOTAL_CRATES];

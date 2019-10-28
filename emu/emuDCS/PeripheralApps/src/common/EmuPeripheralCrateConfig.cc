@@ -10741,8 +10741,11 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   //
   *out << cgicc::td().set("ALIGN","left");
   std::string HardResetTmbFpga = toolbox::toString("/%s/HardResetTmbFpga",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",HardResetTmbFpga) << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","TMB FPGA Hard Reset") << std::endl ;
+  *out << cgicc::form().set("method","GET").set("action",HardResetTmbFpga) << std::endl ;     
+  if (thisTMB->GetHardwareVersion()<=1)
+     *out << cgicc::input().set("type","submit").set("value","TMB FPGA Hard Reset") << std::endl ;
+  else
+     *out << cgicc::input().set("type","submit").set("value","OTMB FPGA recover") << std::endl ;
   sprintf(buf,"%d",tmb);
   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
   *out << cgicc::form() << std::endl ;
@@ -12465,8 +12468,11 @@ void EmuPeripheralCrateConfig::HardResetTmbFpga(xgi::Input * in, xgi::Output * o
   //
   TMB * thisTMB = tmbVector[tmb];
   //
-  thisTMB->tmb_hard_reset_tmb_fpga();
-  //
+  if(thisTMB->GetHardwareVersion()>1)
+     thisTMB->virtex6_recover();
+  else
+     thisTMB->tmb_hard_reset_tmb_fpga();
+ //
   this->TMBUtils(in,out);
   //
 }

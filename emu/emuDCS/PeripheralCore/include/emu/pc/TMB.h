@@ -2778,6 +2778,7 @@ public:
   int read_user_prom(int chip, char *fn);
   void read_user_prom_mcs(int chip, const char *filename);
   void erase_user_prom(int chip);
+  void virtex6_recover();
   
 protected:
   void new_clk_delays(unsigned short int time, int cfeb_id);

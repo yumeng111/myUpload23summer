@@ -12533,6 +12533,40 @@ void TMB::erase_user_prom(int chip)
      new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
      return;
 }
+
+void TMB::virtex6_recover()
+{    
+// step 1: FPGA shutdown
+     if(hardware_version_<=1) return;  // valid only for Virtex6 FPGA
+
+     unsigned short comd;
+
+     setup_jtag(ChainTmbMezz);
+
+     comd=VTX6_SHUTDN;
+     scan(0, (char *)&comd, 10, rcvbuf, 0);
+     //  std::cout <<" Start sending 128 clocks... " << std::endl;
+     getTheController()->CycleIdle_jtag(128);
+     udelay(10000);
+
+     comd=VTX6_BYPASS;
+     scan(0, (char *)&comd, 10, rcvbuf, 0);
+
+     comd=VTX6_JSTART;
+     scan(0, (char *)&comd, 10, rcvbuf, 0);
+     //  std::cout <<" Start sending 128 clocks... " << std::endl;
+     getTheController()->CycleIdle_jtag(128);
+     udelay(100000);
+
+     tmb_set_boot_reg(0);
+     udelay(1000);
+
+// step 2: unjam JTAG
+     UnjamFPGAMini();
+
+// step 3: FPGA reset
+     tmb_hard_reset_tmb_fpga();
+}
   
 } // namespace emu::pc
 } // namespace emu

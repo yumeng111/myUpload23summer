@@ -25,7 +25,8 @@ Sources=\
 
 IncludeDirs = \
         $(XDAQ_ROOT)/include \
-        $(BUILD_HOME)/emu/base/include
+        $(BUILD_HOME)/emu/base/include \
+        $(BUILD_HOME)/emu/soap/include
 
 LibraryDirs = 
 

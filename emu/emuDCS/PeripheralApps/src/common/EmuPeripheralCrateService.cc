@@ -781,6 +781,13 @@ void EmuPeripheralCrateService::ForEmuPage1(xgi::Input *in, xgi::Output *out)
          <<         "\" valueURL=\"" << " "
          << "\"/>" << std::endl;
   }
+    *out << "  <monitorable name=\"" << "Last Action"
+         <<            "\" value=\"" << command_msg[last_msg]
+         <<  "\" nameDescription=\"" << " "
+         << "\" valueDescription=\"" << " "
+         <<          "\" nameURL=\"" << " "
+         <<         "\" valueURL=\"" << " "
+         << "\"/>" << std::endl;
   *out << "</ForEmuPage1>" << std::endl;
 }
 

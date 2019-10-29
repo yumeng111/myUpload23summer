@@ -1372,5 +1372,139 @@ unsigned MPC::readIDCODE(int chip)
    return idcode[0];
 }
 
+void MPC::program_fpga(const char *mcsfile)
+{
+   const int FIRMWARE_SIZE=4238708; // in bytes
+   const int PROM_SIZE=4194304; // in bytes
+   char *bufin, c;
+   bufin=(char *)malloc(16*1024*1024);
+   if(bufin==NULL)  return;
+
+   char filename[1000];
+
+   char *buf0=bufin+2*PROM_SIZE;
+   char *buf1=bufin+3*PROM_SIZE;
+
+// 1. read mcs file(s)
+   strncpy(filename, mcsfile, 980);
+   FILE *fin=fopen(filename,"r");
+   if(fin==NULL ) 
+   { 
+      free(bufin);  
+      std::cout << "ERROR: Unable to open MCS file :" << filename << std::endl;
+      return; 
+   }
+   int mcssize=read_mcs(bufin, fin);
+   fclose(fin);
+   if(mcssize==PROM_SIZE || mcssize<FIRMWARE_SIZE)
+   {   // try to read a 2nd file if it exists
+      filename[strlen(filename)-5]++;
+      fin=fopen(filename,"r");
+      if(fin ) 
+      { 
+         int mcssize2=read_mcs(bufin+mcssize, fin);
+         fclose(fin);
+         mcssize += mcssize2;                   
+      }
+   }
+   std::cout << "Read MCS size: " << std::dec << mcssize << " bytes" << std::endl;
+
+   if(mcssize<FIRMWARE_SIZE)
+   {
+       std::cout << "ERROR: Wrong MCS file. Quit..." << std::endl;
+       free(bufin);
+       return;
+   }
+// byte swap
+   for(int i=0; i<FIRMWARE_SIZE/2; i++)
+   {  c=bufin[i*2];
+      bufin[i*2]=bufin[i*2+1];
+      bufin[i*2+1]=c;
+   }
+
+     int blocks=FIRMWARE_SIZE/4;  // firmware size must be in units of 32-bit words
+     int p1pct=blocks/100;
+     int j=0, pcnts=0;
+     unsigned short comd, tmp;
+     unsigned long ttt=0, tout=0;
+
+//    getTheController()->Debug(2);
+     getTheController()->SetUseDelay(true);
+  
+     jtag_RestoreIdle();      
+
+//
+// The IEEE 1532 ISC (In-System-Configuration) procedure is used.       
+// The bitstream doesn't need to be sent in one JTAG package.
+// It is different from Xilinx's Jtag procedure which uses CFG_IN.
+//
+   
+     comd=VTX6_IDCODE;
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+     mpc_scan(1, (char *)&ttt, 32, (char *)&tout, NOW|READ_YES, 0);     
+     udelay(50);
+     std::cout << "IDCODE=" << std::hex << tout << std::dec << std::endl;
+
+     comd=VTX6_SHUTDN;
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+     std::cout <<" Start sending 4000 clocks... " << std::endl;
+     mpc_scan(2, (char *)&comd, 4000, rcvbuf, NOW, 0);
+     udelay(10000);
+
+     comd=VTX6_JPROG;
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+
+     comd=VTX6_ISC_NOOP; 
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+     udelay(10000);
+     comd=VTX6_ISC_ENABLE; 
+     tmp=0;
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+     mpc_scan(1, (char *)&tmp, 5, rcvbuf, NOW|READ_YES, 0);
+     std::cout <<" Start sending 128 clocks... " << std::endl;
+     mpc_scan(2, (char *)&comd, 128, rcvbuf, NOW, 0);
+     udelay(100);
+
+     comd=VTX6_ISC_PROGRAM; 
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+     udelay(10000);
+    for(int i=0; i<blocks-1; i++)
+    {
+//    if(i>50) getTheController()->Debug(0);
+       mpc_scan(1, bufin+4*i, 32, rcvbuf, NOW, 0);
+       udelay(32);
+       j++;
+       if(j==p1pct)
+       {  pcnts++;
+          if(pcnts<100) std::cout << "Sending " << pcnts <<"%..." << std::endl;
+          j=0;
+       }   
+    }
+     std::cout << "Sending 100%..." << std::endl;
+//    getTheController()->Debug(2);
+
+     comd=VTX6_ISC_DISABLE; 
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+     std::cout <<" Start sending clocks... " << std::endl;
+     mpc_scan(2, (char *)&comd, 128, rcvbuf, NOW, 0);
+     udelay(100);
+     comd=VTX6_BYPASS;
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+
+     comd=VTX6_JSTART;
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+     std::cout <<" Start sending clocks... " << std::endl;
+     mpc_scan(2, (char *)&comd, 4000, rcvbuf, NOW, 0);
+     udelay(10000);
+     //restore idle;
+     jtag_RestoreIdle();
+     comd=VTX6_BYPASS;
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+    
+    std::cout << "FPGA configuration done!" << std::endl;             
+    free(bufin);
+
+}
+
   } // namespace emu::pc
 } // namespace emu

@@ -615,7 +615,9 @@ xoap::MessageReference emu::supervisor::Application::onConfCCBsViaTCDS(xoap::Mes
 {
   isCommandFromWeb_ = false;
 
-  LOG4CPLUS_INFO( getApplicationLogger(), "Received SOAP command to configure CCBs via TCDS." );
+  string sm;
+  message->writeTo( sm );
+  LOG4CPLUS_INFO( getApplicationLogger(), "Received SOAP command to configure CCBs via TCDS:\n" << sm );
 
   if ( ! isUsingTCDS_ ){
     XCEPT_RAISE( xoap::exception::Exception, "Failed to configure CCBs via TCDS as TCDS is not in use in this configuration." );
@@ -623,31 +625,29 @@ xoap::MessageReference emu::supervisor::Application::onConfCCBsViaTCDS(xoap::Mes
 
   xdata::String endcap( "" );
   try{
-    emu::soap::extractCommandAttributes( message, emu::soap::Attributes().add( "endcap", &endcap ) );
+    // By default, emu::soap::Messenger adds the namespace prefix of the parent to the attributes. Let's look for the qualified (namespaced) attribute, then.
+    // The namespace URI for XDAQ SOAP commands is in the macro XDAQ_NS_URI;
+    emu::soap::extractCommandAttributes( message, emu::soap::Attributes().add( emu::soap::QualifiedName( "endcap", XDAQ_NS_URI ), &endcap ) );
+    LOG4CPLUS_INFO( getApplicationLogger(), "Endcap specified in SOAP command ConfCCBsViaTCDS: '" << endcap.toString() << "'" );
   } catch( xcept::Exception& e ){
     //LOG4CPLUS_WARN( getApplicationLogger(), "No endcap specified in SOAP command ConfCCBsViaTCDS." << xcept::stdformat_exception_history(e) );
     XCEPT_RETHROW( xoap::exception::Exception, "No endcap specified in SOAP command ConfCCBsViaTCDS.", e );
   }
 
   try{
-    if ( endcap.toString() == "" ){
-      // Configure all endcaps that are present.
-      if ( ci_plus_  && pi_plus_  ){
-	LOG4CPLUS_INFO( getApplicationLogger(), "Configuring plus endcap's CCBs via TCDS." );
-	confCCBsViaTCDS( ci_plus_ , pi_plus_  );
-      }
-      if ( ci_minus_ && pi_minus_ ){
-	LOG4CPLUS_INFO( getApplicationLogger(), "Configuring minus endcap's CCBs via TCDS." );
-	confCCBsViaTCDS( ci_minus_, pi_minus_ );
-      }
-    }
-    else if ( endcap.toString() == "+" ){
+    if ( endcap.toString().find_first_of( "pP+" ) != string::npos ){
       // Configure plus endcap.
+      if ( ci_plus_ == NULL || pi_plus_ == NULL ){
+	XCEPT_RAISE( xoap::exception::Exception, "Failed to configure plus side CCBs via TCDS because no CI and PI controller applications are found for plus side." );
+      }
       LOG4CPLUS_INFO( getApplicationLogger(), "Configuring plus endcap's CCBs via TCDS." );
       confCCBsViaTCDS( ci_plus_, pi_plus_ );
     }
-    else if ( endcap.toString() == "-" ){
+    if ( endcap.toString().find_first_of( "mM-" ) != string::npos ){
       // Configure minus endcap.
+      if ( ci_minus_ == NULL || pi_minus_ == NULL ){
+	XCEPT_RAISE( xoap::exception::Exception, "Failed to configure minus side CCBs via TCDS because no CI and PI controller applications are found for minus side." );
+      }
       LOG4CPLUS_INFO( getApplicationLogger(), "Configuring minus endcap's CCBs via TCDS." );
       confCCBsViaTCDS( ci_minus_, pi_minus_ );
     }

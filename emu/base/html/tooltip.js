@@ -42,15 +42,21 @@ function tooltip(e, o) {
         o.style.visibility = 'hidden';
     } else {
     
+        var ew;
         if(o.offsetWidth) {
             ew = o.offsetWidth;
         } else if(o.width) {
             ew = o.width;
         }
     
+	if ( ew === undefined ){
+	  // console.log( 'event: '+e+'  object: '+o );
+	  return;
+	}
+        
         y = mouseY(e) + 16;
         x = mouseX(e) - (ew / 4);
-        
+
         if (x < 2) {
             x = 2;
         } else if(x + ew > windowWidth) {

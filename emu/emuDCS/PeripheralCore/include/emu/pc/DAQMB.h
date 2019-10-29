@@ -951,6 +951,8 @@ public:
   int xdcfeb_read_eprom(char *buffout, int dsize, int chip);
   int xdcfeb_load_firmware(CFEB & cfeb, const char *mcsfile, int broadcast);
   void xdcfeb_read_firmware(CFEB & cfeb, const char *filename, int seq=0);
+  int xdcfeb_verify_firmware(CFEB & cfeb, const char *mcsfile);
+
   unsigned xdcfeb_eprom_idcode(CFEB & cfeb, int chip);
   unsigned xdcfeb_ds4550_idcode(CFEB & cfeb);
   int ds4550_read(CFEB & cfeb, char *buf, int address, int size);

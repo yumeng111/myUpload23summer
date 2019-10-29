@@ -3743,9 +3743,9 @@ void EmuPeripheralCrateConfig::CFEBVerifyFirmware(xgi::Input * in, xgi::Output *
      }
      else
      {
-     //   mcsfile=dcfeb_firmware_name;
-     //   std::cout << ", use file " << mcsfile << std::endl;
-     //   rt=thisDMB->xdcfeb_verify_firmware(cfebs[icfeb], mcsfile.c_str(), imode);
+          mcsfile=dcfeb_firmware_name;
+          std::cout << ", use file " << mcsfile << std::endl;
+          rt=thisDMB->xdcfeb_verify_firmware(cfebs[icfeb], mcsfile.c_str());
      }
      if(rt==0)
      {

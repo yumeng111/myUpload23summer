@@ -12743,6 +12743,59 @@ void DAQMB::xdcfeb_read_firmware(CFEB & cfeb, const char *filename, int seq)
    return;
 }
 
+int DAQMB::xdcfeb_verify_firmware(CFEB & cfeb, const char *mcsfile)
+{
+   if(CFEBversion() != 3) return -20;
+
+   const int PROM_SIZE=4194304; // in bytes
+   const int FIRMWARE_SIZE=5464972;
+   char filename[1000];
+
+   char *bufin, c;
+   bufin=(char *)malloc(16*1024*1024);
+   if(bufin==NULL)  return -2;
+   char *buf0=bufin+2*PROM_SIZE;
+   char *buf1=bufin+3*PROM_SIZE;
+
+// 1. read mcs file(s)
+   strncpy(filename, mcsfile, 980);
+   FILE *fin=fopen(filename,"r");
+   if(fin==NULL ) 
+   { 
+      free(bufin);  
+      std::cout << "ERROR: Unable to open MCS file :" << filename << std::endl;
+      return -3; 
+   }
+   int mcssize=read_mcs(bufin, fin);
+   fclose(fin);
+   if(mcssize==PROM_SIZE)
+   {   // try to read a 2nd file if it exists
+      filename[strlen(filename)-5]++;
+      fin=fopen(filename,"r");
+      if(fin ) 
+      { 
+         int mcssize2=read_mcs(bufin+PROM_SIZE, fin);
+         fclose(fin);
+         mcssize += mcssize2;                   
+      }
+   }
+   std::cout << "Read MCS size: " << std::dec << mcssize << " bytes" << std::endl;
+
+// 2. read EPROM(s)
+     getTheController()->SetUseDelay(true);
+     write_cfeb_selector(cfeb.SelectorBit());
+
+     xdcfeb_read_eprom(buf0, PROM_SIZE, 0);
+     if(mcssize>PROM_SIZE) xdcfeb_read_eprom(buf1, PROM_SIZE, 1);    
+
+// 3. compare buffers
+     int errcount=0;
+     for(int i=0; i<mcssize; i++) if(bufin[i]!=buf0[i])  errcount++; 
+
+     free(bufin);
+     return errcount;
+}
+
   unsigned DAQMB::xdcfeb_eprom_idcode(CFEB & cfeb, int chip)
   {
      unsigned rt=0;

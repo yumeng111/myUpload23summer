@@ -48,6 +48,21 @@ function load_igb_emu(){
     fi
     echo "lsmod | grep igb"
     /sbin/lsmod | grep igb
+
+    # Remove hooks by brute force if still loaded
+    if [[ $(/sbin/lsmod | grep -c 'eth_hook') -gt 0 ]]; then
+	echo "Found leftover hooks:"
+	/sbin/lsmod | grep 'eth_hook'
+	echo "Forcing removal"
+	MODSTOREMOVE=( $( lsmod | awk '/^eth_hook/ { print $1 }' ) )
+	for x in $MODSTOREMOVE; do
+	    print "rmmod "${^x} && rmmod ${^x} && sleep 1;
+	done
+	echo "List of hooks after removal, if any:"
+	/sbin/lsmod | grep 'eth_hook'
+    fi
+
+
     /sbin/lspci -k | grep -A 3 Ethernet
 
     # Create schar devices if they don't yet exist

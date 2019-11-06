@@ -1049,17 +1049,17 @@ int EmuDim::ConfigureCCB(int side)
 {
    int rt=0;
 
-/* 
+ 
    // SOAP method
    xdata::String endcap((side>0)?"p":"m");
    try{
      emu::soap::Messenger( this ).sendCommand( "emu::supervisor::Application", "ConfCCBsViaTCDS", emu::soap::Parameters::none, emu::soap::Attributes().add( "endcap", &endcap ) );
    } catch( xcept::Exception &e ){
      rt=1;
+     std::cout << "SOAP message exception, try HTTP!" << std::endl;
+     // HTTP method
+     TcdsLoader->reload(tcds_load);
    }
-*/
-   // HTTP method
-   TcdsLoader->reload(tcds_load);
 
    return rt;
    

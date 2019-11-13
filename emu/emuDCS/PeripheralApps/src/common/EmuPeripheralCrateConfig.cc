@@ -4549,6 +4549,7 @@ void EmuPeripheralCrateConfig::SetRadioactivityTrigger(xgi::Input * in, xgi::Out
 	  int initial_clct_nplanes_hit_pattern = thisTMB->GetMinHitsPattern();
 	  thisTMB->SetHsPretrigThresh(1);
 	  thisTMB->SetMinHitsPattern(1);
+          if(thisTMB->GetHardwareVersion()>1) thisTMB->SetActiveFebFlagThresh(1);  // DCFEBs need this
 	  thisTMB->WriteRegister(0x70);
 	  //
 	  // set the number of BX's that a CFEB channel must be ON in order for TMB to be labeled as "bad"

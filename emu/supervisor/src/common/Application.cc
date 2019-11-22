@@ -471,7 +471,7 @@ bool emu::supervisor::Application::getTCDSAppDescriptors( bool useSystemSwitchTa
   //
 
   try {
-    service = "lpm-csc" + systemSwitchTag;
+    service = "lpm-csc-1" + systemSwitchTag;
     pm_descr_ = findAppDescriptor("tcds::lpm::LPMController", service);
     if ( pm_descr_ == NULL ) XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
     pm_ = new PMControl( this, pm_descr_, "ME" );
@@ -3145,7 +3145,7 @@ void emu::supervisor::Application::StateTable::refresh( bool forceRefresh )
 			  if ( service.substr( 0, 9 ) == "ici-csctf" && app_->ci_tf_    ) state = app_->ci_tf_   ->getSteadyState();
 			}
 			else if ( klass == "tcds::lpm::LPMController" ){
-			  if ( service.substr( 0, 7 ) == "lpm-csc"   && app_->pm_       ) state = app_->pm_      ->getSteadyState();
+			  if ( service.substr( 0, 9 ) == "lpm-csc-1" && app_->pm_       ) state = app_->pm_      ->getSteadyState();
 			}
 			else if ( klass == app_->localDAQClass_.toString() ){
 			  if ( bool( app_->isDAQResponsive_ ) ){

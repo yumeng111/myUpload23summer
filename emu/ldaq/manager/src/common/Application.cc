@@ -9,6 +9,7 @@
 #include "emu/base/TypedFact.h"
 #include "emu/base/ApplicationStatusFact.h"
 #include "emu/ldaq/rui/STEPEventCounter.h"
+#include "emu/ldaq/rui/EventStatistics.h"
 #include "emu/ldaq/manager/STEPInfo.h"
 #include "emu/ldaq/manager/FactTypes.h"
 
@@ -120,8 +121,6 @@ throw (emu::ldaq::manager::exception::Exception)
 {
     vector< const xdaq::ApplicationDescriptor* > orderedDescriptors;
     set< const xdaq::ApplicationDescriptor* > descriptors;
-    set< const xdaq::ApplicationDescriptor* >::size_type nbApps = 0;
-
 
     try
     {
@@ -135,8 +134,6 @@ throw (emu::ldaq::manager::exception::Exception)
 
         XCEPT_RETHROW(emu::ldaq::manager::exception::Exception, s, e);
     }
-
-    nbApps = descriptors.size();
 
     // Fill application descriptors in instance order allowing non-contiguous numbering
     while( !descriptors.empty() ){
@@ -262,9 +259,11 @@ void emu::ldaq::manager::Application::queryAppStatuses(){
     set<const xdaq::ApplicationDescriptor*>::iterator a;
     xdata::String state( "UNKNOWN" );
     xdata::UnsignedLong events( 0 );
+    emu::ldaq::rui::EventStatistics eventStatistics;
     for ( a=apps.begin(); a!=apps.end(); ++a ){
       state = "UNKNOWN";
       events = 0;
+      eventStatistics.zero();
       STEPInfo step;
       STEPInfo* stepInfo = &step; // just a pointer to step
       try
@@ -274,9 +273,17 @@ void emu::ldaq::manager::Application::queryAppStatuses(){
 	  if ( ! isCurrentTestDurationUndefined  ){
 	    // It's a pulsing STEP test, a non-pulsing STEP test of predefined duration, or not a STEP test at all.
 	    // These don't have "STEP" in their name.
-	    if      ( (*a)->getClassName() == "emu::ldaq::rui::Application"                   ) p.add( "nEventsRead"  , &events );
-	    else if ( (*a)->getClassName() == "evb::RU" || (*a)->getClassName() == "evb::EVM" ) p.add( "eventCount"   , &events );
-	    else if ( (*a)->getClassName() == "evb::BU"                                       ) p.add( "nbEventsBuilt", &events );
+	    if      ( (*a)->getClassName() == "emu::ldaq::rui::Application"                   )
+	      p .add( "nEventsRead"    , &events                          )
+		.add( "dataRate"       , &eventStatistics.dataRate        )
+		.add( "eventRate"      , &eventStatistics.eventRate       )
+		.add( "sampledFraction", &eventStatistics.sampledFraction )
+		.add( "sizeMean"       , &eventStatistics.sizeMean        )
+		.add( "sizeStD"        , &eventStatistics.sizeStD         );
+	    else if ( (*a)->getClassName() == "evb::RU" || (*a)->getClassName() == "evb::EVM" )
+	      p .add( "eventCount"   , &events );
+	    else if ( (*a)->getClassName() == "evb::BU"                                       )
+	      p .add( "nbEventsBuilt", &events );
 	    stepInfo = NULL;
 	  }
 	  else{
@@ -303,7 +310,7 @@ void emu::ldaq::manager::Application::queryAppStatuses(){
 	  oss << "Failed to get event count and state of " << (*a)->getClassName() << "." << (*a)->getInstance() << " : " ;
 	  LOG4CPLUS_WARN(logger_, oss.str() + xcept::stdformat_exception_history(e));
 	}
-      currentAppStatuses_.setAppStatus( *a, state, events, stepInfo );
+      currentAppStatuses_.setAppStatus( *a, state, events, &eventStatistics, stepInfo );
     } // for ( a=apps.begin(); a!=apps.end(); ++a )
     //cout << "Previous " << previousAppStatuses_;
     cout << "Current "  << currentAppStatuses_;
@@ -389,7 +396,7 @@ void emu::ldaq::manager::Application::timeWatchdog(){
     timer->scheduleAtFixedRate( start, this, interval,  0, "" );
   } catch(xcept::Exception& e){
     ostringstream ss;
-    ss << "Failed to create " << timerName << " , therefore no scheduled check of state of DAQ applications will be done: " << xcept::stdformat_exception_history(e);
+    ss << "Failed to create " << timerName.str() << " , therefore no scheduled check of state of DAQ applications will be done: " << xcept::stdformat_exception_history(e);
     LOG4CPLUS_WARN( getApplicationLogger(), ss.str() );
     XCEPT_DECLARE( xcept::Exception, eObj, ss.str() );
     this->notifyQualified( "warning", eObj );
@@ -405,7 +412,7 @@ void emu::ldaq::manager::Application::retireWatchdog(){
     }
   } catch(xcept::Exception& e){
     ostringstream ss;
-    ss << "Failed to remove " << timerName << ": " << xcept::stdformat_exception_history(e);
+    ss << "Failed to remove " << timerName.str() << ": " << xcept::stdformat_exception_history(e);
     LOG4CPLUS_WARN( getApplicationLogger(), ss.str() );
     XCEPT_DECLARE( xcept::Exception, eObj, ss.str() );
     this->notifyQualified( "warning", eObj );
@@ -437,7 +444,7 @@ void emu::ldaq::manager::Application::waitForAppsState( vector<const xdaq::Appli
 	oss << "Failed to get state (and event count) of " << (*a)->getClassName() << "." << (*a)->getInstance() << " : " ;
 	LOG4CPLUS_WARN(logger_, oss.str() + xcept::stdformat_exception_history(e));
       }
-      appStatuses.setAppStatus( *a, s, events, NULL );
+      appStatuses.setAppStatus( *a, s, events, NULL, NULL );
     }
     if ( appStatuses.getCombinedState() == state ) return;
     ::sleep( 1 );

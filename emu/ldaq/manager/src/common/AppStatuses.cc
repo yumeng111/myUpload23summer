@@ -20,11 +20,12 @@ emu::ldaq::manager::AppStatuses::AppStatuses()
 {}
 
 emu::ldaq::manager::AppStatuses::AppStatuses( const emu::ldaq::manager::AppStatuses& other )
-  : bSem_          ( toolbox::BSem::EMPTY        )
-  , timeOfUpdate_  ( other.getUnixTimeOfUpdate() )
-  , synonyms_      ( other.getSynonyms()         )
-  , appStates_     ( other.getAppStates()        )
-  , appEventCounts_( other.getAppEventCounts()   )
+  : bSem_              ( toolbox::BSem::EMPTY          )
+  , timeOfUpdate_      ( other.getUnixTimeOfUpdate()   )
+  , synonyms_          ( other.getSynonyms()           )
+  , appStates_         ( other.getAppStates()          )
+  , appEventCounts_    ( other.getAppEventCounts()     )
+  , appEventStatistics_( other.getAppEventStatistics() )
 {
   bSem_.give();
 }
@@ -39,61 +40,32 @@ emu::ldaq::manager::AppStatuses::defineSynonyms( const string canonicalStateName
 }
 
 emu::ldaq::manager::AppStatuses&
-emu::ldaq::manager::AppStatuses::setAppStatus( const xdaq::ApplicationDescriptor* ad, const string& state, const unsigned long eventCount, const STEPInfo* step ){
+emu::ldaq::manager::AppStatuses::setAppStatus( const xdaq::ApplicationDescriptor* ad, const string& state, const unsigned long eventCount, const rui::EventStatistics* statistics, const STEPInfo* step ){
   bSem_.take();
   appStates_[ad] = state;
   // getCanonicalStateName returns its argument if it's not yet member of any synonym class or it is the canonical name of a synonym class.
   // In the first case, defineSynonyms will create a new synonym class for it, in the second case it will do nothing:
   if ( getCanonicalStateName( state ) == state ) defineSynonyms( state, state );
   appEventCounts_[ad] = eventCount;
-  if ( step != NULL ) stepInfo_[ad] = *step;
+  if ( statistics != NULL ) appEventStatistics_[ad] = *statistics;
+  if ( step       != NULL ) stepInfo_[ad]           = *step;
   time( &timeOfUpdate_ ); // time stamp this update
   bSem_.give();
   return *this;
 }
 
-// emu::ldaq::manager::AppStatuses&
-// emu::ldaq::manager::AppStatuses::setAppState( const xdaq::ApplicationDescriptor* ad, const string& state ){
-//   bSem_.take();
-//   appStates_[ad] = state;
-//   // getCanonicalStateName returns its argument if it's not yet member of any synonym class or it is the canonical name of a synonym class.
-//   // In the first case, defineSynonyms will create a new synonym class for it, in the second case it will do nothing:
-//   if ( getCanonicalStateName( state ) == state ) defineSynonyms( state, state );
-//   time( &timeOfUpdate_ );
-//   bSem_.give();
-//   return *this;
-// }
-
-// emu::ldaq::manager::AppStatuses&
-// emu::ldaq::manager::AppStatuses::setAppEventCount( const xdaq::ApplicationDescriptor* ad, const unsigned long eventCount ){
-//   bSem_.take();
-//   appEventCounts_[ad] = eventCount;
-//   time( &timeOfUpdate_ );
-//   bSem_.give();
-//   return *this;
-// }
-
 emu::ldaq::manager::AppStatuses&
 emu::ldaq::manager::AppStatuses::operator=( const emu::ldaq::manager::AppStatuses& other ){
   if ( this == &other ) return *this;
   bSem_.take();
-  timeOfUpdate_   = other.getUnixTimeOfUpdate();
-  appStates_      = other.getAppStates();
-  appEventCounts_ = other.getAppEventCounts();
-  stepInfo_       = other.getSTEPInfo();
+  timeOfUpdate_       = other.getUnixTimeOfUpdate();
+  appStates_          = other.getAppStates();
+  appEventCounts_     = other.getAppEventCounts();
+  appEventStatistics_ = other.getAppEventStatistics();
+  stepInfo_           = other.getSTEPInfo();
   bSem_.give();
   return *this;
 }
-
-// emu::ldaq::manager::AppStatuses&
-// emu::ldaq::manager::AppStatuses::operator=( const map<const xdaq::ApplicationDescriptor*, string>& appStates ){
-//   bSem_.take();
-//   appStates_.clear();
-//   appStates_.insert( appStates.begin(), appStates.end() );
-//   time( &timeOfUpdate_ );
-//   bSem_.give();
-//   return *this;
-// }
 
 set<const xdaq::ApplicationDescriptor*>
 emu::ldaq::manager::AppStatuses::getApps() const {
@@ -300,6 +272,7 @@ emu::ldaq::manager::AppStatuses::clear(){
   bSem_.take();
   appStates_.clear();
   appEventCounts_.clear();
+  appEventStatistics_.clear();
   stepInfo_.clear();
   synonyms_.clear();
   bSem_.give();
@@ -357,6 +330,28 @@ emu::ldaq::manager::AppStatuses::toDOM( DOMDocument* doc ) const {
     attr->setValue( xercesc::XMLString::transcode( emu::utils::stringFrom<unsigned long>( appEventCounts_.at( s->first ) ).c_str() ) );
     appElem->setAttributeNode( attr );
 
+    if ( appEventStatistics_.find( s->first ) != appEventStatistics_.end() ){
+      attr = doc->createAttribute( xercesc::XMLString::transcode( "dataRate" ) );
+      attr->setValue( xercesc::XMLString::transcode( appEventStatistics_.at( s->first ).dataRate.toString().c_str() ) );
+      appElem->setAttributeNode( attr );
+
+      attr = doc->createAttribute( xercesc::XMLString::transcode( "eventRate" ) );
+      attr->setValue( xercesc::XMLString::transcode( appEventStatistics_.at( s->first ).eventRate.toString().c_str() ) );
+      appElem->setAttributeNode( attr );
+
+      attr = doc->createAttribute( xercesc::XMLString::transcode( "sampledFraction" ) );
+      attr->setValue( xercesc::XMLString::transcode( appEventStatistics_.at( s->first ).sampledFraction.toString().c_str() ) );
+      appElem->setAttributeNode( attr );
+
+      attr = doc->createAttribute( xercesc::XMLString::transcode( "sizeMean" ) );
+      attr->setValue( xercesc::XMLString::transcode( appEventStatistics_.at( s->first ).sizeMean.toString().c_str() ) );
+      appElem->setAttributeNode( attr );
+
+      attr = doc->createAttribute( xercesc::XMLString::transcode( "sizeStD" ) );
+      attr->setValue( xercesc::XMLString::transcode( appEventStatistics_.at( s->first ).sizeStD.toString().c_str() ) );
+      appElem->setAttributeNode( attr );
+    }
+    
     if ( hasSTEP && stepInfo_.find( s->first ) != stepInfo_.end() ){
       DOMElement *stepElem = doc->createElement( xercesc::XMLString::transcode( "STEP" ) );
 

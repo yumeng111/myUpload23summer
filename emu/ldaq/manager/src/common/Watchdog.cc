@@ -50,7 +50,7 @@ emu::ldaq::manager::Watchdog::patrol(){
 	oss << "Failed to get event count and state of " << (*a)->getClassName() << "." << (*a)->getInstance() << " : " ;
 	LOG4CPLUS_WARN(application_->logger_, oss.str() + xcept::stdformat_exception_history(e));
       }
-    currentAppStatuses_.setAppStatus( *a, state, events, NULL );
+    currentAppStatuses_.setAppStatus( *a, state, events, NULL, NULL );
   }
   //cout << "Previous " << previousAppStatuses_;
   //cout << "Current "  << currentAppStatuses_;

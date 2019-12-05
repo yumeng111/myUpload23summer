@@ -47,6 +47,13 @@
 // #include <pthread.h>
 #include <sys/socket.h>
 
+ostream& operator<<( ostream& os, const emu::ldaq::rui::EventSample_t& es ){
+  os << "{t=" << es.time
+     << ",e=" << es.event
+     << ",d=" << es.data
+     << "}";
+  return os;
+}
 
 emu::ldaq::rui::Application::Application(xdaq::ApplicationStub *s)
 throw (xdaq::exception::Exception) :
@@ -124,7 +131,8 @@ throw (xdaq::exception::Exception) :
     previousEventNumber_   = 0;
     runStartUTC_           = 0;
     ableToWriteToDisk_     = true;
-
+    eventHistory_          = NULL;
+    
     // bind SOAP client credit message callback
     xoap::bind(this, &emu::ldaq::rui::Application::onSOAPClientCreditMsg, 
 	       "onClientCreditMessage", XDAQ_NS_URI);
@@ -636,10 +644,13 @@ vector< pair<string, xdata::Serializable*> > emu::ldaq::rui::Application::initAn
 
     pathToDataOutFile_   = "";
     fileSizeInMegaBytes_ = 2;
+    isDataToBeSaved_     = true;
     params.push_back(pair<string,xdata::Serializable *>
 		     ("pathToRUIDataOutFile"  , &pathToDataOutFile_   ));
     params.push_back(pair<string,xdata::Serializable *>
 		     ("ruiFileSizeInMegaBytes", &fileSizeInMegaBytes_ ));
+    params.push_back(pair<string,xdata::Serializable *>
+		     ("isDataToBeSaved", &isDataToBeSaved_ ));
     passDataOnToRUBuilder_ = true;
     params.push_back(pair<string,xdata::Serializable *>
 		     ("passDataOnToRUBuilder", &passDataOnToRUBuilder_));
@@ -755,6 +766,15 @@ vector< pair<string, xdata::Serializable*> > emu::ldaq::rui::Application::initAn
     params.push_back(pair<string,xdata::Serializable *>
 		     ("reasonForFailure", &reasonForFailure_));
     
+    // For event statistics
+    // eventStatistics_ = { 0., 0., 0., 0., 0 };
+    eventStatistics_.zero();
+    params.push_back(pair<string,xdata::Serializable*>( "dataRate"       , &eventStatistics_.dataRate        ) );
+    params.push_back(pair<string,xdata::Serializable*>( "eventRate"      , &eventStatistics_.eventRate       ) );
+    params.push_back(pair<string,xdata::Serializable*>( "sampledFraction", &eventStatistics_.sampledFraction ) );
+    params.push_back(pair<string,xdata::Serializable*>( "sizeMean"       , &eventStatistics_.sizeMean        ) );
+    params.push_back(pair<string,xdata::Serializable*>( "sizeStD"        , &eventStatistics_.sizeStD         ) );
+
     return params;
 }
 
@@ -774,7 +794,12 @@ void emu::ldaq::rui::Application::putParamsIntoInfoSpace
 }
 
 void emu::ldaq::rui::Application::attachListeners(){
-  appInfoSpace_->addItemRetrieveListener("dataFileNames",this);
+  appInfoSpace_->addItemRetrieveListener("dataFileNames"  ,this);
+  appInfoSpace_->addItemRetrieveListener("dataRate"       ,this);
+  appInfoSpace_->addItemRetrieveListener("eventRate"      ,this);
+  appInfoSpace_->addItemRetrieveListener("sampledFraction",this);
+  appInfoSpace_->addItemRetrieveListener("sizeMean"       ,this);
+  appInfoSpace_->addItemRetrieveListener("sizeStD"        ,this);
   appInfoSpace_->addItemChangedListener("runStartTime",this);
 }
 
@@ -1557,8 +1582,13 @@ throw (toolbox::fsm::exception::Exception)
       countSinceBadEvent_ = nToWriteAfterBadEvent_.value_+1;
     }
     badEventCount_ = 0;
-}
 
+    // For event statistics
+    delete eventHistory_;
+    eventHistory_ = new RingBuffer<EventSample_t>( 100 );
+    // eventStatistics_ = { 0., 0., 0., 0., 0 };
+    eventStatistics_.zero();
+}
 
 void emu::ldaq::rui::Application::enableAction(toolbox::Event::Reference e)
 throw (toolbox::fsm::exception::Exception)
@@ -2377,8 +2407,10 @@ void emu::ldaq::rui::Application::createFileWriter(){
   destroyFileWriter();
 
   // create new writers if path is not empty
-  if ( pathToDataOutFile_ != string("") && 
-       (xdata::UnsignedInteger64) fileSizeInMegaBytes_ > (uint64_t) 0 )
+  if ( pathToDataOutFile_ != string("")               && 
+       (uint64_t) fileSizeInMegaBytes_ > (uint64_t) 0 &&
+       (bool) isDataToBeSaved_
+       )
     {
       toolbox::net::URL u( appContext_->getContextDescriptor()->getURL() );
       fileWriter_ = new emu::ldaq::writer::RawDataFile( 1000000*fileSizeInMegaBytes_, 
@@ -2749,6 +2781,14 @@ int32_t emu::ldaq::rui::Application::continueConstructionOfFragment()
       // Store this data to be sent to clients (if any)
       addDataForClients( runNumber_.value_, runStartUTC_, nEventsRead_.value_, positionInEvent, errorFlag_, data, dataLength );
 
+      // Add info about this event to the history
+      struct timeval  now;   // gettimeofday will set this to the current time
+      struct timezone dummy; // gettimeofday will set this; not used
+      uint64_t eventTime( 0 );
+      if ( gettimeofday( &now, &dummy ) == 0 ) eventTime  = now.tv_sec * 1000000 + now.tv_usec;
+      if ( header ) eventHistory_->addElement   ( EventSample_t( eventTime, uint64_t( eventNumber_ ), dataLength ) );
+      else          eventHistory_->updateElement( EventSample_t( eventTime, uint64_t( eventNumber_ ), dataLength ) );
+
       if ( trailer ) errorFlag_ = 0;
 
     } // if ( dataLength>0 )
@@ -3045,6 +3085,14 @@ int32_t emu::ldaq::rui::Application::continueSTEPRun()
 	} // if ( header && trailer )
 
       } // if ( insideEvent_ ) else
+
+      // Add info about this event to the history
+      struct timeval  now;   // gettimeofday will set this to the current time
+      struct timezone dummy; // gettimeofday will set this; not used
+      uint64_t eventTime( 0 );
+      if ( gettimeofday( &now, &dummy ) == 0 ) eventTime  = now.tv_sec * 1000000 + now.tv_usec;
+      if ( header ) eventHistory_->addElement   ( EventSample_t( eventTime, uint64_t( eventNumber_ ), dataLength ) );
+      else          eventHistory_->updateElement( EventSample_t( eventTime, uint64_t( eventNumber_ ), dataLength ) );
 
       if ( trailer ) errorFlag_ = 0;
 
@@ -3712,6 +3760,64 @@ void emu::ldaq::rui::Application::updateDataFileNames(){
   applicationBSem_.give();
 }
 
+void emu::ldaq::rui::Application::updateEventStatistics(){
+  if ( eventHistory_ == NULL ) return;
+
+  LOG4CPLUS_INFO(logger_,
+		 "Before updating event statistics: " <<
+		 "dataRate[B/s]="     << eventStatistics_.dataRate       .toString() <<
+		 " eventRate[Hz]= "   << eventStatistics_.eventRate      .toString() <<
+		 " sampledFraction= " << eventStatistics_.sampledFraction.toString() <<
+		 " sizeMean[B]= "     << eventStatistics_.sizeMean       .toString() <<
+		 " sizeStD[B]= "      << eventStatistics_.sizeStD        .toString()    );
+
+  applicationBSem_.take();
+
+  LOG4CPLUS_INFO(logger_, "Event history: " << *eventHistory_ );
+
+  if ( eventHistory_->getNElements() == 0 ){
+    applicationBSem_.give();
+    return;
+  }
+
+  uint64_t sum_size  = 0.;
+  for ( size_t i=0; i<eventHistory_->getNElements(); i++ ){
+    sum_size  += eventHistory_->getElementAt( i )->data;
+  }
+  EventSample_t *oldest = eventHistory_->getOldest();
+  EventSample_t *newest = eventHistory_->getNewest();
+  uint64_t delta_time  = ( newest->time - oldest->time ) * 1000000; // microsec --> sec
+  uint64_t delta_event = ( newest->event >= oldest->event ? newest->event - oldest->event : (1<<24) - oldest->event + newest->event ); // event counter in DDU header wraps around 2^24
+  if ( delta_time > numeric_limits<double>::min() ){
+    eventStatistics_.dataRate  = sum_size                 / double( delta_time  );
+    eventStatistics_.eventRate = eventHistory_->getNElements() / double( delta_time  );
+  }
+  if ( delta_event > 0 ){
+    if ( eventHistory_->getNElements() == 1 ) eventStatistics_.sampledFraction = 1.;
+    else                                      eventStatistics_.sampledFraction = 
+						( eventHistory_->getNElements() - 1 ) / double( delta_event );
+  }
+  eventStatistics_.sizeMean = sum_size / double( eventHistory_->getNElements() );
+  if ( eventHistory_->getNElements() > 1 ){
+    for ( size_t i=0; i<eventHistory_->getNElements(); i++ ){
+      double d = eventHistory_->getElementAt( i )->data - double( eventStatistics_.sizeMean );
+      eventStatistics_.sizeStD = eventStatistics_.sizeStD + d*d;
+    }
+    eventStatistics_.sizeStD = eventStatistics_.sizeStD / ( eventHistory_->getNElements() - 1 );
+    eventStatistics_.sizeStD = sqrt( double( eventStatistics_.sizeStD ) );
+  }
+
+  applicationBSem_.give();
+
+  LOG4CPLUS_INFO(logger_,
+		 "After updating event statistics: " <<
+		 "dataRate[B/s]="     << eventStatistics_.dataRate       .toString() <<
+		 " eventRate[Hz]= "   << eventStatistics_.eventRate      .toString() <<
+		 " sampledFraction= " << eventStatistics_.sampledFraction.toString() <<
+		 " sizeMean[B]= "     << eventStatistics_.sizeMean       .toString() <<
+		 " sizeStD[B]= "      << eventStatistics_.sizeStD        .toString()    );
+}
+
 void emu::ldaq::rui::Application::actionPerformed(xdata::Event & received )
 {
   // implementation of virtual method of class xdata::ActionListener
@@ -3730,6 +3836,14 @@ void emu::ldaq::rui::Application::actionPerformed(xdata::Event & received )
   }
   else if ( e.itemName() == "runStartTime" && e.type() == "ItemChangedEvent" ){
     runStartUTC_ = toUnixTime( runStartTime_ );
+  }
+  if ( (  e.itemName() == "dataRate"        ||
+	  e.itemName() == "eventRate"       ||
+	  e.itemName() == "sampledFraction" ||
+	  e.itemName() == "sizeMean"        ||
+	  e.itemName() == "sizeStD"            )
+       && e.type() == "ItemRetrieveEvent"        ){
+    updateEventStatistics();
   }
 }
 

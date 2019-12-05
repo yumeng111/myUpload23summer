@@ -32,12 +32,25 @@
 #include "emu/ldaq/rui/STEPEventCounter.h"
 #include "emu/ldaq/rui/BadEventCount.h"
 #include "emu/ldaq/rui/EventBufferRing.h"
+#include "emu/ldaq/rui/EventStatistics.h"
 #include "emu/ldaq/rui/LogMessageCounter.h"
 #include "emu/base/FactFinder.h"
+#include "emu/utils/RingBuffer.h"
 
 using namespace std;
 
 namespace emu { namespace ldaq { namespace rui {
+
+struct EventSample_t{
+  uint64_t time;
+  uint64_t event;
+  uint64_t data;
+  EventSample_t( uint64_t t, uint64_t e, uint64_t d ){
+    time  = t;
+    event = e;
+    data  = d;
+  }
+};
 
 class Application :
     public emu::base::FactFinder,
@@ -189,6 +202,11 @@ private:
   emu::ldaq::rui::EventBufferRing      eventBufferRing_; ///< Buffer to store the bad event and its leading context.
   emu::ldaq::rui::BadEventCount        badEventCount_; ///< Bad event count with progressive prescaler
 
+  // For event statistics
+  RingBuffer<EventSample_t> *eventHistory_; ///< metadata of the most recent events read out
+  EventStatistics eventStatistics_;
+  void updateEventStatistics();
+  
   // In STEP runs, count on each DDU input the number of events it's contributed to with data
   bool                                isSTEPRun_;
   emu::ldaq::rui::STEPEventCounter     STEPEventCounter_;
@@ -424,6 +442,7 @@ private:
 
     xdata::String       pathToDataOutFile_;    // the path to the file to write the data into (no file written if "")
     xdata::UnsignedInteger64 fileSizeInMegaBytes_;  // when the file size exceeds this, no more events will be written to it (no file written if <=0)
+    xdata::Boolean      isDataToBeSaved_;      // it true, data is saved to file
     xdata::Integer64    maxEvents_;            // stop reading from DDU after this many events
     xdata::Boolean      passDataOnToRUBuilder_;// it true, data is sent to the event builder
     xdata::UnsignedInteger32 runNumber_;            // run number

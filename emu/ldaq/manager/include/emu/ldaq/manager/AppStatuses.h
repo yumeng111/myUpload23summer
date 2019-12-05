@@ -2,6 +2,7 @@
 #define __emu_ldaq_manager_AppStatuses_h__
 
 #include "emu/ldaq/manager/STEPInfo.h"
+#include "emu/ldaq/rui/EventStatistics.h"
 
 #include "toolbox/BSem.h"
 #include "xdaq/ApplicationDescriptor.h"
@@ -27,14 +28,12 @@ namespace emu { namespace ldaq { namespace manager {
     AppStatuses();
     AppStatuses( const emu::ldaq::manager::AppStatuses& other );
     emu::ldaq::manager::AppStatuses& defineSynonyms( const string canonicalStateName, const string csvOfAlternativeStateNames );
-    emu::ldaq::manager::AppStatuses& setAppStatus( const xdaq::ApplicationDescriptor* ad, const string& state, const unsigned long eventCount, const STEPInfo* step );
-    // emu::ldaq::manager::AppStatuses& setAppState( const xdaq::ApplicationDescriptor* ad, const string& state );
-    // emu::ldaq::manager::AppStatuses& setAppEventCount( const xdaq::ApplicationDescriptor* ad, const unsigned long eventCount );
+    emu::ldaq::manager::AppStatuses& setAppStatus( const xdaq::ApplicationDescriptor* ad, const string& state, const unsigned long eventCount, const rui::EventStatistics* statistics, const STEPInfo* step );
     emu::ldaq::manager::AppStatuses& operator=( const emu::ldaq::manager::AppStatuses& other );
-    // emu::ldaq::manager::AppStatuses& operator=( const map<const xdaq::ApplicationDescriptor*, string>& appStates );
     map< string, set<string> > getSynonyms() const { return synonyms_; }
     map<const xdaq::ApplicationDescriptor*, string> getAppStates() const { return appStates_; }
     map<const xdaq::ApplicationDescriptor*, unsigned long> getAppEventCounts() const { return appEventCounts_; }
+    map<const xdaq::ApplicationDescriptor*, rui::EventStatistics> getAppEventStatistics() const { return appEventStatistics_; }
     map<const xdaq::ApplicationDescriptor*, STEPInfo> getSTEPInfo() const { return stepInfo_; }
     uint64_t getLowestOfLowestSTEPCount() const;
     uint64_t getLowestCount( const string appName = "" ) const;
@@ -71,6 +70,7 @@ namespace emu { namespace ldaq { namespace manager {
     map< string, set<string> > synonyms_; // state name --> set of alternative state names
     map<const xdaq::ApplicationDescriptor*, string> appStates_;
     map<const xdaq::ApplicationDescriptor*, unsigned long> appEventCounts_;
+    map<const xdaq::ApplicationDescriptor*, rui::EventStatistics> appEventStatistics_;
     map<const xdaq::ApplicationDescriptor*, STEPInfo> stepInfo_;
   };
 

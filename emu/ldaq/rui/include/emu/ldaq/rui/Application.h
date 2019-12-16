@@ -204,7 +204,8 @@ private:
 
   // For event statistics
   RingBuffer<EventSample_t> *eventHistory_; ///< metadata of the most recent events read out
-  EventStatistics eventStatistics_;
+  // EventStatistics eventStatistics_;
+  xdata::Bag<EventStatistics> eventStatistics_;
   void updateEventStatistics();
   
   // In STEP runs, count on each DDU input the number of events it's contributed to with data

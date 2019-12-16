@@ -767,13 +767,8 @@ vector< pair<string, xdata::Serializable*> > emu::ldaq::rui::Application::initAn
 		     ("reasonForFailure", &reasonForFailure_));
     
     // For event statistics
-    // eventStatistics_ = { 0., 0., 0., 0., 0 };
-    eventStatistics_.zero();
-    params.push_back(pair<string,xdata::Serializable*>( "dataRate"       , &eventStatistics_.dataRate        ) );
-    params.push_back(pair<string,xdata::Serializable*>( "eventRate"      , &eventStatistics_.eventRate       ) );
-    params.push_back(pair<string,xdata::Serializable*>( "sampledFraction", &eventStatistics_.sampledFraction ) );
-    params.push_back(pair<string,xdata::Serializable*>( "sizeMean"       , &eventStatistics_.sizeMean        ) );
-    params.push_back(pair<string,xdata::Serializable*>( "sizeStD"        , &eventStatistics_.sizeStD         ) );
+    eventStatistics_.bag.zero();
+    params.push_back(pair<string,xdata::Serializable*>( "eventStatistics", &eventStatistics_ ) );
 
     return params;
 }
@@ -795,11 +790,7 @@ void emu::ldaq::rui::Application::putParamsIntoInfoSpace
 
 void emu::ldaq::rui::Application::attachListeners(){
   appInfoSpace_->addItemRetrieveListener("dataFileNames"  ,this);
-  appInfoSpace_->addItemRetrieveListener("dataRate"       ,this);
-  appInfoSpace_->addItemRetrieveListener("eventRate"      ,this);
-  appInfoSpace_->addItemRetrieveListener("sampledFraction",this);
-  appInfoSpace_->addItemRetrieveListener("sizeMean"       ,this);
-  appInfoSpace_->addItemRetrieveListener("sizeStD"        ,this);
+  appInfoSpace_->addItemRetrieveListener("eventStatistics",this);
   appInfoSpace_->addItemChangedListener("runStartTime",this);
 }
 
@@ -1587,7 +1578,7 @@ throw (toolbox::fsm::exception::Exception)
     delete eventHistory_;
     eventHistory_ = new RingBuffer<EventSample_t>( 100 );
     // eventStatistics_ = { 0., 0., 0., 0., 0 };
-    eventStatistics_.zero();
+    eventStatistics_.bag.zero();
 }
 
 void emu::ldaq::rui::Application::enableAction(toolbox::Event::Reference e)
@@ -2051,7 +2042,12 @@ throw (xgi::exception::Exception)
 
         // Value
         *out << "    <td>"                                             << endl;
-        *out << "      " << pos->second->toString()                    << endl;
+	if ( pos->first == "eventStatistics" ){
+	  *out << "      " << dynamic_cast< xdata::Bag<EventStatistics>* >( pos->second )->bag.toString() << endl;
+	}
+	else{
+	  *out << "      " << pos->second->toString()                    << endl;
+	}
         *out << "    </td>"                                            << endl;
 
         *out << "  </tr>"                                              << endl;
@@ -3765,11 +3761,11 @@ void emu::ldaq::rui::Application::updateEventStatistics(){
 
   LOG4CPLUS_INFO(logger_,
 		 "Before updating event statistics: " <<
-		 "dataRate[B/s]="     << eventStatistics_.dataRate       .toString() <<
-		 " eventRate[Hz]= "   << eventStatistics_.eventRate      .toString() <<
-		 " sampledFraction= " << eventStatistics_.sampledFraction.toString() <<
-		 " sizeMean[B]= "     << eventStatistics_.sizeMean       .toString() <<
-		 " sizeStD[B]= "      << eventStatistics_.sizeStD        .toString()    );
+		 "dataRate[B/s]="     << eventStatistics_.bag.dataRate       .toString() <<
+		 " eventRate[Hz]= "   << eventStatistics_.bag.eventRate      .toString() <<
+		 " sampledFraction= " << eventStatistics_.bag.sampledFraction.toString() <<
+		 " sizeMean[B]= "     << eventStatistics_.bag.sizeMean       .toString() <<
+		 " sizeStD[B]= "      << eventStatistics_.bag.sizeStD        .toString()    );
 
   applicationBSem_.take();
 
@@ -3786,36 +3782,36 @@ void emu::ldaq::rui::Application::updateEventStatistics(){
   }
   EventSample_t *oldest = eventHistory_->getOldest();
   EventSample_t *newest = eventHistory_->getNewest();
-  uint64_t delta_time  = ( newest->time - oldest->time ) * 1000000; // microsec --> sec
+  uint64_t delta_time  = ( newest->time - oldest->time );
   uint64_t delta_event = ( newest->event >= oldest->event ? newest->event - oldest->event : (1<<24) - oldest->event + newest->event ); // event counter in DDU header wraps around 2^24
   if ( delta_time > numeric_limits<double>::min() ){
-    eventStatistics_.dataRate  = sum_size                 / double( delta_time  );
-    eventStatistics_.eventRate = eventHistory_->getNElements() / double( delta_time  );
+    eventStatistics_.bag.dataRate  = sum_size                      / double( delta_time  ) * 1000000; // microsec --> sec
+    eventStatistics_.bag.eventRate = eventHistory_->getNElements() / double( delta_time  ) * 1000000; // microsec --> sec
   }
   if ( delta_event > 0 ){
-    if ( eventHistory_->getNElements() == 1 ) eventStatistics_.sampledFraction = 1.;
-    else                                      eventStatistics_.sampledFraction = 
+    if ( eventHistory_->getNElements() == 1 ) eventStatistics_.bag.sampledFraction = 1.;
+    else                                      eventStatistics_.bag.sampledFraction = 
 						( eventHistory_->getNElements() - 1 ) / double( delta_event );
   }
-  eventStatistics_.sizeMean = sum_size / double( eventHistory_->getNElements() );
+  eventStatistics_.bag.sizeMean = sum_size / double( eventHistory_->getNElements() );
   if ( eventHistory_->getNElements() > 1 ){
     for ( size_t i=0; i<eventHistory_->getNElements(); i++ ){
-      double d = eventHistory_->getElementAt( i )->data - double( eventStatistics_.sizeMean );
-      eventStatistics_.sizeStD = eventStatistics_.sizeStD + d*d;
+      double d = eventHistory_->getElementAt( i )->data - double( eventStatistics_.bag.sizeMean );
+      eventStatistics_.bag.sizeStD = eventStatistics_.bag.sizeStD + d*d;
     }
-    eventStatistics_.sizeStD = eventStatistics_.sizeStD / ( eventHistory_->getNElements() - 1 );
-    eventStatistics_.sizeStD = sqrt( double( eventStatistics_.sizeStD ) );
+    eventStatistics_.bag.sizeStD = eventStatistics_.bag.sizeStD / ( eventHistory_->getNElements() - 1 );
+    eventStatistics_.bag.sizeStD = sqrt( double( eventStatistics_.bag.sizeStD ) );
   }
 
   applicationBSem_.give();
 
   LOG4CPLUS_INFO(logger_,
 		 "After updating event statistics: " <<
-		 "dataRate[B/s]="     << eventStatistics_.dataRate       .toString() <<
-		 " eventRate[Hz]= "   << eventStatistics_.eventRate      .toString() <<
-		 " sampledFraction= " << eventStatistics_.sampledFraction.toString() <<
-		 " sizeMean[B]= "     << eventStatistics_.sizeMean       .toString() <<
-		 " sizeStD[B]= "      << eventStatistics_.sizeStD        .toString()    );
+		 "dataRate[B/s]="     << eventStatistics_.bag.dataRate       .toString() <<
+		 " eventRate[Hz]= "   << eventStatistics_.bag.eventRate      .toString() <<
+		 " sampledFraction= " << eventStatistics_.bag.sampledFraction.toString() <<
+		 " sizeMean[B]= "     << eventStatistics_.bag.sizeMean       .toString() <<
+		 " sizeStD[B]= "      << eventStatistics_.bag.sizeStD        .toString()    );
 }
 
 void emu::ldaq::rui::Application::actionPerformed(xdata::Event & received )
@@ -3837,16 +3833,10 @@ void emu::ldaq::rui::Application::actionPerformed(xdata::Event & received )
   else if ( e.itemName() == "runStartTime" && e.type() == "ItemChangedEvent" ){
     runStartUTC_ = toUnixTime( runStartTime_ );
   }
-  if ( (  e.itemName() == "dataRate"        ||
-	  e.itemName() == "eventRate"       ||
-	  e.itemName() == "sampledFraction" ||
-	  e.itemName() == "sizeMean"        ||
-	  e.itemName() == "sizeStD"            )
-       && e.type() == "ItemRetrieveEvent"        ){
+  if ( e.itemName() == "eventStatistics" && e.type() == "ItemRetrieveEvent" ){
     updateEventStatistics();
   }
 }
-
 /**
  * Provides the factory method for the instantiation of emu::ldaq::rui::Application.
  */

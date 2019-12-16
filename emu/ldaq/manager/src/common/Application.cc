@@ -259,11 +259,12 @@ void emu::ldaq::manager::Application::queryAppStatuses(){
     set<const xdaq::ApplicationDescriptor*>::iterator a;
     xdata::String state( "UNKNOWN" );
     xdata::UnsignedLong events( 0 );
-    emu::ldaq::rui::EventStatistics eventStatistics;
+    // emu::ldaq::rui::EventStatistics eventStatistics;
+    xdata::Bag<emu::ldaq::rui::EventStatistics> eventStatistics;
     for ( a=apps.begin(); a!=apps.end(); ++a ){
       state = "UNKNOWN";
       events = 0;
-      eventStatistics.zero();
+      eventStatistics.bag.zero();
       STEPInfo step;
       STEPInfo* stepInfo = &step; // just a pointer to step
       try
@@ -275,11 +276,12 @@ void emu::ldaq::manager::Application::queryAppStatuses(){
 	    // These don't have "STEP" in their name.
 	    if      ( (*a)->getClassName() == "emu::ldaq::rui::Application"                   )
 	      p .add( "nEventsRead"    , &events                          )
-		.add( "dataRate"       , &eventStatistics.dataRate        )
-		.add( "eventRate"      , &eventStatistics.eventRate       )
-		.add( "sampledFraction", &eventStatistics.sampledFraction )
-		.add( "sizeMean"       , &eventStatistics.sizeMean        )
-		.add( "sizeStD"        , &eventStatistics.sizeStD         );
+		.add( "eventStatistics", &eventStatistics );
+		// .add( "dataRate"       , &eventStatistics.dataRate        )
+		// .add( "eventRate"      , &eventStatistics.eventRate       )
+		// .add( "sampledFraction", &eventStatistics.sampledFraction )
+		// .add( "sizeMean"       , &eventStatistics.sizeMean        )
+		// .add( "sizeStD"        , &eventStatistics.sizeStD         );
 	    else if ( (*a)->getClassName() == "evb::RU" || (*a)->getClassName() == "evb::EVM" )
 	      p .add( "eventCount"   , &events );
 	    else if ( (*a)->getClassName() == "evb::BU"                                       )
@@ -310,7 +312,7 @@ void emu::ldaq::manager::Application::queryAppStatuses(){
 	  oss << "Failed to get event count and state of " << (*a)->getClassName() << "." << (*a)->getInstance() << " : " ;
 	  LOG4CPLUS_WARN(logger_, oss.str() + xcept::stdformat_exception_history(e));
 	}
-      currentAppStatuses_.setAppStatus( *a, state, events, &eventStatistics, stepInfo );
+      currentAppStatuses_.setAppStatus( *a, state, events, &eventStatistics.bag, stepInfo );
     } // for ( a=apps.begin(); a!=apps.end(); ++a )
     //cout << "Previous " << previousAppStatuses_;
     cout << "Current "  << currentAppStatuses_;

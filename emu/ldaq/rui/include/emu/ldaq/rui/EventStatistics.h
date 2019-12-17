@@ -1,9 +1,10 @@
 #ifndef __emu_ldaq_rui_EventStatistics_h__
 #define __emu_ldaq_rui_EventStatistics_h__
 
-#include "xdata/Double.h"
+#include "xdata/Float.h"
 #include "xdata/Bag.h"
 #include <string>
+#include <iomanip>
 #include <sstream>
 
 namespace emu { namespace ldaq { namespace rui {
@@ -26,19 +27,20 @@ namespace emu { namespace ldaq { namespace rui {
     }
     std::string toString(){
       std::ostringstream oss;
-      oss << "{ dataRate[B/s]: "   << dataRate       .toString()
-	  << ", eventRate[1/s]: "  << eventRate      .toString()
-	  << ", sampledFraction: " << sampledFraction.toString()
-	  << ", sizeMean[B]: "     << sizeMean       .toString()
-	  << ", sizeStD[B]: "      << sizeStD        .toString()
+      oss << std::scientific << std::setfill('0') << std::setprecision(3)
+	  << "{ dataRate[B/s]: "   << float( dataRate        )
+	  << ", eventRate[1/s]: "  << float( eventRate       )
+	  << ", sampledFraction: " << float( sampledFraction )
+	  << ", sizeMean[B]: "     << float( sizeMean        )
+	  << ", sizeStD[B]: "      << float( sizeStD         )
 	  << " }";
       return oss.str();
     }
-    xdata::Double dataRate;        ///< rate of data volume read out [byte/s]
-    xdata::Double eventRate;       ///< rate of events read out [1/s]
-    xdata::Double sampledFraction; ///< fraction of events read out
-    xdata::Double sizeMean;        ///< mean of event data size [byte]
-    xdata::Double sizeStD;         ///< std dev of event data size [byte]
+    xdata::Float dataRate;        ///< rate of data volume read out [byte/s]
+    xdata::Float eventRate;       ///< rate of events read out [1/s]
+    xdata::Float sampledFraction; ///< fraction of events read out
+    xdata::Float sizeMean;        ///< mean of event data size [byte]
+    xdata::Float sizeStD;         ///< std dev of event data size [byte]
   };
 }}} // namespace emu::ldaq::rui
 

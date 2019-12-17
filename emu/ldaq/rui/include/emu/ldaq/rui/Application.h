@@ -45,10 +45,18 @@ struct EventSample_t{
   uint64_t time;
   uint64_t event;
   uint64_t data;
+  EventSample_t(){
+    zero();
+  }
   EventSample_t( uint64_t t, uint64_t e, uint64_t d ){
     time  = t;
     event = e;
     data  = d;
+  }
+  void zero(){
+    time  = 0;
+    event = 0;
+    data  = 0;
   }
 };
 
@@ -203,8 +211,8 @@ private:
   emu::ldaq::rui::BadEventCount        badEventCount_; ///< Bad event count with progressive prescaler
 
   // For event statistics
+  EventSample_t eventSample_;  ///< metadata of the current event
   RingBuffer<EventSample_t> *eventHistory_; ///< metadata of the most recent events read out
-  // EventStatistics eventStatistics_;
   xdata::Bag<EventStatistics> eventStatistics_;
   void updateEventStatistics();
   

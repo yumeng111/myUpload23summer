@@ -235,8 +235,22 @@
 
   <xsl:template match="applications">
     <div id="countTablesLayout">
-      <xsl:variable name="MID_INSTANCE"><xsl:value-of select="@instance"/></xsl:variable>
       <table class="counts nonSTEP">
+	<xsl:if test="count( application[@class = 'emu::ldaq::rui::Application' and number(@instance)&lt;=18] ) &gt; 0">
+	  <tr>
+	    <th>host</th>
+	    <th>RUI</th>
+	    <th>count</th>
+	    <th>rate [s⁻¹]</th>
+	    <th>vol [B/s]</th>
+	    <th>size [B]</th>
+	    <th>sampled</th>
+	    <xsl:if test="count( application[ @class = 'evb::RU' ] ) &gt; 0 ">
+	      <th>RU</th>
+	      <th>BU</th>
+	    </xsl:if>
+	  </tr>
+	</xsl:if>
 	<!-- <xsl:apply-templates select="application[@class = 'emu::ldaq::rui::Application' and position()&lt;=number(last()*0.5)]"> -->
 	<xsl:apply-templates select="application[@class = 'emu::ldaq::rui::Application' and number(@instance)&lt;=18]">
   	  <xsl:sort select = "@instance" data-type="number"/>
@@ -244,6 +258,21 @@
 	</xsl:apply-templates>
       </table>
       <table class="counts nonSTEP">
+	<xsl:if test="count( application[@class = 'emu::ldaq::rui::Application' and number(@instance)>18] ) &gt; 0">
+	  <tr>
+	    <th>host</th>
+	    <th>RUI</th>
+	    <th>count</th>
+	    <th>rate [s⁻¹]</th>
+	    <th>vol [B/s]</th>
+	    <th>size [B]</th>
+	    <th>sampled</th>
+	    <xsl:if test="count( application[ @class = 'evb::RU' ] ) &gt; 0 ">
+	      <th>RU</th>
+	      <th>BU</th>
+	    </xsl:if>
+	  </tr>
+	</xsl:if>
 	<!-- <xsl:apply-templates select="application[@class = 'emu::ldaq::rui::Application' and position()&gt;number(last()*0.5)]"> -->
 	<xsl:apply-templates select="application[@class = 'emu::ldaq::rui::Application' and number(@instance)>18]">
   	  <xsl:sort select = "@instance" data-type="number"/>
@@ -278,7 +307,7 @@
       <xsl:if test="$PRECEDING_RUIS_ON_HOST = 0">
 	<td>
 	  <xsl:attribute name="rowspan"><xsl:value-of select="number($FOLLOWING_RUIS_ON_HOST) + 1"/></xsl:attribute>
-	  <a href="http://{@host}:9999/urn:xdaq-application:lid=10" title="The host machine.Click to visit the JobControl running on it." target="_blank"><xsl:value-of select="@host"/></a>
+	  <a href="http://{@host}:9999/urn:xdaq-application:lid=10" title="The host machine.Click to visit the JobControl running on it." target="_blank"><xsl:value-of select="substring-before(@host,'.')"/></a>
 	</td>
       </xsl:if>
       <!-- rui -->
@@ -289,14 +318,23 @@
       <td class="count">
 	<a href="{/env:Envelope/env:hardwareMapping}#RUI.{@instance}" title="The number of events read out. Click to see which chambers are read out by the DDU that this RUI reads out." target="_blank"><xsl:value-of select="@eventCount"/></a>
       </td>
+      <td class="statistics" title="Event rate [s⁻¹].">
+	<xsl:value-of select="format-number(substring-before(@eventRate,'e'),'0.000')"/>e<xsl:value-of select="substring-after(@eventRate,'e')"/>
+      </td>
+      <td class="statistics" title="Data rate [Bs⁻¹].">
+	<xsl:value-of select="format-number(substring-before(@dataRate,'e'),'0.000')"/>e<xsl:value-of select="substring-after(@dataRate,'e')"/>
+      </td>
+      <td class="statistics" title="Event size [B].">
+	<xsl:value-of select="format-number(substring-before(@sizeMean,'e'),'0.00')"/>e<xsl:value-of select="substring-after(@sizeMean,'e')"/>±<xsl:value-of select="format-number(substring-before(@sizeStD,'e'),'0.00')"/>e<xsl:value-of select="substring-after(@sizeStD,'e')"/>
+      </td>
+      <td class="statistics" title="Sampled fraction.">
+	<xsl:value-of select="format-number(substring-before(@sampledFraction,'e'),'0.000')"/>e<xsl:value-of select="substring-after(@sampledFraction,'e')"/>
+      </td>
       <!-- ru partner of rui (sharing common instance number) -->
       <xsl:for-each select="../application[ ( @class = 'evb::RU' or @class = 'evb::EVM' ) and @instance = $INSTANCE]">
 	<th class="{@canonicalState}">
 	  <a href="http://{@host}:{@port}/{@appURN}/" title="{@class}.{format-number(@instance,'00')} is in {@state} state. Click to visit it." target="_blank"><xsl:value-of select="substring-after(@class,'evb::')"/>.<xsl:value-of select="format-number(@instance,'00')"/></a>
 	</th>
-	<td class="count">
-	  <xsl:value-of select="@eventCount"/>
-	</td>
       </xsl:for-each>
       <!-- bu on this host -->
       <xsl:if test="$PRECEDING_RUIS_ON_HOST = 0">

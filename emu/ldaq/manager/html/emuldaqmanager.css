@@ -207,6 +207,7 @@ table.counts th.Enabled   { background-color: #98e389; }
 table.counts th.Failed    { background-color: #FF826b; }
 table.counts th.UNKNOWN   { background-color: #dddddd; }
 table.counts td.count     { text-align: right; width: 10ch; color: #2b4265; }
+table.counts td.statistics{ text-align: right; width: 9ch; color: #2b4265; }
 table.counts td.STEPCount, table.counts td.masked, table.counts td.notFinished { text-align: right; color: #2b4265; }
 table.counts td.masked      { background-color: #cccccc; }
 table.counts td.notFinished { font-weight: bold;         }

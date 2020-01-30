@@ -503,50 +503,28 @@ bool TMBTester::testPROMpath(){
   //
   (*MyOutput_) << "TMBTester: Checking User PROM Data Path" << std::endl;
   //
-  int pat_expect1=0, pat_expect2=0;
+  int pat_expect=0;
   //
   bool temptest=true;
   //
+  unsigned char buf[64*1024];
   for (int iprom=0; iprom<=1; iprom++) {
     //
     tmb_->ClockOutPromProgram(iprom,10);
     //
+    int rt=tmb_->read_user_prom(iprom, (char *)buf);
     // **Read the data from the selected PROM **
     for (int prom_adr=0; prom_adr<=9; prom_adr++) {
       //
       int read_data = tmb_->GetClockedOutPromImage(prom_adr);
       //
-      // there are two possible patterns we could get:
-      if (prom_adr==0) {
-	if (iprom == 0) pat_expect1 = 0xab;
-	if (iprom == 1) pat_expect1 = 0xcd;
-      } else if (prom_adr==9) {
-	if (iprom == 0) pat_expect1 = 0xee;
-	if (iprom == 1) pat_expect1 = 0xbb;
-      } else {
-	pat_expect1 = 1 << (prom_adr-1);
-      }
-      if (prom_adr==0) pat_expect2=0x59;
-      if (prom_adr==1) pat_expect2=0x6f;
-      if (prom_adr==2) pat_expect2=0x75;
-      if (prom_adr==3) pat_expect2=0x72;
-      if (prom_adr==4) pat_expect2=0x20;
-      if (prom_adr==5) pat_expect2=0x6d;
-      if (prom_adr==6) pat_expect2=0x6f;
-      if (prom_adr==7) pat_expect2=0x74;
-      if (prom_adr==8) pat_expect2=0x68;
-      if (prom_adr==9) pat_expect2=0x65;
-      if (read_data==pat_expect2) {
-	temptest &= compareValues("data = expected",read_data,pat_expect2,true);
-      } else {
-	temptest &= compareValues("data = expected",read_data,pat_expect1,true);
-      }
+      pat_expect=buf[prom_adr];
+      temptest &= compareValues("data = expected",read_data,pat_expect,true);
     }
   }
   bool testOK = temptest;
   //
   messageOK("PROM path",testOK);
-  //int dummy = sleep(3);
   //
   ResultTestPROMPath_ = testOK;
   //

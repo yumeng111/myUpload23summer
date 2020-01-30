@@ -11339,6 +11339,8 @@ int TMB::virtex6_dna(void *dna)
 
      tmb_set_boot_reg(0);
      udelay(1000);
+// unjam JTAG
+     UnjamFPGAMini();
      return rtv;
 }
     

@@ -756,7 +756,7 @@ function Panel( name, refreshPeriod, dataURL ) {
 		    	$("#TCDS-a_value_State_tooltip table tbody").append("<tr><td>" + row.service + ": </td><td class='" + row.state_name + "'>" + row.state_name + "</td><td>Problem description: </td><td class='ERROR'>" + row.problem_description + "</td></tr>");
 		    }		    
 		}
-		else if ( row.service == 'lpm-csc-'+TCDS_system ){
+		else if ( row.service == 'lpm-csc-1-'+TCDS_system ){
 		    $('#'+self.name+'-td_value_LPMState').attr( 'class', row.state_name );
 		    $('#'+self.name+'-a_value_LPMState').text( row.state_name );
 		    $('#'+self.name+'-a_value_LPMState').attr( 'title', 'The LPM (Local Partition Manager) Controller application is '+row.state_name);
@@ -794,7 +794,7 @@ function Panel( name, refreshPeriod, dataURL ) {
 	    	});
 	    }
 	    else{
-		$.getJSON('http://tcds-control-csc-'+TCDS_system+'.cms:2104/urn:xdaq-application:service=lpm-csc-'+TCDS_system+'/update', function(json){
+		$.getJSON('http://tcds-control-csc-'+TCDS_system+'.cms:2104/urn:xdaq-application:service=lpm-csc-1-'+TCDS_system+'/update', function(json){
 		    var time = toUnixTime( json["Application state"]["Latest monitoring update time"] );
 		    $('#'+self.name+'-td_localDateTime').text( timeToString( time ) );
 		    var L1As = json["itemset-trigger-counter"]["# L1As"];

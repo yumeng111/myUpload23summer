@@ -12,7 +12,7 @@ emu::supervisor::CIControl& emu::supervisor::CIControl::setRunType( xdata::Strin
 
 emu::supervisor::CIControl& emu::supervisor::CIControl::configureSequence(){
   // First of all, wait for CI to complete 'Configure' transition
-  waitForState( "Configured", 20 );
+  if ( ! waitForState( "Configured", 20 ) ){ XCEPT_RAISE( xcept::Exception, "TCDS iCI failed to reach Configured state for the configureSequence to be issued." ); }
 
   // SendLongBDATA 196608 = 0x30000
   // Bits 0x3fff00000 are the address of the TTCrx
@@ -117,7 +117,7 @@ emu::supervisor::CIControl& emu::supervisor::CIControl::configureSequence(){
 
 emu::supervisor::CIControl& emu::supervisor::CIControl::enableSequence(){
   // First of all, wait for CI to complete 'Enable' transition
-  waitForState( "Enabled", 20 );
+  if ( ! waitForState( "Enabled", 20 ) ){ XCEPT_RAISE( xcept::Exception, "TCDS iCI failed to reach Enabled state for the enableSequence to be issued." ); }
 
   switch ( runType_ ){
   case global:
@@ -136,7 +136,7 @@ emu::supervisor::CIControl& emu::supervisor::CIControl::enableSequence(){
 emu::supervisor::CIControl& emu::supervisor::CIControl::stopSequence(){
   // First of all, wait for CI to complete the 'Stop' transition
   // waitForState( "Halted|Configured", 20 );
-  waitForState( "Configured", 20 );
+  if ( ! waitForState( "Configured", 20 ) ){ XCEPT_RAISE( xcept::Exception, "TCDS iCI failed to reach Configured state for the stopSequence to be issued." ); }
 
   xdata::String Resync( "Resync" );
   xdata::String HardReset( "HardReset" );
@@ -169,8 +169,8 @@ emu::supervisor::CIControl& emu::supervisor::CIControl::clearCCBDecoder(){
   // We cannot use the standard configureSequence here as it includes a hard reset, and
   // hard reset must not be issued before the power-up init is completed.
 
-  // First of all, wait for CI to complete 'Configure' transition
-  waitForState( "Configured", 20 );
+  // First of all, wait for CI to reach 'Configured' or 'Enabled' state
+  if ( ! waitForState( "Configured|Enabled", 20 ) ){ XCEPT_RAISE( xcept::Exception, "TCDS iCI failed to reach Configured or Enabled state for the CCB decoder to be cleared." ); }
 
   // SendLongBDATA 196608 = 0x30000
   // Bits 0x3fff00000 are the address of the TTCrx

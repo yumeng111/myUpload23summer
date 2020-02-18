@@ -1303,10 +1303,17 @@ void EmuPeripheralCrateMonitor::DCSMain(xgi::Input * in, xgi::Output * out )
     *out << std::endl;
     //
   }
-
   *out << cgicc::br() << cgicc::br() << std::endl; 
-  *out << cgicc::b(cgicc::i("Configuration filename : ")) ;
-  *out << xmlFile_.toString() << cgicc::br() << std::endl ;
+  if(Xml_or_Db()==0)
+  {
+     *out << cgicc::b(cgicc::i("Configuration filename : ")) ;
+     *out << xmlFile_.toString() << cgicc::br() << std::endl ;
+  }
+  else
+  {
+     *out << cgicc::b(cgicc::i("TStore EMU_config_ID : ")) ;
+     *out << GetRealKey();
+  }
   //
 }
 
@@ -1403,7 +1410,7 @@ void EmuPeripheralCrateMonitor::DCSChamber(xgi::Input * in, xgi::Output * out )
   std::string cham_name=Page.substr(0,Page.find("=", 0) );
   std::vector<DAQMB*> myVector;
   int mycrate=-1, mychamb=-1;
-  int DHversion=0;
+  int DHversion=0, CHversion;
   for ( unsigned int i = 0; i < crateVector.size(); i++ )
   {
      myVector = crateVector[i]->daqmbs();
@@ -1412,7 +1419,8 @@ void EmuPeripheralCrateMonitor::DCSChamber(xgi::Input * in, xgi::Output * out )
        if(cham_name==myVector[j]->GetLabel())
        {  mycrate = i;
           mychamb = j;
-          DHversion=myVector[j]->GetHardwareVersion();
+          DHversion=myVector[j]->DMBversion();
+          CHversion=myVector[j]->CFEBversion();
        }
      }
   }
@@ -1429,6 +1437,10 @@ void EmuPeripheralCrateMonitor::DCSChamber(xgi::Input * in, xgi::Output * out )
   if(cham_name.substr(3,3)=="1/1")
   {  
      cfebs=7;
+     for(unsigned i=0; i<3;i++) {  cv_max[i]=cv_max2[i];  cv_min[i]=cv_min2[i];  }
+  }
+  else if(CHversion>1)
+  {  
      for(unsigned i=0; i<3;i++) {  cv_max[i]=cv_max2[i];  cv_min[i]=cv_min2[i];  }
   }
   *out << cgicc::b("Chamber: "+ cham_name) << std::endl;
@@ -1448,7 +1460,7 @@ void EmuPeripheralCrateMonitor::DCSChamber(xgi::Input * in, xgi::Output * out )
   if(dcsdata==NULL || dcsdata->size()==0) return;
   bool dcfebok=true;
   xdata::Vector<xdata::Float> *dcfebdata(0);
-  if(DHversion>=2)
+  if(CHversion>=2)
   {
      dcfebdata = dynamic_cast<xdata::Vector<xdata::Float> *>(is->find("DCFEBmons"));
      if(dcfebdata==NULL || dcfebdata->size()==0) dcfebok=false;
@@ -1468,7 +1480,7 @@ void EmuPeripheralCrateMonitor::DCSChamber(xgi::Input * in, xgi::Output * out )
   *out << cgicc::table().set("border","1").set("align","center");
   //
   *out <<cgicc::td() << cgicc::td();
-  if(DHversion<=1)
+  if(CHversion<=1)
   {
     *out <<cgicc::td() << "3.3V" << cgicc::td();
     *out <<cgicc::td() << "I" << cgicc::td();
@@ -1477,7 +1489,7 @@ void EmuPeripheralCrateMonitor::DCSChamber(xgi::Input * in, xgi::Output * out )
     *out <<cgicc::td() << "6V" << cgicc::td();
     *out <<cgicc::td() << "I" << cgicc::td();
   }
-  else if(DHversion==2)
+  else if(CHversion>=2)
   {
     *out <<cgicc::td() << "3.0V" << cgicc::td();
     *out <<cgicc::td() << "I" << cgicc::td();
@@ -1492,7 +1504,7 @@ void EmuPeripheralCrateMonitor::DCSChamber(xgi::Input * in, xgi::Output * out )
      *out <<cgicc::td() << "CFEB " << feb+1 << cgicc::td();
      for(int cnt=0; cnt<3; cnt++)
      {
-        val=(*dcsdata)[mychamb*TOTAL_DCS_COUNTERS+19+((DHversion>=2)?6:0)+3*feb+cnt];
+        val=(*dcsdata)[mychamb*TOTAL_DCS_COUNTERS+19+((DHversion==2 || DHversion==4)?6:0)+3*feb+cnt];
         *out << cgicc::td();
         if(val<0.)    
            *out << cgicc::span().set("style","color:magenta") << val << cgicc::span();
@@ -1546,7 +1558,7 @@ void EmuPeripheralCrateMonitor::DCSChamber(xgi::Input * in, xgi::Output * out )
   *out << cgicc::table().set("border","1").set("align","center");
   *out << std::setprecision(1) << std::fixed ;
   //
-  if(DHversion<=1)
+  if(CHversion<=1)
   {
      *out <<cgicc::td() << cgicc::td();
      *out <<cgicc::td() << "DMB" << cgicc::td();
@@ -1576,7 +1588,7 @@ void EmuPeripheralCrateMonitor::DCSChamber(xgi::Input * in, xgi::Output * out )
         *out <<cgicc::td();
      }
   }
-  else if(DHversion==2)
+  else if(CHversion>=2)
   {
      *out <<cgicc::td() << cgicc::td();
      *out <<cgicc::td() << "OTMB" << cgicc::td();
@@ -1810,8 +1822,8 @@ void EmuPeripheralCrateMonitor::DCSCrateTemp(xgi::Input * in, xgi::Output * out 
     throw (xgi::exception::Exception)
 {
   int  Total_Temps=8;
-  float temp_max[10]={70., 70., 70., 70., 70., 70., 70., 70., 70., 70.};
-  float temp_min[10]={ 5.,  5.,  5.,  5.,  5.,  5.,  5.,  5., 5., 5.};
+  float temp_max[11]={70., 70., 70., 70., 70., 70., 70., 70., 70., 70., 70};
+  float temp_min[11]={ 5.,  5.,  5.,  5.,  5.,  5.,  5.,  5., 5., 5., 5.};
   float val;
   bool upgraded=false;
 
@@ -1863,7 +1875,7 @@ void EmuPeripheralCrateMonitor::DCSCrateTemp(xgi::Input * in, xgi::Output * out 
   *out <<cgicc::td();
   //
   for(unsigned int dmb=0; dmb<myVector.size(); dmb++) {
-    if(myVector[dmb]->DMBversion()==2 || myVector[dmb]->DMBversion()==4) Total_Temps = 10;
+    if(myVector[dmb]->DMBversion()==2 || myVector[dmb]->DMBversion()==4) Total_Temps = 11;
     *out <<cgicc::td();
     *out << myVector[dmb]->GetLabel();
     *out <<cgicc::td();
@@ -1884,13 +1896,20 @@ void EmuPeripheralCrateMonitor::DCSCrateTemp(xgi::Input * in, xgi::Output * out 
       *out << std::setprecision(1) << std::fixed;
       if(count==0)
       {
-         if(Total_Temps==10) val=(*dcfebdata)[dmb*TOTAL_DCFEB_MONS+210];  // for ME1/1 with ODMB  
+         if(myVector[dmb]->DMBversion()>1) val=(*dcfebdata)[dmb*TOTAL_DCFEB_MONS+210];  // for ODMB  
          else val=(*dcsdata)[dmb*TOTAL_DCS_COUNTERS+40]; // DMB temp
       }
       else if(count==6)
          val=(*dcsdata)[dmb*TOTAL_DCS_COUNTERS+56];  // ALCT temp is at position 56  
       else if(count==7)
          val=(*dcsdata)[dmb*TOTAL_DCS_COUNTERS+57];  // TMB temp is at position 57  
+      else if(count==10)
+      {
+         if(myVector[dmb]->DMBversion()==2 || myVector[dmb]->DMBversion()==4)
+            val=(*dcsdata)[dmb*TOTAL_DCS_COUNTERS+55];  // LVDB7 temp is at position 55  
+         else
+            val=-500.;
+      }
       else
       {
          if(myVector[dmb]->CFEBversion()>=2)
@@ -5025,6 +5044,7 @@ void EmuPeripheralCrateMonitor::InitCounterNames()
     TECounterName.push_back( "TMB Temp  ");  // 7
     TECounterName.push_back( "CFEB6 Temp");  // 8
     TECounterName.push_back( "CFEB7 Temp");  // 9
+    TECounterName.push_back( "LVDB7 Temp");  // 10
 
     TVCounterName.push_back( "V 5.0 ");  // 0
     TVCounterName.push_back( "V 3.3 ");  //

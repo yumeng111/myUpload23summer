@@ -1596,23 +1596,23 @@ void emu::supervisor::Application::configureAction(toolbox::Event::Reference evt
       // Configure TCDS apps
       //
       // Configure LPM and wait for it to finish.
-      if ( pm_       ) pm_      ->setRunType( run_type_ ).configure( pm_conf ).waitForState( "Configured", 30 );
+      if ( pm_ ) if ( ! pm_->setRunType( run_type_ ).configure( pm_conf ).waitForState( "Configured", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to configure TCDS LPM" ); }
       swLog << "    Configure TCDS PM: " << sw.read() << endl;
       // Configure CIs and wait for them to finish.
       if ( ci_plus_  ) ci_plus_ ->setRunType( run_type_ ).configure( ci_p_conf  );
       if ( ci_minus_ ) ci_minus_->setRunType( run_type_ ).configure( ci_m_conf  );
       if ( ci_tf_    ) ci_tf_   ->setRunType( run_type_ ).configure( ci_tf_conf );
-      if ( ci_plus_  ) ci_plus_ ->waitForState( "Configured", 30 );
-      if ( ci_minus_ ) ci_minus_->waitForState( "Configured", 30 );
-      if ( ci_tf_    ) ci_tf_   ->waitForState( "Configured", 30 );
+      if ( ci_plus_  ) if ( ! ci_plus_ ->waitForState( "Configured", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to configure TCDS iCI plus"  ); }
+      if ( ci_minus_ ) if ( ! ci_minus_->waitForState( "Configured", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to configure TCDS iCI minus" ); }
+      if ( ci_tf_    ) if ( ! ci_tf_   ->waitForState( "Configured", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to configure TCDS iCI TF"    ); }
       swLog << "    Configure TCDS CIs: " << sw.read() << endl;
       // Configure PIs and wait for them to finish.
       if ( pi_plus_  ) pi_plus_ ->setRunType( run_type_ ).configure( pi_conf, usePrimaryTCDS_ );
       if ( pi_minus_ ) pi_minus_->setRunType( run_type_ ).configure( pi_conf, usePrimaryTCDS_ );
       if ( pi_tf_    ) pi_tf_   ->setRunType( run_type_ ).configure( pi_conf, usePrimaryTCDS_ );
-      if ( pi_plus_  ) pi_plus_ ->waitForState( "Configured", 30 );
-      if ( pi_minus_ ) pi_minus_->waitForState( "Configured", 30 );
-      if ( pi_tf_    ) pi_tf_   ->waitForState( "Configured", 30 );
+      if ( pi_plus_  ) if ( ! pi_plus_ ->waitForState( "Configured", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to configure TCDS PI plus"  ); }
+      if ( pi_minus_ ) if ( ! pi_minus_->waitForState( "Configured", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to configure TCDS PI minus" ); }
+      if ( pi_tf_    ) if ( ! pi_tf_   ->waitForState( "Configured", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to configure TCDS PI TF"    ); }
       swLog << "    Configure TCDS PIs: " << sw.read() << endl;
       //
       // Emu-specific TCDS commands
@@ -1894,9 +1894,9 @@ void emu::supervisor::Application::startAction(toolbox::Event::Reference evt)
       if ( pi_plus_  ) pi_plus_ ->enable( run_number_ );
       if ( pi_minus_ ) pi_minus_->enable( run_number_ );
       if ( pi_tf_    ) pi_tf_   ->enable( run_number_ );
-      if ( pi_plus_  ) pi_plus_ ->waitForState( "Enabled", 30 );
-      if ( pi_minus_ ) pi_minus_->waitForState( "Enabled", 30 );
-      if ( pi_tf_    ) pi_tf_   ->waitForState( "Enabled", 30 );
+      if ( pi_plus_  ) if ( ! pi_plus_ ->waitForState( "Enabled", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to enable TCDS PI plus"  ); };
+      if ( pi_minus_ ) if ( ! pi_minus_->waitForState( "Enabled", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to enable TCDS PI minus" ); };
+      if ( pi_tf_    ) if ( ! pi_tf_   ->waitForState( "Enabled", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to enable TCDS PI TF"    ); };
       swLog << "    Enable TCDS PIs: " << sw.read() << endl;
       // CIs
       if ( ci_plus_  ) ci_plus_ ->enable( run_number_ );
@@ -1950,7 +1950,7 @@ void emu::supervisor::Application::stopAction(toolbox::Event::Reference evt)
 
     if ( isUsingTCDS_ ){
       // First of all, pause LPM. This will block triggers and stop non-permanent generators and sequences.
-      if ( pm_ ) pm_->pause().waitForState( "Paused", 30 );
+      if ( pm_ ) if ( ! pm_->pause().waitForState( "Paused", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to pause TCDS LPM" ); }
     }
 
     // Stop TF Cell operation
@@ -2037,9 +2037,9 @@ void emu::supervisor::Application::stopAction(toolbox::Event::Reference evt)
       if ( pi_plus_  ) pi_plus_ ->stop();
       if ( pi_minus_ ) pi_minus_->stop();
       if ( pi_tf_    ) pi_tf_   ->stop();
-      if ( pi_plus_  ) pi_plus_ ->waitForState( "Configured", 30 );
-      if ( pi_minus_ ) pi_minus_->waitForState( "Configured", 30 );
-      if ( pi_tf_    ) pi_tf_   ->waitForState( "Configured", 30 );
+      if ( pi_plus_  ) if ( ! pi_plus_ ->waitForState( "Configured", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to configure TCDS PI plus"  ); }
+      if ( pi_minus_ ) if ( ! pi_minus_->waitForState( "Configured", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to configure TCDS PI minus" ); }
+      if ( pi_tf_    ) if ( ! pi_tf_   ->waitForState( "Configured", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to configure TCDS PI TF"    ); }
       swLog << "    Stop TCDS PIs: " << sw.read() << endl;
     }
 
@@ -2078,7 +2078,7 @@ void emu::supervisor::Application::haltAction(toolbox::Event::Reference evt)
     if ( isUsingTCDS_ ){
       // First of all, pause LPM. This will block triggers and stop non-permanent generators and sequences.
       if ( pm_ ){
-	if ( pm_->getSteadyState() == "Enabled" ) pm_->pause().waitForState( "Paused", 30 );
+	if ( pm_->getSteadyState() == "Enabled" ) if ( ! pm_->pause().waitForState( "Paused", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to pause TCDS LPM" ); }
       }
     }
 
@@ -2154,23 +2154,23 @@ void emu::supervisor::Application::haltAction(toolbox::Event::Reference evt)
       // By resynching through LPM, we make sure it's only done in local runs. 
       // The following command will not be issued if no LPM application is found.
       xdata::String Resync( "Resync" );
-      if ( pm_       ) pm_      ->sendBgoTrain( Resync ).halt().waitForState( "Halted", 30 );
+      if ( pm_       ) if ( ! pm_->sendBgoTrain( Resync ).halt().waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS LPM" ); }
       swLog << "    Halt TCDS LPM: " << sw.read() << endl;
       // CIs
       if ( ci_plus_  ) ci_plus_ ->halt();
       if ( ci_minus_ ) ci_minus_->halt();
       if ( ci_tf_    ) ci_tf_   ->halt();
-      if ( ci_plus_  ) ci_plus_ ->waitForState( "Halted", 30 );
-      if ( ci_minus_ ) ci_minus_->waitForState( "Halted", 30 );
-      if ( ci_tf_    ) ci_tf_   ->waitForState( "Halted", 30 );
+      if ( ci_plus_  ) if ( ! ci_plus_ ->waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS iCI plus"  ); }
+      if ( ci_minus_ ) if ( ! ci_minus_->waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS iCI minus" ); }
+      if ( ci_tf_    ) if ( ! ci_tf_   ->waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS iCI TF"    ); }
       swLog << "    Halt TCDS CIs: " << sw.read() << endl;
       // PIs
       if ( pi_plus_  ) pi_plus_ ->halt();
       if ( pi_minus_ ) pi_minus_->halt();
       if ( pi_tf_    ) pi_tf_   ->halt();
-      if ( pi_plus_  ) pi_plus_ ->waitForState( "Halted", 30 );
-      if ( pi_minus_ ) pi_minus_->waitForState( "Halted", 30 );
-      if ( pi_tf_    ) pi_tf_   ->waitForState( "Halted", 30 );
+      if ( pi_plus_  ) if ( ! pi_plus_ ->waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS PI plus"  ); }
+      if ( pi_minus_ ) if ( ! pi_minus_->waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS PI minus" ); }
+      if ( pi_tf_    ) if ( ! pi_tf_   ->waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS PI TF"    ); }
       swLog << "    Halt TCDS PIs: " << sw.read() << endl;
     }
 
@@ -2280,25 +2280,25 @@ void emu::supervisor::Application::resetAction() throw (toolbox::fsm::exception:
       // LPM
       LOG4CPLUS_ERROR( getApplicationLogger(), "Halting TCDS LPM." );
       if ( pm_       ) pm_      ->halt();
-      if ( pm_       ) pm_      ->waitForState( "Halted", 30 );
+      if ( pm_       ) if ( ! pm_->waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS LPM" ); }
       swLog << "    Halt TCDS LPM: " << sw.read() << endl;
       // CIs
       LOG4CPLUS_ERROR( getApplicationLogger(), "Halting TCDS CIs." );
       if ( ci_plus_  ) ci_plus_ ->halt();
       if ( ci_minus_ ) ci_minus_->halt();
       if ( ci_tf_    ) ci_tf_   ->halt();
-      if ( ci_plus_  ) ci_plus_ ->waitForState( "Halted", 30 );
-      if ( ci_minus_ ) ci_minus_->waitForState( "Halted", 30 );
-      if ( ci_tf_    ) ci_tf_   ->waitForState( "Halted", 30 );
+      if ( ci_plus_  ) if ( ! ci_plus_ ->waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS iCI plus"  ); }
+      if ( ci_minus_ ) if ( ! ci_minus_->waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS iCI minus" ); }
+      if ( ci_tf_    ) if ( ! ci_tf_   ->waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS iCI TF"    ); }
       swLog << "    Halt TCDS CIs: " << sw.read() << endl;
       // PIs
       LOG4CPLUS_ERROR( getApplicationLogger(), "Halting TCDS PIs." );
       if ( pi_plus_  ) pi_plus_ ->halt();
       if ( pi_minus_ ) pi_minus_->halt();
       if ( pi_tf_    ) pi_tf_   ->halt();
-      if ( pi_plus_  ) pi_plus_ ->waitForState( "Halted", 30 );
-      if ( pi_minus_ ) pi_minus_->waitForState( "Halted", 30 );
-      if ( pi_tf_    ) pi_tf_   ->waitForState( "Halted", 30 );
+      if ( pi_plus_  ) if ( ! pi_plus_ ->waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS PI plus"  ); }
+      if ( pi_minus_ ) if ( ! pi_minus_->waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS PI minus" ); }
+      if ( pi_tf_    ) if ( ! pi_tf_   ->waitForState( "Halted", 30 ) ){ XCEPT_RAISE( xcept::Exception, "Failed to halt TCDS PI TF"    ); }
       swLog << "    Halt TCDS PIs: " << sw.read() << endl;
     }
 

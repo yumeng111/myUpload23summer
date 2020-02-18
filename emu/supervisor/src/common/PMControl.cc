@@ -65,17 +65,11 @@ emu::supervisor::PMControl& emu::supervisor::PMControl::configureSequence(){
   case global:
     // In global, we're not in control of the PM, therefore:
     return *this;
-  case local:
+  case local:           // fall through
+  case AFEBcalibration: // fall through
+  case CFEBcalibration: 
     // First of all, wait for PM to complete 'Configure' transition
-    waitForState( "Configured", 20 );
-    break;
-  case AFEBcalibration:
-    // First of all, wait for PM to complete 'Configure' transition
-    waitForState( "Configured", 20 );
-    break;
-  case CFEBcalibration:
-    // First of all, wait for PM to complete 'Configure' transition
-    waitForState( "Configured", 20 );
+    if ( ! waitForState( "Configured", 20 ) ){ XCEPT_RAISE( xcept::Exception, "TCDS LPM failed to reach Configured state." ); }
     break;
   default:
     XCEPT_RAISE( xcept::Exception, "Unknown run type." );
@@ -92,7 +86,7 @@ emu::supervisor::PMControl& emu::supervisor::PMControl::enableSequence(){
   case AFEBcalibration: // fall through
   case CFEBcalibration:
     // First of all, wait for PM to complete 'Enable' transition
-    waitForState( "Enabled", 20 );
+    if ( ! waitForState( "Enabled", 20 ) ){ XCEPT_RAISE( xcept::Exception, "TCDS LPM failed to reach Enabled state." ); }
     break;
   default:
     XCEPT_RAISE( xcept::Exception, "Unknown run type." );
@@ -105,18 +99,11 @@ emu::supervisor::PMControl& emu::supervisor::PMControl::stopSequence(){
   case global:
     // In global, we're not in control of the PM, therefore:
     return *this;
-  case local:
-    // First of all, wait for PM to complete the 'Stop' transition
-    // waitForState( "Halted|Configured", 20 );
-    waitForState( "Configured", 20 );
-    break;
-  case AFEBcalibration:
-    // First of all, wait for PM to complete the 'Stop' transition
-    waitForState( "Configured", 20 );
-    break;
+  case local:           // fall through
+  case AFEBcalibration: // fall through
   case CFEBcalibration:
     // First of all, wait for PM to complete the 'Stop' transition
-    waitForState( "Configured", 20 );
+    if ( ! waitForState( "Configured", 20 ) ){ XCEPT_RAISE( xcept::Exception, "TCDS LPM failed to reach Configured state." ); }
     break;
   default:
     XCEPT_RAISE( xcept::Exception, "Unknown run type." );

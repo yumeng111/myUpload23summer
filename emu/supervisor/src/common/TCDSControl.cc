@@ -208,6 +208,7 @@ string emu::supervisor::TCDSControl::getSteadyState(){
 }
 
 bool emu::supervisor::TCDSControl::waitForState( const string& targetState, const int timeoutSeconds ){
+  // Note that the target must be a steady state.
   set<string> targetStates( emu::utils::csvTo< set<string> >( targetState, '|' ) );
   for ( set<string>::iterator ts = targetStates.begin(); ts != targetStates.end(); ++ts ){
     if ( !isSteadyState( *ts ) ){
@@ -216,15 +217,22 @@ bool emu::supervisor::TCDSControl::waitForState( const string& targetState, cons
   }
   string state( waitForASteadyState( timeoutSeconds ) );
   return targetStates.find( state ) != targetStates.end();
+  if ( targetStates.find( state ) == targetStates.end() ){
+    LOG4CPLUS_ERROR( parentApplication_->getApplicationLogger(), "Failed to reach the target state '" << targetState << "' Instead, it is now in '" << state <<  "' state.");
+    return false;
+  }
+  return true;
 }
 
 string emu::supervisor::TCDSControl::waitForASteadyState( const int timeoutSeconds ){
   // If timeoutSeconds is negative, no timeout.
+  string state;
   for ( int i=0; i<=timeoutSeconds || timeoutSeconds<0; ++i ){
-    string state(  getState() );
+    state = getState();
     if ( isSteadyState( state ) ) return state;
     ::sleep( 1 );
   }
+  LOG4CPLUS_ERROR( parentApplication_->getApplicationLogger(), "Failed to reach a steady state in " << timeoutSeconds << " seconds. It is in '" << state << "' state.");
   return string();
 }
 

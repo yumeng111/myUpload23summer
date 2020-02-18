@@ -1,8 +1,9 @@
 #include "config/PackageInfo.h"
+#include "emu/db/OnlineDBVersion.h"
 
 namespace EmuOnlineDB {
         const std::string package  =  "EmuOnlineDB";
-        const std::string versions =  "14.06.00";
+        const std::string versions =  onlinedbversion;
         const std::string summary = "emu/emuDCS/OnlineDB";
         const std::string description = "Emu Online Database Library";
         const std::string authors = "Stan Durkin";

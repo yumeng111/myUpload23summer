@@ -386,7 +386,7 @@ void EmuPeripheralCrateBase::MyHeader(xgi::Input * in, xgi::Output * out, std::s
     *out << " {  border: none; width: auto; padding: 0.35em; }" << std::endl;  
     *out << " </style>" << std::endl << " </head> " << std::endl;
     *out << "<h1 style=\"text-align: center\"> " << title << "</h1>" << std::endl;
-    *out << "<h5 style=\" font-weight: regular; text-align: center\"> " << "( time stamp: " << getLocalDateTime()  << " ) </h5>" << std::endl;
+    *out << "<h5 style=\" font-weight: regular; text-align: center\"> " << "( time stamp: " << getLocalDateTime()  << ", EmuLib Core:" << coreversion<< ", Apps:" << appsversion << " ) </h5>" << std::endl;
 }
 
  }  // namespace emu::pc

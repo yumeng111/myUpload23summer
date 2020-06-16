@@ -34,7 +34,8 @@
 #include "emu/db/ConfigTree.h" 
 #include "emu/db/TStoreReadWriter.h"
 #include "emu/pc/EmuEndcapConfigWrapper.h"
-
+#include "emu/pc/CoreVersion.h"
+#include "emu/pc/AppsVersion.h"
 
 namespace emu {
   namespace pc {

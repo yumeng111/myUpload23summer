@@ -223,14 +223,18 @@ for DATAFILE in $DATAFILES; do
 	cd $RESULTSTOPDIR && mkdir -p Test_40_Beam && cd Test_40_Beam && $DQMANALYZER $DATAPATHNAME && $DQMANALYZER ${DATAPATHNAME:t:r}.root && cd ${DATAPATHNAME:t:r}.plots && { print $CHAMBERARRAY > chambers.txt }
     fi
 
-    print "cd $RESULTSTOPDIR && $ANALYZER $DATAPATHNAME"
-    cd $RESULTSTOPDIR && $ANALYZER $DATAPATHNAME
+    # Run the calibration analysis (i.e. $ANALYZER). 
+    # For STEP_*, this will do the gas gain analysis, which is only meaningful for normal cosmics (STEP_27), not for single layer cosmics (STEP_27s) or beam-triggered runs (STEP_40).
+    if [[ $DATAPATHNAME != *STEP_27s* && $DATAPATHNAME != *STEP_40* ]]; then
+	print "cd $RESULTSTOPDIR && $ANALYZER $DATAPATHNAME"
+	cd $RESULTSTOPDIR && $ANALYZER $DATAPATHNAME
+    fi
 
     # Generate web page for easier browsing. Not for tests 27 and 40, though, for those the DQM analyzer does it already:
     print "Results' dir:"
     print $RESULTSTOPDIR/Test_*/${DATAPATHNAME:t:r}.plots(/Nom[1])
     RESULTSDIR=$( print $RESULTSTOPDIR/Test_*/${DATAPATHNAME:t:r}.plots(/Nom[1]) )
-    if [[ ${#RESULTSDIR} -gt 0 && $RESULTSDIR != *Test_27_* && $RESULTSDIR != *Test_40_* ]]; then
+    if [[ ${#RESULTSDIR} -gt 0 && $RESULTSDIR != *Test_27* && $RESULTSDIR != *Test_40* ]]; then
 	if [[ -x ${0:h}/generateIndexHTML.sh ]]; then
 	    print "Generating web page with ${0:h}/generateIndexHTML.sh $RESULTSDIR"
 	    ${0:h}/generateIndexHTML.sh $RESULTSDIR

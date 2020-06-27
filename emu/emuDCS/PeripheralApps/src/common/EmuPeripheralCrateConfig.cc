@@ -9586,6 +9586,8 @@ void EmuPeripheralCrateConfig::testTMB(xgi::Input * in, xgi::Output * out )
     tmbTestid = cgi["tmbTestid"]->getIntegerValue();
     std::cout << "tmbTestid " << tmbTestid << std::endl;
   }
+  TMB * thisTMB = tmbVector[tmb];
+
   //
   tmbTestVector[tmb].RedirectOutput(&OutputTMBTests[tmb][current_crate_]);
   if ( tmbTestid == 1 || tmbTestid == 0 ) {
@@ -9649,7 +9651,8 @@ void EmuPeripheralCrateConfig::testTMB(xgi::Input * in, xgi::Output * out )
     tmbTestVector[tmb].testRATuserCodes();
     //printf("Test15");
   }
-  if ( tmbTestid == 16 || tmbTestid == 0 ) {
+  if ( tmbTestid == 16 || (tmbTestid == 0 && thisTMB->GetHardwareVersion()<=1) ) {
+    // June 27, 2020 Liu: skip this test for OTMB in "Run All TMB Tests" 
     tmbTestVector[tmb].testU76chip();
     //printf("Test16");
   }

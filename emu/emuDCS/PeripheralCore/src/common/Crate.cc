@@ -536,6 +536,10 @@ int Crate::configure(int c, int ID) {
 
   CCB * ccb = this->ccb();
   MPC * mpc = this->mpc();
+  std::vector<DAQMB*> myDmbs = this->daqmbs();
+  std::vector<TMB*> myTmbs = this->tmbs();
+  int tmbbtst=0;
+
   if(!ccb) return -2;
   std::cout << label_ << " Crate Configuring, Mode: " << c << std::endl; 
   
@@ -554,7 +558,6 @@ int Crate::configure(int c, int ID) {
      }
      if(mpc) mpc->configure();
   }
-  std::vector<DAQMB*> myDmbs = this->daqmbs();
 
   for (unsigned dmb=0; dmb<myDmbs.size(); dmb++) 
   {
@@ -598,6 +601,19 @@ int Crate::configure(int c, int ID) {
   {
      ccb->hardReset();
      ::sleep(1);
+
+      // check OTMBs: after hard-reset
+      for(unsigned i =0; i < myTmbs.size(); ++i) 
+      {
+         tmbbtst=myTmbs[i]->ReadRegister(0x70000);
+         // std::cout << "check Crate " << label_ << ", TMB #" << i+1 << ": " << std::hex << tmbbtst << std::dec << std::endl;
+         if((tmbbtst & 0x4000) == 0)
+         {
+            std::cout << "Error: Crate " << label_ << ", TMB #" << i+1 << " not good after hard-reset, trying to recover it..." << std::endl;
+            myTmbs[i]->virtex6_recover();
+         }
+         // std::cout << "check CCB CSRA2: " << std::hex << ccb->ReadRegister(2) << std::dec << std::endl;
+      }
   }
 
   if(!IsAlive())
@@ -608,7 +624,6 @@ int Crate::configure(int c, int ID) {
   if(c>1)   return 0; 
 
   // to write flash memory
-  std::vector<TMB*> myTmbs = this->tmbs();
   for(unsigned i =0; i < myTmbs.size(); ++i) {
     if (myTmbs[i]->slot()<22){
       //

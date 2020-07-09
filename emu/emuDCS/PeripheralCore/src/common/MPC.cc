@@ -1146,7 +1146,7 @@ void MPC::mpc_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip)
    if(chip<0 || chip>2) return;
    int TIR[3]={0, 6, 22}, HIR[3]={32,16,0}, HDR[3]={2,1,0}, TDR[3]={0,1,2};
    unsigned long TDI=5, TMS=6, TCK=7, TDO=8; 
-   unsigned long regV=ReadRegister(CSR0);
+   unsigned long regV=ReadRegister(CSR0) & 0xFE1F;
    unsigned long handle=(TDI)+(TMS<<4)+(TCK<<8)+(TDO<<12) + (regV<<16);
    char buff[4200];
    int ncnt=cnt;
@@ -1268,6 +1268,12 @@ int MPC::program_eprom(const char *mcsfile, int chip, int broadcast)
      getTheController()->SetUseDelay(true);
   
      jtag_RestoreIdle();      
+
+     comd=XCF_IDCODE;
+     mpc_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     udelay(10);
+     mpc_scan(1, (char *)&data, 32, rcvbuf, READ_YES, chip);
+
      comd=XCF_ISC_ENABLE; 
      mpc_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      data=0x03;
@@ -1314,15 +1320,24 @@ int MPC::program_eprom(const char *mcsfile, int chip, int broadcast)
      comd=XCF_ISC_PROGRAM; 
      mpc_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      udelay(200);
+     comd=XCF_CLR_STATUS; 
+     mpc_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     udelay(100);
      std::cout << "Sending 100%..." << std::endl;
-//    getTheController()->Debug(2);
-     if(broadcast==0)
-     {
-         std::cout << "Verify. " << std::endl;
-     }
      comd=XCF_ISC_DISABLE; 
      mpc_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
      udelay(200);
+     comd=XCF_CONFIG; 
+     mpc_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     udelay(200);
+     comd=XCF_BYPASS; 
+     mpc_scan(0, (char *)&comd, 16, rcvbuf, 0, chip);
+     udelay(100);
+//    getTheController()->Debug(2);
+     if(broadcast==0)
+     {
+        // std::cout << "Verify. " << std::endl;
+     }
      free(bufin);
      return 0;
 }
@@ -1349,6 +1364,8 @@ unsigned MPC::readIDCODE(int chip)
    //      2   PROM 2 
            
    if(chip<0 || chip>2) return 0;
+
+   jtag_RestoreIdle();      
 
    unsigned idcode[4] = {0};
    char temp[8]={0};

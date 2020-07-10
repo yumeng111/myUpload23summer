@@ -2666,7 +2666,7 @@ void EmuPeripheralCrateConfig::LVMBStatus(xgi::Input * in, xgi::Output * out )
       if(nadcs==5 && cversion>1)  /* for chambers with 5 (x)DCFEEBs */ 
       {
          if(i>=vstart) fvalue[i] = fvalue[i]*1.03;  /* correction for all voltages */
-         else if(i<15 && (i%3)==1) fvalue[i] = fvalue[i]*2;  /* DCFEB 4V currents multiply by 2 */    
+         else if(i<15 && (i%3)==0) fvalue[i] = fvalue[i]*2;  /* DCFEB 3V currents multiply by 2 */    
       }
   }
   *out << cgicc::br() << cgicc::b("ADC Channels") << std::endl;

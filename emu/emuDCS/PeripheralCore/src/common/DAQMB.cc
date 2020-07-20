@@ -8398,7 +8398,7 @@ void DAQMB::dcfeb_program_virtex6(CFEB & cfeb, const char *mcsfile, int broadcas
       mcssize += mcssize2;                   
    }
    std::cout << "Read MCS size: " << mcssize << " bytes" << std::endl;
-   if(mcssize<FIRMWARE_SIZE)
+   if(CFEBversion()==2 && mcssize<FIRMWARE_SIZE)
    {
        std::cout << "ERROR: Wrong MCS file. Quit..." << std::endl;
        free(bufin);
@@ -8436,6 +8436,7 @@ void DAQMB::dcfeb_program_virtex6(CFEB & cfeb, const char *mcsfile, int broadcas
      int p1pct=blocks/100;
      int j=0, pcnts=0;
      unsigned short comd, tmp;
+   if(CFEBversion()==3 && mcssize<FIRMWARE_SIZE) blocks=mcssize/4;  // compressed firmware of xDCFEB 
 //
 // The IEEE 1532 ISC (In-System-Configuration) procedure is used.       
 // The bitstream doesn't need to be sent in one JTAG package.

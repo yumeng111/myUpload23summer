@@ -12074,8 +12074,8 @@ void EmuPeripheralCrateConfig::DefineFirmwareFilenames() {
        TMBFirmware << "/typeA";
        tmbtype="_typeA";
     } else if (thisTMB->GetTMBFirmwareCompileType() == 0xb ) {
-       TMBFirmware << "/typeB";
-       tmbtype="_typeB";
+       TMBFirmware << "/typeA";
+       tmbtype="_typeA";
     } else if (thisTMB->GetTMBFirmwareCompileType() == 0xc ) {
        TMBFirmware << "/typeC";
        tmbtype="_typeC";

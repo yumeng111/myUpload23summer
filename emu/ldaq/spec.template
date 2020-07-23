@@ -59,7 +59,7 @@ __description__
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/%{_prefix}/{bin,lib,include,etc}
 mkdir -p $RPM_BUILD_ROOT/%{_prefix}/include/%{_package}/linux
-#mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/xml
+mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/xml
 
 for x in %{_packages}; do
         install -m 655 %{_packagedir}/../$x/lib/%{_os}/%{_platform}/*.so $RPM_BUILD_ROOT/%{_prefix}/lib/

@@ -36,23 +36,6 @@
 		<xc:Module>/usr/lib64/libboost_filesystem.so</xc:Module>
 		<xc:Module>${XDAQ_ROOT}/lib/libEmuFEDApps.so</xc:Module>
 	</xc:Context>
-
-	<xc:Context url="http://csc-tf.cms:20070">
-		<xc:Application class="emu::fed::MicroMonitor" id="99" instance="0" network="local">
-			<properties xmlns="urn:xdaq-application:MicroMonitor" xsi:type="soapenc:Struct" />
-		</xc:Application>
-		
-		<xc:Module>${XDAQ_ROOT}/lib/libxdaq2rc.so</xc:Module>
-		<xc:Module>${XDAQ_ROOT}/lib/libCAENVME.so</xc:Module>
-		<xc:Module>${XDAQ_ROOT}/lib/libsentinelutils.so</xc:Module>
-		<xc:Module>${XDAQ_ROOT}/lib/libtstoreclient.so</xc:Module>
-		<xc:Module>${XDAQ_ROOT}/lib/libemubase.so</xc:Module>
-		<xc:Module>${XDAQ_ROOT}/lib/libEmuOnlineDB.so</xc:Module>
-		<xc:Module>${XDAQ_ROOT}/lib/libEmuFEDCore.so</xc:Module>
-		<xc:Module>${XDAQ_ROOT}/lib/libEmuFEDUtils.so</xc:Module>
-		<xc:Module>/usr/lib64/libboost_filesystem.so</xc:Module>
-		<xc:Module>${XDAQ_ROOT}/lib/libEmuFEDApps.so</xc:Module>
-	</xc:Context>
 	
 </xc:Partition>
 <!-- vim: set sw=2 ts=2: -->

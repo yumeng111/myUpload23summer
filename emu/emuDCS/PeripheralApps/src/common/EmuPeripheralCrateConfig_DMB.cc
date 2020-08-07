@@ -47,6 +47,7 @@ void EmuPeripheralCrateConfig::DMBTests(xgi::Input * in, xgi::Output * out )
   sprintf(Name,"%s DMB tests, crate=%s, slot=%d",(thisDMB->GetLabel()).c_str(), ThisCrateID_.c_str(),thisDMB->slot());
   //
   MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: DMBTests: " << thisDMB->GetLabel() << ", DMB slot=" << thisDMB->slot() << std::endl;
   //
   char buf[200] ;
   //
@@ -643,6 +644,7 @@ void EmuPeripheralCrateConfig::CFEBStatus(xgi::Input * in, xgi::Output * out )
   std::cout << getLocalDateTime() << " CFEB status " << thisChamber->GetLabel() << std::endl;
   //
   MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: CFEBStatus: " << thisDMB->GetLabel() << ", DMB slot=" << thisDMB->slot() << std::endl;
   //
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
   *out << std::endl;
@@ -991,6 +993,8 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
   
   std::cout << getLocalDateTime() << " CFEB utilities " << thisChamber->GetLabel() << std::endl;  //
   MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: CFEBUtils: " << thisDMB->GetLabel() << ", DMB slot=" << thisDMB->slot() << std::endl;
+
   std::vector<CFEB> cfebs = thisDMB->cfebs() ;
   //
   std::string dmbstring = toolbox::toString("%d",dmb);
@@ -2614,10 +2618,8 @@ void EmuPeripheralCrateConfig::LVMBStatus(xgi::Input * in, xgi::Output * out )
   int dmb=0;
   if(name != cgi.getElements().end()) {
     dmb = cgi["dmb"]->getIntegerValue();
-    std::cout << "DMB " << dmb << std::endl;
     DMB_ = dmb;
   } else {
-    std::cout << "Not dmb" << std::endl ;
     dmb = DMB_;
   }
   //
@@ -2629,6 +2631,7 @@ void EmuPeripheralCrateConfig::LVMBStatus(xgi::Input * in, xgi::Output * out )
 	  (thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),thisDMB->slot());
   //
   MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: LVMBStatus: " << thisDMB->GetLabel() << ", DMB slot=" << thisDMB->slot() << std::endl;  
   //
   char buf[2000], sbuf[100];
   int hversion=thisDMB->DMBversion();
@@ -2837,7 +2840,7 @@ void EmuPeripheralCrateConfig::DMBUtils(xgi::Input * in, xgi::Output * out )
      tot_p_chans=8;
      allmask=0xFF;
   }
-  std::cout << getLocalDateTime() << " DMB utilities " << thisChamber->GetLabel() << std::endl;
+  std::cout << getLocalDateTime() << " Button: DMBUtils: " << thisDMB->GetLabel() << ", DMB slot=" << thisDMB->slot() << std::endl;
   //
   MyHeader(in,out,Name);
   if(thisDMB->DMBversion()==2)
@@ -4138,9 +4141,9 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
   //
   char Name[100];
   sprintf(Name,"%s DMB status, crate=%s, slot=%d",(thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),thisDMB->slot());	
-  std::cout << getLocalDateTime() << " DMB status " << thisChamber->GetLabel() << std::endl;
-  //
   MyHeader(in,out,Name);
+  //
+  std::cout << getLocalDateTime() << " Button: DMBStatus: " << thisDMB->GetLabel() << ", DMB slot=" << thisDMB->slot() << std::endl;
   //
   //*out << cgicc::h1(Name);
   //*out << cgicc::br();

@@ -1701,17 +1701,17 @@ void EmuPeripheralCrateConfig::CrateConfiguration(xgi::Input * in, xgi::Output *
 	*out << cgicc::td();
 	//
 	*out << cgicc::td();
-	std::string TMBStatus = toolbox::toString("/%s/TMBStatus?tmb=%d",getApplicationDescriptor()->getURN().c_str(),i);
+	TMBStatus = toolbox::toString("/%s/TMBStatus?tmb=%d",getApplicationDescriptor()->getURN().c_str(),i);
 	*out << cgicc::a("TMB Status").set("href",TMBStatus) << std::endl;
 	*out << cgicc::td();
 	//
 	*out << cgicc::td();
-	std::string TMBTests = toolbox::toString("/%s/TMBTests?tmb=%d",getApplicationDescriptor()->getURN().c_str(),i);
+	TMBTests = toolbox::toString("/%s/TMBTests?tmb=%d",getApplicationDescriptor()->getURN().c_str(),i);
 	*out << cgicc::a("TMB Tests").set("href",TMBTests) << std::endl;
 	*out << cgicc::td();
 	//
 	*out << cgicc::td();
-	std::string TMBUtils = toolbox::toString("/%s/TMBUtils?tmb=%d",getApplicationDescriptor()->getURN().c_str(),i);
+	TMBUtils = toolbox::toString("/%s/TMBUtils?tmb=%d",getApplicationDescriptor()->getURN().c_str(),i);
 	*out << cgicc::a("TMB Utils").set("href",TMBUtils) << std::endl;
 	*out << cgicc::td();
 	//
@@ -1726,7 +1726,7 @@ void EmuPeripheralCrateConfig::CrateConfiguration(xgi::Input * in, xgi::Output *
 	    *out << cgicc::td();
 	    char Name[50];
 	    sprintf(Name,"Chamber Tests: %s",(tmbVector[i]->GetLabel()).c_str());
-	    std::string ChamberTests = toolbox::toString("/%s/ChamberTests?tmb=%d&dmb=%d",getApplicationDescriptor()->getURN().c_str(),i,iii);
+	    ChamberTests = toolbox::toString("/%s/ChamberTests?tmb=%d&dmb=%d",getApplicationDescriptor()->getURN().c_str(),i,iii);
 	    *out << cgicc::a(Name).set("href",ChamberTests) << std::endl;
 	    *out << cgicc::td();
 	  }
@@ -1752,17 +1752,17 @@ void EmuPeripheralCrateConfig::CrateConfiguration(xgi::Input * in, xgi::Output *
 	*out << cgicc::td();
 	//
 	*out << cgicc::td();
-	std::string DMBStatus = toolbox::toString("/%s/DMBStatus?dmb=%d",getApplicationDescriptor()->getURN().c_str(),i);
+	DMBStatus = toolbox::toString("/%s/DMBStatus?dmb=%d",getApplicationDescriptor()->getURN().c_str(),i);
 	*out << cgicc::a("DMB Status").set("href",DMBStatus) << std::endl;
 	*out << cgicc::td();
 	//
 	*out << cgicc::td();
-	std::string DMBTests = toolbox::toString("/%s/DMBTests?dmb=%d",getApplicationDescriptor()->getURN().c_str(),i);
+	DMBTests = toolbox::toString("/%s/DMBTests?dmb=%d",getApplicationDescriptor()->getURN().c_str(),i);
 	*out << cgicc::a("DMB Tests").set("href",DMBTests) << std::endl;
 	*out << cgicc::td();
 	//
 	*out << cgicc::td();
-	std::string DMBUtils = toolbox::toString("/%s/DMBUtils?dmb=%d",getApplicationDescriptor()->getURN().c_str(),i);
+	DMBUtils = toolbox::toString("/%s/DMBUtils?dmb=%d",getApplicationDescriptor()->getURN().c_str(),i);
 	*out << cgicc::a("DMB Utils").set("href",DMBUtils) << std::endl;
 	*out << cgicc::td();
 	//
@@ -8841,14 +8841,17 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
   int tmb=0;
   if(name != cgi.getElements().end()) {
     tmb = cgi["tmb"]->getIntegerValue();
-    std::cout << "TMB " << tmb << std::endl;
     TMB_ = tmb;
   } else {
-    std::cout << "Not tmb" << std::endl ;
     tmb = TMB_;
   }
+  if(tmb<0 || tmb>=tmbVector.size())
+  {  this->Default(in,out);
+     return;
+  }
   //
-  ALCTController * alct = tmbVector[tmb]->alctController();
+  TMB * thisTMB = tmbVector[tmb];
+  ALCTController * alct = thisTMB->alctController();
   //
   Chamber * thisChamber = chamberVector[tmb];
   //
@@ -8857,6 +8860,7 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
 	  (thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),tmbVector[tmb]->slot());
 
   MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: ALCTStatus: " << thisTMB->GetLabel() << ", TMB slot=" << thisTMB->slot() << std::endl;
   //
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
   *out << std::endl;
@@ -9083,14 +9087,17 @@ void EmuPeripheralCrateConfig::RATStatus(xgi::Input * in, xgi::Output * out )
   int tmb;
   if(name != cgi.getElements().end()) {
     tmb = cgi["tmb"]->getIntegerValue();
-    std::cout << "TMB " << tmb << std::endl;
     TMB_ = tmb;
   } else {
-    std::cout << "Not tmb" << std::endl ;
     tmb = TMB_;
   }
+  if(tmb<0 || tmb>=tmbVector.size())
+  {  this->Default(in,out);
+     return;
+  }
   //
-  RAT * rat = tmbVector[tmb]->getRAT();
+  TMB * thisTMB = tmbVector[tmb];
+  RAT * rat = thisTMB->getRAT();
   //
   Chamber * thisChamber = chamberVector[tmb];
   //
@@ -9099,6 +9106,7 @@ void EmuPeripheralCrateConfig::RATStatus(xgi::Input * in, xgi::Output * out )
 	  (thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),tmbVector[tmb]->slot());
   //
   MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: RATStatus: " << thisTMB->GetLabel() << ", TMB slot=" << thisTMB->slot() << std::endl;
   //
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
   *out << std::endl;
@@ -9148,10 +9156,8 @@ void EmuPeripheralCrateConfig::TMBTests(xgi::Input * in, xgi::Output * out )
   cgicc::form_iterator name = cgi.getElement("tmb");
   if(name != cgi.getElements().end()) {
     tmb = cgi["tmb"]->getIntegerValue();
-    std::cout << "TMBTests: TMB " << tmb << std::endl;
     TMB_ = tmb;
   } else {
-    std::cout << "TMBTests: No tmb" << std::endl ;
     tmb = TMB_;
   }
   //
@@ -9169,6 +9175,7 @@ void EmuPeripheralCrateConfig::TMBTests(xgi::Input * in, xgi::Output * out )
 	  (thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),thisTMB->slot());
   //
   MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: TMBTests: " << thisTMB->GetLabel() << ", TMB slot=" << thisTMB->slot() << std::endl;
   //
   char buf[20];
   //
@@ -9681,10 +9688,8 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
   int tmb;
   if(name != cgi.getElements().end()) {
     tmb = cgi["tmb"]->getIntegerValue();
-    std::cout << getLocalDateTime() << " TMBStatus:  TMB=" << tmb << std::endl;
     TMB_ = tmb;
   } else {
-    std::cout << getLocalDateTime() << " TMBStatus: No TMB" << std::endl ;
     tmb = TMB_;
   }
   if(tmb<0 || tmb>=tmbVector.size())
@@ -9702,6 +9707,7 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
   sprintf(Name,"%s TMB status, crate=%s, slot=%d", thisTMB->GetLabel().c_str(),ThisCrateID_.c_str(),thisTMB->slot());
   //
   MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: TMBStatus: " << thisTMB->GetLabel() << ", TMB slot=" << thisTMB->slot() << std::endl;
   //
   if (alct) {
     std::string ALCTStatus =
@@ -10391,10 +10397,8 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   int tmb;
   if(name != cgi.getElements().end()) {
     tmb = cgi["tmb"]->getIntegerValue();
-    std::cout << getLocalDateTime() << " TMBUtils:  TMB " << tmb << std::endl;
     TMB_ = tmb;
   } else {
-    std::cout << getLocalDateTime() << " TMBUtils:  No TMB" << std::endl ;
     tmb = TMB_;
   }
   //
@@ -10416,6 +10420,8 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   rat = thisTMB->getRAT();
   //
   MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: TMBUtils: " << thisTMB->GetLabel() << ", TMB slot=" << thisTMB->slot() << std::endl;
+
   //
   char buf[200] ;
   //

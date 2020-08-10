@@ -1,28 +1,28 @@
 #BUILD_HOME:=$(shell pwd)/../..
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 include $(BUILD_HOME)/emu/rpm_version
 
 Project=emu
-Package=ldaq
+Package=emu/ldaq
 PackageName=ldaq
 Description="The Emu (CSC) local DAQ"
 Summary="The Emu (CSC) local DAQ"
 Authors="Steven Murray, Karoly banicz"
 Link=""
 
-include $(XDAQ_ROOT)/config/Makefile.rules
-include $(XDAQ_ROOT)/config/mfRPM.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules
 
 Packages= \
-          ldaq/reader \
-          ldaq/writer \
-          ldaq/server \
-          ldaq/rui \
-          ldaq/manager
+          emu/ldaq/reader \
+          emu/ldaq/writer \
+          emu/ldaq/server \
+          emu/ldaq/rui \
+          emu/ldaq/manager
 
-include $(XDAQ_ROOT)/config/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
 
 .PHONY: _rpmall
 _rpmall: spec_update spec_local_update makerpm

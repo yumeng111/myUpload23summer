@@ -3,14 +3,14 @@
 # This is the emuldaqreader test application Makefile
 #
 ##
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 
 #
 # Packages to be built
 #
 Project = emu
-Package = ldaq/reader
+Package = emu/ldaq/reader
 
 Standalone = no
 
@@ -36,7 +36,7 @@ LibraryDirs = $(XDAQ_ROOT)/lib
 UserSourcePath =
 UserCFlags =
 #UserCCFlags = -g -Wall -pedantic-errors -Wno-long-long
-UserCCFlags = -DUSE_DDU2004 -g -Wall -Wno-long-long
+UserCCFlags = -DUSE_DDU2004 -g -Wall -Wno-long-long -std=c++11
 UserDynamicLinkFlags =
 UserStaticLinkFlags =
 UserExecutableLinkFlags =
@@ -61,4 +61,4 @@ endif
 TestLibraries=
 TestExecutables=
 
-include $(XDAQ_ROOT)/config/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules

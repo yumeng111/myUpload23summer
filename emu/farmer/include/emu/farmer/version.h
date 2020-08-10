@@ -4,6 +4,7 @@
 #include "config/PackageInfo.h"
 
 namespace emufarmer {
+	const std::string project     = "emu";
 	const std::string package     = "emufarmer";
 	const std::string versions    = "14.00.01";
 	const std::string description = "Emu (CSC) Farmer";

@@ -4,6 +4,7 @@
 #include "config/PackageInfo.h"
 
 namespace emudaqreader {
+	const std::string project     = "emu";
 	const std::string package     = "emudaqreader";
 	const std::string versions    = "14.07.00";
 	const std::string description = "Emu (CSC) DAQ readers";

@@ -4,8 +4,9 @@
 #include "config/PackageInfo.h"
 
 namespace emubase {
+	const std::string project     = "emu";
 	const std::string package     = "emubase";
-	const std::string versions    = "14.08.00";
+	const std::string versions    = "15.00.00";
 	const std::string description = "Emu (CSC) applications' base classes";
 
 	const std::string summary     = "emu/base";

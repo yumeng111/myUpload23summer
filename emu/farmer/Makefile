@@ -3,15 +3,15 @@
 # This is the emusupervisor Makefile
 #
 ##
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 include $(BUILD_HOME)/emu/rpm_version
 
 #
 # Packages to be built
 #
 Project = emu
-Package = farmer
+Package = emu/farmer
 PackageName=farmer
 Description="Emu (CSC) Farmer"
 Summary="Emu (CSC) Farmer"
@@ -35,7 +35,7 @@ LibraryDirs = $(XDAQ_ROOT)/lib
 
 UserSourcePath =
 UserCFlags =
-UserCCFlags = -g -Wall -pedantic-errors -Wno-long-long -Wno-variadic-macros
+UserCCFlags = -g -Wall -pedantic-errors -Wno-long-long -Wno-variadic-macros  -std=c++11
 UserDynamicLinkFlags =
 UserStaticLinkFlags =
 UserExecutableLinkFlags =
@@ -55,5 +55,5 @@ StaticLibrary =
 TestLibraries=
 TestExecutables=
 
-include $(XDAQ_ROOT)/config/Makefile.rules
-include $(XDAQ_ROOT)/config/mfRPM.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules

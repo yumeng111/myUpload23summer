@@ -49,18 +49,16 @@ public:
   {
     std::ostringstream out;
     out << "{\"history\":[";
-    std::vector< xcept::ExceptionInformation > history = getHistory();
-    for (std::vector< xcept::ExceptionInformation >::iterator iError = history.begin(); iError != history.end(); iError++)
+    for ( xcept::Exception::const_iterator iInfo = history_.begin(); iInfo != history_.end(); iInfo++ )
     {
       out << "{";
-      std::map< std::string, std::string > messages = iError->getProperties();
-      for (std::map< std::string, std::string >::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++)
+      for (std::map< std::string, std::string >::const_iterator iProperty = iInfo->begin(); iProperty != iInfo->end(); iProperty++)
       {
-        out << "\"" << iMessage->first << "\"" << ":";
-        out << "\"" << iMessage->second << "\"";
+        out << "\"" << iProperty->first << "\"" << ":";
+        out << "\"" << iProperty->second << "\"";
         out << ",";
       }
-      // lousy last comma
+      // lousy last comma      
       out.seekp((size_t) out.tellp() - 1);
       out << "}";
     }
@@ -81,10 +79,10 @@ public:
     out << "<tr><th colspan=\"3\">Exception stack</th></tr>";
     out << "<tr><th style=\"width: 1%;\">#</th><th style=\"text-align: left;\">type</th><th style=\"text-align: left;\">message</th><th style=\"text-align: left;\">raised at</th></tr>";
 
-    std::vector<xcept::ExceptionInformation> & history = getHistory();
-    std::vector<xcept::ExceptionInformation>::reverse_iterator i = history.rbegin();
-    int iLayer = history.size();
-    while ( i != history.rend() )
+    // std::vector<xcept::Exception::Info> & history = getHistory();
+    std::vector<xcept::Exception::Info>::const_reverse_iterator i = history_.rbegin();
+    int iLayer = history_.size();
+    while ( i != history_.rend() )
     {
       out << "<tr>";
       out << "<td style=\"width: 1%;background-color: #dddddd;\">" << iLayer << "</td>";

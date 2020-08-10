@@ -4,6 +4,7 @@
 #include "config/PackageInfo.h"
 
 namespace emudaqwriter {
+	const std::string project     = "emu";
 	const std::string package     = "emudaqwriter";
 	const std::string versions    = "14.07.00";
 	const std::string description = "Emu (CSC) DAQ file writer";

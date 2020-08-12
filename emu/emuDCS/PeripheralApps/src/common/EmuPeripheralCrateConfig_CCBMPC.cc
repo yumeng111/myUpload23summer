@@ -27,7 +27,8 @@ void EmuPeripheralCrateConfig::CCBStatus(xgi::Input * in, xgi::Output * out )
   sprintf(Name,"CCB status, crate=%s, slot=%d",ThisCrateID_.c_str(),thisCCB->slot());
   //
   MyHeader(in,out,Name);
-  //
+  std::cout << getLocalDateTime() << " Button: CCBStatus." << std::endl;                                                           
+    //
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
   *out << std::endl;
   //
@@ -205,7 +206,8 @@ void EmuPeripheralCrateConfig::CCBUtils(xgi::Input * in, xgi::Output * out )
   sprintf(Name,"CCB utilities, crate=%s, slot=%d",ThisCrateID_.c_str(),thisCCB->slot());
   //
   MyHeader(in,out,Name);
-  //
+  std::cout << getLocalDateTime() << " Button: CCBUtils." << std::endl;                                                           
+    //
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
   *out << std::endl;
   //
@@ -461,7 +463,8 @@ void EmuPeripheralCrateConfig::MPCStatus(xgi::Input * in, xgi::Output * out )
 	  ThisCrateID_.c_str(),thisMPC->slot());
   //
   MyHeader(in,out,Name);
-  //
+  std::cout << getLocalDateTime() << " Button: MPCStatus." << std::endl;                                                           
+    //
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
   //
   *out << cgicc::legend("MPC Info").set("style","color:blue") << std::endl ;
@@ -519,6 +522,7 @@ void EmuPeripheralCrateConfig::MPCUtils(xgi::Input * in, xgi::Output * out )
 	  ThisCrateID_.c_str(),thisMPC->slot());
   //
   MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: MPCUtils." << std::endl;
   //
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl ;
   //
@@ -634,11 +638,6 @@ void EmuPeripheralCrateConfig::MPCUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::input().set("type","submit").set("value","MPC Configure");
   *out << cgicc::form() << cgicc::br() << std::endl ;
   //
-  std::string MPCLoadFirmware = toolbox::toString("/%s/MPCLoadFirmware",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",MPCLoadFirmware) << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","Load MPC Firmware") << std::endl ;
-  *out << MPCFirmware_ << ".svf";
-  *out << cgicc::form() << std::endl ;
   //
   *out << cgicc::hr() << std::endl;
   //
@@ -654,6 +653,24 @@ void EmuPeripheralCrateConfig::MPCUtils(xgi::Input * in, xgi::Output * out )
     toolbox::toString("/%s/MPCReadFirmware",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",MPCreadFirmware) << std::endl ;
   *out << cgicc::input().set("type","submit").set("value","Read MPC Firmware in MCS format") << std::endl ;
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::br();
+  if( extra_tools_ )
+  {
+     std::string MPCLoadFirmware = toolbox::toString("/%s/MPCLoadFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",MPCLoadFirmware) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","Load MPC Firmware") << std::endl ;
+     *out << MPCFirmware_ << ".svf";
+     *out << cgicc::form() << cgicc::br() << std::endl ;
+  }
+  //
+  *out << cgicc::hr() << std::endl;
+  //
+  std::string mpcprogramfpga = toolbox::toString("/%s/MPCProgramFPGA",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",mpcprogramfpga) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Program MPC FPGA") << std::endl ;
+  *out << MPCFirmware_ << "_0.mcs and " << MPCFirmware_ << "_1.mcs ";
   *out << cgicc::form() << std::endl ;
   //
   *out << cgicc::br();
@@ -760,6 +777,9 @@ void EmuPeripheralCrateConfig::MPCLoadFirmware(xgi::Input * in, xgi::Output * ou
 
   std::string svffile=MPCFirmware_+".svf";
   int status = thisMPC->svfLoad(jch,svffile.c_str(),debugMode, verify);
+
+  thisMPC->configure();
+
   if (status >= 0){
     std::cout << getLocalDateTime() << " Programming finished with " << status << " Verify Errors occured" << std::endl;
   }
@@ -778,7 +798,7 @@ void EmuPeripheralCrateConfig::MPCLoadFirmwareMCS(xgi::Input * in, xgi::Output *
   throw (xgi::exception::Exception) {
   //
   int rt_erase1, rt_erase2, rt_write1, rt_write2;
-  std::cout << getLocalDateTime() << " Programming MPC using " << MPCFirmware_ << "_x.mcs" << std::endl;
+  std::cout << getLocalDateTime() << " Programming MPC EPROMs using " << MPCFirmware_ << "_x.mcs" << std::endl;
 
   rt_erase1=thisMPC->erase_eprom(1);
   if(rt_erase1!=0) std::cout << "Erase EPROM #1 with error code: " << rt_erase1 << std::endl;
@@ -792,11 +812,27 @@ void EmuPeripheralCrateConfig::MPCLoadFirmwareMCS(xgi::Input * in, xgi::Output *
   rt_write2=thisMPC->program_eprom(mcsfile2.c_str(), 2);
   if(rt_write2!=0) std::cout << "Program EPROM #2 with error code: " << rt_write2 << std::endl;
 
+  thisMPC->configure();
   std::cout << getLocalDateTime() << " Finished. " << std::endl;
 
   //
   //thisCCB->hardReset();
   //
+  this->MPCUtils(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::MPCProgramFPGA(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  std::cout << getLocalDateTime() << " Programming MPC FPGA using " << MPCFirmware_ << "_x.mcs" << std::endl;
+
+  std::string mcsfile1=MPCFirmware_+"_0.mcs";
+  thisMPC->program_fpga(mcsfile1.c_str());
+  thisMPC->configure();
+
+  std::cout << getLocalDateTime() << " Finished. " << std::endl;
+
   this->MPCUtils(in,out);
   //
 }
@@ -813,6 +849,7 @@ void EmuPeripheralCrateConfig::MPCReadFirmware(xgi::Input * in, xgi::Output * ou
   thisMPC->read_prom(jtagfile0.c_str(),mcsfile0.c_str());
   thisMPC->read_prom(jtagfile1.c_str(),mcsfile1.c_str());
   //
+  thisMPC->configure();
   this->MPCUtils(in,out);
   //
 }
@@ -1010,7 +1047,8 @@ void EmuPeripheralCrateConfig::CCBTests(xgi::Input * in, xgi::Output * out )
   sprintf(Name,"CCB tests, crate=%s", ThisCrateID_.c_str());
   //
   MyHeader(in,out,Name);
-  //
+  std::cout << getLocalDateTime() << " Button: CCBTests." << std::endl;                 
+    //
   char buf[200] ;
   char sbuf[200];
   //

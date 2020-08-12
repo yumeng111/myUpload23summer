@@ -1146,7 +1146,8 @@ void MPC::mpc_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip)
    if(chip<0 || chip>2) return;
    int TIR[3]={0, 6, 22}, HIR[3]={32,16,0}, HDR[3]={2,1,0}, TDR[3]={0,1,2};
    unsigned long TDI=5, TMS=6, TCK=7, TDO=8; 
-   unsigned long regV=ReadRegister(CSR0) & 0xFE1F;
+//   unsigned long regV=ReadRegister(CSR0) & 0xFE1F;
+   unsigned long regV=0;
    unsigned long handle=(TDI)+(TMS<<4)+(TCK<<8)+(TDO<<12) + (regV<<16);
    char buff[4200];
    int ncnt=cnt;
@@ -1162,7 +1163,7 @@ void MPC::mpc_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip)
       ncnt += HIR[chip]+TIR[chip];
    }
    Jtag_Norm(handle, reg, buff, ncnt, rcv, ird, NOW);
-   if(reg==1 && rcv && (ird&NOW)) cut_headtail(rcv, ncnt, TDR[chip], HDR[chip]);
+   if(reg==1 && rcv && (ird>0)) cut_headtail(rcv, ncnt, TDR[chip], HDR[chip]);
 }
 
 void MPC::jtag_RestoreIdle()
@@ -1373,18 +1374,18 @@ unsigned MPC::readIDCODE(int chip)
    if(chip==0)
    {
      inst=SPT6_IDCODE;
-     mpc_scan(0, (char *)&inst, 6, rcvbuf, NOW, chip);
+     mpc_scan(0, (char *)&inst, 6, rcvbuf, 0, chip);
      udelay(10);
-     mpc_scan(1, temp, 32, (char *)idcode, NOW|READ_YES, chip);
+     mpc_scan(1, temp, 32, (char *)idcode, READ_YES, chip);
      inst=SPT6_BYPASS;
-     mpc_scan(0, (char *)&inst, 6, rcvbuf, NOW, chip);
+     mpc_scan(0, (char *)&inst, 6, rcvbuf, 0, chip);
    }
    else
    {
      inst=XCF_IDCODE;
-     mpc_scan(0, (char *)&inst, 16, rcvbuf, NOW, chip);
+     mpc_scan(0, (char *)&inst, 16, rcvbuf, 0, chip);
      udelay(10);
-     mpc_scan(1, temp, 32, (char *)idcode, NOW|READ_YES, chip);
+     mpc_scan(1, temp, 32, (char *)idcode, READ_YES, chip);
    }   
    return idcode[0];
 }
@@ -1463,39 +1464,39 @@ void MPC::program_fpga(const char *mcsfile)
 //
    
      comd=SPT6_IDCODE;
-     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
-     mpc_scan(1, (char *)&ttt, 32, (char *)&tout, NOW|READ_YES, 0);     
-     udelay(50);
-     std::cout << "IDCODE=" << std::hex << (0xFFFFFFFF & tout) << std::dec << std::endl;
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
+     mpc_scan(1, (char *)&ttt, 32, (char *)&tout, READ_YES, 0);     
+//     udelay(50);
+     std::cout << "FPGA IDCODE=" << std::hex << (0xFFFFFFFF & tout) << std::dec << std::endl;
 
      comd=SPT6_JSHUTDOWN;
-     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
      std::cout <<" Start sending 4000 clocks... " << std::endl;
-     mpc_scan(2, (char *)&comd, 4000, rcvbuf, NOW, 0);
+     mpc_scan(2, (char *)&comd, 4000, rcvbuf, 0, 0);
      udelay(10000);
 
      comd=SPT6_JPROGRAM;
-     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
 
      comd=SPT6_ISC_NOOP; 
-     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
-     udelay(10000);
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
+     udelay(1000);
      comd=SPT6_ISC_ENABLE; 
      tmp=0;
-     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
-     mpc_scan(1, (char *)&tmp, 5, rcvbuf, NOW|READ_YES, 0);
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
+     mpc_scan(1, (char *)&tmp, 5, rcvbuf, READ_YES, 0);
      std::cout <<" Start sending 128 clocks... " << std::endl;
-     mpc_scan(2, (char *)&comd, 128, rcvbuf, NOW, 0);
+     mpc_scan(2, (char *)&comd, 128, rcvbuf, 0, 0);
      udelay(100);
 
      comd=SPT6_ISC_PROGRAM; 
-     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
-     udelay(10000);
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
+     udelay(1000);
     for(int i=0; i<blocks-1; i++)
     {
 //    if(i>50) getTheController()->Debug(0);
-       mpc_scan(1, bufin+2*i, 16, rcvbuf, NOW, 0);
-       udelay(32);
+       mpc_scan(1, bufin+2*i, 16, rcvbuf, 0, 0);
+//       udelay(8);
        j++;
        if(j==p1pct)
        {  pcnts++;
@@ -1507,22 +1508,22 @@ void MPC::program_fpga(const char *mcsfile)
 //    getTheController()->Debug(2);
 
      comd=SPT6_ISC_DISABLE; 
-     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
      std::cout <<" Start sending clocks... " << std::endl;
-     mpc_scan(2, (char *)&comd, 128, rcvbuf, NOW, 0);
+     mpc_scan(2, (char *)&comd, 128, rcvbuf, 0, 0);
      udelay(100);
      comd=SPT6_BYPASS;
-     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
 
      comd=SPT6_JSTART;
-     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
      std::cout <<" Start sending clocks... " << std::endl;
-     mpc_scan(2, (char *)&comd, 4000, rcvbuf, NOW, 0);
+     mpc_scan(2, (char *)&comd, 4000, rcvbuf, 0, 0);
      udelay(10000);
      //restore idle;
      jtag_RestoreIdle();
      comd=SPT6_BYPASS;
-     mpc_scan(0, (char *)&comd, 6, rcvbuf, NOW, 0);
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
     
     std::cout << "FPGA configuration done!" << std::endl;             
     free(bufin);

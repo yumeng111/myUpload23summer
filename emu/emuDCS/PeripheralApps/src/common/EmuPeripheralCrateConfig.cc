@@ -283,6 +283,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::WriteMPCRegister, "WriteMPCRegister");
   xgi::bind(this,&EmuPeripheralCrateConfig::MPCLoadFirmware, "MPCLoadFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::MPCLoadFirmwareMCS, "MPCLoadFirmwareMCS");
+  xgi::bind(this,&EmuPeripheralCrateConfig::MPCProgramFPGA, "MPCProgramFPGA");
   xgi::bind(this,&EmuPeripheralCrateConfig::ReadTTCRegister, "ReadTTCRegister");
   xgi::bind(this,&EmuPeripheralCrateConfig::HardReset, "HardReset");
   xgi::bind(this,&EmuPeripheralCrateConfig::CCBFPGAReset, "CCBFPGAReset");
@@ -1565,7 +1566,7 @@ void EmuPeripheralCrateConfig::CrateConfiguration(xgi::Input * in, xgi::Output *
   {  this->Default(in,out);
      return;
   }
-  std::cout << "CrateConfiguration: " << ThisCrateID_ << " at " << getLocalDateTime() << std::endl;
+  std::cout << getLocalDateTime() << " Button: CrateConfiguration: " << ThisCrateID_ << std::endl;
   MyHeader(in,out,"CrateConfiguration");
   //
   if(thisCrate->IsAlive())

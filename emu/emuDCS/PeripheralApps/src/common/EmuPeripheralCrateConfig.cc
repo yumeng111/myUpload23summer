@@ -12005,9 +12005,8 @@ void EmuPeripheralCrateConfig::VerifySpartan6ALCTFirmware(xgi::Input * in, xgi::
     {
        std::string firmfile = ALCTFirmware_[tmb].toString() + ((thisALCT->GetHardwareVersion()==4)?".mcs":"_0.mcs");
        //
-       std::cout  << getLocalDateTime() <<  " Read and Verify new ALCT Mezzanine (Spartan-6) firmware to slot " << thisTMB->slot() << std::endl;
-//       thisALCT->verify_firmware(firmfile.c_str());
-       thisALCT->program_fpga(firmfile.c_str());
+       std::cout  << getLocalDateTime() <<  " Read and Verify ALCT (Spartan-6) firmware in slot " << thisTMB->slot() << std::endl;
+       thisALCT->verify_firmware(firmfile.c_str());
        std::cout  << getLocalDateTime() <<  " Finished." << std::endl;
     }
   }

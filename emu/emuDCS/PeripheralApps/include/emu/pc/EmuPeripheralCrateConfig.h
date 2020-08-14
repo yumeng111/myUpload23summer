@@ -576,6 +576,7 @@ private:
   void MPCLoadFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void MPCLoadFirmwareMCS(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void MPCProgramFPGA(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void MPCReadSpartan6(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void MPCMask(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void MPCConfig(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void MPCReadFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);

@@ -284,6 +284,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::MPCLoadFirmware, "MPCLoadFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::MPCLoadFirmwareMCS, "MPCLoadFirmwareMCS");
   xgi::bind(this,&EmuPeripheralCrateConfig::MPCProgramFPGA, "MPCProgramFPGA");
+  xgi::bind(this,&EmuPeripheralCrateConfig::MPCReadSpartan6, "MPCReadSpartan6");
   xgi::bind(this,&EmuPeripheralCrateConfig::ReadTTCRegister, "ReadTTCRegister");
   xgi::bind(this,&EmuPeripheralCrateConfig::HardReset, "HardReset");
   xgi::bind(this,&EmuPeripheralCrateConfig::CCBFPGAReset, "CCBFPGAReset");
@@ -2855,7 +2856,7 @@ void EmuPeripheralCrateConfig::CheckFirmware(xgi::Input * in, xgi::Output * out 
       SetCurrentCrate(crate_index);
       if (!thisCrate->IsAlive()) continue;
 //
-      // check CCB and MPC firmware versions by reading the FPGA ID's
+      // check CCB and MPC firmware versions by reading the registers
       ccb_firmware_ok[current_crate_] = thisCrate->ccb()->CheckFirmwareDate();
       mpc_firmware_ok[current_crate_] = thisCrate->mpc()->CheckFirmwareDate();
       //
@@ -2888,7 +2889,7 @@ void EmuPeripheralCrateConfig::CheckFirmware(xgi::Input * in, xgi::Output * out 
 	  if (thisCCB->GetReadDMBConfigDone(chamber_index) == thisCCB->GetExpectedDMBConfigDone() )
 	    dmbcfg_ok[current_crate_][chamber_index]++;
 	  // 
-	  // check firmware versions by reading the FPGA ID's
+	  // check firmware versions by reading the registers
 	  tmb_firmware_ok[current_crate_][chamber_index]         += (int) thisTMB->CheckFirmwareDate();
 	  alct_firmware_ok[current_crate_][chamber_index]        += (int) thisALCT->CheckFirmwareDate();
 	  dmb_vme_firmware_ok[current_crate_][chamber_index]     += (int) thisDMB->CheckVMEFirmwareVersion();
@@ -12005,7 +12006,8 @@ void EmuPeripheralCrateConfig::VerifySpartan6ALCTFirmware(xgi::Input * in, xgi::
        std::string firmfile = ALCTFirmware_[tmb].toString() + ((thisALCT->GetHardwareVersion()==4)?".mcs":"_0.mcs");
        //
        std::cout  << getLocalDateTime() <<  " Read and Verify new ALCT Mezzanine (Spartan-6) firmware to slot " << thisTMB->slot() << std::endl;
-       thisALCT->verify_firmware(firmfile.c_str());
+//       thisALCT->verify_firmware(firmfile.c_str());
+       thisALCT->program_fpga(firmfile.c_str());
        std::cout  << getLocalDateTime() <<  " Finished." << std::endl;
     }
   }

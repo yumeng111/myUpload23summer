@@ -503,7 +503,7 @@ void EmuPeripheralCrateConfig::MPCStatus(xgi::Input * in, xgi::Output * out )
   *out << cgicc::br() << "CSR7 = " << std::hex << thisMPC->ReadRegister(0xCA) << std::endl;
   *out << cgicc::br() << "CSR8 = " << std::hex << thisMPC->ReadRegister(0xCE) << std::endl;
   *out << cgicc::br() << "CSR9 = " << std::hex << thisMPC->ReadRegister(0xB2) << std::endl;
-  *out << cgicc::br() << "CSR10 = " << std::hex << thisMPC->ReadRegister(0xB4) << std::endl;
+  *out << cgicc::br() << "CSR10 = " << std::hex << thisMPC->ReadRegister(0xB4) << std::dec << std::endl;
   //
   *out << cgicc::fieldset();
   //
@@ -662,6 +662,11 @@ void EmuPeripheralCrateConfig::MPCUtils(xgi::Input * in, xgi::Output * out )
      *out << cgicc::form().set("method","GET").set("action",MPCLoadFirmware) << std::endl ;
      *out << cgicc::input().set("type","submit").set("value","Load MPC Firmware") << std::endl ;
      *out << MPCFirmware_ << ".svf";
+     *out << cgicc::form() << cgicc::br() << std::endl ;
+
+     std::string MPCReadSpartan6 = toolbox::toString("/%s/MPCReadSpartan6",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",MPCReadSpartan6) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","Read Spartan6 FPGA registers") << std::endl ;
      *out << cgicc::form() << cgicc::br() << std::endl ;
   }
   //
@@ -872,7 +877,25 @@ void EmuPeripheralCrateConfig::MPCReadFirmware(xgi::Input * in, xgi::Output * ou
     thisMPC->configure();
     this->MPCUtils(in,out);
   }
-  //
+  
+  void EmuPeripheralCrateConfig::MPCReadSpartan6(xgi::Input * in, xgi::Output * out ) 
+    throw (xgi::exception::Exception)
+  {
+    OutputStringMPCStatus.str("");
+    OutputStringMPCStatus << "Read MPC Spartan6 FPGA registers (in Hex):" << std::endl;
+    OutputStringMPCStatus << "IDCODE =" << std::hex << thisMPC->spartan6_readreg(0xe) << std::endl;
+    OutputStringMPCStatus << "STATUS =" << std::hex << thisMPC->spartan6_readreg(8) << std::endl;
+    OutputStringMPCStatus << "COR1 =" << std::hex << thisMPC->spartan6_readreg(0xa) << std::endl;
+    OutputStringMPCStatus << "COR2 =" << std::hex << thisMPC->spartan6_readreg(0xb) << std::endl;
+    OutputStringMPCStatus << "MODE =" << std::hex << thisMPC->spartan6_readreg(0x18) << std::endl;
+    OutputStringMPCStatus << "BOOTST =" << std::hex << thisMPC->spartan6_readreg(0x20) << std::dec << std::endl;
+    thisMPC->configure();
+
+    std::cout << OutputStringMPCStatus.str() << std::endl;      
+
+    this->MPCUtils(in,out);
+  }
+  
   void EmuPeripheralCrateConfig::ReadCCBRegister(xgi::Input * in, xgi::Output * out ) 
     throw (xgi::exception::Exception)
   {

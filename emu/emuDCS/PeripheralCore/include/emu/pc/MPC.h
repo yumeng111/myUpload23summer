@@ -246,6 +246,7 @@ class MPC : public VMEModule, public EmuLogger {
   int program_eprom(const char *mcsfile, int chip, int broadcast=0);
   unsigned readIDCODE(int chip);
   void program_fpga(const char *mcsfile);
+  unsigned spartan6_readreg(int reg);
 
  protected:
   /// MPC base address should always correspond to VME Slot 12 (=0x600000)

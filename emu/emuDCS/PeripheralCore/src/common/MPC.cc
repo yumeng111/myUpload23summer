@@ -1530,5 +1530,36 @@ void MPC::program_fpga(const char *mcsfile)
 
 }
 
+unsigned MPC::spartan6_readreg(int reg)
+{
+     unsigned short comd;
+     unsigned short data[8]={0x9955, 0x66AA, 0, 4, 4, 4, 4, 4};
+     unsigned *rt, rtv1, rtv2, words=1;
+
+     if(reg==0xe) words=2;   // some registers are 2 words; many registers are non-readable
+
+     //restore idle;
+     jtag_RestoreIdle();
+
+     comd=SPT6_CFG_IN;
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
+     unsigned ins=((reg&0x3F)<<5)+(1<<11)+(1<<13)+words;
+     data[2]=0xFFFF & (shuffle32(ins)>>16);  // use shuffle32() and discard the other 16 bits
+     mpc_scan(1, (char *)data, 8*16, rcvbuf, 0, 0);     
+
+     comd=SPT6_CFG_OUT;
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
+     udelay(100);
+     data[0]=0;
+     data[1]=0;
+     mpc_scan(1, (char *)data, (words==2)?32:16, rcvbuf, READ_YES, 0);  
+     rt = (unsigned *)rcvbuf;
+     rtv1=shuffle32(*rt);
+     rtv2=(words==2)?((rtv1&0xFFFF)<<16):0;
+     comd=SPT6_BYPASS;
+     mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
+     return rtv2+(rtv1>>16);
+}
+
   } // namespace emu::pc
 } // namespace emu

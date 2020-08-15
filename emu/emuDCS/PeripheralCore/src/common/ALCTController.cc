@@ -4611,6 +4611,20 @@ void ALCTController::DisableTestPulse()
     return;
 }
 
+void ALCTController::jtag_RestoreIdle(int chain)
+{
+    // chain# are the same as those in EMU_JTAG_constants.h
+    //
+    // chain=0: Slow Control firmware
+    // chain=1: Slow FPGA+PROM
+    // chain=2: Fast Control firmware
+    // chain=3: Fast Mez FPGA+PROMs
+    if(chain<0 || chain>3) return; 
+    int ichain=chain+4;
+    if (chain==3) ichain += ALCTversion();
+    tmb_->new_RestoreIdle(ichain);
+}
+
 void ALCTController::fpga_scan(int reg, char *snd,int cnt,char *rcv,int ird)
 {
     int jchain=7+ALCTversion();
@@ -4985,7 +4999,7 @@ int ALCTController::load_firmware(const char *mcsfile, int broadcast)
 */
 //    tmb_->getTheController()->Debug(2);
      tmb_->getTheController()->SetUseDelay(true);
-     tmb_->new_RestoreIdle(7+ALCTversion());
+     jtag_RestoreIdle(ChainAlctFastMezz);
      std::cout << "Loading firmware to EPROM(s)......" << std::endl;
      erase_eprom(0, broadcast);    
      if(mcssize2) erase_eprom(1, broadcast);    
@@ -5053,7 +5067,7 @@ int ALCTController::verify_firmware(const char *mcsfile)
 */
 //    tmb_->getTheController()->Debug(2);
      tmb_->getTheController()->SetUseDelay(true);
-     tmb_->new_RestoreIdle(7+ALCTversion());
+     jtag_RestoreIdle(ChainAlctFastMezz);
         std::cout << "Read back EPROM(s) and Verify..." << std::endl; 
         read_eprom(rbuf, PROM_SIZE, 0);
         if(mcssize2) read_eprom(rbuf1, mcssize2, 1);
@@ -5094,7 +5108,7 @@ void ALCTController::read_firmware(const char *filename)
          free(buf); 
          return;
       }
-   tmb_->new_RestoreIdle(7+ALCTversion());
+   jtag_RestoreIdle(ChainAlctFastMezz);
    read_eprom(buf, PROM_SIZE, 0);
    tmb_->write_mcs(buf, PROM_SIZE, mcsfile);
    fclose(mcsfile);
@@ -5116,6 +5130,158 @@ void ALCTController::read_firmware(const char *filename)
    free(buf);
    std::cout << " Total " << (PROM_SIZE+PROM2size) << " bytes are read back from EPROM and saved in mcs-format file: " << filename << std::endl;
    return;
+}
+
+void ALCTController::program_fpga(const char *mcsfile)
+{
+   const int PROM_SIZE=4194304; // in bytes
+   char rcvbuf[4096];
+
+   char *bufin, c;
+   bufin=(char *)malloc(16*1024*1024);
+   if(bufin==NULL)  return;
+
+   char filename[1000];
+
+   char *buf0=bufin+2*PROM_SIZE;
+   char *buf1=bufin+3*PROM_SIZE;
+
+// 1. read mcs file(s)
+   strncpy(filename, mcsfile, 980);
+   FILE *fin=fopen(filename,"r");
+   if(fin==NULL ) 
+   { 
+      free(bufin);  
+      std::cout << "ERROR: Unable to open MCS file :" << filename << std::endl;
+      return; 
+   }
+   int mcssize=tmb_->read_mcs(bufin, fin);
+   fclose(fin);
+   if((hardware_version_==2 || hardware_version_==3) && mcssize==PROM_SIZE)
+   {   // try to read a 2nd file if it exists
+      filename[strlen(filename)-5]++;
+      fin=fopen(filename,"r");
+      if(fin ) 
+      { 
+         int mcssize2=tmb_->read_mcs(bufin+mcssize, fin);
+         fclose(fin);
+         mcssize += mcssize2;                   
+      }
+   }
+   std::cout << "Read MCS size: " << std::dec << mcssize << " bytes" << std::endl;
+
+/*
+// byte swap
+   for(int i=0; i<mcssize/2; i++)
+   {  c=bufin[i*2];
+      bufin[i*2]=bufin[i*2+1];
+      bufin[i*2+1]=c;
+   }
+*/
+     int blocks=mcssize/2;
+     int p1pct=blocks/100;
+     int j=0, pcnts=0;
+     unsigned short comd, tmp;
+     unsigned long ttt=0, tout=0;
+
+     tmb_->getTheController()->SetUseDelay(true);
+     jtag_RestoreIdle(ChainAlctFastMezz);
+   
+     comd=SPT6_IDCODE;
+     fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
+     fpga_scan(1, (char *)&ttt, 32, (char *)&tout, READ_YES);     
+//     ::usleep(50);
+     std::cout << "FPGA IDCODE=" << std::hex << (0xFFFFFFFF & tout) << std::dec << std::endl;
+
+     comd=SPT6_JSHUTDOWN;
+     fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
+     std::cout <<" Start sending 4000 clocks... " << std::endl;
+     fpga_scan(2, (char *)&comd, 4000, rcvbuf, 0);
+     ::usleep(10000);
+
+     comd=SPT6_JPROGRAM;
+     fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
+
+     comd=SPT6_ISC_NOOP; 
+     fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
+     ::usleep(1000);
+     comd=SPT6_ISC_ENABLE; 
+     tmp=0;
+     fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
+     fpga_scan(1, (char *)&tmp, 5, rcvbuf, READ_YES);
+     std::cout <<" Start sending 128 clocks... " << std::endl;
+     fpga_scan(2, (char *)&comd, 128, rcvbuf, 0);
+     ::usleep(100);
+
+     comd=SPT6_ISC_PROGRAM; 
+     fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
+     ::usleep(1000);
+     for(int i=0; i<blocks-1; i++)
+     {
+       fpga_scan(1, bufin+2*i, 16, rcvbuf, 0);
+//       ::usleep(8);
+       j++;
+       if(j==p1pct)
+       {  pcnts++;
+          if(pcnts<100) std::cout << "Sending " << pcnts <<"%..." << std::endl;
+          j=0;
+       }   
+     }
+     std::cout << "Sending 100%..." << std::endl;
+//    getTheController()->Debug(2);
+
+     comd=SPT6_ISC_DISABLE; 
+     fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
+     std::cout <<" Start sending clocks... " << std::endl;
+     fpga_scan(2, (char *)&comd, 128, rcvbuf, 0);
+     ::usleep(100);
+     comd=SPT6_BYPASS;
+     fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
+
+     comd=SPT6_JSTART;
+     fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
+     std::cout <<" Start sending clocks... " << std::endl;
+     fpga_scan(2, (char *)&comd, 4000, rcvbuf, 0);
+     ::usleep(10000);
+     //restore idle;
+     jtag_RestoreIdle(ChainAlctFastMezz);
+     comd=SPT6_BYPASS;
+     fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
+    
+    std::cout << "FPGA configuration finished!" << std::endl;             
+    free(bufin);
+}
+
+unsigned ALCTController::spartan6_readreg(int reg)
+{
+     char rcvbuf[4096];
+     unsigned short comd;
+     unsigned short data[8]={0x9955, 0x66AA, 0, 4, 4, 4, 4, 4};
+     unsigned *rt, rtv1, rtv2, words=1;
+
+     if(reg==0xe) words=2;   // some registers are 2 words; many registers are non-readable
+
+     //restore idle;
+     jtag_RestoreIdle(ChainAlctFastMezz);
+
+     comd=SPT6_CFG_IN;
+     fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
+     unsigned ins=((reg&0x3F)<<5)+(1<<11)+(1<<13)+words;
+     data[2]=0xFFFF & (tmb_->shuffle32(ins)>>16);  // use shuffle32() and discard the other 16 bits
+     fpga_scan(1, (char *)data, 8*16, rcvbuf, 0);     
+
+     comd=SPT6_CFG_OUT;
+     fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
+     ::usleep(100);
+     data[0]=0;
+     data[1]=0;
+     fpga_scan(1, (char *)data, (words==2)?32:16, rcvbuf, READ_YES);  
+     rt = (unsigned *)rcvbuf;
+     rtv1=tmb_->shuffle32(*rt);
+     rtv2=(words==2)?rtv1:(rtv1>>16);
+     comd=SPT6_BYPASS;
+     fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
+     return rtv2;
 }
 
   } // namespace emu::pc

@@ -691,10 +691,7 @@ class ALCTController : public EmuLogger
   int CheckFirmwareConfiguration();
   void ProgramALCTProms();
   //
-  // new JTAG routines for new ALCT Mezzanines
-  void fpga_scan(int reg, char *snd,int cnt,char *rcv,int ird);
-  void prom_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip);
-  void ds4550_scan(int reg, char *snd,int cnt,char *rcv,int ird);
+  // new routines for new ALCT Mezzanines, using TMB::new_scan()
   unsigned ds4550_idcode();
   int ds4550_read(char *buf, int address, int size);
   void ds4550_write(char *buf, int address, int size);
@@ -704,6 +701,8 @@ class ALCTController : public EmuLogger
   int load_firmware(const char *mcsfile, int broadcast);
   int verify_firmware(const char *mcsfile);
   void read_firmware(const char *filename);
+  void program_fpga(const char *mcsfile);
+  unsigned spartan6_readreg(int reg);
 
 protected:
   //
@@ -988,6 +987,12 @@ private:
   //
   std::string ALCTHotChannelMaskArray_[6];          // !!!Note: this is not the same as in firmware/hardware!
                                                     // Here bit=0 channel ON (default state); bit=1 channel OFF.
+
+  // new JTAG routines for new ALCT Mezzanines, using TMB::new_scan()
+  void jtag_RestoreIdle(int chain);
+  void fpga_scan(int reg, char *snd,int cnt,char *rcv,int ird);
+  void prom_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip);
+  void ds4550_scan(int reg, char *snd,int cnt,char *rcv,int ird);
 
   // for common JTAG
   enum WRT { LATER, NOW };

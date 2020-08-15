@@ -1935,12 +1935,14 @@ void VMEModule::Jtag_Norm(long dev, int reg, const char *snd, int cnt, char *rcv
      d=pvme;
      for(i=0;i <cnt; i++)
      {
+       bool sendit=false;
+       if(i==(cnt-1) || (i%128)==127) sendit=true;
        for(j=0;j<3;j++)
        {  
          // each shift needs 3 VME writes, the 2nd one with TCK on:
          dd=d;
          if(j==1) dd |= TCK;
-         theController->VME_controller((j<2)?1:3,ptr,&dd,rcv);        
+         theController->VME_controller((j==2 && sendit)?3:1,ptr,&dd,rcv);        
          if(vmesleep) vme_delay(vmesleep);
        }
 //        vme_delay(1);

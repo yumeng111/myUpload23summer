@@ -610,7 +610,7 @@ void Test_AFEB06::finishCSC(std::string cscID)
                 }
             }
 
-          res_out << "\n# " << now() << std::endl;
+          res_out << "\n# " << emu::dqm::utils::now() << std::endl;
           res_out.close();
 
 

@@ -649,7 +649,7 @@ void Test_AFEB07::finishCSC(std::string cscID)
                               iafeb+1, ngood[iafeb], m_avg[iafeb], b_avg[iafeb], idelay[iafeb], y) << std::endl;
             }
 
-          res_out << "\n# " << now() << std::endl;
+          res_out << "\n# " << emu::dqm::utils::now() << std::endl;
           res_out.close();
 
 

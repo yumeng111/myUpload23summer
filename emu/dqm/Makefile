@@ -8,14 +8,14 @@
 
 BUILD_HOME:=$(shell pwd)/../..
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 include $(BUILD_HOME)/emu/rpm_version
 
 
 
 Project=emu
-Package=dqm
+Package=emu/dqm
 PackageName=dqm
 Description="The Emu (CSC) Local DQM"
 Summary="The Emu (CSC) Local DQM"
@@ -27,8 +27,8 @@ Link="http://www.phys.ufl.edu/emu/csc/dqm"
 # == Change BUILD_VERSION for new rpm builds
 #BUILD_VERSION=1
 
-include $(XDAQ_ROOT)/config/Makefile.rules
-include $(XDAQ_ROOT)/config/mfRPM.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules
 
 
 Packages=\
@@ -41,8 +41,8 @@ Packages=\
 	dqm/calibration \
 	dqm/dcfebpipeline
 
-include $(XDAQ_ROOT)/config/Makefile.rules
-#include $(XDAQ_ROOT)/config/mfRPM.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+#include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules
 
 
 .PHONY: _rpmall

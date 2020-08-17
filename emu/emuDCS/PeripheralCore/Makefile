@@ -4,15 +4,15 @@
 #
 ##
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 include $(BUILD_HOME)/emu/rpm_version
 
 #
 # Packages to be built
 #
 Project=emu
-Package=emuDCS/PeripheralCore
+Package=emu/emuDCS/PeripheralCore
 PackageName=PeripheralCore
 Description="Core libraries for Peripheral Crates"
 
@@ -46,7 +46,7 @@ LibraryDirs =
 TestLibraryDirs =
 
 UserCFlags  = 
-UserCCFlags = 
+UserCCFlags = -std=c++11
 UserDynamicLinkFlags =
 UserStaticLinkFlags =
 UserExecutableLinkFlags =
@@ -66,5 +66,5 @@ StaticLibrary=
 Executables=
 TestExecutables= 
 
-include $(XDAQ_ROOT)/config/Makefile.rules
-include $(XDAQ_ROOT)/config/mfRPM.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules

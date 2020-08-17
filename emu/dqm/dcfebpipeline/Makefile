@@ -12,8 +12,8 @@ include ../config/site.mk
 USE_DDUREADOUT = DDU
 
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 
 #DebugFlags=
 #CFlags+= -O2
@@ -28,7 +28,7 @@ endif
 # Packages to be built
 #
 Project=emu
-Package=dqm/dcfebpipeline
+Package=emu/dqm/dcfebpipeline
 
 Sources=\
 	DCFEBSample.cc \
@@ -57,7 +57,7 @@ LibraryDirs = $(XdaqLibraryDirs)
 UserSourcePath = 
 
 UserCFlags = $(ROOTCFLAGS)
-UserCCFlags = $(ROOTCFLAGS)
+UserCCFlags = $(ROOTCFLAGS) -std=c++11
 UserDynamicLinkFlags = $(ROOTLIBS)
 UserStaticLinkFlags =
 UserExecutableLinkFlags += $(ROOTGLIBS)
@@ -75,4 +75,4 @@ StaticLibrary =
 
 
 MakeFilename=Makefile
-include $(XDAQ_ROOT)/config/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules

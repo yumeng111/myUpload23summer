@@ -888,7 +888,7 @@ void EmuMonitor::ConfigureAction(toolbox::Event::Reference e) throw (toolbox::fs
 }
 
 void EmuMonitor::startATCP()
-throw (emu::dqm::monitor::exception::Exception)
+throw (emu::dqm::cscmonitor::exception::Exception)
 {
   // configure and enable all pt::atcp::PeerTransportATCP
 
@@ -899,7 +899,7 @@ throw (emu::dqm::monitor::exception::Exception)
     {
       atcpDescriptors = emu::dqm::getAppDescriptors(zone_, "pt::atcp::PeerTransportATCP");
     }
-  catch (emu::dqm::monitor::exception::Exception e)
+  catch (emu::dqm::cscmonitor::exception::Exception e)
     {
       LOG4CPLUS_WARN(logger_, "Failed to get atcp descriptors : "
                      + xcept::stdformat_exception_history(e) );
@@ -942,7 +942,7 @@ throw (emu::dqm::monitor::exception::Exception)
             {
               stringstream oss;
               oss << "Failed to configure " << (*atcpd)->getClassName() << (*atcpd)->getInstance();
-              XCEPT_RETHROW(emu::dqm::monitor::exception::Exception, oss.str(), e);
+              XCEPT_RETHROW(emu::dqm::cscmonitor::exception::Exception, oss.str(), e);
             }
 
           // Enable ATCP
@@ -954,7 +954,7 @@ throw (emu::dqm::monitor::exception::Exception)
             {
               stringstream oss;
               oss << "Failed to enable " << (*atcpd)->getClassName() << (*atcpd)->getInstance();
-              XCEPT_RETHROW(emu::dqm::monitor::exception::Exception, oss.str(), e);
+              XCEPT_RETHROW(emu::dqm::cscmonitor::exception::Exception, oss.str(), e);
             }
 
         }
@@ -1063,7 +1063,7 @@ void EmuMonitor::doConfigure()
         }
       catch (xcept::Exception e)
         {
-          XCEPT_RETHROW(emu::dqm::monitor::exception::Exception, "Failed to start ATCP ", e);
+          XCEPT_RETHROW(emu::dqm::cscmonitor::exception::Exception, "Failed to start ATCP ", e);
         }
     }
   appBSem_.give();

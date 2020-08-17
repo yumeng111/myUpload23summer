@@ -2,11 +2,11 @@
 include ../config/compdef.mk
 include ../config/site.mk
 include ../config/xdaq.mk
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 
 Project=emu
-Package=dqm/cmssw
+Package=emu/dqm/cmssw
 
 CXX     = g++
 
@@ -54,7 +54,7 @@ OBJS_DIGI      = $(addprefix $(ODIR)/, $(notdir $(SRCS_DIGI:%.cc=%.o)))
 CSCRAW   = $(CMSSW)/EventFilter/CSCRawToDigi
 SRCRAW_PATH    = $(CSCRAW)/src
 
-# check emu/dqm/config/site.mk for NEW_UNPACKER2013 variable and comment it you need old unpacker code prior to CMSSW_6_X_X
+# check emu/dqm/$(BUILD_SUPPORT)/site.mk for NEW_UNPACKER2013 variable and comment it you need old unpacker code prior to CMSSW_6_X_X
 ifdef NEW_UNPACKER2013
 SRCS_RAW      = $(SRCRAW_PATH)/bitset_append.cc \
 	$(SRCRAW_PATH)/CSCDCCExaminer.cc $(SRCRAW_PATH)/CSCDCCHeader.cc $(SRCRAW_PATH)/CSCDCCEventData.cc\
@@ -218,6 +218,6 @@ install: makedirs libs
 
 
 MakeFilename=Makefile
-include $(XDAQ_ROOT)/config/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
 
 

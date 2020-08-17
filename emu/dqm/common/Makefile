@@ -12,18 +12,18 @@ ROOTLIBS      = $(shell root-config --libs)
 ROOTGLIBS     = $(shell root-config --glibs)
 
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 
 # CCFlags= -g -Wall -O3 -march=prescott -mtune=prescott
-CCFlags += -O3 
+CCFlags += -O3
 Standalone=no
 
 #
 # Packages to be built
 #
 Project=emu
-Package=dqm/common
+Package=emu/dqm/common
 
 Sources=\
 	EmuDQM_Utils.cc \
@@ -51,7 +51,7 @@ LibraryDirs = $(XdaqLibraryDirs)
 
 
 UserCFlags = $(ROOTCFLAGS)
-UserCCFlags = $(ROOTCFLAGS)
+UserCCFlags = $(ROOTCFLAGS) -std=c++11
 UserDynamicLinkFlags = $(ROOTLIBS)
 UserStaticLinkFlags = 
 UserExecutableLinkFlags =
@@ -74,4 +74,4 @@ endif
 
 
 MakeFilename=Makefile
-include $(XDAQ_ROOT)/config/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules

@@ -197,7 +197,7 @@ private:
   void bindSOAPcallbacks();
   void bindCGIcallbacks();
   void startATCP()
-  throw (emu::dqm::monitor::exception::Exception);
+  throw (emu::dqm::cscmonitor::exception::Exception);
 
   void getDataServers(xdata::String className);
   void getCollectors(xdata::String className);

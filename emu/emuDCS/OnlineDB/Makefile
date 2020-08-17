@@ -4,14 +4,14 @@
 #
 ##
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 include $(BUILD_HOME)/emu/rpm_version
 
 # Packages to be built
 #
 Project=emu
-Package=emuDCS/OnlineDB
+Package=emu/emuDCS/OnlineDB
 PackageName=OnlineDB
 Description="Database related EMU code"
 
@@ -49,7 +49,7 @@ TestLibraryDirs = \
 	$(XDAQ_ROOT)/lib 
 
 UserCFlags  = 
-UserCCFlags = 
+UserCCFlags = -std=c++11
 UserDynamicLinkFlags =
 UserStaticLinkFlags =
 UserExecutableLinkFlags =
@@ -79,5 +79,5 @@ TestExecutables= \
 	testPCConfigHierarchy.cc \
 	testXMLReadWriter.cc
 
-include $(XDAQ_ROOT)/config/Makefile.rules
-include $(XDAQ_ROOT)/config/mfRPM.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules

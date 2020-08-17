@@ -2,6 +2,7 @@
 #include "emu/db/OnlineDBVersion.h"
 
 namespace EmuOnlineDB {
+	const std::string project = "emu";
         const std::string package  =  "EmuOnlineDB";
         const std::string versions =  onlinedbversion;
         const std::string summary = "emu/emuDCS/OnlineDB";

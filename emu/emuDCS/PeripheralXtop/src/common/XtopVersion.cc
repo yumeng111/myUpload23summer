@@ -2,6 +2,7 @@
 #include "emu/x2p/XtopVersion.h"
 
 namespace EmuPeripheralXtop {
+	const std::string project = "emu";
 	const std::string package  =  "EmuPeripheralXtop";
 	const std::string versions =  xtopversion;
 	const std::string summary = "emu/emuDCS/PeripheralXtop";

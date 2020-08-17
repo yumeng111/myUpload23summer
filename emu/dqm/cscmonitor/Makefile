@@ -9,8 +9,8 @@ include ../config/site.mk
 
 #UserExecutableLinkFlags = $(ROOTGLIBS)
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 
 #CCFlags= -g  -Wall
 CCFlags += -DLOCAL_UNPACK 
@@ -25,7 +25,7 @@ endif
 # Packages to be built
 #
 Project=emu
-Package=dqm/cscmonitor
+Package=emu/dqm/cscmonitor
 
 Sources=\
 	EmuMonitor_SOAP.cc \
@@ -62,7 +62,7 @@ LibraryDirs = $(XdaqLibraryDirs) \
 UserSourcePath = 
 
 UserCFlags = $(ROOTCFLAGS)
-UserCCFlags = $(ROOTCFLAGS)
+UserCCFlags = $(ROOTCFLAGS) -std=c++11
 UserDynamicLinkFlags = $(ROOTLIBS) 
 UserStaticLinkFlags =
 UserExecutableLinkFlags += $(ROOTGLIBS)
@@ -80,5 +80,5 @@ StaticLibrary =
 
 
 MakeFilename=Makefile
-include $(XDAQ_ROOT)/config/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
 

@@ -19,8 +19,8 @@ include $(EMU_DQM_CONFIG)/site.mk
 USE_DDUREADOUT = DDU
 
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 
 #DebugFlags=
 #CFlags+= 
@@ -35,7 +35,7 @@ endif
 # Packages to be built
 #
 Project=emu
-Package=dqm/calibration
+Package=emu/dqm/calibration
 
 Sources=\
 	TestCanvas_6gr1h.cc \
@@ -85,7 +85,10 @@ IncludeDirs += 	$(INST_BUILD_HOME)/emu/dqm/cmssw/include/emu/dqm/cmssw \
 	$(ORA_DIR)/include 
 
 
-LibraryDirs = $(XdaqLibraryDirs)  
+LibraryDirs = \
+	$(BUILD_HOME)/emu/base/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)/ \
+	$(BUILD_HOME)/emu/ldaq/reader/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)/  \
+	$(XdaqLibraryDirs)  
 ifeq ("$(USELOCALBUILD)", "yes")
 LibraryDirs += $(INST_BUILD_HOME)/$(XDAQ_PLATFORM)/lib
 endif
@@ -94,7 +97,7 @@ endif
 UserSourcePath = 
 
 UserCFlags = $(ROOTCFLAGS)
-UserCCFlags = $(ROOTCFLAGS)
+UserCCFlags = $(ROOTCFLAGS) -std=c++11
 UserDynamicLinkFlags = $(ROOTLIBS)
 UserStaticLinkFlags =
 UserExecutableLinkFlags += $(ROOTGLIBS)
@@ -116,4 +119,4 @@ StaticLibrary =
 
 
 MakeFilename=Makefile
-include $(XDAQ_ROOT)/config/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules

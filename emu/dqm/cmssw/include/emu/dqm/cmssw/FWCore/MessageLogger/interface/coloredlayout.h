@@ -3,16 +3,12 @@
 
 #include <xdaq/version.h>
 
-#if XDAQ_VERSION_CODE >= PACKAGE_VERSION_CODE(3,34,0)
 #include <log4cplus/config.hxx>
-#else
-#include <log4cplus/config.h>
-#endif
 #include <log4cplus/loglevel.h>
 #include <log4cplus/streams.h>
 #include <log4cplus/tstring.h>
 
-#include <log4cplus/helpers/logloguser.h>
+#include <log4cplus/helpers/loglog.h>
 #include <log4cplus/helpers/property.h>
 #include <log4cplus/helpers/timehelper.h>
 #include <log4cplus/spi/loggingevent.h>
@@ -79,7 +75,7 @@ namespace log4cplus {
         virtual void formatAndAppend(log4cplus::tostream& output,
                                      const log4cplus::spi::InternalLoggingEvent& event)
 	{
-		output << event.getTimestamp().getFormattedTime(dateFormat, use_gmtime) << "| "
+	  output << log4cplus::helpers::getFormattedTime( dateFormat, event.getTimestamp() ) << "| "
            	<< colormap[event.getLogLevel()] << llmCache.toString(event.getLogLevel())
            	<< LOG4CPLUS_TEXT(" - ")
            	<< event.getMessage() << CL_NORM

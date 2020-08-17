@@ -5,6 +5,7 @@
 //  namespace pc {
 
     namespace EmuPeripheralApps {
+	const std::string project = "emu";
 	const std::string package  =  "EmuPeripheralApps";
 	const std::string versions =  appsversion;
 	const std::string summary = "emu/emuDCS/PeripheralApps";

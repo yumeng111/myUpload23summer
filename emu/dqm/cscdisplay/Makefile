@@ -12,8 +12,8 @@ ROOTLIBS      = $(shell root-config --libs)
 ROOTGLIBS     = $(shell root-config --glibs) 
 
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 
 #CCFlags=-g -Wall -O3
 CCflags+= -O3 -DLOCAL_UNPACK
@@ -27,7 +27,7 @@ endif
 # Packages to be built
 #
 Project=emu
-Package=dqm/cscdisplay
+Package=emu/dqm/cscdisplay
 
 #
 # TODO: Select version.cc or EmuDisplayClientV.cc depending on xdaq version
@@ -63,7 +63,7 @@ LibraryDirs = $(XdaqLibraryDirs)
 
 
 UserCFlags = $(ROOTCFLAGS)
-UserCCFlags = $(ROOTCFLAGS)
+UserCCFlags = $(ROOTCFLAGS) -std=c++11
 UserDynamicLinkFlags = $(ROOTLIBS)
 UserStaticLinkFlags = 
 UserExecutableLinkFlags =
@@ -80,4 +80,4 @@ DynamicLibrary = emudqmcscdisplay
 StaticLibrary = 
 
 MakeFilename=Makefile
-include $(XDAQ_ROOT)/config/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules

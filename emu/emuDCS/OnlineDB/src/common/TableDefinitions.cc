@@ -5,6 +5,8 @@
 #include "emu/utils/System.h"
 #include "emu/utils/DOM.h"
 
+#include <assert.h>
+
 #include "toolbox/string.h"
 
 using namespace emu::utils;

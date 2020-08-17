@@ -12,8 +12,8 @@ include ../config/site.mk
 USE_DDUREADOUT = DDU
 
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 
 #DebugFlags=
 #CFlags+= -O2
@@ -29,7 +29,7 @@ endif
 # Packages to be built
 #
 Project=emu
-Package=dqm/cscanalyzer
+Package=emu/dqm/cscanalyzer
 
 Sources=\
 	EmuPlotter.cc \
@@ -72,13 +72,17 @@ IncludeDirs = $(XdaqIncludeDirs) \
 	$(BOOST)
 
 
-LibraryDirs = $(XdaqLibraryDirs) 
-
+#LibraryDirs = $(XdaqLibraryDirs) 
+LibraryDirs = \
+	$(BUILD_HOME)/emu/base/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)/ \
+	$(BUILD_HOME)/emu/ldaq/reader/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)/  \
+	$(BUILD_HOME)/emu/ldaq/writer/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)/  \
+	$(XdaqLibraryDirs)
 
 UserSourcePath = 
 
 UserCFlags = $(ROOTCFLAGS)
-UserCCFlags = $(ROOTCFLAGS)
+UserCCFlags = $(ROOTCFLAGS) -std=c++11
 UserDynamicLinkFlags = $(ROOTLIBS)
 UserStaticLinkFlags =
 UserExecutableLinkFlags += $(ROOTGLIBS)
@@ -96,4 +100,4 @@ StaticLibrary =
 
 
 MakeFilename=Makefile
-include $(XDAQ_ROOT)/config/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules

@@ -2,6 +2,7 @@
 #include "emu/pc/CoreVersion.h"
 
 namespace EmuPeripheralCore {
+	const std::string project = "emu";
 	const std::string package  =  "EmuPeripheralCore";
 	const std::string versions =  coreversion;
 	const std::string summary = "emu/emuDCS/PeripheralCore";

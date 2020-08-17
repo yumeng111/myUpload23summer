@@ -9,14 +9,14 @@ include ../config/site.mk
 
 UserExecutableLinkFlags = $(ROOTGLIBS)
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 
 #
 # Packages to be built
 #
 Project=emu
-Package=dqm/utils
+Package=emu/dqm/utils
 
 Sources=dduBinExaminer.cc
 
@@ -33,7 +33,7 @@ LibraryDirs =
 UserSourcePath = 
 
 UserCFlags = $(ROOTCFLAGS)
-UserCCFlags = $(ROOTCFLAGS) -fPIC
+UserCCFlags = $(ROOTCFLAGS) -fPIC -std=c++11
 UserDynamicLinkFlags = $(ROOTLIBS)
 UoserStaticLinkFlags =
 # UserExecutableLinkFlags += $(ROOTCFLAGS) -lProof -lProofPlayer -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
@@ -52,4 +52,4 @@ StaticLibrary =
 
 
 MakeFilename=Makefile
-include $(XDAQ_ROOT)/config/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules

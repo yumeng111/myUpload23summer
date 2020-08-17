@@ -6,7 +6,7 @@
 namespace emudaqwriter {
 	const std::string project     = "emu";
 	const std::string package     = "emudaqwriter";
-	const std::string versions    = "14.07.00";
+	const std::string versions    = "15.00.00";
 	const std::string description = "Emu (CSC) DAQ file writer";
 
 	const std::string summary     = "emu/ldaq/writer";

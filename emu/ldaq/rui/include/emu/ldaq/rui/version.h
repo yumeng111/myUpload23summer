@@ -6,7 +6,7 @@
 namespace emudaqrui {
 	const std::string project     = "emu";
 	const std::string package     = "emudaqrui";
-	const std::string versions    = "14.07.00";
+	const std::string versions    = "15.00.00";
 	const std::string description = "Emu (CSC) Readout Unit Input";
 
 	const std::string summary     = "emu/ldaq/rui";

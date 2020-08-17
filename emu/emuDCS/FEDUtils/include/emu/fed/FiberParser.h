@@ -18,11 +18,11 @@ namespace emu {
 
 			/** @returns a pointer to the parsed Fiber object. **/
 			Fiber *parse(xercesc::DOMElement *pNode)
-			throw (emu::fed::exception::ParseException);
+			throw (emu::exception::ParseException);
 
 			/** @returns a DOMElement from a given Fiber object **/
 			xercesc::DOMElement *makeDOMElement(xercesc::DOMDocument *document, Fiber *fiber)
-			throw (emu::fed::exception::ParseException);
+			throw (emu::exception::ParseException);
 
 		}
 

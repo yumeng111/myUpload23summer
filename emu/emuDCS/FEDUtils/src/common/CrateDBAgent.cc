@@ -18,7 +18,7 @@ DBAgent(application, instance)
 
 
 std::vector<emu::fed::Crate *> emu::fed::CrateDBAgent::getCrates(xdata::UnsignedInteger64 &id)
-throw (emu::fed::exception::DBException)
+throw (emu::exception::DBException)
 {
 	// Set up parameters
 	std::map<std::string, std::string> parameters;
@@ -28,21 +28,21 @@ throw (emu::fed::exception::DBException)
 	xdata::Table result;
 	try {
 		result = query("crates", parameters);
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Error posting query", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Error posting query", e);
 	}
 	
 	try {
 		return buildCrates(result,id);
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Error finding columns", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Error finding columns", e);
 	}
 }
 
 
 
 std::vector<emu::fed::Crate *> emu::fed::CrateDBAgent::buildCrates(xdata::Table &table, xdata::UnsignedInteger64 &key)
-throw (emu::fed::exception::DBException)
+throw (emu::exception::DBException)
 {
 	std::vector<emu::fed::Crate *> returnMe;
 	try {
@@ -51,14 +51,14 @@ throw (emu::fed::exception::DBException)
 			xdata::UnsignedShort number = getValue<xdata::UnsignedShort>(*iRow, "CRATE_NUMBER");
 			returnMe.push_back(new Crate(number));
 		}
-	} catch (emu::fed::exception::DBException &e) {
+	} catch (emu::exception::DBException &e) {
 		std::ostringstream error;
 		error << "Error reading crate values from database: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::DBException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::DBException, error.str(), e);
 	} catch (xdata::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Error getting value from table: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::DBException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::DBException, error.str(), e);
 	}
 
 	return returnMe;
@@ -67,7 +67,7 @@ throw (emu::fed::exception::DBException)
 
 
 void emu::fed::CrateDBAgent::upload(xdata::UnsignedInteger64 &key, const std::vector<emu::fed::Crate *> &crateVector)
-throw (emu::fed::exception::DBException)
+throw (emu::exception::DBException)
 {
 	
 	try {
@@ -93,7 +93,7 @@ throw (emu::fed::exception::DBException)
 		// Insert
 		insert("crate", table);
 		
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Unable to upload crates to database: " + std::string(e.what()), e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Unable to upload crates to database: " + std::string(e.what()), e);
 	}
 }

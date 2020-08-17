@@ -92,22 +92,10 @@ void emu::fed::EmuFCrateHyperDAQ::webDefault(xgi::Input *in, xgi::Output *out)
 			std::ostringstream error;
 			error << "Exception caught!";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+			XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 			notifyQualified("ERROR", e2);
 			
-			std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-			for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-				DataTable exceptionTable;
-				unsigned int iRow = 0;
-				std::map<std::string, std::string> messages = iError->getProperties();
-				for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-					exceptionTable(iRow, 0) << iMessage->first << ":";
-					exceptionTable(iRow, 1) << iMessage->second;
-					iRow++;
-				}
-				*out << cgicc::div(exceptionTable.toHTML())
-					.set("class", "exception");
-			}
+			*out << e2.toHTML();
 		}
 	}
 
@@ -692,22 +680,10 @@ void emu::fed::EmuFCrateHyperDAQ::mainPage(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 }
 
@@ -797,22 +773,10 @@ void emu::fed::EmuFCrateHyperDAQ::configurePage(xgi::Input *in, xgi::Output *out
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 }
 
@@ -839,14 +803,14 @@ void emu::fed::EmuFCrateHyperDAQ::setRawConfFile(xgi::Input *in, xgi::Output *ou
 				std::ostringstream error;
 				error << "Could not write configuration data to disk";
 				LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-				XCEPT_DECLARE(emu::fed::exception::FileException, e, error.str());
+				XCEPT_DECLARE(emu::exception::FileException, e, error.str());
 				notifyQualified("ERROR", e);
 			}
 		} else {
 			std::ostringstream error;
 			error << "Could not read configuration data from CGI input";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			XCEPT_DECLARE(emu::fed::exception::FileException, e, error.str());
+			XCEPT_DECLARE(emu::exception::FileException, e, error.str());
 			notifyQualified("ERROR", e);
 		}
 
@@ -859,22 +823,10 @@ void emu::fed::EmuFCrateHyperDAQ::setRawConfFile(xgi::Input *in, xgi::Output *ou
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 
 }
@@ -897,7 +849,7 @@ void emu::fed::EmuFCrateHyperDAQ::setConfFile(xgi::Input *in, xgi::Output *out)
 			std::ostringstream error;
 			error << "Could not read a file name from CGI input";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			XCEPT_DECLARE(emu::fed::exception::FileException, e, error.str());
+			XCEPT_DECLARE(emu::exception::FileException, e, error.str());
 			notifyQualified("ERROR", e);
 		}
 
@@ -909,22 +861,10 @@ void emu::fed::EmuFCrateHyperDAQ::setConfFile(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 }
 
@@ -950,14 +890,14 @@ void emu::fed::EmuFCrateHyperDAQ::uploadConfFile(xgi::Input *in, xgi::Output *ou
 				std::ostringstream error;
 				error << "Could not write configuration file to disk";
 				LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-				XCEPT_DECLARE(emu::fed::exception::FileException, e, error.str());
+				XCEPT_DECLARE(emu::exception::FileException, e, error.str());
 				notifyQualified("ERROR", e);
 			}
 		} else {
 			std::ostringstream error;
 			error << "Could not read file name from CGI input";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			XCEPT_DECLARE(emu::fed::exception::FileException, e, error.str());
+			XCEPT_DECLARE(emu::exception::FileException, e, error.str());
 			notifyQualified("ERROR", e);
 		}
 
@@ -969,29 +909,17 @@ void emu::fed::EmuFCrateHyperDAQ::uploadConfFile(xgi::Input *in, xgi::Output *ou
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 }
 
 
 
 void emu::fed::EmuFCrateHyperDAQ::Configuring()
-throw (emu::fed::exception::ConfigurationException)
+throw (emu::exception::ConfigurationException)
 {
 	for (size_t iCrate = 0; iCrate < crateVector_.size(); iCrate++) {
 		delete crateVector_[iCrate];
@@ -1008,11 +936,11 @@ throw (emu::fed::exception::ConfigurationException)
 		// for convenience.
 		systemName_ = configurator.getSystemName();
 		
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Error parsing file " << xmlFile_.toString();
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_RETHROW(emu::fed::exception::ConfigurationException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ConfigurationException, error.str(), e);
 	}
 
 }
@@ -1047,7 +975,7 @@ void emu::fed::EmuFCrateHyperDAQ::DDURegisterDump(xgi::Input *in, xgi::Output *o
       std::ostringstream error;
       error << "The file " << fileName << " is not accessable for writing";
       LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-      XCEPT_DECLARE(emu::fed::exception::FileException, e, error.str());
+      XCEPT_DECLARE(emu::exception::FileException, e, error.str());
       notifyQualified("ERROR", e);      
       return webRedirect(out,backLocation.str());
     }
@@ -2231,22 +2159,10 @@ void emu::fed::EmuFCrateHyperDAQ::DDURegisterDump(xgi::Input *in, xgi::Output *o
     std::ostringstream error;
     error << "Exception caught!";
     LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-    XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+    XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
     notifyQualified("ERROR", e2);
-               
-    std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-    for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-      DataTable exceptionTable;
-      unsigned int iRow = 0;
-      std::map<std::string, std::string> messages = iError->getProperties();
-      for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-	exceptionTable(iRow, 0) << iMessage->first << ":";
-	exceptionTable(iRow, 1) << iMessage->second;
-	iRow++;
-      }
-      *out << cgicc::div(exceptionTable.toHTML())
-	.set("class", "exception");
-    }
+
+    e2.toHTML();
   }
 
 } // end emu::fed::EmuFCrateHyperDAQ::DDURegisterDump
@@ -2271,8 +2187,8 @@ void emu::fed::EmuFCrateHyperDAQ::DDUBroadcast(xgi::Input *in, xgi::Output *out)
 		std::pair<unsigned int, Crate *> cratePair = getCGICrate(cgi);
 		cgiCrate = cratePair.first;
 		myCrate = cratePair.second;
-	} catch (emu::fed::exception::ParseException &e) {
-		*out << printException(e);
+	} catch (emu::exception::ParseException &e) {
+		*out << e.toHTML();
 		return;
 	}
 
@@ -2517,8 +2433,8 @@ void emu::fed::EmuFCrateHyperDAQ::DDUBroadcast(xgi::Input *in, xgi::Output *out)
 
 		try {
 			if ( StartType==1 ) slotTable(iDDU + 1,2) << myDDU->readFlashBoardID();
-		} catch (emu::fed::exception::DDUException &e) {
-			*out << printException(e);
+		} catch (emu::exception::DDUException &e) {
+			*out << e.toHTML();
 		}
 
 		for (unsigned int iprom = 0; iprom < dduPROMNames.size(); iprom++) {
@@ -2528,16 +2444,16 @@ void emu::fed::EmuFCrateHyperDAQ::DDUBroadcast(xgi::Input *in, xgi::Output *out)
 			
 			try {
 				if ( StartType==1 ) promCode = myDDU->readUserCode(dduPROMTypes[iprom]);
-			} catch (emu::fed::exception::DDUException &e) {
-				*out << printException(e);
+			} catch (emu::exception::DDUException &e) {
+				*out << e.toHTML();
 			}
 			slotTable(iDDU + 1,3 + iprom) << std::hex << promCode;
 
 			if (dduPROMNames[iprom] != "VMEPROM") {
 				try {
 					if ( StartType==1 ) fpgaCode = myDDU->readUserCode(dduFPGATypes[iprom]);
-				} catch (emu::fed::exception::DDUException &e) {
-					*out << printException(e);
+				} catch (emu::exception::DDUException &e) {
+					*out << e.toHTML();
 				}
 			}
 
@@ -2669,7 +2585,7 @@ void emu::fed::EmuFCrateHyperDAQ::DDULoadBroadcast(xgi::Input *in, xgi::Output *
 			std::ostringstream error;
 			error << "PROM type " << type << " not understood";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			XCEPT_DECLARE(emu::fed::exception::ParseException, e, error.str());
+			XCEPT_DECLARE(emu::exception::ParseException, e, error.str());
 			notifyQualified("ERROR", e);
 
 			std::ostringstream backLocation;
@@ -2682,7 +2598,7 @@ void emu::fed::EmuFCrateHyperDAQ::DDULoadBroadcast(xgi::Input *in, xgi::Output *
 			std::ostringstream error;
 			error << "The file you attempted to upload either doesn't exist, or wasn't properly transferred";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			XCEPT_DECLARE(emu::fed::exception::FileException, e, error.str());
+			XCEPT_DECLARE(emu::exception::FileException, e, error.str());
 			notifyQualified("ERROR", e);
 			
 			std::ostringstream backLocation;
@@ -2697,7 +2613,7 @@ void emu::fed::EmuFCrateHyperDAQ::DDULoadBroadcast(xgi::Input *in, xgi::Output *
 			std::ostringstream error;
 			error << "The file " << filename << " is not accessable for writing";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			XCEPT_DECLARE(emu::fed::exception::FileException, e, error.str());
+			XCEPT_DECLARE(emu::exception::FileException, e, error.str());
 			notifyQualified("ERROR", e);
 			
 			std::ostringstream backLocation;
@@ -2718,22 +2634,10 @@ void emu::fed::EmuFCrateHyperDAQ::DDULoadBroadcast(xgi::Input *in, xgi::Output *
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 
 }
@@ -2962,22 +2866,10 @@ void emu::fed::EmuFCrateHyperDAQ::DDUSendBroadcast(xgi::Input *in, xgi::Output *
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 
 }
@@ -3017,22 +2909,10 @@ void emu::fed::EmuFCrateHyperDAQ::DDUReset(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 
 }
@@ -3071,22 +2951,10 @@ void emu::fed::EmuFCrateHyperDAQ::DCCReset(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 }
 
@@ -3820,22 +3688,10 @@ void emu::fed::EmuFCrateHyperDAQ::DDUDebug(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-			.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 }
 
@@ -4538,22 +4394,10 @@ void emu::fed::EmuFCrateHyperDAQ::InFpga(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 
 }
@@ -5459,22 +5303,10 @@ void emu::fed::EmuFCrateHyperDAQ::DDUExpert(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 }
 
@@ -5690,22 +5522,10 @@ void emu::fed::EmuFCrateHyperDAQ::VMEPARA(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 	
 }
@@ -5892,22 +5712,10 @@ void emu::fed::EmuFCrateHyperDAQ::VMESERI(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 }
 
@@ -6117,22 +5925,10 @@ void emu::fed::EmuFCrateHyperDAQ::DDUTextLoad(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 
 }
@@ -6496,22 +6292,10 @@ void emu::fed::EmuFCrateHyperDAQ::DCCBroadcast(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 	
 }
@@ -6542,7 +6326,7 @@ void emu::fed::EmuFCrateHyperDAQ::DCCLoadBroadcast(xgi::Input *in, xgi::Output *
 			std::ostringstream error;
 			error << "PROM type " << type << " not understood";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			XCEPT_DECLARE(emu::fed::exception::ParseException, e, error.str());
+			XCEPT_DECLARE(emu::exception::ParseException, e, error.str());
 			notifyQualified("ERROR", e);
 			
 			std::ostringstream backLocation;
@@ -6555,7 +6339,7 @@ void emu::fed::EmuFCrateHyperDAQ::DCCLoadBroadcast(xgi::Input *in, xgi::Output *
 			std::ostringstream error;
 			error << "The file you attempted to upload either doesn't exist, or wasn't properly transferred";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			XCEPT_DECLARE(emu::fed::exception::FileException, e, error.str());
+			XCEPT_DECLARE(emu::exception::FileException, e, error.str());
 			notifyQualified("ERROR", e);
 			
 			std::ostringstream backLocation;
@@ -6570,7 +6354,7 @@ void emu::fed::EmuFCrateHyperDAQ::DCCLoadBroadcast(xgi::Input *in, xgi::Output *
 			std::ostringstream error;
 			error << "The file " << filename << " is not accessable for writing";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			XCEPT_DECLARE(emu::fed::exception::FileException, e, error.str());
+			XCEPT_DECLARE(emu::exception::FileException, e, error.str());
 			notifyQualified("ERROR", e);
 			
 			std::ostringstream backLocation;
@@ -6591,22 +6375,10 @@ void emu::fed::EmuFCrateHyperDAQ::DCCLoadBroadcast(xgi::Input *in, xgi::Output *
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 }
 
@@ -6658,7 +6430,7 @@ void emu::fed::EmuFCrateHyperDAQ::DCCSendBroadcast(xgi::Input *in, xgi::Output *
 			std::ostringstream error;
 			error << "PROM type not understood";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			XCEPT_DECLARE(emu::fed::exception::ParseException, e, error.str());
+			XCEPT_DECLARE(emu::exception::ParseException, e, error.str());
 			notifyQualified("ERROR", e);
 			
 			std::ostringstream backLocation;
@@ -6710,7 +6482,7 @@ void emu::fed::EmuFCrateHyperDAQ::DCCSendBroadcast(xgi::Input *in, xgi::Output *
 					std::ostringstream error;
 					error << "Firmware load failed: expected usercode " << std::hex << version[type] << ", got " << checkCode << std::dec;
 					LOG4CPLUS_WARN(getApplicationLogger(), error.str());
-					XCEPT_DECLARE(emu::fed::exception::ParseException, e, error.str());
+					XCEPT_DECLARE(emu::exception::ParseException, e, error.str());
 					notifyQualified("WARN", e);
 				} else {
 					LOG4CPLUS_INFO(getApplicationLogger(),"Firmware load succeeded: expected usercode " << std::hex << version[type] << ", got " << checkCode << std::dec);
@@ -6728,22 +6500,10 @@ void emu::fed::EmuFCrateHyperDAQ::DCCSendBroadcast(xgi::Input *in, xgi::Output *
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 
 }
@@ -6964,22 +6724,10 @@ void emu::fed::EmuFCrateHyperDAQ::DCCDebug(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 }
 
@@ -7827,22 +7575,10 @@ void emu::fed::EmuFCrateHyperDAQ::DCCExpert(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 }
 
@@ -7975,22 +7711,10 @@ void emu::fed::EmuFCrateHyperDAQ::DCCTextLoad(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 }
 
@@ -8198,22 +7922,10 @@ void emu::fed::EmuFCrateHyperDAQ::DDUVoltMon(xgi::Input *in, xgi::Output *out)
 		std::ostringstream error;
 		error << "Exception caught!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("ERROR", e2);
 		
-		std::vector<xcept::ExceptionInformation> history = e2.getHistory();
-		for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-			DataTable exceptionTable;
-			unsigned int iRow = 0;
-			std::map<std::string, std::string> messages = iError->getProperties();
-			for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-				exceptionTable(iRow, 0) << iMessage->first << ":";
-				exceptionTable(iRow, 1) << iMessage->second;
-				iRow++;
-			}
-			*out << cgicc::div(exceptionTable.toHTML())
-				.set("class", "exception");
-		}
+		e2.toHTML();
 	}
 }
 
@@ -8310,7 +8022,7 @@ std::string emu::fed::EmuFCrateHyperDAQ::selectACrate(const std::string& locatio
 
 
 std::pair<unsigned int, emu::fed::Crate *> emu::fed::EmuFCrateHyperDAQ::getCGICrate(const cgicc::Cgicc &cgi)
-throw (emu::fed::exception::OutOfBoundsException)
+throw (emu::exception::OutOfBoundsException)
 {
 
 	// get the crate number
@@ -8323,7 +8035,7 @@ throw (emu::fed::exception::OutOfBoundsException)
 		std::ostringstream error;
 		error << "Error getting crate from CGI input";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_RAISE(emu::fed::exception::OutOfBoundsException, error.str());
+		XCEPT_RAISE(emu::exception::OutOfBoundsException, error.str());
 	}
 
 	// Find the crate
@@ -8334,6 +8046,6 @@ throw (emu::fed::exception::OutOfBoundsException)
 	std::ostringstream error;
 	error << "Unable to find a crate with number " << cgiCrate;
 	LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-	XCEPT_RAISE(emu::fed::exception::OutOfBoundsException, error.str());
+	XCEPT_RAISE(emu::exception::OutOfBoundsException, error.str());
 
 }

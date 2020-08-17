@@ -18,11 +18,11 @@ namespace emu {
 			
 			/** @returns a pointer to the parsed DCC object. **/
 			DCC *parse(xercesc::DOMElement *pNode, const bool &fake = false)
-			throw (emu::fed::exception::ParseException);
+			throw (emu::exception::ParseException);
 			
 			/** @returns a DOMElement from a given DCC object **/
 			xercesc::DOMElement *makeDOMElement(xercesc::DOMDocument *document, DCC *dcc)
-			throw (emu::fed::exception::ParseException);
+			throw (emu::exception::ParseException);
 		}
 	}
 }

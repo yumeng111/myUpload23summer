@@ -4,8 +4,8 @@
 #
 ##
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 include $(BUILD_HOME)/emu/rpm_version
 
 # CXX=g++4
@@ -15,7 +15,7 @@ include $(BUILD_HOME)/emu/rpm_version
 # Packages to be built
 #
 Project=emu
-Package=emuDCS/FEDUtils
+Package=emu/emuDCS/FEDUtils
 PackageName=FEDUtils
 Description="Utility libraries used by the Front End Driver (FED) crate XDAQ applications (FEDApps) for the CMS EMu (CSC) subdetector"
 Summary="Emu (CSC) FED Utility Libraries"
@@ -44,7 +44,6 @@ Sources=\
 	AutoConfigurator.cc \
 	DDUDebugger.cc \
 	DCCDebugger.cc \
-	DataTable.cc \
 	JSONSpiritWriter.cc
 
 IncludeDirs = \
@@ -58,7 +57,7 @@ LibraryDirs = \
 	$(XDAQ_ROOT)/lib
 
 UserCFlags =
-UserCCFlags = -pipe -DLINUX -g -Wall -pedantic-errors -Wno-long-long  -Wno-variadic-macros -isystem $(XDAQ_ROOT)/include -O2
+UserCCFlags = -pipe -DLINUX -g -Wall -pedantic-errors -Wno-long-long  -Wno-variadic-macros -isystem $(XDAQ_ROOT)/include -O2  -std=c++11
 UserStaticLinkFlags =
 UserExecutableLinkFlags = -D_REENTRAN -pthread -pedantic-errors
 
@@ -77,5 +76,5 @@ StaticLibrary =
 Executables =
 TestExecutables =
 
-include $(XDAQ_ROOT)/config/Makefile.rules
-include $(XDAQ_ROOT)/config/mfRPM.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules

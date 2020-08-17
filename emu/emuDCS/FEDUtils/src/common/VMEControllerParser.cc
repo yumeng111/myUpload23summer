@@ -9,7 +9,7 @@
 
 
 emu::fed::VMEController *emu::fed::VMEControllerParser::parse(xercesc::DOMElement* pNode, const bool &fake)
-throw (emu::fed::exception::ParseException)
+throw (emu::exception::ParseException)
 {
 	Parser parser(pNode);
 	
@@ -17,25 +17,25 @@ throw (emu::fed::exception::ParseException)
 	try {
 		Device = parser.extract<int>("CAEN_DEVICE");
 		Link = parser.extract<int>("CAEN_LINK");
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse CAEN_DEVICE or CAEN_LINK from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	try {
 		return new VMEController(Device, Link, fake);
-	} catch (emu::fed::exception::CAENException &e) {
+	} catch (emu::exception::CAENException &e) {
 		std::ostringstream error;
 		error << "Unable to instantiate VMEController object";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 }
 
 
 
 xercesc::DOMElement *emu::fed::VMEControllerParser::makeDOMElement(xercesc::DOMDocument *document, emu::fed::VMEController *controller)
-throw (emu::fed::exception::ParseException)
+throw (emu::exception::ParseException)
 {
 	try {
 		// Make a controller element
@@ -49,6 +49,6 @@ throw (emu::fed::exception::ParseException)
 	} catch (xercesc::DOMException &e) {
 		std::ostringstream error;
 		error << "Unable to create VMEController element: " << X(e.getMessage());
-		XCEPT_RAISE(emu::fed::exception::ParseException, error.str());
+		XCEPT_RAISE(emu::exception::ParseException, error.str());
 	}
 }

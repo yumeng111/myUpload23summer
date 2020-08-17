@@ -35,7 +35,7 @@ filename_(filename)
 
 
 std::vector<emu::fed::Crate *> emu::fed::XMLConfigurator::setupCrates(const bool &fake)
-throw (emu::fed::exception::ConfigurationException)
+throw (emu::exception::ConfigurationException)
 {
 	// Timestamp is easy
 	struct stat attrib;
@@ -48,7 +48,7 @@ throw (emu::fed::exception::ConfigurationException)
 	} catch (xercesc::XMLException &e) {
 		std::ostringstream error;
 		error << "Error during Xerces-c Initialization: " << X(e.getMessage());
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+		XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 	}
 	
 	// Create our parser
@@ -67,17 +67,17 @@ throw (emu::fed::exception::ConfigurationException)
 		xercesc::XMLPlatformUtils::Terminate();
 		std::ostringstream error;
 		error << "XML Error during parsing: " << X(e.getMessage());
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+		XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 	} catch (xercesc::DOMException& e) {
 		delete parser;
 		xercesc::XMLPlatformUtils::Terminate();
 		std::ostringstream error;
 		error << "DOM Error during parsing: " << X(e.getMessage());
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+		XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 	} catch (...) {
 		delete parser;
 		xercesc::XMLPlatformUtils::Terminate();
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, "Unknown error during parsing");
+		XCEPT_RAISE(emu::exception::ConfigurationException, "Unknown error during parsing");
 	}
 	
 	// The file exists, so I can parse out the timestamp
@@ -99,7 +99,7 @@ throw (emu::fed::exception::ConfigurationException)
 		xercesc::XMLPlatformUtils::Terminate();
 		std::ostringstream error;
 		error << "Could not find a top-node in the XML document " << filename_;
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+		XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 	}
 	
 	if ( strcmp(X(pFEDSystem->getTagName()), "FEDSystem") ) {
@@ -107,7 +107,7 @@ throw (emu::fed::exception::ConfigurationException)
 		xercesc::XMLPlatformUtils::Terminate();
 		std::ostringstream error;
 		error << "The top-node in the XML document " << filename_ << " was not named 'FEDSystem'";
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+		XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 	}
 	
 	// Let's get the system name
@@ -124,7 +124,7 @@ throw (emu::fed::exception::ConfigurationException)
 		xercesc::XMLPlatformUtils::Terminate();
 		std::ostringstream error;
 		error << "No FEDCrate elements in the XML document " << filename_;
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+		XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 	}
 	
 	for (unsigned int iFEDCrate = 0; iFEDCrate < pFEDCrates->getLength(); iFEDCrate++) {
@@ -134,12 +134,12 @@ throw (emu::fed::exception::ConfigurationException)
 		Crate *newCrate;
 		try {
 			newCrate = CrateParser::parse(pFEDCrate);
-		} catch (emu::fed::exception::ParseException &e) {
+		} catch (emu::exception::ParseException &e) {
 			delete parser;
 			xercesc::XMLPlatformUtils::Terminate();
 			std::ostringstream error;
 			error << "Exception in parsing Crate element: " << e.what();
-			XCEPT_RETHROW(emu::fed::exception::ConfigurationException, error.str(), e);
+			XCEPT_RETHROW(emu::exception::ConfigurationException, error.str(), e);
 		}
 		
 		// Get VMEController
@@ -150,7 +150,7 @@ throw (emu::fed::exception::ConfigurationException)
 			xercesc::XMLPlatformUtils::Terminate();
 			std::ostringstream error;
 			error << "Exactly one VMEController element must exist as a child element of every FEDCrate element in the XML document " << filename_;
-			XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+			XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 		}
 		
 		xercesc::DOMElement *pVMEController = (xercesc::DOMElement *) pVMEControllers->item(0);
@@ -158,12 +158,12 @@ throw (emu::fed::exception::ConfigurationException)
 		// Parse the attributes and make the controller.
 		try {
 			newCrate->setController(VMEControllerParser::parse(pVMEController, fake));
-		} catch (emu::fed::exception::ParseException &e) {
+		} catch (emu::exception::ParseException &e) {
 			delete parser;
 			xercesc::XMLPlatformUtils::Terminate();
 			std::ostringstream error;
 			error << "Exception in parsing VMEController element: " << e.what();
-			XCEPT_RETHROW(emu::fed::exception::ConfigurationException, error.str(), e);
+			XCEPT_RETHROW(emu::exception::ConfigurationException, error.str(), e);
 		}
 		
 		// Get DDUs.  If there are none, then that is a valid crate anyway (even though it doesn't make sense).
@@ -176,12 +176,12 @@ throw (emu::fed::exception::ConfigurationException)
 			DDU *newDDU;
 			try {
 				newDDU = DDUParser::parse(pDDU);
-			} catch (emu::fed::exception::ParseException &e) {
+			} catch (emu::exception::ParseException &e) {
 				delete parser;
 				xercesc::XMLPlatformUtils::Terminate();
 				std::ostringstream error;
 				error << "Exception in parsing DDU element: " << e.what();
-				XCEPT_RETHROW(emu::fed::exception::ConfigurationException, error.str(), e);
+				XCEPT_RETHROW(emu::exception::ConfigurationException, error.str(), e);
 			}
 			
 			// Get Chambers.  OK if there are none.
@@ -192,12 +192,12 @@ throw (emu::fed::exception::ConfigurationException)
 				// Parse and add to the Fiber.
 				try {
 					newDDU->addFiber(FiberParser::parse(pFiber));
-				} catch (emu::fed::exception::Exception &e) {
+				} catch (emu::exception::Exception &e) {
 					delete parser;
 					xercesc::XMLPlatformUtils::Terminate();
 					std::ostringstream error;
 					error << "Exception in parsing Fiber element: " << e.what();
-					XCEPT_RETHROW(emu::fed::exception::ConfigurationException, error.str(), e);
+					XCEPT_RETHROW(emu::exception::ConfigurationException, error.str(), e);
 				}
 			}
 			
@@ -215,12 +215,12 @@ throw (emu::fed::exception::ConfigurationException)
 			DCC *newDCC;
 			try {
 				newDCC = DCCParser::parse(pDCC);
-			} catch (emu::fed::exception::ParseException &e) {
+			} catch (emu::exception::ParseException &e) {
 				delete parser;
 				xercesc::XMLPlatformUtils::Terminate();
 				std::ostringstream error;
 				error << "Exception in parsing DCC element: " << e.what();
-				XCEPT_RETHROW(emu::fed::exception::ConfigurationException, error.str(), e);
+				XCEPT_RETHROW(emu::exception::ConfigurationException, error.str(), e);
 			}
 			
 			// Get FIFOs.  OK if there are none.
@@ -233,12 +233,12 @@ throw (emu::fed::exception::ConfigurationException)
 				// Parse and add to the FIFO.
 				try {
 					newDCC->addFIFO(FIFOParser::parse(pFIFO));
-				} catch (emu::fed::exception::ParseException &e) {
+				} catch (emu::exception::ParseException &e) {
 					delete parser;
 					xercesc::XMLPlatformUtils::Terminate();
 					std::ostringstream error;
 					error << "Exception in parsing FIFO element: " << e.what();
-					XCEPT_RETHROW(emu::fed::exception::ConfigurationException, error.str(), e);
+					XCEPT_RETHROW(emu::exception::ConfigurationException, error.str(), e);
 				}
 			}
 			
@@ -263,7 +263,7 @@ throw (emu::fed::exception::ConfigurationException)
 
 
 std::string emu::fed::XMLConfigurator::makeXML(const std::vector<emu::fed::Crate *> &crateVector, const std::string &systemName)
-throw (emu::fed::exception::ConfigurationException)
+throw (emu::exception::ConfigurationException)
 {
 	// Initialize XML4C system
 	try {
@@ -271,7 +271,7 @@ throw (emu::fed::exception::ConfigurationException)
 	} catch (xercesc::XMLException &e) {
 		std::ostringstream error;
 		error << "Error during Xerces-c Initialization: " << X(e.getMessage());
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+		XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 	}
 	
 	// I need an implementation to build a DOMWriter.  The Core XML implementation is good enough.
@@ -281,7 +281,7 @@ throw (emu::fed::exception::ConfigurationException)
 		xercesc::XMLPlatformUtils::Terminate();
 		std::ostringstream error;
 		error << "Error getting DOM implementation: feature 'Core' unsupported";
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+		XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 	}
 	
 	// Create the document
@@ -292,7 +292,7 @@ throw (emu::fed::exception::ConfigurationException)
 		xercesc::XMLPlatformUtils::Terminate();
 		std::ostringstream error;
 		error << "Error creating DOMDocument: " << X(e.getMessage());
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+		XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 	}
 	
 	// Get the newly created root
@@ -303,7 +303,7 @@ throw (emu::fed::exception::ConfigurationException)
 		xercesc::XMLPlatformUtils::Terminate();
 		std::ostringstream error;
 		error << "Error getting root element: " << X(e.getMessage());
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+		XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 	}
 	
 	try {
@@ -364,16 +364,16 @@ throw (emu::fed::exception::ConfigurationException)
 			
 		}
 	
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		xercesc::XMLPlatformUtils::Terminate();
 		std::ostringstream error;
 		error << "Unable to build XML document";
-		XCEPT_RETHROW(emu::fed::exception::ConfigurationException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ConfigurationException, error.str(), e);
 	} catch (xercesc::DOMException &e) {
 		xercesc::XMLPlatformUtils::Terminate();
 		std::ostringstream error;
 		error << "Unable to build XML document due to DOM exception: " << X(e.getMessage());
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+		XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 	}
 	
 	std::string returnXML( emu::utils::serializeDOM( document ) );

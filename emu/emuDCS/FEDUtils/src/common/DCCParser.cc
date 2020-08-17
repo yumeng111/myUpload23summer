@@ -8,43 +8,43 @@
 #include "emu/fed/DCC.h"
 
 emu::fed::DCC *emu::fed::DCCParser::parse(xercesc::DOMElement *pNode, const bool &fake)
-throw (emu::fed::exception::ParseException)
+throw (emu::exception::ParseException)
 {
 	Parser parser(pNode);
 	
 	unsigned int slot;
 	try {
 		slot = parser.extract<unsigned int>("SLOT");
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse slot number from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 
 	DCC *dcc_ = new DCC(slot, fake);
 
 	try {
 		dcc_->setFMMID(parser.extract<uint16_t>("FMM_ID"));
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse FMM_ID from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	try {
 		dcc_->setSLinkID(1, parser.extract<uint16_t>("SLINK1_ID"));
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse SLINK1_ID from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	try {
 		dcc_->setSLinkID(2, parser.extract<uint16_t>("SLINK2_ID"));
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse SLINK2_ID from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	// Switches
@@ -52,52 +52,52 @@ throw (emu::fed::exception::ParseException)
 
 	try {
 		if (parser.extract<bool>("ENABLE_SW_SWITCH")) softsw |= 0x200;
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse ENABLE_SW_SWITCH from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	try {
 		if (parser.extract<bool>("TTCRX_NOT_READY")) softsw |= 0x1000;
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse TTCRX_NOT_READY from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	try {
 		if (parser.extract<bool>("SW_BIT4")) softsw |= 0x10;
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse SW_BIT4 from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	try {
 		if (parser.extract<bool>("SW_BIT5")) softsw |= 0x20;
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse SW_BIT5 from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	bool ignoreBackpressure = false;
 	bool ignorePresent = false;
 	try {
 		ignoreBackpressure = parser.extract<bool>("IGNORE_SLINK_BACKPRESSURE");
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse IGNORE_SLINK_BACKPRESSURE from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	try {
 		ignorePresent = parser.extract<bool>("IGNORE_SLINK_NOT_PRESENT");
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse IGNORE_SLINK_NOT_PRESENT from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	if (ignorePresent) softsw |= 0x4000;
@@ -112,7 +112,7 @@ throw (emu::fed::exception::ParseException)
 
 
 xercesc::DOMElement *emu::fed::DCCParser::makeDOMElement(xercesc::DOMDocument *document, emu::fed::DCC *dcc)
-throw (emu::fed::exception::ParseException)
+throw (emu::exception::ParseException)
 {
 	try {
 		// Make a crate element
@@ -149,7 +149,7 @@ throw (emu::fed::exception::ParseException)
 	} catch (xercesc::DOMException &e) {
 		std::ostringstream error;
 		error << "Unable to create DCC element: " << X(e.getMessage());
-		XCEPT_RAISE(emu::fed::exception::ParseException, error.str());
+		XCEPT_RAISE(emu::exception::ParseException, error.str());
 	}
 }
 

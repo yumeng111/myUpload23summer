@@ -28,7 +28,7 @@ instance_(instance)
 
 
 std::vector<emu::fed::Crate *> emu::fed::DBConfigurator::setupCrates(const bool &fake)
-throw (emu::fed::exception::ConfigurationException)
+throw (emu::exception::ConfigurationException)
 {
 	// Begin by setting up the system name
 	std::string connectionID = "";
@@ -38,10 +38,10 @@ throw (emu::fed::exception::ConfigurationException)
 		std::pair<std::string, time_t> values = systemAgent.getSystem(dbKey_);
 		systemName_ = values.first;
 		timeStamp_ = values.second;
-	} catch (emu::fed::exception::DBException &e) {
+	} catch (emu::exception::DBException &e) {
 		systemName_ = "unnamed";
 		timeStamp_ = time(NULL);
-		XCEPT_RETHROW(emu::fed::exception::ConfigurationException, "Error setting system name and timestamp", e);
+		XCEPT_RETHROW(emu::exception::ConfigurationException, "Error setting system name and timestamp", e);
 	}
 	
 	// Now get the crates.  The Crate agent gives us a vector of crates.
@@ -49,8 +49,8 @@ throw (emu::fed::exception::ConfigurationException)
 		CrateDBAgent crateAgent(application_, instance_);
 		crateAgent.setConnectionID(connectionID);
 		crateVector_ = crateAgent.getCrates(dbKey_);
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::ConfigurationException, "Error creating crates", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::ConfigurationException, "Error creating crates", e);
 	}
 	
 	for (std::vector<Crate *>::iterator iCrate = crateVector_.begin(); iCrate != crateVector_.end(); ++iCrate) {
@@ -62,8 +62,8 @@ throw (emu::fed::exception::ConfigurationException)
 			VMEAgent.setConnectionID(connectionID);
 			emu::fed::VMEController *controller = VMEAgent.getController(dbKey_, crateNumber, fake);
 			(*iCrate)->setController(controller);
-		} catch (emu::fed::exception::DBException &e) {
-			XCEPT_RETHROW(emu::fed::exception::ConfigurationException, "Error creating VME controller", e);
+		} catch (emu::exception::DBException &e) {
+			XCEPT_RETHROW(emu::exception::ConfigurationException, "Error creating VME controller", e);
 		}
 		
 		// Get DDUs
@@ -72,8 +72,8 @@ throw (emu::fed::exception::ConfigurationException)
 			DDUDBAgent DDUAgent(application_, instance_);
 			DDUAgent.setConnectionID(connectionID);
 			ddus = DDUAgent.getDDUs(dbKey_, crateNumber, fake);
-		} catch (emu::fed::exception::DBException &e) {
-			XCEPT_RETHROW(emu::fed::exception::ConfigurationException, "Error creating DDUs", e);
+		} catch (emu::exception::DBException &e) {
+			XCEPT_RETHROW(emu::exception::ConfigurationException, "Error creating DDUs", e);
 		}
 		
 		// Get Fibers for DDUs
@@ -85,8 +85,8 @@ throw (emu::fed::exception::ConfigurationException)
 				FiberDBAgent fiberAgent(application_, instance_);
 				fiberAgent.setConnectionID(connectionID);
 				(*iDDU)->setFibers(fiberAgent.getFibers(dbKey_, rui));
-			} catch (emu::fed::exception::DBException &e) {
-				XCEPT_RETHROW(emu::fed::exception::ConfigurationException, "Error creating Fibers", e);
+			} catch (emu::exception::DBException &e) {
+				XCEPT_RETHROW(emu::exception::ConfigurationException, "Error creating Fibers", e);
 			}
 			
 			// Add the DDU
@@ -99,8 +99,8 @@ throw (emu::fed::exception::ConfigurationException)
 			DCCDBAgent DCCAgent(application_, instance_);
 			DCCAgent.setConnectionID(connectionID);
 			dccs = DCCAgent.getDCCs(dbKey_, crateNumber, fake);
-		} catch (emu::fed::exception::DBException &e) {
-			XCEPT_RETHROW(emu::fed::exception::ConfigurationException, "Error creating DCCs", e);
+		} catch (emu::exception::DBException &e) {
+			XCEPT_RETHROW(emu::exception::ConfigurationException, "Error creating DCCs", e);
 		}
 		
 		// Get FIFOs for DCCs
@@ -112,8 +112,8 @@ throw (emu::fed::exception::ConfigurationException)
 				FIFODBAgent fifoAgent(application_, instance_);
 				fifoAgent.setConnectionID(connectionID);
 				(*iDCC)->setFIFOs(fifoAgent.getFIFOs(dbKey_, fmm_id));
-			} catch (emu::fed::exception::DBException &e) {
-				XCEPT_RETHROW(emu::fed::exception::ConfigurationException, "Error creating FIFOs", e);
+			} catch (emu::exception::DBException &e) {
+				XCEPT_RETHROW(emu::exception::ConfigurationException, "Error creating FIFOs", e);
 			}
 			
 			// Add the DCC
@@ -128,7 +128,7 @@ throw (emu::fed::exception::ConfigurationException)
 
 
 void emu::fed::DBConfigurator::uploadToDB(const std::vector<emu::fed::Crate *> &crateVector, const std::string &systemName)
-throw (emu::fed::exception::ConfigurationException)
+throw (emu::exception::ConfigurationException)
 {
 	
 	try {
@@ -192,10 +192,10 @@ throw (emu::fed::exception::ConfigurationException)
 			
 		}
 		
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Unable to upload to database: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::ConfigurationException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ConfigurationException, error.str(), e);
 	}
 	
 }

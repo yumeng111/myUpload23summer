@@ -9,7 +9,7 @@
 #include <vector>
 #include <string>
 
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 #include "xdata/UnsignedShort.h"
 #include "xdata/TableIterator.h"
 
@@ -30,17 +30,17 @@ namespace emu {
 			
 			/** Build a controller corresponding to a configuration key and a crate number **/
 			emu::fed::VMEController *getController(xdata::UnsignedInteger64 &key, xdata::UnsignedShort &number, const bool &fake = false)
-			throw (emu::fed::exception::DBException);
+			throw (emu::exception::DBException);
 			
 			/** Upload a controller **/
 			void upload(xdata::UnsignedInteger64 &key, xdata::UnsignedShort &crateNumber, VMEController *controller)
-			throw (emu::fed::exception::DBException);
+			throw (emu::exception::DBException);
 
 		private:
 		
 			/** Build the controller from the table returned **/
 			emu::fed::VMEController *buildController(xdata::Table &table, const bool &fake = false)
-			throw (emu::fed::exception::DBException);
+			throw (emu::exception::DBException);
 			
 		};
 

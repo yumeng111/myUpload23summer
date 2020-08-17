@@ -6,61 +6,61 @@
 #include "emu/fed/DDU.h"
 
 emu::fed::DDU *emu::fed::DDUParser::parse(xercesc::DOMElement *pNode, const bool &fake)
-throw (emu::fed::exception::ParseException)
+throw (emu::exception::ParseException)
 {
 	Parser parser(pNode);
 	
 	unsigned int slot = 0;
 	try {
 		slot = parser.extract<unsigned int>("SLOT");
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse SLOT from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 
 	DDU *ddu_ = new DDU(slot, fake);
 	
 	try {
 		ddu_->setRUI(parser.extract<uint16_t>("RUI")); // & 0x3f);
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse RUI from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	try {
 		ddu_->setSlinkId (parser.extract<uint16_t>("SLINK_ID"));
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse SLINK_ID from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	try {
 		if (parser.extract<bool>("INVERT_CCB_COMMAND_SIGNALS")) {
 			ddu_->setRUI(0xc0);
 		}
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse INVERT_CCB_COMMAND_SIGNALS from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	try {
 		ddu_->setFMMID(parser.extract<uint16_t>("FMM_ID"));
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse FMM_ID from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 
 	try {
 		ddu_->setGbEPrescale(parser.extract<uint16_t>("GBE_PRESCALE", std::ios::hex));
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse GBE_PRESCALE from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	std::vector<std::string> optionNames;
@@ -75,10 +75,10 @@ throw (emu::fed::exception::ParseException)
 		std::string optionName = optionNames[iOption];
 		try {
 			if (parser.extract<bool>(optionName)) killfiber |= (1 << (15 + iOption));
-		} catch (emu::fed::exception::ParseException &e) {
+		} catch (emu::exception::ParseException &e) {
 			std::ostringstream error;
 			error << "Unable to parse " << optionName << " from element";
-			XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+			XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 		}
 	}
 	
@@ -91,7 +91,7 @@ throw (emu::fed::exception::ParseException)
 
 
 xercesc::DOMElement *emu::fed::DDUParser::makeDOMElement(xercesc::DOMDocument *document, emu::fed::DDU *ddu)
-throw (emu::fed::exception::ParseException)
+throw (emu::exception::ParseException)
 {
 	try {
 		// Make a crate element
@@ -125,6 +125,6 @@ throw (emu::fed::exception::ParseException)
 	} catch (xercesc::DOMException &e) {
 		std::ostringstream error;
 		error << "Unable to create DDU element: " << X(e.getMessage());
-		XCEPT_RAISE(emu::fed::exception::ParseException, error.str());
+		XCEPT_RAISE(emu::exception::ParseException, error.str());
 	}
 }

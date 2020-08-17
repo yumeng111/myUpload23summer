@@ -5,7 +5,7 @@
 #define __EMU_FED_VMELOCK_H__
 
 #include <pthread.h>
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 #include <string>
 
 namespace emu {
@@ -19,18 +19,18 @@ namespace emu {
 			
 			/** Standard constructor. **/
 			VMELock(const std::string &fileName)
-			throw (emu::fed::exception::SoftwareException);
+			throw (emu::exception::SoftwareException);
 			
 			/** Standard destructor. **/
 			~VMELock();
 			
 			/** Attempts to issue a lock and blocks until the lock is established. **/
 			void lock()
-			throw (emu::fed::exception::SoftwareException);
+			throw (emu::exception::SoftwareException);
 			
 			/** Releases the current lock if this process is indeed locking. **/
 			void unlock()
-			throw (emu::fed::exception::SoftwareException);
+			throw (emu::exception::SoftwareException);
 			
 		private:
 			

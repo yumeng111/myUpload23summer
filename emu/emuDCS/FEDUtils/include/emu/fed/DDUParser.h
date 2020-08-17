@@ -19,11 +19,11 @@ namespace emu {
 		
 			/** @returns a pointer to the parsed DDU object. **/
 			DDU *parse(xercesc::DOMElement *pNode, const bool &fake = false)
-			throw (emu::fed::exception::ParseException);
+			throw (emu::exception::ParseException);
 			
 			/** @returns a DOMElement from a given DDU object **/
 			xercesc::DOMElement *makeDOMElement(xercesc::DOMDocument *document, DDU *ddu)
-			throw (emu::fed::exception::ParseException);
+			throw (emu::exception::ParseException);
 
 		}
 

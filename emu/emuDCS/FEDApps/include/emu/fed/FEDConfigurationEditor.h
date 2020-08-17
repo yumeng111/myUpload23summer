@@ -3,7 +3,7 @@
 
 #include "emu/db/ConfigurationEditor.h"
 #include "xdata/String.h"
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 #include "emu/fed/DBAgent.h"
 
 #include "xdata/UnsignedShort.h"
@@ -74,7 +74,7 @@ namespace emu {
 			throw (xcept::Exception);
 			
 			void readDDU(const std::string &connectionID,const std::string &parentIdentifier,xdata::UnsignedInteger64 &key,xdata::UnsignedShort &rui)
-			throw (emu::fed::exception::DBException);
+			throw (emu::exception::DBException);
 			
 			void readDCC(const std::string &connectionID,const std::string &parentIdentifier,xdata::UnsignedInteger64 &key,xdata::UnsignedShort &crateNumber)
 			throw (xcept::Exception);
@@ -83,7 +83,7 @@ namespace emu {
 			throw (xcept::Exception);
 			
 			void readController(const std::string &connectionID,const std::string &parentIdentifier,xdata::UnsignedInteger64 &key,xdata::UnsignedShort &number)
-			throw (emu::fed::exception::DBException);
+			throw (emu::exception::DBException);
 			
 			void readConfigFromDB(xgi::Input * in, xgi::Output * out )
 			throw (xgi::exception::Exception);

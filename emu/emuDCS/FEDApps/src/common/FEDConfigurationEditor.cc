@@ -222,13 +222,13 @@ throw (xcept::Exception) {
 	try {
 		query(connectionID,"get_fibers_by_key_rui", parameters,result);
 		setCachedTable("fiber",parentIdentifier,result);
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Error posting query", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Error posting query", e);
 	}
 }
 
 void FEDConfigurationEditor::readDDU(const std::string &connectionID,const std::string &parentIdentifier,xdata::UnsignedInteger64 &key,xdata::UnsignedShort &crateNumber)
-throw (emu::fed::exception::DBException) {
+throw (emu::exception::DBException) {
 	// Set up parameters
 	std::map<std::string, std::string> parameters;
 	parameters["KEY"] = key.toString();
@@ -239,11 +239,11 @@ throw (emu::fed::exception::DBException) {
 	try {
 		query(connectionID,"get_ddus_by_key_crate", parameters,result);
 		//setCachedTable("ddu",parentIdentifier,result);
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Error posting query", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Error posting query", e);
 	}
 	if (!result.getRowCount()) {
-		XCEPT_RAISE(emu::fed::exception::DBException, "No matching rows found");
+		XCEPT_RAISE(emu::exception::DBException, "No matching rows found");
 	}
 	int rowIndex=0;
 	for (xdata::Table::iterator iRow = result.begin(); iRow != result.end(); ++iRow,++rowIndex) {			
@@ -256,7 +256,7 @@ throw (emu::fed::exception::DBException) {
 			setCachedTable("ddu",parentIdentifier+" RUI "+rui->toString(),justThisRow);
 			readFibers(connectionID,parentIdentifier+" RUI "+rui->toString(),key,*rui);
 		} else {
-			XCEPT_RAISE(emu::fed::exception::DBException,"rui is of type "+rui->type()+", expected unsigned short");
+			XCEPT_RAISE(emu::exception::DBException,"rui is of type "+rui->type()+", expected unsigned short");
 		}
 	}
 }
@@ -300,19 +300,19 @@ throw (xcept::Exception) {
 	try {
 		query(connectionID,"get_dccs_by_key_crate", parameters,result);
 		setCachedTable("dcc",parentIdentifier,result);
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Error posting query", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Error posting query", e);
 	}
 	
 	// Did we match anything
 	switch (result.getRowCount()) {
 		case 0: 
-			XCEPT_RAISE(emu::fed::exception::DBException, "No matching rows found");
+			XCEPT_RAISE(emu::exception::DBException, "No matching rows found");
 			break;
 		case 1:
 			break;
 		default:
-			XCEPT_RAISE(emu::fed::exception::DBException, "More than one matching row found");
+			XCEPT_RAISE(emu::exception::DBException, "More than one matching row found");
 			break;
 	}
 	
@@ -322,17 +322,17 @@ throw (xcept::Exception) {
 			if (fmm_id) {
 				readFIFOs(connectionID,parentIdentifier,key,*fmm_id);
 			} else {
-				XCEPT_RAISE(emu::fed::exception::DBException,"fmm_id is of type "+fmm_id->type()+", expected unsigned int");
+				XCEPT_RAISE(emu::exception::DBException,"fmm_id is of type "+fmm_id->type()+", expected unsigned int");
 			}
 		}
-	} catch (emu::fed::exception::DBException &e) {
+	} catch (emu::exception::DBException &e) {
 		XCEPT_RETHROW(xcept::Exception, "Error finding columns", e);
 	}
 }
 
 
 void FEDConfigurationEditor::readController(const std::string &connectionID,const std::string &parentIdentifier,xdata::UnsignedInteger64 &key,xdata::UnsignedShort &number)
-throw (emu::fed::exception::DBException) {
+throw (emu::exception::DBException) {
 	// Set up parameters
 	std::map<std::string, std::string> parameters;
 	parameters["CRATE_NUMBER"] = number.toString();
@@ -343,19 +343,19 @@ throw (emu::fed::exception::DBException) {
 	try {
 		query(connectionID,"get_controller_by_key_crate", parameters,result);
 		setCachedTable("controller",parentIdentifier,result);
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Error posting query", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Error posting query", e);
 	}
 	
 	// Did we match anything
 	switch (result.getRowCount()) {
 	case 0: 
-		XCEPT_RAISE(emu::fed::exception::DBException, "No matching rows found");
+		XCEPT_RAISE(emu::exception::DBException, "No matching rows found");
 		break;
 	case 1:
 		break;
 	default:
-		XCEPT_RAISE(emu::fed::exception::DBException, "More than one matching row found");
+		XCEPT_RAISE(emu::exception::DBException, "More than one matching row found");
 		break;
 	}
 }

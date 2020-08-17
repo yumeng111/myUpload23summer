@@ -20,7 +20,7 @@ DBAgent(application, instance)
 
 
 std::vector<emu::fed::DDU *> emu::fed::DDUDBAgent::getDDUs(xdata::UnsignedInteger64 &key,xdata::UnsignedShort &crateNumber, const bool &fake)
-throw (emu::fed::exception::DBException)
+throw (emu::exception::DBException)
 {
 	// Set up parameters
 	std::map<std::string, std::string> parameters;
@@ -31,21 +31,21 @@ throw (emu::fed::exception::DBException)
 	xdata::Table result;
 	try {
 		result = query("get_ddus_by_key_crate", parameters);
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Error posting query", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Error posting query", e);
 	}
 	
 	try {
 		return buildDDUs(result, fake);
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Error finding columns", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Error finding columns", e);
 	}
 }
 
 
 
 std::vector<emu::fed::DDU *> emu::fed::DDUDBAgent::buildDDUs(xdata::Table &table, const bool &fake)
-throw (emu::fed::exception::DBException)
+throw (emu::exception::DBException)
 {
 	std::vector<DDU *> returnMe;
 	try {
@@ -82,18 +82,18 @@ throw (emu::fed::exception::DBException)
 			
 			returnMe.push_back(newDDU);
 		}
-	} catch (emu::fed::exception::CAENException &e) {
+	} catch (emu::exception::CAENException &e) {
 		std::ostringstream error;
 		error << "Error initializing DDU hardware: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::DBException, error.str(), e);
-	} catch (emu::fed::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, error.str(), e);
+	} catch (emu::exception::DBException &e) {
 		std::ostringstream error;
 		error << "Error reading DDU values from database: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::DBException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::DBException, error.str(), e);
 	} catch (xdata::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Error getting value from table: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::DBException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::DBException, error.str(), e);
 	}
 	
 	return returnMe;
@@ -102,7 +102,7 @@ throw (emu::fed::exception::DBException)
 
 
 void emu::fed::DDUDBAgent::upload(xdata::UnsignedInteger64 &key, xdata::UnsignedShort &crateNumber, const std::vector<emu::fed::DDU *> &dduVector)
-throw (emu::fed::exception::DBException)
+throw (emu::exception::DBException)
 {
 	try {
 		// Make a table
@@ -158,7 +158,7 @@ throw (emu::fed::exception::DBException)
 		// Insert
 		insert("ddu", table);
 		
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Unable to upload DDUs to database: " + std::string(e.what()), e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Unable to upload DDUs to database: " + std::string(e.what()), e);
 	}
 }

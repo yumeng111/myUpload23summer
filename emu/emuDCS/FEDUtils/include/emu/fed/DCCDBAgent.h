@@ -9,7 +9,7 @@
 #include <vector>
 #include <string>
 
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 #include "xdata/UnsignedShort.h"
 
 namespace emu {
@@ -28,17 +28,17 @@ namespace emu {
 			
 			/** Build a bunch of DCCs corresponding to a crate ID **/
 			std::vector<emu::fed::DCC *> getDCCs(xdata::UnsignedInteger64 &key, xdata::UnsignedShort &crateNumber, const bool &fake = false)
-			throw (emu::fed::exception::DBException);
+			throw (emu::exception::DBException);
 			
 			/** Upload a set of DCCs **/
 			void upload(xdata::UnsignedInteger64 &key, xdata::UnsignedShort &crateNumber, const std::vector<DCC *> &dccVector)
-			throw (emu::fed::exception::DBException);
+			throw (emu::exception::DBException);
 
 		private:
 		
 			/** Build the crates from the table returned **/
 			std::vector<emu::fed::DCC *> buildDCCs(xdata::Table &table, const bool &fake = false)
-			throw (emu::fed::exception::DBException);
+			throw (emu::exception::DBException);
 
 		};
 

@@ -71,11 +71,11 @@ emu::fed::Supervised(stub)
 	try {
 		softwareConfigure();
 		REVOKE_ALARM("MicroMonitorConfigure", NULL);
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Unable to properly configure the MicroMonitor.  Please destroy and re-initialize the application.";
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-		RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "MicroMonitorConfigure", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+		RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "MicroMonitorConfigure", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 	}
 	
 	// Set the last good reads to a bad read
@@ -122,7 +122,7 @@ void emu::fed::MicroMonitor::DCSOutput(xgi::Input *in, xgi::Output *out)
 			uint16_t reserved = 0;
 			try {
 				reserved = (*iDDU)->readFiberErrors();
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				// Not a bad read because this is not stored in the database
 				//goodRead = false;
 			}
@@ -133,7 +133,7 @@ void emu::fed::MicroMonitor::DCSOutput(xgi::Input *in, xgi::Output *out)
 				try {
 					voltages[iVolt] = (*iDDU)->readVoltage(iVolt);
 					lastGoodVoltages_[(*iDDU)->getRUI()][iVolt] = voltages[iVolt];
-				} catch (emu::fed::exception::Exception &e) {
+				} catch (emu::exception::Exception &e) {
 					goodRead = false;
 					voltages[iVolt] = lastGoodVoltages_[(*iDDU)->getRUI()][iVolt];
 				}
@@ -145,7 +145,7 @@ void emu::fed::MicroMonitor::DCSOutput(xgi::Input *in, xgi::Output *out)
 				try {
 					temperatures[iTemp] = (*iDDU)->readTemperature(iTemp);
 					lastGoodTemperatures_[(*iDDU)->getRUI()][iTemp] = temperatures[iTemp];
-				} catch (emu::fed::exception::Exception &e) {
+				} catch (emu::exception::Exception &e) {
 					goodRead = false;
 					temperatures[iTemp] = lastGoodTemperatures_[(*iDDU)->getRUI()][iTemp];
 				}
@@ -182,11 +182,11 @@ throw (toolbox::fsm::exception::Exception)
 	try {
 		softwareConfigure();
 		REVOKE_ALARM("MicroMonitorConfigure", NULL);
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Unable to properly configure the MicroMonitor.  Please destroy and re-initialize the application.";
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-		RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "MicroMonitorConfigure", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+		RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "MicroMonitorConfigure", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 		XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e);
 	}
 	

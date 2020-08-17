@@ -4,6 +4,7 @@
 #include "config/PackageInfo.h"
 
 namespace emusoap {
+	const std::string project     = "emu";
 	const std::string package     = "emusoap";
 	const std::string versions    = "14.08.00";
 	const std::string description = "SOAP messenger class for Emu (CSC) XDAQ applications";

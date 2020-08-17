@@ -139,7 +139,7 @@ namespace emu {
 			*
 			*	@note This method will not set bits if the crate/slot combination is not under the command of this instance of the Communicator application. **/
 			void writeTTSBits(const unsigned int crate, const unsigned int slot, const int bits)
-			throw (emu::fed::exception::TTSException);
+			throw (emu::exception::TTSException);
 
 			/** Reads back the RSS (FMM) bits from a given board.
 			*
@@ -148,7 +148,7 @@ namespace emu {
 			*
 			*	@note This method will not read bits if the crate/slot combination is not under the command of this instance of the Communicator application. **/
 			int readTTSBits(const unsigned int crate, const unsigned int slot)
-			throw (emu::fed::exception::TTSException);
+			throw (emu::exception::TTSException);
 			
 			/** Checks the FIFO and L1A status of the DCC
 			*

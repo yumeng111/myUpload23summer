@@ -97,7 +97,7 @@ void emu::fed::Configurable::webChangeConfigMode(xgi::Input *in, xgi::Output *ou
 		if (configMode_ != "XML" && configMode_ != "Database" && configMode_ != "Autodetect") {
 			std::ostringstream error;
 			error << "Configuration mode " << configMode_.toString() << " doesn't make sense, falling back to " << oldConfigMode.toString();
-			XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+			XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 			LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 			notifyQualified("ERROR", e2);
 			configMode_ = oldConfigMode;
@@ -134,7 +134,7 @@ void emu::fed::Configurable::webChangeXMLFile(xgi::Input *in, xgi::Output *out)
 		if (!boost::filesystem::exists(xmlFile_.toString())) {
 			std::ostringstream error;
 			error << "Configuration XML file " << xmlFile_.toString() << " doesn't exist, falling back to " << oldXMLFile.toString();
-			XCEPT_DECLARE(emu::fed::exception::FileException, e2, error.str());
+			XCEPT_DECLARE(emu::exception::FileException, e2, error.str());
 			LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 			notifyQualified("ERROR", e2);
 			xmlFile_ = oldXMLFile;
@@ -173,7 +173,7 @@ void emu::fed::Configurable::webChangeDBKey(xgi::Input *in, xgi::Output *out)
 		} catch (xdata::exception::Exception &e) {
 			std::ostringstream error;
 			error << "DB key " << cgi["dbKey"]->getValue() << " doesn't make sense, falling back to " << oldDBKey.toString();
-			XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+			XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 			LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 			notifyQualified("ERROR", e2);
 			dbKey_ = oldDBKey;
@@ -203,10 +203,10 @@ void emu::fed::Configurable::webReconfigure(xgi::Input *in, xgi::Output *out)
 	
 	try {
 		softwareConfigure();
-	} catch (emu::fed::exception::ConfigurationException &e) {
+	} catch (emu::exception::ConfigurationException &e) {
 		std::ostringstream error;
 		error << "Error attempting to reconfigure";
-		XCEPT_DECLARE_NESTED(emu::fed::exception::ConfigurationException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::ConfigurationException, e2, error.str(), e);
 		LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("ERROR", e2);
 		output.push_back(JSONSpirit::Pair("exception", error.str()));
@@ -219,7 +219,7 @@ void emu::fed::Configurable::webReconfigure(xgi::Input *in, xgi::Output *out)
 
 
 void emu::fed::Configurable::softwareConfigure()
-throw (emu::fed::exception::ConfigurationException)
+throw (emu::exception::ConfigurationException)
 {
 
 	for (size_t iCrate = 0; iCrate < crateVector_.size(); iCrate++) {
@@ -236,11 +236,11 @@ throw (emu::fed::exception::ConfigurationException)
 		try {
 			crateVector_ = configurator.setupCrates();
 			systemName_ = configurator.getSystemName();
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			std::ostringstream error;
 			error << "Unable to autodetect FED objects: " << e.what();
 			LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-			XCEPT_RETHROW(emu::fed::exception::ConfigurationException, error.str(), e);
+			XCEPT_RETHROW(emu::exception::ConfigurationException, error.str(), e);
 		}
 		
 	} else if (configMode_ == "XML") {
@@ -252,11 +252,11 @@ throw (emu::fed::exception::ConfigurationException)
 		try {
 			crateVector_ = configurator.setupCrates();
 			systemName_ = configurator.getSystemName();
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			std::ostringstream error;
 			error << "Unable to create FED objects by parsing file " << xmlFile_.toString() << ": " << e.what();
 			LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-			XCEPT_RETHROW(emu::fed::exception::ConfigurationException, error.str(), e);
+			XCEPT_RETHROW(emu::exception::ConfigurationException, error.str(), e);
 		}
 		
 	} else if (configMode_ == "Database") {
@@ -267,18 +267,18 @@ throw (emu::fed::exception::ConfigurationException)
 		try {
 			crateVector_ = configurator.setupCrates();
 			systemName_ = configurator.getSystemName();
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			std::ostringstream error;
 			error << "Unable to create FED objects using the online database: " << e.what();
 			LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-			XCEPT_RETHROW(emu::fed::exception::ConfigurationException, error.str(), e);
+			XCEPT_RETHROW(emu::exception::ConfigurationException, error.str(), e);
 		}
 		
 	} else {
 		std::ostringstream error;
 		error << "configMode_ \"" << configMode_.toString() << "\" not understood";
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+		XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 	}
 	
 }
@@ -361,7 +361,7 @@ std::string emu::fed::Configurable::printConfigureOptions()
 		out << cgicc::tr() << std::endl;
 		out << cgicc::table() << std::endl;
 		
-	} catch (emu::fed::exception::ConfigurationException &e) {
+	} catch (emu::exception::ConfigurationException &e) {
 		
 		out << cgicc::div("Unable to read keys from the database")
 			.set("class", "tier2") << std::endl;
@@ -438,7 +438,7 @@ std::string emu::fed::Configurable::printConfigureOptions()
 
 
 std::map<std::string, std::vector<xdata::UnsignedInteger64> > emu::fed::Configurable::getDBKeys()
-throw(emu::fed::exception::ConfigurationException)
+throw(emu::exception::ConfigurationException)
 {
 	std::map<std::string, std::vector<xdata::UnsignedInteger64> > dbKeys;
 	
@@ -453,10 +453,10 @@ throw(emu::fed::exception::ConfigurationException)
 		
 		keyMap = agent.getAllKeys();
 		
-	} catch (emu::fed::exception::DBException &e) {
+	} catch (emu::exception::DBException &e) {
 		std::ostringstream error;
 		error << "Exception attempting to read DB keys";
-		XCEPT_RETHROW(emu::fed::exception::ConfigurationException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ConfigurationException, error.str(), e);
 	}
 	
 	for (std::map<std::string, std::vector<std::pair<xdata::UnsignedInteger64, time_t> > >::iterator iPair = keyMap.begin(); iPair != keyMap.end(); ++iPair) {

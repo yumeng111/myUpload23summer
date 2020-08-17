@@ -5,7 +5,7 @@
 #define __EMU_FED_APPLICATION_H__
 
 #include "xdaq/WebApplication.h"
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 
 #include <string>
 #include <vector>
@@ -51,7 +51,7 @@ namespace emu {
 			*	@author Phillip Killewald &lt;paste@mps.ohio-state.edu&gt;
 			**/
 			xoap::MessageReference getParameters(const xdaq::ApplicationDescriptor *applicationDescriptor)
-			throw (emu::fed::exception::SOAPException);
+			throw (emu::exception::SOAPException);
 
 			/** Sends the GetParameters SOAP command to a target application.
 			*
@@ -64,7 +64,7 @@ namespace emu {
 			*	@author Phillip Killewald &lt;paste@mps.ohio-state.edu&gt;
 			**/
 			xoap::MessageReference getParameters(const std::string &applicationName, const unsigned int &instance)
-			throw (emu::fed::exception::SOAPException);
+			throw (emu::exception::SOAPException);
 
 			/** Sets a parameter in a remote application.  I don't know where the
 			*	binding to this command is set, but it seems to affect all
@@ -88,7 +88,7 @@ namespace emu {
 			*	@author Phillip Killewald (stolen from Laria's CSCSupervisor.cc)
 			**/
 			void setParameter(const std::string &applicationName, const std::string &name, const std::string &type, const std::string &value, const int &instance = -1)
-			throw (emu::fed::exception::SOAPException);
+			throw (emu::exception::SOAPException);
 
 			/** Reads a reply from onGetParameters and returns a named parameter from
 			*	a target ApplicationInfoSpace.
@@ -105,7 +105,7 @@ namespace emu {
 			**/
 			template<typename T>
 			T readParameter(xoap::MessageReference &message, const std::string &parameterName)
-			throw (emu::fed::exception::SOAPException)
+			throw (emu::exception::SOAPException)
 			{
 				T thingToGet;
 				xdata::soap::Serializer serializer;
@@ -119,7 +119,7 @@ namespace emu {
 				} catch (xoap::exception::Exception &e) {
 					std::ostringstream error;
 					error << "Unable to parse SOAP message: " << messageStr;
-					XCEPT_RETHROW(emu::fed::exception::SOAPException, error.str(), e);
+					XCEPT_RETHROW(emu::exception::SOAPException, error.str(), e);
 				}
 
 				xoap::SOAPName name(parameterName, "xdaq", XDAQ_NS_URI);
@@ -146,7 +146,7 @@ namespace emu {
 				if (!found) {
 					std::ostringstream error;
 					error << "Unable to find parameter " << parameterName;
-					XCEPT_RAISE(emu::fed::exception::SOAPException, error.str());
+					XCEPT_RAISE(emu::exception::SOAPException, error.str());
 				}
 				return thingToGet;
 			}
@@ -161,7 +161,7 @@ namespace emu {
 			**/
 			template<typename T, typename V>
 			const xdaq::ApplicationDescriptor *findMatchingApplication(const std::string &myClass, const std::string &parameter, const V &value)
-			throw (emu::fed::exception::SoftwareException)
+			throw (emu::exception::SoftwareException)
 			{
 				
 				std::set<const xdaq::ApplicationDescriptor *> descriptors = getApplicationContext()->getDefaultZone()->getApplicationGroup("default")->getApplicationDescriptors(myClass);
@@ -171,10 +171,10 @@ namespace emu {
 					xoap::MessageReference reply;
 					try {
 						reply = getParameters((*jDescriptor));
-					} catch (emu::fed::exception::SOAPException &e) {
+					} catch (emu::exception::SOAPException &e) {
 						std::ostringstream error;
 						error << "Unable to get parameters from application '" << (*jDescriptor)->getClassName() << "' instance " << (*jDescriptor)->getInstance();
-						XCEPT_DECLARE_NESTED(emu::fed::exception::SOAPException, e2, error.str(), e);
+						XCEPT_DECLARE_NESTED(emu::exception::SOAPException, e2, error.str(), e);
 						LOG4CPLUS_WARN(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 						notifyQualified("WARN", e2);
 						continue;
@@ -185,10 +185,10 @@ namespace emu {
 						if (myValue == value) {
 							return (*jDescriptor);
 						}
-					} catch (emu::fed::exception::SOAPException &e) {
+					} catch (emu::exception::SOAPException &e) {
 						std::ostringstream error;
 						error << "Unable to read parameter '" << parameter << "' from application '" << (*jDescriptor)->getClassName() << "' instance " << (*jDescriptor)->getInstance();
-						XCEPT_DECLARE_NESTED(emu::fed::exception::SOAPException, e2, error.str(), e);
+						XCEPT_DECLARE_NESTED(emu::exception::SOAPException, e2, error.str(), e);
 						LOG4CPLUS_WARN(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 						notifyQualified("WARN", e2);
 						continue;
@@ -198,7 +198,7 @@ namespace emu {
 				std::ostringstream error;
 				error << "Unable to find an application of class '" << myClass << "' with a parameter '" << parameter << "' matching '" << value << "'";
 				//LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-				XCEPT_RAISE(emu::fed::exception::SoftwareException, error.str());
+				XCEPT_RAISE(emu::exception::SoftwareException, error.str());
 			}
 
 			/** Returns a standard Header for the EmuFCrate pages.  Displays a title,
@@ -275,18 +275,8 @@ namespace emu {
 			*	@param instance is the instance of the given class to which the command should be sent.  A -1 value means send to all instances of the given class.
 			**/
 			void sendSOAPCommand(const std::string &command, const std::string &klass, const int instance = -1)
-			throw (emu::fed::exception::SOAPException);
+			throw (emu::exception::SOAPException);
 			
-			/** Print all the exceptions in the history of a given exception.
-			*
-			* @param myException the exception you want to display
-			* @returns a string with an HTML representation of the history of the exception
-			*
-			* @author Phillip Killewald
-			**/
-			std::string printException(xcept::Exception &myException);
-			
-
 		protected:
 			
 			/// Let the SOAP DOMParser be a member to avoid thrashing

@@ -415,7 +415,7 @@ throw (toolbox::fsm::exception::Exception)
 	if ( fsm_.getCurrentState() != 'H' ) {
 		std::ostringstream error;
 		error << state_.toString() << "->Configured via action 'Configure' is not valid:  transitioning through 'Halted' first";
-		XCEPT_DECLARE(emu::fed::exception::FSMException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::FSMException, e2, error.str());
 		LOG4CPLUS_WARN(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("WARN", e2);
 
@@ -424,22 +424,22 @@ throw (toolbox::fsm::exception::Exception)
 
 	try{
 	        setParameter("emu::fed::Communicator","runType","xsd:string",runType_.toString());
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "In configuring, Manager failed to set run type for Communicators";
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::FSMException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::FSMException, e2, error.str(), e);
 		notifyQualified("FATAL", e2);
 		XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e2);
 	}
 
 	try{
 		sendSOAPCommand("Configure","emu::fed::Communicator");
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception in configuring Manager";
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::FSMException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::FSMException, e2, error.str(), e);
 		notifyQualified("FATAL", e2);
 		XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e2);
 	}
@@ -449,7 +449,7 @@ throw (toolbox::fsm::exception::Exception)
 		std::ostringstream error;
 		error << "Failure in achieving consistant underlying FSM states";
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-		XCEPT_DECLARE(emu::fed::exception::FSMException, e, error.str());
+		XCEPT_DECLARE(emu::exception::FSMException, e, error.str());
 		notifyQualified("FATAL", e);
 		XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e);
 	} 
@@ -465,7 +465,7 @@ throw (toolbox::fsm::exception::Exception)
 	if (state_.toString() != "Configured") {
 		std::ostringstream error;
 		error << state_.toString() << "->Enabled via action 'Enable' is not valid:  transitioning through 'Halted' and 'Configured' first";
-		XCEPT_DECLARE(emu::fed::exception::FSMException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::FSMException, e2, error.str());
 		LOG4CPLUS_WARN(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("WARN", e2);
 
@@ -478,21 +478,21 @@ throw (toolbox::fsm::exception::Exception)
 	// PGK Now send the run number to the Communicators.
 	try {
 		setParameter("emu::fed::Communicator", "runNumber", "xsd:unsignedInt", runNumber_.toString());
-	} catch (emu::fed::exception::SOAPException &e) {
+	} catch (emu::exception::SOAPException &e) {
 		std::ostringstream error;
 		error << "Unable to send runNumber to Communicators";
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("ERROR", e2);
 	}
 
 	try{
 		sendSOAPCommand("Enable","emu::fed::Communicator");
-	} catch (emu::fed::exception::SOAPException &e) {
+	} catch (emu::exception::SOAPException &e) {
 		std::ostringstream error;
 		error << "Exception in enabling Communicators";
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::FSMException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::FSMException, e2, error.str(), e);
 		notifyQualified("FATAL", e2);
 		XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e2);
 	}
@@ -502,7 +502,7 @@ throw (toolbox::fsm::exception::Exception)
 		std::ostringstream error;
 		error << "Failure in achieving consistant underlying FSM states";
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-		XCEPT_DECLARE(emu::fed::exception::FSMException, e, error.str());
+		XCEPT_DECLARE(emu::exception::FSMException, e, error.str());
 		notifyQualified("FATAL", e);
 		XCEPT_RAISE(toolbox::fsm::exception::Exception, error.str() );
 	}
@@ -518,7 +518,7 @@ throw (toolbox::fsm::exception::Exception)
 	if (state_.toString() != "Enabled") {
 		std::ostringstream error;
 		error << state_.toString() << "->Configured via action 'Disable' is not valid:  doing 'Halted'->'Configured' instead";
-		XCEPT_DECLARE(emu::fed::exception::FSMException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::FSMException, e2, error.str());
 		LOG4CPLUS_WARN(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("WARN", e2);
 
@@ -529,11 +529,11 @@ throw (toolbox::fsm::exception::Exception)
 
 		try{
 			sendSOAPCommand("Disable","emu::fed::Communicator");
-		} catch (emu::fed::exception::SOAPException &e) {
+		} catch (emu::exception::SOAPException &e) {
 			std::ostringstream error;
 			error << "Exception in disabling Communicators";
 			LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-			XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+			XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 			notifyQualified("FATAL", e2);
 			XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e2);
 		}
@@ -544,7 +544,7 @@ throw (toolbox::fsm::exception::Exception)
 		std::ostringstream error;
 		error << "Failure in achieving consistant underlying FSM states";
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-		XCEPT_DECLARE(emu::fed::exception::FSMException, e, error.str());
+		XCEPT_DECLARE(emu::exception::FSMException, e, error.str());
 		notifyQualified("FATAL", e);
 		XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e);
 	}
@@ -559,11 +559,11 @@ throw (toolbox::fsm::exception::Exception)
 
 	try{
 		sendSOAPCommand("Halt","emu::fed::Communicator");
-	} catch (emu::fed::exception::SOAPException &e) {
+	} catch (emu::exception::SOAPException &e) {
 		std::ostringstream error;
 		error << "Exception in halting Communicators";
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SoftwareException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SoftwareException, e2, error.str(), e);
 		notifyQualified("FATAL", e2);
 		XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e2);
 	}
@@ -573,7 +573,7 @@ throw (toolbox::fsm::exception::Exception)
 		std::ostringstream error;
 		error << "Failure in achieving consistant underlying FSM states";
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
-		XCEPT_DECLARE(emu::fed::exception::FSMException, e, error.str());
+		XCEPT_DECLARE(emu::exception::FSMException, e, error.str());
 		notifyQualified("FATAL", e);
 		XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e);
 	}
@@ -597,7 +597,7 @@ std::string emu::fed::Manager::getManagerState(const std::string &targetState, c
 				if (state == "Failed" || state == "Unknown") {
 					std::ostringstream error;
 					error << "One or more Communicator application is in a Failed or Unknown state";
-					XCEPT_DECLARE(emu::fed::exception::SoftwareException, e2, error.str());
+					XCEPT_DECLARE(emu::exception::SoftwareException, e2, error.str());
 					LOG4CPLUS_FATAL(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 					notifyQualified("FATAL", e2);
 					return "Failed";
@@ -613,7 +613,7 @@ std::string emu::fed::Manager::getManagerState(const std::string &targetState, c
 	if (stateMap.size() > 1) {
 		std::ostringstream error;
 		error << "Inconsistant state across Communicator applications";
-		XCEPT_DECLARE(emu::fed::exception::SoftwareException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::SoftwareException, e2, error.str());
 		LOG4CPLUS_WARN(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("WARN", e2);
 		return "Unknown";
@@ -622,7 +622,7 @@ std::string emu::fed::Manager::getManagerState(const std::string &targetState, c
 	if (stateMap.size() == 0 || stateMap.begin()->first != targetState) {
 		std::ostringstream error;
 		error << "Communicator applications are not in the target state of " << targetState;
-		XCEPT_DECLARE(emu::fed::exception::SoftwareException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::SoftwareException, e2, error.str());
 		LOG4CPLUS_FATAL(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("FATAL", e2);
 		return "Failed";
@@ -656,11 +656,11 @@ JSONSpirit::Array emu::fed::Manager::getUnderlyingStatus()
 		try {
 			reply = getParameters((*iDescriptor));
 			REVOKE_ALARM("ManagerGetStatus", NULL);
-		} catch (emu::fed::exception::SOAPException &e) {
+		} catch (emu::exception::SOAPException &e) {
 			std::ostringstream error;
 			error << "Unable to get parameters from application '" << (*iDescriptor)->getClassName() << "' instance " << (*iDescriptor)->getInstance();
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			RAISE_ALARM_NESTED(emu::fed::exception::SOAPException, "ManagerGetStatus", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::SOAPException, "ManagerGetStatus", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 			continue;
 		}
 
@@ -684,7 +684,7 @@ JSONSpirit::Array emu::fed::Manager::getUnderlyingStatus()
 			std::ostringstream monitorStream;
 			monitorStream << monitorApp->getContextDescriptor()->getURL() << "/" << monitorApp->getURN();
 			monitorURL = monitorStream.str();
-		} catch (emu::fed::exception::SoftwareException &e) {
+		} catch (emu::exception::SoftwareException &e) {
 			// do nothing
 		}
 		applicationObject.push_back(JSONSpirit::Pair("monitorURL", monitorURL));
@@ -696,7 +696,7 @@ JSONSpirit::Array emu::fed::Manager::getUnderlyingStatus()
 			std::ostringstream commanderStream;
 			commanderStream << commanderApp->getContextDescriptor()->getURL() << "/" << commanderApp->getURN();
 			commanderURL = commanderStream.str();
-		} catch (emu::fed::exception::SoftwareException &e) {
+		} catch (emu::exception::SoftwareException &e) {
 			// do nothing
 		}
 		applicationObject.push_back(JSONSpirit::Pair("commanderURL", commanderURL));
@@ -747,7 +747,7 @@ xoap::MessageReference emu::fed::Manager::onSetTTSBits(xoap::MessageReference me
 	} else {
 		std::ostringstream error;
 		error << "ttsID_=" << ttsID_.toString() << " is out-of-bounds for the CSC FEDs";
-		XCEPT_DECLARE(emu::fed::exception::OutOfBoundsException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::OutOfBoundsException, e2, error.str());
 		LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("WARN", e2);
 		return createReply(message);
@@ -763,10 +763,10 @@ xoap::MessageReference emu::fed::Manager::onSetTTSBits(xoap::MessageReference me
 		// The Communicator applications will decide if they should do anything based on the crates they conmmand.
 		sendSOAPCommand("SetTTSBits", "emu::fed::Communicator");
 
-	} catch (emu::fed::exception::SoftwareException &e) {
+	} catch (emu::exception::SoftwareException &e) {
 		std::ostringstream error;
 		error << "Exception caught in completing setTTSBits";
-		XCEPT_DECLARE_NESTED(emu::fed::exception::OutOfBoundsException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::OutOfBoundsException, e2, error.str(), e);
 		LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("ERROR", e2);
 	}

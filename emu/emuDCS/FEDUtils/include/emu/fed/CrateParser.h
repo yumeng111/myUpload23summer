@@ -19,11 +19,11 @@ namespace emu {
 
 			/** @returns a vector of the crates parsed from the XML file. **/
 			Crate *parse(xercesc::DOMElement *pNode)
-			throw (emu::fed::exception::ParseException);
+			throw (emu::exception::ParseException);
 			
 			/** @returns a DOMElement from a given crate object **/
 			xercesc::DOMElement *makeDOMElement(xercesc::DOMDocument *document, Crate *crate)
-			throw (emu::fed::exception::ParseException);
+			throw (emu::exception::ParseException);
 
 		}
 

@@ -49,14 +49,14 @@ namespace emu {
 			
 			/** Configures the software only. **/
 			void softwareConfigure()
-			throw (emu::fed::exception::ConfigurationException);
+			throw (emu::exception::ConfigurationException);
 			
 			/** Print the software configure options. **/
 			std::string printConfigureOptions();
 			
 			/** Grabs the available DB keys from TStore **/
 			std::map<std::string, std::vector<xdata::UnsignedInteger64> > getDBKeys()
-			throw (emu::fed::exception::ConfigurationException);
+			throw (emu::exception::ConfigurationException);
 			
 			/** Grabs the available XML file names from the configuration directory **/
 			std::vector<std::string> getXMLFileNames(const boost::filesystem::path &configDir);

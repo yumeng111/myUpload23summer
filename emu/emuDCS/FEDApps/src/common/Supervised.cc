@@ -36,7 +36,7 @@ void emu::fed::Supervised::fireEvent(std::string name)
 		if (ignoreSOAP_) {
 			std::ostringstream error;
 			error << "Ignoring SOAP event named " << name << " to application " << getApplicationDescriptor()->getClassName() << " instance " << getApplicationDescriptor()->getInstance();
-			XCEPT_DECLARE(emu::fed::exception::FSMException, e2, error.str());
+			XCEPT_DECLARE(emu::exception::FSMException, e2, error.str());
 			LOG4CPLUS_WARN(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 			notifyQualified("WARN", e2);
 			return;
@@ -51,7 +51,7 @@ void emu::fed::Supervised::fireEvent(std::string name)
 	} catch (toolbox::fsm::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception caught firing event named " << name << " to application " << getApplicationDescriptor()->getClassName() << " instance " << getApplicationDescriptor()->getInstance();
-		XCEPT_DECLARE_NESTED(emu::fed::exception::FSMException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::FSMException, e2, error.str(), e);
 		LOG4CPLUS_FATAL(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("FATAL", e2);
 		throw e;
@@ -70,10 +70,10 @@ void emu::fed::Supervised::webFire(xgi::Input *in, xgi::Output *out)
 		LOG4CPLUS_DEBUG(getApplicationLogger(), "FSM state change from web requested: " << action);
 		try {
 			fireEvent(action);
-		} catch (emu::fed::exception::FSMException &e) {
+		} catch (emu::exception::FSMException &e) {
 			std::ostringstream error;
 			error << "Error in FSM state change from web with action " << action;
-			XCEPT_DECLARE_NESTED(emu::fed::exception::FSMException, e2, error.str(), e);
+			XCEPT_DECLARE_NESTED(emu::exception::FSMException, e2, error.str(), e);
 			LOG4CPLUS_FATAL(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 			notifyQualified("FATAL", e2);
 		}

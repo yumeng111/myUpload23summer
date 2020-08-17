@@ -29,7 +29,7 @@ fake_(fake)
 
 
 void emu::fed::VMEModule::writeCycle(const uint32_t myAddress, const unsigned int nBits, const std::vector<uint16_t> &data, const bool debug)
-throw (emu::fed::exception::CAENException)
+throw (emu::exception::CAENException)
 {
 	// What I really need is the number of words and remainder bits.
 	// These are incomplete words, a sort of ceiling function for unsigned ints
@@ -40,10 +40,10 @@ throw (emu::fed::exception::CAENException)
 	// Now, I start the sending process...
 	try {
 		mutex_->lock();
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception locking mutex: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 	}
 	try {
 		for (unsigned int iWord = 0; iWord < nWords; iWord++) {
@@ -53,22 +53,22 @@ throw (emu::fed::exception::CAENException)
 
 			writeVME(myAddress, data[iWord] & bitMask, debug);
 		}
-	} catch (emu::fed::exception::CAENException &e) {
+	} catch (emu::exception::CAENException &e) {
 		try {
 			mutex_->unlock();
-		} catch (emu::fed::exception::Exception &e2) {
+		} catch (emu::exception::Exception &e2) {
 			std::ostringstream error;
 			error << "Exception unlocking mutex: " << e2.what();
-			XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e2);
+			XCEPT_RETHROW(emu::exception::CAENException, error.str(), e2);
 		}
 		throw e;
 	}
 	try {
 		mutex_->unlock();
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception unlocking mutex: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 	}
 
 	return;
@@ -77,7 +77,7 @@ throw (emu::fed::exception::CAENException)
 
 
 std::vector<uint16_t> emu::fed::VMEModule::readCycle(const uint32_t myAddress, const unsigned int nBits, const bool debug)
-throw (emu::fed::exception::CAENException)
+throw (emu::exception::CAENException)
 {
 	// What I really need is the number of words and remainder bits.
 	// These are incomplete words, a sort of ceiling function for unsigned ints
@@ -91,10 +91,10 @@ throw (emu::fed::exception::CAENException)
 	// Now, I start the reading process...
 	try {
 		mutex_->lock();
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception locking mutex: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 	}
 	try {
 		for (unsigned int iWord = 0; iWord < nWords; iWord++) {
@@ -103,22 +103,22 @@ throw (emu::fed::exception::CAENException)
 			if (iWord == nWords - 1 && remainderBits) bitMask = (1 << remainderBits) - 1;
 			result.push_back(readVME(myAddress, debug) & bitMask);
 		}
-	} catch (emu::fed::exception::CAENException &e) {
+	} catch (emu::exception::CAENException &e) {
 		try {
 			mutex_->unlock();
-		} catch (emu::fed::exception::Exception &e2) {
+		} catch (emu::exception::Exception &e2) {
 			std::ostringstream error;
 			error << "Exception unlocking mutex: " << e2.what();
-			XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e2);
+			XCEPT_RETHROW(emu::exception::CAENException, error.str(), e2);
 		}
 		throw e;
 	}
 	try {
 		mutex_->unlock();
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception unlocking mutex: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 	}
 	return result;
 }
@@ -126,7 +126,7 @@ throw (emu::fed::exception::CAENException)
 
 
 void emu::fed::VMEModule::commandCycle(const enum DEVTYPE dev, const uint16_t myCommand, const bool debug)
-throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException)
+throw (emu::exception::CAENException, emu::exception::DevTypeException)
 {
 
 	// Address encoded in the JTAG channel, and is the same for all elements of the chain.
@@ -134,7 +134,7 @@ throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException
 	if (JTAGMap.find(dev) == JTAGMap.end()) {
 		std::ostringstream error;
 		error << "JTAGChain not defined for dev=" << dev;
-		XCEPT_RAISE(emu::fed::exception::DevTypeException, error.str());
+		XCEPT_RAISE(emu::exception::DevTypeException, error.str());
 	}
 
 	JTAGChain chain = JTAGMap[dev];
@@ -142,10 +142,10 @@ throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException
 
 	try {
 		mutex_->lock();
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception locking mutex: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 	}
 
 	try {
@@ -243,30 +243,30 @@ throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException
 
 		}
 
-	} catch (emu::fed::exception::CAENException &e) {
+	} catch (emu::exception::CAENException &e) {
 		try {
 			mutex_->unlock();
-		} catch (emu::fed::exception::Exception &e2) {
+		} catch (emu::exception::Exception &e2) {
 			std::ostringstream error;
 			error << "Exception unlocking mutex: " << e2.what();
-			XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e2);
+			XCEPT_RETHROW(emu::exception::CAENException, error.str(), e2);
 		}
 		throw e;
 	}
 
 	try {
 		mutex_->unlock();
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception unlocking mutex: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 	}
 }
 
 
 
 std::vector<uint16_t> emu::fed::VMEModule::jtagWrite(const enum DEVTYPE dev, const unsigned int nBits, const std::vector<uint16_t> &data, const bool noRead, const bool debug)
-throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException)
+throw (emu::exception::CAENException, emu::exception::DevTypeException)
 {
 	std::vector<uint16_t> myData = data;
 
@@ -274,7 +274,7 @@ throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException
 	if (JTAGMap.find(dev) == JTAGMap.end()) {
 		std::ostringstream error;
 		error << "JTAGChain not defined for dev=" << dev;
-		XCEPT_DECLARE(emu::fed::exception::DevTypeException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::DevTypeException, e2, error.str());
 		throw e2;
 	}
 
@@ -302,10 +302,10 @@ throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException
 
 	try {
 		mutex_->lock();
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception locking mutex: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 	}
 
 	try {
@@ -420,23 +420,23 @@ throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException
 
 		}
 
-	} catch (emu::fed::exception::CAENException &e) {
+	} catch (emu::exception::CAENException &e) {
 		try {
 			mutex_->unlock();
-		} catch (emu::fed::exception::Exception &e2) {
+		} catch (emu::exception::Exception &e2) {
 			std::ostringstream error;
 			error << "Exception unlocking mutex: " << e2.what();
-			XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e2);
+			XCEPT_RETHROW(emu::exception::CAENException, error.str(), e2);
 		}
 		throw e;
 	}
 
 	try {
 		mutex_->unlock();
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception unlocking mutex: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 	}
 
 	return result;
@@ -446,13 +446,13 @@ throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException
 
 
 std::vector<uint16_t> emu::fed::VMEModule::jtagRead(const enum DEVTYPE dev, const unsigned int nBits, const bool debug)
-throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException)
+throw (emu::exception::CAENException, emu::exception::DevTypeException)
 {
 	// Get the chain.  Very important to know.
 	if (JTAGMap.find(dev) == JTAGMap.end()) {
 		std::ostringstream error;
 		error << "JTAGChain not defined for dev=" << dev;
-		XCEPT_DECLARE(emu::fed::exception::DevTypeException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::DevTypeException, e2, error.str());
 		throw e2;
 	}
 
@@ -485,10 +485,10 @@ throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException
 	// Now, I start the sending process...
 	try {
 		mutex_->lock();
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception locking mutex: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 	}
 	try {
 		for (unsigned int iWord = 0; iWord < nWords; iWord++) {
@@ -543,22 +543,22 @@ throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException
 
 			result.push_back(tempResult);
 		}
-	} catch (emu::fed::exception::CAENException &e) {
+	} catch (emu::exception::CAENException &e) {
 		try {
 			mutex_->unlock();
-		} catch (emu::fed::exception::Exception &e2) {
+		} catch (emu::exception::Exception &e2) {
 			std::ostringstream error;
 			error << "Exception unlocking mutex: " << e2.what();
-			XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e2);
+			XCEPT_RETHROW(emu::exception::CAENException, error.str(), e2);
 		}
 		throw e;
 	}
 	try {
 		mutex_->unlock();
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception unlocking mutex: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 	}
 
 	return result;
@@ -568,7 +568,7 @@ throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException
 
 
 uint16_t emu::fed::VMEModule::readVME(const uint32_t Address, const bool debug)
-throw (emu::fed::exception::CAENException)
+throw (emu::exception::CAENException)
 {
 	if (fake_) {
 		srand(time(NULL));
@@ -596,7 +596,7 @@ throw (emu::fed::exception::CAENException)
 	if (err != cvSuccess) {
 		std::ostringstream error;
 		error << "Exception in readVME(Address=" << myAddress << "): " << CAENVME_DecodeError(err);
-		XCEPT_DECLARE(emu::fed::exception::CAENException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::CAENException, e2, error.str());
 		throw e2;
 	}
 
@@ -606,7 +606,7 @@ throw (emu::fed::exception::CAENException)
 
 
 void emu::fed::VMEModule::writeVME(const uint32_t Address, const uint16_t data, const bool debug)
-throw (emu::fed::exception::CAENException)
+throw (emu::exception::CAENException)
 {
 	if (fake_) return;
 
@@ -629,7 +629,7 @@ throw (emu::fed::exception::CAENException)
 	if (err != cvSuccess) {
 		std::ostringstream error;
 		error << "Exception in writeVME(Address=" << myAddress << ", data=" << data << "): " << CAENVME_DecodeError(err);
-		XCEPT_DECLARE(emu::fed::exception::CAENException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::CAENException, e2, error.str());
 		throw e2;
 	}
 
@@ -639,7 +639,7 @@ throw (emu::fed::exception::CAENException)
 
 
 void emu::fed::VMEModule::loadPROM(const enum DEVTYPE dev, const char *fileName, const std::string &startString, const std::string &stopString, const bool debug)
-throw (emu::fed::exception::FileException, emu::fed::exception::CAENException, emu::fed::exception::DevTypeException)
+throw (emu::exception::FileException, emu::exception::CAENException, emu::exception::DevTypeException)
 {
 	// Open the filestream
 	std::ifstream inFile(fileName, std::ifstream::in);
@@ -648,7 +648,7 @@ throw (emu::fed::exception::FileException, emu::fed::exception::CAENException, e
 	if (!inFile.is_open()) {
 		std::stringstream error;
 		error << "Cannot open file " << fileName;
-		XCEPT_DECLARE(emu::fed::exception::FileException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::FileException, e2, error.str());
 		throw e2;
 	}
 
@@ -671,14 +671,14 @@ throw (emu::fed::exception::FileException, emu::fed::exception::CAENException, e
 
 
 void emu::fed::VMEModule::loadPROMFile(const enum DEVTYPE dev, const std::string &data, const std::string &startString, const std::string &stopString, const bool debug)
-throw (emu::fed::exception::FileException, emu::fed::exception::CAENException, emu::fed::exception::DevTypeException)
+throw (emu::exception::FileException, emu::exception::CAENException, emu::exception::DevTypeException)
 {
 
 	// The element in the chain that I am using
 	if (JTAGMap.find(dev) == JTAGMap.end()) {
 		std::ostringstream error;
 		error << "JTAGChain not defined for dev=" << dev;
-		XCEPT_DECLARE(emu::fed::exception::DevTypeException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::DevTypeException, e2, error.str());
 		throw e2;
 	}
 
@@ -705,10 +705,10 @@ throw (emu::fed::exception::FileException, emu::fed::exception::CAENException, e
 	try {
 		//std::cout << "lock 1" << std::endl;
 		mutex_->lock();
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception locking mutex: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 	}
 
 	try {
@@ -744,10 +744,10 @@ throw (emu::fed::exception::FileException, emu::fed::exception::CAENException, e
 					//std::cerr << "STOP!" << std::flush << std::endl;
 					try {
 						mutex_->unlock();
-					} catch (emu::fed::exception::Exception &e) {
+					} catch (emu::exception::Exception &e) {
 						std::ostringstream error;
 						error << "Exception unlocking mutex: " << e.what();
-						XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+						XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 					}
 					return;
 				}
@@ -770,10 +770,10 @@ throw (emu::fed::exception::FileException, emu::fed::exception::CAENException, e
 					//inFile.close();
 					try {
 						mutex_->unlock();
-					} catch (emu::fed::exception::Exception &e) {
+					} catch (emu::exception::Exception &e) {
 						std::ostringstream error;
 						error << "Exception unlocking mutex: " << e.what();
-						XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+						XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 					}
 					return;
 				}
@@ -869,7 +869,7 @@ throw (emu::fed::exception::FileException, emu::fed::exception::CAENException, e
 // 					if (nBits != element->cmdBits) {
 // 						std::stringstream error;
 // 						error << "SIR command " << value << " with nBits " << nBits << " does not match the number of bits in the command bus of dev " << element->name << " (" << element->cmdBits << ")";
-// 						XCEPT_RAISE(emu::fed::exception::FEDException, error.str());
+// 						XCEPT_RAISE(emu::exception::FEDException, error.str());
 // 					}
 
 					// The number of bits matches that of the command bus.
@@ -980,14 +980,14 @@ throw (emu::fed::exception::FileException, emu::fed::exception::CAENException, e
 			}
 		}
 
-	} catch (emu::fed::exception::CAENException &e) {
+	} catch (emu::exception::CAENException &e) {
 		//inFile.close();
 		try {
 			mutex_->unlock();
-		} catch (emu::fed::exception::Exception &e2) {
+		} catch (emu::exception::Exception &e2) {
 			std::ostringstream error;
 			error << "Exception unlocking mutex: " << e2.what();
-			XCEPT_DECLARE_NESTED(emu::fed::exception::CAENException, e3, error.str(), e);
+			XCEPT_DECLARE_NESTED(emu::exception::CAENException, e3, error.str(), e);
 			throw e3;
 		}
 		throw e;
@@ -997,10 +997,10 @@ throw (emu::fed::exception::FileException, emu::fed::exception::CAENException, e
 
 	try {
 		mutex_->unlock();
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Exception unlocking mutex: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::CAENException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::CAENException, error.str(), e);
 	}
 
 }

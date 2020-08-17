@@ -8,17 +8,17 @@
 #include "emu/fed/Crate.h"
 
 emu::fed::Crate *emu::fed::CrateParser::parse(xercesc::DOMElement *pNode)
-throw (emu::fed::exception::ParseException)
+throw (emu::exception::ParseException)
 {
 	Parser parser(pNode);
 
 	unsigned int number;
 	try {
 		number = parser.extract<unsigned int>("CRATE_NUMBER");
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse CRATE_NUMBER from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 
 	return new Crate(number);
@@ -27,7 +27,7 @@ throw (emu::fed::exception::ParseException)
 
 
 xercesc::DOMElement *emu::fed::CrateParser::makeDOMElement(xercesc::DOMDocument *document, emu::fed::Crate *crate)
-throw (emu::fed::exception::ParseException)
+throw (emu::exception::ParseException)
 {
 	try {
 		// Make a crate element
@@ -40,6 +40,6 @@ throw (emu::fed::exception::ParseException)
 	} catch (xercesc::DOMException &e) {
 		std::ostringstream error;
 		error << "Unable to create FEDCrate element: " << X(e.getMessage());
-		XCEPT_RAISE(emu::fed::exception::ParseException, error.str());
+		XCEPT_RAISE(emu::exception::ParseException, error.str());
 	}
 }

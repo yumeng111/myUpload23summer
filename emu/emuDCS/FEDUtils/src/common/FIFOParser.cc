@@ -9,35 +9,35 @@
 
 
 emu::fed::FIFO *emu::fed::FIFOParser::parse(xercesc::DOMElement *pNode)
-throw (emu::fed::exception::ParseException)
+throw (emu::exception::ParseException)
 {
 	Parser parser(pNode);
 	
 	unsigned int number = 0;
 	try {
 		number = parser.extract<unsigned int>("FIFO_NUMBER");
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse FIFO_NUMBER from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	bool used;
 	try {
 		used = parser.extract<bool>("USED");
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse USED from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	unsigned int rui = 0;
 	try {
 		rui = parser.extract<unsigned int>("RUI");
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse RUI from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	return new FIFO(number, rui, used);
@@ -47,7 +47,7 @@ throw (emu::fed::exception::ParseException)
 
 
 xercesc::DOMElement *emu::fed::FIFOParser::makeDOMElement(xercesc::DOMDocument *document, emu::fed::FIFO *fifo)
-throw (emu::fed::exception::ParseException)
+throw (emu::exception::ParseException)
 {
 	try {
 		// Make a crate element
@@ -63,6 +63,6 @@ throw (emu::fed::exception::ParseException)
 	} catch (xercesc::DOMException &e) {
 		std::ostringstream error;
 		error << "Unable to create FIFO element: " << X(e.getMessage());
-		XCEPT_RAISE(emu::fed::exception::ParseException, error.str());
+		XCEPT_RAISE(emu::exception::ParseException, error.str());
 	}
 }

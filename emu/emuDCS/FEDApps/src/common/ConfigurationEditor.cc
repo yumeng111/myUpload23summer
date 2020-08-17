@@ -258,7 +258,7 @@ void emu::fed::ConfigurationEditor::webGetDBKeys(xgi::Input *in, xgi::Output *ou
 
 		keyMap = agent.getAllKeys();
 
-	} catch (emu::fed::exception::DBException &e) {
+	} catch (emu::exception::DBException &e) {
 		// Signal the user that there has been an error
 		JSONSpirit::Object systemObject;
 		JSONSpirit::Array keyArray;
@@ -270,7 +270,7 @@ void emu::fed::ConfigurationEditor::webGetDBKeys(xgi::Input *in, xgi::Output *ou
 
 		std::ostringstream error;
 		error << "Error loading keys from database";
-		XCEPT_DECLARE_NESTED(emu::fed::exception::DBException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::DBException, e2, error.str(), e);
 		LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("ERROR", e2);
 	}
@@ -307,7 +307,7 @@ void emu::fed::ConfigurationEditor::webUploadFile(xgi::Input *in, xgi::Output *o
 		// ERROR!
 		std::ostringstream error;
 		error << "Error uploading file:  unable to find file in cgi data";
-		XCEPT_DECLARE(emu::fed::exception::DBException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::DBException, e2, error.str());
 		LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("ERROR", e2);
 
@@ -323,7 +323,7 @@ void emu::fed::ConfigurationEditor::webUploadFile(xgi::Input *in, xgi::Output *o
 			if (tempFile.is_open()) tempFile.close();
 			std::ostringstream error;
 			error << "Error opening local file " << ofile << " for writing";
-			XCEPT_DECLARE(emu::fed::exception::DBException, e2, error.str());
+			XCEPT_DECLARE(emu::exception::DBException, e2, error.str());
 			LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 			notifyQualified("ERROR", e2);
 			return;
@@ -338,10 +338,10 @@ void emu::fed::ConfigurationEditor::webUploadFile(xgi::Input *in, xgi::Output *o
 		systemName_ = configurator.getSystemName();
 		timeStamp_ = configurator.getTimeStamp();
 		dbKey_ = 0;
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Unable to create FED objects by parsing file " << ofile;
-		XCEPT_DECLARE_NESTED(emu::fed::exception::DBException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::DBException, e2, error.str(), e);
 		LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("ERROR", e2);
 		return;
@@ -373,7 +373,7 @@ void emu::fed::ConfigurationEditor::webLoadFromDB(xgi::Input *in, xgi::Output *o
 		crateVector_ = configurator.setupCrates(true);
 		systemName_ = configurator.getSystemName();
 		timeStamp_ = configurator.getTimeStamp();
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Unable to create FED objects by loading key " << dbKey_.toString() << ": " << e.what();
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
@@ -417,9 +417,9 @@ void emu::fed::ConfigurationEditor::webWriteXML(xgi::Input *in, xgi::Output *out
 
 		*out << output;
 
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 
-		*out << printException(e);
+		*out << e.toHTML();
 
 	}
 }
@@ -519,7 +519,7 @@ void emu::fed::ConfigurationEditor::webSystem(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				key = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse DB number.  " + std::string(e.what())));
 				output.push_back(JSONSpirit::Pair("value", dbKey_.toString()));
 				*out << JSONSpirit::write(output);
@@ -542,10 +542,10 @@ void emu::fed::ConfigurationEditor::webSystem(xgi::Input *in, xgi::Output *out)
 
 			keyMap = agent.getAllKeys();
 
-		} catch (emu::fed::exception::DBException &e) {
+		} catch (emu::exception::DBException &e) {
 			std::ostringstream error;
 			error << "Error loading keys from database";
-			XCEPT_DECLARE_NESTED(emu::fed::exception::DBException, e2, error.str(), e);
+			XCEPT_DECLARE_NESTED(emu::exception::DBException, e2, error.str(), e);
 			LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 			notifyQualified("ERROR", e2);
 			output.push_back(JSONSpirit::Pair("error", error.str()));
@@ -608,7 +608,7 @@ void emu::fed::ConfigurationEditor::webCrate(xgi::Input *in, xgi::Output *out)
 	if (cgi.getElement("crate") != cgi.getElements().end()) {
 		try {
 			crateNumber = getIntegerValue(cgi["crate"]->getValue());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			output.push_back(JSONSpirit::Pair("error", "Unable to parse crate number.  " + std::string(e.what())));
 			*out << JSONSpirit::write(output);
 			return;
@@ -730,7 +730,7 @@ void emu::fed::ConfigurationEditor::webCrate(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				newCrate = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse new crate number.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -777,7 +777,7 @@ void emu::fed::ConfigurationEditor::webCrate(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				newCrate = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse new crate number.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -907,7 +907,7 @@ void emu::fed::ConfigurationEditor::webController(xgi::Input *in, xgi::Output *o
 	if (cgi.getElement("crate") != cgi.getElements().end()) {
 		try {
 			crateNumber = getIntegerValue(cgi["crate"]->getValue());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			output.push_back(JSONSpirit::Pair("error", "Unable to parse crate number.  " + std::string(e.what())));
 			*out << JSONSpirit::write(output);
 			return;
@@ -967,7 +967,7 @@ void emu::fed::ConfigurationEditor::webController(xgi::Input *in, xgi::Output *o
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				value = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse device number.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -1006,7 +1006,7 @@ void emu::fed::ConfigurationEditor::webController(xgi::Input *in, xgi::Output *o
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				value = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse link number.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -1065,7 +1065,7 @@ void emu::fed::ConfigurationEditor::webDDU(xgi::Input *in, xgi::Output *out)
 	if (cgi.getElement("crate") != cgi.getElements().end()) {
 		try {
 			crateNumber = getIntegerValue(cgi["crate"]->getValue());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			output.push_back(JSONSpirit::Pair("error", "Unable to parse crate number.  " + std::string(e.what())));
 			*out << JSONSpirit::write(output);
 			return;
@@ -1097,7 +1097,7 @@ void emu::fed::ConfigurationEditor::webDDU(xgi::Input *in, xgi::Output *out)
 	if (cgi.getElement("rui") != cgi.getElements().end()) {
 		try {
 			rui = getIntegerValue(cgi["rui"]->getValue());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			output.push_back(JSONSpirit::Pair("error", "Unable to parse RUI.  " + std::string(e.what())));
 			*out << JSONSpirit::write(output);
 			return;
@@ -1186,7 +1186,7 @@ void emu::fed::ConfigurationEditor::webDDU(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("slot") != cgi.getElements().end()) {
 			try {
 				slot = getIntegerValue(cgi["slot"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse slot.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -1328,7 +1328,7 @@ void emu::fed::ConfigurationEditor::webDDU(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				value = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse RUI.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -1403,7 +1403,7 @@ void emu::fed::ConfigurationEditor::webDDU(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				value = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse RUI.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -1490,7 +1490,7 @@ void emu::fed::ConfigurationEditor::webDDU(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				value = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse FMMID.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -1532,7 +1532,7 @@ void emu::fed::ConfigurationEditor::webDDU(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				value = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse GbE prescale.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -1642,7 +1642,7 @@ void emu::fed::ConfigurationEditor::webFiber(xgi::Input *in, xgi::Output *out)
 	if (cgi.getElement("crate") != cgi.getElements().end()) {
 		try {
 			crateNumber = getIntegerValue(cgi["crate"]->getValue());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			output.push_back(JSONSpirit::Pair("error", "Unable to parse crate number.  " + std::string(e.what())));
 			*out << JSONSpirit::write(output);
 			return;
@@ -1674,7 +1674,7 @@ void emu::fed::ConfigurationEditor::webFiber(xgi::Input *in, xgi::Output *out)
 	if (cgi.getElement("rui") != cgi.getElements().end()) {
 		try {
 			rui = getIntegerValue(cgi["rui"]->getValue());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			output.push_back(JSONSpirit::Pair("error", "Unable to parse RUI.  " + std::string(e.what())));
 			*out << JSONSpirit::write(output);
 			return;
@@ -1707,7 +1707,7 @@ void emu::fed::ConfigurationEditor::webFiber(xgi::Input *in, xgi::Output *out)
 	if (cgi.getElement("fiber") != cgi.getElements().end()) {
 		try {
 			number = getIntegerValue(cgi["fiber"]->getValue());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			output.push_back(JSONSpirit::Pair("error", "Unable to parse fiber number.  " + std::string(e.what())));
 			*out << JSONSpirit::write(output);
 			return;
@@ -1861,7 +1861,7 @@ void emu::fed::ConfigurationEditor::webFiber(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				value = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse fiber number.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -2031,7 +2031,7 @@ void emu::fed::ConfigurationEditor::webDCC(xgi::Input *in, xgi::Output *out)
 	if (cgi.getElement("crate") != cgi.getElements().end()) {
 		try {
 			crateNumber = getIntegerValue(cgi["crate"]->getValue());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			output.push_back(JSONSpirit::Pair("error", "Unable to parse crate number.  " + std::string(e.what())));
 			*out << JSONSpirit::write(output);
 			return;
@@ -2063,7 +2063,7 @@ void emu::fed::ConfigurationEditor::webDCC(xgi::Input *in, xgi::Output *out)
 	if (cgi.getElement("fmmid") != cgi.getElements().end()) {
 		try {
 			fmmid = getIntegerValue(cgi["fmmid"]->getValue());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			output.push_back(JSONSpirit::Pair("error", "Unable to parse FMM ID.  " + std::string(e.what())));
 			*out << JSONSpirit::write(output);
 			return;
@@ -2153,7 +2153,7 @@ void emu::fed::ConfigurationEditor::webDCC(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("slot") != cgi.getElements().end()) {
 			try {
 				slot = getIntegerValue(cgi["slot"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse slot.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -2297,7 +2297,7 @@ void emu::fed::ConfigurationEditor::webDCC(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				value = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse FMM ID.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -2369,7 +2369,7 @@ void emu::fed::ConfigurationEditor::webDCC(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				value = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse slot.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -2457,7 +2457,7 @@ void emu::fed::ConfigurationEditor::webDCC(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				value = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse SLink ID.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -2598,7 +2598,7 @@ void emu::fed::ConfigurationEditor::webFIFO(xgi::Input *in, xgi::Output *out)
 	if (cgi.getElement("crate") != cgi.getElements().end()) {
 		try {
 			crateNumber = getIntegerValue(cgi["crate"]->getValue());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			output.push_back(JSONSpirit::Pair("error", "Unable to parse crate number.  " + std::string(e.what())));
 			*out << JSONSpirit::write(output);
 			return;
@@ -2630,7 +2630,7 @@ void emu::fed::ConfigurationEditor::webFIFO(xgi::Input *in, xgi::Output *out)
 	if (cgi.getElement("fmmid") != cgi.getElements().end()) {
 		try {
 			fmmid = getIntegerValue(cgi["fmmid"]->getValue());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			output.push_back(JSONSpirit::Pair("error", "Unable to parse FMM ID.  " + std::string(e.what())));
 			*out << JSONSpirit::write(output);
 			return;
@@ -2663,7 +2663,7 @@ void emu::fed::ConfigurationEditor::webFIFO(xgi::Input *in, xgi::Output *out)
 	if (cgi.getElement("fifo") != cgi.getElements().end()) {
 		try {
 			number = getIntegerValue(cgi["fifo"]->getValue());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			output.push_back(JSONSpirit::Pair("error", "Unable to parse FIFO number.  " + std::string(e.what())));
 			*out << JSONSpirit::write(output);
 			return;
@@ -2817,7 +2817,7 @@ void emu::fed::ConfigurationEditor::webFIFO(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				value = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse FIFO number.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -2893,7 +2893,7 @@ void emu::fed::ConfigurationEditor::webFIFO(xgi::Input *in, xgi::Output *out)
 		if (cgi.getElement("value") != cgi.getElements().end()) {
 			try {
 				value = getIntegerValue(cgi["value"]->getValue());
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				output.push_back(JSONSpirit::Pair("error", "Unable to parse RUI.  " + std::string(e.what())));
 				*out << JSONSpirit::write(output);
 				return;
@@ -3002,7 +3002,7 @@ void emu::fed::ConfigurationEditor::webUploadToDB(xgi::Input *in, xgi::Output *o
 		output.push_back(JSONSpirit::Pair("systemName", systemName_.toString()));
 		output.push_back(JSONSpirit::Pair("key", dbKey_.toString()));
 
-	} catch (emu::fed::exception::ConfigurationException &e) {
+	} catch (emu::exception::ConfigurationException &e) {
 
 		output.push_back(JSONSpirit::Pair("error", e.what()));
 
@@ -3014,7 +3014,7 @@ void emu::fed::ConfigurationEditor::webUploadToDB(xgi::Input *in, xgi::Output *o
 
 
 int emu::fed::ConfigurationEditor::getIntegerValue(const std::string &value)
-throw (emu::fed::exception::Exception)
+throw (emu::exception::Exception)
 {
 	int returnMe = 0;
 
@@ -3027,7 +3027,7 @@ throw (emu::fed::exception::Exception)
 		} catch (std::istringstream::failure &e) {
 			std::ostringstream error;
 			error << "Improper format for hex number " << value;
-			XCEPT_RAISE(emu::fed::exception::Exception, error.str());
+			XCEPT_RAISE(emu::exception::Exception, error.str());
 		}
 
 	} else {
@@ -3039,7 +3039,7 @@ throw (emu::fed::exception::Exception)
 		} catch (std::istringstream::failure &e) {
 			std::ostringstream error;
 			error << "Improper format for decimal number " << value;
-			XCEPT_RAISE(emu::fed::exception::Exception, error.str());
+			XCEPT_RAISE(emu::exception::Exception, error.str());
 		}
 	}
 

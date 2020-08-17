@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "emu/fed/Configurable.h"
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 #include "emu/fed/JSONSpiritValue.h"
 
 
@@ -73,7 +73,7 @@ namespace emu {
 			
 			/** Diggs out a crate from the input xgi stream. **/
 			Crate *parseCrate(xgi::Input *in)
-			throw (emu::fed::exception::ParseException);
+			throw (emu::exception::ParseException);
 			
 		};
 		

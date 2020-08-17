@@ -5,7 +5,7 @@
 #define __EMU_FED_COMMANDER_H__
 
 #include "emu/fed/Configurable.h"
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 #include "emu/base/FactFinder.h"
 
 namespace emu {

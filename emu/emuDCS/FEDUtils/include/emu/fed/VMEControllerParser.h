@@ -18,11 +18,11 @@ namespace emu {
 			
 			/** Parse and return a (real or fake) VMEController **/
 			VMEController *parse(xercesc::DOMElement *pNode, const bool &fake = false)
-			throw (emu::fed::exception::ParseException);
+			throw (emu::exception::ParseException);
 
 			/** @returns a DOMElement from a given VMEController object **/
 			xercesc::DOMElement *makeDOMElement(xercesc::DOMDocument *document, VMEController *controller)
-			throw (emu::fed::exception::ParseException);
+			throw (emu::exception::ParseException);
 			
 		}
 	}

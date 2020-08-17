@@ -4,6 +4,8 @@
 #ifndef __EMU_FED_EXCEPTION_H__
 #define __EMU_FED_EXCEPTION_H__
 
+#warning "Obsolete include file. Use emu/base/exception/Exception.h instead."
+
 #include "xcept/Exception.h"
 #include <string>
 #include <sstream>

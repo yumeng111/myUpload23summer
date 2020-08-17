@@ -8,6 +8,7 @@
 #include "config/PackageInfo.h"
 
 namespace EmuFEDApps {
+	const std::string project     = "emu";
 	const std::string package     = "EmuFEDApps";
 	const std::string versions    = "14.08.00";
 	const std::string description = "Emu (CSC) FED XDAQ Applications";

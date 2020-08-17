@@ -32,11 +32,11 @@ namespace emu {
 
 			/** Configure the crates and return them. **/
 			virtual std::vector<emu::fed::Crate *> setupCrates(const bool &fake = false)
-			throw (emu::fed::exception::ConfigurationException);
+			throw (emu::exception::ConfigurationException);
 			
 			/** Upload system configuration to database **/
 			void uploadToDB(const std::vector<emu::fed::Crate *> &crateVector, const std::string &systemName)
-			throw (emu::fed::exception::ConfigurationException);
+			throw (emu::exception::ConfigurationException);
 
 		protected:
 

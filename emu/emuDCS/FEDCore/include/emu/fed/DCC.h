@@ -7,7 +7,7 @@
 #include <string>
 
 #include "emu/fed/JTAG_constants.h"
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 
 #include "emu/fed/VMEModule.h"
 
@@ -58,25 +58,25 @@ namespace emu {
 
 			/** @return the S-Link parameter from configuration **/
 			const inline uint16_t getSLinkID(const unsigned short int iSlink) const
-			throw (emu::fed::exception::OutOfBoundsException)
+			throw (emu::exception::OutOfBoundsException)
 			{
 				if (iSlink == 1) return slink1_id_;
 				else if (iSlink == 2) return slink2_id_;
-				else XCEPT_RAISE(emu::fed::exception::OutOfBoundsException, "Parameter must be either 1 or 2");
+				else XCEPT_RAISE(emu::exception::OutOfBoundsException, "Parameter must be either 1 or 2");
 			}
 
 			/** Sets the S-Link ID parameter **/
 			inline void setSLinkID(const unsigned short int iSlink, const uint16_t slink_id)
-			throw (emu::fed::exception::OutOfBoundsException)
+			throw (emu::exception::OutOfBoundsException)
 			{
 				if (iSlink == 1) slink1_id_ = slink_id;
 				else if (iSlink == 2) slink2_id_ = slink_id;
-				else XCEPT_RAISE(emu::fed::exception::OutOfBoundsException, "Parameter must be either 1 or 2");
+				else XCEPT_RAISE(emu::exception::OutOfBoundsException, "Parameter must be either 1 or 2");
 			}
 
 			/** Configure the DCC by loading the FIFOInUse and SoftwareSwitch variables to the PROMs. **/
 			void configure()
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** Part of the suite of FIFO methods.
 			*	@returns a vector of FIFOs in FIFO-order.
@@ -88,20 +88,20 @@ namespace emu {
 			*	@returns the fifo at the given fifo input number.
 			**/
 			const FIFO *getFIFO(const unsigned int fifoNumber) const
-			throw (emu::fed::exception::OutOfBoundsException);
+			throw (emu::exception::OutOfBoundsException);
 
 			/** Adds a FIFO object to the DCC.
 			*	@param fifo is the FIFO being added.
 			*	@param fifoNumber is the FIFO number.
 			**/
 			void addFIFO(FIFO *fifo)
-			throw (emu::fed::exception::OutOfBoundsException);
+			throw (emu::exception::OutOfBoundsException);
 
 			/** Sets the vector of FIFO objects in the DCC to some vector.
 			*	@param fifoVector is a vector of FIFOs to copy to the internal vector.
 			**/
 			void setFIFOs(const std::vector<FIFO *> &fifoVector)
-			throw (emu::fed::exception::OutOfBoundsException);
+			throw (emu::exception::OutOfBoundsException);
 
 			/** Deletes a given FIFO and invalidates the pointer **/
 			inline void deleteFIFO(FIFO *fifo)
@@ -122,7 +122,7 @@ namespace emu {
 
 			/** @returns the high 16-bits of the DCC status register **/
 			const uint16_t readStatusHigh()
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** @returns the low 16-bits of the DCC status register
 			 *
@@ -130,52 +130,52 @@ namespace emu {
 			 * readStatusHigh.  The name is purely historical.
 			 **/
 			const uint16_t readStatusLow()
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** @returns the FMM status of the DCC, as decoded from the StatusHigh register **/
 			const inline uint8_t readFMMStatus()
-			throw (emu::fed::exception::DCCException)
+			throw (emu::exception::DCCException)
 			{
 				try {
 					return ((readStatusHigh() >> 12) & 0xf);
-				} catch (emu::fed::exception::DCCException &e) {
+				} catch (emu::exception::DCCException &e) {
 					throw e;
 				}
 			}
 
 			/** @returns the SLink statuses, as decided from the StatusHigh register **/
 			const inline uint8_t readSLinkStatus()
-			throw (emu::fed::exception::DCCException)
+			throw (emu::exception::DCCException)
 			{
 				try {
 					return (readStatusHigh() & 0xf);
-				} catch (emu::fed::exception::DCCException &e) {
+				} catch (emu::exception::DCCException &e) {
 					throw e;
 				}
 			}
 
 			/** @return the low 16 bits of the L1A counter **/
 			const inline uint16_t readL1ALow()
-			throw (emu::fed::exception::DCCException)
+			throw (emu::exception::DCCException)
 			{
 				try {
 					return readStatusLow();
-				} catch (emu::fed::exception::DCCException &e) {
+				} catch (emu::exception::DCCException &e) {
 					throw e;
 				}
 			}
 
 			/** @return the high 8 bits of the L1A counter **/
 			const uint8_t readL1AHigh()
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** @return the combined 24 bits of the L1A counter **/
 			const inline uint32_t readL1A()
-			throw (emu::fed::exception::DCCException)
+			throw (emu::exception::DCCException)
 			{
 				try {
 					return readL1ALow() && (((uint32_t) readL1AHigh()) << 16);
-				} catch (emu::fed::exception::DCCException &e) {
+				} catch (emu::exception::DCCException &e) {
 					throw e;
 				}
 			}
@@ -187,7 +187,7 @@ namespace emu {
 			 * bits low are logical true.
 			 * **/
 			const uint16_t readFIFOStatus()
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** @returns the input FIFOs (DDUs) that are being read in
 			 * to the DCC as a binary number where a 1 in the nth bit means that
@@ -198,7 +198,7 @@ namespace emu {
 			 * @sa getDDUSlotFromFIFO
 			 **/
 			const uint16_t readFIFOInUse()
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** Write a new value to the FIFOInUse register.
 			 *
@@ -209,7 +209,7 @@ namespace emu {
 			 * @sa getDDUSlotFromFIFO
 			 **/
 			void writeFIFOInUse(const uint16_t value)
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** @returns the current read-in or read-out data rate (in bytes/sec) of
 			 * the given FIFO (DDU or S-Link).
@@ -220,7 +220,7 @@ namespace emu {
 			 * the DDU input FIFOs 6-10.
 			 **/
 			const uint16_t readRate(const unsigned int fifo)
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** @returns the current setting of the omni-purpose software switch.
 			 *
@@ -240,7 +240,7 @@ namespace emu {
 			 * S-Link (FMM) IDs.
 			 **/
 			const uint16_t readSoftwareSwitch()
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** Set the omni-purpose software switch.
 			 *
@@ -249,11 +249,11 @@ namespace emu {
 			 * @sa readSoftwareSwitch()
 			 **/
 			void writeSoftwareSwitch(const uint16_t value)
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** @return the value of the FMM register. **/
 			const uint16_t readFMM(const enum DEVICE dev = All)
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** Write a custom value to the FMM register.
 			 *
@@ -271,7 +271,7 @@ namespace emu {
 			 * (if the force bit for that hardware element is high).
 			 **/
 			void inline writeFMM(const uint16_t value)
-			throw (emu::fed::exception::DCCException)
+			throw (emu::exception::DCCException)
 			{
 				try {
 					writeFMM(All, value);
@@ -281,11 +281,11 @@ namespace emu {
 			}
 
 			void writeFMM(const enum DEVICE dev, const uint16_t value)
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** @return the last TTC command sent. **/
 			const uint16_t readTTCCommand()
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** Immediately sends a TTC command to the FED crate.
 			 *
@@ -299,15 +299,15 @@ namespace emu {
 			 * the commands resetBX() and resetEvents().
 			 **/
 			void writeTTCCommand(const uint8_t value)
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** Send the TTC command to reset BX values in the FED crate. **/
 			void resetBX()
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** Send the TTC command to reset event counters in the FED crate. **/
 			void resetEvents()
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** Set the fake L1A generation register.
 			 *
@@ -315,45 +315,45 @@ namespace emu {
 			 * the high 8 bits are used to set the rate at which they are generated.
 			 **/
 			void writeFakeL1A(const uint16_t value)
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 /* stan added routines Feb 9, 2012 */
                         /* */
                         void writeDisableOutOfSyncOnL1AMismatch(const uint16_t value)
-                        throw (emu::fed::exception::DCCException);
+                        throw (emu::exception::DCCException);
                         /* */
                         void writeEnableOutOfSyncOnL1AMismatch(const uint16_t value)
-                        throw (emu::fed::exception::DCCException);
+                        throw (emu::exception::DCCException);
                         /* */
                         const uint16_t readNumberOfL1AMismatches()
-                        throw (emu::fed::exception::DCCException);
+                        throw (emu::exception::DCCException);
                         /* */
                         const uint16_t readOutofSyncEnableDisable()
-                        throw (emu::fed::exception::DCCException);
+                        throw (emu::exception::DCCException);
 /* end stan added routines Feb 9, 2012 */
 /* start CRC error routines Feb 23, 2012 */
                         /* */
                         void writeDisableCRCErrOnL1AMismatch(const uint16_t value)
-                        throw (emu::fed::exception::DCCException);
+                        throw (emu::exception::DCCException);
                         /* */
                         void writeEnableCRCErrOnL1AMismatch(const uint16_t value)
-                        throw (emu::fed::exception::DCCException);
+                        throw (emu::exception::DCCException);
                         /* */
                         const uint16_t readCRCErrEnableDisable()
-                        throw (emu::fed::exception::DCCException);
+                        throw (emu::exception::DCCException);
 /* end CRC error routines Feb 23, 2012 */
 			/** @return the ID code from the given PROM chip.
 			 *
 			 * @param dev the device from which to read the ID code.
 			 **/
 			const uint32_t readIDCode(const enum DEVTYPE dev)
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** @return the User code programmed into the given PROM chip.
 			 *
 			 * @param dev the device from which to read the User code.
 			 **/
 			const uint32_t readUserCode(const enum DEVTYPE dev)
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** Resets an FPGA through the given PROM.
 			*
@@ -362,59 +362,59 @@ namespace emu {
 			*	@note The RESET device will reset the MCTRL FPGA.
 			**/
 			void resetPROM(const enum DEVTYPE dev)
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			// Misc routines
 
 			/** Hard reset the crate through a TTC-override command. **/
 			void crateHardReset()
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** Sync reset the crate through a TTC-override command. **/
 			void crateResync(bool ignoreBackPress = false)
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** @returns the slot number of the DDU corresponding to the given input FIFO
 			*
 			* @param fifo the input FIFO number from which to calculate the DDU slot
 			**/
 			const unsigned int getDDUSlotFromFIFO(const unsigned int fifo) const
-			throw (emu::fed::exception::OutOfBoundsException);
+			throw (emu::exception::OutOfBoundsException);
 
 			/** @returns the FIFO number corresponding to the given input DDU slot number
 			*
 			* @param mySlot the DDU slot number from which to calculate the FIFO number
 			**/
 			const unsigned int getFIFOFromDDUSlot(const unsigned int mySlot) const
-			throw (emu::fed::exception::OutOfBoundsException);
+			throw (emu::exception::OutOfBoundsException);
 
 			/** @returns the SLink number corresponding to the given output FIFO
 			*
 			* @param fifo the output FIFO number from which to calculate the SLink number
 			**/
 			const unsigned int getSLinkFromFIFO(const unsigned int fifo) const
-			throw (emu::fed::exception::OutOfBoundsException);
+			throw (emu::exception::OutOfBoundsException);
 
 			/** @returns the FIFO number corresponding to the given SLink number
 			*
 			* @param slink the SLink number from which to calculate the output FIFO number
 			**/
 			const unsigned int getFIFOFromSLink(const unsigned int slink) const
-			throw (emu::fed::exception::OutOfBoundsException);
+			throw (emu::exception::OutOfBoundsException);
 
 			/** @returns the current read-in data rate (in bytes/sec) of the given DDU.
 			*
 			* @param mySlot is the slot number from which to read the data rate.
 			**/
 			const uint16_t readDDURate(const unsigned int mySlot)
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 			/** @returns the current read-out data rate (in bytes/sec) of the given SLink.
 			*
 			* @param slink is the SLink number from which to read the data rate.
 			**/
 			const uint16_t readSLinkRate(const unsigned int slink)
-			throw (emu::fed::exception::DCCException);
+			throw (emu::exception::DCCException);
 
 
 		protected:
@@ -433,7 +433,7 @@ namespace emu {
 			*	@param @nBits is the number of bits to read.
 			**/
 			const std::vector<uint16_t> readRegister(const enum DEVTYPE dev, const uint16_t myReg, const unsigned int nBits, const bool debug = false)
-			throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException);
+			throw (emu::exception::CAENException, emu::exception::DevTypeException);
 
 			/** Writes an arbitrary number of bits to a given register on a given device.
 			*
@@ -443,7 +443,7 @@ namespace emu {
 			*	@param @myData is the data to write.
 			**/
 			const std::vector<uint16_t> writeRegister(const enum DEVTYPE dev, const uint16_t myReg, const unsigned int nBits, const std::vector<uint16_t> &data, const bool debug = false)
-			throw (emu::fed::exception::CAENException, emu::fed::exception::DevTypeException);
+			throw (emu::exception::CAENException, emu::exception::DevTypeException);
 
 			/// The FIFOs that are associated with this DCC, in FIFO (NOT slot)-order.
 			std::vector<FIFO *> fifoVector_;

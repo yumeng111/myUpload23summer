@@ -18,7 +18,7 @@ DBAgent(application, instance)
 
 
 std::vector<emu::fed::Fiber *> emu::fed::FiberDBAgent::getFibers(xdata::UnsignedInteger64 &key, xdata::UnsignedShort &rui)
-throw (emu::fed::exception::DBException)
+throw (emu::exception::DBException)
 {
 	// Set up parameters
 	std::map<std::string, std::string> parameters;
@@ -29,21 +29,21 @@ throw (emu::fed::exception::DBException)
 	xdata::Table result;
 	try {
 		result = query("get_fibers_by_key_rui", parameters);
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Error posting query", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Error posting query", e);
 	}
 
 	try {
 		return buildFibers(result);
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Error finding columns", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Error finding columns", e);
 	}
 }
 
 
 
 std::vector<emu::fed::Fiber *> emu::fed::FiberDBAgent::buildFibers(xdata::Table &table)
-throw (emu::fed::exception::DBException)
+throw (emu::exception::DBException)
 {
 	std::vector<emu::fed::Fiber *> returnMe;
 	try {
@@ -54,7 +54,7 @@ throw (emu::fed::exception::DBException)
 			xdata::Boolean killed = getValue<xdata::Boolean>(*iRow, "KILLED");
 			xdata::Boolean ignoreErr = getValue<xdata::Boolean>(*iRow, "IGNOREERR");
 			// Don't want to kill myself here
-			if ((xdata::UnsignedShortT) fiber_number > 14) XCEPT_RAISE(emu::fed::exception::DBException, "Fiber number is too large");
+			if ((xdata::UnsignedShortT) fiber_number > 14) XCEPT_RAISE(emu::exception::DBException, "Fiber number is too large");
 			
 			std::string chamberName = chamber.toString();
 			std::string endcap = "?";
@@ -73,14 +73,14 @@ throw (emu::fed::exception::DBException)
 			// Set names now.
 			returnMe.push_back(new Fiber(fiber_number, endcap, station, ring, number, killed, ignoreErr));
 		}
-	} catch (emu::fed::exception::DBException &e) {
+	} catch (emu::exception::DBException &e) {
 		std::ostringstream error;
 		error << "Error reading fiber values from database: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::DBException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::DBException, error.str(), e);
 	} catch (xdata::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Error getting value from table: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::DBException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::DBException, error.str(), e);
 	}
 	
 	return returnMe;
@@ -90,7 +90,7 @@ throw (emu::fed::exception::DBException)
 
 
 void emu::fed::FiberDBAgent::upload(xdata::UnsignedInteger64 &key, xdata::UnsignedShort &rui, const std::vector<emu::fed::Fiber *> &fiberVector)
-throw (emu::fed::exception::DBException)
+throw (emu::exception::DBException)
 {
 	try {
 		// Make a table
@@ -125,7 +125,7 @@ throw (emu::fed::exception::DBException)
 		// Insert
 		insert("fiber", table);
 		
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Unable to upload fibers to database: " + std::string(e.what()), e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Unable to upload fibers to database: " + std::string(e.what()), e);
 	}
 }

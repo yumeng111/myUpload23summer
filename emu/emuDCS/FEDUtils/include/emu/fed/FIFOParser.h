@@ -18,11 +18,11 @@ namespace emu {
 
 			/** @returns a pointer to the parsed FIFO object. **/
 			FIFO *parse(xercesc::DOMElement *pNode)
-			throw (emu::fed::exception::ParseException);
+			throw (emu::exception::ParseException);
 			
 			/** @returns a DOMElement from a given FIFO object **/
 			xercesc::DOMElement *makeDOMElement(xercesc::DOMDocument *document, FIFO *fifo)
-			throw (emu::fed::exception::ParseException);
+			throw (emu::exception::ParseException);
 
 		}
 

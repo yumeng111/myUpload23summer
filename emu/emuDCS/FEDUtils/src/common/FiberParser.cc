@@ -9,42 +9,42 @@
 
 
 emu::fed::Fiber *emu::fed::FiberParser::parse(xercesc::DOMElement *pNode)
-throw (emu::fed::exception::ParseException)
+throw (emu::exception::ParseException)
 {
 	Parser parser(pNode);
 	
 	unsigned int fiberNumber = 0;
 	try {
 		fiberNumber = parser.extract<unsigned int>("FIBER_NUMBER");
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse FIBER_NUMBER from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	bool killed;
 	try {
 		killed = parser.extract<bool>("KILLED");
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse KILLED from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 	
 	bool ignoreErr;
 	try {
 		ignoreErr = parser.extract<bool>("IGNOREERR");
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		std::ostringstream error;
 		error << "Unable to parse IGNOREERR from element";
-		XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 	}
 
 	// This is optional
 	std::string chamberName = "+0/0/00";
 	try {
 		chamberName = parser.extract<std::string>("CHAMBER");
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		// already set to the default.
 	}
 	
@@ -69,7 +69,7 @@ throw (emu::fed::exception::ParseException)
 
 
 xercesc::DOMElement *emu::fed::FiberParser::makeDOMElement(xercesc::DOMDocument *document, emu::fed::Fiber *fiber)
-throw (emu::fed::exception::ParseException)
+throw (emu::exception::ParseException)
 {
 	try {
 		// Make a crate element
@@ -87,6 +87,6 @@ throw (emu::fed::exception::ParseException)
 	} catch (xercesc::DOMException &e) {
 		std::ostringstream error;
 		error << "Unable to create Fiber element: " << X(e.getMessage());
-		XCEPT_RAISE(emu::fed::exception::ParseException, error.str());
+		XCEPT_RAISE(emu::exception::ParseException, error.str());
 	}
 }

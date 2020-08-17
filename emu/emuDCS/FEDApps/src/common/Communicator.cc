@@ -136,14 +136,14 @@ void emu::fed::Communicator::webDefault(xgi::Input *in, xgi::Output *out)
 #if GCC_VERSION >= 40300
 		REVOKE_ALARM("CommunicatorConfigurator", NULL);
 #endif
-	} catch (emu::fed::exception::ConfigurationException &e) {
+	} catch (emu::exception::ConfigurationException &e) {
 		std::ostringstream error;
 		error << "Unable to properly configure the Communicator software.";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
 #if GCC_VERSION >= 40300
-		RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorConfigurator", "ERROR", error.str(), "", NULL, e);
+		RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorConfigurator", "ERROR", error.str(), "", NULL, e);
 #endif
-		*out << printException(e);
+		*out << e.toHTML();
 	}
 
 	std::vector<std::string> jsFileNames;
@@ -353,7 +353,7 @@ void emu::fed::Communicator::webGetStatus(xgi::Input *in, xgi::Output *out)
 		std::ostringstream monitorStream;
 		monitorStream << monitorApp->getContextDescriptor()->getURL() << "/" << monitorApp->getURN();
 		monitorURL = monitorStream.str();
-	} catch (emu::fed::exception::SoftwareException &e) {
+	} catch (emu::exception::SoftwareException &e) {
 		// do nothing.
 	}
 
@@ -362,7 +362,7 @@ void emu::fed::Communicator::webGetStatus(xgi::Input *in, xgi::Output *out)
 		std::ostringstream commanderStream;
 		commanderStream << commanderApp->getContextDescriptor()->getURL() << "/" << commanderApp->getURN();
 		commanderURL = commanderStream.str();
-	} catch (emu::fed::exception::SoftwareException &e) {
+	} catch (emu::exception::SoftwareException &e) {
 		// do nothing.
 	}
 	output.push_back(JSONSpirit::Pair("monitorURL", monitorURL));
@@ -391,10 +391,10 @@ void emu::fed::Communicator::webReconfigure(xgi::Input *in, xgi::Output *out)
 	try {
 		// Never ever ever configure if enabled
 		if (state_ != "Enabled") softwareConfigure();
-	} catch (emu::fed::exception::ConfigurationException &e) {
+	} catch (emu::exception::ConfigurationException &e) {
 		std::ostringstream error;
 		error << "Error attempting to reconfigure";
-		XCEPT_DECLARE_NESTED(emu::fed::exception::ConfigurationException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::ConfigurationException, e2, error.str(), e);
 		LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("ERROR", e2);
 		output.push_back(JSONSpirit::Pair("exception", error.str()));
@@ -419,7 +419,7 @@ throw (toolbox::fsm::exception::Exception)
 #if GCC_VERSION >= 40300
 			REVOKE_ALARM("CommunicatorResetCrate", NULL);
 #endif
-		} catch (emu::fed::exception::DCCException &e) {
+		} catch (emu::exception::DCCException &e) {
 			std::ostringstream error;
 			error << "Hard reset through DCC in crate " <<
 				(*iCrate)->getNumber() << " slot " << dccs[0]->slot() <<
@@ -429,7 +429,7 @@ throw (toolbox::fsm::exception::Exception)
 			tag << "FEDCrate " << (*iCrate)->getNumber() << " FMM " <<
 				dccs[0]->getFMMID();
 #if GCC_VERSION >= 40300
-			RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorResetCrate", "WARN", error.str(), tag.str(), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorResetCrate", "WARN", error.str(), tag.str(), NULL, e);
 #endif
 		}
 	}
@@ -442,12 +442,12 @@ void emu::fed::Communicator::toggleDDUPassthroughMode( Crate* crate ){
       try{
 	(*iDDU)->writeFakeL1( 0x8787 );
       }
-      catch( emu::fed::exception::DDUException& e ){
+      catch( emu::exception::DDUException& e ){
 	stringstream whatswrong;
 	whatswrong << "Failed to set passthrough mode for DDU in crate " << crate->getNumber() << ", slot " << (*iDDU)->slot();
-	XCEPT_RETHROW( emu::fed::exception::Exception, whatswrong.str(), e );
+	XCEPT_RETHROW( emu::exception::Exception, whatswrong.str(), e );
       }
-      // catch( emu::fed::exception::DDUException& e ){
+      // catch( emu::exception::DDUException& e ){
       // 	LOG4CPLUS_ERROR( getApplicationLogger(), "Failed to set passthrough mode for DDU in crate " << crate->getNumber() << ", slot " << (*iDDU)->slot() << ": " <<  xcept::stdformat_exception_history(e) );
       // }
       // catch( std::exception& e ){
@@ -479,9 +479,9 @@ void emu::fed::Communicator::chkDCCstatus(const unsigned int crateNum,
 				std::ostringstream tag;
 				tag << "FEDCrate " << crateNum << " FMM " << (*iDCC)->getFMMID() << " SLINK1 " << (*iDCC)->getSLinkID(1) << " SLINK2 " << (*iDCC)->getSLinkID(2);
 #if GCC_VERSION >= 40300
-				RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorCheckDCC", "ERROR", error.str(), tag.str(), NULL);
+				RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorCheckDCC", "ERROR", error.str(), tag.str(), NULL);
 #endif
-				XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+				XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 				exceptions.push_back(e2);
 			}
 			if ((status & 0xfff0) != 0x8ff0) {
@@ -520,23 +520,23 @@ void emu::fed::Communicator::chkDCCstatus(const unsigned int crateNum,
 				std::ostringstream tag;
 				tag << "FEDCrate " << crateNum << " FMM " << (*iDCC)->getFMMID() << " SLINK1 " << (*iDCC)->getSLinkID(1) << " SLINK2 " << (*iDCC)->getSLinkID(2);
 #if GCC_VERSION >= 40300
-				RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorCheckDCC", "ERROR", error.str(), tag.str(), NULL);
+				RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorCheckDCC", "ERROR", error.str(), tag.str(), NULL);
 #endif
 				//FIXME for local running, if S-Link is not ignored, this will probably fail
-				//XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+				//XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 				//exceptions.push_back(e2);
 			}
 
-		} catch (emu::fed::exception::DCCException &e) {
+		} catch (emu::exception::DCCException &e) {
 			std::ostringstream error;
 			error << "Exception in communicating to DCC in crate " << crateNum << ", slot " << (*iDCC)->slot();
 			LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
 			std::ostringstream tag;
 			tag << "FEDCrate " << crateNum << " FMM " << (*iDCC)->getFMMID() << " SLINK1 " << (*iDCC)->getSLinkID(1) << " SLINK2 " << (*iDCC)->getSLinkID(2);
 #if GCC_VERSION >= 40300
-			RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorCheckDCC", "ERROR", error.str(), tag.str(), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorCheckDCC", "ERROR", error.str(), tag.str(), NULL, e);
 #endif
-			XCEPT_DECLARE_NESTED(emu::fed::exception::ConfigurationException, e2, error.str(), e);
+			XCEPT_DECLARE_NESTED(emu::exception::ConfigurationException, e2, error.str(), e);
 			exceptions.push_back(e2);
 		}
 		// LOG4CPLUS_DEBUG(getApplicationLogger(), "DCC " << (*iDCC)->getFMMID() << " status checks out");
@@ -568,14 +568,14 @@ throw (toolbox::fsm::exception::Exception)
 #if GCC_VERSION >= 40300
 			REVOKE_ALARM("CommunicatorConfigure", NULL);
 #endif
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			std::ostringstream error;
 			error << "Configuration of crate " << (*iCrate)->getNumber() << " has failed";
 			LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
 			std::ostringstream tag;
 			tag << "FEDCrate " << (*iCrate)->getNumber();
 #if GCC_VERSION >= 40300
-			RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorConfigure", "ERROR", error.str(), tag.str(), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorConfigure", "ERROR", error.str(), tag.str(), NULL, e);
 #endif
 			XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e);
 		}
@@ -607,16 +607,16 @@ throw (toolbox::fsm::exception::Exception)
 #if GCC_VERSION >= 40300
 				REVOKE_ALARM("CommunicatorConfigureFMMDisable", NULL);
 #endif
-			} catch (emu::fed::exception::DDUException &e) {
+			} catch (emu::exception::DDUException &e) {
 				std::ostringstream error;
 				error << "Broadcast FMM disable to crate " << (*iCrate)->getNumber() << " has failed";
 				LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
 				std::ostringstream tag;
 				tag << "FEDCrate " << (*iCrate)->getNumber();
 #if GCC_VERSION >= 40300
-				RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorConfigureFMMDisable", "ERROR", error.str(), tag.str(), NULL, e);
+				RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorConfigureFMMDisable", "ERROR", error.str(), tag.str(), NULL, e);
 #endif
-				XCEPT_DECLARE_NESTED(emu::fed::exception::ConfigurationException, e2, error.str(), e);
+				XCEPT_DECLARE_NESTED(emu::exception::ConfigurationException, e2, error.str(), e);
 				exceptions.push_back(e2);
 			}
 		}
@@ -647,9 +647,9 @@ throw (toolbox::fsm::exception::Exception)
 						std::ostringstream tag;
 						tag << "FEDCrate " << (*iCrate)->getNumber() << " RUI " << (*iDDU)->getRUI() << " FMM " << (*iDDU)->getFMMID();
 #if GCC_VERSION >= 40300
-						RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorConfigureFlashKillFiber", "ERROR", error.str(), tag.str(), NULL);
+						RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorConfigureFlashKillFiber", "ERROR", error.str(), tag.str(), NULL);
 #endif
-						XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+						XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 						exceptions.push_back(e2);
 					}
 				}
@@ -670,9 +670,9 @@ throw (toolbox::fsm::exception::Exception)
 						std::ostringstream tag;
 						tag << "FEDCrate " << (*iCrate)->getNumber() << " RUI " << (*iDDU)->getRUI() << " FMM " << (*iDDU)->getFMMID();
 #if GCC_VERSION >= 40300
-						RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorConfigureFPGAKillFiber", "ERROR", error.str(), tag.str(), NULL);
+						RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorConfigureFPGAKillFiber", "ERROR", error.str(), tag.str(), NULL);
 #endif
-						XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+						XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 						exceptions.push_back(e2);
 					}
 				}
@@ -695,9 +695,9 @@ throw (toolbox::fsm::exception::Exception)
 						std::ostringstream tag;
 						tag << "FEDCrate " << (*iCrate)->getNumber() << " RUI " << (*iDDU)->getRUI() << " FMM " << (*iDDU)->getFMMID();
 #if GCC_VERSION >= 40300
-						RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorConfigureFPGAGbEPrescale", "ERROR", error.str(), tag.str(), NULL);
+						RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorConfigureFPGAGbEPrescale", "ERROR", error.str(), tag.str(), NULL);
 #endif
-						XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+						XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 						exceptions.push_back(e2);
 					}
 				}
@@ -726,9 +726,9 @@ throw (toolbox::fsm::exception::Exception)
 						std::ostringstream tag;
 						tag << "FEDCrate " << (*iCrate)->getNumber() << " RUI " << (*iDDU)->getRUI() << " FMM " << (*iDDU)->getFMMID();
 #if GCC_VERSION >= 40300
-						RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorConfigureFlashRUI", "ERROR", error.str(), tag.str(), NULL);
+						RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorConfigureFlashRUI", "ERROR", error.str(), tag.str(), NULL);
 #endif
-						XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+						XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 						exceptions.push_back(e2);
 					}
 				}
@@ -737,16 +737,16 @@ throw (toolbox::fsm::exception::Exception)
 				REVOKE_ALARM("CommunicatorConfigureFlashRUI", NULL);
 #endif
 
-			} catch (emu::fed::exception::DDUException &e) {
+			} catch (emu::exception::DDUException &e) {
 				std::ostringstream error;
 				error << "Exception in communicating to DDU in crate " << (*iCrate)->getNumber() << ", slot " << (*iDDU)->slot();
 				LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
 				std::ostringstream tag;
 				tag << "FEDCrate " << (*iCrate)->getNumber() << " RUI " << (*iDDU)->getRUI() << " FMM " << (*iDDU)->getFMMID();
 #if GCC_VERSION >= 40300
-				RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorConfigureDDU", "ERROR", error.str(), tag.str(), NULL, e);
+				RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorConfigureDDU", "ERROR", error.str(), tag.str(), NULL, e);
 #endif
-				XCEPT_DECLARE_NESTED(emu::fed::exception::ConfigurationException, e2, error.str(), e);
+				XCEPT_DECLARE_NESTED(emu::exception::ConfigurationException, e2, error.str(), e);
 				exceptions.push_back(e2);
 			}
 
@@ -779,9 +779,9 @@ throw (toolbox::fsm::exception::Exception)
 						std::ostringstream tag;
 						tag << "FEDCrate " << (*iCrate)->getNumber() << " FMM " << (*iDCC)->getFMMID() << " SLINK1 " << (*iDCC)->getSLinkID(1) << " SLINK2 " << (*iDCC)->getSLinkID(2);
 #if GCC_VERSION >= 40300
-						RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorConfigureFPGAFIFOInUse", "ERROR", error.str(), tag.str(), NULL);
+						RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorConfigureFPGAFIFOInUse", "ERROR", error.str(), tag.str(), NULL);
 #endif
-						XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+						XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 						exceptions.push_back(e2);
 					}
 				}
@@ -808,9 +808,9 @@ throw (toolbox::fsm::exception::Exception)
 						std::ostringstream tag;
 						tag << "FEDCrate " << (*iCrate)->getNumber() << " FMM " << (*iDCC)->getFMMID() << " SLINK1 " << (*iDCC)->getSLinkID(1) << " SLINK2 " << (*iDCC)->getSLinkID(2);
 #if GCC_VERSION >= 40300
-						RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorConfigureFPGASoftwareSwitch", "ERROR", error.str(), tag.str(), NULL);
+						RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorConfigureFPGASoftwareSwitch", "ERROR", error.str(), tag.str(), NULL);
 #endif
-						XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+						XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 						exceptions.push_back(e2);
 					}
 				}
@@ -819,16 +819,16 @@ throw (toolbox::fsm::exception::Exception)
 				REVOKE_ALARM("CommunicatorConfigureFPGASoftwareSwitch", NULL);
 #endif
 
-			} catch (emu::fed::exception::DCCException &e) {
+			} catch (emu::exception::DCCException &e) {
 				std::ostringstream error;
 				error << "Exception in communicating to DCC in crate " << (*iCrate)->getNumber() << ", slot " << (*iDCC)->slot();
 				LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
 				std::ostringstream tag;
 				tag << "FEDCrate " << (*iCrate)->getNumber() << " FMM " << (*iDCC)->getFMMID() << " SLINK1 " << (*iDCC)->getSLinkID(1) << " SLINK2 " << (*iDCC)->getSLinkID(2);
 #if GCC_VERSION >= 40300
-				RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorConfigureDCC", "ERROR", error.str(), tag.str(), NULL, e);
+				RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorConfigureDCC", "ERROR", error.str(), tag.str(), NULL, e);
 #endif
-				XCEPT_DECLARE_NESTED(emu::fed::exception::ConfigurationException, e2, error.str(), e);
+				XCEPT_DECLARE_NESTED(emu::exception::ConfigurationException, e2, error.str(), e);
 				exceptions.push_back(e2);
 			}
 
@@ -851,16 +851,16 @@ throw (toolbox::fsm::exception::Exception)
 #if GCC_VERSION >= 40300
 				REVOKE_ALARM("CommunicatorConfigureResync", NULL);
 #endif
-			} catch (emu::fed::exception::DCCException &e) {
+			} catch (emu::exception::DCCException &e) {
 				std::ostringstream error;
 				error << "Resync through DCC in crate " << (*iCrate)->getNumber() << " slot " << myDCCs[0]->slot() << " has failed";
 				LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
 				std::ostringstream tag;
 				tag << "FEDCrate " << (*iCrate)->getNumber() << " FMM " << myDCCs[0]->getFMMID() << " SLINK1 " << myDCCs[0]->getSLinkID(1) << " SLINK2 " << myDCCs[0]->getSLinkID(2);
 #if GCC_VERSION >= 40300
-				RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorConfigureResync", "ERROR", error.str(), tag.str(), NULL, e);
+				RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorConfigureResync", "ERROR", error.str(), tag.str(), NULL, e);
 #endif
-				XCEPT_DECLARE_NESTED(emu::fed::exception::ConfigurationException, e2, error.str(), e);
+				XCEPT_DECLARE_NESTED(emu::exception::ConfigurationException, e2, error.str(), e);
 				exceptions.push_back(e2);
 			}
 		}
@@ -917,12 +917,12 @@ throw (toolbox::fsm::exception::Exception)
 #if GCC_VERSION >= 40300
 		REVOKE_ALARM("CommunicatorConfigurator", NULL);
 #endif
-	} catch (emu::fed::exception::ConfigurationException &e) {
+	} catch (emu::exception::ConfigurationException &e) {
 		std::ostringstream error;
 		error << "Unable to properly configure the Communicator software: " << e.what();
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
 #if GCC_VERSION >= 40300
-		RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorConfigurator", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+		RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorConfigurator", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 #endif
 		XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e);
 	}
@@ -950,16 +950,16 @@ throw (toolbox::fsm::exception::Exception)
 #if GCC_VERSION >= 40300
 				REVOKE_ALARM("CommunicatorEnableResync", NULL);
 #endif
-			} catch (emu::fed::exception::DCCException &e) {
+			} catch (emu::exception::DCCException &e) {
 				std::ostringstream error;
 				error << "Resync through DCC in crate " << (*iCrate)->getNumber() << " slot " << dccs[0]->slot() << " has failed";
 				LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
 				std::ostringstream tag;
 				tag << "FEDCrate " << (*iCrate)->getNumber() << " FMM " << dccs[0]->getFMMID() << " SLINK1 " << dccs[0]->getSLinkID(1) << " SLINK2 " << dccs[0]->getSLinkID(2);
 #if GCC_VERSION >= 40300
-				RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorEnableResync", "ERROR", error.str(), tag.str(), NULL, e);
+				RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorEnableResync", "ERROR", error.str(), tag.str(), NULL, e);
 #endif
-				XCEPT_DECLARE_NESTED(emu::fed::exception::ConfigurationException, e2, error.str(), e);
+				XCEPT_DECLARE_NESTED(emu::exception::ConfigurationException, e2, error.str(), e);
 				exceptions.push_back(e2);
 			}
 
@@ -971,16 +971,16 @@ throw (toolbox::fsm::exception::Exception)
 #if GCC_VERSION >= 40300
 				REVOKE_ALARM("CommunicatorReconfigureTFDDU", NULL);
 #endif
-			} catch (emu::fed::exception::DDUException &e) {
+			} catch (emu::exception::DDUException &e) {
 				std::ostringstream error;
 				error << "Unable to reset GbEPrescale of TF DDU";
 				LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
 				std::ostringstream tag;
 				tag << "FEDCrate " << (*iCrate)->getNumber();
 #if GCC_VERSION >= 40300
-				RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorReconfigureTFDDU", "ERROR", error.str(), tag.str(), NULL, e);
+				RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorReconfigureTFDDU", "ERROR", error.str(), tag.str(), NULL, e);
 #endif
-				XCEPT_DECLARE_NESTED(emu::fed::exception::ConfigurationException, e2, error.str(), e);
+				XCEPT_DECLARE_NESTED(emu::exception::ConfigurationException, e2, error.str(), e);
 				exceptions.push_back(e2);
 			}
 		}
@@ -1000,9 +1000,9 @@ throw (toolbox::fsm::exception::Exception)
 				std::ostringstream tag;
 				tag << "FEDCrate " << (*iCrate)->getNumber() << " RUI " << (*iDDU)->getRUI() << " FMM " << (*iDDU)->getFMMID();
 #if GCC_VERSION >= 40300
-				RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorEnableDDU", "ERROR", error.str(), tag.str(), NULL);
+				RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorEnableDDU", "ERROR", error.str(), tag.str(), NULL);
 #endif
-				XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+				XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 				exceptions.push_back(e2);
 			}
 
@@ -1034,9 +1034,9 @@ throw (toolbox::fsm::exception::Exception)
 				std::ostringstream tag;
 				tag << "FEDCrate " << (*iCrate)->getNumber() << " RUI " << (*iDDU)->getRUI() << " FMM " << (*iDDU)->getFMMID();
 #if GCC_VERSION >= 40300
-				RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorEnableDDU", "ERROR", error.str(), tag.str(), NULL);
+				RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorEnableDDU", "ERROR", error.str(), tag.str(), NULL);
 #endif
-				XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+				XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 				exceptions.push_back(e2);
 			}
 			if (inFPGA1Stat & 0xf0eec2ff) { // The mask is important, used to be 0xf7eedfff
@@ -1052,9 +1052,9 @@ throw (toolbox::fsm::exception::Exception)
 				std::ostringstream tag;
 				tag << "FEDCrate " << (*iCrate)->getNumber() << " RUI " << (*iDDU)->getRUI() << " FMM " << (*iDDU)->getFMMID();
 #if GCC_VERSION >= 40300
-				RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorEnableDDU", "ERROR", error.str(), tag.str(), NULL);
+				RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorEnableDDU", "ERROR", error.str(), tag.str(), NULL);
 #endif
-				XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+				XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 				exceptions.push_back(e2);
 			}
 			if (dduFPGAStat  & 0x0000c000) { // The mask is important.  
@@ -1070,9 +1070,9 @@ throw (toolbox::fsm::exception::Exception)
 				std::ostringstream tag;
 				tag << "FEDCrate " << (*iCrate)->getNumber() << " RUI " << (*iDDU)->getRUI() << " FMM " << (*iDDU)->getFMMID();
 #if GCC_VERSION >= 40300
-				RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorEnableDDU", "ERROR", error.str(), tag.str(), NULL);
+				RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorEnableDDU", "ERROR", error.str(), tag.str(), NULL);
 #endif
-				XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+				XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 				exceptions.push_back(e2);
 			}
 			if (CSCStat) {
@@ -1085,9 +1085,9 @@ throw (toolbox::fsm::exception::Exception)
 					if (CSCStat && (1 << iFiber)) tag << " chamber " << (*iDDU)->getFiber(iFiber)->getName();
 				}
 #if GCC_VERSION >= 40300
-				RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorEnableDDU", "ERROR", error.str(), tag.str(), NULL);
+				RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorEnableDDU", "ERROR", error.str(), tag.str(), NULL);
 #endif
-				XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+				XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 				exceptions.push_back(e2);
 			}
 			if (thisL1A) {
@@ -1097,9 +1097,9 @@ throw (toolbox::fsm::exception::Exception)
 				std::ostringstream tag;
 				tag << "FEDCrate " << (*iCrate)->getNumber() << " RUI " << (*iDDU)->getRUI() << " FMM " << (*iDDU)->getFMMID();
 #if GCC_VERSION >= 40300
-				RAISE_ALARM(emu::fed::exception::ConfigurationException, "CommunicatorEnableDDU", "ERROR", error.str(), tag.str(), NULL);
+				RAISE_ALARM(emu::exception::ConfigurationException, "CommunicatorEnableDDU", "ERROR", error.str(), tag.str(), NULL);
 #endif
-				XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+				XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 				exceptions.push_back(e2);
 			}
 
@@ -1163,12 +1163,12 @@ throw (toolbox::fsm::exception::Exception)
 #if GCC_VERSION >= 40300
 		REVOKE_ALARM("CommunicatorEnableThreads", NULL);
 #endif
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "FMM monitoring threads not started!";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
 #if GCC_VERSION >= 40300
-		RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorEnableThreads", "ERROR", error.str(), "", NULL, e);
+		RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorEnableThreads", "ERROR", error.str(), "", NULL, e);
 #endif
 		// Probably not a critical error.
 		//XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e);
@@ -1189,12 +1189,12 @@ throw (toolbox::fsm::exception::Exception)
 #if GCC_VERSION >= 40300
 		REVOKE_ALARM("CommunicatorDisableThreads", NULL);
 #endif
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Error in stopping FMM monitoring threads";
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
 #if GCC_VERSION >= 40300
-		RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorDisableThreads", "ERROR", error.str(), "", NULL, e);
+		RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorDisableThreads", "ERROR", error.str(), "", NULL, e);
 #endif
 		XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e);
 	}
@@ -1214,12 +1214,12 @@ throw (toolbox::fsm::exception::Exception)
 #if GCC_VERSION >= 40300
 		REVOKE_ALARM("CommunicatorHaltThreads", NULL);
 #endif
-	} catch (emu::fed::exception::Exception &e) {
+	} catch (emu::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Error in stopping FMM monitoring threads";
 		LOG4CPLUS_FATAL(getApplicationLogger(), error.str());
 #if GCC_VERSION >= 40300
-		RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorHaltThreads", "ERROR", error.str(), "", NULL, e);
+		RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorHaltThreads", "ERROR", error.str(), "", NULL, e);
 #endif
 		XCEPT_RETHROW(toolbox::fsm::exception::Exception, error.str(), e);
 	}
@@ -1240,12 +1240,12 @@ xoap::MessageReference emu::fed::Communicator::onGetParameters(xoap::MessageRefe
 #if GCC_VERSION >= 40300
 			REVOKE_ALARM("CommunicatorGetParameters", NULL);
 #endif
-		} catch (emu::fed::exception::ConfigurationException &e) {
+		} catch (emu::exception::ConfigurationException &e) {
 			std::ostringstream error;
 			error << "Unable to properly configure the Communicator application";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
 #if GCC_VERSION >= 40300
-			RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "CommunicatorGetParameters", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "CommunicatorGetParameters", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 #endif
 		}
 	}
@@ -1283,7 +1283,7 @@ xoap::MessageReference emu::fed::Communicator::onGetParameters(xoap::MessageRefe
 							totalDCCInputRate_ = totalDCCInputRate_ + (*iDCC)->readRate(iFIFO);
 							break;
 						}
-					} catch (emu::fed::exception::DCCException &e) {
+					} catch (emu::exception::DCCException &e) {
 						// do nothing
 					}
 				}
@@ -1339,12 +1339,12 @@ xoap::MessageReference emu::fed::Communicator::onSetTTSBits(xoap::MessageReferen
 #if GCC_VERSION >= 40300
 		REVOKE_ALARM("TTSWrite", NULL);
 #endif
-	} catch (emu::fed::exception::TTSException &e) {
+	} catch (emu::exception::TTSException &e) {
 		std::ostringstream error;
 		error << "Set TTS bits in crate " << ttsCrate_.toString() << ", slot " << ttsSlot_.toString() << " has failed";
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
 #if GCC_VERSION >= 40300
-		RAISE_ALARM_NESTED(emu::fed::exception::TTSException, "TTSWrite", "ERROR", error.str(), "", NULL, e);
+		RAISE_ALARM_NESTED(emu::exception::TTSException, "TTSWrite", "ERROR", error.str(), "", NULL, e);
 #endif
 		return createReply(message);
 	}
@@ -1356,7 +1356,7 @@ xoap::MessageReference emu::fed::Communicator::onSetTTSBits(xoap::MessageReferen
 		error << "Read back ttsBits_=" << ttsBits_.toString() << " from ttsCrate_=" << ttsCrate_.toString() << ", ttsSlot_=" << ttsSlot_.toString() << ", should have been " << cachedBits.toString();
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
 #if GCC_VERSION >= 40300
-		RAISE_ALARM(emu::fed::exception::TTSException, "TSSCheck", "WARN", error.str(), "", NULL);
+		RAISE_ALARM(emu::exception::TTSException, "TSSCheck", "WARN", error.str(), "", NULL);
 #endif
 	}
 
@@ -1372,7 +1372,7 @@ xoap::MessageReference emu::fed::Communicator::onSetTTSBits(xoap::MessageReferen
 
 // Stolen from the now-defunct EmuFController
 void emu::fed::Communicator::writeTTSBits(const unsigned int crate, const unsigned int slot, const int bits)
-throw (emu::fed::exception::TTSException)
+throw (emu::exception::TTSException)
 {
 
 	LOG4CPLUS_DEBUG(getApplicationLogger(), "Setting TTS bits on crate " << crate << ", slot " << slot << ", bits " << std::hex << bits << std::dec);
@@ -1386,10 +1386,10 @@ throw (emu::fed::exception::TTSException)
 				if ((*iDCC)->slot() != slot) continue;
 				try {
 					(*iDCC)->writeFMM((bits | 0x10) & 0xffff);
-				} catch (emu::fed::exception::DCCException &e) {
+				} catch (emu::exception::DCCException &e) {
 					std::ostringstream error;
 					error << "Set TTS bits on DCC in crate " << (*iCrate)->getNumber() << " slot " << (*iDCC)->slot() << " has failed";
-					XCEPT_RETHROW(emu::fed::exception::TTSException, error.str(), e);
+					XCEPT_RETHROW(emu::exception::TTSException, error.str(), e);
 				}
 			}
 		} else {
@@ -1399,10 +1399,10 @@ throw (emu::fed::exception::TTSException)
 				if ((*iDDU)->slot() != slot) continue;
 				try {
 					(*iDDU)->writeFMM((bits | 0xf0e0) & 0xffff);
-				} catch (emu::fed::exception::DDUException &e) {
+				} catch (emu::exception::DDUException &e) {
 					std::ostringstream error;
 					error << "Set TTS bits on DDU in crate " << (*iCrate)->getNumber() << " slot " << (*iDDU)->slot() << " has failed";
-					XCEPT_RETHROW(emu::fed::exception::TTSException, error.str(), e);
+					XCEPT_RETHROW(emu::exception::TTSException, error.str(), e);
 				}
 			}
 		}
@@ -1412,7 +1412,7 @@ throw (emu::fed::exception::TTSException)
 
 // Stolen from the now-defunct EmuFController
 int emu::fed::Communicator::readTTSBits(const unsigned int crate, const unsigned int slot)
-throw (emu::fed::exception::TTSException)
+throw (emu::exception::TTSException)
 {
 	LOG4CPLUS_DEBUG(getApplicationLogger(), "Reading TTS bits on crate " << crate << ", slot " << slot);
 	for (std::vector<Crate *>::iterator iCrate = crateVector_.begin(); iCrate != crateVector_.end(); iCrate++) {
@@ -1425,10 +1425,10 @@ throw (emu::fed::exception::TTSException)
 				if ((*iDCC)->slot() != slot) continue;
 				try {
 					return (*iDCC)->readFMM() & 0xf;
-				} catch (emu::fed::exception::DCCException &e) {
+				} catch (emu::exception::DCCException &e) {
 					std::ostringstream error;
 					error << "Read TTS bits from DCC in crate " << (*iCrate)->getNumber() << " slot " << (*iDCC)->slot() << " has failed";
-					XCEPT_RETHROW(emu::fed::exception::TTSException, error.str(), e);
+					XCEPT_RETHROW(emu::exception::TTSException, error.str(), e);
 				}
 			}
 		} else {
@@ -1438,10 +1438,10 @@ throw (emu::fed::exception::TTSException)
 				if ((*iDDU)->slot() != slot) continue;
 				try {
 					return (*iDDU)->readFMM() & 0xf;
-				} catch (emu::fed::exception::DDUException &e) {
+				} catch (emu::exception::DDUException &e) {
 					std::ostringstream error;
 					error << "Read TTS bits from DDU in crate " << (*iCrate)->getNumber() << " slot " << (*iDDU)->slot() << " has failed";
-					XCEPT_RETHROW(emu::fed::exception::TTSException, error.str(), e);
+					XCEPT_RETHROW(emu::exception::TTSException, error.str(), e);
 				}
 			}
 		}
@@ -1484,7 +1484,7 @@ emu::base::Fact emu::fed::Communicator::findFact(const emu::base::Component& com
 
 	std::ostringstream error;
 	error << "Failed to find fact of type \"" << factType << "\" on component \"" << component << "\" requested by expert system";
-	XCEPT_DECLARE(emu::fed::exception::OutOfBoundsException, e, error.str());
+	XCEPT_DECLARE(emu::exception::OutOfBoundsException, e, error.str());
 	notifyQualified("WARN", e);
 	LOG4CPLUS_WARN(getApplicationLogger(), xcept::stdformat_exception_history(e));
 

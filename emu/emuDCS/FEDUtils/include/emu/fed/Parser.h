@@ -8,7 +8,7 @@
 #include <iostream>
 #include <sstream>
 #include "xercesc/dom/DOM.hpp"
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 
 #define X(str) xercesc::XMLString::transcode(str)
 
@@ -33,7 +33,7 @@ namespace emu {
 			**/
 			template<class T>
 			T extract(const char *item, const std::ios_base::fmtflags &flags = std::ios::dec)
-			throw (emu::fed::exception::ParseException)
+			throw (emu::exception::ParseException)
 			{
 				XMLCh *name = X(item);
 				xercesc::DOMAttr *pAttributeNode = (xercesc::DOMAttr *) pAttributes_->getNamedItem(name);
@@ -41,7 +41,7 @@ namespace emu {
 				if (pAttributeNode == NULL) {
 					std::ostringstream error;
 					error << "Attribute " << item << " does not appear to exist";
-					XCEPT_RAISE(emu::fed::exception::ParseException, error.str());
+					XCEPT_RAISE(emu::exception::ParseException, error.str());
 				}
 
 				std::stringstream scan;
@@ -54,14 +54,14 @@ namespace emu {
 				} catch (std::stringstream::failure &e) {
 					std::ostringstream error;
 					error << "Unable to parse " << item << "=" << X(pAttributeNode->getNodeValue()) << ": " << e.what();
-					XCEPT_RAISE(emu::fed::exception::ParseException, error.str());
+					XCEPT_RAISE(emu::exception::ParseException, error.str());
 				}
 				return target;
 			}
 			
 			template<class T>
 			T extract(const std::string &item, const std::ios_base::fmtflags &flags = std::ios::dec)
-			throw (emu::fed::exception::ParseException)
+			throw (emu::exception::ParseException)
 			{
 				try {
 					return extract<T>(item.c_str(), flags);
@@ -77,7 +77,7 @@ namespace emu {
 			**/
 			template<class T>
 			static void insert(xercesc::DOMElement *element, const std::string &name, const T &value, const std::ios_base::fmtflags &flags = std::ios::dec)
-			throw (emu::fed::exception::ParseException)
+			throw (emu::exception::ParseException)
 			{
 				std::ostringstream valStream;
 				valStream.flags(flags);
@@ -87,7 +87,7 @@ namespace emu {
 				} catch (xercesc::DOMException &e) {
 					std::ostringstream error;
 					error << "Unable to set attribute " << name << " with value " << valStream.str() << ": " << X(e.getMessage());
-					XCEPT_RAISE(emu::fed::exception::ParseException, error.str());
+					XCEPT_RAISE(emu::exception::ParseException, error.str());
 				}
 			}
 		

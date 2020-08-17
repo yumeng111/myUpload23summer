@@ -108,10 +108,10 @@ namespace emu {
 				V value = defaultValue;
 				try {
 					value = readParameter<T>(message, name);
-				} catch (emu::fed::exception::SOAPException &e) {
+				} catch (emu::exception::SOAPException &e) {
 					std::ostringstream error;
 					error << "Unable to read parameter '" << name << "'";
-					XCEPT_DECLARE_NESTED(emu::fed::exception::SOAPException, e2, error.str(), e);
+					XCEPT_DECLARE_NESTED(emu::exception::SOAPException, e2, error.str(), e);
 					LOG4CPLUS_WARN(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 					notifyQualified("WARN", e2);
 				}

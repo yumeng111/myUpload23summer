@@ -9,7 +9,7 @@
 #include "emu/fed/VMELock.h"
 
 emu::fed::Crate::Crate(const unsigned int &myNumber)
-throw(emu::fed::exception::SoftwareException):
+throw(emu::exception::SoftwareException):
 number_(myNumber)
 {
 	boardVector_.reserve(18);
@@ -38,12 +38,12 @@ bool emu::fed::Crate::isTrackFinder()
 
 
 void emu::fed::Crate::addBoard(VMEModule *myBoard)
-throw (emu::fed::exception::OutOfBoundsException)
+throw (emu::exception::OutOfBoundsException)
 {
 	if (boardVector_.size() == 18) {
 		std::ostringstream error;
 		error << "The physical limitations of FED crates limit the number of boards to 18";
-		XCEPT_DECLARE(emu::fed::exception::ConfigurationException, e2, error.str());
+		XCEPT_DECLARE(emu::exception::ConfigurationException, e2, error.str());
 		std::ostringstream tag;
 		tag << "FEDCrate " << number_;
 		e2.setProperty("tag", tag.str());
@@ -59,7 +59,7 @@ throw (emu::fed::exception::OutOfBoundsException)
 
 
 void emu::fed::Crate::setController(VMEController *controller)
-throw(emu::fed::exception::SoftwareException)
+throw(emu::exception::SoftwareException)
 {
 	vmeController_ = controller;
 
@@ -91,15 +91,15 @@ uint16_t emu::fed::Crate::getRUI(const int &slot) {
 
 
 void emu::fed::Crate::configure()
-throw (emu::fed::exception::ConfigurationException)
+throw (emu::exception::ConfigurationException)
 {
 	for(std::vector<VMEModule *>::iterator iBoard = boardVector_.begin(); iBoard != boardVector_.end(); iBoard++) {
 		try {
 			(*iBoard)->configure();
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			std::ostringstream error;
 			error << "Configuration of board in crate " << number_ << " slot " << (*iBoard)->slot() << " has failed";
-			XCEPT_DECLARE_NESTED(emu::fed::exception::ConfigurationException, e2, error.str(), e);
+			XCEPT_DECLARE_NESTED(emu::exception::ConfigurationException, e2, error.str(), e);
 			std::ostringstream tag;
 			tag << e.getProperty("tag") << " FEDCrate " << number_;
 			e2.setProperty("tag", tag.str());

@@ -8,7 +8,7 @@
 #include <string>
 #include <time.h>
 
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 
 namespace emu {
 	namespace fed {
@@ -25,7 +25,7 @@ namespace emu {
 
 			/** Configure the crates and return them **/
 			virtual std::vector<emu::fed::Crate *> setupCrates(const bool &fake = false)
-			throw (emu::fed::exception::ConfigurationException) = 0;
+			throw (emu::exception::ConfigurationException) = 0;
 			
 			/** Access the already-configured crates **/
 			inline std::vector<emu::fed::Crate *> getCrates() { return crateVector_; }

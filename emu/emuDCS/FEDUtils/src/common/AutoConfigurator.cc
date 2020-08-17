@@ -21,7 +21,7 @@ emu::fed::AutoConfigurator::AutoConfigurator()
 
 
 std::vector<emu::fed::Crate *> emu::fed::AutoConfigurator::setupCrates(const bool &fake)
-throw (emu::fed::exception::ConfigurationException)
+throw (emu::exception::ConfigurationException)
 {
 	timeStamp_ = time(NULL);
 	
@@ -43,10 +43,10 @@ throw (emu::fed::exception::ConfigurationException)
 			Crate *testCrate;
 			try {
 				testCrate = new Crate(crateNumber++);
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				std::ostringstream error;
 				error << "Unable to create crate: " << e.what();
-				XCEPT_DECLARE_NESTED(emu::fed::exception::ConfigurationException, e2, error.str(), e);
+				XCEPT_DECLARE_NESTED(emu::exception::ConfigurationException, e2, error.str(), e);
 				std::ostringstream tag;
 				tag << "FEDCrate " << crateNumber;
 				e2.setProperty("tag", tag.str());
@@ -57,7 +57,7 @@ throw (emu::fed::exception::ConfigurationException)
 
 			try {
 				testController = new VMEController(iDevice, iLink, fake);
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				// As soon as I can't find a link, I am done with this device
 				// If this is the first link I am checking, then I am completely done.
 				if (iLink == 0) noLinks = true;
@@ -103,7 +103,7 @@ throw (emu::fed::exception::ConfigurationException)
 					}
 					delete testDCC;
 					
-				} catch (emu::fed::exception::Exception &e) {
+				} catch (emu::exception::Exception &e) {
 					// probe failed
 					continue;
 				}
@@ -122,7 +122,7 @@ throw (emu::fed::exception::ConfigurationException)
 	if (crateVector_.size() == 0) {
 		std::ostringstream error;
 		error << "Could not auto-detect any controllers on this system.";
-		XCEPT_RAISE(emu::fed::exception::ConfigurationException, error.str());
+		XCEPT_RAISE(emu::exception::ConfigurationException, error.str());
 	}
 	
 	if (crateVector_.size() == 1) {

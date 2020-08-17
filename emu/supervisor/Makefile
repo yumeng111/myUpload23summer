@@ -39,7 +39,7 @@ LibraryDirs = $(XDAQ_ROOT)/lib
 
 UserSourcePath =
 UserCFlags =
-UserCCFlags = -g -Wall -pedantic-errors -Wno-long-long -Wno-variadic-macros
+UserCCFlags = -g -Wall -pedantic-errors -Wno-long-long -Wno-variadic-macros -std=c++11
 UserDynamicLinkFlags =
 UserStaticLinkFlags =
 UserExecutableLinkFlags =

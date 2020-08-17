@@ -10,7 +10,7 @@
 
 
 emu::fed::VMELock::VMELock(const std::string &fileName)
-throw (emu::fed::exception::SoftwareException):
+throw (emu::exception::SoftwareException):
 lockfile_(fileName),
 fd_(-1),
 nFileLock_(0)
@@ -21,14 +21,14 @@ nFileLock_(0)
 	if ((fd_ = open(lockfile_.c_str(), O_CREAT, mode)) < 0) {
 		std::ostringstream error;
 		error << "Error opening lock file " << lockfile_ << ":  permissions problem?";
-		XCEPT_RAISE(emu::fed::exception::SoftwareException, error.str());
+		XCEPT_RAISE(emu::exception::SoftwareException, error.str());
 	}
 
 	// // Make sure other people can use this file
 	// if (fchmod(fd_, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)) {
 	// 	std::ostringstream error;
 	// 	error << "Error changing permissions of lock file " << lockfile_;
-	// 	XCEPT_RAISE(emu::fed::exception::SoftwareException, error.str());
+	// 	XCEPT_RAISE(emu::exception::SoftwareException, error.str());
 	// }
 
 	// Initialize the mutex
@@ -38,13 +38,13 @@ nFileLock_(0)
 	if (err) {
 		std::ostringstream error;
 		error << "Unable to set mutex into recursive mode: " << err;
-		XCEPT_RAISE(emu::fed::exception::SoftwareException, error.str());
+		XCEPT_RAISE(emu::exception::SoftwareException, error.str());
 	}
 	err = pthread_mutex_init(&mutex_, &mutexAttr);
 	if (err) {
 		std::ostringstream error;
 		error << "Unable to initialize mutex: " << err;
-		XCEPT_RAISE(emu::fed::exception::SoftwareException, error.str());
+		XCEPT_RAISE(emu::exception::SoftwareException, error.str());
 	}
 }
 
@@ -62,7 +62,7 @@ emu::fed::VMELock::~VMELock()
 
 
 void emu::fed::VMELock::lock()
-throw (emu::fed::exception::SoftwareException)
+throw (emu::exception::SoftwareException)
 {
 	//std::cout << "lock" << std::endl;
 	// First do the non-expensive locking of the process
@@ -70,7 +70,7 @@ throw (emu::fed::exception::SoftwareException)
 	if (err) {
 		std::ostringstream error;
 		error << "Error locking mutex: " << err;
-		XCEPT_RAISE(emu::fed::exception::SoftwareException, error.str());
+		XCEPT_RAISE(emu::exception::SoftwareException, error.str());
 	}
 
 	// Now try to lock the file
@@ -78,7 +78,7 @@ throw (emu::fed::exception::SoftwareException)
 	if (err) {
 		std::ostringstream error;
 		error << "Error locking file " << lockfile_ << ": " << err;
-		XCEPT_RAISE(emu::fed::exception::SoftwareException, error.str());
+		XCEPT_RAISE(emu::exception::SoftwareException, error.str());
 	}
 	nFileLock_++;
 }
@@ -86,7 +86,7 @@ throw (emu::fed::exception::SoftwareException)
 
 
 void emu::fed::VMELock::unlock()
-throw (emu::fed::exception::SoftwareException)
+throw (emu::exception::SoftwareException)
 {
 	//std::cout << "unlock" << std::endl;
 	// First, try to unlock the file
@@ -95,7 +95,7 @@ throw (emu::fed::exception::SoftwareException)
 		if (err) {
 			std::ostringstream error;
 			error << "Error unlocking file " << lockfile_ << ": " << err;
-			XCEPT_RAISE(emu::fed::exception::SoftwareException, error.str());
+			XCEPT_RAISE(emu::exception::SoftwareException, error.str());
 		}
 		nFileLock_ = 0;
 	} else if (nFileLock_ > 0) {
@@ -107,6 +107,6 @@ throw (emu::fed::exception::SoftwareException)
 	if (err) {
 		std::ostringstream error;
 		error << "Error unlocking mutex: " << err;
-		XCEPT_RAISE(emu::fed::exception::SoftwareException, error.str());
+		XCEPT_RAISE(emu::exception::SoftwareException, error.str());
 	}
 }

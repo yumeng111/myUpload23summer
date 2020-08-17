@@ -10,7 +10,7 @@
 #include <sstream>
 #include "cgicc/HTMLClasses.h"
 
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 
 namespace emu {
 	namespace fed {

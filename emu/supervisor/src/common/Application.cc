@@ -295,8 +295,7 @@ void emu::supervisor::Application::setUpLogger(){
   std::string fileName = "/tmp/emu-supervisor-" + emu::utils::getDateTime( true ) + ".log";
   log4cplus::SharedAppenderPtr myAppender( new log4cplus::FileAppender( fileName.c_str() ) );
   myAppender->setName(getApplicationDescriptor()->getClassName() + "Appender");
-  std::auto_ptr<Layout> myLayout = std::auto_ptr<Layout>( new log4cplus::PatternLayout("%D{%m/%d/%Y %H:%M:%S.%q} %-5p %c, %m%n") );
-  myAppender->setLayout( myLayout );
+  myAppender->setLayout( std::unique_ptr<Layout>( new log4cplus::PatternLayout("%D{%m/%d/%Y %H:%M:%S.%q} %-5p %c, %m%n") ) );
   getApplicationLogger().addAppender( myAppender );
 }
 

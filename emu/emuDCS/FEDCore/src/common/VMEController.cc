@@ -17,7 +17,7 @@
 #include "emu/fed/JTAG_constants.h"
 
 emu::fed::VMEController::VMEController(const int &Device, const int &Link, const bool &fake)
-throw (emu::fed::exception::CAENException):
+throw (emu::exception::CAENException):
 Device_(Device),
 Link_(Link),
 BHandle_(-1),
@@ -26,7 +26,7 @@ fake_(true)
 
 	try {
 		setFake(fake);
-	} catch (emu::fed::exception::CAENException &e) {
+	} catch (emu::exception::CAENException &e) {
 		throw;
 	}
 
@@ -41,7 +41,7 @@ emu::fed::VMEController::~VMEController() {
 
 
 bool emu::fed::VMEController::waitIRQ(const unsigned int &mSecs)
-throw (emu::fed::exception::CAENException)
+throw (emu::exception::CAENException)
 {
 	if (!fake_) {
 		// If the BHandle is not set properly, just return a good signal (true)
@@ -52,7 +52,7 @@ throw (emu::fed::exception::CAENException)
 		if (err != cvSuccess) {
 			std::ostringstream error;
 			error << "Exception in waitIRQ: " << CAENVME_DecodeError(err);
-			XCEPT_DECLARE(emu::fed::exception::CAENException, e2, error.str());
+			XCEPT_DECLARE(emu::exception::CAENException, e2, error.str());
 			throw e2;
 		}
 		
@@ -74,7 +74,7 @@ throw (emu::fed::exception::CAENException)
 
 
 uint16_t emu::fed::VMEController::readIRQ()
-throw (emu::fed::exception::CAENException)
+throw (emu::exception::CAENException)
 {
 	if (!fake_) {
 		// If the BHandle is not set properly, return nothing
@@ -87,7 +87,7 @@ throw (emu::fed::exception::CAENException)
 		if (err != cvSuccess) {
 			std::ostringstream error;
 			error << "Exception in readIRQ: " << CAENVME_DecodeError(err);
-			XCEPT_DECLARE(emu::fed::exception::CAENException, e2, error.str());
+			XCEPT_DECLARE(emu::exception::CAENException, e2, error.str());
 			throw e2;
 		}
 		
@@ -102,7 +102,7 @@ throw (emu::fed::exception::CAENException)
 
 
 void emu::fed::VMEController::setFake(const bool &fake)
-throw (emu::fed::exception::CAENException)
+throw (emu::exception::CAENException)
 {
 	
 	if (!fake) {
@@ -130,21 +130,21 @@ throw (emu::fed::exception::CAENException)
 					inFile.close();
 					std::ostringstream error;
 					error << "Failure extracting pre-opened BHandle from file " << fileName.str();
-					XCEPT_DECLARE(emu::fed::exception::CAENException, e2, error.str());
+					XCEPT_DECLARE(emu::exception::CAENException, e2, error.str());
 					throw e2;
 				}
 				inFile.close();
 			} else {
 				std::ostringstream error;
 				error << "Encountered CAEN bus error, but no open BHandles detected in file " << fileName;
-				XCEPT_DECLARE(emu::fed::exception::CAENException, e2, error.str());
+				XCEPT_DECLARE(emu::exception::CAENException, e2, error.str());
 				throw e2;
 			}
 			
 		} else if (err != cvSuccess) {
 			std::ostringstream error;
 			error << "error " << err << ": " << CAENVME_DecodeError(err);
-			XCEPT_DECLARE(emu::fed::exception::CAENException, e2, error.str());
+			XCEPT_DECLARE(emu::exception::CAENException, e2, error.str());
 			throw e2;
 			
 		} else {
@@ -160,7 +160,7 @@ throw (emu::fed::exception::CAENException)
 			} else {
 				std::ostringstream error;
 				error << "Unable to save BHandle information to external file " << fileName.str();
-				XCEPT_DECLARE(emu::fed::exception::CAENException, e2, error.str());
+				XCEPT_DECLARE(emu::exception::CAENException, e2, error.str());
 				throw e2;
 			}
 		}
@@ -170,10 +170,10 @@ throw (emu::fed::exception::CAENException)
 		lockName << "/tmp/CAEN_" << getDevice() << "_" << getLink() << ".lock";
 		try {
 			mutex_ = new VMELock(lockName.str());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			std::ostringstream error;
 			error << "Unable to create mutex: " << e.what();
-			XCEPT_DECLARE_NESTED(emu::fed::exception::CAENException, e2, error.str(), e);
+			XCEPT_DECLARE_NESTED(emu::exception::CAENException, e2, error.str(), e);
 			throw e2;
 		}
 		
@@ -200,7 +200,7 @@ throw (emu::fed::exception::CAENException)
 		lockName << "/tmp/CAEN_" << getDevice() << "_" << getLink() << ".fakelock";
 		try {
 			mutex_ = new VMELock(lockName.str());
-		} catch (emu::fed::exception::Exception &e) {
+		} catch (emu::exception::Exception &e) {
 			// Don't care
 		}
 		

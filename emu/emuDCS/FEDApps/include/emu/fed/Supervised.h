@@ -5,7 +5,7 @@
 #define __EMU_FED_SUPERVISED_H__
 
 #include "emu/base/Supervised.h"
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 
 #include <string>
 #include <vector>

@@ -4,8 +4,8 @@
 #
 ##
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 include $(BUILD_HOME)/emu/rpm_version
 
 #CXX=g++4
@@ -15,7 +15,7 @@ include $(BUILD_HOME)/emu/rpm_version
 # Packages to be built
 #
 Project=emu
-Package=emuDCS/FEDApps
+Package=emu/emuDCS/FEDApps
 PackageName=FEDApps
 Description="Applications to control and monitor the Front End Device (FED) crates for the CMS Emu (CSC) subdetector"
 Summary="Emu (CSC) FED XDAQ Applications"
@@ -52,7 +52,7 @@ LibraryDirs = \
 	$(XDAQ_ROOT)/lib
 
 UserCFlags =
-UserCCFlags = -pipe -DLINUX -g -Wall -pedantic-errors -Wno-long-long -Wno-variadic-macros -isystem $(XDAQ_ROOT)/include -O1
+UserCCFlags = -pipe -DLINUX -g -Wall -pedantic-errors -Wno-long-long -Wno-variadic-macros -isystem $(XDAQ_ROOT)/include -O1 -std=c++11
 UserStaticLinkFlags =
 UserDynamicLinkFlags = -lboost_filesystem
 UserExecutableLinkFlags = -D_REENTRAN -pthread -pedantic-errors
@@ -72,5 +72,5 @@ StaticLibrary =
 Executables =
 TestExecutables =
 
-include $(XDAQ_ROOT)/config/Makefile.rules
-include $(XDAQ_ROOT)/config/mfRPM.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules

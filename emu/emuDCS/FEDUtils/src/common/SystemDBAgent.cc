@@ -16,7 +16,7 @@ DBAgent(application, instance)
 
 
 std::pair<std::string, time_t> emu::fed::SystemDBAgent::getSystem(xdata::UnsignedInteger64 &key)
-throw (emu::fed::exception::DBException)
+throw (emu::exception::DBException)
 {
 	// Set up parameters
 	std::map<std::string, std::string> parameters;
@@ -26,14 +26,14 @@ throw (emu::fed::exception::DBException)
 	xdata::Table result;
 	try {
 		result = query("get_configuration", parameters);
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Error posting query", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Error posting query", e);
 	}
 	
 	try {
 		return buildSystem(result);
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Error finding columns", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Error finding columns", e);
 	}
 	
 }
@@ -41,14 +41,14 @@ throw (emu::fed::exception::DBException)
 
 
 std::map<std::string, std::vector<std::pair<xdata::UnsignedInteger64, time_t> > > emu::fed::SystemDBAgent::getAllKeys()
-throw (emu::fed::exception::DBException)
+throw (emu::exception::DBException)
 {
 	// Execute the query
 	xdata::Table result;
 	try {
 		result = getAll();
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Error posting query", e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Error posting query", e);
 	}
 	
 	std::map<std::string, std::vector<std::pair<xdata::UnsignedInteger64, time_t> > > returnMe;
@@ -59,8 +59,8 @@ throw (emu::fed::exception::DBException)
 			toolbox::TimeVal timeStamp = getValue<xdata::TimeVal>(*iRow, "TIMESTAMP");
 			
 			returnMe[name.toString()].push_back(std::make_pair(id, timeStamp.sec()));
-		} catch (emu::fed::exception::DBException &e) {
-			XCEPT_RETHROW(emu::fed::exception::DBException, "Unable to parse system from database", e);
+		} catch (emu::exception::DBException &e) {
+			XCEPT_RETHROW(emu::exception::DBException, "Unable to parse system from database", e);
 		}
 	}
 	
@@ -77,7 +77,7 @@ throw (emu::fed::exception::DBException)
 
 
 std::pair<std::string, time_t> emu::fed::SystemDBAgent::buildSystem(xdata::Table &table)
-throw (emu::fed::exception::DBException)
+throw (emu::exception::DBException)
 {
 	// Parse out system name and timestamp
 	xdata::String name;
@@ -87,14 +87,14 @@ throw (emu::fed::exception::DBException)
 		name = getValue<xdata::String>(table.getValueAt(0, "DESCRIPTION"));
 		toolbox::TimeVal timeVal = getValue<xdata::TimeVal>(table.getValueAt(0, "TIMESTAMP"));
 		timeStamp = timeVal.sec();
-	} catch (emu::fed::exception::DBException &e) {
+	} catch (emu::exception::DBException &e) {
 		std::ostringstream error;
 		error << "Error reading system values from database: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::DBException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::DBException, error.str(), e);
 	} catch (xdata::exception::Exception &e) {
 		std::ostringstream error;
 		error << "Error getting value from table: " << e.what();
-		XCEPT_RETHROW(emu::fed::exception::DBException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::DBException, error.str(), e);
 	}
 	
 	return make_pair(name.toString(), timeStamp);
@@ -103,7 +103,7 @@ throw (emu::fed::exception::DBException)
 
 
 void emu::fed::SystemDBAgent::upload(xdata::UnsignedInteger64 &key, xdata::String &name)
-throw (emu::fed::exception::DBException)
+throw (emu::exception::DBException)
 {
 	
 	try {
@@ -127,7 +127,7 @@ throw (emu::fed::exception::DBException)
 		// Insert
 		insert("configuration", table);
 	
-	} catch (emu::fed::exception::DBException &e) {
-		XCEPT_RETHROW(emu::fed::exception::DBException, "Unable to upload system to database: " + std::string(e.what()), e);
+	} catch (emu::exception::DBException &e) {
+		XCEPT_RETHROW(emu::exception::DBException, "Unable to upload system to database: " + std::string(e.what()), e);
 	}
 }

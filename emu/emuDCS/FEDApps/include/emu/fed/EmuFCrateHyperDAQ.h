@@ -15,7 +15,7 @@
 #include "xdata/xdata.h"
 
 #include "Application.h"
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 #include "emu/fed/Crate.h"
 
 namespace emu {
@@ -158,7 +158,7 @@ namespace emu {
 			*
 			**/
 			void Configuring()
-			throw (emu::fed::exception::ConfigurationException);
+			throw (emu::exception::ConfigurationException);
 
 			/** My patented Select-a-crate/board
 			*
@@ -175,7 +175,7 @@ namespace emu {
 			* @author Phillip Killewald
 			**/
 			std::pair<unsigned int, Crate *> getCGICrate(const cgicc::Cgicc &cgi)
-			throw (emu::fed::exception::OutOfBoundsException);
+			throw (emu::exception::OutOfBoundsException);
 
 			/** A way to easily get the selected DDU/DCC from the CGI variables
 			*
@@ -187,18 +187,18 @@ namespace emu {
 			**/
 			template<class T>
 			std::pair<unsigned int, T *> getCGIBoard(const cgicc::Cgicc &cgi)
-			throw (emu::fed::exception::OutOfBoundsException)
+			throw (emu::exception::OutOfBoundsException)
 			{
 
 				// Start with the crate
 				std::pair<unsigned int, Crate *> cratePair;
 				try {
 					cratePair = getCGICrate(cgi);
-				} catch (emu::fed::exception::OutOfBoundsException &e) {
+				} catch (emu::exception::OutOfBoundsException &e) {
 					std::ostringstream error;
 					error << "Error getting crate from CGI input";
 					LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-					XCEPT_RETHROW(emu::fed::exception::ParseException, error.str(), e);
+					XCEPT_RETHROW(emu::exception::ParseException, error.str(), e);
 				}
 				Crate *crate = cratePair.second;
 
@@ -211,7 +211,7 @@ namespace emu {
 					std::ostringstream error;
 					error << "Error getting slot from CGI input";
 					LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-					XCEPT_RAISE(emu::fed::exception::OutOfBoundsException, error.str());
+					XCEPT_RAISE(emu::exception::OutOfBoundsException, error.str());
 				}
 
 				// Now get the vector of boards.
@@ -225,7 +225,7 @@ namespace emu {
 				std::ostringstream error;
 				error << "Unable to find a board of specified type given crate " << cratePair.first << ", slot " << cgiSlot;
 				LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-				XCEPT_RAISE(emu::fed::exception::OutOfBoundsException, error.str());
+				XCEPT_RAISE(emu::exception::OutOfBoundsException, error.str());
 			}
 			
 			/// The XML configuration file.

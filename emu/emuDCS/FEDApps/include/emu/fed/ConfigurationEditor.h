@@ -84,7 +84,7 @@ namespace emu {
 
 			/** @return the parsed integer.  Will automatically switch base if 0x is prepended to the string. **/
 			int getIntegerValue(const std::string &value)
-			throw (emu::fed::exception::Exception);
+			throw (emu::exception::Exception);
 
 			/// Database user name
 			xdata::String dbUsername_;

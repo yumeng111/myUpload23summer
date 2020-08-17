@@ -53,7 +53,7 @@ application_(application)
 	  error << "The file " << fileName << " is not accessable for writing";
 	  log4cplus::Logger logger = log4cplus::Logger::getInstance("EmuFMMIRQ");  
 	  LOG4CPLUS_FATAL(logger, error.str());
-	  XCEPT_DECLARE(emu::fed::exception::FileException, e, error.str());
+	  XCEPT_DECLARE(emu::exception::FileException, e, error.str());
 	}
 
 }
@@ -86,7 +86,7 @@ void emu::fed::IRQThreadManager::attachCrates(std::vector<Crate *> &crateVec)
 
 
 void emu::fed::IRQThreadManager::startThreads(const unsigned int &runNumber)
-throw (emu::fed::exception::FMMThreadException)
+throw (emu::exception::FMMThreadException)
 {
 
 	// Make the shared data object that will be passed between threads and the
@@ -110,10 +110,9 @@ throw (emu::fed::exception::FMMThreadException)
 	myAppend->setName("EmuFMMIRQAppender");
 
 	//Appender Layout
-	std::auto_ptr<log4cplus::Layout> myLayout = std::auto_ptr<log4cplus::Layout>(new log4cplus::PatternLayout("%D{%m/%d/%Y %H:%M:%S.%q} %-5p %c, %m%n"));
 	// for date code, use the Year %Y, DayOfYear %j and Hour:Min:Sec.mSec
 	// only need error data from Log lines with "ErrorData" tag
-	myAppend->setLayout(myLayout);
+	myAppend->setLayout(std::unique_ptr<log4cplus::Layout>(new log4cplus::PatternLayout("%D{%m/%d/%Y %H:%M:%S.%q} %-5p %c, %m%n")));
 
 	log4cplus::Logger logger = log4cplus::Logger::getInstance("EmuFMMIRQ");
 	logger.addAppender(myAppend);
@@ -150,14 +149,14 @@ throw (emu::fed::exception::FMMThreadException)
 			try {
 				cscStatus = (*iDDU)->readFiberErrors();
 				MY_REVOKE_ALARM("IRQThreadStartup");
-			} catch (emu::fed::exception::DDUException &e) {
+			} catch (emu::exception::DDUException &e) {
 				std::ostringstream error;
 				error << "Exception in communicating with DDU in crate " << myCrate->number() << ", slot " << (*iDDU)->slot();
 				LOG4CPLUS_FATAL(logger, error.str());
 				std::ostringstream tag;
 				tag << "FEDcrate " << myCrate->number();
-				MY_RAISE_ALARM_NESTED(emu::fed::exception::FMMThreadException, "IRQThreadStartupCommunication", "ERROR", error.str(), tag.str(), e);
-				XCEPT_DECLARE_NESTED(emu::fed::exception::FMMThreadException, e2, error.str(), e);
+				MY_RAISE_ALARM_NESTED(emu::exception::FMMThreadException, "IRQThreadStartupCommunication", "ERROR", error.str(), tag.str(), e);
+				XCEPT_DECLARE_NESTED(emu::exception::FMMThreadException, e2, error.str(), e);
 				e2.setProperty("tag", tag.str());
 				throw e2;
 			}
@@ -181,7 +180,7 @@ throw (emu::fed::exception::FMMThreadException)
 						error << "Crate " << myCrate->number() << " Slot " << (*iDDU)->slot() << " shows error in " << chamberName << " before the threads actually started.  This may not show up as an interrupt!";
 						LOG4CPLUS_WARN(logger, error.str());
 
-						MY_RAISE_ALARM(emu::fed::exception::FMMThreadException, "IRQThreadStartupCondition", "WARN", error.str(), tag.str());
+						MY_RAISE_ALARM(emu::exception::FMMThreadException, "IRQThreadStartupCondition", "WARN", error.str(), tag.str());
 					}
 				}
 			} else {
@@ -199,8 +198,8 @@ throw (emu::fed::exception::FMMThreadException)
 			LOG4CPLUS_FATAL(logger, error.str());
 			std::ostringstream tag;
 			tag << "FEDCrate " << myCrate->number();
-			MY_RAISE_ALARM(emu::fed::exception::FMMThreadException, "IRQThreadStart", "ERROR", error.str(), tag.str());
-			XCEPT_DECLARE(emu::fed::exception::FMMThreadException, e2, error.str());
+			MY_RAISE_ALARM(emu::exception::FMMThreadException, "IRQThreadStart", "ERROR", error.str(), tag.str());
+			XCEPT_DECLARE(emu::exception::FMMThreadException, e2, error.str());
 			e2.setProperty("tag", tag.str());
 			throw e2;
 		} else {
@@ -213,7 +212,7 @@ throw (emu::fed::exception::FMMThreadException)
 
 
 void emu::fed::IRQThreadManager::endThreads()
-throw (emu::fed::exception::FMMThreadException)
+throw (emu::exception::FMMThreadException)
 {
 
 	log4cplus::Logger logger = log4cplus::Logger::getInstance("EmuFMMIRQ");
@@ -246,8 +245,8 @@ throw (emu::fed::exception::FMMThreadException)
 			LOG4CPLUS_FATAL(logger, error.str());
 			std::ostringstream tag;
 			tag << "FEDCrate " << myCrate->number();
-			MY_RAISE_ALARM(emu::fed::exception::FMMThreadException, "IRQThreadEnd", "ERROR", error.str(), tag.str());
-			XCEPT_DECLARE(emu::fed::exception::FMMThreadException, e2, error.str());
+			MY_RAISE_ALARM(emu::exception::FMMThreadException, "IRQThreadEnd", "ERROR", error.str(), tag.str());
+			XCEPT_DECLARE(emu::exception::FMMThreadException, e2, error.str());
 			e2.setProperty("tag", tag.str());
 
 			LOG4CPLUS_INFO(logger, "Removing appender with exception");
@@ -268,8 +267,8 @@ throw (emu::fed::exception::FMMThreadException)
 			LOG4CPLUS_FATAL(logger, error.str());
 			std::ostringstream tag;
 			tag << "FEDCrate " << myCrate->number();
-			MY_RAISE_ALARM(emu::fed::exception::FMMThreadException, "IRQThreadEnd", "ERROR", error.str(), tag.str());
-			XCEPT_DECLARE(emu::fed::exception::FMMThreadException, e2, error.str());
+			MY_RAISE_ALARM(emu::exception::FMMThreadException, "IRQThreadEnd", "ERROR", error.str(), tag.str());
+			XCEPT_DECLARE(emu::exception::FMMThreadException, e2, error.str());
 			e2.setProperty("tag", tag.str());
 
 			LOG4CPLUS_INFO(logger, "Removing appender with exception");
@@ -1028,7 +1027,7 @@ void *emu::fed::IRQThreadManager::IRQThread(void *data)
 									 << endl;  
 							std::ostringstream tag;
 							tag << "FEDcrate " << crateNumber << " RUI " << myDDU->getRUI() << " fiber " << std::setw(2) << std::setfill('0') << iFiber << " chamber " << myDDU->getFiber(iFiber)->getName();
-							MY_RAISE_ALARM(emu::fed::exception::FMMThreadException, alarmName.str(), "ERROR", error.str(), tag.str());
+							MY_RAISE_ALARM(emu::exception::FMMThreadException, alarmName.str(), "ERROR", error.str(), tag.str());
 						}
 					}
 					
@@ -1334,7 +1333,7 @@ void *emu::fed::IRQThreadManager::IRQThread(void *data)
 									// Distinct alarm for each DCC
 									std::ostringstream alarmName;
 									alarmName << "IRQThreadDCCFMM" << crateNumber << "_" << (*iDCC)->getSlot();
-									MY_RAISE_ALARM(emu::fed::exception::FMMThreadException, alarmName.str(), alarmType, error.str(), tag.str());
+									MY_RAISE_ALARM(emu::exception::FMMThreadException, alarmName.str(), alarmType, error.str(), tag.str());
 								} else {
 									LOG4CPLUS_INFO(logger, error.str());
 									
@@ -1372,7 +1371,7 @@ void *emu::fed::IRQThreadManager::IRQThread(void *data)
 											// Distinct alarm for each FIFO
 											std::ostringstream alarmName;
 											alarmName << "IRQThreadDCCFIFO" << crateNumber << "_" << (*iDCC)->slot() << "_" << (*iFIFO)->getNumber();
-											MY_RAISE_ALARM(emu::fed::exception::FMMThreadException, alarmName.str(), alarmType, error.str(), tag.str());
+											MY_RAISE_ALARM(emu::exception::FMMThreadException, alarmName.str(), alarmType, error.str(), tag.str());
 										} else {
 											std::ostringstream alarmName;
 											alarmName << "IRQThreadDCCFIFO" << crateNumber << "_" << (*iDCC)->slot() << "_" << (*iFIFO)->getNumber();
@@ -1410,7 +1409,7 @@ void *emu::fed::IRQThreadManager::IRQThread(void *data)
 											// Distinct alarm for each SLink
 											std::ostringstream alarmName;
 											alarmName << "IRQThreadDCCSlink" << crateNumber << "_" << (*iDCC)->slot() << "_" << iLink;
-											MY_RAISE_ALARM(emu::fed::exception::FMMThreadException, alarmName.str(), alarmType, error.str(), tag.str());
+											MY_RAISE_ALARM(emu::exception::FMMThreadException, alarmName.str(), alarmType, error.str(), tag.str());
 										} else {
 											std::ostringstream alarmName;
 											alarmName << "IRQThreadDCCSlink" << crateNumber << "_" << (*iDCC)->slot() << "_" << iLink;
@@ -1432,14 +1431,14 @@ void *emu::fed::IRQThreadManager::IRQThread(void *data)
 					pthread_testcancel();
 				} // End all clear
 				
-			} catch (emu::fed::exception::Exception &e) {
+			} catch (emu::exception::Exception &e) {
 				std::ostringstream error;
 				error << "Exception in IRQ handling for crate " << crateNumber;
 				LOG4CPLUS_FATAL(logger, error.str());
 				LOG4CPLUS_FATAL(logger, e.toJSON());
 				std::ostringstream tag;
 				tag << "FEDcrate " << crateNumber;
-				MY_RAISE_ALARM_NESTED(emu::fed::exception::FMMThreadException, "IRQThreadWait", "ERROR", error.str(), tag.str(), e);
+				MY_RAISE_ALARM_NESTED(emu::exception::FMMThreadException, "IRQThreadWait", "ERROR", error.str(), tag.str(), e);
 				pthread_exit(NULL);
 			}
 		}

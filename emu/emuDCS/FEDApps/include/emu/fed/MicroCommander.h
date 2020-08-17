@@ -10,7 +10,7 @@
 
 #include "emu/fed/Configurable.h"
 #include "emu/base/FactFinder.h"
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 
 namespace emu {
 	namespace fed {

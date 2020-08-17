@@ -67,11 +67,11 @@ void emu::fed::Monitor::webDefault(xgi::Input *in, xgi::Output *out)
 		try {
 			softwareConfigure();
 			REVOKE_ALARM("MonitorDefault", NULL);
-		} catch (emu::fed::exception::ConfigurationException &e) {
+		} catch (emu::exception::ConfigurationException &e) {
 			std::ostringstream error;
 			error << "Unable to properly configure the Monitor application";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "MonitorDefault", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "MonitorDefault", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 		}
 	}
 	
@@ -283,11 +283,11 @@ void emu::fed::Monitor::webGetTemperatures(xgi::Input *in, xgi::Output *out)
 		try {
 			softwareConfigure();
 			REVOKE_ALARM("MonitorGetTemperatures", NULL);
-		} catch (emu::fed::exception::ConfigurationException &e) {
+		} catch (emu::exception::ConfigurationException &e) {
 			std::ostringstream error;
 			error << "Unable to properly configure the Monitor application";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "MonitorGetTemperatures", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "MonitorGetTemperatures", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 		}
 	}
 	
@@ -309,7 +309,7 @@ void emu::fed::Monitor::webGetTemperatures(xgi::Input *in, xgi::Output *out)
 	Crate *myCrate = NULL;
 	try {
 		myCrate = parseCrate(in);
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		output.push_back(JSONSpirit::Pair("exception", e.message()));
 		*out << JSONSpirit::write(output);
 		return;
@@ -341,7 +341,7 @@ void emu::fed::Monitor::webGetTemperatures(xgi::Input *in, xgi::Output *out)
 				std::pair<std::string, std::string> debugged = DDUDebugger::Temperature(temperature);
 				status = debugged.second;
 				message = debugged.first;
-			} catch (emu::fed::exception::DDUException &e) {
+			} catch (emu::exception::DDUException &e) {
 				tempObject.push_back(JSONSpirit::Pair("exception", e.what()));
 			}
 			std::ostringstream tempStream;
@@ -372,11 +372,11 @@ void emu::fed::Monitor::webGetVoltages(xgi::Input *in, xgi::Output *out)
 		try {
 			softwareConfigure();
 			REVOKE_ALARM("MonitorGetVoltages", NULL);
-		} catch (emu::fed::exception::ConfigurationException &e) {
+		} catch (emu::exception::ConfigurationException &e) {
 			std::ostringstream error;
 			error << "Unable to properly configure the Monitor application";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "MonitorGetVoltages", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "MonitorGetVoltages", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 		}
 	}
 	
@@ -398,7 +398,7 @@ void emu::fed::Monitor::webGetVoltages(xgi::Input *in, xgi::Output *out)
 	Crate *myCrate = NULL;
 	try {
 		myCrate = parseCrate(in);
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		output.push_back(JSONSpirit::Pair("exception", e.message()));
 		*out << JSONSpirit::write(output);
 		return;
@@ -431,7 +431,7 @@ void emu::fed::Monitor::webGetVoltages(xgi::Input *in, xgi::Output *out)
 				std::pair<std::string, std::string> debugged = DDUDebugger::Voltage(iVolt, voltage);
 				status = debugged.second;
 				message = debugged.first;
-			} catch (emu::fed::exception::DDUException &e) {
+			} catch (emu::exception::DDUException &e) {
 				voltObject.push_back(JSONSpirit::Pair("exception", e.what()));
 			}
 			std::ostringstream voltStream;
@@ -462,11 +462,11 @@ void emu::fed::Monitor::webGetOccupancies(xgi::Input *in, xgi::Output *out)
 		try {
 			softwareConfigure();
 			REVOKE_ALARM("MonitorGetOccupancies", NULL);
-		} catch (emu::fed::exception::ConfigurationException &e) {
+		} catch (emu::exception::ConfigurationException &e) {
 			std::ostringstream error;
 			error << "Unable to properly configure the Monitor application";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "MonitorGetOccupancies", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "MonitorGetOccupancies", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 		}
 	}
 	
@@ -488,7 +488,7 @@ void emu::fed::Monitor::webGetOccupancies(xgi::Input *in, xgi::Output *out)
 	Crate *myCrate = NULL;
 	try {
 		myCrate = parseCrate(in);
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		output.push_back(JSONSpirit::Pair("exception", e.message()));
 		*out << JSONSpirit::write(output);
 		return;
@@ -512,7 +512,7 @@ void emu::fed::Monitor::webGetOccupancies(xgi::Input *in, xgi::Output *out)
 		uint32_t l1aScaler = 0;
 		try {
 			l1aScaler = (*iDDU)->readL1Scaler(emu::fed::DDUFPGA);
-		} catch (emu::fed::exception::DDUException &e) {
+		} catch (emu::exception::DDUException &e) {
 			dduObject.push_back(JSONSpirit::Pair("exception", e.what()));
 		}
 		
@@ -529,7 +529,7 @@ void emu::fed::Monitor::webGetOccupancies(xgi::Input *in, xgi::Output *out)
 			std::vector<uint32_t> occupancies(4, 0);
 			try {
 				occupancies = (*iDDU)->readOccupancyMonitor();
-			} catch (emu::fed::exception::DDUException &e) {
+			} catch (emu::exception::DDUException &e) {
 				fiberObject.push_back(JSONSpirit::Pair("exception", e.what()));
 			}
 			
@@ -596,11 +596,11 @@ void emu::fed::Monitor::webGetCounts(xgi::Input *in, xgi::Output *out)
 		try {
 			softwareConfigure();
 			REVOKE_ALARM("MonitorGetCounts", NULL);
-		} catch (emu::fed::exception::ConfigurationException &e) {
+		} catch (emu::exception::ConfigurationException &e) {
 			std::ostringstream error;
 			error << "Unable to properly configure the Monitor application";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "MonitorGetCounts", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "MonitorGetCounts", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 		}
 	}
 	
@@ -622,7 +622,7 @@ void emu::fed::Monitor::webGetCounts(xgi::Input *in, xgi::Output *out)
 	Crate *myCrate = NULL;
 	try {
 		myCrate = parseCrate(in);
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		output.push_back(JSONSpirit::Pair("exception", e.message()));
 		*out << JSONSpirit::write(output);
 		return;
@@ -649,7 +649,7 @@ void emu::fed::Monitor::webGetCounts(xgi::Input *in, xgi::Output *out)
 		uint32_t scaler = 0;
 		try {
 			scaler = (*iDDU)->readL1Scaler(emu::fed::DDUFPGA);
-		} catch (emu::fed::exception::DDUException &e) {
+		} catch (emu::exception::DDUException &e) {
 			ddufpgaObject.push_back(JSONSpirit::Pair("exception", e.what()));
 		}
 		ddufpgaObject.push_back(JSONSpirit::Pair("count", (int) scaler));
@@ -660,7 +660,7 @@ void emu::fed::Monitor::webGetCounts(xgi::Input *in, xgi::Output *out)
 		scaler = 0;
 		try {
 			scaler = (*iDDU)->readL1Scaler(emu::fed::INFPGA0);
-		} catch (emu::fed::exception::DDUException &e) {
+		} catch (emu::exception::DDUException &e) {
 			infpga01Object.push_back(JSONSpirit::Pair("exception", e.what()));
 		}
 		infpga01Object.push_back(JSONSpirit::Pair("count", (int) scaler));
@@ -671,7 +671,7 @@ void emu::fed::Monitor::webGetCounts(xgi::Input *in, xgi::Output *out)
 		scaler = 0;
 		try {
 			scaler = (*iDDU)->readL1Scaler1(emu::fed::INFPGA0);
-		} catch (emu::fed::exception::DDUException &e) {
+		} catch (emu::exception::DDUException &e) {
 			infpga02Object.push_back(JSONSpirit::Pair("exception", e.what()));
 		}
 		infpga02Object.push_back(JSONSpirit::Pair("count", (int) scaler));
@@ -682,7 +682,7 @@ void emu::fed::Monitor::webGetCounts(xgi::Input *in, xgi::Output *out)
 		scaler = 0;
 		try {
 			scaler = (*iDDU)->readL1Scaler(emu::fed::INFPGA1);
-		} catch (emu::fed::exception::DDUException &e) {
+		} catch (emu::exception::DDUException &e) {
 			infpga11Object.push_back(JSONSpirit::Pair("exception", e.what()));
 		}
 		infpga11Object.push_back(JSONSpirit::Pair("count", (int) scaler));
@@ -693,7 +693,7 @@ void emu::fed::Monitor::webGetCounts(xgi::Input *in, xgi::Output *out)
 		scaler = 0;
 		try {
 			scaler = (*iDDU)->readL1Scaler1(emu::fed::INFPGA1);
-		} catch (emu::fed::exception::DDUException &e) {
+		} catch (emu::exception::DDUException &e) {
 			infpga12Object.push_back(JSONSpirit::Pair("exception", e.what()));
 		}
 		infpga12Object.push_back(JSONSpirit::Pair("count", (int) scaler));
@@ -719,11 +719,11 @@ void emu::fed::Monitor::webGetFiberStatus(xgi::Input *in, xgi::Output *out)
 		try {
 			softwareConfigure();
 			REVOKE_ALARM("MonitorGetFiberStatus", NULL);
-		} catch (emu::fed::exception::ConfigurationException &e) {
+		} catch (emu::exception::ConfigurationException &e) {
 			std::ostringstream error;
 			error << "Unable to properly configure the Monitor application";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "MonitorGetFiberStatus", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "MonitorGetFiberStatus", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 		}
 	}
 	
@@ -745,7 +745,7 @@ void emu::fed::Monitor::webGetFiberStatus(xgi::Input *in, xgi::Output *out)
 	Crate *myCrate = NULL;
 	try {
 		myCrate = parseCrate(in);
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		output.push_back(JSONSpirit::Pair("exception", e.message()));
 		*out << JSONSpirit::write(output);
 		return;
@@ -772,7 +772,7 @@ void emu::fed::Monitor::webGetFiberStatus(xgi::Input *in, xgi::Output *out)
 		try {
 			fiberStatus = (*iDDU)->readFiberErrors();
 			liveFibers = (*iDDU)->readLiveFibers();
-		} catch (emu::fed::exception::DDUException &e) {
+		} catch (emu::exception::DDUException &e) {
 			dduObject.push_back(JSONSpirit::Pair("exception", e.what()));
 		}
 		
@@ -789,7 +789,7 @@ void emu::fed::Monitor::webGetFiberStatus(xgi::Input *in, xgi::Output *out)
 			Fiber *fiber;
 			try {
 				fiber = (*iDDU)->getFiber(iFiber);
-			} catch (emu::fed::exception::OutOfBoundsException &e) {
+			} catch (emu::exception::OutOfBoundsException &e) {
 				fiber = new Fiber(iFiber);
 				fiberObject.push_back(JSONSpirit::Pair("exception", e.what()));
 			}
@@ -832,11 +832,11 @@ void emu::fed::Monitor::webGetDCCStatus(xgi::Input *in, xgi::Output *out)
 		try {
 			softwareConfigure();
 			REVOKE_ALARM("MonitorGetDCCStatus", NULL);
-		} catch (emu::fed::exception::ConfigurationException &e) {
+		} catch (emu::exception::ConfigurationException &e) {
 			std::ostringstream error;
 			error << "Unable to properly configure the Monitor application";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "MonitorGetDCCStatus", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "MonitorGetDCCStatus", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 		}
 	}
 	
@@ -856,7 +856,7 @@ void emu::fed::Monitor::webGetDCCStatus(xgi::Input *in, xgi::Output *out)
 	Crate *myCrate = NULL;
 	try {
 		myCrate = parseCrate(in);
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		output.push_back(JSONSpirit::Pair("exception", e.message()));
 		*out << JSONSpirit::write(output);
 		return;
@@ -887,7 +887,7 @@ void emu::fed::Monitor::webGetDCCStatus(xgi::Input *in, xgi::Output *out)
 			else if (debugged.find("warning") != debugged.end()) statusDecoded = "warning";
 			else if (debugged.find("caution") != debugged.end()) statusDecoded = "caution";
 			else statusDecoded = "ok";
-		} catch (emu::fed::exception::DCCException &e) {
+		} catch (emu::exception::DCCException &e) {
 			dccObject.push_back(JSONSpirit::Pair("exception", e.what()));
 		}
 		dccObject.push_back(JSONSpirit::Pair("fmmStatus", statusDecoded));
@@ -896,7 +896,7 @@ void emu::fed::Monitor::webGetDCCStatus(xgi::Input *in, xgi::Output *out)
 		uint32_t dccL1A = 0;
 		try {
 			dccL1A = (*iDCC)->readL1A();
-		} catch (emu::fed::exception::DCCException &e) {
+		} catch (emu::exception::DCCException &e) {
 			dccObject.push_back(JSONSpirit::Pair("exception", e.what()));
 		}
 		dccObject.push_back(JSONSpirit::Pair("L1A", (int) dccL1A));
@@ -906,7 +906,7 @@ void emu::fed::Monitor::webGetDCCStatus(xgi::Input *in, xgi::Output *out)
 		uint16_t fifoStatus = 0;
 		try {
 			fifoStatus = (*iDCC)->readFIFOStatus();
-		} catch (emu::fed::exception::DCCException &e) {
+		} catch (emu::exception::DCCException &e) {
 			dccObject.push_back(JSONSpirit::Pair("exception", e.what()));
 		}
 		for (size_t iFIFO = 1; iFIFO <= 11; iFIFO++) {
@@ -920,7 +920,7 @@ void emu::fed::Monitor::webGetDCCStatus(xgi::Input *in, xgi::Output *out)
 			unsigned int iSlot = 0;
 			try {
 				iSlot = (*iDCC)->getDDUSlotFromFIFO(iFIFO);
-			} catch (emu::fed::exception::OutOfBoundsException &e) {
+			} catch (emu::exception::OutOfBoundsException &e) {
 				// Not a valid FIFO number?
 				fifoObject.push_back(JSONSpirit::Pair("exception", e.what()));
 			}
@@ -932,7 +932,7 @@ void emu::fed::Monitor::webGetDCCStatus(xgi::Input *in, xgi::Output *out)
 			try {
 				// Look up rates by slot, not by FIFO
 				rate = (*iDCC)->readDDURate(iSlot);
-			} catch (emu::fed::exception::DCCException &e) {
+			} catch (emu::exception::DCCException &e) {
 				fifoObject.push_back(JSONSpirit::Pair("exception", e.what()));
 			}
 			
@@ -960,7 +960,7 @@ void emu::fed::Monitor::webGetDCCStatus(xgi::Input *in, xgi::Output *out)
 		uint16_t slinkStatus = 0;
 		try {
 			slinkStatus = (*iDCC)->readSLinkStatus();
-		} catch (emu::fed::exception::DCCException &e) {
+		} catch (emu::exception::DCCException &e) {
 			dccObject.push_back(JSONSpirit::Pair("exception", e.what()));
 		}
 		for (unsigned int iLink = 1; iLink <= 2; iLink++) {
@@ -975,7 +975,7 @@ void emu::fed::Monitor::webGetDCCStatus(xgi::Input *in, xgi::Output *out)
 			
 			try {
 				rate = (*iDCC)->readSLinkRate(iLink);
-			} catch (emu::fed::exception::DCCException &e) {
+			} catch (emu::exception::DCCException &e) {
 				slinkObject.push_back(JSONSpirit::Pair("exception", e.what()));
 			}
 
@@ -1010,11 +1010,11 @@ void emu::fed::Monitor::webGetDDUStatus(xgi::Input *in, xgi::Output *out)
 		try {
 			softwareConfigure();
 			REVOKE_ALARM("MonitorGetDDUStatus", NULL);
-		} catch (emu::fed::exception::ConfigurationException &e) {
+		} catch (emu::exception::ConfigurationException &e) {
 			std::ostringstream error;
 			error << "Unable to properly configure the Monitor application";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "MonitorGetDDUStatus", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "MonitorGetDDUStatus", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 		}
 	}
 	
@@ -1034,7 +1034,7 @@ void emu::fed::Monitor::webGetDDUStatus(xgi::Input *in, xgi::Output *out)
 	Crate *myCrate = NULL;
 	try {
 		myCrate = parseCrate(in);
-	} catch (emu::fed::exception::ParseException &e) {
+	} catch (emu::exception::ParseException &e) {
 		output.push_back(JSONSpirit::Pair("exception", e.what()));
 		*out << JSONSpirit::write(output);
 		return;
@@ -1060,7 +1060,7 @@ void emu::fed::Monitor::webGetDDUStatus(xgi::Input *in, xgi::Output *out)
 		try {
 			uint8_t fmmStatus = (*iDDU)->readRealFMM();
 			statusDecoded = DDUDebugger::RealFMM(fmmStatus).second;
-		} catch (emu::fed::exception::DDUException &e) {
+		} catch (emu::exception::DDUException &e) {
 			dduObject.push_back(JSONSpirit::Pair("exception", e.what()));
 		}
 		dduObject.push_back(JSONSpirit::Pair("fmmStatus", statusDecoded));
@@ -1069,7 +1069,7 @@ void emu::fed::Monitor::webGetDDUStatus(xgi::Input *in, xgi::Output *out)
 		uint32_t l1aScaler = 0;
 		try {
 			l1aScaler = (*iDDU)->readL1Scaler(emu::fed::DDUFPGA);
-		} catch (emu::fed::exception::DDUException &e) {
+		} catch (emu::exception::DDUException &e) {
 			dduObject.push_back(JSONSpirit::Pair("exception", e.what()));
 		}
 		dduObject.push_back(JSONSpirit::Pair("L1A", (int) l1aScaler));
@@ -1086,7 +1086,7 @@ void emu::fed::Monitor::webGetDDUStatus(xgi::Input *in, xgi::Output *out)
 
 
 emu::fed::Crate *emu::fed::Monitor::parseCrate(xgi::Input *in)
-throw (emu::fed::exception::ParseException)
+throw (emu::exception::ParseException)
 {
 	cgicc::Cgicc cgi(in);
 	
@@ -1095,7 +1095,7 @@ throw (emu::fed::exception::ParseException)
 	if (cgi.getElement("crateNumber") != cgi.getElements().end()) {
 		crateNumber = cgi["crateNumber"]->getIntegerValue();
 	} else {
-		XCEPT_RAISE(emu::fed::exception::ParseException, "crateNumber not found");
+		XCEPT_RAISE(emu::exception::ParseException, "crateNumber not found");
 	}
 	
 	// Pick the appropriate crate
@@ -1108,7 +1108,7 @@ throw (emu::fed::exception::ParseException)
 	}
 	
 	if (myCrate == NULL) {
-		XCEPT_RAISE(emu::fed::exception::ParseException, "crateNumber does not match any crates under the perview of this monitor");
+		XCEPT_RAISE(emu::exception::ParseException, "crateNumber does not match any crates under the perview of this monitor");
 	}
 	
 	return myCrate;
@@ -1125,11 +1125,11 @@ xoap::MessageReference emu::fed::Monitor::onGetParameters(xoap::MessageReference
 		try {
 			softwareConfigure();
 			REVOKE_ALARM("MonitorGetParameters", NULL);
-		} catch (emu::fed::exception::ConfigurationException &e) {
+		} catch (emu::exception::ConfigurationException &e) {
 			std::ostringstream error;
 			error << "Unable to properly configure the Monitor application";
 			LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-			RAISE_ALARM_NESTED(emu::fed::exception::ConfigurationException, "MonitorGetParameters", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
+			RAISE_ALARM_NESTED(emu::exception::ConfigurationException, "MonitorGetParameters", "ERROR", error.str(), e.getProperty("tag"), NULL, e);
 		}
 	}
 	return emu::fed::Application::onGetParameters(message);

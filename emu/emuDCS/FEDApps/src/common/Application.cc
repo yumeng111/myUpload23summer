@@ -13,7 +13,6 @@
 #include "log4cplus/logger.h"
 #include "log4cplus/fileappender.h"
 #include "log4cplus/configurator.h"
-#include "emu/fed/DataTable.h"
 #include "xoap/DOMParserFactory.h"
 #include "xcept/tools.h"
 
@@ -39,8 +38,7 @@ xdaq::WebApplication(stub)
 	myAppender->setName(getApplicationDescriptor()->getClassName() + "Appender");
 	
 	// Appender Layout
-	std::auto_ptr<Layout> myLayout = std::auto_ptr<Layout>(new log4cplus::PatternLayout("%D{%m/%d/%Y %H:%M:%S.%q} %-5p %c, %m%n"));
-	myAppender->setLayout( myLayout );
+	myAppender->setLayout( std::unique_ptr<Layout>(new log4cplus::PatternLayout("%D{%m/%d/%Y %H:%M:%S.%q} %-5p %c, %m%n")) );
 	getApplicationLogger().addAppender(myAppender);
 	
 	// Build the SOAP parser.  This will throw an uncaught exception if it fails, which is kind of what we want, because it means you are out of memory.
@@ -59,7 +57,7 @@ emu::fed::Application::~Application()
 
 
 xoap::MessageReference emu::fed::Application::getParameters(const xdaq::ApplicationDescriptor *applicationDescriptor)
-throw (emu::fed::exception::SOAPException)
+throw (emu::exception::SOAPException)
 {
 
 	xoap::MessageReference message = xoap::createMessage();
@@ -76,7 +74,7 @@ throw (emu::fed::exception::SOAPException)
 		std::string temp;
 		message->writeTo(temp);
 		error << "Error in posting SOAP message with contents: " << temp;
-		XCEPT_RETHROW(emu::fed::exception::SOAPException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::SOAPException, error.str(), e);
 	}
 
 }
@@ -84,7 +82,7 @@ throw (emu::fed::exception::SOAPException)
 
 
 xoap::MessageReference emu::fed::Application::getParameters(const std::string &applicationName, const unsigned int &instance)
-throw (emu::fed::exception::SOAPException)
+throw (emu::exception::SOAPException)
 {
 
 	xoap::MessageReference reply;
@@ -95,7 +93,7 @@ throw (emu::fed::exception::SOAPException)
 	} catch (xdaq::exception::ApplicationDescriptorNotFound &e) {
 		std::ostringstream error;
 		error << "Application name '" << applicationName << "' not found";
-		XCEPT_RETHROW(emu::fed::exception::SOAPException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::SOAPException, error.str(), e);
 	}
 
 	std::set<const xdaq::ApplicationDescriptor *>::const_iterator iAD;
@@ -106,14 +104,14 @@ throw (emu::fed::exception::SOAPException)
 
 	std::ostringstream error;
 	error << "Application name '" << applicationName << "' instance " << instance << " not found";
-	XCEPT_RAISE(emu::fed::exception::SOAPException, error.str());
+	XCEPT_RAISE(emu::exception::SOAPException, error.str());
 
 }
 
 
 
 void emu::fed::Application::setParameter(const std::string &applicationName, const std::string &name, const std::string &type, const std::string &value, const int &instance)
-throw (emu::fed::exception::SOAPException)
+throw (emu::exception::SOAPException)
 {
 
 	// find applications
@@ -124,7 +122,7 @@ throw (emu::fed::exception::SOAPException)
 		std::ostringstream error;
 		error << "Application name '" << applicationName << "' not found";
 		LOG4CPLUS_WARN(getApplicationLogger(), error.str());
-		XCEPT_RETHROW(emu::fed::exception::SOAPException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::SOAPException, error.str(), e);
 	}
 
 	//LOG4CPLUS_DEBUG(getApplicationLogger(), "setParameter " << applicationName << " " << name << " " << type << " " << value << " " << instance << " shows " << apps.size() << " apps");
@@ -134,7 +132,7 @@ throw (emu::fed::exception::SOAPException)
 		std::ostringstream error;
 		error << "Application name '" << applicationName << "' not found";
 		LOG4CPLUS_WARN(getApplicationLogger(), error.str());
-		XCEPT_RAISE(emu::fed::exception::SOAPException, error.str());
+		XCEPT_RAISE(emu::exception::SOAPException, error.str());
 	}
 
 	// prepare a SOAP message
@@ -174,7 +172,7 @@ throw (emu::fed::exception::SOAPException)
 				message->writeTo(temp);
 				error << "Error in posting SOAP message with contents: " << temp;
 				LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-				XCEPT_RETHROW(emu::fed::exception::SOAPException, error.str(), e);
+				XCEPT_RETHROW(emu::exception::SOAPException, error.str(), e);
 			}
 			// Analysis here, if debugging needed.
 			if (instance >= 0) break;
@@ -306,7 +304,7 @@ xoap::MessageReference emu::fed::Application::onGetParameters(xoap::MessageRefer
 	} catch (xcept::Exception &e) {
 		std::ostringstream error;
 		error << "Exception in onGetParamters: " << e.what();
-		XCEPT_DECLARE_NESTED(emu::fed::exception::SOAPException, e2, error.str(), e);
+		XCEPT_DECLARE_NESTED(emu::exception::SOAPException, e2, error.str(), e);
 		LOG4CPLUS_ERROR(getApplicationLogger(), xcept::stdformat_exception_history(e2));
 		notifyQualified("ERROR", e2);
 	}
@@ -387,7 +385,7 @@ xoap::MessageReference emu::fed::Application::createSOAPCommand(const std::strin
 
 
 void emu::fed::Application::sendSOAPCommand(const std::string &command, const std::string &klass, const int instance)
-throw (emu::fed::exception::SOAPException)
+throw (emu::exception::SOAPException)
 {
 
 	// find applications
@@ -403,7 +401,7 @@ throw (emu::fed::exception::SOAPException)
 		std::ostringstream error;
 		error << "Found no applications matching klass=" << klass << ", instance=" << instance;
 		LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
-		XCEPT_RETHROW(emu::fed::exception::SOAPException, error.str(), e);
+		XCEPT_RETHROW(emu::exception::SOAPException, error.str(), e);
 	}
 
 	// prepare a SOAP message
@@ -420,31 +418,7 @@ throw (emu::fed::exception::SOAPException)
 			message->writeTo(messageOut);
 			error << "sendCommand failed sending command=" << command << " to klass=" << klass << ", instance=" << instance;
 			LOG4CPLUS_WARN(getApplicationLogger(), error.str());
-			XCEPT_RETHROW(emu::fed::exception::SOAPException, error.str(), e);
+			XCEPT_RETHROW(emu::exception::SOAPException, error.str(), e);
 		}
 	}
 }
-
-
-
-std::string emu::fed::Application::printException(xcept::Exception &myException)
-{
-	std::ostringstream out;
-	
-	std::vector<xcept::ExceptionInformation> history = myException.getHistory();
-	for (std::vector<xcept::ExceptionInformation>::iterator iError = history.begin(); iError != history.end(); iError++) {
-		DataTable exceptionTable;
-		unsigned int iRow = 0;
-		std::map<std::string, std::string> messages = iError->getProperties();
-		for (std::map<std::string, std::string>::iterator iMessage = messages.begin(); iMessage != messages.end(); iMessage++) {
-			exceptionTable(iRow, 0) << iMessage->first << ":";
-			exceptionTable(iRow, 1) << iMessage->second;
-			iRow++;
-		}
-		out << cgicc::div(exceptionTable.toHTML())
-			.set("class", "exception");
-	}
-	
-	return out.str();
-}
-

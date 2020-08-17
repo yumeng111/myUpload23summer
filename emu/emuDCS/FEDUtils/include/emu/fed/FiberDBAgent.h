@@ -9,7 +9,7 @@
 #include <vector>
 #include "xdata/UnsignedShort.h"
 
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 
 namespace emu {
 	namespace fed {
@@ -27,17 +27,17 @@ namespace emu {
 			
 			/** Build a bunch of Fiber objects corresponding to a configuration key and an RUI **/
 			std::vector<emu::fed::Fiber *> getFibers(xdata::UnsignedInteger64 &key, xdata::UnsignedShort &rui)
-			throw (emu::fed::exception::DBException);
+			throw (emu::exception::DBException);
 			
 			/** Upload a set of fibers **/
 			void upload(xdata::UnsignedInteger64 &key, xdata::UnsignedShort &rui, const std::vector<Fiber *> &fiberVector)
-			throw (emu::fed::exception::DBException);
+			throw (emu::exception::DBException);
 
 		private:
 		
 			/** Build the crates from the table returned **/
 			std::vector<emu::fed::Fiber *> buildFibers(xdata::Table &table)
-			throw (emu::fed::exception::DBException);
+			throw (emu::exception::DBException);
 
 		};
 

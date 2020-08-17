@@ -8,7 +8,7 @@
 #include <string>
 #include <pthread.h>
 
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 #include "emu/base/Alarm.h"
 #include "emu/fed/IRQData.h"
 
@@ -59,11 +59,11 @@ namespace emu {
 			
 			/** Begin monitoring with an optional run number. **/
 			void startThreads(const unsigned int &runNumber = 0)
-			throw (emu::fed::exception::FMMThreadException);
+			throw (emu::exception::FMMThreadException);
 			
 			/** Stop the threads. **/
 			void endThreads()
-			throw (emu::fed::exception::FMMThreadException);
+			throw (emu::exception::FMMThreadException);
 			
 			/** Stop the threads and do not check to see if everything is okay. **/
 			void killThreads();

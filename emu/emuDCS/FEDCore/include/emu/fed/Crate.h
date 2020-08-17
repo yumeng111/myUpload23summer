@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#include "Exception.h"
+#include "emu/exception/Exception.h"
 #include "emu/fed/DDU.h"
 #include "emu/fed/DCC.h"
 
@@ -25,7 +25,7 @@ namespace emu {
 			*	@param myNumber the identification number of the crate.
 			**/
 			Crate(const unsigned int &myNumber = 0)
-			throw (emu::fed::exception::SoftwareException);
+			throw (emu::exception::SoftwareException);
 
 			/** Default destructor.**/
 			~Crate();
@@ -42,11 +42,11 @@ namespace emu {
 
 			/** Adds a VMEModule to the crate. **/
 			void addBoard(VMEModule *myBoard)
-			throw (emu::fed::exception::OutOfBoundsException);
+			throw (emu::exception::OutOfBoundsException);
 
 			/** Sets the VMEController in the crate. **/
 			void setController(VMEController *controller)
-			throw (emu::fed::exception::SoftwareException);
+			throw (emu::exception::SoftwareException);
 
 			/** @returns a pointer to the crate's VMEController. **/
 			inline VMEController *getController() { return vmeController_; }
@@ -85,7 +85,7 @@ namespace emu {
 
 			/** Relay the configure command to all the boards in the crate. **/
 			void configure()
-			throw (emu::fed::exception::ConfigurationException);
+			throw (emu::exception::ConfigurationException);
 
 			/** Deletes the board from the crate and invalidates the given pointer. **/
 			template<typename T>

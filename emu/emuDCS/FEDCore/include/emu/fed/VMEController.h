@@ -6,7 +6,7 @@
 
 #include <stdint.h> // for intN_t
 
-#include "emu/fed/Exception.h"
+#include "emu/exception/Exception.h"
 #include "emu/fed/VMELock.h"
 
 namespace emu {
@@ -24,7 +24,7 @@ namespace emu {
 			*	@param Link the position of the target controller in a daisy chain.
 			**/
 			VMEController(const int &Device, const int &Link, const bool &fake = false)
-			throw (emu::fed::exception::CAENException);
+			throw (emu::exception::CAENException);
 
 			/** Default destructor. **/
 			virtual ~VMEController();
@@ -49,14 +49,14 @@ namespace emu {
 			*	@returns false if there was an interrupt set, true otherwise.
 			**/
 			virtual bool waitIRQ(const unsigned int &mSecs = 5000)
-			throw (emu::fed::exception::CAENException);
+			throw (emu::exception::CAENException);
 
 			/** Read the VME IRQ channel
 			*
 			*	@returns the 16-bits read from the IRQ channel.
 			**/
 			virtual uint16_t readIRQ()
-			throw (emu::fed::exception::CAENException);
+			throw (emu::exception::CAENException);
 
 			/**	I am doing something smart here.  Instead of making the BHandles extern,
 			*	I am going to have the original constructor set its own BHanlde to a
@@ -71,7 +71,7 @@ namespace emu {
 			
 			/** Sets whether the controller is connected to a crate or not. **/
 			void setFake(const bool &fake)
-			throw (emu::fed::exception::CAENException);
+			throw (emu::exception::CAENException);
 			
 		protected:
 			/// A mutex for atomizing communication with the controller.

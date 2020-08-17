@@ -6,39 +6,39 @@
 #
 ##
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 include $(BUILD_HOME)/emu/rpm_version
 
 Project=emu
 
 ifeq ($(Set),framework)
 Packages=\
-	emuDCS/PeripheralCore \
-	emuDCS/PeripheralApps \
-        emuDCS/PeripheralXtop \
-        emuDCS/PCSwitches \
-	emuDCS/OnlineDB \
-	emuDCS/FEDCore \
-	emuDCS/FEDUtils \
-	emuDCS/FEDApps
+	emu/emuDCS/PeripheralCore \
+	emu/emuDCS/PeripheralApps \
+        emu/emuDCS/PeripheralXtop \
+        emu/emuDCS/PCSwitches \
+	emu/emuDCS/OnlineDB \
+	emu/emuDCS/FEDCore \
+	emu/emuDCS/FEDUtils \
+	emu/emuDCS/FEDApps
 endif
 
 ifeq ($(Set),PeripheralApps)
 Packages= \
-	emuDCS/PeripheralCore \
-	emuDCS/PeripheralApps \
-        emuDCS/PeripheralXtop \
-	emuDCS/OnlineDB
+	emu/emuDCS/PeripheralCore \
+	emu/emuDCS/PeripheralApps \
+        emu/emuDCS/PeripheralXtop \
+	emu/emuDCS/OnlineDB
 endif
 
 ifeq ($(Set),FEDCrate)
 Packages= \
-        emuDCS/FEDCore \
-	emuDCS/FEDUtils \
-	emuDCS/FEDApps \
-	emuDCS/OnlineDB 
+        emu/emuDCS/FEDCore \
+	emu/emuDCS/FEDUtils \
+	emu/emuDCS/FEDApps \
+	emu/emuDCS/OnlineDB 
 endif
 
-include $(XDAQ_ROOT)/config/Makefile.rules
-include $(XDAQ_ROOT)/config/mfRPM.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules

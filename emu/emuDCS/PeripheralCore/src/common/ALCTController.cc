@@ -5109,8 +5109,8 @@ void ALCTController::read_firmware(const char *filename)
          return;
       }
    jtag_RestoreIdle(ChainAlctFastMezz);
-   read_eprom(buf, PROM_SIZE, 0);
-   tmb_->write_mcs(buf, PROM_SIZE, mcsfile);
+   read_eprom(buf1, PROM_SIZE, 0);
+   tmb_->write_mcs(buf1, PROM_SIZE, mcsfile);
    fclose(mcsfile);
    if(PROM2size)
    {
@@ -5123,8 +5123,8 @@ void ALCTController::read_firmware(const char *filename)
           free(buf);
           return;
       }
-      read_eprom(buf1, PROM2size, 1);
-      tmb_->write_mcs(buf+PROM_SIZE, PROM2size, mcsfile2);
+      read_eprom(buf2, PROM2size, 1);
+      tmb_->write_mcs(buf2, PROM2size, mcsfile2);
       fclose(mcsfile2);
    }
    free(buf);
@@ -5135,7 +5135,7 @@ void ALCTController::read_firmware(const char *filename)
 void ALCTController::program_fpga(const char *mcsfile)
 {
    const int PROM_SIZE=4194304; // in bytes
-   char rcvbuf[4096];
+   char rcvbuf[1024];
 
    char *bufin, c;
    bufin=(char *)malloc(16*1024*1024);
@@ -5254,7 +5254,7 @@ void ALCTController::program_fpga(const char *mcsfile)
 
 unsigned ALCTController::spartan6_readreg(int reg)
 {
-     char rcvbuf[4096];
+     char rcvbuf[1024];
      unsigned short comd;
      unsigned short data[8]={0x9955, 0x66AA, 0, 4, 4, 4, 4, 4};
      unsigned *rt, rtv1, rtv2, words=1;
@@ -5283,6 +5283,140 @@ unsigned ALCTController::spartan6_readreg(int reg)
      fpga_scan(0, (char *)&comd, 6, rcvbuf, 0);
      return rtv2;
 }
+
+     void ALCTController::fastcontrol_read(int op, int cnt, char *rcv)
+     {  
+        char rcvbuf[1024];
+        unsigned short comd;
+        int jchain=6;
+        int isize=5;
+
+        comd=op;
+        tmb_->new_scan(0, (char *)&comd, isize, NULL, 0, jchain);
+        ::usleep(10);
+        if(cnt>0 && rcv!=NULL)
+           tmb_->new_scan(1, rcvbuf, cnt, rcv, READ_YES, jchain);
+     }
+
+     void ALCTController::fastcontrol_write(int op, int cnt, char *data)
+     {  
+        char rcvbuf[1024];
+        unsigned short comd;
+        int jchain=6;
+        int isize=5;
+
+        comd=op;
+        tmb_->new_scan(0, (char *)&comd, isize, NULL, 0, jchain);
+        ::usleep(10);
+        if(cnt>0 && data!=NULL)
+           tmb_->new_scan(1, data, cnt, rcvbuf, 0, jchain);
+     }
+
+  void ALCTController::read_all_adc()
+  {  
+// based on Andrew Peck's C++ code
+    int  rd_data,  wr_data;
+    int  adc_sdo, adc_sck, adc_sdi, adc_ncs,  adc_shiftin;
+
+///------------------------------------------------------------------------------
+//  Fast Control's ADC register
+//------------------------------------------------------------------------------
+// adc_reg[0] = adc_sck;         // Serial clock
+// adc_reg[1] = adc_sdi;         // Serial data to ADC
+// adc_reg[2] = adc_ncs;         // Chip select, active low
+// adc_reg[3] = adc_sdo;         // Serial data out from ADC
+// adc_reg[4] = adc_eoc;         // End of conversion
+//------------------------------------------------------------------------------
+// Loop over 14 ADC channels of 12 adc clock cycles each, plus 1 more cycle to read last channel
+    for (int ich=0; ich<=14; ++ich) 
+    {
+       adc_sdo     = 0;
+       adc_shiftin = (ich << 4);           // d[7:4]=channel, d[3:2]=length, d[1:0]=ldbf,bip
+       if (ich >= 14) adc_shiftin = 0;    // Don't send channel 14, it is power-down
+
+       // Take ADC cs high, clock low
+       adc_sck = 0;
+       adc_sdi = 0;
+       adc_ncs = 1;
+       wr_data = (adc_sck << 0) | (adc_sdi << 1) | (adc_ncs << 2);
+       adc_write_op(wr_data);
+
+       // Loop over 12 adc clocks, for 12-bit, unipolar format
+       for (int iclk=0; iclk<12; ++iclk) 
+       {
+
+         // Clock low: output channel number for next cycle, msb first
+         if (iclk <= 7)  adc_sdi = (adc_shiftin >> (7-iclk)) & 0x1;
+         else            adc_sdi = 0;
+
+         adc_sck = 0;
+         adc_ncs = 0;
+         wr_data = (adc_sck << 0) | (adc_sdi << 1) | (adc_ncs << 2);
+         adc_write_op(wr_data);
+
+         // Clock high: send channel number for next cycle
+         adc_sck = 1;
+         adc_ncs = 0;
+         wr_data = (adc_sck << 0) | (adc_sdi << 1) | (adc_ncs << 2);
+         adc_write_op(wr_data);
+
+         // Clock high: read ADC data for previous channel, msb first
+         rd_data = adc_read_op();
+         rd_data  = (rd_data >> 3) & 0x1;
+         adc_sdo = adc_sdo | (rd_data << (11-iclk));
+       }   // close iclk
+
+       // Take ADC cs high, clock low
+       adc_sck = 0;
+       adc_sdi = 0;
+       adc_ncs = 1;
+       wr_data = (adc_sck << 0) | (adc_sdi << 1) | (adc_ncs << 2);
+       adc_write_op (wr_data);
+
+       // Close channel loop
+       if (ich >= 1) adc_out[ich-1]  = adc_sdo;
+    }  // close for ich
+
+  }
+
+     double ALCTController::get_adc(int chan)
+     {
+        if(chan<0 || chan>13) return -9999.9;
+        double a= (double)adc_out[chan]*2500.0/4096.0;  // in minivolts, full scale at 4095=2500mV.
+        if(chan==0 || chan==1 || chan==8) a = 2*a; // values in these 3 channels are doubled.
+        // Note: value in channel #11 intentionally left as is: VREF/2.
+        if(  (hardware_version_==2 && (chan==5 || chan==6))
+          || (hardware_version_==3 && (chan==6 || chan==7))
+          || (hardware_version_==4 && (chan==9 || chan==10)) )
+        {
+           a = (a-500.)/10.;   // these channels are temperatures, in Centigrade.
+        }
+        else
+        {
+           a = a/1000.;   // these channels are voltages, in Volts
+        }
+        return a;
+     }
+
+     int ALCTController::dummy_test()
+     {
+/*
+        // the following code read out Configuration Register using the old and new ways and compare them.
+        char dout[10];
+
+        ReadConfigurationReg(); // saved in read_config_reg_[i], one bit per address
+
+        fastcontrol_read( ALCT_FAST_RD_CONFIG_REG, RegSizeAlctFastFpga_RD_CONFIG_REG, dout);        
+
+        for(int i=0; i<69; i++)
+        {
+           std::cout << "CF i=" << i << "  " << std::hex << (read_config_reg_[i] & 0xFF); 
+           if((i%8)==0) std::cout << " <-> "  <<  (dout[i/8] & 0xFF);
+           std::cout << std::dec << std::endl;
+        }
+*/
+        return 0;
+     }
 
   } // namespace emu::pc
   } // namespace emu

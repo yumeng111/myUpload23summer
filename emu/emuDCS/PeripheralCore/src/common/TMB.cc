@@ -11112,7 +11112,7 @@ void TMB::program_virtex6(const char *mcsfile)
      unsigned short comd, tmp;
      unsigned long ttt=0, tout=0;
 
-//    getTheController()->Debug(2);
+    getTheController()->Debug(2);
      getTheController()->SetUseDelay(true);
   
      setup_jtag(ChainTmbMezz);
@@ -11156,7 +11156,7 @@ void TMB::program_virtex6(const char *mcsfile)
      udelay(10000);
     for(int i=0; i<blocks-1; i++)
     {
-//    if(i>50) getTheController()->Debug(0);
+    if(i==50) getTheController()->Debug(0);
        scan(1, bufin+4*i, 32, rcvbuf, 0);
        udelay(32);
        j++;
@@ -12403,8 +12403,11 @@ void TMB::new_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chain)
       ncnt += HIR[shiftpos]+TIR[shiftpos];
    }
    Jtag_Norm(handle, reg, buff, ncnt, rbuff, ird, NOW);
-   if(chip>0 && reg==1) cut_headtail(rbuff, ncnt, TDR[shiftpos], HDR[shiftpos]);
-   if((rcv!=NULL) && (cnt>0)) memcpy(rcv,rbuff, (cnt+7)/8);
+   if(ird>0)
+   {
+      if(chip>0 && reg==1) cut_headtail(rbuff, ncnt, TDR[shiftpos], HDR[shiftpos]);
+      if((rcv!=NULL) && (cnt>0)) memcpy(rcv,rbuff, (cnt+7)/8);
+   }
 }
 
 void TMB::new_RestoreIdle(int dev)

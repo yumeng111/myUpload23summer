@@ -703,7 +703,11 @@ class ALCTController : public EmuLogger
   void read_firmware(const char *filename);
   void program_fpga(const char *mcsfile);
   unsigned spartan6_readreg(int reg);
+  void read_all_adc();  // data stored in array adc_out[16]
+  double get_adc(int channel);  
 
+  int dummy_test();
+  
 protected:
   //
   //
@@ -993,7 +997,13 @@ private:
   void fpga_scan(int reg, char *snd,int cnt,char *rcv,int ird);
   void prom_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chip);
   void ds4550_scan(int reg, char *snd,int cnt,char *rcv,int ird);
+  void fastcontrol_read(int op, int cnt, char *rcv);
+  void fastcontrol_write(int op, int cnt, char *data);
+  inline int adc_read_op() { int rtn; fastcontrol_read(ALCT_FAST_RD_ADC_REG , RegSizeAlctFastFpga_RD_ADC_REG, (char *)&rtn); return rtn; }
+  inline void adc_write_op(int w_data) { fastcontrol_write(ALCT_FAST_WRT_ADC_REG , RegSizeAlctFastFpga_WRT_ADC_REG, (char *)&w_data); }
 
+  int adc_out[16];  // store ADC outputs from method read_all_adc(); to be accessed by get_adc(int)
+  
   // for common JTAG
   enum WRT { LATER, NOW };
 

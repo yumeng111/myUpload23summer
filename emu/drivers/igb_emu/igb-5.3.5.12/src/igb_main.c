@@ -2346,7 +2346,9 @@ static const struct net_device_ops igb_netdev_ops = {
 	.ndo_get_stats		= igb_get_stats,
 	.ndo_set_rx_mode	= igb_set_rx_mode,
 	.ndo_set_mac_address	= igb_set_mac,
+#if RHEL_RELEASE_CODE != RHEL_RELEASE_VERSION(7,6)
 	.ndo_change_mtu		= igb_change_mtu,
+#endif /* RHEL_RELEASE_CODE != RHEL_RELEASE_VERSION(7,6) */
 	.ndo_do_ioctl		= igb_ioctl,
 #ifdef HAVE_RHEL7_NET_DEVICE_OPS_EXT
 	/* RHEL7 requires this to be defined to enable extended ops. RHEL7 uses

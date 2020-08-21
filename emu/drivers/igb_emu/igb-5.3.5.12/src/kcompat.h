@@ -5519,6 +5519,7 @@ pci_release_mem_regions(struct pci_dev *pdev)
 #if !(SLE_VERSION_CODE && (SLE_VERSION_CODE >= SLE_VERSION(12,3,0)))
 #ifndef dma_map_page_attrs
 #define dma_map_page_attrs __kc_dma_map_page_attrs
+#if RHEL_RELEASE_CODE != RHEL_RELEASE_VERSION(7,6)
 static inline dma_addr_t __kc_dma_map_page_attrs(struct device *dev,
 						 struct page *page,
 						 size_t offset, size_t size,
@@ -5527,19 +5528,28 @@ static inline dma_addr_t __kc_dma_map_page_attrs(struct device *dev,
 {
 	return dma_map_page(dev, page, offset, size, dir);
 }
+#endif /* RHEL_RELEASE_CODE != RHEL_RELEASE_VERSION(7,6) */
 #endif
 
 #ifndef dma_unmap_page_attrs
 #define dma_unmap_page_attrs __kc_dma_unmap_page_attrs
+#if RHEL_RELEASE_CODE == RHEL_RELEASE_VERSION(7,6)
+static inline void __kc_dma_unmap_page_attrs(struct device *dev,
+					     dma_addr_t addr, size_t size,
+					     enum dma_data_direction dir,
+					     void* __always_unused attrs)
+#else  /* RHEL_RELEASE_CODE == RHEL_RELEASE_VERSION(7,6) */
 static inline void __kc_dma_unmap_page_attrs(struct device *dev,
 					     dma_addr_t addr, size_t size,
 					     enum dma_data_direction dir,
 					     unsigned long __always_unused attrs)
+#endif  /* RHEL_RELEASE_CODE == RHEL_RELEASE_VERSION(7,6) */
 {
 	dma_unmap_page(dev, addr, size, dir);
 }
 #endif
 
+#if RHEL_RELEASE_CODE != RHEL_RELEASE_VERSION(7,6)
 static inline void __page_frag_cache_drain(struct page *page,
 					   unsigned int count)
 {
@@ -5555,6 +5565,7 @@ static inline void __page_frag_cache_drain(struct page *page,
 #endif
 	__free_pages(page, compound_order(page));
 }
+#endif /* RHEL_RELEASE_CODE != RHEL_RELEASE_VERSION(7,6) */
 #endif /* !SLE_VERSION(12,3,0) */
 #ifndef ETH_MIN_MTU
 #define ETH_MIN_MTU 68

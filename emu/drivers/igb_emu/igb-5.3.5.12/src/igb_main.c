@@ -2346,9 +2346,11 @@ static const struct net_device_ops igb_netdev_ops = {
 	.ndo_get_stats		= igb_get_stats,
 	.ndo_set_rx_mode	= igb_set_rx_mode,
 	.ndo_set_mac_address	= igb_set_mac,
-#if RHEL_RELEASE_CODE != RHEL_RELEASE_VERSION(7,6)
+#if RHEL_RELEASE_CODE >= RHEL_RELEASE_VERSION(7,6)
+	.extended.ndo_change_mtu		= igb_change_mtu,
+#else /* RHEL_RELEASE_CODE >= RHEL_RELEASE_VERSION(7,6) */
 	.ndo_change_mtu		= igb_change_mtu,
-#endif /* RHEL_RELEASE_CODE != RHEL_RELEASE_VERSION(7,6) */
+#endif /* RHEL_RELEASE_CODE >= RHEL_RELEASE_VERSION(7,6) */
 	.ndo_do_ioctl		= igb_ioctl,
 #ifdef HAVE_RHEL7_NET_DEVICE_OPS_EXT
 	/* RHEL7 requires this to be defined to enable extended ops. RHEL7 uses
@@ -2734,9 +2736,15 @@ static int igb_probe(struct pci_dev *pdev,
 
 #ifdef HAVE_NETDEVICE_MIN_MAX_MTU
 	/* MTU range: 68 - 9696 */
+#if RHEL_RELEASE_CODE >= RHEL_RELEASE_VERSION(7,6)
+	netdev->extended->min_mtu = ETH_MIN_MTU;
+	netdev->extended->max_mtu = MAX_RX_JUMBO_FRAME_SIZE -
+		(ETH_HLEN + ETH_FCS_LEN + VLAN_HLEN);
+#else /* RHEL_RELEASE_CODE >= RHEL_RELEASE_VERSION(7,6) */
 	netdev->min_mtu = ETH_MIN_MTU;
 	netdev->max_mtu = MAX_RX_JUMBO_FRAME_SIZE -
 		(ETH_HLEN + ETH_FCS_LEN + VLAN_HLEN);
+#endif /* RHEL_RELEASE_CODE >= RHEL_RELEASE_VERSION(7,6) */
 #endif
 
 #ifdef HAVE_NET_DEVICE_OPS

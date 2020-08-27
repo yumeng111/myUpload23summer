@@ -86,7 +86,11 @@ endif
 # We customize the kernelbuild target in order to provide our hack to disable
 # CONFIG_PTP_1588_CLOCK support should -DNO_PTP_SUPPORT be defined in the extra
 # cflags given on the command line.
-EXTRA_CFLAGS += -DCONFIG_IGB_DISABLE_PACKET_SPLIT 
+EXTRA_CFLAGS += -DCONFIG_IGB_DISABLE_PACKET_SPLIT
+# Extra flags needed for Redhat release 7.6
+ifeq (7.6,$(shell /bin/sed -n -e 's/[^0-9]*\([0-9]\+.[0-9]\+\).[0-9]\+[^0-9]*/\1/p' /etc/redhat-release))
+  EXTRA_CFLAGS += -DHAVE_NETDEVICE_MIN_MAX_MTU
+endif
 devkernelbuild = $(call kernelbuild,$(if $(filter -DNO_PTP_SUPPORT,${EXTRA_CFLAGS}),CONFIG_PTP_1588_CLOCK=n) ${2},${1})
 
 ###############

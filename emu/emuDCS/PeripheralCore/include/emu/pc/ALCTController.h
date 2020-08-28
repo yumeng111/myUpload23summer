@@ -687,8 +687,6 @@ class ALCTController : public EmuLogger
   //
   inline TMB * GetTMB(){ return tmb_;}
   //
-  // Methods used to program ALCT prom:
-  int CheckFirmwareConfiguration();
   void ProgramALCTProms();
   //
   // new routines for new ALCT Mezzanines, using TMB::new_scan()

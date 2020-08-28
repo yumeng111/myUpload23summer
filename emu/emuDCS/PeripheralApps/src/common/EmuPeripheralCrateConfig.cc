@@ -433,8 +433,6 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::HardResetTmbFpga, "HardResetTmbFpga");  
   xgi::bind(this,&EmuPeripheralCrateConfig::UnjamTMB, "UnjamTMB");  
   xgi::bind(this,&EmuPeripheralCrateConfig::UnjamTmbFpga, "UnjamTmbFpgaJtagChain");  
-  xgi::bind(this,&EmuPeripheralCrateConfig::CheckAbilityToLoadALCT, "CheckAbilityToLoadALCT");
-  xgi::bind(this,&EmuPeripheralCrateConfig::LoadALCTFirmware, "LoadALCTFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::LoadCrateALCTFirmware, "LoadCrateALCTFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::LoadRATFirmware, "LoadRATFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::EraseRATFirmware, "EraseRATFirmware");
@@ -460,7 +458,6 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBRawHits, "TMBRawHits");
   xgi::bind(this,&EmuPeripheralCrateConfig::ALCTRawHits, "ALCTRawHits");
   xgi::bind(this,&EmuPeripheralCrateConfig::GEMRawHits, "GEMRawHits");
-  xgi::bind(this,&EmuPeripheralCrateConfig::DisableALCTTestPulse, "DisableALCTTestPulse");
   xgi::bind(this,&EmuPeripheralCrateConfig::OTMBLoadFirmware, "OTMBLoadFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBReadFirmware, "TMBReadFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBBPIReset, "TMBBPIReset");
@@ -479,15 +476,21 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBBPIPromBlockUnlock, "TMBBPIPromBlockUnlock");
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBBPIPromBlockErase, "TMBBPIPromBlockErase");
   xgi::bind(this,&EmuPeripheralCrateConfig::TMBBPIPromBlockLock, "TMBBPIPromBlockLock");
-  xgi::bind(this,&EmuPeripheralCrateConfig::ALCTReadFirmware, "ALCTReadFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::RATReadFirmware, "RATReadFirmware");
-  xgi::bind(this,&EmuPeripheralCrateConfig::LoadALCTSlowFirmware, "LoadALCTSlowFirmware");
-  xgi::bind(this,&EmuPeripheralCrateConfig::LoadSpartan6ALCTFirmware, "LoadSpartan6ALCTFirmware");
-  xgi::bind(this,&EmuPeripheralCrateConfig::VerifySpartan6ALCTFirmware, "VerifySpartan6ALCTFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::LoadVirtex6TMBFirmware, "LoadVirtex6TMBFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::LoadVirtex6TMBFPGA, "LoadVirtex6TMBFPGA");
   xgi::bind(this,&EmuPeripheralCrateConfig::ReadOTMBVirtex6Reg, "ReadOTMBVirtex6Reg");
   xgi::bind(this,&EmuPeripheralCrateConfig::SerialLoadCrateTMBFirmware, "SerialLoadCrateTMBFirmware");
+
+  xgi::bind(this,&EmuPeripheralCrateConfig::ALCTUtils,  "ALCTUtils");
+  xgi::bind(this,&EmuPeripheralCrateConfig::LoadALCTFirmware, "LoadALCTFirmware");
+  xgi::bind(this,&EmuPeripheralCrateConfig::ALCTReadFirmware, "ALCTReadFirmware");
+  xgi::bind(this,&EmuPeripheralCrateConfig::LoadALCTSlowFirmware, "LoadALCTSlowFirmware");
+  xgi::bind(this,&EmuPeripheralCrateConfig::LoadSpartan6ALCTFirmware, "LoadSpartan6ALCTFirmware");
+  xgi::bind(this,&EmuPeripheralCrateConfig::ProgramALCTFPGA, "ProgramALCTFPGA");
+  xgi::bind(this,&EmuPeripheralCrateConfig::ReadALCTSpartan6Reg, "ReadALCTSpartan6Reg");
+  xgi::bind(this,&EmuPeripheralCrateConfig::VerifySpartan6ALCTFirmware, "VerifySpartan6ALCTFirmware");
+  xgi::bind(this,&EmuPeripheralCrateConfig::DisableALCTTestPulse, "DisableALCTTestPulse");
 
   //
   //----------------------------
@@ -628,7 +631,6 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
 #endif
   //
   for (int i=0; i<9; i++) {
-    able_to_load_alct[i] = -1;  
     number_of_tmb_firmware_errors[i] = -1;
     number_of_alct_firmware_errors[i] = -1;
   }
@@ -1284,8 +1286,6 @@ bool EmuPeripheralCrateConfig::ParsingXML(){
       MyTest[i][cr].SetDMB(dmbVector[i]);
       MyTest[i][cr].SetCCB(thisCCB);
       MyTest[i][cr].SetMPC(thisMPC);
-      // reset ALCT firmware check value for this crate
-      able_to_load_alct[i] = -1;
     }
     //
     DefineFirmwareFilenames();
@@ -3727,19 +3727,6 @@ void EmuPeripheralCrateConfig::FixCFEB(xgi::Input * in, xgi::Output * out )
 	SetCurrentCrate(initial_crate);
 	this->PowerOnFixCFEB(in,out);
       }
-      //
-      int config_check = thisALCT->CheckFirmwareConfiguration();
-      //
-      if (config_check == 0 || config_check > 1) {
-	std::cout << "----------------------------------------------------------------" << std::endl;
-	std::cout << "---- ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR------" << std::endl;
-	std::cout << "---- Firmware database check did not pass for this crate. ------" << std::endl;
-	std::cout << "---- ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR------" << std::endl;
-	std::cout << "----------------------------------------------------------------" << std::endl;
-	SetCurrentCrate(initial_crate);
-	this->PowerOnFixCFEB(in,out);
-      }
-      //
       // to read the ALCT's PROM content and save as a .mcs file
 
       std::string chambername= thisTMB->GetLabel();
@@ -10427,6 +10414,14 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   //
   char buf[200] ;
   //
+  if (alct) {
+    std::string ALCTUtils =
+      toolbox::toString("/%s/ALCTUtils?tmb=%d",getApplicationDescriptor()->getURN().c_str(),tmb);
+    //
+    *out << cgicc::a("ALCT Utilities").set("href",ALCTUtils) << std::endl;
+    //
+  }
+  //
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
   *out << std::endl ;
   //
@@ -10574,111 +10569,6 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   //
   *out << cgicc::br() << std::endl;
   *out << cgicc::br() << std::endl;
-  //
-  if (alct) {
-    *out << "ALCT: " << cgicc::br() << std::endl;
-  if (alct->GetHardwareVersion()<=1)
-  {
-     *out << "firmware version = " << ALCTFirmware_[tmb].toString() << ".xsvf" << cgicc::br() << std::endl;
-    //
-    *out << "Step 1)  Disable DCS monitoring to crates" << cgicc::br() << std::endl;
-    //
-    std::string CheckAbilityToLoadALCT = toolbox::toString("/%s/CheckAbilityToLoadALCT",getApplicationDescriptor()->getURN().c_str());
-    *out << cgicc::form().set("method","GET").set("action",CheckAbilityToLoadALCT) << std::endl ;
-    //
-    int track_checked = able_to_load_alct[tmb]; 
-    //
-    if ( track_checked < 0 ) {
-      *out << cgicc::input().set("type","submit").set("value","Step 2) ALCT firmware loading check").set("style","color:blue");
-    } else if ( track_checked == 0 ) {
-      *out << cgicc::input().set("type","submit").set("value","Step 2) ALCT firmware loading check").set("style","color:green");
-    } else {
-      *out << cgicc::input().set("type","submit").set("value","Step 2) ALCT firmware loading check").set("style","color:red");
-    }
-    *out << cgicc::form() << std::endl ;
-    //
-    //
-    *out << cgicc::table().set("border","0");
-    //
-    *out << cgicc::td().set("ALIGN","left");
-    std::string LoadALCTFirmware = toolbox::toString("/%s/LoadALCTFirmware",getApplicationDescriptor()->getURN().c_str());
-    *out << cgicc::form().set("method","GET").set("action",LoadALCTFirmware) << std::endl ;
-    sprintf(buf,"Step 3) Load Firmware for ALCT in slot %d",tmbVector[tmb]->slot());
-    *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
-    sprintf(buf,"%d",tmb);
-    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
-    *out << cgicc::form() << std::endl ;
-    *out << cgicc::td();
-    //
-    *out << cgicc::td().set("ALIGN","center");
-    *out << "... or ...";
-    *out << cgicc::td();
-    //
-    *out << cgicc::td().set("ALIGN","left");
-    std::string LoadCrateALCTFirmware = toolbox::toString("/%s/LoadCrateALCTFirmware",getApplicationDescriptor()->getURN().c_str());
-    *out << cgicc::form().set("method","GET").set("action",LoadCrateALCTFirmware) << std::endl ;
-    *out << cgicc::input().set("type","submit").set("value","Step 3) Load firmware (serially) to all ALCTs in this crate") << std::endl ;
-    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
-    *out << cgicc::form() << std::endl ;
-    *out << cgicc::td();
-    //
-    *out << cgicc::table();
-    //
-    print_it = false;
-    for (int j=0;j<9;j++) 
-      if (number_of_alct_firmware_errors[j] >= 0) 
-	print_it = true;
-    //
-    if (print_it) {
-      for (unsigned i=0; i<tmbVector.size(); i++) {
-	if (number_of_alct_firmware_errors[i] < 1) {
-	  *out << cgicc::span().set("style","color:black");
-	} else {
-	  *out << cgicc::span().set("style","color:red");
-	}
-	*out << "Number of firmware verify errors for ALCT in slot " << tmbVector[i]->slot() 
-	     << " = " << number_of_alct_firmware_errors[i] << cgicc::br() << std::endl;
-	*out << cgicc::span() << std::endl ;
-      }
-    }
-    //
-    *out << cgicc::form().set("method","GET").set("action",CCBHardResetFromTMBPage) << std::endl ;
-    *out << cgicc::input().set("type","submit").set("value","Step 4) CCB hard reset") << std::endl ;
-    *out << cgicc::form() << std::endl ;
-  }  // end of old ALCT
-  else
-  {  // begin new ALCT
-    if (alct->GetHardwareVersion()==4)
-        *out << "firmware version = " << ALCTFirmware_[tmb].toString() << ".mcs" << cgicc::br() << std::endl;
-    else
-        *out << "firmware version = " << ALCTFirmware_[tmb].toString() << "_0.mcs" << cgicc::br() << std::endl;      
-    *out << "Step 1)  Disable DCS monitoring to crates" << cgicc::br() << std::endl;
-    //
-    std::string LoadSpartan6ALCTFirmware = toolbox::toString("/%s/LoadSpartan6ALCTFirmware",getApplicationDescriptor()->getURN().c_str());
-    *out << cgicc::form().set("method","GET").set("action",LoadSpartan6ALCTFirmware) << std::endl ;
-    sprintf(buf,"Step 2) Load ALCT Spartan-6 Firmware in slot %d",tmbVector[tmb]->slot());
-    *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
-    sprintf(buf,"%d",tmb);
-    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
-    *out << cgicc::form() << std::endl ;
-    //
-    std::string VerifySpartan6ALCTFirmware = toolbox::toString("/%s/VerifySpartan6ALCTFirmware",getApplicationDescriptor()->getURN().c_str());
-    *out << cgicc::form().set("method","GET").set("action",VerifySpartan6ALCTFirmware) << std::endl ;
-    sprintf(buf,"Step 2.5) Verify ALCT Spartan-6 Firmware in slot %d",tmbVector[tmb]->slot());
-    *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
-    sprintf(buf,"%d",tmb);
-    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
-    *out << cgicc::form() << std::endl ;
-    //
-    *out << cgicc::form().set("method","GET").set("action",CCBHardResetFromTMBPage) << std::endl ;
-    *out << cgicc::input().set("type","submit").set("value","Step 3) CCB hard reset") << std::endl ;
-    *out << cgicc::form() << std::endl ;
-  }  // end of new ALCT
-  //
-  *out << cgicc::br() << std::endl;
-  *out << cgicc::br() << std::endl;
-  }  // end of ALCT
-  //
   if (rat) {
     *out << "RAT: " << cgicc::br() << std::endl;
     *out << "firmware version = " << RATFirmware_[tmb].toString() << cgicc::br() << std::endl;
@@ -10716,26 +10606,6 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   }
   //
   *out << cgicc::br() << std::endl;
-  *out << cgicc::br() << std::endl;
-  //
-  if (alct) {
-    *out << "ALCT Slow Control: " << cgicc::br() << std::endl;
-    *out << "firmware version = " << FirmwareDir_ + ALCT_SLOW_FIRMWARE_FILENAME_XC18V01 << cgicc::br() << std::endl;
-    //
-    *out << "Step 1)  Disable DCS monitoring to crates" << cgicc::br() << std::endl;
-    //
-    //
-    std::string LoadALCTslowFirmware = toolbox::toString("/%s/LoadALCTSlowFirmware",getApplicationDescriptor()->getURN().c_str());
-    *out << cgicc::form().set("method","GET").set("action",LoadALCTslowFirmware) << std::endl ;
-    sprintf(buf,"Step 2) Load Slow Control Firmware for ALCT in slot %d",tmbVector[tmb]->slot());
-    *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
-    sprintf(buf,"%d",tmb);
-    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
-    *out << cgicc::form() << std::endl ;
-    *out << cgicc::form().set("method","GET").set("action",CCBHardResetFromTMBPage) << std::endl ;
-    *out << cgicc::input().set("type","submit").set("value","Step 3) CCB hard reset") << std::endl ;
-    *out << cgicc::form() << std::endl ;
-  }
   //
   *out << cgicc::fieldset();
   //
@@ -11841,7 +11711,7 @@ void EmuPeripheralCrateConfig::LoadALCTSlowFirmware(xgi::Input * in, xgi::Output
     thisCCB->setCCBMode(CCB::DLOG);
   }
 
-  this->TMBUtils(in,out);
+  this->ALCTUtils(in,out);
 }
 //
 void EmuPeripheralCrateConfig::LoadVirtex6TMBFirmware(xgi::Input * in, xgi::Output * out )
@@ -11978,7 +11848,7 @@ void EmuPeripheralCrateConfig::LoadSpartan6ALCTFirmware(xgi::Input * in, xgi::Ou
     }
   }
   //
-this->TMBUtils(in,out);
+this->ALCTUtils(in,out);
 }
 //
 void EmuPeripheralCrateConfig::VerifySpartan6ALCTFirmware(xgi::Input * in, xgi::Output * out )
@@ -12011,7 +11881,7 @@ void EmuPeripheralCrateConfig::VerifySpartan6ALCTFirmware(xgi::Input * in, xgi::
     }
   }
   //
-this->TMBUtils(in,out);
+this->ALCTUtils(in,out);
 }
 
 //
@@ -12537,36 +12407,6 @@ void EmuPeripheralCrateConfig::UnjamTmbFpga(xgi::Input * in, xgi::Output * out )
   //
 }
 //
-//
-void EmuPeripheralCrateConfig::CheckAbilityToLoadALCT(xgi::Input * in, xgi::Output * out ) 
-  throw (xgi::exception::Exception) {
-  //
-  std::cout << "Check ability to load firmware for all ALCTs in this crate..." << std::endl;
-  //
-  int check_value[10] = {};
-  //
-  for (unsigned i=0; i<tmbVector.size(); i++) 
-    check_value[i] = tmbVector[i]->alctController()->CheckFirmwareConfiguration();
-  //
-  // print out the results
-  //
-  for (unsigned i=0; i<tmbVector.size(); i++) {
-    //
-    std::cout << "TMB in slot " << tmbVector[i]->slot() << " ... ";
-    if (check_value[i] == 1) {
-      able_to_load_alct[i] = 0;
-      std::cout << "OK";
-    } else if (check_value[i] == 0) {
-      able_to_load_alct[i] = 1;
-      std::cout << " ---> FAIL <---";
-    }
-    std::cout << std::endl;
-  }
-  //
-  this->TMBUtils(in,out);
-  //
-}
-//
 void EmuPeripheralCrateConfig::LoadALCTFirmware(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {
   //
@@ -12591,16 +12431,6 @@ void EmuPeripheralCrateConfig::LoadALCTFirmware(xgi::Input * in, xgi::Output * o
     std::cout << "This ALCT not defined" << std::endl;
     this->TMBUtils(in,out);
   }
-  if (able_to_load_alct[tmb] != 0) {
-    std::cout << "----------------------------------------------------------------" << std::endl;
-    std::cout << "---- ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR------" << std::endl;
-    std::cout << "---- Firmware database check did not pass for this crate. ------" << std::endl;
-    std::cout << "---- ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR------" << std::endl;
-    std::cout << "----------------------------------------------------------------" << std::endl;
-    this->TMBUtils(in,out);
-  }
-  // reset the ALCT check button
-  able_to_load_alct[tmb] = -1;
   //
   // Put CCB in FPGA mode to make the CCB ignore TTC commands (such as hard reset) during ALCT downloading...
   // Liu July-20,2015: commented out the following line to allow ALCT firmware loading during data taking
@@ -12675,17 +12505,6 @@ void EmuPeripheralCrateConfig::LoadCrateALCTFirmware(xgi::Input * in, xgi::Outpu
       std::cout << "This ALCT not defined" << std::endl;
       this->TMBUtils(in,out);
     }
-    //
-    if (able_to_load_alct[i] != 0) {
-      std::cout << "----------------------------------------------------------------" << std::endl;
-      std::cout << "---- ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR------" << std::endl;
-      std::cout << "---- Firmware database check did not pass for this crate. ------" << std::endl;
-      std::cout << "---- ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR------" << std::endl;
-      std::cout << "----------------------------------------------------------------" << std::endl;
-      this->TMBUtils(in,out);
-    }
-    // reset the ALCT check button
-    able_to_load_alct[i] = -1;
     //
     LOG4CPLUS_INFO(getApplicationLogger(), "Program ALCT firmware");
     //
@@ -14142,6 +13961,227 @@ void EmuPeripheralCrateConfig::TMBBPIPromLoadAddress(xgi::Input * in, xgi::Outpu
   //
   this->TMBUtils(in, out);
   //
+}
+
+//
+void EmuPeripheralCrateConfig::ALCTUtils(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) 
+{
+  if(!parsed)
+  {  this->Default(in,out);
+     return;
+  }
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("tmb");
+  int tmb;
+  if(name != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    TMB_ = tmb;
+  } else {
+    tmb = TMB_;
+  }
+  //
+  if(tmb<0 || tmb>=tmbVector.size())
+  {  this->Default(in,out);
+     return;
+  }
+  //
+  TMB * thisTMB = tmbVector[tmb];
+  //
+  Chamber * thisChamber = chamberVector[tmb];
+  //
+  char Name[100];
+  sprintf(Name,"%s ALCT utilities, crate=%s slot=%d",
+	  (thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),thisTMB->slot());
+
+  //
+  alct = thisTMB->alctController();
+  if(alct==NULL)
+  {  this->Default(in,out);
+     return;
+  }
+  //
+  MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: ALCTUtils: " << thisTMB->GetLabel() << ", TMB slot=" << thisTMB->slot() << std::endl;
+
+  //
+  char buf[200] ;
+
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+  *out << std::endl ;
+  //
+  *out << cgicc::legend("ALCT Firmware").set("style","color:blue") ;
+  //
+  *out << "ALCT: " << cgicc::br() << std::endl;
+  if (alct->GetHardwareVersion()<=1)
+  {
+    *out << "firmware = " << ALCTFirmware_[tmb].toString() << ".xsvf" << cgicc::br() << std::endl;
+    //
+    *out << "Step 1)  Disable DCS monitoring to crates" << cgicc::br() << std::endl;
+    //
+    //
+    *out << cgicc::table().set("border","0");
+    //
+    *out << cgicc::td().set("ALIGN","left");
+    std::string LoadALCTFirmware = toolbox::toString("/%s/LoadALCTFirmware",getApplicationDescriptor()->getURN().c_str());
+    *out << cgicc::form().set("method","GET").set("action",LoadALCTFirmware) << std::endl ;
+    sprintf(buf,"Step 2) Load Firmware for ALCT in slot %d",tmbVector[tmb]->slot());
+    *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
+    sprintf(buf,"%d",tmb);
+    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+    *out << cgicc::form() << std::endl ;
+    *out << cgicc::td();
+    //
+    *out << cgicc::td().set("ALIGN","center");
+    *out << "... or ...";
+    *out << cgicc::td();
+    //
+    *out << cgicc::td().set("ALIGN","left");
+    std::string LoadCrateALCTFirmware = toolbox::toString("/%s/LoadCrateALCTFirmware",getApplicationDescriptor()->getURN().c_str());
+    *out << cgicc::form().set("method","GET").set("action",LoadCrateALCTFirmware) << std::endl ;
+    *out << cgicc::input().set("type","submit").set("value","Step 2) Load firmware (serially) to all ALCTs in this crate") << std::endl ;
+    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+    *out << cgicc::form() << std::endl ;
+    *out << cgicc::td();
+    //
+    *out << cgicc::table();
+    //
+  }  // end of old ALCT
+  else
+  {  // begin new ALCT
+    if (alct->GetHardwareVersion()==4)
+        *out << "firmware = " << ALCTFirmware_[tmb].toString() << ".mcs" << cgicc::br() << std::endl;
+    else
+        *out << "firmware = " << ALCTFirmware_[tmb].toString() << "_0.mcs" << cgicc::br() << std::endl;      
+    *out << "Step 1)  Disable DCS monitoring to crates" << cgicc::br() << std::endl;
+    //
+    std::string LoadSpartan6ALCTFirmware = toolbox::toString("/%s/LoadSpartan6ALCTFirmware",getApplicationDescriptor()->getURN().c_str());
+    *out << cgicc::form().set("method","GET").set("action",LoadSpartan6ALCTFirmware) << std::endl ;
+    sprintf(buf,"Step 2) Load ALCT Spartan-6 Firmware to EPROM in slot %d",tmbVector[tmb]->slot());
+    *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
+    sprintf(buf,"%d",tmb);
+    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+    *out << cgicc::form() << std::endl ;
+    //
+    std::string VerifySpartan6ALCTFirmware = toolbox::toString("/%s/VerifySpartan6ALCTFirmware",getApplicationDescriptor()->getURN().c_str());
+    *out << cgicc::form().set("method","GET").set("action",VerifySpartan6ALCTFirmware) << std::endl ;
+    sprintf(buf,"Step 2.5) Verify ALCT Spartan-6 Firmware in slot %d",tmbVector[tmb]->slot());
+    *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
+    sprintf(buf,"%d",tmb);
+    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+    *out << cgicc::form() << std::endl ;
+
+    *out << cgicc::br() << cgicc::br() << std::endl;
+    //
+    *out << "ALCT FPGA: " << cgicc::br() << std::endl;
+    if (alct->GetHardwareVersion()==4)
+        *out << "firmware = " << ALCTFirmware_[tmb].toString() << ".mcs" << cgicc::br() << std::endl;
+    else
+        *out << "firmware = " << ALCTFirmware_[tmb].toString() << "_0.mcs" << cgicc::br() << std::endl;      
+    std::string ProgALCTFpga = toolbox::toString("/%s/ProgramALCTFPGA",getApplicationDescriptor()->getURN().c_str());
+    *out << cgicc::form().set("method","GET").set("action",ProgALCTFpga) << std::endl ;
+    sprintf(buf,"Program ALCT Spartan-6 FPGA in slot %d",tmbVector[tmb]->slot());
+    *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
+    sprintf(buf,"%d",tmb);
+    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+    *out << cgicc::form() << std::endl ;
+    //
+  }  // end of new ALCT
+  //
+  *out << cgicc::br() << std::endl;
+  *out << cgicc::br() << std::endl;
+
+  // ALCT Slow Control
+    *out << "ALCT Slow Control: " << cgicc::br() << std::endl;
+    *out << "firmware = " << FirmwareDir_ + ALCT_SLOW_FIRMWARE_FILENAME_XC18V01 << cgicc::br() << std::endl;
+    //
+    *out << "Step 1)  Disable DCS monitoring to crates" << cgicc::br() << std::endl;
+    //
+    //
+    std::string LoadALCTslowFirmware = toolbox::toString("/%s/LoadALCTSlowFirmware",getApplicationDescriptor()->getURN().c_str());
+    *out << cgicc::form().set("method","GET").set("action",LoadALCTslowFirmware) << std::endl ;
+    sprintf(buf,"Step 2) Load ALCT Slow Control Firmware in slot %d",tmbVector[tmb]->slot());
+    *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
+    sprintf(buf,"%d",tmb);
+    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+    *out << cgicc::form() << std::endl ;
+
+  *out << cgicc::br() << std::endl;
+
+  *out << cgicc::fieldset() << cgicc::br() << std::endl;
+    
+  //
+}
+//
+void EmuPeripheralCrateConfig::ProgramALCTFPGA(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) 
+{
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name2 = cgi.getElement("tmb");
+  int tmb;
+  if(name2 != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "Select TMB " << tmb << std::endl;
+  } else {
+    std::cout << "No TMB" << std::endl ;
+    tmb=-1;
+  }
+  //
+  TMB * thisTMB=NULL;
+  if(tmb>=0 && (unsigned)tmb<tmbVector.size())  thisTMB = tmbVector[tmb];
+  if(thisTMB)
+  {
+    ALCTController * thisALCT = thisTMB->alctController();
+    if(thisALCT && (thisALCT->GetHardwareVersion()>=2))
+    {
+       std::string firmfile = ALCTFirmware_[tmb].toString() + ((thisALCT->GetHardwareVersion()==4)?".mcs":"_0.mcs");
+       // Put CCB in FPGA mode to make the CCB ignore TTC commands (such as hard reset)
+       thisCCB->setCCBMode(CCB::VMEFPGA);
+       thisTMB->disableALCTClock();
+       //
+       std::cout  << getLocalDateTime() <<  " Program new ALCT Mezzanine (Spartan-6) FPGA in slot " << thisTMB->slot() << std::endl;
+       thisALCT->program_fpga(firmfile.c_str());
+       std::cout  << getLocalDateTime() <<  " Finished." << std::endl;
+       thisTMB->enableAllClocks();
+       // Put CCB back into DLOG mode to listen to TTC commands...
+       thisCCB->setCCBMode(CCB::DLOG);
+    }
+  }
+  //
+  this->ALCTUtils(in,out);
+}
+//
+void EmuPeripheralCrateConfig::ReadALCTSpartan6Reg(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) 
+{
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name2 = cgi.getElement("tmb");
+  int tmb;
+  if(name2 != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "Select TMB " << tmb << std::endl;
+  } else {
+    std::cout << "No TMB" << std::endl ;
+    tmb=-1;
+  }
+  //
+  TMB * thisTMB=NULL;
+  if(tmb>=0 && (unsigned)tmb<tmbVector.size())  thisTMB = tmbVector[tmb];
+  if(thisTMB)
+  {
+    ALCTController * thisALCT = thisTMB->alctController();
+    if(thisALCT && (thisALCT->GetHardwareVersion()>=2))
+    {
+       // thisALCT->spartan6_readreg(0xe);
+    }
+  }
+  //
+  this->ALCTUtils(in,out);
 }
 
 void EmuPeripheralCrateConfig::EnableWriteDCFEBPROM(xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception) 

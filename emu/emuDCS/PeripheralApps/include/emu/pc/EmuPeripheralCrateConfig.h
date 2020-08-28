@@ -478,9 +478,6 @@ private:
   void CCBHardResetFromTMBPage(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);  
   void CheckTMBFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void ClearTMBBootReg(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
-  void CheckAbilityToLoadALCT(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
-  void LoadALCTFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
-  void LoadCrateALCTFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void LoadRATFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void EraseRATFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void TMBDumpAllRegisters(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
@@ -499,7 +496,6 @@ private:
   void TMBRawHits(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void ALCTRawHits(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void GEMRawHits(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
-  void DisableALCTTestPulse(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void TMBPrintCounters(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void TMBResetCounters(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void TMBCounterForFixedTime(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
@@ -530,14 +526,23 @@ private:
   void TMBBPIPromBlockErase(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void TMBBPIPromBlockLock(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   
-  void ALCTReadFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void RATReadFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
-  void LoadALCTSlowFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void LoadVirtex6TMBFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);  
   void LoadVirtex6TMBFPGA(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);  
-  void LoadSpartan6ALCTFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
-  void VerifySpartan6ALCTFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void ReadOTMBVirtex6Reg(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  //
+  // ALCT utils
+  void ALCTUtils(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void LoadALCTFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void LoadCrateALCTFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void LoadALCTSlowFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void LoadSpartan6ALCTFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void ProgramALCTFPGA(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void ReadALCTSpartan6Reg(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void VerifySpartan6ALCTFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void ALCTReadFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void DisableALCTTestPulse(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  
   //
   // VCC utils
   void VCCHeader(xgi::Input * in, xgi::Output * out, std::string title, std::string heading ) throw (xgi::exception::Exception); 
@@ -784,7 +789,6 @@ private:
   //
   int number_of_alct_firmware_errors[9];
   int number_of_tmb_firmware_errors[9];
-  int able_to_load_alct[9];
   //
   bool print_config_check_output;
   char date_and_time_[13];

@@ -1778,6 +1778,7 @@ void EmuPeripheralCrateConfig::CrateConfiguration(xgi::Input * in, xgi::Output *
   //
   *out << cgicc::table().set("border","1");
   //
+  *out << " <tr> ";
   *out << cgicc::td();
   *out << "Data readout synchronization parameters..." << std::endl;
   *out << cgicc::td();
@@ -1810,8 +1811,9 @@ void EmuPeripheralCrateConfig::CrateConfiguration(xgi::Input * in, xgi::Output *
   *out << cgicc::form() << std::endl ;
   *out << cgicc::td();
   //
+  *out << " </tr> " << std::endl;
   //
-  *out << cgicc::tr();
+  *out << " <tr> ";
   //
   *out << cgicc::td();
   *out << "Muonic timing scans" << std::endl;
@@ -1845,7 +1847,9 @@ void EmuPeripheralCrateConfig::CrateConfiguration(xgi::Input * in, xgi::Output *
   *out << cgicc::td();
   *out << cgicc::td();
   //
-  *out << cgicc::tr();
+  *out << " </tr> " << std::endl;
+  //
+  *out << " <tr> ";
   //
   *out << cgicc::td();
   *out << "ODMB Timing scans" << std::endl;
@@ -1901,7 +1905,9 @@ void EmuPeripheralCrateConfig::CrateConfiguration(xgi::Input * in, xgi::Output *
        << cgicc::form() << std::endl
        << cgicc::td();
   //
-  *out << cgicc::tr();
+  *out << " </tr> " << std::endl;
+  //
+  *out << " <tr> ";
   //
   *out << cgicc::td();
   *out << "Other cratewide utilities" << std::endl;
@@ -1938,6 +1944,7 @@ void EmuPeripheralCrateConfig::CrateConfiguration(xgi::Input * in, xgi::Output *
   *out << cgicc::form() << std::endl ;
   *out << cgicc::td();
   //
+  *out << " </tr> " << std::endl;
   *out << cgicc::table();
   //*out << cgicc::body();
   *out << cgicc::fieldset();
@@ -8893,6 +8900,10 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
   //
   *out << cgicc::legend("Voltages, Currents, and Temperatures").set("style","color:blue") 
        << std::endl ;
+
+  *out << cgicc::span().set("style","color:blue");
+  *out << "ALCT Baseboard:";
+  *out << cgicc::span() << cgicc::br() << std::endl;
   //
   alct->ReadAlctTemperatureAndVoltages();
   //
@@ -8905,6 +8916,7 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
   *out << cgicc::table().set("border","1").set("cellspacing","1").set("cellpadding","8");
   //
   /////////////////////////////////////////////////
+  *out << " <tr> ";
   *out << cgicc::td().set("ALIGN","center");
   *out << "power line" << std::endl;
   *out << cgicc::td();
@@ -8926,8 +8938,9 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
   *out << cgicc::td();
   //
   /////////////////////////////////////////////////
-  *out << cgicc::tr();
+  *out << " </tr> " << std::endl;
   //
+  *out << " <tr> ";
   *out << cgicc::td().set("ALIGN","center");  
   *out << "measured V" << std::endl;
   *out << cgicc::td();
@@ -8992,8 +9005,9 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
   *out << cgicc::span();
   *out << cgicc::td();
   //
+  *out << " </tr> " << std::endl;
   //////////////////////////////////////////////////
-  *out << cgicc::tr();
+  *out << " <tr> ";
   //
   *out << cgicc::td().set("ALIGN","center");
   *out << "measured I" << std::endl;
@@ -9059,9 +9073,191 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
   *out << std::setprecision(2) << value_5p5ampsa << " A" ;
   *out << cgicc::span();
   *out << cgicc::td();
+  *out << " </tr> ";
+  //
+  *out << cgicc::table();
+
+  if(alct->ALCTversion()<2) return;  // Only new ALCT mezzanines have the following part
+  *out << cgicc::hr();
+  *out << cgicc::span().set("style","color:blue");
+  *out << "ALCT Mezzanine:";
+  *out << cgicc::span() << cgicc::br() << std::endl;
+  alct->read_all_adc();
+  switch(alct->ALCTversion())
+  {
+     case 2:
+       *out << "FPGA_Top Temperature = " << alct->get_adc(5) << " C" << cgicc::br() << std::endl;
+       *out << "FPGA_Bot Temperature = " << alct->get_adc(6) << " C" << cgicc::br() << std::endl;
+       break;
+     case 3:
+       *out << "FPGA_Top Temperature = " << alct->get_adc(6) << " C" << cgicc::br() << std::endl;
+       *out << "FPGA_Bot Temperature = " << alct->get_adc(7) << " C" << cgicc::br() << std::endl;
+       break;
+     case 4:
+       *out << "FPGA Temperature = " << alct->get_adc(9) << " C" << cgicc::br() << std::endl;
+       *out << "GBTx Temperature = " << alct->get_adc(10) << " C" << cgicc::br() << std::endl;
+       break;
+  }
+  *out << cgicc::table().set("border","1").set("cellspacing","1").set("cellpadding","8");
+  *out << " <tr> ";
+  *out << cgicc::td().set("ALIGN","right");
+  *out << "power line" << std::endl;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td().set("ALIGN","center");
+  *out << "measured" << std::endl;
+  *out << cgicc::td();
+  *out << " </tr> " << std::endl;
+  //
+  *out << " <tr> ";
+  *out << cgicc::td().set("ALIGN","right");
+  *out << "3.3V" << std::endl;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  *out << alct->get_adc(0) << " V" << std::endl;
+  *out << cgicc::td();
+  *out << " </tr> " << std::endl;
+  //
+  *out << " <tr> ";
+  *out << cgicc::td().set("ALIGN","right");
+  *out << "VCCAUX 2.5V" << std::endl;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  if(alct->ALCTversion()==4)
+    *out << alct->get_adc(8) << " V" << std::endl;
+  else
+    *out << alct->get_adc(1) << " V" << std::endl;    
+  *out << cgicc::td();
+  *out << " </tr> " << std::endl;
+  //
+  if(alct->ALCTversion()==4)
+  {
+    *out << " <tr> ";
+    *out << cgicc::td().set("ALIGN","right");
+    *out << "VCCSPF 2.5V" << std::endl;
+    *out << cgicc::td();
+    //
+    *out << cgicc::td();
+    *out << alct->get_adc(1) << " V" << std::endl;
+    *out << cgicc::td();
+    *out << " </tr> " << std::endl;
+  }
+  else if(alct->ALCTversion()==3)
+  {
+    *out << " <tr> ";
+    *out << cgicc::td().set("ALIGN","right");
+    *out << "VCCSPF 2.5V" << std::endl;
+    *out << cgicc::td();
+    //
+    *out << cgicc::td();
+    *out << alct->get_adc(8) << " V" << std::endl;
+    *out << cgicc::td();
+    *out << " </tr> " << std::endl;
+  }
+  //
+  *out << " <tr> ";
+  *out << cgicc::td().set("ALIGN","right");
+  *out << "Core 1.8V" << std::endl;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  *out << alct->get_adc(2) << " V" << std::endl;    
+  *out << cgicc::td();
+  *out << " </tr> " << std::endl;
+  //
+  *out << " <tr> ";
+  *out << cgicc::td().set("ALIGN","right");
+  *out << "EPROM 1.8V" << std::endl;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  *out << alct->get_adc(3) << " V" << std::endl;    
+  *out << cgicc::td();
+  *out << " </tr> " << std::endl;
+  //
+  *out << " <tr> ";
+  *out << cgicc::td().set("ALIGN","right");
+  *out << "INT 1.2V" << std::endl;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  *out << alct->get_adc(4) << " V" << std::endl;    
+  *out << cgicc::td();
+  *out << " </tr> " << std::endl;
+  //
+  if(alct->ALCTversion()==4)
+  {
+    //
+    *out << " <tr> ";
+    *out << cgicc::td().set("ALIGN","right");
+    *out << "GBTx RSSI" << std::endl;
+    *out << cgicc::td();
+    //
+    *out << cgicc::td();
+    *out << alct->get_adc(5) << " V" << std::endl;
+    *out << cgicc::td();
+    *out << " </tr> " << std::endl;
+    //
+    *out << " <tr> ";
+    *out << cgicc::td().set("ALIGN","right");
+    *out << "GBTx 1.5V(D)" << std::endl;
+    *out << cgicc::td();
+    //
+    *out << cgicc::td();
+    *out << alct->get_adc(6) << " V" << std::endl;
+    *out << cgicc::td();
+    *out << " </tr> " << std::endl;
+    //
+    *out << " <tr> ";
+    *out << cgicc::td().set("ALIGN","right");
+    *out << "GBTx 1.5V(A)" << std::endl;
+    *out << cgicc::td();
+    //
+    *out << cgicc::td();
+    *out << alct->get_adc(7) << " V" << std::endl;
+    *out << cgicc::td();
+    *out << " </tr> " << std::endl;
+  }
+  //
+  *out << " <tr> ";
+  *out << cgicc::td().set("ALIGN","right");
+  *out << "Zero 0.0V" << std::endl;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  *out << alct->get_adc(12) << " V" << std::endl;    
+  *out << cgicc::td();
+  *out << " </tr> " << std::endl;
+  //
+  *out << " <tr> ";
+  *out << cgicc::td().set("ALIGN","right");
+  *out << "VRef/2 1.25V" << std::endl;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  *out << alct->get_adc(11) << " V" << std::endl;    
+  *out << cgicc::td();
+  *out << " </tr> " << std::endl;
+  //
+  *out << " <tr> ";
+  *out << cgicc::td().set("ALIGN","right");
+  *out << "VRef 2.5V" << std::endl;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  *out << alct->get_adc(13) << " V" << std::endl;    
+  *out << cgicc::td();
+  *out << " </tr> " << std::endl;
   //
   *out << cgicc::table();
   //
+  if(alct->ALCTversion()==4)
+  {
+    *out << "GBTx Photocurrent = " << (2.5-alct->get_adc(5)) << " mA." << cgicc::br() << std::endl;
+  }
+  //  
   *out << cgicc::fieldset();
   *out << std::endl;
   //

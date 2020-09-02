@@ -691,6 +691,9 @@ void EmuPeripheralCrateConfig::MainPage(xgi::Input * in, xgi::Output * out )
   //
   EmuPeripheralCrateBase::MyHeader(in,out,"EmuPeripheralCrateConfig");
 
+  cgicc::fieldset().reset();
+  cgicc::table().reset();      
+
   if(!parsed) 
   {  
      if(Valid_config_ID=="" && (XML_or_DB_.toString() == "db" || XML_or_DB_.toString() == "DB"))
@@ -1569,6 +1572,10 @@ void EmuPeripheralCrateConfig::CrateConfiguration(xgi::Input * in, xgi::Output *
   }
   std::cout << getLocalDateTime() << " Button: CrateConfiguration: " << ThisCrateID_ << std::endl;
   MyHeader(in,out,"CrateConfiguration");
+
+  cgicc::fieldset().reset();
+  cgicc::table().reset();      
+
   //
   if(thisCrate->IsAlive())
      *out << cgicc::h2("Current Crate: "+ ThisCrateID_ );
@@ -3301,6 +3308,10 @@ void EmuPeripheralCrateConfig::PowerOnFixCFEB(xgi::Input * in, xgi::Output * out
   }
   //
   MyHeader(in,out,"CSC DOC daily checklist");
+
+  cgicc::fieldset().reset();
+  cgicc::table().reset();      
+
   //
   int initial_crate = current_crate_;
   //
@@ -4053,10 +4064,10 @@ void EmuPeripheralCrateConfig::ExpertToolsPage(xgi::Input * in, xgi::Output * ou
   //
   int initial_crate = current_crate_;
   //
-  char Name[100];
-  sprintf(Name,"Expert Tools Page");
-  //
-  MyHeader(in,out,Name);
+  MyHeader(in,out,"Expert Tools Page");
+
+  cgicc::fieldset().reset();
+  cgicc::table().reset();      
   //
   *out << cgicc::h2("!!!Do NOT click these buttons during a GLOBAL RUN!!!");
   *out << cgicc::br();
@@ -9077,7 +9088,12 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
   //
   *out << cgicc::table();
 
-  if(alct->ALCTversion()<2) return;  // Only new ALCT mezzanines have the following part
+  if(alct->ALCTversion()<2) 
+  {
+      *out << cgicc::fieldset() << std::endl;
+      return;  // Only new ALCT mezzanines have the following part
+  //
+  }
   *out << cgicc::hr();
   *out << cgicc::span().set("style","color:blue");
   *out << "ALCT Mezzanine:";
@@ -9258,8 +9274,7 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
     *out << "GBTx Photocurrent = " << (2.5-alct->get_adc(5)) << " mA." << cgicc::br() << std::endl;
   }
   //  
-  *out << cgicc::fieldset();
-  *out << std::endl;
+  *out << cgicc::fieldset() << std::endl;
   //
 }
 //
@@ -9843,8 +9858,7 @@ void EmuPeripheralCrateConfig::testTMB(xgi::Input * in, xgi::Output * out )
     tmbTestVector[tmb].testRATuserCodes();
     //printf("Test15");
   }
-  if ( tmbTestid == 16 || (tmbTestid == 0 && thisTMB->GetHardwareVersion()<=1) ) {
-    // June 27, 2020 Liu: skip this test for OTMB in "Run All TMB Tests" 
+  if ( tmbTestid == 16 || tmbTestid == 0 ) {
     tmbTestVector[tmb].testU76chip();
     //printf("Test16");
   }

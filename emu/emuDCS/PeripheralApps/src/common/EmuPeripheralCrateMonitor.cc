@@ -4632,6 +4632,7 @@ void EmuPeripheralCrateMonitor::DCFEBProblems(xgi::Input * in, xgi::Output * out
   *out << "<pre>" << std::endl;
   for ( unsigned int i = 0; i < crateVector.size(); i++ )
   {
+     if(crate_off[i]) continue;
      myVector = crateVector[i]->daqmbs();
      mytmbs = crateVector[i]->tmbs();
 

@@ -8489,6 +8489,26 @@ void DAQMB::dcfeb_program_virtex6(CFEB & cfeb, const char *mcsfile, int broadcas
     free(bufin);
 }
 
+unsigned DAQMB::virtex2_readreg(int reg)
+{
+   unsigned short comd;
+   unsigned data[7]={0x66AA9955, 4, 0, 4, 4, 4};
+   unsigned *rt, rtv;
+   comd=VTX2_CFG_IN;
+   unsigned ins=((reg&0x1F)<<13)+(1<<27)+(1<<29)+1;
+   data[2]=shuffle32(ins);
+   daqmb_do(6, &comd, 6*32, data, rcvbuf, LATER, CTRL_FPGA);
+   comd=VTX2_CFG_OUT;
+   data[0]=0;
+   daqmb_do(6, &comd, 32, data, rcvbuf, NOW|READ_YES, CTRL_FPGA);     
+   rt = (unsigned *)rcvbuf;
+   rtv=shuffle32(*rt);
+   // printf("return: %08X\n", rtv);
+   comd=VTX2_BYPASS;
+   daqmb_do(6, &comd, 0, data, rcvbuf, NOW, CTRL_FPGA);
+   udelay(100);
+   return rtv;
+}
 
 unsigned DAQMB::virtex6_readreg(int reg)
 {
@@ -10662,10 +10682,35 @@ int DAQMB::read_xcv_prom(int dev, char *fn)
      return blocks*dataaddr;
 }
 
+void DAQMB::dmb_read_firmware(int dev, const char *filename)
+{
+     if(dev<CTRL_PROM || dev>VME_PROM) return;
+     int firmwaresize[2]={337408, 167424};
+     int promsize[2]={512*1024, 256*1024};
+     int FIRMWARE_SIZE=firmwaresize[dev-CTRL_PROM]; // in bytes
+     int PROM_SIZE=promsize[dev-CTRL_PROM]; // in bytes
+     FILE *mcsfile;
+
+     char *buf=(char *)malloc(PROM_SIZE);
+     if(buf==NULL) return;
+
+     mcsfile=fopen(filename, "w");
+     if(mcsfile==NULL)
+      {
+         std::cout << "Unable to open file to write :" << filename << std::endl;
+         free(buf);
+         return;
+     }
+     int rt=read_xcv_prom(dev, buf);
+     if(rt>=FIRMWARE_SIZE) write_mcs(buf, FIRMWARE_SIZE, mcsfile);
+     fclose(mcsfile);
+     free(buf);
+}
+
 void DAQMB::cfeb_read_firmware(CFEB & cfeb, const char *filename)
 {
      const int FIRMWARE_SIZE=69900; // in bytes
-     const int PROM_SIZE=256*1024; // in bytes
+     const int PROM_SIZE=256*512; // in bytes
      FILE *mcsfile;
 
      write_cfeb_selector(cfeb.SelectorBit());

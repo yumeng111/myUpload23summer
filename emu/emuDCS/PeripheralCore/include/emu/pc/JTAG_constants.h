@@ -99,7 +99,7 @@ enum DEVTYPE{ALLMUX=-3,ALLSCAM=-2,ALL=-1,NONE,F1PROM,F2PROM,F3PROM,F4PROM,F5PROM
 #define PROM_PROGRAM 0xEA
 #define PROM_ENABLE 0xE8
 
-/* VIRTEXII fpga scan instructions */
+/* VIRTEX-II fpga scan instructions */
 #define VTX2_EXTEST 0x00
 #define VTX2_SAMPLE 0x01
 #define VTX2_USR1  0x02
@@ -113,6 +113,10 @@ enum DEVTYPE{ALLMUX=-3,ALLSCAM=-2,ALL=-1,NONE,F1PROM,F2PROM,F3PROM,F4PROM,F5PROM
 #define VTX2_JSTART 0x0C
 #define VTX2_JPROG  0x0B
 #define VTX2_SHUTDN 0x0D
+#define VTX2_ISC_ENABLE 0x10
+#define VTX2_ISC_PROGRAM 0x11
+#define VTX2_ISC_NOOP 0x14
+#define VTX2_ISC_DISABLE 0x16
 #define VTX2_BYPASS 0x3F
 
 /* VIRTEX fpga scan instructions */

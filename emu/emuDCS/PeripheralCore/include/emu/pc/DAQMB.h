@@ -770,6 +770,7 @@ public:
   void dcfeb_configure(CFEB & cfeb);
   void dcfeb_print_parameters(CFEB & cfeb);
   void dcfeb_test_dummy(CFEB & cfeb, int test);
+  unsigned virtex2_readreg(int reg);
   unsigned virtex6_readreg(int reg);
   void virtex6_writereg(int reg, unsigned value);
     
@@ -935,8 +936,9 @@ public:
   void SEM_control(CFEB &cfeb);
   void SEM_rst_doublerrorflag(CFEB &cfeb);
 
-  int read_xcv_prom(int dev, char *fn);
-  void cfeb_read_firmware(CFEB & cfeb, const char *mcsfile);
+  inline void read_firmware_control(const char *mcsfile) { dmb_read_firmware(CTRL_PROM, mcsfile); }
+  inline void read_firmware_vme(const char *mcsfile) { dmb_read_firmware(VME_PROM, mcsfile); }
+  void cfeb_read_firmware(CFEB & cfeb, const char *mcsfile);  
   int cfeb_verify_firmware(CFEB & cfeb, const char *mcsfile);
   
   int SVFLoad(int dev, const char *fn, int db, int verify );
@@ -1026,6 +1028,9 @@ public:
   static const unsigned RESET_TX          = 0x5320; ///< reset DDU tx FIFO
 
  private:
+
+  int read_xcv_prom(int dev, char *fn);
+  void dmb_read_firmware(int dev, const char *mcsfile);
 
   // DCFEB BPI-->EPROM access rountines
   void dcfeb_XPROM_do(unsigned short command);

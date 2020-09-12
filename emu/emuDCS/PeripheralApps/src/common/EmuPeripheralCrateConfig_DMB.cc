@@ -3560,7 +3560,7 @@ void EmuPeripheralCrateConfig::DMBLoadFPGA(xgi::Input * in, xgi::Output * out )
        std::cout << getLocalDateTime() << " ODMB program FPGA in slot " << thisDMB->slot() << std::endl;
        std::cout << "Use mcs file: " << mcsfile << std::endl;
 
-       thisDMB->odmb_program_virtex6(mcsfile.c_str());
+       thisDMB->odmb_program_fpga(mcsfile.c_str());
      
        std::cout << getLocalDateTime() << " ODMB program FPGA finished." << std::endl;
 

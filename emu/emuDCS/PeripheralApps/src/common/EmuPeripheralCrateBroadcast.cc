@@ -301,9 +301,9 @@ void EmuPeripheralCrateBroadcast::DefineBroadcastCrate() {
     std::vector<DAQMB*> mydmbs = broadcastCrate->daqmbs();
     for(unsigned i=0;i<mydmbs.size();i++)
     {
-      if(mydmbs[i] && mydmbs[i]->GetHardwareVersion()<=1 && mydmbs[i]->slot()>21)     
+      if(mydmbs[i] && mydmbs[i]->DMBversion()<=1 && mydmbs[i]->slot()>21)     
          broadcastDMB = mydmbs[i];
-      else if(mydmbs[i] && mydmbs[i]->GetHardwareVersion()==2 && mydmbs[i]->slot()>21)     
+      else if(mydmbs[i] && mydmbs[i]->DMBversion()>=2 && mydmbs[i]->slot()>21)     
          broadcastODMB = mydmbs[i];
 
       if(mydmbs[i] && mydmbs[i]->slot()<=21)
@@ -314,7 +314,7 @@ void EmuPeripheralCrateBroadcast::DefineBroadcastCrate() {
     {
       if(mytmbs[i] && mytmbs[i]->GetHardwareVersion()<=1 && mytmbs[i]->slot()>21)     
          broadcastTMB = mytmbs[i];
-      else if(mytmbs[i] && mytmbs[i]->GetHardwareVersion()==2 && mytmbs[i]->slot()>21)     
+      else if(mytmbs[i] && mytmbs[i]->GetHardwareVersion()>=2 && mytmbs[i]->slot()>21)     
          broadcastOTMB = mytmbs[i];
     }
     if( broadcastTMB ){ 
@@ -611,7 +611,7 @@ void EmuPeripheralCrateBroadcast::LoadODMBFPGA(xgi::Input * in, xgi::Output * ou
     {
        std::cout << " Broadcast on slot " << otherDMBs[i]->slot() << std::endl;
        if(otherDMBs[i]->GetHardwareVersion()==2)
-          otherDMBs[i]->odmb_program_virtex6(ODMBFirmwareFile_.c_str());
+          otherDMBs[i]->odmb_program_fpga(ODMBFirmwareFile_.c_str());
     }
     std::cout << getLocalDateTime() << " Finished programming all ODMB FPGAs." << std::endl;
    this->LoadDMBCFEBFPGAFirmware(in, out);

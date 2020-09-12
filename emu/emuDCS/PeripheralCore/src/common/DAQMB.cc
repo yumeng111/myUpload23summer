@@ -9656,7 +9656,7 @@ void DAQMB::odmb_program_eprom(const char *mcsfile)
       return true;
     }
 
-void DAQMB::odmb_program_virtex6(const char *mcsfile)
+void DAQMB::odmb_program_fpga(const char *mcsfile)
 {
    const int FIRMWARE_SIZE=5464972; // in bytes
    char *bufin, c;

@@ -879,7 +879,7 @@ public:
 
   void odmb_readfirmware_mcs(const char *filename);
   void odmb_program_eprom(const char *mcsfile);
-  void odmb_program_virtex6(const char *mcsfile);
+  void odmb_program_fpga(const char *mcsfile);
   bool odmb_program_eprom_poll(const char *mcsfile);
   
   void odmb_dcfeb_tests();

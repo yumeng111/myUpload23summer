@@ -9116,7 +9116,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
 
     }else {
     //
-    (*MyOutput_) << " -> Unable to decode register: PLEASE DEFINE" << std::endl;
+    (*MyOutput_) << " = 0x" << std::hex << ReadRegister(address) << std::dec << std::endl;
     //
   }
   return;

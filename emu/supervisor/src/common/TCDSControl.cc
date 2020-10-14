@@ -216,7 +216,6 @@ bool emu::supervisor::TCDSControl::waitForState( const string& targetState, cons
     }
   }
   string state( waitForASteadyState( timeoutSeconds ) );
-  return targetStates.find( state ) != targetStates.end();
   if ( targetStates.find( state ) == targetStates.end() ){
     LOG4CPLUS_ERROR( parentApplication_->getApplicationLogger(), "Failed to reach the target state '" << targetState << "' Instead, it is now in '" << state <<  "' state.");
     return false;

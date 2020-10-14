@@ -15,7 +15,8 @@ function onLoad() {
 	// CSCTF:    "http://cmslas.cern.ch/emtflas/urn:xdaq-application:lid=16/retrieveCollection",
 	CSCTF:    "http://l1ts-xaas.cms:9945/urn:xdaq-application:lid=16/retrieveCollection",
 	// TCDS:     "http://cmslas.cern.ch/tcdslas/urn:xdaq-application:lid=16/retrieveCollection",
-	TCDS:     "http://tcds-xaas.cms:9945/urn:xdaq-application:lid=16/retrieveCollection",
+	// TCDS:     "http://tcds-xaas.cms:9945/urn:xdaq-application:lid=16/retrieveCollection",
+	TCDS:     "http://kvm-s3562-1-ip151-95.cms:9942/urn:xdaq-application:lid=16/retrieveCollection",
 	FED:      "http://csc-sv.cms:20101/urn:xdaq-application:lid=66/ForEmuPage1",
 	DAQ:      "http://csc-daq00.cms:20200/urn:xdaq-application:class=emu::ldaq::manager::Application,instance=0/ForEmuPage1",
 	DQM:      "http://csc-dqm.cms:20550/urn:xdaq-application:lid=1450/ForEmuPage1"
@@ -737,6 +738,7 @@ function Panel( name, refreshPeriod, dataURL ) {
 	    self.trends[2] = new Trend(2); // container to keep the LPM L1A counts in
 	    isFirstCall = true; // So that we know that this is the first call after this page was loaded, and percieve a HardReset count of 0 on the second call as a change from the previous one.
 	}
+	// TODO: Get states as flashlist:tcds_common is no longer
 	$.getJSON( self.DataURL+'?fmt=json&flash=urn:xdaq-flashlist:tcds_common', function(json){
 	    var combinedState = null;
 	    $("#TCDS-a_value_LPMState_tooltip").empty();
@@ -777,7 +779,8 @@ function Panel( name, refreshPeriod, dataURL ) {
 	    $('#'+self.name+'-a_value_State').text( combinedState );
 	    $('#'+self.name+'-a_value_State').attr( 'title', (combinedState == 'INDEFINITE' ? 'Not all TCDS CI and PI Controller applications are in the same FSM state.' : 'All TCDS CI and PI Controller applications are '+combinedState ) );
 	    
-	}).success( function(){
+	  });
+	// }).success( function(){
 	    if ( whoIsInControl == 'global' ){
 	      $.getJSON( self.DataURL+'?fmt=json&flash=urn:xdaq-flashlist:tcds_cpm_rates', function(json){
  	      	  var time = toUnixTime( json.table.properties.LastUpdate );
@@ -806,7 +809,7 @@ function Panel( name, refreshPeriod, dataURL ) {
 		});
 	    }
 			  
-	});
+	// });
 
 	//$.getJSON("http://cmslas.cern.ch/emtflas/urn:xdaq-application:lid=16/retrieveCollection?fmt=json&flash=urn:xdaq-flashlist:l1ts_cell", function(json){
 	$.getJSON("http://l1ts-xaas.cms:9945/urn:xdaq-application:lid=16/retrieveCollection?fmt=json&flash=urn:xdaq-flashlist:l1ts_cell", function(json){

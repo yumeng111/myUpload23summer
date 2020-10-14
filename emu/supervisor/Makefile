@@ -3,15 +3,15 @@
 # This is the emusupervisor Makefile
 #
 ##
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 include $(BUILD_HOME)/emu/rpm_version
 
 #
 # Packages to be built
 #
 Project = emu
-Package = supervisor
+Package = emu/supervisor
 PackageName=supervisor
 Description="Emu (CSC) Supervisor"
 Summary="Emu (CSC) Supervisor"
@@ -61,5 +61,5 @@ TestExecutables=testRegDumpPreprocessor.cc
 # To execute:
 # LD_LIBRARY_PATH=$BUILD_HOME/x86_64_slc6/lib:/opt/xdaq/lib $BUILD_HOME/emu/supervisor/bin/linux/x86_64_slc6/testRegDumpPreprocessor.exe <register_dump> [<substitute_registers>]
 
-include $(XDAQ_ROOT)/config/Makefile.rules
-include $(XDAQ_ROOT)/config/mfRPM.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules

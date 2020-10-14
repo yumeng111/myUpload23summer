@@ -253,6 +253,15 @@ private: // XDAQ parameters
   PIControl *pi_tf_;
 
   xdata::Boolean usePrimaryTCDS_;
+  xdata::String ciPlusServiceName_;
+  xdata::String ciMinusServiceName_;
+  xdata::String ciTfServiceName_;
+  xdata::String pmServiceName_;
+  xdata::String piPlusServiceName_;
+  xdata::String piMinusServiceName_;
+  xdata::String piTfServiceName_;
+
+  bool haveAlreadyTCDSAppDescriptors_;
 
   bool isUsingTCDS_;		///< Will be FALSE if a legacy TTCci application is found. Then the legacy TTC system will be used instead of TCDS.
 

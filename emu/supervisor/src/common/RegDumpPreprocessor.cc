@@ -1,6 +1,6 @@
 #include "emu/supervisor/RegDumpPreprocessor.h"
 
-// #include "emu/utils/IO.h"
+#include "emu/utils/IO.h"
 
 #include "toolbox/regex.h"
 #include "xcept/tools.h"
@@ -44,8 +44,16 @@ std::string RegDumpPreprocessor::removeComment( const std::string& line ) const 
 }
 
 std::string RegDumpPreprocessor::getRegisterName( const std::string& line ) const {
+  // Return the register name. Argument should have comments removed.
   std::vector<std::string> matches;
   if ( toolbox::regx_match( line, "^[[:blank:]]*([^[:blank:]]+)", matches ) ) return matches.at(1);
+  return std::string();
+}
+
+std::string RegDumpPreprocessor::getRegisterValue( const std::string& line ) const {
+  // Return everything after the register name. Argument should have comments removed.
+  std::vector<std::string> matches; // Matches the register name.
+  if ( toolbox::regx_match( line, "^[[:blank:]]*([^[:blank:]]+)", matches ) ) return line.substr( matches.at(1).length() );
   return std::string();
 }
 
@@ -127,6 +135,7 @@ std::string
 RegDumpPreprocessor::makeSubstitutions( const std::string& original, const std::string& substitutes ){
   // If their register names match, replace the original line with that of the substitute.
   std::string result;
+  const std::string deleteToken( "delete" ); // If this is the value of the register, the line should be deleted
   std::istringstream originalStream( original );
   std::istringstream substitutesStream( substitutes );
   std::string originalLine;
@@ -137,6 +146,10 @@ RegDumpPreprocessor::makeSubstitutions( const std::string& original, const std::
     // Only take this line if something other than white space is left after comments are removed:
     if ( bareSubstituteLine.find_first_not_of(" \t") != std::string::npos ) substituteLines.push_back( std::make_pair( bareSubstituteLine, false ) );
   }
+
+  std::cout << "substituteLines before:\n";
+  for ( std::vector< std::pair<std::string,bool> >::iterator sub=substituteLines.begin(); sub!= substituteLines.end(); ++sub ) std::cout << sub->first << "   " << sub->second << std::endl;
+
   // Loop over the original lines:
   while( std::getline( originalStream, originalLine ) ){
     std::string bareOriginalLine( removeComment( originalLine ) );
@@ -147,8 +160,9 @@ RegDumpPreprocessor::makeSubstitutions( const std::string& original, const std::
       if ( ! sub->second                     && // This substitute has not been used yet.
 	   registerToSubstitute.length() > 0 && 
 	   getRegisterName( bareOriginalLine ) == registerToSubstitute ){
-	// This line has the same register name that this unused substitute line has. Add the substitute to the result:
-	result.append( sub->first + "\n" );
+	// This line has the same register name that this unused substitute line has. Add the substitute to the result,
+	// unless it is to be deleted (indicated by the deleteToken in the register value string):
+	if ( getRegisterValue( sub->first ).find( deleteToken ) == std::string::npos ) result.append( sub->first + "\n" );
 	sub->second = true; // Mark this substitute as used.
 	isReplaced = true; // This original line has been substituted for.
       }
@@ -156,6 +170,10 @@ RegDumpPreprocessor::makeSubstitutions( const std::string& original, const std::
     // If no substitution was done, add the original line to the result:
     if ( ! isReplaced ) result.append( originalLine + "\n" );
   }
+
+  std::cout << "substituteLines after:\n";
+  for ( std::vector< std::pair<std::string,bool> >::iterator sub=substituteLines.begin(); sub!= substituteLines.end(); ++sub ) std::cout << sub->first << "   " << sub->second << std::endl;
+
   // Look for unused substitute line(s) and report them:
   bool allUsed = true;
   for ( std::vector< std::pair<std::string,bool> >::iterator sub=substituteLines.begin(); sub!= substituteLines.end(); ++sub ) allUsed &= sub->second;

@@ -12,11 +12,13 @@ emu::supervisor::PIControl& emu::supervisor::PIControl::setRunType( xdata::Strin
 
 emu::supervisor::PIControl& emu::supervisor::PIControl::configure( xdata::String& hardwareConfigurationString, xdata::Boolean& usePrimaryTCDS ){
   hardwareConfiguration_ = hardwareConfigurationString;
+  fedEnableMask_ = "4095&0%"; // To make PI-GEM happy (see https://twiki.cern.ch/twiki/bin/view/CMS/TcdsCookBookPi#PI_AMC13_based_systems); TODO: correct value
   string initialState( waitForASteadyState( 20 ) );
   if ( initialState == "Halted" ){
     messenger_->sendCommand( tcdsApplicationDescriptor_, "Configure",
 			     emu::soap::Parameters()
 			     .add( "hardwareConfigurationString", &hardwareConfiguration_ )
+			     .add( "fedEnableMask"              , &fedEnableMask_         ) 
 			     .add( "usePrimaryTCDS"             , &usePrimaryTCDS         ), 
 			     emu::soap::Attributes().add( "actionRequestorId", &actionRequestorId_ ) );
   }

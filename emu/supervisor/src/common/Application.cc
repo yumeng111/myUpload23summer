@@ -114,6 +114,14 @@ emu::supervisor::Application::Application(xdaq::ApplicationStub *stub)
   ci_plus_(NULL), ci_minus_(NULL), ci_tf_(NULL), pm_(NULL),
   pi_plus_(NULL), pi_minus_(NULL), pi_tf_(NULL),
   usePrimaryTCDS_( true ),
+  ciPlusServiceName_ ( "ici-cscp"  ),
+  ciMinusServiceName_( "ici-cscm"  ),
+  ciTfServiceName_   ( "ici-csctf" ),
+  pmServiceName_     ( "lpm-csc-1" ),
+  piPlusServiceName_ ( "pi-cscp"   ),
+  piMinusServiceName_( "pi-cscm"   ),
+  piTfServiceName_   ( "pi-csctf"  ),
+  haveAlreadyTCDSAppDescriptors_( false ),
   isUsingTCDS_( true ),
   isTFCellResponsive_( true ),
   isDAQResponsive_( true ),
@@ -147,6 +155,13 @@ emu::supervisor::Application::Application(xdaq::ApplicationStub *stub)
   i->fireItemAvailable("TTCSource", &ttc_source_);
 
   i->fireItemAvailable("usePrimaryTCDS", &usePrimaryTCDS_);
+  i->fireItemAvailable("ciPlusServiceName" , &ciPlusServiceName_  );
+  i->fireItemAvailable("ciMinusServiceName", &ciMinusServiceName_ );
+  i->fireItemAvailable("ciTfServiceName"   , &ciTfServiceName_    );
+  i->fireItemAvailable("pmServiceName"	   , &pmServiceName_      );
+  i->fireItemAvailable("piPlusServiceName" , &piPlusServiceName_  );
+  i->fireItemAvailable("piMinusServiceName", &piMinusServiceName_ );
+  i->fireItemAvailable("piTfServiceName"   , &piTfServiceName_    );
   
   i->fireItemAvailable( "localDAQClass",  &localDAQClass_  );
 
@@ -254,6 +269,10 @@ emu::supervisor::Application::Application(xdaq::ApplicationStub *stub)
   
   state_ = fsm_.getStateName(fsm_.getCurrentState());
 
+  // Get app descriptors. Note that TCDS app descriptors will not be found at this stage yet
+  // as their service names are given in the XML configuration, which will be available
+  // only after the constructor has finished. We'll need to call getTCDSAppDescriptors()
+  // later, outside the constructor.
   getAppDescriptors();
   
   state_table_.addApplication("emu::fed::Manager");
@@ -266,8 +285,10 @@ emu::supervisor::Application::Application(xdaq::ApplicationStub *stub)
   state_table_.addApplication("tcds::lpm::LPMController");
 
   setUpLogger();
-  
+
   LOG4CPLUS_INFO(getApplicationLogger(), "emu::supervisor::Application constructed for " << state_table_ );
+
+  wl_semaphore_.give();
 }
 
 void emu::supervisor::Application::setUpLogger(){
@@ -331,7 +352,7 @@ void emu::supervisor::Application::getAppDescriptors(){
   
   getTFAppDescriptor();
 
-  getTCDSAppDescriptors();
+//   getTCDSAppDescriptors(); Will be called separately after construction of object
 }
 
 void emu::supervisor::Application::getTFAppDescriptor(){
@@ -358,10 +379,14 @@ void emu::supervisor::Application::getTFAppDescriptor(){
 }
 
 void emu::supervisor::Application::getTCDSAppDescriptors(){
+  if ( haveAlreadyTCDSAppDescriptors_ ) return;
   // First try to find the primary or secondary system.
   if ( getTCDSAppDescriptors( true ) ) return;
   // Looks like it was not found. Try to find the default system (i.e. service names with no system switch tag).
   getTCDSAppDescriptors( false );
+  wl_semaphore_.take();
+  haveAlreadyTCDSAppDescriptors_ = true;
+  wl_semaphore_.give();
 }
 
 bool emu::supervisor::Application::getTCDSAppDescriptors( bool useSystemSwitchTag ){
@@ -378,110 +403,131 @@ bool emu::supervisor::Application::getTCDSAppDescriptors( bool useSystemSwitchTa
   // PI apps
   //
 
-  try {
-    service = "pi-cscp" + systemSwitchTag;
-    pi_plus_descr_ = findAppDescriptor("tcds::pi::PIController", service);
-    if ( pi_plus_descr_ == NULL ) XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
-    pi_plus_ = new PIControl( this, pi_plus_descr_, "ME+" );
-  } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
-    areAllFound = false;
-    stringstream ss;
-    ss << "Failed to get application descriptor for tcds::pi::PIController, service " << service << ". ";
-    LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
-    XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
-    this->notifyQualified( "error", eObj );
+  if ( pi_plus_ == NULL ){
+    try {
+      service = piPlusServiceName_.toString() + systemSwitchTag;
+      pi_plus_descr_ = findAppDescriptor("tcds::pi::PIController", service);
+      if ( pi_plus_descr_ == NULL ) XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
+      pi_plus_ = new PIControl( this, pi_plus_descr_, "ME+" );
+      LOG4CPLUS_INFO( getApplicationLogger(), "Created descriptor for " + service );
+    } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
+      areAllFound &= false;
+      stringstream ss;
+      ss << "Failed to get application descriptor for tcds::pi::PIController, service " << service << ". ";
+      LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
+      XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
+      this->notifyQualified( "error", eObj );
+    }
+  }
+  
+  if ( pi_minus_ == NULL ){
+    try {
+      service = piMinusServiceName_.toString() + systemSwitchTag;
+      pi_minus_descr_ = findAppDescriptor("tcds::pi::PIController", service);
+      if ( pi_minus_descr_ == NULL )  XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
+      pi_minus_ = new PIControl( this, pi_minus_descr_, "ME-" );
+      LOG4CPLUS_INFO( getApplicationLogger(), "Created descriptor for " + service );
+    } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
+      areAllFound &= false;
+      stringstream ss;
+      ss << "Failed to get application descriptor for tcds::pi::PIController, service " << service << ". ";
+      LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
+      XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
+      this->notifyQualified( "error", eObj );
+    }
   }
 
-  try {
-    service = "pi-cscm" + systemSwitchTag;
-    pi_minus_descr_ = findAppDescriptor("tcds::pi::PIController", service);
-    if ( pi_minus_descr_ == NULL )  XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
-    pi_minus_ = new PIControl( this, pi_minus_descr_, "ME-" );
-  } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
-    areAllFound = false;
-    stringstream ss;
-    ss << "Failed to get application descriptor for tcds::pi::PIController, service " << service << ". ";
-    LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
-    XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
-    this->notifyQualified( "error", eObj );
-  }
-
-  try {
-    service = "pi-csctf" + systemSwitchTag;
-    pi_tf_descr_ = findAppDescriptor("tcds::pi::PIController", service);
-    if ( pi_tf_descr_ == NULL )  XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
-    pi_tf_ = new PIControl( this, pi_tf_descr_, "TF" );
-  } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
-    areAllFound = false;
-    stringstream ss;
-    ss << "Failed to get application descriptor for tcds::pi::PIController, service " << service << ". ";
-    LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
-    XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
-    this->notifyQualified( "error", eObj );
-  }
+//   if ( pi_tf_ == NULL ){
+//     try {
+//       service = piTfServiceName_.toString() + systemSwitchTag;
+//       pi_tf_descr_ = findAppDescriptor("tcds::pi::PIController", service);
+//       if ( pi_tf_descr_ == NULL )  XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
+//       pi_tf_ = new PIControl( this, pi_tf_descr_, "TF" );
+//       LOG4CPLUS_INFO( getApplicationLogger(), "Created descriptor for " + service );
+//     } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
+//       areAllFound &= false;
+//       stringstream ss;
+//       ss << "Failed to get application descriptor for tcds::pi::PIController, service " << service << ". ";
+//       LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
+//       XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
+//       this->notifyQualified( "error", eObj );
+//     }
+//   }
 
   //
   // iCI apps
   //
 
-  try {
-    service = "ici-cscp" + systemSwitchTag;
-    ci_plus_descr_ = findAppDescriptor("tcds::ici::ICIController", service);
-    if ( ci_plus_descr_ == NULL ) XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
-    ci_plus_ = new CIControl( this, ci_plus_descr_, "ME+" );
-  } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
-    areAllFound = false;
-    stringstream ss;
-    ss << "Failed to get application descriptor for tcds::ici::ICIController, service " << service << ". ";
-    LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
-    XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
-    this->notifyQualified( "error", eObj );
+  if ( ci_plus_ == NULL ){
+    try {
+      service = ciPlusServiceName_.toString() + systemSwitchTag;
+      ci_plus_descr_ = findAppDescriptor("tcds::ici::ICIController", service);
+      if ( ci_plus_descr_ == NULL ) XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
+      ci_plus_ = new CIControl( this, ci_plus_descr_, "ME+" );
+      LOG4CPLUS_INFO( getApplicationLogger(), "Created descriptor for " + service );
+    } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
+      areAllFound &= false;
+      stringstream ss;
+      ss << "Failed to get application descriptor for tcds::ici::ICIController, service " << service << ". ";
+      LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
+      XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
+      this->notifyQualified( "error", eObj );
+    }
   }
 
-  try {
-    service = "ici-cscm" + systemSwitchTag;
-    ci_minus_descr_ = findAppDescriptor("tcds::ici::ICIController", service);
-    if ( ci_minus_descr_ == NULL )  XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
-    ci_minus_ = new CIControl( this, ci_minus_descr_, "ME-" );
-  } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
-    areAllFound = false;
-    stringstream ss;
-    ss << "Failed to get application descriptor for tcds::ici::ICIController, service " << service << ". ";
-    LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
-    XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
-    this->notifyQualified( "error", eObj );
+  if ( ci_minus_ == NULL ){
+    try {
+      service = ciMinusServiceName_.toString() + systemSwitchTag;
+      ci_minus_descr_ = findAppDescriptor("tcds::ici::ICIController", service);
+      if ( ci_minus_descr_ == NULL )  XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
+      ci_minus_ = new CIControl( this, ci_minus_descr_, "ME-" );
+      LOG4CPLUS_INFO( getApplicationLogger(), "Created descriptor for " + service );
+    } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
+      areAllFound &= false;
+      stringstream ss;
+      ss << "Failed to get application descriptor for tcds::ici::ICIController, service " << service << ". ";
+      LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
+      XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
+      this->notifyQualified( "error", eObj );
+    }
   }
 
-  try {
-    service = "ici-csctf" + systemSwitchTag;
-    ci_tf_descr_ = findAppDescriptor("tcds::ici::ICIController", service);
-    if ( ci_tf_descr_ == NULL )  XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
-    ci_tf_ = new CIControl( this, ci_tf_descr_, "TF" );
-  } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
-    areAllFound = false;
-    stringstream ss;
-    ss << "Failed to get application descriptor for tcds::ici::ICIController, service " << service << ". ";
-    LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
-    XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
-    this->notifyQualified( "error", eObj );
-  }
+//   if ( ci_tf_ == NULL ){
+//     try {
+//       service = ciTfServiceName_.toString() + systemSwitchTag;
+//       ci_tf_descr_ = findAppDescriptor("tcds::ici::ICIController", service);
+//       if ( ci_tf_descr_ == NULL )  XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
+//       ci_tf_ = new CIControl( this, ci_tf_descr_, "TF" );
+//       LOG4CPLUS_INFO( getApplicationLogger(), "Created descriptor for " + service );
+//     } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
+//       areAllFound &= false;
+//       stringstream ss;
+//       ss << "Failed to get application descriptor for tcds::ici::ICIController, service " << service << ". ";
+//       LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
+//       XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
+//       this->notifyQualified( "error", eObj );
+//     }
+//   }
 
   //
   // LPM app
   //
 
-  try {
-    service = "lpm-csc-1" + systemSwitchTag;
-    pm_descr_ = findAppDescriptor("tcds::lpm::LPMController", service);
-    if ( pm_descr_ == NULL ) XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
-    pm_ = new PMControl( this, pm_descr_, "ME" );
-  } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
-    areAllFound = false;
-    stringstream ss;
-    ss << "Failed to get application descriptor for tcds::lpm::LPMController, service " << service << ". ";
-    LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
-    XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
-    this->notifyQualified( "error", eObj );
+  if ( pm_ == NULL ){
+    try {
+      service = pmServiceName_.toString() + systemSwitchTag;
+      pm_descr_ = findAppDescriptor("tcds::lpm::LPMController", service);
+      if ( pm_descr_ == NULL ) XCEPT_RAISE( xdaq::exception::ApplicationDescriptorNotFound, "No such application." );
+      pm_ = new PMControl( this, pm_descr_, "ME" );
+      LOG4CPLUS_INFO( getApplicationLogger(), "Created descriptor for " + service );
+    } catch (xdaq::exception::ApplicationDescriptorNotFound& e) {
+      areAllFound &= false;
+      stringstream ss;
+      ss << "Failed to get application descriptor for tcds::lpm::LPMController, service " << service << ". ";
+      LOG4CPLUS_ERROR( getApplicationLogger(), ss.str() << xcept::stdformat_exception_history(e) );
+      XCEPT_DECLARE_NESTED( emu::supervisor::exception::Exception, eObj, ss.str(), e );
+      this->notifyQualified( "error", eObj );
+    }
   }
 
   return areAllFound;
@@ -662,6 +708,9 @@ xoap::MessageReference emu::supervisor::Application::onConfCCBsViaTCDS(xoap::Mes
 void emu::supervisor::Application::webDefault(xgi::Input *in, xgi::Output *out)
   throw (xgi::exception::Exception)
 {
+  // Get TCDS app descriptors for primary or secondary TCDS, depending on the usePrimaryTCDS parameter.
+  getTCDSAppDescriptors();
+
   if (keep_refresh_ || bool(isInCalibrationSequence_)) {
     HTTPResponseHeader &header = out->getHTTPResponseHeader();
     header.addHeader("Refresh", "2");
@@ -1128,6 +1177,9 @@ void emu::supervisor::Application::webHardResetViaTCDS(xgi::Input *in, xgi::Outp
 {
   isCommandFromWeb_ = true;
   
+  // Get TCDS app descriptors for primary or secondary TCDS, depending on the usePrimaryTCDS parameter.
+  getTCDSAppDescriptors();
+
   if ( !pm_ ){
     XCEPT_RAISE( xgi::exception::Exception, "Failed to issue hard reset via TCDS as no LPM appliation was found." );
   }
@@ -1149,6 +1201,9 @@ void emu::supervisor::Application::webHardResetBgoTrainViaTCDS(xgi::Input *in, x
 {
   isCommandFromWeb_ = true;
   
+  // Get TCDS app descriptors for primary or secondary TCDS, depending on the usePrimaryTCDS parameter.
+  getTCDSAppDescriptors();
+
   if ( !pm_ ){
     XCEPT_RAISE( xgi::exception::Exception, "Failed to issue hard reset Bgo train via TCDS as no LPM appliation was found." );
   }
@@ -1268,6 +1323,9 @@ bool emu::supervisor::Application::calibrationAction(toolbox::task::WorkLoop *wl
   LOG4CPLUS_DEBUG(getApplicationLogger(), "calibrationAction " << "(begin)");
   
   if ( isUsingTCDS_ ){
+
+    // Get TCDS app descriptors for primary or secondary TCDS, depending on the usePrimaryTCDS parameter.
+    getTCDSAppDescriptors();
 
     unsigned int index = std::max( 0, keyToIndex(run_type_) );
 
@@ -2193,6 +2251,9 @@ void emu::supervisor::Application::resetAction() throw (toolbox::fsm::exception:
 {
   LOG4CPLUS_DEBUG(getApplicationLogger(), "reset(begin)");
   
+  // Get TCDS app descriptors for primary or secondary TCDS, depending on the usePrimaryTCDS parameter.
+  getTCDSAppDescriptors();
+
   fsm_.reset();
   reasonForFailure_ = "";
   state_ = fsm_.getStateName(fsm_.getCurrentState());
@@ -3135,17 +3196,17 @@ void emu::supervisor::Application::StateTable::refresh( bool forceRefresh )
 		try {
 			xdata::String state;
 			if ( klass == "tcds::pi::PIController" ){
-			  if ( service.substr( 0, 7 ) == "pi-cscp"  && app_->pi_plus_   ) state = app_->pi_plus_ ->getSteadyState();
-			  if ( service.substr( 0, 7 ) == "pi-cscm"  && app_->pi_minus_  ) state = app_->pi_minus_->getSteadyState();
-			  if ( service.substr( 0, 8 ) == "pi-csctf" && app_->pi_tf_     ) state = app_->pi_tf_   ->getSteadyState();
+			  if ( service.substr( 0, 7 ) == app_->piPlusServiceName_.toString()  && app_->pi_plus_   ) state = app_->pi_plus_ ->getSteadyState();
+			  if ( service.substr( 0, 7 ) == app_->piMinusServiceName_.toString() && app_->pi_minus_  ) state = app_->pi_minus_->getSteadyState();
+			  if ( service.substr( 0, 8 ) == app_->piTfServiceName_.toString()    && app_->pi_tf_     ) state = app_->pi_tf_   ->getSteadyState();
 			}
 			else if ( klass == "tcds::ici::ICIController" ){
-			  if ( service.substr( 0, 8 ) == "ici-cscp"  && app_->ci_plus_  ) state = app_->ci_plus_ ->getSteadyState();
-			  if ( service.substr( 0, 8 ) == "ici-cscm"  && app_->ci_minus_ ) state = app_->ci_minus_->getSteadyState();
-			  if ( service.substr( 0, 9 ) == "ici-csctf" && app_->ci_tf_    ) state = app_->ci_tf_   ->getSteadyState();
+			  if ( service.substr( 0, 8 ) == app_->ciPlusServiceName_.toString()  && app_->ci_plus_  ) state = app_->ci_plus_ ->getSteadyState();
+			  if ( service.substr( 0, 8 ) == app_->ciMinusServiceName_.toString() && app_->ci_minus_ ) state = app_->ci_minus_->getSteadyState();
+			  if ( service.substr( 0, 9 ) == app_->ciTfServiceName_.toString()    && app_->ci_tf_    ) state = app_->ci_tf_   ->getSteadyState();
 			}
 			else if ( klass == "tcds::lpm::LPMController" ){
-			  if ( service.substr( 0, 9 ) == "lpm-csc-1" && app_->pm_       ) state = app_->pm_      ->getSteadyState();
+			  if ( service.substr( 0, 9 ) == app_->pmServiceName_.toString()      && app_->pm_       ) state = app_->pm_      ->getSteadyState();
 			}
 			else if ( klass == app_->localDAQClass_.toString() ){
 			  if ( bool( app_->isDAQResponsive_ ) ){

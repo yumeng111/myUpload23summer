@@ -739,42 +739,44 @@ function Panel( name, refreshPeriod, dataURL ) {
 	    isFirstCall = true; // So that we know that this is the first call after this page was loaded, and percieve a HardReset count of 0 on the second call as a change from the previous one.
 	}
 	// TODO: Get states as flashlist:tcds_common is no longer
-	$.getJSON( self.DataURL+'?fmt=json&flash=urn:xdaq-flashlist:tcds_common', function(json){
+	// Get apps' state from TCDS Central instead:
+	$.getJSON( 'http://tcds-control-central.cms:2000/urn:xdaq-application:service=tcds-central/update', function(json){
 	    var combinedState = null;
 	    $("#TCDS-a_value_LPMState_tooltip").empty();
 	    $("#TCDS-a_value_CPMState_tooltip").empty();
 	    $("#TCDS-a_value_State_tooltip").empty();
 	    $("#TCDS-a_value_State_tooltip").append("<table><tbody></tbody></table>");
-	    $.each( json.table.rows, function(i,row){
-		if ( row.service.search('i-csc[^ ]*-'+TCDS_system) >= 0 ){
-		    if ( combinedState && combinedState != row.state_name ) combinedState = 'INDEFINITE';
-		    else                                                    combinedState = row.state_name;
-		    // console.log( row.service+' '+row.state_name+' '+combinedState );
-		    //console.log($("#TCDS-a_value_State_tooltip") + "valami");
-		    if (row.problem_description == "-"){
-		    	$("#TCDS-a_value_State_tooltip table tbody").append("<tr><td>" + row.service + ": </td><td class='" + row.state_name + "'>" + row.state_name + "</td></tr>");
-		    }
-		    else {
-		    	$("#TCDS-a_value_State_tooltip table tbody").append("<tr><td>" + row.service + ": </td><td class='" + row.state_name + "'>" + row.state_name + "</td><td>Problem description: </td><td class='ERROR'>" + row.problem_description + "</td></tr>");
-		    }		    
+	    $.each( json['itemset-appsinfo-tcds_pri']['Status of applications'], function(i,app){
+	    	if ( app.service.search('i-csc[^ ]*-'+TCDS_system) >= 0 ){
+		  // console.log( i + ' ' + app.service  + ' ' + app.stateName );
+		  if ( combinedState && combinedState != app.stateName ) combinedState = 'INDEFINITE';
+		  else                                                   combinedState = app.stateName;
+		  // console.log( app.service+' '+app.stateName+' '+combinedState );
+		  if (app.problemDescription == "-"){
+		    $("#TCDS-a_value_State_tooltip table tbody").append("<tr><td>" + app.service + ": </td><td class='" + app.stateName + "'>" + app.stateName + "</td></tr>");
+		  }
+		  else {
+		    $("#TCDS-a_value_State_tooltip table tbody").append("<tr><td>" + app.service + ": </td><td class='" + app.stateName + "'>" + app.stateName + "</td><td>Problem description: </td><td class='ERROR'>" + app.problemDescription + "</td></tr>");
+		  }		    
 		}
-		else if ( row.service == 'lpm-csc-1-'+TCDS_system ){
-		    $('#'+self.name+'-td_value_LPMState').attr( 'class', row.state_name );
-		    $('#'+self.name+'-a_value_LPMState').text( row.state_name );
-		    $('#'+self.name+'-a_value_LPMState').attr( 'title', 'The LPM (Local Partition Manager) Controller application is '+row.state_name);
-		    if (row.problem_description != "-"){
-		    	$("#TCDS-a_value_LPMState_tooltip").append("<p>Problem description: " + row.problem_description + "</p>");
-		    }
+		else if ( app.service == 'lpm-csc-1-'+TCDS_system ){ // lpm-csc-2-* is used by GEM!
+		  // console.log( i + ' ' + app.service  + ' ' + app.stateName );
+		  $('#'+self.name+'-td_value_LPMState').attr( 'class', app.stateName );
+		  $('#'+self.name+'-a_value_LPMState').text( app.stateName );
+		  $('#'+self.name+'-a_value_LPMState').attr( 'title', 'The LPM (Local Partition Manager) Controller application is '+app.stateName);
+		  if (app.problemDescription != "-"){
+		    $("#TCDS-a_value_LPMState_tooltip").append("<p>Problem description: " + app.problemDescription + "</p>");
+		  }
 		}
-		else if ( row.service == 'cpm-'+TCDS_system ){
-		    $('#'+self.name+'-td_value_CPMState').attr( 'class', row.state_name );
-		    $('#'+self.name+'-a_value_CPMState').text( row.state_name );
-		    $('#'+self.name+'-a_value_CPMState').attr( 'title', 'The CPM (Central Partition Manager) Controller application is '+row.state_name);
-		    if (row.problem_description != "-"){
-		    	$("#TCDS-a_value_CPMState_tooltip").append("<p>Problem description: " + row.problem_description + "</p>");
-		    }
+	    	else if ( app.service == 'cpm-'+TCDS_system ){
+		  $('#'+self.name+'-td_value_CPMState').attr( 'class', app.stateName );
+		  $('#'+self.name+'-a_value_CPMState').text( app.stateName );
+		  $('#'+self.name+'-a_value_CPMState').attr( 'title', 'The CPM (Central Partition Manager) Controller application is '+app.stateName);
+		  if (app.problemDescription != "-"){
+		    $("#TCDS-a_value_CPMState_tooltip").append("<p>Problem description: " + app.problemDescription + "</p>");
+		  }
 		}
-	    });
+	      });
 	    $('#'+self.name+'-td_value_State').attr( 'class', combinedState );
 	    $('#'+self.name+'-a_value_State').text( combinedState );
 	    $('#'+self.name+'-a_value_State').attr( 'title', (combinedState == 'INDEFINITE' ? 'Not all TCDS CI and PI Controller applications are in the same FSM state.' : 'All TCDS CI and PI Controller applications are '+combinedState ) );
@@ -803,6 +805,8 @@ function Panel( name, refreshPeriod, dataURL ) {
 		    var L1As = json["itemset-trigger-counter"]["# L1As"];
 		    self.trends[2].add( time, Number(L1As) );
 		    var graphPoint = { name:'CSC LPM L1A rate [Hz]', time:time, value:self.trends[2].rate( 2 ) };
+		    // console.log("# L1As" + L1As);
+		    // console.log(time + " " + self.trends[2].rate( 2 ));
 		    self.appendPoint( graphPoint );
 		    clearTimeout(self.Clock);
 		    self.ageOfPageClock(0);
@@ -811,7 +815,6 @@ function Panel( name, refreshPeriod, dataURL ) {
 			  
 	// });
 
-	//$.getJSON("http://cmslas.cern.ch/emtflas/urn:xdaq-application:lid=16/retrieveCollection?fmt=json&flash=urn:xdaq-flashlist:l1ts_cell", function(json){
 	$.getJSON("http://l1ts-xaas.cms:9945/urn:xdaq-application:lid=16/retrieveCollection?fmt=json&flash=urn:xdaq-flashlist:l1ts_cell", function(json){
 		var combinedState = null;
 		$("#TCDS-a_value_MUTFUPState_tooltip").empty();

@@ -215,7 +215,12 @@ bool emu::supervisor::TCDSControl::waitForState( const string& targetState, cons
       XCEPT_RAISE( xcept::Exception, "Target state " + *ts + "is not a steady state." );
     }
   }
-  string state( waitForASteadyState( timeoutSeconds ) );
+  // Keep checking while ( there's no timeout OR hasn't yet timed out ) AND hasn't yet reached the target state
+  int timePassed( 0 );
+  while(    ( timeoutSeconds < 0 || timePassed++ <= timeoutSeconds )
+	 && targetStates.find( waitForASteadyState( 0 ) ) == targetStates.end() ) ::sleep( 1 );
+  // Check if it's reached the target state
+  string state( waitForASteadyState( 0 ) );
   if ( targetStates.find( state ) == targetStates.end() ){
     LOG4CPLUS_ERROR( parentApplication_->getApplicationLogger(), "Failed to reach the target state '" << targetState << "' Instead, it is now in '" << state <<  "' state.");
     return false;
@@ -231,7 +236,7 @@ string emu::supervisor::TCDSControl::waitForASteadyState( const int timeoutSecon
     if ( isSteadyState( state ) ) return state;
     ::sleep( 1 );
   }
-  LOG4CPLUS_ERROR( parentApplication_->getApplicationLogger(), "Failed to reach a steady state in " << timeoutSeconds << " seconds. It is in '" << state << "' state.");
+  LOG4CPLUS_WARN( parentApplication_->getApplicationLogger(), "Failed to reach a steady state in " << timeoutSeconds << " seconds. It is in '" << state << "' state.");
   return string();
 }
 

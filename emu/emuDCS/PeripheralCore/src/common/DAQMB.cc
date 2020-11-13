@@ -1433,7 +1433,10 @@ void DAQMB::restoreCFEBIdle() {
 // Set all CFEB's JTAG state machines
    char cfeb_maskX = (DMBversion()<=1)?0x1f:0x7f;
    write_cfeb_selector(cfeb_maskX); 
-   WriteRegister(reset_CFEB_JTAG, 0);
+// Liu Nov. 13, 2020
+// Avoid bug in ODMB firmware 3_20, disabled writing this register on ODMB
+   if(DMBversion()<=1)
+      WriteRegister(reset_CFEB_JTAG, 0);
 }
 
 
@@ -8095,6 +8098,7 @@ void DAQMB::dcfeb_configure(CFEB & cfeb)
    bool changed=false, verify_failed=false;
    unsigned short int bufload[DCFEB_PARAMETERS], oldbuf[DCFEB_PARAMETERS];
 
+   std::cout << "Configuring DCFEB #" << number_+1 << std::endl; 
    write_cfeb_selector(cfeb.SelectorBit());
    if(CFEBversion() == 2)
    {
@@ -9701,11 +9705,17 @@ void DAQMB::odmb_program_fpga(const char *mcsfile)
      int p1pct=blocks/100;
      int j=0, pcnts=0;
      unsigned short comd, tmp;
+     unsigned long tin=0, tout=0;
 //
 // The IEEE 1532 ISC (In-System-Configuration) procedure is used.       
 // The bitstream doesn't need to be sent in one JTAG package.
 // It is different from Xilinx's Jtag procedure which uses CFG_IN.
 //
+     comd=VTX6_IDCODE;
+     dlog_do(10, &comd, 32, &tin, (char *)&tout, READ_YES|NOW);
+     udelay(50);
+     std::cout << "FPGA IDCODE=" << std::hex << tout << std::dec << std::endl;
+
      comd=VTX6_JPROG;
      dlog_do(10, &comd, 0, &tmp, rcvbuf, NOW);
 

@@ -38,7 +38,7 @@
 #endif
 
 #define DRV_VERSION "3.8.4" DRV_EXTRAVERSION
-char e1000e_driver_name[] = "e1000e";
+char e1000e_driver_name[] = "e1000e_emu";
 const char e1000e_driver_version[] = DRV_VERSION;
 
 #define DEFAULT_MSG_ENABLE (NETIF_MSG_DRV|NETIF_MSG_PROBE|NETIF_MSG_LINK)

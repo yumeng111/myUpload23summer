@@ -9,9 +9,9 @@ ifneq ($(KERNELRELEASE),)
 # Makefile for the @SUMMARY@
 #
 
-obj-$(CONFIG_E1000E) += e1000e.o
+obj-$(CONFIG_E1000E) += e1000e_emu.o
 
-define e1000e-y
+define e1000e_emu-y
 	netdev.o
 	ethtool.o
 	ich8lan.o
@@ -23,20 +23,22 @@ define e1000e-y
 	82571.o
 	param.o
 endef
-e1000e-y := $(strip ${e1000e-y})
+e1000e_emu-y := $(strip ${e1000e_emu-y})
 
 #ifdef BUILD_PTP_SUPPORT
-e1000e-$(CONFIG_PTP_1588_CLOCK:m=y) += ptp.o
+e1000e_emu-$(CONFIG_PTP_1588_CLOCK:m=y) += ptp.o
 #endif
 
 #ifndef REMOVE_COMPAT
 
-e1000e-y += kcompat.o
+e1000e_emu-y += kcompat.o
 
 else	# ifneq($(KERNELRELEASE),)
 # normal makefile
 
-DRIVER := e1000e
+DRIVER := e1000e_emu
+
+WD=$(shell pwd)
 
 ifeq (,$(wildcard common.mk))
   $(error Cannot find common.mk build rules)
@@ -70,6 +72,8 @@ devkernelbuild = $(call kernelbuild,$(if $(filter -DNO_PTP_SUPPORT,${EXTRA_CFLAG
 
 # Standard compilation, with regular output
 default:
+	$(shell cat $(WD)/../../eth_hook_2_daq/ddu/Module.symvers $(WD)/../../eth_hook_3_daq/ddu/Module.symvers $(WD)/../../eth_hook_4_daq/ddu/Module.symvers $(WD)/../../eth_hook_5_daq/ddu/Module.symvers > Module.symvers)
+#       See https://www.kernel.org/doc/Documentation/kbuild/modules.txt
 	@+$(call devkernelbuild,modules)
 
 # Noisy output, for extra debugging

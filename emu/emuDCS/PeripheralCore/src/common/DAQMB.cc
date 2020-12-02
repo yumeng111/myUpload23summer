@@ -737,7 +737,7 @@ void DAQMB::configure(int c)
    //(*MyOutput_) << std::endl;
    (*MyOutput_) << "CFEB size="<<cfebs_.size()<<std::endl;
   //
-  (*MyOutput_) << "DAQMB: configure() for crate " << this->crate() << " slot " << this->slot() << std::endl;
+  (*MyOutput_) << "DAQMB: configure() for crate " << std::dec << this->crate() << " slot " << this->slot() << std::endl;
   //
 
  if(DMBversion()==1)
@@ -883,7 +883,7 @@ void DAQMB::configure(int c)
 	std::cout << " killinput old " << KillInput_ << " new " << killinput_ << std::endl;
      (*MyOutput_) << "Set crate id " << crate_id_ << std::endl ;
      setcrateid(crate_id_);
-     (*MyOutput_) << "Set fine_latency, kill_input, xL1A, cfeb clk delay " <<std::hex<< killflatclk_ <<" in hex"<< std::endl ;
+     (*MyOutput_) << "Set fine_latency, kill_input, xL1A, cfeb clk delay " <<std::hex<< killflatclk_ <<" in hex" << std::dec << std::endl ;
      //     comdelay=((xfinelatency_<<10)&0x3c00)+((killinput_<<7)&0x380)+((xlatency_<<5)&0x60)+(cfeb_clk_delay_&0x1f);
      //     cout<<" GUJH program comdelay: "<<hex <<killflatclk_ <<dec<<endl;
      //     cout<<" xfinedelay: "<<xfinelatency_<<" killinput: "<<killinput_<<" xlatency "<<xlatency_<<" cfeb_clk_dly: "<<cfeb_clk_delay_<<endl;
@@ -9288,13 +9288,13 @@ void DAQMB::odmb_print_parameters()
    
    if(DMBversion() == 2)
    {
-      std::cout << "Configuration Parameters for ODMB" << std::endl;
+      (*MyOutput_) << "Configuration Parameters for ODMB" << std::endl;
       int block=0;
-      std::cout << "---- From parameter block #" << block << " ----" << std::endl;
+      (*MyOutput_) << "---- From parameter block #" << block << " ----" << std::endl;
       odmb_readparam(block, ODMB_PARAMETERS, bufload);
       for(int i=0; i<ODMB_PARAMETERS;i++)
       {
-         std::cout << i << "   " << std::hex << "0x" << bufload[i] << std::dec  << std::endl;
+         (*MyOutput_) << i << "   " << std::hex << "0x" << bufload[i] << std::dec  << std::endl;
       }
    }
 }
@@ -10022,7 +10022,7 @@ void DAQMB::odmb_dcfeb_tests()
       unsigned int dcfeb_usercode = this->febfpgauser(*cfeb);
       std::cout << " ********************* " << std::endl
 		<< " FEB" << dcfeb_cop+1 << " : "
-		<< " Usercode: " << std::hex << dcfeb_usercode << std::endl;
+		<< " Usercode: " << std::hex << dcfeb_usercode << std::dec << std::endl;
       if (dcfeb_usercode >> 12 == 0xDCFEB) {
 	copper_mapping_local[dcfeb_cop]=1;
 	if (dcfeb_cop!=dcfeb_dev) power_on_others=true; // incorrect mapping

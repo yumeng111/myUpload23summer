@@ -72,7 +72,9 @@ void EmuPeripheralCrateConfig::CCBStatus(xgi::Input * in, xgi::Output * out )
     break;
   }
 
+  int csra2 = thisCCB->ReadRegister( CCB::CSRA2 );
   int ccb_status = thisCCB->ReadRegister( CCB::CSRA3 );
+  int csra3=ccb_status;
   if(((ccb_status>>13)&1)==1) 
   { 
     *out << cgicc::span().set("style","color:green");
@@ -117,8 +119,8 @@ void EmuPeripheralCrateConfig::CCBStatus(xgi::Input * in, xgi::Output * out )
 
   //
   *out << cgicc::br() << "CSRA1  = 0x" << std::hex << ccb_mode                             << std::endl;
-  *out << cgicc::br() << "CSRA2  = 0x" << std::hex << thisCCB->ReadRegister( CCB::CSRA2  ) << std::endl;
-  *out << cgicc::br() << "CSRA3  = 0x" << std::hex << ccb_status                           << std::endl;
+  *out << cgicc::br() << "CSRA2  = 0x" << std::hex << csra2                                << std::endl;
+  *out << cgicc::br() << "CSRA3  = 0x" << std::hex << csra3                                << std::endl;
   *out << cgicc::br() << "CSRB1  = 0x" << std::hex << thisCCB->ReadRegister( CCB::CSRB1  ) << std::endl;
   *out << cgicc::br() << "CSRB18 = 0x" << std::hex << thisCCB->ReadRegister( CCB::CSRB18 ) << std::endl;
   //
@@ -135,8 +137,61 @@ void EmuPeripheralCrateConfig::CCBStatus(xgi::Input * in, xgi::Output * out )
   *out << cgicc::br()                << "DOUT  counter =  "            << std::dec << dcounter << std::endl;
   *out << cgicc::br()                << "Last TTC command = 0x"        << std::hex << lastcmd  << std::dec << " (" << thisCCB->GetTTCCommandName( lastcmd ) << ")" << std::endl;
   
-  *out << cgicc::fieldset();
+  *out << cgicc::fieldset() << cgicc::br();
   //
+  *out << cgicc::fieldset().set("style","font-size: 10pt; font-family: arial;");
+  *out << cgicc::legend("Configuration Done bits").set("style","color:blue") << std::endl ;
+  *out << "MPC cfg ";
+  if((csra2&0x1) == 0) {
+    *out << cgicc::span().set("style","color:green");
+    *out << " OK";
+    *out << cgicc::span();
+  } else {
+    *out << cgicc::span().set("style","color:red");
+    *out << " No";
+    *out << cgicc::span();
+  }
+  *out << cgicc::br(); 
+  //
+  *out << cgicc::table().set("border","1");
+  //
+  *out << cgicc::td() << cgicc::td();
+  //
+  for(unsigned int dmb=0; dmb<dmbVector.size(); dmb++) {
+    *out << cgicc::td();
+    *out << dmbVector[dmb]->GetLabel();
+    *out << cgicc::td();
+  }
+  //
+  *out <<cgicc::tr() << std::endl;
+  // 
+  *out << cgicc::td() << "ALCT (0=OK)" << cgicc::td();
+  for (int count=1; count<=9; count++)
+  {
+     *out <<cgicc::td() << ((csra2>>count)&0x1);
+     *out << cgicc::td();
+  }
+  *out << cgicc::tr() << std::endl;
+  *out << cgicc::td() << "TMB (0=OK)" << cgicc::td();
+  for (int count=1; count<=9; count++)
+  {
+     if(count<7)
+         *out <<cgicc::td() << ((csra2>>(count+9))&0x1);
+     else
+         *out <<cgicc::td() << ((csra3>>(count-7))&0x1);
+     *out << cgicc::td();
+  }
+  *out << cgicc::tr() << std::endl;
+  *out << cgicc::td() << "DMB (1=OK)" << cgicc::td();
+  for (int count=1; count<=9; count++)
+  {
+     *out <<cgicc::td() << ((csra3>>(count+2))&0x1);
+     *out << cgicc::td();
+  }
+  *out << cgicc::tr() << std::endl;
+  *out << cgicc::table();
+  *out << "Note: for ME 1/3 chambers, DMB could be always 0" << std::endl;
+  *out << cgicc::fieldset() << std::endl;
 }
 //
 

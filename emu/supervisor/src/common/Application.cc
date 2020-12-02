@@ -669,6 +669,9 @@ xoap::MessageReference emu::supervisor::Application::onConfCCBsViaTCDS(xoap::Mes
     XCEPT_RAISE( xoap::exception::Exception, "Failed to configure CCBs via TCDS as TCDS is not in use in this configuration." );
   }
 
+  // Get TCDS app descriptors for primary or secondary TCDS, depending on the usePrimaryTCDS parameter.
+  getTCDSAppDescriptors();
+
   xdata::String endcap( "" );
   try{
     // By default, emu::soap::Messenger adds the namespace prefix of the parent to the attributes. Let's look for the qualified (namespaced) attribute, then.
@@ -1248,6 +1251,9 @@ void emu::supervisor::Application::webConfPlusCCBsViaTCDS(xgi::Input *in, xgi::O
   
   LOG4CPLUS_INFO( getApplicationLogger(), "Received command from web page to configure plus side's CCBs via TCDS." );
 
+  // Get TCDS app descriptors for primary or secondary TCDS, depending on the usePrimaryTCDS parameter.
+  getTCDSAppDescriptors();
+
   try{
     confCCBsViaTCDS( ci_plus_, pi_plus_ );
   }
@@ -1266,6 +1272,9 @@ void emu::supervisor::Application::webConfMinusCCBsViaTCDS(xgi::Input *in, xgi::
 
   LOG4CPLUS_INFO( getApplicationLogger(), "Received command from web page to configure minus side's CCBs via TCDS." );
   
+  // Get TCDS app descriptors for primary or secondary TCDS, depending on the usePrimaryTCDS parameter.
+  getTCDSAppDescriptors();
+
   try{
     confCCBsViaTCDS( ci_minus_, pi_minus_ );
   }

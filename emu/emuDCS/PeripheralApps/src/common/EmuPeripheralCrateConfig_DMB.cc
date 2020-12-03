@@ -998,7 +998,114 @@ void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out )
   std::vector<CFEB> cfebs = thisDMB->cfebs() ;
   //
   std::string dmbstring = toolbox::toString("%d",dmb);
-  char sbuf[50];
+  char buf[200],sbuf[50];
+
+  // this part for CFEBs only
+  if(thisDMB->CFEBversion()<=1)
+  {
+     *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+     *out << cgicc::legend("CFEB Firmware").set("style","color:blue") << std::endl ;
+     
+     std::string CFEBLoadFirmware = toolbox::toString("/%s/CFEBLoadFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",CFEBLoadFirmware) << std::endl ;
+
+       *out << "Choose CFEB: " << std::endl;
+       *out << cgicc::select().set("name", "cfeb") << std::endl;
+       for (unsigned i = 0; i < cfebs.size(); ++i) 
+       {
+          sprintf(sbuf,"%d",i);
+           if (i == 0) 
+              *out << cgicc::option().set("value", sbuf).set("selected", "");
+           else  
+              *out << cgicc::option().set("value", sbuf);
+           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+       }
+       // -1 will be used for broadcast
+       *out << cgicc::option().set("value", "-1") << "All CFEBs" << cgicc::option() << std::endl;
+       *out << cgicc::select() << std::endl;
+
+     *out << cgicc::input().set("type","submit").set("value","CFEB Load Firmware") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << CFEBFirmware_.toString();
+     *out << cgicc::form() << std::endl ;
+     //
+     *out << cgicc::br();
+     //
+     std::string CFEBVerifyFirmwareID = toolbox::toString("/%s/CFEBVerifyFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",CFEBVerifyFirmwareID) << std::endl ;
+
+       *out << "Choose CFEB: " << std::endl;
+       *out << cgicc::select().set("name", "cfeb") << std::endl;
+       for (unsigned i = 0; i < cfebs.size(); ++i) 
+       {
+          sprintf(sbuf,"%d",i);
+           if (i == 0) 
+              *out << cgicc::option().set("value", sbuf).set("selected", "");
+           else  
+              *out << cgicc::option().set("value", sbuf);
+           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+       }
+       *out << cgicc::select() << std::endl;
+
+     *out << cgicc::input().set("type","submit").set("value","CFEB Verify Firmware") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << CFEBVerify_.toString();
+     *out << cgicc::form() << std::endl ;
+     //
+     *out << cgicc::br();
+
+     std::string CFEBReadFw = toolbox::toString("/%s/CFEBReadFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",CFEBReadFw) << std::endl ;
+
+       *out << "Choose CFEB: " << std::endl;
+       *out << cgicc::select().set("name", "cfeb") << std::endl;
+       for (unsigned i = 0; i < cfebs.size(); ++i) 
+       {
+          sprintf(sbuf,"%d",i);
+           if (i == 0) 
+              *out << cgicc::option().set("value", sbuf).set("selected", "");
+           else  
+              *out << cgicc::option().set("value", sbuf);
+           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+       }
+       *out << cgicc::select() << std::endl;
+
+     *out << cgicc::input().set("type","submit").set("value","CFEB Read Firmware") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::input().set("type","hidden").set("value","0").set("name","mode");
+     *out << cgicc::form() << std::endl ;
+     //
+     *out << cgicc::br();
+     //
+/* comment out. This is unfinished and unsafe to use.
+     *out << cgicc::td();
+     std::string RdVfyCFEBVirtexDMB = toolbox::toString("/%s/RdVfyCFEBVirtexDMB",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",RdVfyCFEBVirtexDMB) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","Check CFEB FPGAs") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::form() << std::endl ;;
+     *out << cgicc::td();
+     *out << cgicc::br() << std::endl;
+     //
+*/
+     *out << cgicc::fieldset()<< cgicc::br() << std::endl;
+     //
+     // Output area
+     //
+     *out << cgicc::form().set("method","GET") << std::endl ;
+     *out << cgicc::pre();
+     *out << cgicc::textarea().set("name","CrateTestDMBOutput").set("rows","30").set("cols","132").set("WRAP","OFF");
+     *out << OutputStringDMBStatus[dmb].str() << std::endl ;
+     *out << cgicc::textarea();
+     *out << cgicc::pre();
+     *out << cgicc::form() << std::endl ;
+     //
+     return;
+  }  // end of CFEBs
  
   std::string dcfeb_firmware_name= (thisDMB->CFEBversion()==2)? (FirmwareDir_+"cfeb/me11_dcfeb.mcs"):(FirmwareDir_+"cfeb/me11_xdcfeb_0.mcs") ; 
   if(thisDMB->CFEBversion()==2)
@@ -2848,7 +2955,7 @@ void EmuPeripheralCrateConfig::DMBUtils(xgi::Input * in, xgi::Output * out )
      *out << cgicc::span().set("style","color:black") << cgicc::h3("Attention: If the ODMB's FPGA not configured, all functions not working except [ODMB Program FPGA]. ") << cgicc::span();
   }
   //
-  if( thisDMB->CFEBversion()>1 && thisDMB->cfebs().size() > 0 ) {
+  if( thisDMB->cfebs().size() > 0 ) {
     std::string CFEBUtils =
       toolbox::toString("/%s/CFEBUtils?dmb=%d",getApplicationDescriptor()->getURN().c_str(),dmb);
     *out << cgicc::a("CFEB Utilities").set("href",CFEBUtils) << cgicc::br()  << cgicc::br() << std::endl;
@@ -3084,10 +3191,12 @@ if(D_hversion<=1)
   *out << cgicc::input().set("type","submit").set("value","Configure DMB+CFEBs") << std::endl ;
   sprintf(buf,"%d",dmb);
   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
-  *out << cgicc::form();
-  *out << std::endl ;
-  *out << cgicc::br();
+  *out << cgicc::form() << cgicc::br() << std::endl ;
   //
+if(D_hversion<=1)
+{
+ 
+}
 if(D_hversion>=2)
 {
   // new tests for DCFEB communication
@@ -3096,15 +3205,23 @@ if(D_hversion>=2)
   *out << cgicc::input().set("type","submit").set("value","DCFEB copper/fiber mapping test") << std::endl ;
   sprintf(buf,"%d",dmb);
   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
-  *out << cgicc::form() << std::endl ;
+  *out << cgicc::form() << cgicc::br() <<std::endl ;
+
+  if(extra_tools_)
+  {
+     std::string ODMBPara = toolbox::toString("/%s/ODMBParaPrint",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",ODMBPara) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","Print ODMB parameters stored in EPROM") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::form() << std::endl ;
+  }
 }
   //
   *out << cgicc::fieldset() << cgicc::br();
   //  
 if(D_hversion>=2)
 {
-  // Pipeline Depth Scan
-  //
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl ;
 
   *out << cgicc::legend("ODMB Timing Scans (N.B.: must be taking cosmics to use!)").set("style","color:blue") ;
@@ -3158,10 +3275,12 @@ if(D_hversion>=2)
   *out << cgicc::fieldset() << cgicc::br();
  }
 
+  // DCFEB Pipeline Depth Scan
+  //
  if ( C_hversion > 1 ){
    std::string PipelineDepthScanWithDAQ = "/" + getApplicationDescriptor()->getURN() + "/PipelineDepthScanWithDAQ";
    *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl
-	<< cgicc::legend("Pipeline depth scan with local DAQ").set("style","color:blue")
+	<< cgicc::legend("DCFEB Pipeline depth scan with local DAQ").set("style","color:blue")
 	<< cgicc::form().set("method","GET").set("action",PipelineDepthScanWithDAQ) << std::endl
 	<< cgicc::input().set("type","submit").set("value","Pipeline depth scan with local DAQ").set("title","Scan pipeline depth using the local DAQ, and find its best value with the unpacker.")
 	<< "from "          << cgicc::input().set("type","text").set("size","3").set("value","55").set("name","from"      )
@@ -3179,7 +3298,7 @@ if(D_hversion>=2)
   //
 if(D_hversion<=1)
 {
-  *out << cgicc::legend("DMB/CFEB Firmware").set("style","color:blue") ;
+  *out << cgicc::legend("DMB Firmware").set("style","color:blue") ;
   //
   std::string DMBLoadFirmware = toolbox::toString("/%s/DMBLoadFirmware",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",DMBLoadFirmware) << std::endl ;
@@ -3193,6 +3312,15 @@ if(D_hversion<=1)
   *out << cgicc::form() << std::endl ;
   //
   *out << cgicc::br();
+
+     std::string DMBReadFirmware = toolbox::toString("/%s/DMBReadFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",DMBReadFirmware) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","Read back DMB Control Firmware") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::form() << std::endl ;
+     //
+     *out << cgicc::br();
   //
   std::string DMBVmeLoadFirmware = toolbox::toString("/%s/DMBVmeLoadFirmware",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",DMBVmeLoadFirmware) << std::endl ;
@@ -3216,97 +3344,18 @@ if(D_hversion<=1)
   //
   *out << cgicc::br();
   //
-  if(C_hversion<=1)
-  {
-     std::string CFEBLoadFirmware = toolbox::toString("/%s/CFEBLoadFirmware",getApplicationDescriptor()->getURN().c_str());
-     *out << cgicc::form().set("method","GET").set("action",CFEBLoadFirmware) << std::endl ;
+  std::string ReadDMBVirtex2 = toolbox::toString("/%s/ReadDMBVirtex2Reg",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",ReadDMBVirtex2) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Read DMB Control FPGA registers") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::br();
+  //
 
-       *out << "Choose CFEB: " << std::endl;
-       *out << cgicc::select().set("name", "cfeb") << std::endl;
-       for (unsigned i = 0; i < cfebs.size(); ++i) 
-       {
-          sprintf(sbuf,"%d",i);
-           if (i == 0) 
-              *out << cgicc::option().set("value", sbuf).set("selected", "");
-           else  
-              *out << cgicc::option().set("value", sbuf);
-           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
-       }
-       // -1 will be used for broadcast
-       *out << cgicc::option().set("value", "-1") << "All CFEBs" << cgicc::option() << std::endl;
-       *out << cgicc::select() << std::endl;
-
-     *out << cgicc::input().set("type","submit").set("value","CFEB Load Firmware") << std::endl ;
-     sprintf(buf,"%d",dmb);
-     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
-     *out << CFEBFirmware_.toString();
-     *out << cgicc::form() << std::endl ;
-     //
-     *out << cgicc::br();
-     //
-     std::string CFEBVerifyFirmwareID = toolbox::toString("/%s/CFEBVerifyFirmware",getApplicationDescriptor()->getURN().c_str());
-     *out << cgicc::form().set("method","GET").set("action",CFEBVerifyFirmwareID) << std::endl ;
-
-       *out << "Choose CFEB: " << std::endl;
-       *out << cgicc::select().set("name", "cfeb") << std::endl;
-       for (unsigned i = 0; i < cfebs.size(); ++i) 
-       {
-          sprintf(sbuf,"%d",i);
-           if (i == 0) 
-              *out << cgicc::option().set("value", sbuf).set("selected", "");
-           else  
-              *out << cgicc::option().set("value", sbuf);
-           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
-       }
-       *out << cgicc::select() << std::endl;
-
-     *out << cgicc::input().set("type","submit").set("value","CFEB Verify Firmware") << std::endl ;
-     sprintf(buf,"%d",dmb);
-     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
-     *out << CFEBVerify_.toString();
-     *out << cgicc::form() << std::endl ;
-     //
-     *out << cgicc::br();
-
-     std::string CFEBReadFw = toolbox::toString("/%s/CFEBReadFirmware",getApplicationDescriptor()->getURN().c_str());
-     *out << cgicc::form().set("method","GET").set("action",CFEBReadFw) << std::endl ;
-
-       *out << "Choose CFEB: " << std::endl;
-       *out << cgicc::select().set("name", "cfeb") << std::endl;
-       for (unsigned i = 0; i < cfebs.size(); ++i) 
-       {
-          sprintf(sbuf,"%d",i);
-           if (i == 0) 
-              *out << cgicc::option().set("value", sbuf).set("selected", "");
-           else  
-              *out << cgicc::option().set("value", sbuf);
-           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
-       }
-       *out << cgicc::select() << std::endl;
-
-     *out << cgicc::input().set("type","submit").set("value","CFEB Read Firmware") << std::endl ;
-     sprintf(buf,"%d",dmb);
-     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
-     *out << cgicc::input().set("type","hidden").set("value","0").set("name","mode");
-     *out << cgicc::form() << std::endl ;
-     //
-     *out << cgicc::br();
-     //
-/* comment out. This is unfinished and unsafe to use.
-     *out << cgicc::td();
-     std::string RdVfyCFEBVirtexDMB = toolbox::toString("/%s/RdVfyCFEBVirtexDMB",getApplicationDescriptor()->getURN().c_str());
-     *out << cgicc::form().set("method","GET").set("action",RdVfyCFEBVirtexDMB) << std::endl ;
-     *out << cgicc::input().set("type","submit").set("value","Check CFEB FPGAs") << std::endl ;
-     sprintf(buf,"%d",dmb);
-     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
-     *out << cgicc::form() << std::endl ;;
-     *out << cgicc::td();
-     *out << cgicc::br() << std::endl;
-     //
-*/
-  }
 }
-else if(D_hversion==2)
+else if(D_hversion>=2)
 {
      *out << cgicc::legend("ODMB Firmware").set("style","color:blue") ;
      //
@@ -3593,7 +3642,25 @@ void EmuPeripheralCrateConfig::DMBReadFirmware(xgi::Input * in, xgi::Output * ou
   if(thisDMB)
   {
      int hversion=thisDMB->DMBversion();
-     if(hversion==2)
+     if(hversion<=1)
+     {
+        std::string chambername= thisDMB->GetLabel();
+        unsigned t = chambername.find('/');
+        unsigned s = chambername.size();
+        while(t<=s )
+        { 
+           chambername.replace(t,1,"_");
+           t = chambername.find('/');        
+        } 
+        std::string mcsfile="/tmp/DMB_CTL_"+chambername+".mcs";
+                
+        std::cout << getLocalDateTime() << " DMB Control firmware read back from slot " << thisDMB->slot() << std::endl;
+
+        thisDMB->read_firmware_control(mcsfile.c_str());
+     
+        std::cout << getLocalDateTime() << " DMB Control firmware read back finished and saved as " << mcsfile << std::endl;
+     }
+     else if(hversion==2)
      {
         std::string chambername= thisDMB->GetLabel();
         unsigned t = chambername.find('/');
@@ -3609,7 +3676,7 @@ void EmuPeripheralCrateConfig::DMBReadFirmware(xgi::Input * in, xgi::Output * ou
 
         thisDMB->odmb_readfirmware_mcs(mcsfile.c_str());
      
-        std::cout << getLocalDateTime() << " ODMB firmware read back finished." << std::endl;
+        std::cout << getLocalDateTime() << " ODMB firmware read back finished and saved as " << mcsfile << std::endl;
      }
   }                    
   this->DMBUtils(in, out);
@@ -5471,6 +5538,75 @@ void EmuPeripheralCrateConfig::xDCFEBReadVTTX(xgi::Input * in, xgi::Output * out
      thisDMB->RedirectOutput(&std::cout);
   }
   this->CFEBUtils(in,out);           
+}
+
+void EmuPeripheralCrateConfig::ODMBParaPrint(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  if(thisDMB)
+  {
+     OutputStringDMBStatus[dmb].str("");
+          
+     int hversion = thisDMB->DMBversion();
+
+     if (hversion == 2) 
+     {
+       thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+       thisDMB->odmb_print_parameters();
+       thisDMB->RedirectOutput(&std::cout);
+     }
+  }
+  this->DMBUtils(in,out);           
+}
+
+void EmuPeripheralCrateConfig::ReadDMBVirtex2Reg(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  if(thisDMB)
+  {
+     OutputStringDMBStatus[dmb].str("");
+          
+     OutputStringDMBStatus[dmb] << "Read DMB Control FPGA Virtex2 registers (in Hex):" << std::endl;
+     OutputStringDMBStatus[dmb] << "IDCODE =" << std::hex << thisDMB->virtex2_readreg(0xe) << std::endl;
+     OutputStringDMBStatus[dmb] << "STATUS =" << std::hex << thisDMB->virtex2_readreg(7) << std::endl;
+     OutputStringDMBStatus[dmb] << "COR =" << std::hex << thisDMB->virtex2_readreg(9) << std::endl;
+     OutputStringDMBStatus[dmb] << "CTL =" << std::hex << thisDMB->virtex2_readreg(5) << std::endl;
+     OutputStringDMBStatus[dmb] << "MASK =" << std::hex << thisDMB->virtex2_readreg(6) << std::endl;
+
+     std::cout <<  OutputStringDMBStatus[dmb].str() << std::endl;      
+
+  }
+  this->DMBUtils(in,out);           
 }
 
  }  // namespace emu::pc

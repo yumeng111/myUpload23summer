@@ -412,6 +412,8 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::DCFEBShutdown,"DCFEBShutdown");
   xgi::bind(this,&EmuPeripheralCrateConfig::xDCFEBReadSwitch,"xDCFEBReadSwitch");
   xgi::bind(this,&EmuPeripheralCrateConfig::xDCFEBReadVTTX,"xDCFEBReadVTTX");
+  xgi::bind(this,&EmuPeripheralCrateConfig::ODMBParaPrint, "ODMBParaPrint");
+  xgi::bind(this,&EmuPeripheralCrateConfig::ReadDMBVirtex2Reg, "ReadDMBVirtex2Reg");
   //
   //-----------------------------------------------
   // TMB tests

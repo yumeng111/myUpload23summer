@@ -11124,15 +11124,6 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::td();
   }
   //
-  *out << cgicc::td().set("ALIGN","left");
-  std::string DisALCTTestPulse = toolbox::toString("/%s/DisableALCTTestPulse",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",DisALCTTestPulse) ;
-  *out << cgicc::input().set("type","submit").set("value","Disable ALCT Test Pulse") ;
-  sprintf(buf,"%d",tmb);
-  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
-  *out << cgicc::form() << std::endl ;
-  *out << cgicc::td();
-  //
   //////////////////////////////////////////////
   *out << cgicc::tr();
   //
@@ -11149,6 +11140,7 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
   *out << cgicc::form() ;
   *out << cgicc::td();
+/* 2020-12-03, disabled. Not ready in firmware
   //
   if (thisTMB->GetHardwareVersion()==2) 
   {
@@ -11166,23 +11158,13 @@ void EmuPeripheralCrateConfig::TMBUtils(xgi::Input * in, xgi::Output * out )
      *out << FirmwareDir_+"otmb/me11_otmb.mcs";
      *out << cgicc::td();
   }
-
+*/
   //
   //////////////////////////////////////////////
   *out << cgicc::tr();
   //
   *out << cgicc::td().set("ALIGN","left");
-  *out << "ALCT firmware";
-  *out << cgicc::td();
-  //
-  //
-  *out << cgicc::td().set("ALIGN","left");
-  std::string ALCTreadFirmware = toolbox::toString("/%s/ALCTReadFirmware",getApplicationDescriptor()->getURN().c_str());
-  *out << cgicc::form().set("method","GET").set("action",ALCTreadFirmware) ;
-  *out << cgicc::input().set("type","submit").set("value","Read back ALCT firmware") ;
-  sprintf(buf,"%d",tmb);
-  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
-  *out << cgicc::form() ;
+  *out << "RAT firmware";
   *out << cgicc::td();
   //
   //
@@ -14302,6 +14284,17 @@ void EmuPeripheralCrateConfig::ALCTUtils(xgi::Input * in, xgi::Output * out )
   }  // end of new ALCT
   //
   *out << cgicc::br() << std::endl;
+  //
+  *out << cgicc::td().set("ALIGN","left");
+  std::string ALCTreadFirmware = toolbox::toString("/%s/ALCTReadFirmware",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",ALCTreadFirmware) ;
+  *out << cgicc::input().set("type","submit").set("value","Read back ALCT firmware") ;
+  sprintf(buf,"%d",tmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+  *out << cgicc::form() ;
+  *out << cgicc::td();
+  //
+
   *out << cgicc::br() << std::endl;
 
   // ALCT Slow Control
@@ -14322,7 +14315,48 @@ void EmuPeripheralCrateConfig::ALCTUtils(xgi::Input * in, xgi::Output * out )
   *out << cgicc::br() << std::endl;
 
   *out << cgicc::fieldset() << cgicc::br() << std::endl;
-    
+
+        
+  // other ALCT functions
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+  *out << std::endl ;
+  //
+  *out << cgicc::legend("Other ALCT Functions").set("style","color:blue") ;
+  //
+  *out << cgicc::td().set("ALIGN","left");
+  std::string DisALCTTestPulse = toolbox::toString("/%s/DisableALCTTestPulse",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DisALCTTestPulse) ;
+  *out << cgicc::input().set("type","submit").set("value","Disable ALCT Test Pulse") ;
+  sprintf(buf,"%d",tmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::td();
+  //
+  if (alct->GetHardwareVersion()>1)
+  {
+     std::string ReadALCTSpartan6 = toolbox::toString("/%s/ReadALCTSpartan6Reg",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",ReadALCTSpartan6) << std::endl ;
+     sprintf(buf,"Read ALCT Mez FPGA Spartan-6 registers",tmbVector[tmb]->slot());
+     *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
+     sprintf(buf,"%d",tmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+     *out << cgicc::form() << cgicc::br() << std::endl ;
+  }
+  *out << cgicc::fieldset() << cgicc::br() << std::endl;
+  //
+  // Output area
+  //
+  *out << cgicc::form().set("method","GET") << std::endl ;
+  *out << cgicc::pre();
+  *out << cgicc::textarea().set("name","TMB-ALCT Output")
+    .set("rows","50")
+    .set("cols","150")
+    .set("WRAP","OFF");
+  *out << OutputStringTMBStatus[tmb].str() << std::endl ;
+  *out << cgicc::textarea();
+  OutputStringTMBStatus[tmb].str("");
+  *out << cgicc::pre();
+  *out << cgicc::form() << std::endl ;
   //
 }
 //
@@ -14389,7 +14423,16 @@ void EmuPeripheralCrateConfig::ReadALCTSpartan6Reg(xgi::Input * in, xgi::Output 
     ALCTController * thisALCT = thisTMB->alctController();
     if(thisALCT && (thisALCT->GetHardwareVersion()>=2))
     {
-       // thisALCT->spartan6_readreg(0xe);
+       OutputStringTMBStatus[tmb].str("");
+       OutputStringTMBStatus[tmb] << "Read ALCT Mez Spartan6 FPGA registers (in Hex):" << std::endl;
+       OutputStringTMBStatus[tmb] << "IDCODE =" << std::hex << thisALCT->spartan6_readreg(0xe) << std::endl;
+       OutputStringTMBStatus[tmb] << "STATUS =" << std::hex << thisALCT->spartan6_readreg(8) << std::endl;
+       OutputStringTMBStatus[tmb] << "COR1 =" << std::hex << thisALCT->spartan6_readreg(0xa) << std::endl;
+       OutputStringTMBStatus[tmb] << "COR2 =" << std::hex << thisALCT->spartan6_readreg(0xb) << std::endl;
+       OutputStringTMBStatus[tmb] << "MODE =" << std::hex << thisALCT->spartan6_readreg(0x18) << std::endl;
+       OutputStringTMBStatus[tmb] << "BOOTST =" << std::hex << thisALCT->spartan6_readreg(0x20) << std::dec << std::endl;
+
+       std::cout << OutputStringTMBStatus[tmb].str() << std::endl;      
     }
   }
   //

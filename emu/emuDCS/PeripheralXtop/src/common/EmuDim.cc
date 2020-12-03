@@ -929,14 +929,14 @@ int EmuDim::PowerUp()
            else
            {
               confirm = "INIT_FAILED;" + crate_name[i];              
-              std::cout << getLocalDateTime() << " Init failed: " << crate_name[i] << std::endl;
+              std::cout << getLocalDateTime() << " Power-up failed: " << crate_name[i] << std::endl;
            }
          }
          else
          {
             std::cout << "Blue Page returns bad message with total length: " << BlueLoader->Content_Size() << std::endl;
             confirm = "INIT_FAILED;" + crate_name[i];              
-            std::cout << getLocalDateTime() << " Init failed: " << crate_name[i] << std::endl;
+            std::cout << getLocalDateTime() << " Power-up failed: " << crate_name[i] << std::endl;
          }
          if(crate_state[i]==1)  // state didn't change into 2, failed
          {

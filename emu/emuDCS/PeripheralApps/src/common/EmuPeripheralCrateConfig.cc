@@ -9271,7 +9271,7 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
   //
   *out << cgicc::table();
   //
-  if(alct->ALCTversion()==4)
+  if(alct->ALCTversion()==4 && alct->GetChamberType()=="ME11" )
   {
     *out << "GBTx Photocurrent = " << (2.5-alct->get_adc(5)) << " mA." << cgicc::br() << std::endl;
   }

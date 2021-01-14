@@ -17,6 +17,52 @@
 #include <vector>
 #include <stdint.h>
 #include <strings.h>
+#include <limits>
+#include <sstream>
+
+/// Put CSV (character-separated values) into an STL container (deque, list, set, multiset or vector).
+///
+/// @param s string of character-separated values
+/// @param delimiter delimiter character, comma by default
+///
+/// @return STL container initialized from CSV
+///
+template <typename Container>
+Container csvTo( const std::string& csv, const char delimiter = ',' )
+{
+  Container values;
+  typename Container::value_type value;
+  size_t start = 0;
+  size_t found = csv.find( delimiter );
+  while ( found != std::string::npos )
+  {
+    value = typename Container::value_type();
+    std::istringstream iss( csv.substr( start, found - start ) );
+    iss >> value;
+    values.insert( values.end(), value );
+    start = found + 1;
+    found = csv.find( delimiter, start );
+  }
+  value = typename Container::value_type();
+  std::istringstream last( csv.substr(start) );
+  last >> value;
+  values.insert( values.end(), value );
+  return values;
+}
+
+/**
+ * quick vector dump
+ */
+template< typename T >
+std::ostream& operator<<(std::ostream& os, const std::vector< T >& t)
+{
+  os << "[";
+  typename std::vector< T >::const_iterator it;
+  for (it = t.begin(); it != t.end(); ++it)
+    os << *it << (it + 1 != t.end() ? "," : "");
+  os << "]";
+  return os;
+}
 
 using namespace std;
 
@@ -111,7 +157,10 @@ int main(int argc, char **argv)
   bool fFormat2013 = false;
   unsigned DDU_Firmware_Revision = 0;
 
-  long EventToPrint=-1;
+  string EventsToPrint;
+  vector<long> EventRange; // EventRange[0]: first event; EventRange[1]: last event; EventRange[0]: step
+  long first, last, step;
+
   long cntDDUHeaders=0, cntDDUTrailers=0, cntDMBHeaders=0;
   long DDU_L1A=0, DMB_L1A=0, ALCT_L1A=0, TMB_L1A=0;
   long SampleCount=0, BSampleCount=0;
@@ -154,8 +203,46 @@ int main(int argc, char **argv)
     }
   cerr << datafile << " Opened" << endl;
 
-  cout << "Enter Event Number to print: ";
-  cin >> EventToPrint;
+  cout << "Specify event(s) to print as first[,last[,increment]] (last<0 for all from first on): ";
+  cin >> EventsToPrint; // requires at least one non-whitespace character
+  // getline( cin, EventsToPrint ); // to allow empty string input
+  EventRange = csvTo< vector<long> >( EventsToPrint );
+  // cout << EventRange << endl;
+  if ( EventRange.size() == 0 ){
+    cout << "No events specified. Exiting." << endl;
+    exit(1);
+  }
+  if ( EventRange.size() == 1 ){
+    EventRange.push_back( EventRange[0] ); // last = first
+  }
+  if ( EventRange.size() >= 2 ){
+    if ( EventRange[1] < 0 ) EventRange[1] = numeric_limits<long>::max(); // all events
+    if ( EventRange[0] > EventRange[1] ){
+      cout << "Last event cannot be less than first. Exiting." << endl;
+      exit(2);
+    }
+  }
+  if ( EventRange.size() == 2 ){
+    EventRange.push_back( 1 ); // default increment    
+  }
+  if ( EventRange.size() == 3 ){
+    if ( EventRange[2] < 1 ){
+      cout << "Increment must be positive. Exiting." << endl;
+      exit(3);
+    }
+  }
+  if ( EventRange.size() > 3 ){
+    cout << "Too many parameters given for range of events to print. Exiting." << endl;
+    exit(4);
+  }
+  if ( EventRange[0] <= 0 || EventRange[1] == 0 ){
+    cout << "The first event number must be positive, the last event nonzero (negative for infinity). Exiting." << endl;
+    exit(5);
+  }
+  first = EventRange[0];
+  last  = EventRange[1];
+  step  = EventRange[2];
+  cout << "Printing events from " << first << " to " << last << " in steps of " << step << endl;
 
 //------------------------------------------------------------------------------------------------
 
@@ -192,7 +279,9 @@ int main(int argc, char **argv)
               cout << "DDU Header Occurrence " << cntDDUHeaders << endl;
             }
 
-          if (cntDDUHeaders==EventToPrint)
+	  if ( first         <= cntDDUHeaders            && 
+	       cntDDUHeaders <= last                     && 
+	       ( cntDDUHeaders - first ) % step == 0        )
             {
 	      DDU_Firmware_Revision    = (buf_1[0] >> 4) & 0xF;
               if (DDU_Firmware_Revision > 6)
@@ -218,7 +307,7 @@ int main(int argc, char **argv)
 
             }
 
-          if (cntDDUHeaders == (EventToPrint+1))    // Passed the requested Event, Exit the program
+          if ( cntDDUHeaders > last )    // Passed the requested Event, Exit the program
             {
               // input.close();
               ::close(input);
@@ -229,7 +318,9 @@ int main(int argc, char **argv)
 
 
       // == Print the whole event
-      if (cntDDUHeaders==EventToPrint)
+      if ( first         <= cntDDUHeaders            && 
+	   cntDDUHeaders <= last                     && 
+	   ( cntDDUHeaders - first ) % step == 0        )
         {
 
           // == DMB Header found
@@ -560,7 +651,9 @@ int main(int argc, char **argv)
         {
           cntDDUTrailers++; // Increment DDUTrailer counter
 
-          if (cntDDUHeaders==EventToPrint)
+	  if ( first         <= cntDDUHeaders            && 
+	       cntDDUHeaders <= last                     && 
+	       ( cntDDUHeaders - first ) % step == 0        )
             {
               // printb(buf1); cout << endl;
               int wordcnt = buf2[2]+((buf2[3]&0xFF) << 16);
@@ -576,12 +669,6 @@ int main(int argc, char **argv)
               cout << "DDU Trailer Occurrence " << cntDDUTrailers << endl << endl;
 
               cout << "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" << endl << endl;
-              // Exit the program
-              // input.close();
-              ::close(input);
-              cerr << datafile << " Closed" << endl << endl;
-
-              return 0;
             }
         }
 	if (fDDU) {

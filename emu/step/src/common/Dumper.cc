@@ -38,7 +38,7 @@ unsigned long long emu::step::Dumper::timeNowInMicrosec(){
 void emu::step::Dumper::dumpCounters( const char* signalName ){
   ostringstream counterDump;
   counterDump << dumpHeader();
-  counterDump << "Start at " << timeOfReset_;        
+  counterDump << "Start at " << timeOfReset_;
   if ( signalName ) counterDump << " us on " << resetOnSignal_;
   counterDump << "\n";
   counterDump << "End   at " << timeNowInMicrosec();
@@ -60,9 +60,34 @@ void emu::step::Dumper::dumpCounters( const char* signalName ){
   }
   string fileName( options_->dumpDir() + "/TMBCounters_" + options_->dumperName() + ".txt" );
   ofstream outFile( fileName.c_str(), ofstream::out | ofstream::app );
-  outFile << counterDump.str();
-  outFile.close();
-  LOG4CPLUS_INFO( *options_->test()->getLogger(), "TMB dumper " << options_->dumperName() << " wrote counters of " << tmbs.size() << " TMBs to " << fileName );
+  if ( outFile.good() ){
+    outFile << counterDump.str();
+    if ( outFile.good() ){
+      LOG4CPLUS_INFO( *options_->test()->getLogger(), 
+		      "TMB dumper " << options_->dumperName() << 
+		      " wrote counters of " << tmbs.size() << 
+		      " TMBs to " << fileName );
+    }
+    else{ // if ( outFile.good() )
+      LOG4CPLUS_WARN( *options_->test()->getLogger(), 
+		      "Problem with TMB dump file " << fileName << 
+		      " after writing: " << ( outFile.fail() ? " failbit" : "" ) << 
+		      ( outFile.bad() ? " badbit" : "" ) );
+    }
+    outFile.close();
+    if ( ! outFile.good() ){
+      LOG4CPLUS_WARN( *options_->test()->getLogger(), 
+		      "Problem with TMB dump file " << fileName << 
+		      " after closing: " << ( outFile.fail() ? " failbit" : "" ) << 
+		      ( outFile.bad() ? " badbit" : "" ) );
+    }
+  }
+  else{ // if ( outFile.good() )
+    LOG4CPLUS_WARN( *options_->test()->getLogger(), 
+		    "Problem with TMB dump file " << fileName << 
+		    " after opening: " << ( outFile.fail() ? " failbit" : "" ) << 
+		    ( outFile.bad() ? " badbit" : "" ) );
+  }
 }
 
 void emu::step::Dumper::resetCounters( const char* signalName ){

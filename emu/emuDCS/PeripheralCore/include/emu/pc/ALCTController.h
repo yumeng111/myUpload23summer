@@ -774,6 +774,7 @@ private:
   float ConvertADCtoCurrent_(int adc_value);
   float ConvertADCtoTemperature_(int adc_value);
   //
+public:
   //////////////////////////
   //TESTPULSE POWERSWITCH
   //////////////////////////
@@ -844,6 +845,8 @@ private:
   //
   int write_standby_register_[RegSizeAlctSlowFpga_WRT_STANDBY_REG];
   int read_standby_register_[RegSizeAlctSlowFpga_RD_STANDBY_REG];
+
+private:
   //
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // vectors of bits for the fast-control registers, variables in these registers, and methods to translate between the two... //

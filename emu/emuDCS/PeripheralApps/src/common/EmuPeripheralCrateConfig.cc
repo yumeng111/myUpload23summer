@@ -8908,6 +8908,23 @@ void EmuPeripheralCrateConfig::ALCTStatus(xgi::Input * in, xgi::Output * out )
   alct->RedirectOutput(&std::cout);
   *out << cgicc::fieldset();
   //
+  // ALCT Test Pulse
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+  //
+  *out << cgicc::legend("ALCT Test Pulse Status").set("style","color:blue") 
+       << std::endl ;
+  alct->ReadTestpulsePowerSwitchReg_();
+  alct->ReadTestpulseGroupMask_();
+  alct->ReadTestpulseStripMask_();
+  *out << "Test Pulse Power-Switch (0 is Off) = " << alct->GetTestpulsePowerSwitchReg_() << cgicc::br() << std::endl;
+  *out << "Test Pulse Group-Mask (7 bits, 6->0) = ";
+    for (int i=6; i>=0; i--)  *out <<  (1&(alct->GetTestpulseGroupMask_(i)));
+    *out << cgicc::br() << std::endl;
+  *out << "Test Pulse Strip-Mask (6 bits, 5->0) = ";
+    for (int i=5; i>=0; i--)  *out <<  (1&(alct->GetTestpulseStripMask_(i)));
+    *out << cgicc::br() << std::endl;
+  *out << cgicc::fieldset();
+  //
   //
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
   //

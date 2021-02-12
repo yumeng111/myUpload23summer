@@ -4483,9 +4483,17 @@ void ALCTController::ProgramALCTProms() {
 
 void ALCTController::DisableTestPulse()
 {
+    for (int group=0; group<GetNumberOfGroupsOfDelayChips(); group++) {
+      SetTestpulseGroupMask_(group,OFF);
+    }
+    WriteTestpulseGroupMask_();
+
     for (int layer=0; layer<MAX_NUM_LAYERS; layer++) 
          SetTestpulseStripMask_(layer,OFF);
     WriteTestpulseStripMask_();
+
+    SetTestpulseAmplitude(0);
+    WriteTestpulseAmplitude_();
 
     SetTestpulsePowerSwitchReg_(OFF);
     WriteTestpulsePowerSwitchReg_();

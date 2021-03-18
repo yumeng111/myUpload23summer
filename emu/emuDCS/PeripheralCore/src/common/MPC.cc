@@ -1446,7 +1446,7 @@ void MPC::program_fpga(const char *mcsfile)
       bufin[i*2+1]=c;
    }
 */
-     int blocks=FIRMWARE_SIZE/2;  // firmware size must be in units of 16-bit words
+     int blocks=mcssize/2;  // firmware size must be in units of 16-bit words
      int p1pct=blocks/100;
      int j=0, pcnts=0;
      unsigned short comd, tmp;
@@ -1484,6 +1484,7 @@ void MPC::program_fpga(const char *mcsfile)
      comd=SPT6_ISC_ENABLE; 
      tmp=0;
      mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
+     udelay(100);
      mpc_scan(1, (char *)&tmp, 5, rcvbuf, READ_YES, 0);
      std::cout <<" Start sending 128 clocks... " << std::endl;
      mpc_scan(2, (char *)&comd, 128, rcvbuf, 0, 0);
@@ -1525,7 +1526,7 @@ void MPC::program_fpga(const char *mcsfile)
      comd=SPT6_BYPASS;
      mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
     
-    std::cout << "FPGA configuration done!" << std::endl;             
+    std::cout << "FPGA configuration finished!" << std::endl;             
     free(bufin);
 
 }
@@ -1534,7 +1535,7 @@ unsigned MPC::spartan6_readreg(int reg)
 {
      unsigned short comd;
      unsigned short data[8]={0x9955, 0x66AA, 0, 4, 4, 4, 4, 4};
-     unsigned *rt, rtv1, rtv2, words=1;
+     unsigned *rt, rtv1, words=1;
 
      if(reg==0xe) words=2;   // some registers are 2 words; many registers are non-readable
 
@@ -1555,10 +1556,10 @@ unsigned MPC::spartan6_readreg(int reg)
      mpc_scan(1, (char *)data, (words==2)?32:16, rcvbuf, READ_YES, 0);  
      rt = (unsigned *)rcvbuf;
      rtv1=shuffle32(*rt);
-     rtv2=(words==2)?((rtv1&0xFFFF)<<16):0;
      comd=SPT6_BYPASS;
      mpc_scan(0, (char *)&comd, 6, rcvbuf, 0, 0);
-     return rtv2+(rtv1>>16);
+    if(words==1) rtv1 = (rtv1>>16);
+    return rtv1;
 }
 
   } // namespace emu::pc

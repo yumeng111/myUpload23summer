@@ -7,6 +7,7 @@
 ##
 include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
 include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
+include $(BUILD_HOME)/emu/rpm_version
 
 #
 # Packages to be built
@@ -54,3 +55,4 @@ TestLibraries=
 TestExecutables=
 
 include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules

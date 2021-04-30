@@ -1,49 +1,30 @@
-#BUILD_HOME:=$(shell pwd)/../..
-
 include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
 include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 include $(BUILD_HOME)/emu/rpm_version
 
 Project=emu
 Package=emu/ldaq
 PackageName=ldaq
+
 Description="The Emu (CSC) local DAQ"
 Summary="The Emu (CSC) local DAQ"
 Authors="Steven Murray, Karoly banicz"
 Link=""
 
-include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
-include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules
-
 Packages= \
-          emu/ldaq/reader \
-          emu/ldaq/writer \
-          emu/ldaq/server \
-          emu/ldaq/rui \
-          emu/ldaq/manager
+           ldaq/reader \
+           ldaq/writer \
+           ldaq/server \
+           ldaq/rui \
+           ldaq/manager
 
-include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules
 
 .PHONY: _rpmall
 _rpmall: spec_update spec_local_update makerpm
-	@echo "Building emuldaq rpm: done"
+	@echo "Building emu-ldaq rpm: done" 
 
 .PHONY: spec_local_update
 spec_local_update:
 	perl -p -i -e 's#__packages__#$(Packages)#' $(PackagePath)/rpm/$(PackageName).spec
-
-
-# componentsrpm:
-# 	for x in $(Packages); do \
-# 	  make -C ../$$x rpm; \
-# 	done
-# 
-# installcomponentsrpm:
-# 	for x in $(Packages); do \
-# 	  make -C ../$$x installrpm; \
-# 	done
-# 
-# cleancomponentsrpm:
-# 	for x in $(Packages); do \
-# 	  make -C ../$$x cleanrpm; \
-# 	done

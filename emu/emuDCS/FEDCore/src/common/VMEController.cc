@@ -136,7 +136,7 @@ throw (emu::exception::CAENException)
 				inFile.close();
 			} else {
 				std::ostringstream error;
-				error << "Encountered CAEN bus error, but no open BHandles detected in file " << fileName;
+				error << "Encountered CAEN bus error, but no open BHandles detected in file " << fileName.str();
 				XCEPT_DECLARE(emu::exception::CAENException, e2, error.str());
 				throw e2;
 			}

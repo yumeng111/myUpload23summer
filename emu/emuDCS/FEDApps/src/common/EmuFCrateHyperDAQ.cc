@@ -973,7 +973,7 @@ void emu::fed::EmuFCrateHyperDAQ::DDURegisterDump(xgi::Input *in, xgi::Output *o
     outfile.open(fileName.str().c_str(), std::ios::trunc);
     if (!outfile.is_open()) {
       std::ostringstream error;
-      error << "The file " << fileName << " is not accessable for writing";
+      error << "The file " << fileName.str() << " is not accessable for writing";
       LOG4CPLUS_ERROR(getApplicationLogger(), error.str());
       XCEPT_DECLARE(emu::exception::FileException, e, error.str());
       notifyQualified("ERROR", e);      

@@ -1288,7 +1288,7 @@ void VMEModule::Parse(char *buf,int *Count,char **Word)
       buf++;
     }
   }
-  buf = '\0';
+  // buf = '\0';
 }
 
 

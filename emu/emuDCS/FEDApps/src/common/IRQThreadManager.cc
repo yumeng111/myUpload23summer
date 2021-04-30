@@ -50,7 +50,7 @@ application_(application)
 	logHardResets_ = new std::ofstream(fileName.str().c_str(), std::ios::trunc);  
 	if (!logHardResets_->is_open()) {
 	  std::ostringstream error;
-	  error << "The file " << fileName << " is not accessable for writing";
+	  error << "The file " << fileName.str() << " is not accessable for writing";
 	  log4cplus::Logger logger = log4cplus::Logger::getInstance("EmuFMMIRQ");  
 	  LOG4CPLUS_FATAL(logger, error.str());
 	  XCEPT_DECLARE(emu::exception::FileException, e, error.str());

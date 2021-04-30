@@ -17,7 +17,6 @@ Packages=\
 	emu/emuDCS/PeripheralCore \
 	emu/emuDCS/PeripheralApps \
         emu/emuDCS/PeripheralXtop \
-        emu/emuDCS/PCSwitches \
 	emu/emuDCS/OnlineDB \
 	emu/emuDCS/FEDCore \
 	emu/emuDCS/FEDUtils \

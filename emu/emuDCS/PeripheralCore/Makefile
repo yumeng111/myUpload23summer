@@ -46,7 +46,7 @@ LibraryDirs =
 TestLibraryDirs =
 
 UserCFlags  = 
-UserCCFlags = -std=c++11
+UserCCFlags = -std=c++11 -Wno-narrowing
 UserDynamicLinkFlags =
 UserStaticLinkFlags =
 UserExecutableLinkFlags =

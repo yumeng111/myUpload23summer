@@ -32,14 +32,14 @@ include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules
 
 
 Packages=\
-	dqm/cmssw \
-	dqm/common \
-	dqm/cscanalyzer \
-	dqm/cscmonitor \
-	dqm/utils \
-	dqm/cscdisplay \
-	dqm/calibration \
-	dqm/dcfebpipeline
+	emu/dqm/cmssw \
+	emu/dqm/common \
+	emu/dqm/cscanalyzer \
+	emu/dqm/cscmonitor \
+	emu/dqm/utils \
+	emu/dqm/cscdisplay \
+	emu/dqm/calibration \
+	emu/dqm/dcfebpipeline
 
 include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
 #include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules
@@ -51,7 +51,7 @@ _rpmall: spec_update spec_local_update makerpm
 
 .PHONY: spec_local_update
 spec_local_update:
-	perl -p -i -e 's#__packages__#$(Packages)#' $(PackagePath)/rpm/$(PackageName).spec
+	perl -p -i -e 's#__packages__#$(Packages)#' $(PackagePath)/rpm/$(Project)$(PackageName).spec
 #	perl -p -i -e 's#__includedirs__#$(IncludeDirs)#' $(PackagePath)/rpm/$(PackageName).spec
 
 

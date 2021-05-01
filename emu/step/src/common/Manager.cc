@@ -861,7 +861,8 @@ void emu::step::Manager::waitForTestsToFinish( const bool isTestDurationUndefine
 	  map<string,pair<double,string> > groupsProgress; // group -> ( progress, message )
 	  map<string,const xdaq::ApplicationDescriptor*>::iterator app;
 	  for ( app = testerDescriptors_.begin(); app != testerDescriptors_.end(); ++app ){
-	    groupsProgress[app->first] = make_pair<double,string>( progress, reasonForFailure );
+	    //	    groupsProgress[app->first] = make_pair<double,string>( progress, reasonForFailure.toString() );
+	    groupsProgress[app->first] = make_pair( progress, reasonForFailure );
 	  }
 	  configuration_->setTestProgress( groupsProgress );
 	}

@@ -4,6 +4,7 @@
 #include "config/PackageInfo.h"
 
 namespace emustep {
+	const std::string project     = "emu";
 	const std::string package     = "emustep";
 	const std::string versions    = "06.00.00";
 	const std::string description = "Emu (CSC) System Test of Endcap Peripheral crate and chamber electronics (STEP)";

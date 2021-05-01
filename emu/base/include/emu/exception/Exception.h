@@ -42,6 +42,9 @@ public:
   : xcept::Exception(name, message, module, line, function, previous)
   {}
 
+
+  std::vector<xcept::Exception::Info> getHistory() const { return history_; }
+
   /**
    * Outputs exception in a form that is suitable for javascript parsing
    */

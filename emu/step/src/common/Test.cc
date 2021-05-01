@@ -20,7 +20,6 @@
 #include "xcept/tools.h"
 
 #include "log4cplus/loggingmacros.h"
-#include "log4cplus/helpers/sleep.h" // sleepmillis()
 
 #include <algorithm>
 #include <iomanip>
@@ -1544,7 +1543,7 @@ void emu::step::Test::enable_17(){
 	    msWaitAfterPulse = 10; // pulsing takes a lot more time for DCFEBs...
 	  }
 	} // for ( vector<emu::pc::DAQMB*>::iterator dmb = dmbs.begin(); dmb != dmbs.end(); ++dmb )
-	log4cplus::helpers::sleepmillis(400);
+	usleep( 400000 );
 
 	(*crate)->ccb()->RedirectOutput( &noBuffer ); // ccb prints a line on each test pulse - waste it
 
@@ -1553,7 +1552,7 @@ void emu::step::Test::enable_17(){
 	  // Dmb_cfeb_calibrate1 15 CFEB Trigger Pattern Calibration
 	  // Dmb_cfeb_calibrate2 16 CFEB Pedestal Calibration
 	  (*crate)->ccb()->GenerateDmbCfebCalib0(); // pulse
-	  log4cplus::helpers::sleepmillis( msWaitAfterPulse  + msec_between_pulses );
+	  usleep( 1000 * msWaitAfterPulse  + msec_between_pulses );
 	  progress_.increment();
 	  if (iPulse % events_per_delay == 0) {
 	    if ( pLogger_ ){
@@ -2270,7 +2269,7 @@ void emu::step::Test::enable_25(){
 	alct->SetPretrigNumberOfPattern( iTriggerSetting + 1 );
 	alct->WriteConfigurationReg();
 	
-	log4cplus::helpers::sleepmillis( ( iTriggerSetting == 1 ? 50000 : 20000 ) );
+	usleep( iTriggerSetting == 1 ? 50000000 : 20000000 );
 	
 	(*crate)->ccb()->WriteRegister( emu::pc::CCB::enableL1aCounter, 0 );
 	(*crate)->ccb()->WriteRegister( emu::pc::CCB::resetL1aCounter , 0 ); // zero L1A counter
@@ -2278,7 +2277,7 @@ void emu::step::Test::enable_25(){
 	// (*crate)->ccb()->WriteRegister( emu::pc::CCB::CSRB1, 0x1edd ); // CSRB1=0x20; enable CCB to send L1A on TMB request; same as CCB::EnableL1aFromTmbL1aReq
 	(*crate)->ccb()->EnableL1aFromTmbL1aReq();
 	gettimeofday( &start, NULL );
-	log4cplus::helpers::sleepmillis( ( iTriggerSetting == 0 ? 5000 : (iTriggerSetting+1)*10000 ) );
+	usleep( iTriggerSetting == 0 ? 5000000 : (iTriggerSetting+1)*10000000 );
 	// (*crate)->ccb()->WriteRegister( emu::pc::CCB::CSRB1, 0x1af9 ); // CSRB1=0x20; disable CCB to send L1A on TMB request; same as CCB::EnableL1aFromDmbCfebCalibX
 	(*crate)->ccb()->EnableL1aFromDmbCfebCalibX();
 	gettimeofday( &end, NULL );
@@ -2521,7 +2520,7 @@ void emu::step::Test::enable_30(){
       (*crate)->ccb()->EnableL1aFromTmbL1aReq();
       gettimeofday( &start, NULL );
 			
-      log4cplus::helpers::sleepmillis(5000);			
+      usleep( 5000000 );
 
       (*crate)->ccb()->EnableL1aFromDmbCfebCalibX();
       gettimeofday( &end, NULL );

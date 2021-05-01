@@ -1,6 +1,7 @@
 #include "emu/step/Application.h"
 
 #include "xdaq/NamespaceURI.h"
+#include "emu/exception/Exception.h"
 
 emu::step::Application::Application( xdaq::ApplicationStub *s ) :
   xdaq::WebApplication( s ),
@@ -146,8 +147,9 @@ string emu::step::Application::xhtmlformat_exception_history( xcept::Exception& 
   ss << "<tr><th colspan=\"3\">Exception stack</th></tr>";
   ss << "<tr><th style=\"width: 1%;\">layer</th><th>message</th><th>raised at</th></tr>";
 
-  std::vector<xcept::ExceptionInformation> & history = e.getHistory();
-  std::vector<xcept::ExceptionInformation>::reverse_iterator i = history.rbegin();
+  //xcept::Exception xe( e );
+  std::vector<xcept::Exception::Info> history = ( dynamic_cast<const emu::exception::Exception*>( &e ) )->getHistory();
+  std::vector<xcept::Exception::Info>::const_reverse_iterator i = history.rbegin();
   int iLayer = history.size();
   while ( i != history.rend() ){
     ss << "<tr>";

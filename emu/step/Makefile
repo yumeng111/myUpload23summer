@@ -6,8 +6,8 @@
 
 BUILD_HOME:=$(shell pwd)/../..
 
-include $(XDAQ_ROOT)/config/mfAutoconf.rules
-include $(XDAQ_ROOT)/config/mfDefs.$(XDAQ_OS)
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
 PACKAGE_VER_MAJOR=05
 PACKAGE_VER_MINOR=01
 PACKAGE_VER_PATCH=01
@@ -16,7 +16,7 @@ PACKAGE_VER_PATCH=01
 # Packages to be built
 #
 Project = emu
-Package = step
+Package = emu/step
 PackageName= step
 Description="Emu (CSC) STEP (System Test of Endcap Peripheral crate and chamber electronics)"
 Summary="Emu (CSC) STEP"
@@ -56,7 +56,7 @@ UserCFlags = $(ROOTCFLAGS)
 #     https://readthedocs.web.cern.ch/download/attachments/21178175/dip-devel-5.6.3.3-1.x86_64.rpm
 #   Add to XDAQ configuration the module /opt/dip/lib64/libdip.so
 #   Add -DDIP to UserCCFlags if the DIP library is available and needed.
-UserCCFlags = -O0 -g -Wall -Wno-long-long $(ROOTCFLAGS) # -DDIP
+UserCCFlags = -O0 -g -Wall -Wno-long-long $(ROOTCFLAGS) -Wno-variadic-macros -std=c++11 # -DDIP
 UserDynamicLinkFlags = $(ROOTLIBS)
 UserStaticLinkFlags =
 UserExecutableLinkFlags =
@@ -82,5 +82,5 @@ TestLibraryDirs=
 TestLibraries=xcept toolbox log4cplus xdata xerces-c xalan-c xdaq xalanMsg xoap xgi cgicc pthttp peer asyncresolv mimetic config logudpappender logxmlappender uuid emubase emusoap tstoreclient EmuOnlineDB EmuPeripheralCore EmuPeripheralApps
 TestExecutables=configTest.cc
 
-include $(XDAQ_ROOT)/config/Makefile.rules
-include $(XDAQ_ROOT)/config/mfRPM.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules

@@ -90,11 +90,11 @@ for x in %{_packages}; do
 	fi
 done
 
-mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/xml
-( cd %{_packagedir}/xml;
-  find ./ \( -name "*.xml" \) \
-    -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/xml/{} \;
-)
+#mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/xml
+#( cd %{_packagedir}/xml;
+#  find ./ \( -name "*.xml" \) \
+#    -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/xml/{} \;
+#)
 
 if [ -e %{_packagedir}/ChangeLog ]; then
 	install -m 655 %{_packagedir}/ChangeLog %{_packagedir}/rpm/RPMBUILD/BUILD/ChangeLog

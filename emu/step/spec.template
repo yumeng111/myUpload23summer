@@ -77,11 +77,11 @@ mkdir -p $RPM_BUILD_ROOT/usr/src/debug/%{_project}-%{_packagename}-%{_version}/
 
 if [ -d %{_packagedir}/bin/%{_os}/%{_platform} ]; then
 	cd %{_packagedir}/bin/%{_os}/%{_platform}; \
-	find ./ -name ".svn" -prune -o -exec ${XDAQ_ROOT}/config/install.sh {} %{_prefix}/bin/{} 755 $RPM_BUILD_ROOT %{_packagedir} %{_project}-%{_packagename} %{_version} %{_prefix}/include '%{_includedirs}' \;
+	find ./ -name ".svn" -prune -o -exec ${XDAQ_ROOT}/${BUILD_SUPPORT}/install.sh {} %{_prefix}/bin/{} 755 $RPM_BUILD_ROOT %{_packagedir} %{_project}-%{_packagename} %{_version} %{_prefix}/include '%{_includedirs}' \;
 fi
 if [ -d %{_packagedir}/lib/%{_os}/%{_platform} ]; then
 	cd %{_packagedir}/lib/%{_os}/%{_platform}; \
-	find ./ -name ".svn" -prune -o -exec ${XDAQ_ROOT}/config/install.sh {} %{_prefix}/lib/{} 655 $RPM_BUILD_ROOT %{_packagedir} %{_project}-%{_packagename} %{_version} %{_prefix}/include '%{_includedirs}' \;
+	find ./ -name ".svn" -prune -o -exec ${XDAQ_ROOT}/${BUILD_SUPPORT}/install.sh {} %{_prefix}/lib/{} 655 $RPM_BUILD_ROOT %{_packagedir} %{_project}-%{_packagename} %{_version} %{_prefix}/include '%{_includedirs}' \;
 fi
 if [ -d %{_packagedir}/include ]; then
 	cd %{_packagedir}/include; \

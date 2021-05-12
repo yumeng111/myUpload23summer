@@ -58,8 +58,8 @@ __description__
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/%{_prefix}/{bin,lib,include,etc}
-mkdir -p $RPM_BUILD_ROOT/%{_prefix}/include/%{_project}/%{_package}/linux
-mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/{images,xml,html}
+mkdir -p $RPM_BUILD_ROOT/%{_prefix}/include/%{_project}/%{_packagename}/linux
+mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_packagename}/{images,xml,html}
 # mkdir -p $RPM_BUILD_ROOT/%{_prefix}/{scripts}/%{_package}
 
 if [ -d %{_packagedir}/bin/%{_os}/%{_platform} ]; then 
@@ -82,15 +82,15 @@ if [ -d %{_packagedir}/etc ]; then
 fi
 if [ -d %{_packagedir}/xml ]; then
 	cd %{_packagedir}/xml; \
-	find ./ -name "*.*" -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/xml/{} \;
+	find ./ -name "*.*" -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_packagename}/xml/{} \;
 fi
 if [ -d %{_packagedir}/images ]; then
 	cd %{_packagedir}/images; \
-	find ./ -name "*.*" -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/images/{} \;
+	find ./ -name "*.*" -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_packagename}/images/{} \;
 fi
 if [ -d %{_packagedir}/html ]; then
 	cd %{_packagedir}/html; \
-	find ./ -name "*.*" -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/html/{} \;
+	find ./ -name "*.*" -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_packagename}/html/{} \;
 fi
 
 if [ -e %{_packagedir}/ChangeLog ]; then
@@ -129,9 +129,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/bin
 %{_prefix}/lib
 %{_prefix}/etc
-%{_prefix}/htdocs/%{_project}/%{_package}/xml
-%{_prefix}/htdocs/%{_project}/%{_package}/images
-%{_prefix}/htdocs/%{_project}/%{_package}/html
+%{_prefix}/htdocs/%{_project}/%{_packagename}/xml
+%{_prefix}/htdocs/%{_project}/%{_packagename}/images
+%{_prefix}/htdocs/%{_project}/%{_packagename}/html
 
 #
 # Files that go in the devel RPM

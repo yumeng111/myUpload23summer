@@ -57,8 +57,8 @@ __description__
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/%{_prefix}/{bin,lib,include,etc}
-mkdir -p $RPM_BUILD_ROOT/%{_prefix}/include/%{_project}/%{_package}/linux
-mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/xml
+mkdir -p $RPM_BUILD_ROOT/%{_prefix}/include/%{_package}/linux
+mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_package}/xml
 
 # This needs to exist for whatever reason
 mkdir -p %{_packagedir}/rpm/RPMBUILD/SOURCES/%{_packagename}
@@ -70,7 +70,7 @@ find ./ \( -name "*.[hi]" -o -name "*.hpp" -o -name "*.hh" -o -name "*.hxx" \) \
 )
 ( cd %{_packagedir}/xml;
 find ./ \( -name "*.xml" -o -name "*.view" \) \
--exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/xml/{} \;
+-exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_package}/xml/{} \;
 )
 
 if [ -e %{_packagedir}/ChangeLog ]; then
@@ -109,7 +109,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/bin
 %{_prefix}/lib
 %{_prefix}/etc
-%{_prefix}/htdocs/%{_project}/%{_package}/xml
+%{_prefix}/htdocs/%{_package}/xml
 
 #
 # Files that go in the devel RPM

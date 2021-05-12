@@ -57,8 +57,8 @@ __description__
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/%{_prefix}/{bin,lib,include,etc}
-mkdir -p $RPM_BUILD_ROOT/%{_prefix}/include/%{_project}/%{_package}/linux
-mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/{xml,html}
+mkdir -p $RPM_BUILD_ROOT/%{_prefix}/include/%{_project}/%{_packagename}/linux
+mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_packagename}/{xml,html}
 
 # This needs to exist for whatever reason
 mkdir -p %{_packagedir}/rpm/RPMBUILD/SOURCES/%{_packagename}
@@ -70,11 +70,11 @@ install -m 655 %{_packagedir}/lib/%{_os}/%{_platform}/*.so $RPM_BUILD_ROOT/%{_pr
 )
 ( cd %{_packagedir}/html;
   find ./ \( -name "*.html" -o -name "*.xml" -o -name "*.js" -o -name "*.css" \) \
-    -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/html/{} \;
+    -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_packagename}/html/{} \;
 )
 ( cd %{_packagedir}/xml;
   find ./ \( -name "*.xml" \) \
-    -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/xml/{} \;
+    -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_packagename}/xml/{} \;
 )
 
 if [ -e %{_packagedir}/ChangeLog ]; then
@@ -113,8 +113,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/bin
 %{_prefix}/lib
 %{_prefix}/etc
-%{_prefix}/htdocs/%{_project}/%{_package}/html
-%{_prefix}/htdocs/%{_project}/%{_package}/xml
+%{_prefix}/htdocs/%{_project}/%{_packagename}/html
+%{_prefix}/htdocs/%{_project}/%{_packagename}/xml
 
 #
 # Files that go in the devel RPM

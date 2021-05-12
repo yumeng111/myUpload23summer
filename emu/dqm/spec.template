@@ -61,7 +61,7 @@ __description__
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/%{_prefix}/{bin,lib,include,etc}
 #mkdir -p $RPM_BUILD_ROOT/%{_prefix}/include/%{_package}/linux
-mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/{xml,html}
+mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_packagename}/{xml,html}
 
 for x in %{_packages}; do
 #        install -m 655 %{_packagedir}/../$x/lib/%{_os}/%{_platform}/*.so $RPM_BUILD_ROOT/%{_prefix}/lib/
@@ -87,15 +87,15 @@ for x in %{_packages}; do
 	fi
 done
 
-#mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/xml
+#mkdir -p $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_packagename}/xml
 ( cd %{_packagedir}/xml;
   find ./ \( -name "*.xml" -o -name "csc_map.*" \) \
-    -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/xml/{} \;
+    -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_packagename}/xml/{} \;
 )
 
 ( cd %{_packagedir}/html;
   find ./ \(  -name "*.html" -o -name "*.js" \) \
-    -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_package}/html/{} \;
+    -exec install -m 655 -D {} $RPM_BUILD_ROOT/%{_prefix}/htdocs/%{_project}/%{_packagename}/html/{} \;
 )
 
 
@@ -135,11 +135,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/bin
 %{_prefix}/lib
 %{_prefix}/etc
-#%{_prefix}/htdocs/%{_project}/%{_package}/*/images
-#%{_prefix}/htdocs/%{_project}/%{_package}/*/html
-#%{_prefix}/htdocs/%{_project}/%{_package}/*/xml
-%{_prefix}/htdocs/%{_project}/%{_package}/xml
-%{_prefix}/htdocs/%{_project}/%{_package}/html
+#%{_prefix}/htdocs/%{_project}/%{_packagename}/*/images
+#%{_prefix}/htdocs/%{_project}/%{_packagename}/*/html
+#%{_prefix}/htdocs/%{_project}/%{_packagename}/*/xml
+%{_prefix}/htdocs/%{_project}/%{_packagename}/xml
+%{_prefix}/htdocs/%{_project}/%{_packagename}/html
 
 #
 # Files that go in the devel RPM

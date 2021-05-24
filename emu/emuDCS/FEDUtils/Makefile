@@ -44,6 +44,7 @@ Sources=\
 	AutoConfigurator.cc \
 	DDUDebugger.cc \
 	DCCDebugger.cc \
+	DataTable.cc \
 	JSONSpiritWriter.cc
 
 IncludeDirs = \

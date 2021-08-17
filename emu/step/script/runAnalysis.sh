@@ -136,9 +136,9 @@ if [[ $# -gt 2 ]]; then
 	    typeset -A ENDCAP
 	    ENDCAP=( '+' 1 '-' 2 )
 	    EC=${ENDCAP[${CHAMBER[3]}]}
-	    ST=${CHAMBER[4]}]
-	    RG=${CHAMBER[6]}]
-	    CH=${CHAMBER[8,-1]}]
+	    ST=${CHAMBER[4]}
+	    RG=${CHAMBER[6]}
+	    CH=${CHAMBER[8,-1]}
 	    print "${(l:8:)EC}${(l:8:)ST}${(l:8:)RG}${(l:8:)$((CH))}"
 	    sed -i -e 's/^\([ ]\+[0-9]\+\)\{4\}\([ ]\+'${CRATEID}'[ ]\+'${DMB}'[ ]\+\)\([[:print:]]\+\)/'${(l:8:)EC}${(l:8:)ST}${(l:8:)RG}${(l:8:)$((CH))}'\2\3/g' $DQMCONFIG/$MAP_TXT
 	    ;;

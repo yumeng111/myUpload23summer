@@ -248,6 +248,9 @@ public:
   //
   // Define the timing of the BC0 from TMB -> ALCT -> TMB
   int ALCTBC0Scan();
+  int ALCTBC0ScanWithCounter();
+  int GEMBC0Scan();
+  int GEMCSCMatchScan(int step_time, int nstep);
   //
   inline void setLocalTmbBxnOffset(int value) { local_tmb_bxn_offset_ = value; }
   inline int getLocalTmbBxnOffset() { return local_tmb_bxn_offset_; }
@@ -413,6 +416,9 @@ public:
   inline int  GetALCTvpf_configvalue()           { return thisTMB->GetAlctVpfDelay(); }
   inline int  GetALCTL1aDelay_configvalue()      { return thisTMB->alctController()->GetWriteL1aDelay(); }
   inline int  GetAlctBx0Delay()                  { return thisTMB->GetAlctBx0Delay(); }
+  inline int  GetGemABx0Delay()                  { return thisTMB->GetGemABx0Delay(); }
+  inline int  GetGemBBx0Delay()                  { return thisTMB->GetGemBBx0Delay(); }
+  inline int  GetMatchGemAlctDelay()             { return thisTMB->GetMatchGemAlctDelay(); }
   // ODMB
   inline int  GetL1accDavDelay()        { return l1acc_dav_delay_;}
   inline int  GetTmbDavDelay()          { return tmb_dav_delay_;}
@@ -446,6 +452,9 @@ public:
   inline int  GetTmbL1aDelayTest()         { return TMBL1aTiming_; }
   inline int  GetAlctL1aDelayTest()        { return ALCTL1aDelay_; }
   inline int  GetAlctBx0DelayTest()        { return ALCT_bx0_delay_; }
+  inline int  GetGemABx0DelayTest()        { return gemA_bx0_delay_; }
+  inline int  GetGemBBx0DelayTest()        { return gemB_bx0_delay_; }
+  inline int  GetMatchGemAlctDelayTest()   { return match_gem_alct_delay_; }
   //
   // Get measured values (not parameters)
   inline float GetActiveFebFlagToL1aAtDMB() { return AffToL1aAverageValue_; }
@@ -551,6 +560,9 @@ private:
   int local_tmb_bxn_offset_;
   int ALCT_bx0_delay_;
   int tmb_bxn_offset_used_;
+  int gemA_bx0_delay_;
+  int gemB_bx0_delay_;
+  int match_gem_alct_delay_;
   //
   int ScopeMin_;
   int ScopeMax_;

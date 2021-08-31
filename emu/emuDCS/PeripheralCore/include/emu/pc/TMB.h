@@ -406,6 +406,7 @@
 #include "emu/pc/VMEModule.h"
 #include "emu/pc/JTAG_constants.h"
 #include <cstdio>
+#include <cassert>
 #include <vector>
 #include <string>
 #include <bitset>
@@ -467,6 +468,8 @@ public:
   int  GetALCTWordCount();
   void DecodeALCT();
   void PrintALCT();
+  void DecodeGEMHits();
+  void PrintGEMHits();
   //
   void clear_i2c();
   //! Set the values for the DDD delays.  Better done writing the register values and firing the state machine separately.
@@ -620,12 +623,33 @@ public:
   int * NewCounters();                   /// read TMB counters in jumbo packet
   int  GetCounter(int counter);         /// return counter value
   int  GetGemCounter(int counter);         /// return gem counter value
+  int  GetLCTCounter() {return GetCounter(alctclctmatch_counter_index_); } /// return the  counter value for alct*clct match
+  int  GetBx0MatchCounter() {return GetCounter(bx0match_counter_index_); }
+   
+  int  GetGemABx0MatchCounter()  {return GetGemCounter(gemA_bx0match_counter_index_); } 
+  int  GetGemBBx0MatchCounter()  {return GetGemCounter(gemB_bx0match_counter_index_); } 
+  //int  GetBC0MatchCounter() {}// 
+
   void PrintCounters(int counter=-1);   /// print counter value (-1 means print all)
   void PrintGemCounters(int counter=-1);   /// print counter value (-1 means print all)
   std::string CounterName(int counter); /// return counter label
   inline int GetMaxCounter() { return MaxCounter; }
   std::string GEMCounterName(int counter); /// return counter label
   inline int GetMaxGEMCounter() { return MaxGEMCounter;}
+
+  int GetGEMABC0MatchCounter()  {return GetGemCounter(gemA_bx0match_counter_index_);} //
+  int GetGEMBBC0MatchCounter()  {return GetGemCounter(gemB_bx0match_counter_index_);} //
+  int GetGEMAALCTMatchCounter() {return GetGemCounter(gemA_alct_match_counter_index_);} //
+  int GetGEMBALCTMatchCounter() {return GetGemCounter(gemB_alct_match_counter_index_);} //
+  int GetGEMACLCTMatchCounter() {return GetGemCounter(gemA_clct_match_counter_index_);} //
+  int GetGEMBCLCTMatchCounter() {return GetGemCounter(gemB_clct_match_counter_index_);} //
+
+  int GetGEMADlyALCTMatchCounter() {return GetGemCounter(116);}
+  int GetGEMBDlyALCTMatchCounter() {return GetGemCounter(117);}
+  int GetDlyGEMAALCTMatchCounter() {return GetGemCounter(118);}
+  int GetDlyGEMBALCTMatchCounter() {return GetGemCounter(119);}
+
+
   inline int GetALCTSentToTMBCounterIndex()  { return alct_sent_to_tmb_counter_index_;  }
   inline int GetECCTriggerPathOneErrorCounterIndex()  { return ecc_trigger_path_one_error_counter_index_;  }
   inline int GetECCTriggerPathTwoErrorsCounterIndex()  { return ecc_trigger_path_two_errors_counter_index_;  }
@@ -781,6 +805,7 @@ public:
   int tmb_read_delays(int);
   //
   inline int  GetCfebRxClockDelay(int CFEB) {
+    //assert(CFEB < 5 || (CFEB < 7 && GetHardwareVersion() == 2));
     if(!(CFEB < 5 || (CFEB < 7 && GetHardwareVersion() == 2))) return 0;
     
     int tmp[5] = { cfeb0_rx_clock_delay_, cfeb1_rx_clock_delay_, cfeb2_rx_clock_delay_, cfeb3_rx_clock_delay_, cfeb4_rx_clock_delay_};
@@ -790,6 +815,7 @@ public:
   }
   //
   inline int  GetCfebRxPosNeg(int CFEB) {
+    //assert(CFEB < 5 || (CFEB < 7 && GetHardwareVersion() == 2));
     if(!(CFEB < 5 || (CFEB < 7 && GetHardwareVersion() == 2))) return 0;
     
     int tmp[5] = { cfeb0_rx_posneg_, cfeb1_rx_posneg_, cfeb2_rx_posneg_, cfeb3_rx_posneg_, cfeb4_rx_posneg_};
@@ -1615,6 +1641,7 @@ public:
   //!alct_match_window_size = [0-15] = ALCT/CLCT match window width for trigger (bx)
   inline void SetAlctMatchWindowSize(int alct_match_window_size) { alct_match_window_size_ = alct_match_window_size; }
   inline int  GetAlctMatchWindowSize() { return alct_match_window_size_ ; }
+  //inline int  GetReadAlctMatchWindowSize() { return read_alct_match_window_size_;}
   //
   //!mpc_tx_delay = [0-15] = delay sending LCT to MPC (bx)
   inline void SetMpcTxDelay(int mpc_tx_delay) { mpc_tx_delay_ = mpc_tx_delay; }
@@ -2179,12 +2206,13 @@ public:
     cfeb0123_rxd_int_delay_ = cfeb0123_rxd_int_delay; 
   }
   inline int  GetCFEB0123RxdIntDelay() { return  cfeb0123_rxd_int_delay_; }
-  inline int  GetReadCFEB0123RxdIntDelay() { return  read_cfeb0123_rxd_int_delay_; }
+  inline int  GetReadCFEB0123RxdIntDelay() {  return  read_cfeb0123_rxd_int_delay_; }
   //
-  inline void SetCFEB456RxdIntDelay(int cfeb456_rxd_int_delay) { cfeb456_rxd_int_delay_ = cfeb456_rxd_int_delay; 
+  inline void SetCFEB456RxdIntDelay(int cfeb456_rxd_int_delay) { 
+    cfeb456_rxd_int_delay_ = cfeb456_rxd_int_delay; 
   }
-  inline int  GetCFEB456RxdIntDelay() { return  cfeb456_rxd_int_delay_; }
-  inline int  GetReadCFEB456RxdIntDelay() { return  read_cfeb456_rxd_int_delay_; }
+  inline int  GetCFEB456RxdIntDelay() {  return  cfeb456_rxd_int_delay_; }
+  inline int  GetReadCFEB456RxdIntDelay() {  return  read_cfeb456_rxd_int_delay_; }
 
   //
   //---------------------------------------------------------------------
@@ -2388,6 +2416,9 @@ public:
   //GTX link error count (full scale count is hex E0)
   inline int  GetReadGtxRxErrorCount(int cfebNum) { return read_gtx_rx_error_count_[cfebNum]; }
   
+  //GTX link error count (full scale count is hex E0)
+  inline int  GetReadGtxRxNotintableCount(int cfebNum) { return read_gtx_rx_notintable_count_[cfebNum]; }
+  inline int  GetReadGtxRxDisperrCount(int cfebNum) { return read_gtx_rx_disperr_count_[cfebNum]; }
   //
   //----------------------------------------------------------------
   //0X17A = ADR_V6_EXTEND: ADR_CFEB_INJ:  CFEB Injector Control; ADR_SEQ_TRIG_EN: 
@@ -2471,7 +2502,91 @@ public:
   inline int  Get_clct_use_corrected_bx() { return clct_use_corrected_bx_; }
   inline int  GetRead_clct_use_corrected_bx() { return read_clct_use_corrected_bx_; }
   
+  //---------------------------------------------------------------------
+  //ADR_CLCT0_CC = 0x19A
+  //ADR_CLCT1_CC = 0x19C
+  //ADR_CLCT0_BNDXKY = 0x19E
+  //ADR_CLCT1_BNDXKY = 0x1A0
+  //---------------------------------------------------------------------
+  inline int GetRead_clct0_comparatorcode() {return  read_clct0_comparatorcode_;}
+  inline int GetRead_clct1_comparatorcode() {return  read_clct1_comparatorcode_;}
+  //inline int GetRead_clct0_cc_quality() {return  read_clct0_cc_quality_;}
+  //inline int GetRead_clct1_cc_quality() {return  read_clct1_cc_quality_;}
+  inline int GetRead_clct0_cc_bending() {return  read_clct0_cc_bending_;}
+  inline int GetRead_clct1_cc_bending() {return  read_clct1_cc_bending_;}
+  inline int GetRead_clct0_cc_bendinglr() {return  read_clct0_cc_lr_;}
+  inline int GetRead_clct1_cc_bendinglr() {return  read_clct1_cc_lr_;}
+  inline int GetRead_clct0_cc_xky() {return  read_clct0_cc_xky_;}
+  inline int GetRead_clct1_cc_xky() {return  read_clct1_cc_xky_;}
 
+  //---------------------------------------------------------------------
+  //ADR_RUN3_FORMAT_CTRL = 0x1AA
+  //---------------------------------------------------------------------
+  int GetRead_cclut_enable() {return read_cclut_enable_;}
+  int GetRead_run3_trig_dataformat_enable() {return read_run3_trig_dataformat_enable_;}
+  int GetRead_run3_daq_dataformat_enable() {return read_run3_daq_dataformat_enable_;}
+  void Setrun3_trig_dataformat_enable(int run3_trig_df_enable) { run3_trig_dataformat_enable_ = run3_trig_df_enable;}
+  void Setrun3_daq_dataformat_enable(int run3_daq_df_enable)   { run3_daq_dataformat_enable_  = run3_daq_df_enable;}
+  
+  inline int Getrun3_trig_dataformat_enable() {return run3_trig_dataformat_enable_;}
+  inline int Getrun3_daq_dataformat_enable()  {return run3_daq_dataformat_enable_;}
+  //
+  //---------------------------------------------------------------------
+  //ADR_HMT_CTRL = 0x1AC
+  //---------------------------------------------------------------------
+  int GetRead_hmt_enable()      {return read_hmt_enable_;}
+  int GetRead_hmt_me1a_enable() {return read_hmt_me1a_enable_;}
+  void Sethmt_enable(int hmt_enable)     {hmt_enable_ = hmt_enable;}
+  void Sethmt_me1a_enable(int hmt_me1a_enable)     {hmt_me1a_enable_ = hmt_me1a_enable;}
+  int GetRead_hmt_nhits_trig()  {return read_hmt_nhits_trig_;}
+  int GetRead_hmt_trigger()  {return read_hmt_trigger_;}
+
+  inline int Gethmt_enable()      {return hmt_enable_;}
+  inline int Gethmt_me1a_enable()      {return hmt_me1a_enable_;}
+  //inline int Gethmt_nhits_trig()      {return hmt_nhits_trig_;}
+  //inline int Gethmt_trigger()      {return hmt_trigger_;}
+  //------------------------------------------------------------------
+  //0X1B4 = ADR_HMT_NHITS_SIG: nhits in bx678  (Tao, 2020)
+  //0X1B6 = ADR_HMT_NHITS_BKG: nhits in bx2345  (Tao, 2020)
+  //------------------------------------------------------------------
+  int GetRead_hmt_nhits_sig()  {return read_hmt_nhits_sig_; }
+  int GetRead_hmt_nhits_bkg()  {return read_hmt_nhits_bkg_; }
+  void Sethmt_nhits_sig(int hmt_nhits_sig)  { hmt_nhits_sig_= hmt_nhits_sig;}  
+  void Sethmt_nhits_bkg(int hmt_nhits_bkg)  { hmt_nhits_bkg_= hmt_nhits_bkg;}  
+
+  inline int Gethmt_nhits_sig() {return hmt_nhits_sig_;}
+  inline int Gethmt_nhits_bkg() {return hmt_nhits_bkg_;}
+  //
+  //------------------------------------------------------------------
+  //0X1AE = ADR_HMT_THRESH1:  HMT loose threshold  (Tao, 2020)
+  //0X1B0 = ADR_HMT_THRESH2:  HMT median threshold  (Tao, 2020)
+  //0X1B2 = ADR_HMT_THRESH3:  HMT tight threshold  (Tao, 2020)
+  //------------------------------------------------------------------
+  int GetRead_hmt_thresh1()         {return read_hmt_thresh1_;}
+  int GetRead_hmt_thresh1_pass()    {return read_hmt_thresh1_pass_;}
+  int GetRead_hmt_thresh2()         {return read_hmt_thresh2_;}
+  int GetRead_hmt_thresh2_pass()    {return read_hmt_thresh2_pass_;}
+  int GetRead_hmt_thresh3()         {return read_hmt_thresh3_;}
+  int GetRead_hmt_thresh3_pass()    {return read_hmt_thresh3_pass_;}
+
+  void Sethmt_thresh1(int hmt_thresh)  {hmt_thresh1_ = hmt_thresh;}            
+  void Sethmt_thresh2(int hmt_thresh)  {hmt_thresh2_ = hmt_thresh;}            
+  void Sethmt_thresh3(int hmt_thresh)  {hmt_thresh3_ = hmt_thresh;}            
+
+  inline int Gethmt_thresh1()      {return hmt_thresh1_;}
+  inline int Gethmt_thresh2()      {return hmt_thresh2_;}
+  inline int Gethmt_thresh3()      {return hmt_thresh3_;}
+  //
+  ////---------------------------------------------------------------------
+  ////ADR_LCT_INJECTION = 0x1B8
+  ////---------------------------------------------------------------------
+  //void Setlct_inj_hs(int lct_inj_hs)       {lct_inj_hs_= lct_inj_hs;}
+  //void Setlct_inj_wg(int lct_inj_wg)       {lct_inj_wg_= lct_inj_wg;}
+  //void Setlct_inj_enable(int lct_inj_enable)   {lct_inj_enable_= lct_inj_enable;}
+
+  //inline int Getlct_inj_hs()        {return lct_inj_hs_;}
+  //inline int Getlct_inj_wg()        {return lct_inj_wg_;}
+  //inline int Getlct_inj_enable()    {return lct_inj_enable_;}
   //
   //---------------------------------------------------------------------
   // 0X15C ADR_V6_CFEB_BADBITS_CTRL: CFEB Bad Bits Control/Status (See Adr 0x122) (extra DCFEB Bad Bits on OTMB)
@@ -2553,6 +2668,9 @@ public:
   //GTX link error count (full scale count is hex E0)
   inline int  GetReadGemGtxRxErrorCount(int gemNum) { return read_gem_gtx_rx_error_count_[gemNum]; }
 
+  //GTX link error count (full scale count is hex E0): disperr/notintable
+  inline int  GetReadGemGtxRxNotintableCount(int gemNum) { return read_gem_gtx_rx_notintable_count_[gemNum]; }
+  inline int  GetReadGemGtxRxDisperrCount(int gemNum) { return read_gem_gtx_rx_disperr_count_[gemNum]; }
   //-----------------------------------------------------------------------------
   // 0x308 & 0x30A GEM Phasers
   //-----------------------------------------------------------------------------
@@ -2630,18 +2748,207 @@ public:
       gemB_rxd_int_delay_ = gem_rxd_int_delay;
   }
   inline int  GetReadGemRxdIntDelay() {
-    if (HasGroupedGemRxValues()>0) return GetReadGemARxdIntDelay();
-    else return 0;
+    return GetReadGemARxdIntDelay();
   }
 
   inline int  GetDecoupleGemRxdIntDelay ()                               { return decouple_gem_rxd_int_delay_ ;}
   inline void SetDecoupleGemRxdIntDelay (int decouple_gem_rxd_int_delay) { decouple_gem_rxd_int_delay_ = decouple_gem_rxd_int_delay;}
 
   inline int  GetGemReadoutMask ()                     { return gem_readout_mask_;}
+  inline int  GetReadGemReadoutMask ()                     { return read_gem_readout_mask_;}
   inline void SetGemReadoutMask (int gem_readout_mask) { gem_readout_mask_ = gem_readout_mask;}
 
+  //-----------------------------------------------------------------------------
+  // 0X318 GEM_CSC_MATCH_WINDOW
+  //-----------------------------------------------------------------------------
 
+  inline int   GetGemClctDeltahs ()                                { return gem_clct_deltahs_ ;}
+  inline void  SetGemClctDeltahs (int gem_clct_deltahs)            { gem_clct_deltahs_ = gem_clct_deltahs;}
+  inline int   GetGemAlctDeltawire ()                              { return gem_alct_deltawire_ ;}
+  inline void  SetGemAlctDeltawire (int gem_alct_deltawire)        { gem_alct_deltawire_ = gem_alct_deltawire;}
+  inline int   GetGemClctEnable ()                                 { return gem_clct_enable_ ;}
+  inline void  SetGemClctEnable (int gem_clct_enable)              { gem_clct_enable_ = gem_clct_enable;}
+  inline int   GetGemAlctEnable ()                                 { return gem_alct_enable_ ;}
+  inline void  SetGemAlctEnable (int gem_alct_enable)              { gem_alct_enable_ = gem_alct_enable;}
+
+  //-----------------------------------------------------------------------------
+  // 0X324 GEM_COPAD_CTRL
+  //-----------------------------------------------------------------------------
+
+  inline int  GetGemMatchNeighborRoll ()                                { return gem_match_neighborRoll_ ;}
+  inline int  GetGemMatchNeighborPad ()                                 { return gem_match_neighborPad_ ;}
+  inline int  GetGemMatchDeltaPad ()                                    { return gem_match_deltaPad_ ;}
+  inline void SetGemMatchNeighborRoll (int gem_match_neighborRoll)      { gem_match_neighborRoll_ = gem_match_neighborRoll;}
+  inline void SetGemMatchNeighborPad (int gem_match_neighborPad)        { gem_match_neighborPad_ = gem_match_neighborPad;}
+  inline void SetGemMatchDeltaPad (int gem_match_deltaPad)              { gem_match_deltaPad_ = gem_match_deltaPad;}
+
+  //-----------------------------------------------------------------------------
+  // 0X326 GEM_BX0_DELAY
+  //-----------------------------------------------------------------------------
+
+  inline int  GetGemABx0Delay ()                                { return gemA_bx0_delay_ ;}
+  inline int  GetGemABx0Enable ()                               { return gemA_bx0_enable_ ;}
+  inline int  GetGemABx0Match ()                                { return gemA_bx0_match_ ;}
+  inline int  GetReadGemABx0Match ()                            { return read_gemA_bx0_match_ ;}
+
+  inline void SetGemABx0Delay (int gemA_bx0_delay)                                { gemA_bx0_delay_  = gemA_bx0_delay;}
+  inline void SetGemABx0Enable (int gemA_bx0_enable)                                { gemA_bx0_enable_= gemA_bx0_enable ;}
+
+  inline int  GetGemBBx0Delay ()                                { return gemB_bx0_delay_ ;}
+  inline int  GetGemBBx0Enable ()                               { return gemB_bx0_enable_ ;}
+  inline int  GetGemBBx0Match ()                                { return gemB_bx0_match_ ;}
+  inline int  GetReadGemBBx0Match ()                            { return read_gemB_bx0_match_ ;}
+
+  inline void SetGemBBx0Delay (int gemB_bx0_delay)                                { gemB_bx0_delay_  = gemB_bx0_delay;}
+  inline void SetGemBBx0Enable (int gemB_bx0_enable)                               { gemB_bx0_enable_ = gemB_bx0_enable ;}
+
+  //-----------------------------------------------------------------------------
+  // 0X328 ADR_GEMA_TRG_CTRL
+  //-----------------------------------------------------------------------------
+
+  //window is same for both gemA/B
+  inline int   GetMatchGemAlctWindow ()                               { return match_gem_alct_window_ ;}
+  inline int   GetMatchGemClctWindow ()                               { return match_gem_clct_window_ ;}
+
+  inline int   GetGemAAlctMatch ()                                         { return gemA_alct_match_ ;}
+  inline int   GetReadGemAAlctMatch ()                                     { return read_gemA_alct_match_ ;}
+  inline int   GetGemAClctMatch ()                                         { return gemA_clct_match_ ;}
+  inline int   GetReadGemAClctMatch ()                                     { return read_gemA_clct_match_ ;}
+  
+  inline int   GetGemAFiberEnable ()                                         { return gemA_fiber_enable_ ;}
+
+  inline void  SetMatchGemAlctWindow (int match_gem_alct_window)           { match_gem_alct_window_= match_gem_alct_window;}
+  inline void  SetMatchGemClctWindow (int match_gem_clct_window)           { match_gem_clct_window_= match_gem_clct_window;}
+
+  inline void  SetGemAFiberEnable (int gemA_fiber_enable)                    { gemA_fiber_enable_ = gemA_fiber_enable;}
+
+  //-----------------------------------------------------------------------------
+  // 0X32a ADR_GEMB_TRG_CTRL
+  //-----------------------------------------------------------------------------
+
+  inline int   GetMatchGemAlctDelay ()                                { return match_gem_alct_delay_ ;}
+  //inline int   GetMatchGemBAlctWindow ()                               { return match_gemB_alct_window_ ;}
+  //inline int   GetMatchGemBClctWindow ()                               { return match_gemB_clct_window_ ;}
+
+  inline int   GetGemBAlctMatch ()                                         { return gemB_alct_match_ ;}
+  inline int   GetReadGemBAlctMatch ()                                     { return read_gemB_alct_match_ ;}
+  inline int   GetGemBClctMatch ()                                         { return gemB_clct_match_ ;}
+  inline int   GetReadGemBClctMatch ()                                     { return read_gemB_clct_match_ ;}
+  
+  inline int   GetGemBFiberEnable ()                                         { return gemB_fiber_enable_ ;}
+
+  inline void  SetMatchGemAlctDelay  (int match_gem_alct_delay)            { match_gem_alct_delay_ = match_gem_alct_delay ;}
+  //inline void  SetMatchGemBAlctWindow (int match_gemB_alct_window)           { match_gemB_alct_window_= match_gemB_alct_window;}
+  //inline void  SetMatchGemBClctWindow (int match_gemB_clct_window)           { match_gemB_clct_window_= match_gemB_clct_window;}
+
+  inline void  SetGemBFiberEnable (int gemB_fiber_enable)                    { gemB_fiber_enable_ = gemB_fiber_enable;}
+
+  //-----------------------------------------------------------------------------
+  // 0X32c ADR_GEM_CSC_MATCH_CTRL
+  //-----------------------------------------------------------------------------
+
+  inline int   GetGemMe1aMatchEnable ()                                { return gem_me1a_match_enable_ ;}
+  inline int   GetGemMe1bMatchEnable ()                                { return gem_me1b_match_enable_ ;}
+  inline int   GetGemMe1aMatchNoGem  ()                                { return gem_me1a_match_nogem_ ;}
+  inline int   GetGemMe1bMatchNoGem  ()                                { return gem_me1b_match_nogem_ ;}
+  inline int   GetGemMe1aMatchNoAlct ()                                { return gem_me1a_match_noalct_ ;}
+  inline int   GetMatchDropLowqalct ()                                 { return match_drop_lowqalct_ ;}
+  inline int   GetMe1aMatchDropLowqclct ()                             { return me1a_match_drop_lowqclct_ ;}
+  inline int   GetMe1bMatchDropLowqclct ()                             { return me1b_match_drop_lowqclct_ ;}
+  //inline int   GetGemMe1aMatchPromoteQual ()                           { return gem_me1a_match_promotequal_ ;}
+  //inline int   GetGemMe1bMatchPromoteQual ()                           { return gem_me1b_match_promotequal_ ;}
+  inline int   GetTmbCopadAlctAllow  ()                                { return tmb_copad_alct_allow_ ;}
+  inline int   GetTmbCopadClctAllow  ()                                { return tmb_copad_clct_allow_ ;}
+  inline int   GetGemAMatchIgnorePosition  ()                          { return gemA_match_ignore_position_ ;}
+  inline int   GetGemBMatchIgnorePosition  ()                          { return gemB_match_ignore_position_ ;}
+  inline int   GetGemcscBendEnable  ()                                 { return gemcsc_bend_enable_ ;}
+  inline int   GetGemcscIgnoreBendCheck  ()                            { return gemcsc_ignore_bend_check_ ;}
+
+  inline int   GetReadGemMe1aMatchEnable ()                         { return read_gem_me1a_match_enable_ ;}
+  inline int   GetReadGemMe1bMatchEnable ()                         { return read_gem_me1b_match_enable_ ;}
+  inline int   GetReadGemMe1aMatchNoGem  ()                         { return read_gem_me1a_match_nogem_ ;}
+  inline int   GetReadGemMe1bMatchNoGem  ()                         { return read_gem_me1b_match_nogem_ ;}
+  inline int   GetReadGemMe1aMatchNoAlct ()                         { return read_gem_me1a_match_noalct_ ;}
+  inline int   GetReadMatchDropLowqalct ()                          { return read_match_drop_lowqalct_ ;}
+  inline int   GetReadMe1aMatchDropLowqclct ()                      { return read_me1a_match_drop_lowqclct_ ;}
+  inline int   GetReadMe1bMatchDropLowqclct ()                      { return read_me1b_match_drop_lowqclct_ ;}
+  inline int   GetReadTmbCopadAlctAllow  ()                         { return read_tmb_copad_alct_allow_ ;}
+  inline int   GetReadTmbCopadClctAllow  ()                         { return read_tmb_copad_clct_allow_ ;}
+  inline int   GetReadGemAMatchIgnorePosition  ()                   { return read_gemA_match_ignore_position_ ;}
+  inline int   GetReadGemBMatchIgnorePosition  ()                   { return read_gemB_match_ignore_position_ ;}
+  inline int   GetReadGemcscBendEnable  ()                          { return read_gemcsc_bend_enable_ ;}
+  inline int   GetReadGemcscIgnoreBendCheck  ()                     { return read_gemcsc_ignore_bend_check_ ;}
+
+  inline void  SetGemMe1aMatchEnable (int gem_me1a_match_enable)                { gem_me1a_match_enable_ = gem_me1a_match_enable;}
+  inline void  SetGemMe1bMatchEnable (int gem_me1b_match_enable)                { gem_me1b_match_enable_ = gem_me1b_match_enable;}
+  inline void  SetGemMe1aMatchNoGem  (int gem_me1a_match_nogem )                { gem_me1a_match_nogem_  = gem_me1a_match_nogem;}
+  inline void  SetGemMe1bMatchNoGem  (int gem_me1b_match_nogem )                { gem_me1b_match_nogem_  = gem_me1b_match_nogem;}
+  inline void  SetGemMe1aMatchNoAlct (int gem_me1a_match_noalct)                { gem_me1a_match_noalct_ = gem_me1a_match_noalct;}
+  inline void  SetMatchDropLowqalct  (int match_drop_lowqalct)                  { match_drop_lowqalct_ = match_drop_lowqalct;}
+  inline void  SetMe1aMatchDropLowqclct (int me1a_match_drop_lowqclct)          { me1a_match_drop_lowqclct_ = me1a_match_drop_lowqclct;}
+  inline void  SetMe1bMatchDropLowqclct (int me1b_match_drop_lowqclct)          { me1b_match_drop_lowqclct_ = me1b_match_drop_lowqclct;}
+  //inline void  SetGemMe1aMatchPromoteQual (int gem_me1a_match_promotequal)      { gem_me1a_match_promotequal_ = gem_me1a_match_promotequal;}
+  //inline void  SetGemMe1bMatchPromoteQual (int gem_me1b_match_promotequal)      { gem_me1b_match_promotequal_ = gem_me1b_match_promotequal;}
+  inline void  SetTmbCopadAlctAllow  (int tmb_copad_alct_allow )                { tmb_copad_alct_allow_ = tmb_copad_alct_allow;}
+  inline void  SetTmbCopadClctAllow  (int tmb_copad_clct_allow )                { tmb_copad_clct_allow_ = tmb_copad_clct_allow;}
+  inline void  SetGemAMatchIgnorePosition  (int gemA_match_ignore_position)     {  gemA_match_ignore_position_  = gemA_match_ignore_position;}
+  inline void  SetGemBMatchIgnorePosition  (int gemB_match_ignore_position)     {  gemB_match_ignore_position_  = gemB_match_ignore_position;}
+  inline void  SetGemcscBendEnable (int gemcsc_bend_enable)                     {  gemcsc_bend_enable_ = gemcsc_bend_enable ;}
+  inline void  SetGemcscIgnoreBendCheck (int gemcsc_ignore_bend_check)          {  gemcsc_ignore_bend_check_ = gemcsc_ignore_bend_check ;}
   //
+  //
+  //-----------------------------------------------------------------------------
+  // 0X32e ADR_GEM_CSC_MATCH_CLUSTER0
+  // 0X330 ADR_GEM_CSC_MATCH_CLUSTER1
+  //-----------------------------------------------------------------------------
+  inline int   GetGemCscMatchCluster0Iclst ()                                { return gem_csc_match_cluster0_iclst_ ;}
+  inline int   GetGemCscMatchCluster0Roll ()                                 { return gem_csc_match_cluster0_roll_ ;}
+  inline int   GetGemCscMatchCluster0Cscxky ()                               { return gem_csc_match_cluster0_cscxky_ ;}
+  inline int   GetGemCscMatchCluster0Pad ()                                  { return gem_csc_match_cluster0_pad_ ;}
+  inline int   GetGemCscMatchCluster0Angle ()                                { return gem_csc_match_cluster0_angle_ ;}
+  inline int   GetGemCscMatchCluster0Bend ()                                 { return gem_csc_match_cluster0_bend_ ;}
+  inline int   GetGemCscMatchCluster1Iclst ()                                { return gem_csc_match_cluster1_iclst_ ;}
+  inline int   GetGemCscMatchCluster1Roll ()                                 { return gem_csc_match_cluster1_roll_ ;}
+  inline int   GetGemCscMatchCluster1Cscxky ()                               { return gem_csc_match_cluster1_cscxky_ ;}
+  inline int   GetGemCscMatchCluster1Pad ()                                  { return gem_csc_match_cluster1_pad_ ;}
+  inline int   GetGemCscMatchCluster1Angle ()                                { return gem_csc_match_cluster1_angle_ ;}
+  inline int   GetGemCscMatchCluster1Bend ()                                 { return gem_csc_match_cluster1_bend_ ;}
+  inline int   GetReadGemCscMatchCluster0Iclst ()                            { return read_gem_csc_match_cluster0_iclst_ ;}
+  inline int   GetReadGemCscMatchCluster0Roll ()                             { return read_gem_csc_match_cluster0_roll_ ;}
+  inline int   GetReadGemCscMatchCluster0Cscxky ()                           { return read_gem_csc_match_cluster0_cscxky_ ;}
+  inline int   GetReadGemCscMatchCluster0Pad ()                              { return read_gem_csc_match_cluster0_pad_ ;}
+  inline int   GetReadGemCscMatchCluster0Angle ()                            { return read_gem_csc_match_cluster0_angle_ ;}
+  inline int   GetReadGemCscMatchCluster0Bend ()                             { return read_gem_csc_match_cluster0_bend_ ;}
+  inline int   GetReadGemCscMatchCluster1Iclst ()                            { return read_gem_csc_match_cluster1_iclst_ ;}
+  inline int   GetReadGemCscMatchCluster1Roll ()                             { return read_gem_csc_match_cluster1_roll_ ;}
+  inline int   GetReadGemCscMatchCluster1Cscxky ()                           { return read_gem_csc_match_cluster1_cscxky_ ;}
+  inline int   GetReadGemCscMatchCluster1Pad ()                              { return read_gem_csc_match_cluster1_pad_ ;}
+  inline int   GetReadGemCscMatchCluster1Angle ()                            { return read_gem_csc_match_cluster1_angle_ ;}
+  inline int   GetReadGemCscMatchCluster1Bend ()                             { return read_gem_csc_match_cluster1_bend_ ;}
+  //
+  //
+  //-----------------------------------------------------------------------------
+  //GEM hot vfat mask
+  // 0X33a ADR_GEM_VFAT_HCM0
+  // 0X33c ADR_GEM_VFAT_HCM1
+  // 0X33e ADR_GEM_VFAT_HCM2
+  //-----------------------------------------------------------------------------
+  inline int   GetGemAHotVfat(int vfat)                       {return gemA_hot_channel_mask_[vfat];} 
+  inline int   GetGemBHotVfat(int vfat)                       {return gemB_hot_channel_mask_[vfat];} 
+
+  inline void  SettGemAHotVfat(int vfat, int on_or_off)       {gemA_hot_channel_mask_[vfat] = on_or_off;}
+  inline void  SettGemBHotVfat(int vfat, int on_or_off)       {gemB_hot_channel_mask_[vfat] = on_or_off;}
+
+  void  SetGemVfatHotChannelMask(int value, bool gemA)  {
+    for (int ivfat = MAX_GEM_VFATS_PER_LAYER; ivfat >=0; ivfat--)
+       if (gemA)
+        gemA_hot_channel_mask_[ivfat] = (value >> ivfat) & 0x1;
+       else
+        gemB_hot_channel_mask_[ivfat] = (value >> ivfat) & 0x1;
+  }
+
+  void ReadGEMHotChannelMask();
+  
   //
   // **********************************************************************************
   //
@@ -2713,6 +3020,7 @@ public:
   //-- print out read values of groups of TMB registers to screen --//
   void PrintTMBConfiguration();
   void PrintHotChannelMask();
+  void PrintGEMHotChannelMask();
   void PrintVMEStateMachine();
   void PrintJTAGStateMachine();
   void PrintRawHitsHeader();
@@ -2773,6 +3081,7 @@ public:
 
   void clear_mpc_tx_delay();   // clear the mpc_tx_delay field in register ADR_TMBTIM; used by TMB-MPC test
   //
+  //void new_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chain); // new unified JTAG routine
   void new_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chain=1); // new unified JTAG routine
   void new_RestoreIdle(int dev);
   int read_user_prom(int chip, char *fn);
@@ -2832,6 +3141,35 @@ private:
   //
   int CLCT0_data_;
   int CLCT1_data_;
+  int gemA_cluster_[8];
+  int gemA_cluster_vpf_[8];
+  int gemA_cluster_pad_[8];
+  int gemA_cluster_pad2_[8];//pad within one roll, 0-191
+  int gemA_cluster_size_[8];
+  int gemA_cluster_roll_[8];
+  int gemA_cluster_vfat_[8];
+  int gemA_cluster_globalpad_[8];
+  int gemA_overflow_;
+  int gemA_sync_;
+  int gemB_cluster_[8];
+  int gemB_cluster_pad_[8];
+  int gemB_cluster_vpf_[8];
+  int gemB_cluster_pad2_[8];//pad within one roll, 0-191
+  int gemB_cluster_roll_[8];
+  int gemB_cluster_size_[8];
+  int gemB_cluster_vfat_[8];
+  int gemB_cluster_globalpad_[8];
+  int gemB_overflow_;
+  int gemB_sync_;
+  int gem_copad_[8];
+  int gem_copad_pad_[8];
+  int gem_copad_vpf_[8];
+  int gem_copad_pad2_[8];//pad within one roll, 0-191
+  int gem_copad_roll_[8];
+  int gem_copad_size_[8];
+  int gem_copad_vfat_[8];
+  int gem_copad_globalpad_[8];
+  int gems_sync_;
   //
   int mpc0_frame0_data_;
   int mpc0_frame1_data_;
@@ -2849,8 +3187,8 @@ private:
   int ALCT1_data_;
   //
   // The following is actually the MaxCounter in TMB + 1 (i.e., they count from 0)
-  static const int MaxCounter = 93;
-  static const int MaxGEMCounter = 59;
+  static const int MaxCounter = 96;
+  static const int MaxGEMCounter = 120;
   int FinalCounter[MaxCounter+40];
   int FinalGEMCounter[MaxGEMCounter+1];
   int alct_sent_to_tmb_counter_index_;
@@ -2862,6 +3200,16 @@ private:
   int lct_sent_to_mpc_counter_index_; 
   int lct_accepted_by_mpc_counter_index_;
   int l1a_in_tmb_window_counter_index_; 
+
+  static const int alctclctmatch_counter_index_ = 32;
+  static const int bx0match_counter_index_ = 95;
+
+  static const int gemA_bx0match_counter_index_ = 88;
+  static const int gemB_bx0match_counter_index_ = gemA_bx0match_counter_index_+1;
+  static const int gemA_alct_match_counter_index_ = 98;
+  static const int gemB_alct_match_counter_index_ = gemA_alct_match_counter_index_+1;
+  static const int gemA_clct_match_counter_index_ = gemA_alct_match_counter_index_+2;
+  static const int gemB_clct_match_counter_index_ = gemA_alct_match_counter_index_+3;
   //
   //
   //-- TMB and ALCT data in raw hits VME readout --//
@@ -3388,6 +3736,12 @@ private:
   int read_mpc0_frame0_clct_first_pat_;
   int read_mpc0_frame0_lct_first_quality_;
   int read_mpc0_frame0_first_vpf_;
+  // Run3 data format!!
+  int read_mpc0_run3frame0_alct_first_key_;
+  int read_mpc0_run3frame0_lct_pidbit0to3_;
+  int read_mpc0_run3frame0_lct_first_quality_;
+  int read_mpc0_run3frame0_clct_first_qxky_;
+  int read_mpc0_run3frame0_first_vpf_;
   //
   //------------------------------------------------------------------
   //0X8A = ADR_MPC0_FRAME1:  MPC0 Frame1 Data Sent to MPC
@@ -3398,6 +3752,14 @@ private:
   int read_mpc0_frame1_alct_first_bxn_;
   int read_mpc0_frame1_clct_first_bx0_local_;
   int read_mpc0_frame1_csc_id_;
+  // Run3 data format!!
+  int read_mpc0_run3frame1_clct_first_key_;
+  int read_mpc0_run3frame1_clct_first_lr_;
+  int read_mpc0_run3frame1_clct_first_exky_;
+  int read_mpc0_run3frame1_alct_first_bxn_;
+  int read_mpc0_run3frame1_clct_first_bx0_local_;
+  int read_mpc0_run3frame1_clct_first_bend_;
+  //int read_mpc0_run3frame1_csc_id_;
   //
   //------------------------------------------------------------------
   //0X8C = ADR_MPC1_FRAME0:  MPC1 Frame0 Data Sent to MPC
@@ -3406,6 +3768,13 @@ private:
   int read_mpc1_frame0_clct_second_pat_;
   int read_mpc1_frame0_lct_second_quality_;
   int read_mpc1_frame0_second_vpf_;
+  // Run3 data format!!
+  int read_mpc1_run3frame0_alct_second_key_;
+  int read_mpc1_run3frame0_lct_pidbit4_;
+  int read_mpc1_run3frame0_hmtbit1to3_;
+  int read_mpc1_run3frame0_lct_second_quality_;
+  int read_mpc1_run3frame0_clct_second_qxky_;
+  int read_mpc1_run3frame0_second_vpf_;
   //
   //------------------------------------------------------------------
   //0X8E = ADR_MPC1_FRAME1:  MPC1 Frame1 Data Sent to MPC
@@ -3416,6 +3785,15 @@ private:
   int read_mpc1_frame1_alct_second_bxn_;
   int read_mpc1_frame1_clct_second_bx0_local_;
   int read_mpc1_frame1_csc_id_;
+  // Run3 data format!!
+  int read_mpc1_run3frame1_clct_second_key_;
+  int read_mpc1_run3frame1_clct_second_lr_;
+  int read_mpc1_run3frame1_clct_second_exky_;
+  int read_mpc1_run3frame1_hmtbit0_;
+  int read_mpc1_run3frame1_clct_second_bx0_local_;
+  int read_mpc1_run3frame1_clct_second_bend_;
+  //int read_mpc1_run3frame1_csc_id_;
+  //int read_mpc1_run3frame1_alct_second_bxn_;
   //
   //------------------------------------------------------------------
   //0X17C = ADR_MPC0_FRAME0_FIFO:  MPC0 Frame0 Data Sent to MPC and Stored in FIFO
@@ -3424,6 +3802,12 @@ private:
   int read_mpc0_frame0_fifo_clct_first_pat_;
   int read_mpc0_frame0_fifo_lct_first_quality_;
   int read_mpc0_frame0_fifo_first_vpf_;
+  // Run3 data format!!
+  int read_mpc0_run3frame0_fifo_alct_first_key_;
+  int read_mpc0_run3frame0_fifo_lct_pidbit0to3_;
+  int read_mpc0_run3frame0_fifo_lct_first_quality_;
+  int read_mpc0_run3frame0_fifo_clct_first_qxky_;
+  int read_mpc0_run3frame0_fifo_first_vpf_;
   //
   //------------------------------------------------------------------
   //0X17E = ADR_MPC0_FRAME1_FIFO:  MPC0 Frame1 Data Sent to MPC and Stored in FIFO
@@ -3434,6 +3818,13 @@ private:
   int read_mpc0_frame1_fifo_alct_first_bxn_;
   int read_mpc0_frame1_fifo_clct_first_bx0_local_;
   int read_mpc0_frame1_fifo_csc_id_;
+  // Run3 data format!!
+  int read_mpc0_run3frame1_fifo_clct_first_key_;
+  int read_mpc0_run3frame1_fifo_clct_first_lr_;
+  int read_mpc0_run3frame1_fifo_clct_first_exky_;
+  int read_mpc0_run3frame1_fifo_alct_first_bxn_;
+  int read_mpc0_run3frame1_fifo_clct_first_bx0_local_;
+  int read_mpc0_run3frame1_fifo_clct_first_bend_;
   //
   //------------------------------------------------------------------
   //0X180 = ADR_MPC1_FRAME0_FIFO:  MPC1 Frame0 Data Sent to MPC and Stored in FIFO
@@ -3442,6 +3833,13 @@ private:
   int read_mpc1_frame0_fifo_clct_second_pat_;
   int read_mpc1_frame0_fifo_lct_second_quality_;
   int read_mpc1_frame0_fifo_second_vpf_;
+  // Run3 data format!!
+  int read_mpc1_run3frame0_fifo_alct_second_key_;
+  int read_mpc1_run3frame0_fifo_lct_pidbit4_;
+  int read_mpc1_run3frame0_fifo_hmtbit1to3_;
+  int read_mpc1_run3frame0_fifo_lct_second_quality_;
+  int read_mpc1_run3frame0_fifo_clct_second_qxky_;
+  int read_mpc1_run3frame0_fifo_second_vpf_;
   //
   //------------------------------------------------------------------
   //0X182 = ADR_MPC1_FRAME1_FIFO:  MPC1 Frame1 Data Sent to MPC and Stored in FIFO
@@ -3452,6 +3850,13 @@ private:
   int read_mpc1_frame1_fifo_alct_second_bxn_;
   int read_mpc1_frame1_fifo_clct_second_bx0_local_;
   int read_mpc1_frame1_fifo_csc_id_;
+  // Run3 data format!!
+  int read_mpc1_run3frame1_fifo_clct_second_key_;
+  int read_mpc1_run3frame1_fifo_clct_second_lr_;
+  int read_mpc1_run3frame1_fifo_clct_second_exky_;
+  int read_mpc1_run3frame1_fifo_hmtbit0_;
+  int read_mpc1_run3frame1_fifo_clct_second_bx0_local_;
+  int read_mpc1_run3frame1_fifo_clct_second_bend_;
   //
   //------------------------------------------------------------------
   //0X98 = ADR_SCP_CTRL:  Scope control
@@ -4142,6 +4547,8 @@ private:
   //
   //---------------------------------------------------------------------
   // 0X14C - 0X158 = ADR_V6_GTX_RX[CFEB]: GTX link control and monitoring
+  // 0X1BA - 0X1C6 = ADR_V6_GTX_notintable[CFEB]: GTX link control and monitoring
+  // 0X1C8 - 0X1D4 = ADR_V6_GTX_disperr[CFEB]: GTX link control and monitoring
   //---------------------------------------------------------------------
   int gtx_rx_enable_[7];
   int gtx_rx_reset_[7];
@@ -4156,6 +4563,11 @@ private:
   int read_gtx_rx_link_bad_[7];
   int read_gtx_rx_pol_swap_[7];
   int read_gtx_rx_error_count_[7];
+  int read_gtx_rx_notintable_count_[7];
+  int read_gtx_rx_disperr_count_[7];
+
+
+
   //
   //---------------------------------------------------------------------
   // 0X15C ADR_V6_CFEB_BADBITS_CTRL: CFEB Bad Bits Control/Status (See Adr 0x122) (extra DCFEB Bad Bits on OTMB)
@@ -4247,6 +4659,85 @@ private:
   int read_cross_bx_algorithm_;
   int read_clct_use_corrected_bx_;
   //
+  //---------------------------------------------------------------------
+  //ADR_CLCT0_CC = 0x19A
+  //ADR_CLCT1_CC = 0x19C
+  //ADR_CLCT0_QLT = 0x19E
+  //ADR_CLCT1_QLT = 0x1A0
+  //ADR_CLCT0_BND = 0x1A2
+  //ADR_CLCT1_BND = 0x1A4
+  //ADR_CLCT0_XKY = 0x1A6
+  //ADR_CLCT1_XKY = 0x1A8
+  //---------------------------------------------------------------------
+  int read_clct0_comparatorcode_;
+  int read_clct1_comparatorcode_;
+  //int read_clct0_cc_quality_;
+  //int read_clct1_cc_quality_;
+  int read_clct0_cc_bending_;
+  int read_clct1_cc_bending_;
+  int read_clct0_cc_lr_;
+  int read_clct1_cc_lr_;
+  int read_clct0_cc_xky_;
+  int read_clct1_cc_xky_;
+  float read_clct0_cc_xky_float_;
+  float read_clct1_cc_xky_float_;
+   
+
+  //---------------------------------------------------------------------
+  //ADR_CCLUT_FORMAT_CTRL = 0x1AA
+  //---------------------------------------------------------------------
+  int read_cclut_enable_;
+  int run3_trig_dataformat_enable_;
+  int run3_daq_dataformat_enable_;
+  int read_run3_trig_dataformat_enable_;
+  int read_run3_daq_dataformat_enable_;
+
+  //---------------------------------------------------------------------
+  //ADR_HMT_CTRL = 0x1AC
+  //---------------------------------------------------------------------
+  int hmt_enable_;
+  int hmt_me1a_enable_;
+  int hmt_nhits_trig_;
+  int hmt_trigger_;
+  int read_hmt_enable_;
+  int read_hmt_me1a_enable_;
+  int read_hmt_nhits_trig_;
+  int read_hmt_trigger_;
+
+  //------------------------------------------------------------------
+  //0X1AE = ADR_HMT_THRESH1:  HMT loose threshold  (Tao, 2020)
+  //0X1B0 = ADR_HMT_THRESH2:  HMT median threshold  (Tao, 2020)
+  //0X1B2 = ADR_HMT_THRESH3:  HMT tight threshold  (Tao, 2020)
+  //------------------------------------------------------------------
+  int hmt_thresh1_;
+  int hmt_thresh1_pass_;
+  int hmt_thresh2_;
+  int hmt_thresh2_pass_;
+  int hmt_thresh3_;
+  int hmt_thresh3_pass_;
+  int read_hmt_thresh1_;
+  int read_hmt_thresh1_pass_;
+  int read_hmt_thresh2_;
+  int read_hmt_thresh2_pass_;
+  int read_hmt_thresh3_;
+  int read_hmt_thresh3_pass_;
+  //------------------------------------------------------------------
+  //0X1B4 = ADR_HMT_NHITS_SIG: nhits in bx678  (Tao, 2020)
+  //0X1B6 = ADR_HMT_NHITS_BKG: nhits in bx2345  (Tao, 2020)
+  //------------------------------------------------------------------
+  int hmt_nhits_sig_, hmt_nhits_bkg_;
+  int read_hmt_nhits_sig_, read_hmt_nhits_bkg_;
+  //
+  ////-----------------------------------------------------------------------------
+  //// 0x1B8 = ADR_LCT_INJECTION: LCT injection from configuration (Tao, 2020)
+  ////-----------------------------------------------------------------------------
+  //int lct_inj_hs_;
+  //int lct_inj_wg_;
+  //int lct_inj_enable_;
+  //int read_lct_inj_hs_;
+  //int read_lct_inj_wg_;
+  //int read_lct_inj_enable_;
+  //
   //-----------------------------------------------------------------------------
   // 0X300 - 0X306 = ADR_GEM_GTX_RX[0-3]: GTX link control and monitoring for GEM
   //-----------------------------------------------------------------------------
@@ -4263,6 +4754,8 @@ private:
   int read_gem_gtx_rx_link_bad_[MAX_GEM_FIBERS_ME11];
   int read_gem_gtx_rx_pol_swap_[MAX_GEM_FIBERS_ME11];
   int read_gem_gtx_rx_error_count_[MAX_GEM_FIBERS_ME11];
+  int read_gem_gtx_rx_notintable_count_[MAX_GEM_FIBERS_ME11];
+  int read_gem_gtx_rx_disperr_count_[MAX_GEM_FIBERS_ME11];
   //
   //-----------------------------------------------------------------------------
   // 0X310 ADR_GEM_TBINS
@@ -4298,7 +4791,182 @@ private:
 
   int read_decouple_gem_rxd_int_delay_;
   int read_gem_readout_mask_;
+
   //
+  //-----------------------------------------------------------------------------
+  // 0X318 ADR_GEM_CSC_MATCH_WINDOW
+  //-----------------------------------------------------------------------------
+  //
+  //int gem_trg_delay_;
+  //int read_gem_trg_delay_;
+
+  //int gem_trg_enable_;
+  //int read_gem_trg_enable_;
+  int gem_clct_deltahs_;
+  int read_gem_clct_deltahs_;
+
+  int gem_alct_deltawire_;
+  int read_gem_alct_deltawire_;
+
+  int gem_clct_enable_;
+  int read_gem_clct_enable_;
+
+  int gem_alct_enable_;
+  int read_gem_alct_enable_;
+  //
+  //-----------------------------------------------------------------------------
+  // 0X324 ADR_GEM_COPAD_CTRL
+  //-----------------------------------------------------------------------------
+  //
+  int gem_match_neighborRoll_;
+  int gem_match_neighborPad_;
+  int gem_match_deltaPad_;
+
+  int read_gem_match_neighborRoll_;
+  int read_gem_match_neighborPad_;
+  int read_gem_match_deltaPad_;
+  //
+  //
+  //-----------------------------------------------------------------------------
+  // 0X326 ADR_GEM_BX0_DELAY
+  //-----------------------------------------------------------------------------
+  //
+  int gemA_bx0_delay_;
+  int gemA_bx0_enable_;
+  int gemA_bx0_match_;
+  int gemB_bx0_delay_;
+  int gemB_bx0_enable_;
+  int gemB_bx0_match_;
+
+  int read_gemA_bx0_delay_;
+  int read_gemA_bx0_enable_;
+  int read_gemA_bx0_match_;
+  int read_gemB_bx0_delay_;
+  int read_gemB_bx0_enable_;
+  int read_gemB_bx0_match_;
+  //
+  //
+  //-----------------------------------------------------------------------------
+  // 0X328 ADR_GEMA_TRG_CTRL
+  //-----------------------------------------------------------------------------
+  //
+  int match_gem_alct_window_;
+  int match_gem_clct_window_;
+  int gemA_alct_match_;
+  int gemA_clct_match_;
+  int gemA_fiber_enable_;
+
+  int read_match_gem_alct_window_;
+  int read_match_gem_clct_window_;
+  int read_gemA_alct_match_;
+  int read_gemA_clct_match_;
+  int read_gemA_fiber_enable_;
+  //
+  //
+  //-----------------------------------------------------------------------------
+  // 0X32a ADR_GEMB_TRG_CTRL
+  //-----------------------------------------------------------------------------
+  //
+  int match_gem_alct_delay_;
+  //int match_gemB_alct_window_;
+  //int match_gemB_clct_window_;
+  int gemB_alct_match_;
+  int gemB_clct_match_;
+  int gemB_fiber_enable_;
+
+  int read_match_gem_alct_delay_;
+  //int read_match_gemB_alct_window_;
+  //int read_match_gemB_clct_window_;
+  int read_gemB_alct_match_;
+  int read_gemB_clct_match_;
+  int read_gemB_fiber_enable_;
+  //
+  //
+  //-----------------------------------------------------------------------------
+  // 0X32c ADR_GEM_CSC_MATCH_CTRL
+  //-----------------------------------------------------------------------------
+  //
+  int gem_me1a_match_enable_;
+  int gem_me1b_match_enable_;
+  int gem_me1a_match_nogem_;
+  int gem_me1b_match_nogem_;
+  int gem_me1a_match_noalct_;
+  int match_drop_lowqalct_;
+  int me1a_match_drop_lowqclct_;
+  int me1b_match_drop_lowqclct_;
+  //int gem_me1a_match_promotequal_;
+  //int gem_me1b_match_promotequal_;
+  //int gem_me1a_match_promotepat_;
+  //int gem_me1b_match_promotepat_;
+  int tmb_copad_alct_allow_;
+  int tmb_copad_clct_allow_;
+  int gemA_match_ignore_position_;
+  int gemB_match_ignore_position_;
+  int gemcsc_bend_enable_;
+  int gemcsc_ignore_bend_check_;
+
+  int read_gem_me1a_match_enable_;
+  int read_gem_me1b_match_enable_;
+  int read_gem_me1a_match_nogem_;
+  int read_gem_me1b_match_nogem_;
+  int read_gem_me1a_match_noalct_;
+  int read_match_drop_lowqalct_;
+  int read_me1a_match_drop_lowqclct_;
+  int read_me1b_match_drop_lowqclct_;
+  //int read_gem_me1a_match_promotequal_;
+  //int read_gem_me1b_match_promotequal_;
+  //int read_gem_me1a_match_promotepat_;
+  //int read_gem_me1b_match_promotepat_;
+  int read_tmb_copad_alct_allow_;
+  int read_tmb_copad_clct_allow_;
+  int read_gemA_match_ignore_position_;
+  int read_gemB_match_ignore_position_;
+  int read_gemcsc_bend_enable_;
+  int read_gemcsc_ignore_bend_check_;
+  //
+  //
+  //-----------------------------------------------------------------------------
+  // 0X32e ADR_GEM_CSC_MATCH_CLUSTER0
+  // 0X330 ADR_GEM_CSC_MATCH_CLUSTER1
+  //-----------------------------------------------------------------------------
+  int gem_csc_match_cluster0_iclst_;
+  int gem_csc_match_cluster0_roll_;
+  int gem_csc_match_cluster0_cscxky_;
+  int gem_csc_match_cluster0_pad_;
+  int gem_csc_match_cluster0_angle_;
+  int gem_csc_match_cluster0_bend_;
+  int gem_csc_match_cluster1_iclst_;
+  int gem_csc_match_cluster1_roll_;
+  int gem_csc_match_cluster1_cscxky_;
+  int gem_csc_match_cluster1_pad_;
+  int gem_csc_match_cluster1_angle_;
+  int gem_csc_match_cluster1_bend_;
+  int read_gem_csc_match_cluster0_iclst_;
+  int read_gem_csc_match_cluster0_roll_;
+  int read_gem_csc_match_cluster0_cscxky_;
+  int read_gem_csc_match_cluster0_pad_;
+  int read_gem_csc_match_cluster0_angle_;
+  int read_gem_csc_match_cluster0_bend_;
+  int read_gem_csc_match_cluster1_iclst_;
+  int read_gem_csc_match_cluster1_roll_;
+  int read_gem_csc_match_cluster1_cscxky_;
+  int read_gem_csc_match_cluster1_pad_;
+  int read_gem_csc_match_cluster1_angle_;
+  int read_gem_csc_match_cluster1_bend_;
+  //
+  //-----------------------------------------------------------------------------
+  // 0X33a ADR_GEM_VFAT_HCM0
+  // 0X33c ADR_GEM_VFAT_HCM1
+  // 0X33e ADR_GEM_VFAT_HCM2
+  //-----------------------------------------------------------------------------
+  //
+
+  int gemA_hot_channel_mask_[MAX_GEM_VFATS_PER_LAYER];
+  int gemB_hot_channel_mask_[MAX_GEM_VFATS_PER_LAYER];
+
+  int read_gemA_hot_channel_mask_[MAX_GEM_VFATS_PER_LAYER];
+  int read_gemB_hot_channel_mask_[MAX_GEM_VFATS_PER_LAYER];
+
   //*******************************************************************
   // TMB Raw Hits header words
   //*******************************************************************

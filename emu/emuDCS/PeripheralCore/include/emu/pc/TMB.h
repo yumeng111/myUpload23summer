@@ -2576,6 +2576,18 @@ public:
   inline int Gethmt_thresh1()      {return hmt_thresh1_;}
   inline int Gethmt_thresh2()      {return hmt_thresh2_;}
   inline int Gethmt_thresh3()      {return hmt_thresh3_;}
+
+  int GetReadCfebAllowHmtRo()         {return read_cfeb_allow_hmt_ro_;}
+  int GetReadTmbAllowHmt()            {return read_tmb_allow_hmt_;}
+  int GetReadTmbAllowHmtRo()            {return read_tmb_allow_hmt_ro_;}
+  
+  void SetCfebAllowHmtRo(int cfeb_allow_hmt_ro)         { cfeb_allow_hmt_ro_ = cfeb_allow_hmt_ro;}
+  void SetTmbAllowHmt   (int tmb_allow_hmt)             { tmb_allow_hmt_     = tmb_allow_hmt;}
+  void SetTmbAllowHmtRo (int tmb_allow_hmt_ro)          { tmb_allow_hmt_ro_  = tmb_allow_hmt_ro;}
+  
+  inline int GetCfebAllowHmtRo()         {return cfeb_allow_hmt_ro_;}
+  inline int GetTmbAllowHmt()            {return tmb_allow_hmt_;}
+  inline int GetTmbAllowHmtRo()          {return tmb_allow_hmt_ro_;}
   //
   ////---------------------------------------------------------------------
   ////ADR_LCT_INJECTION = 0x1B8
@@ -3187,7 +3199,7 @@ private:
   int ALCT1_data_;
   //
   // The following is actually the MaxCounter in TMB + 1 (i.e., they count from 0)
-  static const int MaxCounter = 96;
+  static const int MaxCounter = 106;//add 10 counters for HMT
   static const int MaxGEMCounter = 120;
   int FinalCounter[MaxCounter+40];
   int FinalGEMCounter[MaxGEMCounter+1];
@@ -4715,12 +4727,18 @@ private:
   int hmt_thresh2_pass_;
   int hmt_thresh3_;
   int hmt_thresh3_pass_;
+  int cfeb_allow_hmt_ro_;
+  int tmb_allow_hmt_;
+  int tmb_allow_hmt_ro_;
   int read_hmt_thresh1_;
   int read_hmt_thresh1_pass_;
   int read_hmt_thresh2_;
   int read_hmt_thresh2_pass_;
   int read_hmt_thresh3_;
   int read_hmt_thresh3_pass_;
+  int read_cfeb_allow_hmt_ro_;
+  int read_tmb_allow_hmt_;
+  int read_tmb_allow_hmt_ro_;
   //------------------------------------------------------------------
   //0X1B4 = ADR_HMT_NHITS_SIG: nhits in bx678  (Tao, 2020)
   //0X1B6 = ADR_HMT_NHITS_BKG: nhits in bx2345  (Tao, 2020)

@@ -545,6 +545,9 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
     if (fillInt("hmt_thresh1"               ,value)) { tmb_->Sethmt_thresh1                (value);}
     if (fillInt("hmt_thresh2"               ,value)) { tmb_->Sethmt_thresh2                (value);}
     if (fillInt("hmt_thresh3"               ,value)) { tmb_->Sethmt_thresh3                (value);}
+    if (fillInt("cfeb_allow_hmt_ro"         ,value)) { tmb_->SetCfebAllowHmtRo          (value);}
+    if (fillInt("tmb_allow_hmt"             ,value)) { tmb_->SetTmbAllowHmt              (value);}
+    if (fillInt("tmb_allow_hmt_ro"          ,value)) { tmb_->SetTmbAllowHmtRo           (value);}
     ////0x1B8 = ADR_LCT_INJECTION
     //if (fillInt("lct_inj_hs"               ,value)) { tmb_->Setlct_inj_hs                (value);}
     //if (fillInt("lct_inj_wg"               ,value)) { tmb_->Setlct_inj_wg                (value);}

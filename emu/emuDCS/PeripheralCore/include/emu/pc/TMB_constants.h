@@ -3848,6 +3848,21 @@ const int hmt_thresh1_pass_bitlo   = 10;
 const int hmt_thresh1_pass_bithi   = 10;
 const int hmt_thresh1_pass_default = 0;
 //
+const int cfeb_allow_hmt_ro_vmereg  = hmt_thresh1_adr;
+const int cfeb_allow_hmt_ro_bitlo   = 11;
+const int cfeb_allow_hmt_ro_bithi   = 11;
+const int cfeb_allow_hmt_ro_default = 0;
+//
+const int tmb_allow_hmt_ro_vmereg  = hmt_thresh1_adr;
+const int tmb_allow_hmt_ro_bitlo   = 12;
+const int tmb_allow_hmt_ro_bithi   = 12;
+const int tmb_allow_hmt_ro_default = 0;
+//
+const int tmb_allow_hmt_vmereg     = hmt_thresh1_adr;
+const int tmb_allow_hmt_bitlo      = 13;
+const int tmb_allow_hmt_bithi      = 13;
+const int tmb_allow_hmt_default    = 0;
+//
 const int hmt_thresh2_vmereg       = hmt_thresh2_adr;
 const int hmt_thresh2_bitlo        = 0;
 const int hmt_thresh2_bithi        = 9;

@@ -2593,6 +2593,17 @@ std::string TMB::CounterName(int counter){
   if( counter == 93 ) name =  "CLCT: sequential trigger counter                        ";//Tao, algo2016
   if( counter == 94 ) name =  "CLCT: checking pretrigger in last 4BX                   ";//Tao, algo2016
   if( counter == 95 ) name =  "TMB: ALCT-CLCT BX0 match                                ";//Tao, 201908
+  if( counter == 96 ) name =  "TMB: hmt over threshold1(loose)                         ";//Tao, 201908
+  if( counter == 97 ) name =  "TMB: hmt over threshold2(median)                        ";//Tao, 202108
+  if( counter == 98 ) name =  "TMB: hmt over threshold3(tight)                         ";//Tao, 202108
+  if( counter == 99 ) name =  "TMB: hmt+preCLCT coincidence                            ";//Tao, 202108
+  if( counter == 100) name =  "TMB: hmt+CLCT coincidence                               ";//Tao, 202108
+  if( counter == 101) name =  "TMB: hmt+LCT coincidence                                ";//Tao, 202108
+  if( counter == 102) name =  "TMB: trigger pulse source from HMT (no LCT)             ";//Tao, 202108
+  if( counter == 103) name =  "TMB: trigger keep source from HMT                       ";//Tao, 202108
+  if( counter == 104) name =  "TMB: fired HMT in signal time region                    ";//Tao, 202108
+  if( counter == 105) name =  "TMB: fired HMT in signal and background time region     ";//Tao, 202108
+
   //
   return name;
 }
@@ -7582,6 +7593,9 @@ void TMB::SetTMBRegisterDefaults() {
   hmt_thresh1_            = hmt_thresh1_default;
   hmt_thresh2_            = hmt_thresh2_default;
   hmt_thresh3_            = hmt_thresh3_default;
+  cfeb_allow_hmt_ro_      = cfeb_allow_hmt_ro_default;
+  tmb_allow_hmt_          = tmb_allow_hmt_default;
+  tmb_allow_hmt_ro_       = tmb_allow_hmt_ro_default;
 
   ////-----------------------------------------------------------------------------
   ////ADR_LCT_INJECTION = 0x1B8
@@ -8423,6 +8437,9 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //------------------------------------------------------------------
     read_hmt_thresh1_               = ExtractValueFromData(data,hmt_thresh1_bitlo                 ,hmt_thresh1_bithi             );
     read_hmt_thresh1_pass_          = ExtractValueFromData(data,hmt_thresh1_pass_bitlo            ,hmt_thresh1_pass_bithi        );
+    read_cfeb_allow_hmt_ro_         = ExtractValueFromData(data,cfeb_allow_hmt_ro_bitlo           ,cfeb_allow_hmt_ro_bithi        );
+    read_tmb_allow_hmt_             = ExtractValueFromData(data,tmb_allow_hmt_bitlo               ,tmb_allow_hmt_bithi        );
+    read_tmb_allow_hmt_ro_          = ExtractValueFromData(data,tmb_allow_hmt_ro_bitlo            ,tmb_allow_hmt_ro_bithi        );
   } else if ( address == hmt_thresh2_adr ) {
     //------------------------------------------------------------------
     //0X1B0 = ADR_HMT_thresh2:  HMT Thresh2  (Tao, 2020)
@@ -9687,6 +9704,9 @@ void TMB::PrintTMBRegister(unsigned long int address) {
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger loose thresh:" << std::endl;
       (*MyOutput_) << "    HMT thresh1(loose)          = " << std::dec << read_hmt_thresh1_ << std::endl; 
+      (*MyOutput_) << "    Allow to readout cfeb by HMT= " << std::hex << read_cfeb_allow_hmt_ro_ << std::endl;
+      (*MyOutput_) << "    Allow to trigger  by HMT    = " << std::hex << read_tmb_allow_hmt_ << std::endl;
+      (*MyOutput_) << "    Allow to readout OTMB by HMT= " << std::hex << read_tmb_allow_hmt_ro_ << std::endl;
   } else if ( address == hmt_thresh2_adr ) {
    //------------------------------------------------------------------
    //0X1B0 = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
@@ -10857,6 +10877,9 @@ int TMB::FillTMBRegister(unsigned long int address) {
     	      << "\n    hmt_thresh1_         " << hmt_thresh1_        
               << std::endl;
     InsertValueIntoDataWord(hmt_thresh1_,      hmt_thresh1_bithi,      hmt_thresh1_bitlo,      &data_word);
+    InsertValueIntoDataWord(cfeb_allow_hmt_ro_,cfeb_allow_hmt_ro_bithi,cfeb_allow_hmt_ro_bitlo,      &data_word);
+    InsertValueIntoDataWord(tmb_allow_hmt_,    tmb_allow_hmt_bithi,    tmb_allow_hmt_bitlo,      &data_word);
+    InsertValueIntoDataWord(tmb_allow_hmt_ro_, tmb_allow_hmt_ro_bithi, tmb_allow_hmt_ro_bitlo,      &data_word);
   } else if ( address == hmt_thresh2_adr ) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_THRESH2:  HMT thresh2  (Tao, 2020)
@@ -12026,6 +12049,29 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     // Here check only the bit (ANDed between all five CFEB bits...)
     config_ok &= compareValues("TMB cfeb_badbits_block",GetReadCFEBBadBitsBlock(),GetCFEBBadBitsBlock(),print_errors); 
     //
+    //---------------------------------------------------------------------
+    // 0X1AA = ADR_RUN3_FORMAT_CTRL:  Run3 format control  (Tao, 2020)
+    //---------------------------------------------------------------------
+    config_ok &= compareValues("TMB run3_trig_dataformat_enable",  read_run3_trig_dataformat_enable_,  run3_trig_dataformat_enable_, print_errors);
+    config_ok &= compareValues("TMB run3_daq_dataformat_enable",  read_run3_daq_dataformat_enable_,  run3_daq_dataformat_enable_, print_errors);
+    //
+    //---------------------------------------------------------------------
+    // 0X1AC = ADR_HMT_CTRL:  HMT control 
+    //---------------------------------------------------------------------
+    config_ok &= compareValues("TMB hmt_enable",  read_hmt_enable_,  hmt_enable_, print_errors);
+    config_ok &= compareValues("TMB hmt_me1a_enable",  read_hmt_me1a_enable_,  hmt_me1a_enable_, print_errors);
+    //
+    //---------------------------------------------------------------------
+    // 0X1AE = ADR_HMT_THRESH1:  HMT threshold and control
+    // 0X1B0 = ADR_HMT_THRESH2:  HMT threshold and control
+    // 0X1B2 = ADR_HMT_THRESH3:  HMT threshold and control
+    //---------------------------------------------------------------------
+    config_ok &= compareValues("TMB hmt_thresh1",  read_hmt_thresh1_,  hmt_thresh1_, print_errors);
+    config_ok &= compareValues("TMB hmt_thresh2",  read_hmt_thresh2_,  hmt_thresh2_, print_errors);
+    config_ok &= compareValues("TMB hmt_thresh3",  read_hmt_thresh3_,  hmt_thresh3_, print_errors);
+    config_ok &= compareValues("TMB cfeb_allow_hmt_ro",  read_cfeb_allow_hmt_ro_,  cfeb_allow_hmt_ro_, print_errors);
+    config_ok &= compareValues("TMB tmb_allow_hmt",      read_tmb_allow_hmt_,      tmb_allow_hmt_, print_errors);
+    config_ok &= compareValues("TMB tmb_allow_hmt_ro",   read_tmb_allow_hmt_ro_,   tmb_allow_hmt_ro_, print_errors);
     //
     //------------------------------------------------------------------
     //0X17A = ADR_V6_EXTEND: ADR_CFEB_INJ:  CFEB Injector Control; ADR_SEQ_TRIG_EN:

@@ -2599,8 +2599,8 @@ std::string TMB::CounterName(int counter){
   if( counter == 99 ) name =  "TMB: hmt+preCLCT coincidence                            ";//Tao, 202108
   if( counter == 100) name =  "TMB: hmt+CLCT coincidence                               ";//Tao, 202108
   if( counter == 101) name =  "TMB: hmt+LCT coincidence                                ";//Tao, 202108
-  if( counter == 102) name =  "TMB: trigger pulse source from HMT (no LCT)             ";//Tao, 202108
-  if( counter == 103) name =  "TMB: trigger keep source from HMT                       ";//Tao, 202108
+  if( counter == 102) name =  "TMB: trigger pulse source from HMT only (no LCT)        ";//Tao, 202108
+  if( counter == 103) name =  "TMB: trigger keep source from HMT only                  ";//Tao, 202108
   if( counter == 104) name =  "TMB: fired HMT in signal time region                    ";//Tao, 202108
   if( counter == 105) name =  "TMB: fired HMT in signal and background time region     ";//Tao, 202108
 

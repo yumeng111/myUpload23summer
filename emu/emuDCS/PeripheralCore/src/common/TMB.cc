@@ -10099,12 +10099,12 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     if (GetGemEnabled()) {
         if (HasGroupedGemRxValues() == 1) {
         (*MyOutput_) << " ->GEM A+B to TMB communication clock delay:" << std::endl;
-        (*MyOutput_) << "    GEM A+B rx clock delay, unit=1ns    = " << std::dec << read_gem_rx_clock_delay_ << std::endl;
+        (*MyOutput_) << "    GEM A+B rx clock delay, unit=1ns     = " << std::dec << read_gem_rx_clock_delay_ << std::endl;
         (*MyOutput_) << "    GEM A+B rx fine delay, unit=0.1ns    = " << std::dec << read_gem_rx_fine_delay_ << std::endl;
-        (*MyOutput_) << "    GEM A+B posneg    = " << std::dec << read_gem_rx_posneg_ << std::endl;
+        (*MyOutput_) << "    GEM A+B posneg                       = " << std::dec << read_gem_rx_posneg_ << std::endl;
         } else {
         (*MyOutput_) << " ->GEM A to TMB communication clock delay:" << std::endl;
-        (*MyOutput_) << "    GEM A rx clock delay    = " << std::dec << read_gemA_rx_clock_delay_ << std::endl;
+        (*MyOutput_) << "    GEM A rx clock delay   = " << std::dec << read_gemA_rx_clock_delay_ << std::endl;
         (*MyOutput_) << "    GEM A rx fine delay    = " << std::dec << read_gemA_rx_fine_delay_ << std::endl;
         (*MyOutput_) << "    GEM A posneg    = " << std::dec << read_gemA_rx_posneg_ << std::endl;
         }
@@ -10117,7 +10117,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     if (GetGemEnabled()) {
         if (HasGroupedGemRxValues() == 0) {
         (*MyOutput_) << " ->GEM B to TMB communication clock delay:" << std::endl;
-        (*MyOutput_) << "    GEM B rx clock delay    = " << std::dec << read_gemB_rx_clock_delay_ << std::endl;
+        (*MyOutput_) << "    GEM B rx clock delay   = " << std::dec << read_gemB_rx_clock_delay_ << std::endl;
         (*MyOutput_) << "    GEM B rx fine delay    = " << std::dec << read_gemB_rx_fine_delay_ << std::endl;
         (*MyOutput_) << "    GEM B posneg    = " << std::dec << read_gemB_rx_posneg_ << std::endl;
         }
@@ -10409,10 +10409,10 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     // 0X318 = ADR_GEM_CSC_MATCH_WINDOW
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM CSC Match Window (position) Register:"                  << std::endl;
-    (*MyOutput_) << "    TMB gem-clct match, delta halfstrip, odd chamber  = " << read_gem_clct_deltahs_odd_              << std::endl;
-    (*MyOutput_) << "    TMB gem-clct match, delta halfstrip,even chamber  = " << read_gem_clct_deltahs_even_             << std::endl;
-    (*MyOutput_) << "    TMB gem-alct match, delta wire, odd chamber       = " << read_gem_alct_deltawire_odd_            << std::endl;
-    (*MyOutput_) << "    TMB gem-alct match, delta wire,even chamber       = " << read_gem_alct_deltawire_even_           << std::endl;
+    (*MyOutput_) << "    TMB gem-clct match, delta halfstrip, odd chamber  = " << std::dec << read_gem_clct_deltahs_odd_              << std::endl;
+    (*MyOutput_) << "    TMB gem-clct match, delta halfstrip,even chamber  = " << std::dec << read_gem_clct_deltahs_even_             << std::endl;
+    (*MyOutput_) << "    TMB gem-alct match, delta wire, odd chamber       = " << std::dec << read_gem_alct_deltawire_odd_            << std::endl;
+    (*MyOutput_) << "    TMB gem-alct match, delta wire,even chamber       = " << std::dec << read_gem_alct_deltawire_even_           << std::endl;
     } else if ( address == gem_copad_ctrl_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X324 = ADR_GEM_COPAD_CTRL
@@ -10445,7 +10445,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     // 0X32a = ADR_GEMB_TRG_CTRL
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEMB Trigger for match control  Register:"                              << std::endl;
-    (*MyOutput_) << "    TMB gem delay for gem-alct match                 = " << read_match_gem_alct_delay_     << std::endl;
+    (*MyOutput_) << "    TMB gem delay for gem-alct match                  =  " << read_match_gem_alct_delay_     << std::endl;
     //(*MyOutput_) << "    TMB gemB-alct match window, BX                    = " << read_match_gemB_alct_window_    << std::endl;
     //(*MyOutput_) << "    TMB gemB-clct match window, BX                    = " << read_match_gemB_clct_window_    << std::endl;
     (*MyOutput_) << "    TMB gemB fiber enabled for gem-csc match          = " << read_gemB_fiber_enable_    << std::endl;
@@ -10467,7 +10467,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << "    TMB gem-csc match allows gemA match no position   = " << read_gemA_match_ignore_position_     << std::endl;
     (*MyOutput_) << "    TMB gem-csc match allows gemB match no position   = " << read_gemB_match_ignore_position_     << std::endl;
     (*MyOutput_) << "    TMB used gemcsc bend angle rather csc-only bend   = " << read_gemcsc_bend_enable_     << std::endl;
-    (*MyOutput_) << "    TMB ignores gemcsc bending lr and csc bending lr  = " << read_gemcsc_ignore_bend_check_     << std::endl;
+    (*MyOutput_) << "    TMB ignores check gemcsc bend lr and csc bend lr  = " << read_gemcsc_ignore_bend_check_     << std::endl;
     //(*MyOutput_) << "    TMB promote lct quality with gemcsc match in me1a = " << read_gem_me1a_match_promotequal_     << std::endl;
     //(*MyOutput_) << "    TMB promote lct quality with gemcsc match in me1b = " << read_gem_me1b_match_promotequal_     << std::endl;
     //(*MyOutput_) << "    TMB promote lct pattern with gemcsc match in me1a = " << read_gem_me1a_match_promotepat_     << std::endl;

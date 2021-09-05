@@ -37,20 +37,15 @@ Packages= \
 	emu/emuDCS/FEDApps
 endif
 
-ifeq ($(Set),emuDAQ)
+ifeq ($(Set),ldaq)
 Packages= \
-	emu/emuDAQ/emuReadout \
-	emu/emuDAQ/emuFU \
-	emu/emuDAQ/emuRUI \
-	emu/emuDAQ/emuTA \
-	emu/emuDAQ/emuDAQManager \
-	emu/emuDAQ/emuClient \
-	emu/emuDAQ/emuUtil \
-	emu/emuDAQ/drivers
+        emu/farmer \
+	emu/ldaq
 endif
 
-ifeq ($(Set),emuDQM)
-Packages=
+ifeq ($(Set),dqm)
+Packages= \
+          emu/dqm
 endif
 
 ifeq ($(Set),supervisor) 
@@ -61,8 +56,7 @@ endif
 
 ifeq ($(Set),drivers)
 Packages = \
-	emu/emuDAQ/drivers \
-	emu/emuDCS/drivers
+	emu/drivers
 endif
 
 include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules

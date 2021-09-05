@@ -4015,28 +4015,29 @@ const int gem_readout_mask_default           = 0xf;
 // 0X318 ADR_GEM_CSC_MATCH_WINDOW
 //-----------------------------------------------------------------------------
 //
-const int gem_clct_deltahs_vmereg               = gem_csc_match_window_adr;
-const int gem_clct_deltahs_bitlo                = 0;
-const int gem_clct_deltahs_bithi                = 4;
-const int gem_clct_deltahs_default              = 8;
+const int gem_clct_deltahs_odd_vmereg               = gem_csc_match_window_adr;
+const int gem_clct_deltahs_odd_bitlo                = 0;
+const int gem_clct_deltahs_odd_bithi                = 4;
+const int gem_clct_deltahs_odd_default              = 20;
 //
 //
-const int gem_alct_deltawire_vmereg             = gem_csc_match_window_adr;
-const int gem_alct_deltawire_bitlo              = 5;
-const int gem_alct_deltawire_bithi              = 7;
-const int gem_alct_deltawire_default            = 1;
+const int gem_alct_deltawire_odd_vmereg             = gem_csc_match_window_adr;
+const int gem_alct_deltawire_odd_bitlo              = 5;
+const int gem_alct_deltawire_odd_bithi              = 7;
+const int gem_alct_deltawire_odd_default            = 3;
 //
 //
-const int gem_clct_enable_vmereg                = gem_csc_match_window_adr;
-const int gem_clct_enable_bitlo                 = 8;
-const int gem_clct_enable_bithi                 = 8;
-const int gem_clct_enable_default               = 1;
+const int gem_clct_deltahs_even_vmereg              = gem_csc_match_window_adr;
+const int gem_clct_deltahs_even_bitlo               = 8;
+const int gem_clct_deltahs_even_bithi               = 12;
+const int gem_clct_deltahs_even_default             = 12;
 //
 //
-const int gem_alct_enable_vmereg                = gem_csc_match_window_adr;
-const int gem_alct_enable_bitlo                 = 9;
-const int gem_alct_enable_bithi                 = 9;
-const int gem_alct_enable_default               = 1;
+const int gem_alct_deltawire_even_vmereg            = gem_csc_match_window_adr;
+const int gem_alct_deltawire_even_bitlo             = 13;
+const int gem_alct_deltawire_even_bithi             = 15;
+const int gem_alct_deltawire_even_default           = 2;
+//
 //
 //-----------------------------------------------------------------------------
 // 0X320 ADR_GEM_INJ_CTRL

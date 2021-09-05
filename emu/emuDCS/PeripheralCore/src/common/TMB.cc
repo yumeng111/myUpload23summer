@@ -7636,10 +7636,10 @@ void TMB::SetTMBRegisterDefaults() {
   // 0X318 ADR_GEM_CSC_MATCH_WINDOW
   //-----------------------------------------------------------------------------
    
-  gem_clct_deltahs_      =  gem_clct_deltahs_default;
-  gem_clct_enable_       =  gem_clct_enable_default;
-  gem_alct_deltawire_    =  gem_alct_deltawire_default;
-  gem_alct_enable_       =  gem_alct_enable_default;
+  gem_clct_deltahs_odd_       =  gem_clct_deltahs_odd_default;
+  gem_clct_deltahs_even_      =  gem_clct_deltahs_even_default;
+  gem_alct_deltawire_odd_     =  gem_alct_deltawire_odd_default;
+  gem_alct_deltawire_even_    =  gem_alct_deltawire_even_default;
 
   ////-----------------------------------------------------------------------------
   //// 0X320 ADR_GEM_INJ_CTRL
@@ -9008,10 +9008,10 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //---------------------------------------------------------------------
     // 0X318 = ADR_GEM_TRG
     //---------------------------------------------------------------------
-    read_gem_clct_deltahs_             = ExtractValueFromData (data , gem_clct_deltahs_bitlo         , gem_clct_deltahs_bithi);
-    read_gem_alct_deltawire_           = ExtractValueFromData (data , gem_alct_deltawire_bitlo       , gem_alct_deltawire_bithi);
-    read_gem_clct_enable_              = ExtractValueFromData (data , gem_clct_enable_bitlo          , gem_clct_enable_bithi);
-    read_gem_alct_enable_              = ExtractValueFromData (data , gem_alct_enable_bitlo          , gem_alct_enable_bithi);
+    read_gem_clct_deltahs_odd_            = ExtractValueFromData (data , gem_clct_deltahs_odd_bitlo          , gem_clct_deltahs_odd_bithi);
+    read_gem_clct_deltahs_even_           = ExtractValueFromData (data , gem_clct_deltahs_even_bitlo         , gem_clct_deltahs_even_bithi);
+    read_gem_alct_deltawire_odd_          = ExtractValueFromData (data , gem_alct_deltawire_odd_bitlo        , gem_alct_deltawire_odd_bithi);
+    read_gem_alct_deltawire_even_         = ExtractValueFromData (data , gem_alct_deltawire_even_bitlo       , gem_alct_deltawire_even_bithi);
     //
   } else if ( address == gem_copad_ctrl_adr ) {
     //---------------------------------------------------------------------
@@ -10409,10 +10409,10 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     // 0X318 = ADR_GEM_CSC_MATCH_WINDOW
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM CSC Match Window (position) Register:"                  << std::endl;
-    (*MyOutput_) << "    TMB gem-clct match, delta halfstrip               = " << read_gem_clct_deltahs_              << std::endl;
-    (*MyOutput_) << "    TMB gem-alct match, delta wire                    = " << read_gem_alct_deltawire_            << std::endl;
-    (*MyOutput_) << "    TMB gem-clct match, enabled                       = " << read_gem_clct_enable_              << std::endl;
-    (*MyOutput_) << "    TMB gem-alct match, enabled                       = " << read_gem_alct_enable_              << std::endl;
+    (*MyOutput_) << "    TMB gem-clct match, delta halfstrip, odd chamber  = " << read_gem_clct_deltahs_odd_              << std::endl;
+    (*MyOutput_) << "    TMB gem-clct match, delta halfstrip,even chamber  = " << read_gem_clct_deltahs_even_             << std::endl;
+    (*MyOutput_) << "    TMB gem-alct match, delta wire, odd chamber       = " << read_gem_alct_deltawire_odd_            << std::endl;
+    (*MyOutput_) << "    TMB gem-alct match, delta wire,even chamber       = " << read_gem_alct_deltawire_even_           << std::endl;
     } else if ( address == gem_copad_ctrl_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X324 = ADR_GEM_COPAD_CTRL
@@ -11275,10 +11275,10 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //---------------------------------------------------------------------
     // 0X318 = ADR_GEM_CSC_MATCH_WINDOW
     //---------------------------------------------------------------------
-    InsertValueIntoDataWord( gem_clct_deltahs_         , gem_clct_deltahs_bithi         , gem_clct_deltahs_bitlo         , &data_word);
-    InsertValueIntoDataWord( gem_clct_enable_          , gem_clct_enable_bithi          , gem_clct_enable_bitlo          , &data_word);
-    InsertValueIntoDataWord( gem_alct_deltawire_       , gem_alct_deltawire_bithi       , gem_alct_deltawire_bitlo       , &data_word);
-    InsertValueIntoDataWord( gem_alct_enable_          , gem_alct_enable_bithi          , gem_alct_enable_bitlo          , &data_word);
+    InsertValueIntoDataWord( gem_clct_deltahs_odd_         , gem_clct_deltahs_odd_bithi          , gem_clct_deltahs_odd_bitlo          , &data_word);
+    InsertValueIntoDataWord( gem_clct_deltahs_even_        , gem_clct_deltahs_even_bithi         , gem_clct_deltahs_even_bitlo         , &data_word);
+    InsertValueIntoDataWord( gem_alct_deltawire_odd_       , gem_alct_deltawire_odd_bithi        , gem_alct_deltawire_odd_bitlo        , &data_word);
+    InsertValueIntoDataWord( gem_alct_deltawire_even_      , gem_alct_deltawire_even_bithi       , gem_alct_deltawire_even_bitlo       , &data_word);
   } else if ( address == gem_copad_ctrl_adr ) {
     //---------------------------------------------------------------------
     // 0X324 = ADR_GEM_COPAD_CTRL
@@ -12130,10 +12130,10 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
         // 0X318 = ADR_GEM_TRG
         //---------------------------------------------------------------------
 
-        config_ok &= compareValues ("TMB gem_clct_deltahs"   , read_gem_clct_deltahs_        , gem_clct_deltahs_     , print_errors);
-        config_ok &= compareValues ("TMB gem_alct_deltawire" , read_gem_alct_deltawire_      , gem_alct_deltawire_   , print_errors);
-        config_ok &= compareValues ("TMB gem_clct_enable"    , read_gem_clct_enable_         , gem_clct_enable_      , print_errors);
-        config_ok &= compareValues ("TMB gem_alct_enable"    , read_gem_alct_enable_         , gem_alct_enable_      , print_errors);
+        config_ok &= compareValues ("TMB gem_clct_deltahs_odd"   , read_gem_clct_deltahs_odd_        , gem_clct_deltahs_odd_     , print_errors);
+        config_ok &= compareValues ("TMB gem_clct_deltahs_even"  , read_gem_clct_deltahs_even_       , gem_clct_deltahs_even_    , print_errors);
+        config_ok &= compareValues ("TMB gem_alct_deltawire_odd" , read_gem_alct_deltawire_odd_      , gem_alct_deltawire_odd_   , print_errors);
+        config_ok &= compareValues ("TMB gem_alct_deltawire_even", read_gem_alct_deltawire_even_     , gem_alct_deltawire_even_  , print_errors);
 
         //---------------------------------------------------------------------
         // 0X324 = ADR_GEM_COPAD_CTRL

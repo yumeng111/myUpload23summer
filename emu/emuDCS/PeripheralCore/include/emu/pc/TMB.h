@@ -2774,15 +2774,20 @@ public:
   // 0X318 GEM_CSC_MATCH_WINDOW
   //-----------------------------------------------------------------------------
 
-  inline int   GetGemClctDeltahs ()                                { return gem_clct_deltahs_ ;}
-  inline void  SetGemClctDeltahs (int gem_clct_deltahs)            { gem_clct_deltahs_ = gem_clct_deltahs;}
-  inline int   GetGemAlctDeltawire ()                              { return gem_alct_deltawire_ ;}
-  inline void  SetGemAlctDeltawire (int gem_alct_deltawire)        { gem_alct_deltawire_ = gem_alct_deltawire;}
-  inline int   GetGemClctEnable ()                                 { return gem_clct_enable_ ;}
-  inline void  SetGemClctEnable (int gem_clct_enable)              { gem_clct_enable_ = gem_clct_enable;}
-  inline int   GetGemAlctEnable ()                                 { return gem_alct_enable_ ;}
-  inline void  SetGemAlctEnable (int gem_alct_enable)              { gem_alct_enable_ = gem_alct_enable;}
+  inline int   GetGemClctDeltahsOdd  ()                                { return gem_clct_deltahs_odd_ ;}
+  inline void  SetGemClctDeltahsOdd  (int gem_clct_deltahs_odd)        {        gem_clct_deltahs_odd_ = gem_clct_deltahs_odd;}
+  inline int   GetGemClctDeltahsEven ()                                { return gem_clct_deltahs_even_ ;}
+  inline void  SetGemClctDeltahsEven (int gem_clct_deltahs_even)       {        gem_clct_deltahs_even_ = gem_clct_deltahs_even;}
+  inline int   GetGemAlctDeltawireOdd  ()                              { return gem_alct_deltawire_odd_ ;}
+  inline void  SetGemAlctDeltawireOdd  (int gem_alct_deltawire_odd)    { gem_alct_deltawire_odd_ = gem_alct_deltawire_odd;}
+  inline int   GetGemAlctDeltawireEven ()                              { return gem_alct_deltawire_even_ ;}
+  inline void  SetGemAlctDeltawireEven (int gem_alct_deltawire_even)   { gem_alct_deltawire_even_ = gem_alct_deltawire_even;}
 
+
+  inline int  GetReadClctDeltahsOdd   ()                               {return read_gem_clct_deltahs_odd_;}
+  inline int  GetReadClctDeltahsEven  ()                               {return read_gem_clct_deltahs_even_;}
+  inline int  GetReadAlctDeltawireOdd ()                               {return read_gem_alct_deltawire_odd_;}
+  inline int  GetReadAlctDeltawireEven()                               {return read_gem_alct_deltawire_even_;}
   //-----------------------------------------------------------------------------
   // 0X324 GEM_COPAD_CTRL
   //-----------------------------------------------------------------------------
@@ -2794,6 +2799,9 @@ public:
   inline void SetGemMatchNeighborPad (int gem_match_neighborPad)        { gem_match_neighborPad_ = gem_match_neighborPad;}
   inline void SetGemMatchDeltaPad (int gem_match_deltaPad)              { gem_match_deltaPad_ = gem_match_deltaPad;}
 
+  inline int  GetReadGemMatchNeighborRoll ()                                { return read_gem_match_neighborRoll_ ;}
+  inline int  GetReadGemMatchNeighborPad ()                                 { return read_gem_match_neighborPad_ ;}
+  inline int  GetReadGemMatchDeltaPad ()                                    { return read_gem_match_deltaPad_ ;}
   //-----------------------------------------------------------------------------
   // 0X326 GEM_BX0_DELAY
   //-----------------------------------------------------------------------------
@@ -4820,17 +4828,15 @@ private:
 
   //int gem_trg_enable_;
   //int read_gem_trg_enable_;
-  int gem_clct_deltahs_;
-  int read_gem_clct_deltahs_;
+  int      gem_clct_deltahs_odd_;
+  int      gem_clct_deltahs_even_;
+  int read_gem_clct_deltahs_odd_;
+  int read_gem_clct_deltahs_even_;
 
-  int gem_alct_deltawire_;
-  int read_gem_alct_deltawire_;
-
-  int gem_clct_enable_;
-  int read_gem_clct_enable_;
-
-  int gem_alct_enable_;
-  int read_gem_alct_enable_;
+  int      gem_alct_deltawire_odd_;
+  int      gem_alct_deltawire_even_;
+  int read_gem_alct_deltawire_odd_;
+  int read_gem_alct_deltawire_even_;
   //
   //-----------------------------------------------------------------------------
   // 0X324 ADR_GEM_COPAD_CTRL

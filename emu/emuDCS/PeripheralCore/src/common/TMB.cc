@@ -9688,37 +9688,37 @@ void TMB::PrintTMBRegister(unsigned long int address) {
   //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 format control  (Tao, 2020)
   //------------------------------------------------------------------
       (*MyOutput_) << " ->Run3 format control:" << std::endl;
-      (*MyOutput_) << "    enable CCLUT                 = " << std::dec << read_cclut_enable_ << std::endl; 
-      (*MyOutput_) << "    enable Run3 Trigger Format   = " << std::dec << read_run3_trig_dataformat_enable_ << std::endl; 
-      (*MyOutput_) << "    enable Run3 DAQ Format       = " << std::dec << read_run3_daq_dataformat_enable_ << std::endl; 
+      (*MyOutput_) << "    enable CCLUT                               = " << std::dec << read_cclut_enable_ << std::endl; 
+      (*MyOutput_) << "    enable Run3 Trigger Format                 = " << std::dec << read_run3_trig_dataformat_enable_ << std::endl; 
+      (*MyOutput_) << "    enable Run3 DAQ Format                     = " << std::dec << read_run3_daq_dataformat_enable_ << std::endl; 
   } else if ( address == hmt_ctrl_adr ) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger control:" << std::endl;
-      (*MyOutput_) << "    enable HMT                  = " << std::dec << read_hmt_enable_ << std::endl; 
-      (*MyOutput_) << "    enable HMT in ME1a          = " << std::dec << read_hmt_me1a_enable_ << std::endl; 
+      (*MyOutput_) << "    enable HMT                                 = " << std::dec << read_hmt_enable_ << std::endl; 
+      (*MyOutput_) << "    enable HMT in ME1a                         = " << std::dec << read_hmt_me1a_enable_ << std::endl; 
   } else if ( address == hmt_thresh1_adr ) {
    //------------------------------------------------------------------
    //0X1AE = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger loose thresh:" << std::endl;
-      (*MyOutput_) << "    HMT thresh1(loose)          = " << std::dec << read_hmt_thresh1_ << std::endl; 
-      (*MyOutput_) << "    Allow to readout cfeb by HMT= " << std::hex << read_cfeb_allow_hmt_ro_ << std::endl;
-      (*MyOutput_) << "    Allow to trigger  by HMT    = " << std::hex << read_tmb_allow_hmt_ << std::endl;
-      (*MyOutput_) << "    Allow to readout OTMB by HMT= " << std::hex << read_tmb_allow_hmt_ro_ << std::endl;
+      (*MyOutput_) << "    HMT thresh1(loose)                         = " << std::dec << read_hmt_thresh1_ << std::endl; 
+      (*MyOutput_) << "    Allow to readout cfeb by HMT               = " << std::hex << read_cfeb_allow_hmt_ro_ << std::endl;
+      (*MyOutput_) << "    Allow to trigger  by HMT                   = " << std::hex << read_tmb_allow_hmt_ << std::endl;
+      (*MyOutput_) << "    Allow to readout OTMB by HMT               = " << std::hex << read_tmb_allow_hmt_ro_ << std::endl;
   } else if ( address == hmt_thresh2_adr ) {
    //------------------------------------------------------------------
    //0X1B0 = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger median thresh:" << std::endl;
-      (*MyOutput_) << "    HMT thresh2(median)         = " << std::dec << read_hmt_thresh2_ << std::endl; 
+      (*MyOutput_) << "    HMT thresh2(median)                        = " << std::dec << read_hmt_thresh2_ << std::endl; 
   } else if ( address == hmt_thresh3_adr ) {
    //------------------------------------------------------------------
    //0X1B2 = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger tight thresh:" << std::endl;
-      (*MyOutput_) << "    HMT thresh3(tight)          = " << std::dec << read_hmt_thresh3_ << std::endl; 
+      (*MyOutput_) << "    HMT thresh3(tight)                         = " << std::dec << read_hmt_thresh3_ << std::endl; 
   //} else if ( address == lct_injection_adr ) {
   //  //------------------------------------------------------------------
   //  //0X1B8 = ADR_LCT_INJECTION:  LCT injection from configuration  (Tao, 2020)
@@ -10383,11 +10383,11 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     // 0X310 = ADR_GEM_TBINS
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM Readout Configuration:"                            << std::endl;
-    (*MyOutput_) << "    TMB gem_fifo_tbins                                = " << read_gem_fifo_tbins_          << std::endl;
-    (*MyOutput_) << "    TMB gem_fifo_pretrig                              = " << read_gem_fifo_pretrig_        << std::endl;
-    (*MyOutput_) << "    TMB gem_fifo_decouple                             = " << read_gem_fifo_decouple_       << std::endl;
-    (*MyOutput_) << "    TMB gem_read_enable                               = " << read_gem_read_enable_         << std::endl;
-    (*MyOutput_) << "    TMB gem Zero Supression Enabled                   = " << read_gem_zero_supress_enable_ << std::endl;
+    (*MyOutput_) << "    TMB gem_fifo_tbins                                = " << std::dec << read_gem_fifo_tbins_          << std::endl;
+    (*MyOutput_) << "    TMB gem_fifo_pretrig                              = " << std::dec << read_gem_fifo_pretrig_        << std::endl;
+    (*MyOutput_) << "    TMB gem_fifo_decouple                             = " << std::dec << read_gem_fifo_decouple_       << std::endl;
+    (*MyOutput_) << "    TMB gem_read_enable                               = " << std::dec << read_gem_read_enable_         << std::endl;
+    (*MyOutput_) << "    TMB gem Zero Supression Enabled                   = " << std::dec << read_gem_zero_supress_enable_ << std::endl;
 
     } else if ( address == gem_cfg_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
@@ -10395,14 +10395,14 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM Bx Delay Configuration Register:"                  << std::endl;
     if (!HasGroupedGemRxValues()) {
-    (*MyOutput_) << "    TMB gem A rxd_int_delay                           = " << read_gemA_rxd_int_delay_         << std::endl;
-    (*MyOutput_) << "    TMB gem B rxd_int_delay                           = " << read_gemB_rxd_int_delay_         << std::endl;
+    (*MyOutput_) << "    TMB gem A rxd_int_delay                           = " << std::dec << read_gemA_rxd_int_delay_         << std::endl;
+    (*MyOutput_) << "    TMB gem B rxd_int_delay                           = " << std::dec << read_gemB_rxd_int_delay_         << std::endl;
     }
     else  {
-    (*MyOutput_) << "    TMB gem rxd_int_delay for A/B                     = " << read_gem_rxd_int_delay_          << std::endl;
+    (*MyOutput_) << "    TMB gem rxd_int_delay for A/B                     = " << std::dec << read_gem_rxd_int_delay_          << std::endl;
     }
-    (*MyOutput_) << "    TMB gem rxd_int_delays decoupled                  = " << read_decouple_gem_rxd_int_delay_ << std::endl;
-    (*MyOutput_) << "    TMB gem readout mask                              = " << read_gem_readout_mask_           << std::endl;
+    (*MyOutput_) << "    TMB gem rxd_int_delays decoupled                  = " << std::dec << read_decouple_gem_rxd_int_delay_ << std::endl;
+    (*MyOutput_) << "    TMB gem readout mask                              = " << std::dec << read_gem_readout_mask_           << std::endl;
 
     } else if ( address == gem_csc_match_window_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
@@ -10418,37 +10418,37 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     // 0X324 = ADR_GEM_COPAD_CTRL
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM copad match control  Register:"                    << std::endl;
-    (*MyOutput_) << "    TMB gem copad match with neighbor roll            = " << read_gem_match_neighborRoll_     << std::endl;
-    (*MyOutput_) << "    TMB gem copad match with neighbor pad             = " << read_gem_match_neighborPad_      << std::endl;
-    (*MyOutput_) << "    TMB gem copad match,max pad differences           = " << read_gem_match_deltaPad_         << std::endl;
+    (*MyOutput_) << "    TMB gem copad match with neighbor roll            = " << std::dec << read_gem_match_neighborRoll_     << std::endl;
+    (*MyOutput_) << "    TMB gem copad match with neighbor pad             = " << std::dec << read_gem_match_neighborPad_      << std::endl;
+    (*MyOutput_) << "    TMB gem copad match,max pad differences           = " << std::dec << read_gem_match_deltaPad_         << std::endl;
     } else if ( address == gem_bx0_delay_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X326 = ADR_GEM_BX0_DELAY
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM BX0 delay  Register:"                              << std::endl;
-    (*MyOutput_) << "    TMB gemA bx0 delay                                = " << read_gemA_bx0_delay_     << std::endl;
-    (*MyOutput_) << "    TMB gemA bx0 Enabled                              = " << read_gemA_bx0_enable_    << std::endl;
-    (*MyOutput_) << "    TMB gemA+CLCT bx0 match                           = " << read_gemA_bx0_match_     << std::endl;
-    (*MyOutput_) << "    TMB gemB bx0 delay                                = " << read_gemB_bx0_delay_     << std::endl;
-    (*MyOutput_) << "    TMB gemB bx0 Enabled                              = " << read_gemB_bx0_enable_    << std::endl;
-    (*MyOutput_) << "    TMB gemB+CLCT bx0 match                           = " << read_gemB_bx0_match_     << std::endl;
+    (*MyOutput_) << "    TMB gemA bx0 delay                                = " << std::dec << read_gemA_bx0_delay_     << std::endl;
+    (*MyOutput_) << "    TMB gemA bx0 Enabled                              = " << std::dec << read_gemA_bx0_enable_    << std::endl;
+    (*MyOutput_) << "    TMB gemA+CLCT bx0 match                           = " << std::dec << read_gemA_bx0_match_     << std::endl;
+    (*MyOutput_) << "    TMB gemB bx0 delay                                = " << std::dec << read_gemB_bx0_delay_     << std::endl;
+    (*MyOutput_) << "    TMB gemB bx0 Enabled                              = " << std::dec << read_gemB_bx0_enable_    << std::endl;
+    (*MyOutput_) << "    TMB gemB+CLCT bx0 match                           = " << std::dec << read_gemB_bx0_match_     << std::endl;
     } else if ( address == gemA_trg_ctrl_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X328 = ADR_GEMA_TRG_CTRL
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEMA Trigger for match control  Register:"                              << std::endl;
-    (*MyOutput_) << "    TMB gemA/B-alct match window, BX                  = " << read_match_gem_alct_window_    << std::endl;
-    (*MyOutput_) << "    TMB gemA/B-clct match window, BX                  = " << read_match_gem_clct_window_    << std::endl;
-    (*MyOutput_) << "    TMB gemA fiber enabled for gem-csc match          = " << read_gemA_fiber_enable_    << std::endl;
+    (*MyOutput_) << "    TMB gemA/B-alct match window, BX                  = " << std::dec << read_match_gem_alct_window_    << std::endl;
+    (*MyOutput_) << "    TMB gemA/B-clct match window, BX                  = " << std::dec << read_match_gem_clct_window_    << std::endl;
+    (*MyOutput_) << "    TMB gemA fiber enabled for gem-csc match          = " << std::dec << read_gemA_fiber_enable_    << std::endl;
     } else if ( address == gemB_trg_ctrl_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X32a = ADR_GEMB_TRG_CTRL
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEMB Trigger for match control  Register:"                              << std::endl;
-    (*MyOutput_) << "    TMB gem delay for gem-alct match                  =  " << read_match_gem_alct_delay_     << std::endl;
+    (*MyOutput_) << "    TMB gem delay for gem-alct match                  = " << std::dec << read_match_gem_alct_delay_     << std::endl;
+    (*MyOutput_) << "    TMB gemB fiber enabled for gem-csc match          = " << std::dec << read_gemB_fiber_enable_    << std::endl;
     //(*MyOutput_) << "    TMB gemB-alct match window, BX                    = " << read_match_gemB_alct_window_    << std::endl;
     //(*MyOutput_) << "    TMB gemB-clct match window, BX                    = " << read_match_gemB_clct_window_    << std::endl;
-    (*MyOutput_) << "    TMB gemB fiber enabled for gem-csc match          = " << read_gemB_fiber_enable_    << std::endl;
     } else if ( address == gem_csc_match_ctrl_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X32c = ADR_GEM_CSC_MATCH_CTRL

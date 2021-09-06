@@ -3272,6 +3272,10 @@ private:
   //
   int read_tmb_firmware_version_;
   int read_tmb_firmware_revcode_;
+  //Run3 firmware revcode  = {format_version[3:0], major_version[3:0], minor_version[4:0]}
+  int read_tmb_firmware_format_version_;
+  int read_tmb_firmware_major_version_;
+  int read_tmb_firmware_minor_version_;
   int read_tmb_firmware_type_;
   int read_rat_firmware_month_;
   int read_rat_firmware_day_;
@@ -5019,12 +5023,33 @@ private:
   int h8_clock_lock_lost_err_;
   int h9_r_pretrig_counter_lsbs_;
   int h10_r_pretrig_counter_msbs_;
+  //run3 DAQ format 
+  int h10_hmt_bit0_;
+  int h10_clct0_key_bit10_;
+  int h10_run3_trig_df_;
+  int h10_clct0_cc_;
   int h11_r_clct_counter_lsbs_;
   int h12_r_clct_counter_msbs_;
+  //run3 DAQ format with GEM
+  int h12_lct0_nogem_, h12_lct0_with_gemA_, h12_lct0_with_gemB_, h12_lct0_with_copad_;
+  int h12_lct1_nogem_, h12_lct1_with_gemA_, h12_lct1_with_gemB_, h12_lct1_with_copad_;
+  int h12_gemA_vpf_, h12_gemB_vpf_;
+  int h12_gemA_overflow_, h12_gemB_overflow_;
+  int h12_gems_sync_, h12_gemA_sync_, h12_gemB_sync_;
   int h13_r_trig_counter_lsbs_;
   int h14_r_trig_counter_msbs_;
+  //run3 DAQ format 
+  int h14_hmt_bit1_;
+  int h14_clct1_key_bit10_;
+  int h14_gem_enable_;
+  int h14_clct1_cc_;
   int h15_r_alct_counter_lsbs_;
   int h16_r_alct_counter_msbs_;
+  //run3 DAQ format with GEM
+  int h16_alct_gem_win_;
+  int h16_gem_clct_win_;
+  int h16_gem_delay_;
+  int h16_num_copad_;
   int h17_r_orbit_counter_lsbs_;
   int h18_r_orbit_counter_msbs_;
   int h19_r_ncfebs_;
@@ -5043,6 +5068,10 @@ private:
   int h21_clct_window_;
   int h22_r_trig_source_vec_lsbs_;
   int h22_r_layers_hit_;
+  //run3 DAQ format
+  int h22_clct0_bnd_value_;
+  int h22_clct0_bnd_lr_;
+  int h22_clct1_bnd_lr_;
   int h23_active_feb_mux_lsbs_;
   int h23_r_cfebs_read_lsbs_;
   int h23_r_l1a_match_win_;
@@ -5075,6 +5104,8 @@ private:
   int h28_r_alct0_amu_;
   int h28_r_alct0_key_;
   int h28_r_alct_preClct_win_;
+  //run3 DAQ format
+  int h28_clct1_bnd_value_;
   int h29_r_alct1_valid_;
   int h29_r_alct1_quality_;
   int h29_r_alct1_amu_;
@@ -5088,6 +5119,8 @@ private:
   int h30_cfeb_badbits_blocked_;
   int h30_alct_cfg_done_;
   int h30_bx0_match_;
+  //run3 DAQ format
+  int h30_hmt_bit6to2_;
   int h31_r_mpc0_frame0_ff_lsbs_;
   int h32_r_mpc0_frame1_ff_lsbs_;
   int h33_r_mpc1_frame0_ff_lsbs_;
@@ -5104,6 +5137,7 @@ private:
   int h36_rpc_read_enable_;
   int h36_fifo_tbins_rpc_;
   int h36_fifo_pretrig_rpc_;
+  //run3 DAQ format with GEM
   int h36_gem_zero_suppress_;
   int h36_gem_read_enable_;
   int h36_fifo_tbins_gem_;
@@ -5131,6 +5165,8 @@ private:
   int h40_chamber_is_me11_;
   int h40_r_trig_source_vec_msbs_;
   int h40_r_tmb_trig_pulse_;
+  // run3DAQ format with GEM
+  int h40_gem_csc_bend_enable_;
   int h41_tmb_allow_alct_;
   int h41_tmb_allow_clct_;
   int h41_tmb_allow_match_;

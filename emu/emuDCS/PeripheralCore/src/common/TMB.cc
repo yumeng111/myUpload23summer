@@ -831,8 +831,16 @@ int TMB::FirmwareRevCode(){
   tmb_vme(VME_READ,vme_idreg3_adr,sndbuf,rcvbuf,NOW);
   //
   int data = (((rcvbuf[0]&0xff)<<8) | (rcvbuf[1]&0xff)) ;
+  //std::cout <<"Firwmare revcode from 0x"<< std::hex << data << std::endl; 
   //
-  read_tmb_firmware_revcode_ = (data>>12) & 0x000f ;
+  if (read_cclut_enable_){
+    read_tmb_firmware_revcode_ = data & 0x1fff;//13 bits 
+    read_tmb_firmware_format_version_       = (read_tmb_firmware_revcode_ >> 9) & 0xf;
+    read_tmb_firmware_major_version_        = (read_tmb_firmware_revcode_ >> 5) & 0xf;
+    read_tmb_firmware_minor_version_        = (read_tmb_firmware_revcode_     ) & 0x1f;
+  }
+  else 
+	  read_tmb_firmware_revcode_ = (data>>12) & 0x000f ;
   //
   return data;
   //
@@ -4319,19 +4327,50 @@ void TMB::DecodeTMBRawHitWord_(int address) {
     } else if (address == 9) {
         h9_r_pretrig_counter_lsbs_ = ExtractValueFromData(data , h9_r_pretrig_counter_lsbs_lo_bit , h9_r_pretrig_counter_lsbs_hi_bit);
     } else if (address == 10) {
-        h10_r_pretrig_counter_msbs_ = ExtractValueFromData(data , h10_r_pretrig_counter_msbs_lo_bit , h10_r_pretrig_counter_msbs_hi_bit);
+	h10_r_pretrig_counter_msbs_ = ExtractValueFromData(data , h10_r_pretrig_counter_msbs_lo_bit , h10_r_pretrig_counter_msbs_hi_bit);
+        //run3 DAQ format
+	h10_clct0_cc_        = ExtractValueFromData(data , h10_clct0_cc_lo_bit         , h10_clct0_cc_hi_bit);
+	h10_run3_trig_df_    = ExtractValueFromData(data , h10_run3_trig_df_lo_bit     , h10_run3_trig_df_hi_bit);
+	h10_clct0_key_bit10_ = ExtractValueFromData(data , h10_clct0_key_bit10_lo_bit  , h10_clct0_key_bit10_hi_bit);
+	h10_hmt_bit0_        = ExtractValueFromData(data , h10_hmt_bit0_lo_bit         , h10_hmt_bit0_hi_bit);
     } else if (address == 11) {
-        h11_r_clct_counter_lsbs_ = ExtractValueFromData(data, h11_r_clct_counter_lsbs_lo_bit, h11_r_clct_counter_lsbs_hi_bit);
+          h11_r_clct_counter_lsbs_ = ExtractValueFromData(data, h11_r_clct_counter_lsbs_lo_bit, h11_r_clct_counter_lsbs_hi_bit);
     } else if (address == 12) {
         h12_r_clct_counter_msbs_ = ExtractValueFromData(data , h12_r_clct_counter_msbs_lo_bit , h12_r_clct_counter_msbs_hi_bit);
+        //run3 DAQ format
+	h12_lct0_nogem_      = ExtractValueFromData(data , h12_lct0_nogem_lo_bit      , h12_lct0_nogem_hi_bit);
+	h12_lct0_with_gemA_  = ExtractValueFromData(data , h12_lct0_with_gemA_lo_bit  , h12_lct0_with_gemA_hi_bit);
+	h12_lct0_with_gemB_  = ExtractValueFromData(data , h12_lct0_with_gemB_lo_bit  , h12_lct0_with_gemB_hi_bit);
+	h12_lct0_with_copad_ = ExtractValueFromData(data , h12_lct0_with_copad_lo_bit , h12_lct0_with_copad_hi_bit);
+	h12_lct1_nogem_      = ExtractValueFromData(data , h12_lct1_nogem_lo_bit      , h12_lct1_nogem_hi_bit);
+	h12_lct1_with_gemA_  = ExtractValueFromData(data , h12_lct1_with_gemA_lo_bit  , h12_lct1_with_gemA_hi_bit);
+	h12_lct1_with_gemB_  = ExtractValueFromData(data , h12_lct1_with_gemB_lo_bit  , h12_lct1_with_gemB_hi_bit);
+	h12_lct1_with_copad_ = ExtractValueFromData(data , h12_lct1_with_copad_lo_bit , h12_lct1_with_copad_hi_bit);
+	h12_gemA_vpf_        = ExtractValueFromData(data , h12_gemA_vpf_lo_bit        , h12_gemA_vpf_hi_bit);
+	h12_gemA_overflow_   = ExtractValueFromData(data , h12_gemA_overflow_lo_bit   , h12_gemA_overflow_hi_bit);
+	h12_gemA_sync_       = ExtractValueFromData(data , h12_gemA_sync_lo_bit       , h12_gemA_sync_hi_bit);
+	h12_gemB_vpf_        = ExtractValueFromData(data , h12_gemB_vpf_lo_bit        , h12_gemB_vpf_hi_bit);
+	h12_gemB_overflow_   = ExtractValueFromData(data , h12_gemB_overflow_lo_bit   , h12_gemB_overflow_hi_bit);
+	h12_gemB_sync_       = ExtractValueFromData(data , h12_gemB_sync_lo_bit       , h12_gemB_sync_hi_bit);
+	h12_gems_sync_       = ExtractValueFromData(data , h12_gems_sync_lo_bit       , h12_gems_sync_hi_bit);
     } else if (address == 13) {
         h13_r_trig_counter_lsbs_ = ExtractValueFromData(data, h13_r_trig_counter_lsbs_lo_bit, h13_r_trig_counter_lsbs_hi_bit);
     } else if (address == 14) {
         h14_r_trig_counter_msbs_ = ExtractValueFromData(data , h14_r_trig_counter_msbs_lo_bit , h14_r_trig_counter_msbs_hi_bit);
+        //run3 DAQ format
+	h14_clct1_cc_        = ExtractValueFromData(data , h14_clct1_cc_lo_bit         , h14_clct1_cc_hi_bit);
+	h14_gem_enable_      = ExtractValueFromData(data , h14_gem_enable_lo_bit       , h14_gem_enable_hi_bit);
+	h14_clct1_key_bit10_ = ExtractValueFromData(data , h14_clct1_key_bit10_lo_bit  , h14_clct1_key_bit10_hi_bit);
+	h14_hmt_bit1_        = ExtractValueFromData(data , h14_hmt_bit1_lo_bit         , h14_hmt_bit1_hi_bit);
     } else if (address == 15) {
         h15_r_alct_counter_lsbs_ = ExtractValueFromData(data, h15_r_alct_counter_lsbs_lo_bit, h15_r_alct_counter_lsbs_hi_bit);
     } else if (address == 16) {
         h16_r_alct_counter_msbs_ = ExtractValueFromData(data , h16_r_alct_counter_msbs_lo_bit , h16_r_alct_counter_msbs_hi_bit);
+        //run3 DAQ format
+	h16_num_copad_    = ExtractValueFromData(data , h16_num_copad_lo_bit    , h16_num_copad_hi_bit);
+	h16_gem_delay_    = ExtractValueFromData(data , h16_gem_delay_lo_bit    , h16_gem_delay_hi_bit);
+	h16_gem_clct_win_ = ExtractValueFromData(data , h16_gem_clct_win_lo_bit , h16_gem_clct_win_hi_bit);
+	h16_alct_gem_win_ = ExtractValueFromData(data , h16_alct_gem_win_lo_bit , h16_alct_gem_win_hi_bit);
     } else if (address == 17) {
         h17_r_orbit_counter_lsbs_ = ExtractValueFromData(data, h17_r_orbit_counter_lsbs_lo_bit, h17_r_orbit_counter_lsbs_hi_bit);
     } else if (address == 18) {
@@ -4356,6 +4395,10 @@ void TMB::DecodeTMBRawHitWord_(int address) {
     } else if (address == 22) {
         h22_r_trig_source_vec_lsbs_ = ExtractValueFromData(data , h22_r_trig_source_vec_lsbs_lo_bit , h22_r_trig_source_vec_lsbs_hi_bit);
         h22_r_layers_hit_           = ExtractValueFromData(data , h22_r_layers_hit_lo_bit           , h22_r_layers_hit_hi_bit);
+        //run3 DAQ format
+	h22_clct0_bnd_value_ = ExtractValueFromData(data , h22_clct0_bnd_value_lo_bit , h22_clct0_bnd_value_hi_bit);
+	h22_clct0_bnd_lr_    = ExtractValueFromData(data , h22_clct0_bnd_lr_lo_bit    , h22_clct0_bnd_lr_hi_bit);
+	h22_clct1_bnd_lr_    = ExtractValueFromData(data , h22_clct1_bnd_lr_lo_bit    , h22_clct1_bnd_lr_hi_bit);
     } else if (address == 23) {
         h23_active_feb_mux_lsbs_ = ExtractValueFromData(data , h23_active_feb_mux_lsbs_lo_bit , h23_active_feb_mux_lsbs_hi_bit);
         h23_r_cfebs_read_lsbs_   = ExtractValueFromData(data , h23_r_cfebs_read_lsbs_lo_bit   , h23_r_cfebs_read_lsbs_hi_bit);
@@ -4394,6 +4437,8 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         h28_r_alct0_amu_        = ExtractValueFromData(data , h28_r_alct0_amu_lo_bit        , h28_r_alct0_amu_hi_bit);
         h28_r_alct0_key_        = ExtractValueFromData(data , h28_r_alct0_key_lo_bit        , h28_r_alct0_key_hi_bit);
         h28_r_alct_preClct_win_ = ExtractValueFromData(data , h28_r_alct_preClct_win_lo_bit , h28_r_alct_preClct_win_hi_bit);
+        //run3 DAQ format
+	h28_clct1_bnd_value_    = ExtractValueFromData(data , h28_clct1_bnd_value_lo_bit    , h28_clct1_bnd_value_hi_bit);
     } else if (address == 29) {
         h29_r_alct1_valid_   = ExtractValueFromData(data , h29_r_alct1_valid_lo_bit   , h29_r_alct1_valid_hi_bit);
         h29_r_alct1_quality_ = ExtractValueFromData(data , h29_r_alct1_quality_lo_bit , h29_r_alct1_quality_hi_bit);
@@ -4409,6 +4454,8 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         h30_cfeb_badbits_blocked_    = ExtractValueFromData(data , h30_cfeb_badbits_blocked_lo_bit    , h30_cfeb_badbits_blocked_hi_bit);
         h30_alct_cfg_done_           = ExtractValueFromData(data , h30_alct_cfg_done_lo_bit           , h30_alct_cfg_done_hi_bit);
         h30_bx0_match_               = ExtractValueFromData(data , h30_bx0_match_lo_bit               , h30_bx0_match_hi_bit);
+        //run3 DAQ format
+	h30_hmt_bit6to2_             = ExtractValueFromData(data , h30_hmt_bit6to2_lo_bit , h30_hmt_bit6to2_hi_bit);
     } else if (address == 31) {
         h31_r_mpc0_frame0_ff_lsbs_ = ExtractValueFromData(data , h31_r_mpc0_frame0_ff_lsbs_lo_bit , h31_r_mpc0_frame0_ff_lsbs_hi_bit);
     } else if (address == 32) {
@@ -4431,6 +4478,7 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         h36_rpc_read_enable_   = ExtractValueFromData(data , h36_rpc_read_enable_lo_bit   , h36_rpc_read_enable_hi_bit);
         h36_fifo_tbins_rpc_    = ExtractValueFromData(data , h36_fifo_tbins_rpc_lo_bit    , h36_fifo_tbins_rpc_hi_bit);
         h36_fifo_pretrig_rpc_  = ExtractValueFromData(data , h36_fifo_pretrig_rpc_lo_bit  , h36_fifo_pretrig_rpc_hi_bit);
+        //run3 DAQ format
         h36_gem_zero_suppress_ = ExtractValueFromData(data , h36_gem_zero_suppress_lo_bit , h36_gem_zero_suppress_hi_bit);
         h36_gem_read_enable_   = ExtractValueFromData(data , h36_gem_read_enable_lo_bit   , h36_gem_read_enable_hi_bit);
         h36_fifo_tbins_gem_    = ExtractValueFromData(data , h36_fifo_tbins_gem_lo_bit    , h36_fifo_tbins_gem_hi_bit);
@@ -4462,6 +4510,8 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         h40_chamber_is_me11_         = ExtractValueFromData(data , h40_chamber_is_me11_lo_bit         , h40_chamber_is_me11_hi_bit);
         h40_r_trig_source_vec_msbs_  = ExtractValueFromData(data , h40_r_trig_source_vec_msbs_lo_bit  , h40_r_trig_source_vec_msbs_hi_bit);
         h40_r_tmb_trig_pulse_        = ExtractValueFromData(data , h40_r_tmb_trig_pulse_lo_bit        , h40_r_tmb_trig_pulse_hi_bit);
+        //run3 DAQ format
+	h40_gem_csc_bend_enable_     = ExtractValueFromData(data , h40_gem_csc_bend_enable_lo_bit , h40_gem_csc_bend_enable_hi_bit);
     } else if (address == 41) {
         h41_tmb_allow_alct_       =  ExtractValueFromData(data , h41_tmb_allow_alct_lo_bit      , h41_tmb_allow_alct_hi_bit);
         h41_tmb_allow_clct_       =  ExtractValueFromData(data , h41_tmb_allow_clct_lo_bit      , h41_tmb_allow_clct_hi_bit);
@@ -4495,9 +4545,9 @@ void TMB::GEMRawhits() {
         status |= (igem & 0x3) << 3;
         WriteRegister (gem_debug_fifo_ctrl_adr, status);
         (*MyOutput_) <<
-        "|-------+-----+-------+-------+-------+-------+----------------|"<<std::endl <<
-        "| Fiber |  BX | clst0 | clst1 | clst2 | clst3 |  data packet   |"<<std::endl <<
-        "|-------+-----+-------+-------+-------+-------+----------------|"<<std::endl;
+        "|-------+-----+--------+--------+--------+--------+----------------|"<<std::endl <<
+        "| Fiber |  BX | clst0  | clst1  | clst2  | clst3  |  data packet   |"<<std::endl <<
+        "|-------+-----+--------+--------+--------+--------+----------------|"<<std::endl;
     for (int ibx=0; ibx<16; ibx++) {
         status = (unsigned short) ReadRegister(gem_debug_fifo_ctrl_adr);
         status &= ~(0x7FF << 5);
@@ -4517,17 +4567,20 @@ void TMB::GEMRawhits() {
 
         data = 0x3FFF & ReadRegister(gem_debug_fifo_data_adr);
 
-        unsigned short cluster_adr = (data >> 0) & 0x7FF;
-        unsigned short cluster_cnt = (data >>11) & 0x7;
+        //old GEM data format: {size[2:0], adr[10:0]}
+        //current GEM data format: {size[2:0], roll[2:0], pad[7:0]}
+        unsigned short cluster_pad  = (data >> 0) & 0xFF;
+        unsigned short cluster_roll = (data >> 8) & 0x7;
+        unsigned short cluster_cnt  = (data >>11) & 0x7;
 
         packet = packet | (((uint64_t) data)<<(14*icluster));
 
-        (*MyOutput_) << std::hex << std::setfill('0') << std::setw(1) << (cluster_cnt) << ":" << std::setw(3) << cluster_adr << " | ";
+        (*MyOutput_) << std::hex << std::setfill('0') << std::setw(1) << (cluster_cnt) << ":" << std::setw(1) << cluster_roll << ":" << std::setw(2) << cluster_pad << " | ";
     } // cluster
     (*MyOutput_) << std::hex << std::setfill('0') << std::setw(14) << (packet) << " |";
     (*MyOutput_) << std::endl;
     } // bx
-    (*MyOutput_) << "|-------+-----+-------+-------+-------+-------+----------------|"<<std::endl;
+    (*MyOutput_) << "|-------+-----+--------+--------+--------+--------+----------------|"<<std::endl;
     (*MyOutput_) << std::endl;
     } // gem
 
@@ -4542,6 +4595,9 @@ void TMB::GEMRawhits() {
 }
 //
 void TMB::PrintTMBRawHits() {
+    bool run3_daq_enable_nogem   = read_run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ == tmb_firmware_version_OTMBCCLUT_const;
+    bool run3_daq_enable_withgem = read_run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ == tmb_firmware_version_OTMBGEMCSC_const;
+
   //
   (*MyOutput_) << "Header 0:" << std::endl;
   (*MyOutput_) << " -> Beginning of Cathode record marker                      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h0_beginning_of_cathode_<<std::endl;
@@ -4586,25 +4642,60 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> CLCT pre-trigger counter, stop on ovf                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h9_r_pretrig_counter_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 10:" <<std::endl;
-  (*MyOutput_) << " -> CLCT pre-trigger counter                                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_r_pretrig_counter_msbs_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> CLCT0 comparator code                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_clct0_cc_<<std::endl;
+    (*MyOutput_) << " -> run3_trig_df                                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_run3_trig_df_<<std::endl;
+    (*MyOutput_) << " -> CLCT0 strip position 1/4 and 1/8 bits                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_clct0_key_bit10_<<std::endl;
+    (*MyOutput_) << " -> HMT in-time hits counter,bit0                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_hmt_bit0_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> CLCT pre-trigger counter                                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_r_pretrig_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 11:" <<std::endl;
   (*MyOutput_) << " -> CLCT post-drift counter, stop on ovf                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h11_r_clct_counter_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 12:" <<std::endl;
-  (*MyOutput_) << " -> CLCT post-drift counter                                 = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_r_clct_counter_msbs_<<std::endl;
+  if (run3_daq_enable_withgem){
+    (*MyOutput_) << " -> LCT0 without gem match                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct0_nogem_<<std::endl;
+    (*MyOutput_) << " -> LCT0 with gemA match                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct0_with_gemA_<<std::endl;
+    (*MyOutput_) << " -> LCT0 with gemB match                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct0_with_gemB_<<std::endl;
+    (*MyOutput_) << " -> LCT0 with copad match                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct0_with_copad_<<std::endl;
+    (*MyOutput_) << " -> LCT1 without gem match                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct1_nogem_<<std::endl;
+    (*MyOutput_) << " -> LCT1 with gemA match                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct1_with_gemA_<<std::endl;
+    (*MyOutput_) << " -> LCT1 with gemB match                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct1_with_gemB_<<std::endl;
+    (*MyOutput_) << " -> LCT1 with copad match                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct1_with_copad_<<std::endl;
+    (*MyOutput_) << " -> gemA has valid cluster                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemA_vpf_<<std::endl;
+    (*MyOutput_) << " -> gemB overflow                                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemB_overflow_<<std::endl;
+    (*MyOutput_) << " -> gemA overflow                                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemA_overflow_<<std::endl;
+    (*MyOutput_) << " -> gemB has valid cluster                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemB_vpf_<<std::endl;
+    (*MyOutput_) << " -> gemA two fibers synced                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemA_sync_<<std::endl;
+    (*MyOutput_) << " -> gemB two fibers synced                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemB_sync_<<std::endl;
+    (*MyOutput_) << " -> gemA and gemB  synced                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gems_sync_<<std::endl;
+  } else
+    (*MyOutput_) << " -> CLCT post-drift counter                                 = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_r_clct_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 13:" <<std::endl;
   (*MyOutput_) << " -> TMB trigger counter, stop on ovf                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h13_r_trig_counter_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 14:" <<std::endl;
-  (*MyOutput_) << " -> TMB trigger counter                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_r_trig_counter_msbs_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> CLCT1 comparator code                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_clct1_cc_<<std::endl;
+    (*MyOutput_) << " -> gem enable for gemcsc match                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_gem_enable_<<std::endl;
+    (*MyOutput_) << " -> CLCT1 strip position 1/4 and 1/8 bits                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_clct1_key_bit10_<<std::endl;
+    (*MyOutput_) << " -> HMT in-time hits counter,bit1                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_hmt_bit1_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> TMB trigger counter                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_r_trig_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 15:" <<std::endl;
   (*MyOutput_) << " -> Counts ALCTs received from ALCT board, stop on ovf      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h15_r_alct_counter_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 16:" <<std::endl;
-  (*MyOutput_) << " -> Counts ALCTs received from ALCT board, stop on ovf      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_r_alct_counter_msbs_<<std::endl;
+  if (run3_daq_enable_withgem){
+    (*MyOutput_) << " -> number of copads                                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_num_copad_<<std::endl;
+    (*MyOutput_) << " -> gem delay for gem-alct match                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_gem_delay_<<std::endl;
+    (*MyOutput_) << " -> gem location in clct match window                       = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_gem_clct_win_<<std::endl;
+    (*MyOutput_) << " -> alct location in gem match window                       = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_alct_gem_win_<<std::endl;
+  } else
+     (*MyOutput_) << " -> Counts ALCTs received from ALCT board, stop on ovf      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_r_alct_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 17:" <<std::endl;
   (*MyOutput_) << " -> BX0s since last hard reset, stop on ovf                 = 0x" << std::hex << std::setfill('0') << std::setw(4) << h17_r_orbit_counter_lsbs_<<std::endl;
@@ -4634,7 +4725,12 @@ void TMB::PrintTMBRawHits() {
 
   (*MyOutput_) << "Header 22:" <<std::endl;
   (*MyOutput_) << " -> Trigger source vector                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_r_trig_source_vec_lsbs_<<std::endl;
-  (*MyOutput_) << " -> CSC layers hit on layer trigger after drift             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_r_layers_hit_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> CLCT0 bend absolute value                               = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_clct0_bnd_value_<<std::endl;
+    (*MyOutput_) << " -> CLCT0 bend direction,CCLUT                              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_clct0_bnd_lr_<<std::endl;
+    (*MyOutput_) << " -> CLCT1 bend direction,CCLUT                              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_clct1_bnd_lr_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> CSC layers hit on layer trigger after drift             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_r_layers_hit_<<std::endl;
 
   (*MyOutput_) << "Header 23:" <<std::endl;
   (*MyOutput_) << " -> Active CFEB list sent to DMB                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h23_active_feb_mux_lsbs_<<std::endl;
@@ -4678,7 +4774,10 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> ALCT0 quality                                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct0_quality_<<std::endl;
   (*MyOutput_) << " -> ALCT0 accelerator muon flag                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct0_amu_<<std::endl;
   (*MyOutput_) << " -> ALCT0 key wire group                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct0_key_<<std::endl;
-  (*MyOutput_) << " -> ALCT active_feb_flag position in pretrig window         = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct_preClct_win_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> CLCT1 bend absolute value, CCLUT                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_clct1_bnd_value_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> ALCT active_feb_flag position in pretrig window         = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct_preClct_win_<<std::endl;
 
   (*MyOutput_) << "Header 29:" <<std::endl;
   (*MyOutput_) << " -> ALCT1 valid pattern flag                                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h29_r_alct1_valid_<<std::endl;
@@ -4690,7 +4789,10 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> Layer-mode trigger                                      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h29_hs_layer_trig_<<std::endl;
 
   (*MyOutput_) << "Header 30:" <<std::endl;
-  (*MyOutput_) << " -> ALCT0/1 bxn                                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_r_alct_bxn_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> HMT in-time hits counter[6:2]                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_hmt_bit6to2_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> ALCT0/1 bxn                                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_r_alct_bxn_<<std::endl;
   (*MyOutput_) << " -> ALCT trigger path ECC error code                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_r_alct_ecc_err_<<std::endl;
   (*MyOutput_) << " -> CFEB[n] has at least 1 bad bit                          = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_cfeb_badbits_found_lsbs_<<std::endl;
   (*MyOutput_) << " -> A CFEB had bad bits that were blocked                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_cfeb_badbits_blocked_<<std::endl;
@@ -4719,20 +4821,18 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> CFEBs enabled for triggering                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h35_cfeb_en_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 36:" <<std::endl;
-  if (!GetGemEnabled())
+  if (run3_daq_enable_withgem){
+  (*MyOutput_) << " -> GEM zero-suppression enabled                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_gem_zero_suppress_<<std::endl;
+  (*MyOutput_) << " -> GEM readout enabled                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_gem_read_enable_<<std::endl;
+  (*MyOutput_) << " -> Number GEM FIFO time bins to read out                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_tbins_gem_<<std::endl;
+  (*MyOutput_) << " -> Number GEM FIFO time bins before pretrigger             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_pretrig_gem_<<std::endl;
+  } else
   {
   (*MyOutput_) << " -> RPCs included in read out                               = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_rd_list_rpc_<<std::endl;
   (*MyOutput_) << " -> Number of RPCs in readout, 0,1,2, 0 if head-only event  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_r_nrpcs_read_<<std::endl;
   (*MyOutput_) << " -> RPC readout enabled                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_rpc_read_enable_<<std::endl;
   (*MyOutput_) << " -> Number RPC FIFO time bins to read out                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_tbins_rpc_<<std::endl;
   (*MyOutput_) << " -> Number RPC FIFO time bins before pretrigger             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_pretrig_rpc_<<std::endl;
-  }
-  else
-  {
-  (*MyOutput_) << " -> GEM zero-suppression enabled                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_gem_zero_suppress_<<std::endl;
-  (*MyOutput_) << " -> GEM readout enabled                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_gem_read_enable_<<std::endl;
-  (*MyOutput_) << " -> Number GEM FIFO time bins to read out                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_tbins_gem_<<std::endl;
-  (*MyOutput_) << " -> Number GEM FIFO time bins before pretrigger             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_pretrig_gem_<<std::endl;
   }
 
   (*MyOutput_) << "Header 37:" <<std::endl;
@@ -4762,7 +4862,10 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> Hdr30 CFEB[n] has at least 1 bad bit                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_cfeb_badbits_found_msbs_<<std::endl;
   (*MyOutput_) << " -> Hdr35 CFEBs enabled for triggering                      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_cfeb_en_msbs_<<std::endl;
   (*MyOutput_) << " -> Current fence is peak number of fences in RAM           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_buf_fence_cnt_is_peak_<<std::endl;
-  (*MyOutput_) << " -> chamber_is_me11                                         = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_chamber_is_me11_<<std::endl;
+  if (run3_daq_enable_withgem){
+    (*MyOutput_) << " -> enable gem-csc bend for LCT bend                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_gem_csc_bend_enable_<<std::endl;
+  } else
+    (*MyOutput_) << " -> chamber_is_me11                                         = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_chamber_is_me11_<<std::endl;
   (*MyOutput_) << " -> Pre-trigger was ME1A/ME1B                               = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_r_trig_source_vec_msbs_<<std::endl;
   (*MyOutput_) << " -> TMB trig pulse coincident with rtmb_push                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_r_tmb_trig_pulse_<<std::endl;
 
@@ -10489,7 +10592,12 @@ void TMB::PrintFirmwareDate() {
 	       << GetReadTmbFirmwareDay() << std::endl;
   (*MyOutput_) << "-> TMB Firmware type   : " << std::hex << GetReadTmbFirmwareType()    << std::endl;
   (*MyOutput_) << "-> TMB Firmware version: " << std::hex << GetReadTmbFirmwareVersion() << std::endl;
-  (*MyOutput_) << "-> TMB Firmware RevCode: " << std::hex << GetReadTmbFirmwareRevcode() << std::endl;
+  if (read_cclut_enable_){
+	  (*MyOutput_) << "-> TMB Firmware RevCode(Run3): format_verison=0x" << std::hex << read_tmb_firmware_format_version_ 
+		<<" major_version=0x" << read_tmb_firmware_major_version_<<" minor_version=0x"<< read_tmb_firmware_minor_version_ << std::endl;
+  } else 
+	  (*MyOutput_) << "-> TMB Firmware RevCode: " << std::hex << GetReadTmbFirmwareRevcode() << std::endl;
+
   (*MyOutput_) << "... ... ...  " <<HasGroupedME11ABCFEBRxValues() <<  std::endl;
   //
   return;

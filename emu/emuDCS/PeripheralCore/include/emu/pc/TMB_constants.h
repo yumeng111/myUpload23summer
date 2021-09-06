@@ -4788,7 +4788,11 @@ const int h6_bd_status_hi_bit   =14;
 // Firmware version date code
 const int h7_revcode_lo_bit   =0;
 const int h7_revcode_hi_bit   =14;
-
+//for Run3 format version definition
+const int tmb_firmware_version_TMBRun2_const    = 0;
+const int tmb_firmware_version_OTMBRun2_const   = 1;
+const int tmb_firmware_version_OTMBCCLUT_const  = 2;
+const int tmb_firmware_version_OTMBGEMCSC_const = 3;
 
 // Full Header-mode words 8-to-EOB: Event Counters
 
@@ -4816,6 +4820,17 @@ const int h9_r_pretrig_counter_lsbs_hi_bit   =14;
 const int h10_r_pretrig_counter_msbs_lo_bit   =0;
 const int h10_r_pretrig_counter_msbs_hi_bit   =14;
 
+//run3 DAQ format 
+const int h10_clct0_cc_lo_bit =0;
+const int h10_clct0_cc_hi_bit =10;
+const int h10_run3_trig_df_lo_bit =11;
+const int h10_run3_trig_df_hi_bit =11;
+const int h10_clct0_key_bit10_lo_bit =12;
+const int h10_clct0_key_bit10_hi_bit =13;
+const int h10_hmt_bit0_lo_bit = 14;
+const int h10_hmt_bit0_hi_bit = 14;
+
+
 // CLCT post-drift counter, stop on ovf
 const int h11_r_clct_counter_lsbs_lo_bit   =0;
 const int h11_r_clct_counter_lsbs_hi_bit   =14;
@@ -4823,6 +4838,38 @@ const int h11_r_clct_counter_lsbs_hi_bit   =14;
 // CLCT post-drift counter
 const int h12_r_clct_counter_msbs_lo_bit   =0;
 const int h12_r_clct_counter_msbs_hi_bit   =14;
+
+  //run3 DAQ format with GEM
+const int h12_lct0_nogem_lo_bit      =0;
+const int h12_lct0_nogem_hi_bit      =0;
+const int h12_lct0_with_gemA_lo_bit  =1; 
+const int h12_lct0_with_gemA_hi_bit  =1; 
+const int h12_lct0_with_gemB_lo_bit  =2;
+const int h12_lct0_with_gemB_hi_bit  =2;
+const int h12_lct0_with_copad_lo_bit =3;
+const int h12_lct0_with_copad_hi_bit =3;
+const int h12_lct1_nogem_lo_bit      =4;
+const int h12_lct1_nogem_hi_bit      =4;
+const int h12_lct1_with_gemA_lo_bit  =5; 
+const int h12_lct1_with_gemA_hi_bit  =5; 
+const int h12_lct1_with_gemB_lo_bit  =6;
+const int h12_lct1_with_gemB_hi_bit  =6;
+const int h12_lct1_with_copad_lo_bit =7;
+const int h12_lct1_with_copad_hi_bit =7;
+const int h12_gemA_vpf_lo_bit =8;
+const int h12_gemA_vpf_hi_bit =8;
+const int h12_gemB_vpf_lo_bit =9;
+const int h12_gemB_vpf_hi_bit =9;
+const int h12_gemA_overflow_lo_bit =10;
+const int h12_gemA_overflow_hi_bit =10;
+const int h12_gemB_overflow_lo_bit =11;
+const int h12_gemB_overflow_hi_bit =11;
+const int h12_gemA_sync_lo_bit =12; 
+const int h12_gemA_sync_hi_bit =12; 
+const int h12_gemB_sync_lo_bit =13;
+const int h12_gemB_sync_hi_bit =13;
+const int h12_gems_sync_lo_bit =14;
+const int h12_gems_sync_hi_bit =14;
 
 // TMB trigger counter, stop on ovf
 const int h13_r_trig_counter_lsbs_lo_bit   =0;
@@ -4832,6 +4879,15 @@ const int h13_r_trig_counter_lsbs_hi_bit   =14;
 const int h14_r_trig_counter_msbs_lo_bit   =0;
 const int h14_r_trig_counter_msbs_hi_bit   =14;
 
+  //run3 DAQ format 
+const int h14_clct1_cc_lo_bit = 0;
+const int h14_clct1_cc_hi_bit = 10;
+const int h14_gem_enable_lo_bit = 11;
+const int h14_gem_enable_hi_bit = 11;
+const int h14_clct1_key_bit10_lo_bit =12;
+const int h14_clct1_key_bit10_hi_bit =13;
+const int h14_hmt_bit1_lo_bit =14;
+const int h14_hmt_bit1_hi_bit =14;
 // Counts ALCTs received from ALCT board, stop on ovf
 const int h15_r_alct_counter_lsbs_lo_bit   =0;
 const int h15_r_alct_counter_lsbs_hi_bit   =14;
@@ -4840,6 +4896,15 @@ const int h15_r_alct_counter_lsbs_hi_bit   =14;
 const int h16_r_alct_counter_msbs_lo_bit   =0;
 const int h16_r_alct_counter_msbs_hi_bit   =14;
 
+  //run3 DAQ format with GEM
+const int h16_num_copad_lo_bit =0;
+const int h16_num_copad_hi_bit =3;
+const int h16_gem_delay_lo_bit =4;
+const int h16_gem_delay_hi_bit =7;
+const int h16_gem_clct_win_lo_bit =8;
+const int h16_gem_clct_win_hi_bit =11;
+const int h16_alct_gem_win_lo_bit = 12;
+const int h16_alct_gem_win_hi_bit = 14;
 // BX0s since last hard reset, stop on ovf
 const int h17_r_orbit_counter_lsbs_lo_bit   =0;
 const int h17_r_orbit_counter_lsbs_hi_bit   =14;
@@ -4921,6 +4986,13 @@ const int h22_r_trig_source_vec_lsbs_hi_bit   =8;
 const int h22_r_layers_hit_lo_bit   =9;
 const int h22_r_layers_hit_hi_bit   =14;
 
+  //run3 DAQ format
+const int h22_clct0_bnd_value_lo_bit =9;
+const int h22_clct0_bnd_value_hi_bit =12;
+const int h22_clct0_bnd_lr_lo_bit    =13;
+const int h22_clct0_bnd_lr_hi_bit    =13;
+const int h22_clct1_bnd_lr_lo_bit = 14;
+const int h22_clct1_bnd_lr_hi_bit = 14;
 // Active CFEB list sent to DMB
 const int h23_active_feb_mux_lsbs_lo_bit   =0;
 const int h23_active_feb_mux_lsbs_hi_bit   =4;
@@ -5060,6 +5132,9 @@ const int h28_r_alct0_key_hi_bit   =10;
 const int h28_r_alct_preClct_win_lo_bit   =11;
 const int h28_r_alct_preClct_win_hi_bit   =14;
 
+  //run3 DAQ format
+const int h28_clct1_bnd_value_lo_bit = 11;
+const int h28_clct1_bnd_value_hi_bit = 14;
 // ALCT1 valid pattern flag
 const int h29_r_alct1_valid_lo_bit   =0;
 const int h29_r_alct1_valid_hi_bit   =0;
@@ -5112,6 +5187,9 @@ const int h30_alct_cfg_done_hi_bit   =13;
 const int h30_bx0_match_lo_bit   =14;
 const int h30_bx0_match_hi_bit   =14;
 
+  //run3 DAQ format
+const int h30_hmt_bit6to2_lo_bit =0;
+const int h30_hmt_bit6to2_hi_bit =4;
 
 // MPC Frames
 
@@ -5295,6 +5373,9 @@ const int h40_r_trig_source_vec_msbs_hi_bit   =13;
 const int h40_r_tmb_trig_pulse_lo_bit   =14;
 const int h40_r_tmb_trig_pulse_hi_bit   =14;
 
+  // run3DAQ format with GEM
+const int h40_gem_csc_bend_enable_lo_bit =11;
+const int h40_gem_csc_bend_enable_hi_bit =11;
 // Allow ALCT-only  tmb-matching trigger
 const int h41_tmb_allow_alct_lo_bit   =0;
 const int h41_tmb_allow_alct_hi_bit   =0;

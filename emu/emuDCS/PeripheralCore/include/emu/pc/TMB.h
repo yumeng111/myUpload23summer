@@ -2576,6 +2576,18 @@ public:
   inline int Gethmt_thresh1()      {return hmt_thresh1_;}
   inline int Gethmt_thresh2()      {return hmt_thresh2_;}
   inline int Gethmt_thresh3()      {return hmt_thresh3_;}
+
+  int GetReadCfebAllowHmtRo()         {return read_cfeb_allow_hmt_ro_;}
+  int GetReadTmbAllowHmt()            {return read_tmb_allow_hmt_;}
+  int GetReadTmbAllowHmtRo()            {return read_tmb_allow_hmt_ro_;}
+  
+  void SetCfebAllowHmtRo(int cfeb_allow_hmt_ro)         { cfeb_allow_hmt_ro_ = cfeb_allow_hmt_ro;}
+  void SetTmbAllowHmt   (int tmb_allow_hmt)             { tmb_allow_hmt_     = tmb_allow_hmt;}
+  void SetTmbAllowHmtRo (int tmb_allow_hmt_ro)          { tmb_allow_hmt_ro_  = tmb_allow_hmt_ro;}
+  
+  inline int GetCfebAllowHmtRo()         {return cfeb_allow_hmt_ro_;}
+  inline int GetTmbAllowHmt()            {return tmb_allow_hmt_;}
+  inline int GetTmbAllowHmtRo()          {return tmb_allow_hmt_ro_;}
   //
   ////---------------------------------------------------------------------
   ////ADR_LCT_INJECTION = 0x1B8
@@ -2762,15 +2774,20 @@ public:
   // 0X318 GEM_CSC_MATCH_WINDOW
   //-----------------------------------------------------------------------------
 
-  inline int   GetGemClctDeltahs ()                                { return gem_clct_deltahs_ ;}
-  inline void  SetGemClctDeltahs (int gem_clct_deltahs)            { gem_clct_deltahs_ = gem_clct_deltahs;}
-  inline int   GetGemAlctDeltawire ()                              { return gem_alct_deltawire_ ;}
-  inline void  SetGemAlctDeltawire (int gem_alct_deltawire)        { gem_alct_deltawire_ = gem_alct_deltawire;}
-  inline int   GetGemClctEnable ()                                 { return gem_clct_enable_ ;}
-  inline void  SetGemClctEnable (int gem_clct_enable)              { gem_clct_enable_ = gem_clct_enable;}
-  inline int   GetGemAlctEnable ()                                 { return gem_alct_enable_ ;}
-  inline void  SetGemAlctEnable (int gem_alct_enable)              { gem_alct_enable_ = gem_alct_enable;}
+  inline int   GetGemClctDeltahsOdd  ()                                { return gem_clct_deltahs_odd_ ;}
+  inline void  SetGemClctDeltahsOdd  (int gem_clct_deltahs_odd)        {        gem_clct_deltahs_odd_ = gem_clct_deltahs_odd;}
+  inline int   GetGemClctDeltahsEven ()                                { return gem_clct_deltahs_even_ ;}
+  inline void  SetGemClctDeltahsEven (int gem_clct_deltahs_even)       {        gem_clct_deltahs_even_ = gem_clct_deltahs_even;}
+  inline int   GetGemAlctDeltawireOdd  ()                              { return gem_alct_deltawire_odd_ ;}
+  inline void  SetGemAlctDeltawireOdd  (int gem_alct_deltawire_odd)    { gem_alct_deltawire_odd_ = gem_alct_deltawire_odd;}
+  inline int   GetGemAlctDeltawireEven ()                              { return gem_alct_deltawire_even_ ;}
+  inline void  SetGemAlctDeltawireEven (int gem_alct_deltawire_even)   { gem_alct_deltawire_even_ = gem_alct_deltawire_even;}
 
+
+  inline int  GetReadClctDeltahsOdd   ()                               {return read_gem_clct_deltahs_odd_;}
+  inline int  GetReadClctDeltahsEven  ()                               {return read_gem_clct_deltahs_even_;}
+  inline int  GetReadAlctDeltawireOdd ()                               {return read_gem_alct_deltawire_odd_;}
+  inline int  GetReadAlctDeltawireEven()                               {return read_gem_alct_deltawire_even_;}
   //-----------------------------------------------------------------------------
   // 0X324 GEM_COPAD_CTRL
   //-----------------------------------------------------------------------------
@@ -2782,6 +2799,9 @@ public:
   inline void SetGemMatchNeighborPad (int gem_match_neighborPad)        { gem_match_neighborPad_ = gem_match_neighborPad;}
   inline void SetGemMatchDeltaPad (int gem_match_deltaPad)              { gem_match_deltaPad_ = gem_match_deltaPad;}
 
+  inline int  GetReadGemMatchNeighborRoll ()                                { return read_gem_match_neighborRoll_ ;}
+  inline int  GetReadGemMatchNeighborPad ()                                 { return read_gem_match_neighborPad_ ;}
+  inline int  GetReadGemMatchDeltaPad ()                                    { return read_gem_match_deltaPad_ ;}
   //-----------------------------------------------------------------------------
   // 0X326 GEM_BX0_DELAY
   //-----------------------------------------------------------------------------
@@ -3187,7 +3207,7 @@ private:
   int ALCT1_data_;
   //
   // The following is actually the MaxCounter in TMB + 1 (i.e., they count from 0)
-  static const int MaxCounter = 96;
+  static const int MaxCounter = 106;//add 10 counters for HMT
   static const int MaxGEMCounter = 120;
   int FinalCounter[MaxCounter+40];
   int FinalGEMCounter[MaxGEMCounter+1];
@@ -3252,6 +3272,10 @@ private:
   //
   int read_tmb_firmware_version_;
   int read_tmb_firmware_revcode_;
+  //Run3 firmware revcode  = {format_version[3:0], major_version[3:0], minor_version[4:0]}
+  int read_tmb_firmware_format_version_;
+  int read_tmb_firmware_major_version_;
+  int read_tmb_firmware_minor_version_;
   int read_tmb_firmware_type_;
   int read_rat_firmware_month_;
   int read_rat_firmware_day_;
@@ -4715,12 +4739,18 @@ private:
   int hmt_thresh2_pass_;
   int hmt_thresh3_;
   int hmt_thresh3_pass_;
+  int cfeb_allow_hmt_ro_;
+  int tmb_allow_hmt_;
+  int tmb_allow_hmt_ro_;
   int read_hmt_thresh1_;
   int read_hmt_thresh1_pass_;
   int read_hmt_thresh2_;
   int read_hmt_thresh2_pass_;
   int read_hmt_thresh3_;
   int read_hmt_thresh3_pass_;
+  int read_cfeb_allow_hmt_ro_;
+  int read_tmb_allow_hmt_;
+  int read_tmb_allow_hmt_ro_;
   //------------------------------------------------------------------
   //0X1B4 = ADR_HMT_NHITS_SIG: nhits in bx678  (Tao, 2020)
   //0X1B6 = ADR_HMT_NHITS_BKG: nhits in bx2345  (Tao, 2020)
@@ -4802,17 +4832,15 @@ private:
 
   //int gem_trg_enable_;
   //int read_gem_trg_enable_;
-  int gem_clct_deltahs_;
-  int read_gem_clct_deltahs_;
+  int      gem_clct_deltahs_odd_;
+  int      gem_clct_deltahs_even_;
+  int read_gem_clct_deltahs_odd_;
+  int read_gem_clct_deltahs_even_;
 
-  int gem_alct_deltawire_;
-  int read_gem_alct_deltawire_;
-
-  int gem_clct_enable_;
-  int read_gem_clct_enable_;
-
-  int gem_alct_enable_;
-  int read_gem_alct_enable_;
+  int      gem_alct_deltawire_odd_;
+  int      gem_alct_deltawire_even_;
+  int read_gem_alct_deltawire_odd_;
+  int read_gem_alct_deltawire_even_;
   //
   //-----------------------------------------------------------------------------
   // 0X324 ADR_GEM_COPAD_CTRL
@@ -4995,12 +5023,33 @@ private:
   int h8_clock_lock_lost_err_;
   int h9_r_pretrig_counter_lsbs_;
   int h10_r_pretrig_counter_msbs_;
+  //run3 DAQ format 
+  int h10_hmt_bit0_;
+  int h10_clct0_key_bit10_;
+  int h10_run3_trig_df_;
+  int h10_clct0_cc_;
   int h11_r_clct_counter_lsbs_;
   int h12_r_clct_counter_msbs_;
+  //run3 DAQ format with GEM
+  int h12_lct0_nogem_, h12_lct0_with_gemA_, h12_lct0_with_gemB_, h12_lct0_with_copad_;
+  int h12_lct1_nogem_, h12_lct1_with_gemA_, h12_lct1_with_gemB_, h12_lct1_with_copad_;
+  int h12_gemA_vpf_, h12_gemB_vpf_;
+  int h12_gemA_overflow_, h12_gemB_overflow_;
+  int h12_gems_sync_, h12_gemA_sync_, h12_gemB_sync_;
   int h13_r_trig_counter_lsbs_;
   int h14_r_trig_counter_msbs_;
+  //run3 DAQ format 
+  int h14_hmt_bit1_;
+  int h14_clct1_key_bit10_;
+  int h14_gem_enable_;
+  int h14_clct1_cc_;
   int h15_r_alct_counter_lsbs_;
   int h16_r_alct_counter_msbs_;
+  //run3 DAQ format with GEM
+  int h16_alct_gem_win_;
+  int h16_gem_clct_win_;
+  int h16_gem_delay_;
+  int h16_num_copad_;
   int h17_r_orbit_counter_lsbs_;
   int h18_r_orbit_counter_msbs_;
   int h19_r_ncfebs_;
@@ -5019,6 +5068,10 @@ private:
   int h21_clct_window_;
   int h22_r_trig_source_vec_lsbs_;
   int h22_r_layers_hit_;
+  //run3 DAQ format
+  int h22_clct0_bnd_value_;
+  int h22_clct0_bnd_lr_;
+  int h22_clct1_bnd_lr_;
   int h23_active_feb_mux_lsbs_;
   int h23_r_cfebs_read_lsbs_;
   int h23_r_l1a_match_win_;
@@ -5051,6 +5104,8 @@ private:
   int h28_r_alct0_amu_;
   int h28_r_alct0_key_;
   int h28_r_alct_preClct_win_;
+  //run3 DAQ format
+  int h28_clct1_bnd_value_;
   int h29_r_alct1_valid_;
   int h29_r_alct1_quality_;
   int h29_r_alct1_amu_;
@@ -5064,6 +5119,8 @@ private:
   int h30_cfeb_badbits_blocked_;
   int h30_alct_cfg_done_;
   int h30_bx0_match_;
+  //run3 DAQ format
+  int h30_hmt_bit6to2_;
   int h31_r_mpc0_frame0_ff_lsbs_;
   int h32_r_mpc0_frame1_ff_lsbs_;
   int h33_r_mpc1_frame0_ff_lsbs_;
@@ -5080,6 +5137,7 @@ private:
   int h36_rpc_read_enable_;
   int h36_fifo_tbins_rpc_;
   int h36_fifo_pretrig_rpc_;
+  //run3 DAQ format with GEM
   int h36_gem_zero_suppress_;
   int h36_gem_read_enable_;
   int h36_fifo_tbins_gem_;
@@ -5107,6 +5165,8 @@ private:
   int h40_chamber_is_me11_;
   int h40_r_trig_source_vec_msbs_;
   int h40_r_tmb_trig_pulse_;
+  // run3DAQ format with GEM
+  int h40_gem_csc_bend_enable_;
   int h41_tmb_allow_alct_;
   int h41_tmb_allow_clct_;
   int h41_tmb_allow_match_;

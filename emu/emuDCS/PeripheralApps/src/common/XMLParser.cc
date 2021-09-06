@@ -331,7 +331,7 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
 
   int slot = 0;
   fillInt("slot", slot);
-//  std::cout << "Inside TMBParser..."<<std::endl;
+  //std::cout << "Inside TMBParser... slot "<< slot <<std::endl;
   if(slot == 0) {
     std::cerr << "No slot specified for TMB! " << std::endl;
   } else {
@@ -545,6 +545,9 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
     if (fillInt("hmt_thresh1"               ,value)) { tmb_->Sethmt_thresh1                (value);}
     if (fillInt("hmt_thresh2"               ,value)) { tmb_->Sethmt_thresh2                (value);}
     if (fillInt("hmt_thresh3"               ,value)) { tmb_->Sethmt_thresh3                (value);}
+    if (fillInt("cfeb_allow_hmt_ro"         ,value)) { tmb_->SetCfebAllowHmtRo          (value);}
+    if (fillInt("tmb_allow_hmt"             ,value)) { tmb_->SetTmbAllowHmt              (value);}
+    if (fillInt("tmb_allow_hmt_ro"          ,value)) { tmb_->SetTmbAllowHmtRo           (value);}
     ////0x1B8 = ADR_LCT_INJECTION
     //if (fillInt("lct_inj_hs"               ,value)) { tmb_->Setlct_inj_hs                (value);}
     //if (fillInt("lct_inj_wg"               ,value)) { tmb_->Setlct_inj_wg                (value);}
@@ -713,10 +716,10 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
         if (fillInt ("gem_readout_mask"           , value)) { tmb_->SetGemReadoutMask         (value);}
 
         //0x318
-        if (fillInt ("gem_clct_deltahs"     , value)) { tmb_->SetGemClctDeltahs        (value);}
-        if (fillInt ("gem_clct_enable"      , value)) { tmb_->SetGemClctEnable         (value); }
-        if (fillInt ("gem_alct_deltawire"   , value)) { tmb_->SetGemAlctDeltawire        (value);}
-        if (fillInt ("gem_alct_enable"      , value)) { tmb_->SetGemAlctEnable         (value); }
+        if (fillInt ("gem_clct_deltahs_odd"      , value)) { tmb_->SetGemClctDeltahsOdd     (value);}
+        if (fillInt ("gem_clct_deltahs_even"     , value)) { tmb_->SetGemClctDeltahsEven    (value);}
+        if (fillInt ("gem_alct_deltawire_odd"    , value)) { tmb_->SetGemAlctDeltawireOdd        (value);}
+        if (fillInt ("gem_alct_deltawire_even"   , value)) { tmb_->SetGemAlctDeltawireEven       (value);}
 
         //0x324
         if (fillInt ("gem_match_neighborRoll"    , value)) { tmb_->SetGemMatchNeighborRoll        (value);}
@@ -1125,7 +1128,7 @@ void XMLParser::CSCParser(xercesc::DOMNode * pNode, Crate * theCrate, xercesc::D
   //
   while (pNode1) {
     if (pNode1->getNodeType() == xercesc::DOMNode::ELEMENT_NODE) {
-      // std::cout << "PeripheralCrateParser: pNode1=" << xercesc::XMLString::transcode(pNode1->getNodeName()) << std::endl;
+       //std::cout << "PeripheralCrateParser: pNode1=" << xercesc::XMLString::transcode(pNode1->getNodeName()) << std::endl;
       //
       if (strcmp("DAQMB",xercesc::XMLString::transcode(pNode1->getNodeName()))==0) {  
 	DAQMBParser(pNode1, theCrate, csc_);

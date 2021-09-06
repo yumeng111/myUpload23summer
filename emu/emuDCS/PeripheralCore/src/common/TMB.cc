@@ -831,8 +831,16 @@ int TMB::FirmwareRevCode(){
   tmb_vme(VME_READ,vme_idreg3_adr,sndbuf,rcvbuf,NOW);
   //
   int data = (((rcvbuf[0]&0xff)<<8) | (rcvbuf[1]&0xff)) ;
+  //std::cout <<"Firwmare revcode from 0x"<< std::hex << data << std::endl; 
   //
-  read_tmb_firmware_revcode_ = (data>>12) & 0x000f ;
+  if (read_cclut_enable_){
+    read_tmb_firmware_revcode_ = data & 0x1fff;//13 bits 
+    read_tmb_firmware_format_version_       = (read_tmb_firmware_revcode_ >> 9) & 0xf;
+    read_tmb_firmware_major_version_        = (read_tmb_firmware_revcode_ >> 5) & 0xf;
+    read_tmb_firmware_minor_version_        = (read_tmb_firmware_revcode_     ) & 0x1f;
+  }
+  else 
+	  read_tmb_firmware_revcode_ = (data>>12) & 0x000f ;
   //
   return data;
   //
@@ -2593,6 +2601,17 @@ std::string TMB::CounterName(int counter){
   if( counter == 93 ) name =  "CLCT: sequential trigger counter                        ";//Tao, algo2016
   if( counter == 94 ) name =  "CLCT: checking pretrigger in last 4BX                   ";//Tao, algo2016
   if( counter == 95 ) name =  "TMB: ALCT-CLCT BX0 match                                ";//Tao, 201908
+  if( counter == 96 ) name =  "TMB: hmt over threshold1(loose)                         ";//Tao, 201908
+  if( counter == 97 ) name =  "TMB: hmt over threshold2(median)                        ";//Tao, 202108
+  if( counter == 98 ) name =  "TMB: hmt over threshold3(tight)                         ";//Tao, 202108
+  if( counter == 99 ) name =  "TMB: hmt+preCLCT coincidence                            ";//Tao, 202108
+  if( counter == 100) name =  "TMB: hmt+CLCT coincidence                               ";//Tao, 202108
+  if( counter == 101) name =  "TMB: hmt+LCT coincidence                                ";//Tao, 202108
+  if( counter == 102) name =  "TMB: trigger pulse source from HMT only (no LCT)        ";//Tao, 202108
+  if( counter == 103) name =  "TMB: trigger keep source from HMT only                  ";//Tao, 202108
+  if( counter == 104) name =  "TMB: fired HMT in signal time region                    ";//Tao, 202108
+  if( counter == 105) name =  "TMB: fired HMT in signal and background time region     ";//Tao, 202108
+
   //
   return name;
 }
@@ -4308,19 +4327,50 @@ void TMB::DecodeTMBRawHitWord_(int address) {
     } else if (address == 9) {
         h9_r_pretrig_counter_lsbs_ = ExtractValueFromData(data , h9_r_pretrig_counter_lsbs_lo_bit , h9_r_pretrig_counter_lsbs_hi_bit);
     } else if (address == 10) {
-        h10_r_pretrig_counter_msbs_ = ExtractValueFromData(data , h10_r_pretrig_counter_msbs_lo_bit , h10_r_pretrig_counter_msbs_hi_bit);
+	h10_r_pretrig_counter_msbs_ = ExtractValueFromData(data , h10_r_pretrig_counter_msbs_lo_bit , h10_r_pretrig_counter_msbs_hi_bit);
+        //run3 DAQ format
+	h10_clct0_cc_        = ExtractValueFromData(data , h10_clct0_cc_lo_bit         , h10_clct0_cc_hi_bit);
+	h10_run3_trig_df_    = ExtractValueFromData(data , h10_run3_trig_df_lo_bit     , h10_run3_trig_df_hi_bit);
+	h10_clct0_key_bit10_ = ExtractValueFromData(data , h10_clct0_key_bit10_lo_bit  , h10_clct0_key_bit10_hi_bit);
+	h10_hmt_bit0_        = ExtractValueFromData(data , h10_hmt_bit0_lo_bit         , h10_hmt_bit0_hi_bit);
     } else if (address == 11) {
-        h11_r_clct_counter_lsbs_ = ExtractValueFromData(data, h11_r_clct_counter_lsbs_lo_bit, h11_r_clct_counter_lsbs_hi_bit);
+          h11_r_clct_counter_lsbs_ = ExtractValueFromData(data, h11_r_clct_counter_lsbs_lo_bit, h11_r_clct_counter_lsbs_hi_bit);
     } else if (address == 12) {
         h12_r_clct_counter_msbs_ = ExtractValueFromData(data , h12_r_clct_counter_msbs_lo_bit , h12_r_clct_counter_msbs_hi_bit);
+        //run3 DAQ format
+	h12_lct0_nogem_      = ExtractValueFromData(data , h12_lct0_nogem_lo_bit      , h12_lct0_nogem_hi_bit);
+	h12_lct0_with_gemA_  = ExtractValueFromData(data , h12_lct0_with_gemA_lo_bit  , h12_lct0_with_gemA_hi_bit);
+	h12_lct0_with_gemB_  = ExtractValueFromData(data , h12_lct0_with_gemB_lo_bit  , h12_lct0_with_gemB_hi_bit);
+	h12_lct0_with_copad_ = ExtractValueFromData(data , h12_lct0_with_copad_lo_bit , h12_lct0_with_copad_hi_bit);
+	h12_lct1_nogem_      = ExtractValueFromData(data , h12_lct1_nogem_lo_bit      , h12_lct1_nogem_hi_bit);
+	h12_lct1_with_gemA_  = ExtractValueFromData(data , h12_lct1_with_gemA_lo_bit  , h12_lct1_with_gemA_hi_bit);
+	h12_lct1_with_gemB_  = ExtractValueFromData(data , h12_lct1_with_gemB_lo_bit  , h12_lct1_with_gemB_hi_bit);
+	h12_lct1_with_copad_ = ExtractValueFromData(data , h12_lct1_with_copad_lo_bit , h12_lct1_with_copad_hi_bit);
+	h12_gemA_vpf_        = ExtractValueFromData(data , h12_gemA_vpf_lo_bit        , h12_gemA_vpf_hi_bit);
+	h12_gemA_overflow_   = ExtractValueFromData(data , h12_gemA_overflow_lo_bit   , h12_gemA_overflow_hi_bit);
+	h12_gemA_sync_       = ExtractValueFromData(data , h12_gemA_sync_lo_bit       , h12_gemA_sync_hi_bit);
+	h12_gemB_vpf_        = ExtractValueFromData(data , h12_gemB_vpf_lo_bit        , h12_gemB_vpf_hi_bit);
+	h12_gemB_overflow_   = ExtractValueFromData(data , h12_gemB_overflow_lo_bit   , h12_gemB_overflow_hi_bit);
+	h12_gemB_sync_       = ExtractValueFromData(data , h12_gemB_sync_lo_bit       , h12_gemB_sync_hi_bit);
+	h12_gems_sync_       = ExtractValueFromData(data , h12_gems_sync_lo_bit       , h12_gems_sync_hi_bit);
     } else if (address == 13) {
         h13_r_trig_counter_lsbs_ = ExtractValueFromData(data, h13_r_trig_counter_lsbs_lo_bit, h13_r_trig_counter_lsbs_hi_bit);
     } else if (address == 14) {
         h14_r_trig_counter_msbs_ = ExtractValueFromData(data , h14_r_trig_counter_msbs_lo_bit , h14_r_trig_counter_msbs_hi_bit);
+        //run3 DAQ format
+	h14_clct1_cc_        = ExtractValueFromData(data , h14_clct1_cc_lo_bit         , h14_clct1_cc_hi_bit);
+	h14_gem_enable_      = ExtractValueFromData(data , h14_gem_enable_lo_bit       , h14_gem_enable_hi_bit);
+	h14_clct1_key_bit10_ = ExtractValueFromData(data , h14_clct1_key_bit10_lo_bit  , h14_clct1_key_bit10_hi_bit);
+	h14_hmt_bit1_        = ExtractValueFromData(data , h14_hmt_bit1_lo_bit         , h14_hmt_bit1_hi_bit);
     } else if (address == 15) {
         h15_r_alct_counter_lsbs_ = ExtractValueFromData(data, h15_r_alct_counter_lsbs_lo_bit, h15_r_alct_counter_lsbs_hi_bit);
     } else if (address == 16) {
         h16_r_alct_counter_msbs_ = ExtractValueFromData(data , h16_r_alct_counter_msbs_lo_bit , h16_r_alct_counter_msbs_hi_bit);
+        //run3 DAQ format
+	h16_num_copad_    = ExtractValueFromData(data , h16_num_copad_lo_bit    , h16_num_copad_hi_bit);
+	h16_gem_delay_    = ExtractValueFromData(data , h16_gem_delay_lo_bit    , h16_gem_delay_hi_bit);
+	h16_gem_clct_win_ = ExtractValueFromData(data , h16_gem_clct_win_lo_bit , h16_gem_clct_win_hi_bit);
+	h16_alct_gem_win_ = ExtractValueFromData(data , h16_alct_gem_win_lo_bit , h16_alct_gem_win_hi_bit);
     } else if (address == 17) {
         h17_r_orbit_counter_lsbs_ = ExtractValueFromData(data, h17_r_orbit_counter_lsbs_lo_bit, h17_r_orbit_counter_lsbs_hi_bit);
     } else if (address == 18) {
@@ -4345,6 +4395,10 @@ void TMB::DecodeTMBRawHitWord_(int address) {
     } else if (address == 22) {
         h22_r_trig_source_vec_lsbs_ = ExtractValueFromData(data , h22_r_trig_source_vec_lsbs_lo_bit , h22_r_trig_source_vec_lsbs_hi_bit);
         h22_r_layers_hit_           = ExtractValueFromData(data , h22_r_layers_hit_lo_bit           , h22_r_layers_hit_hi_bit);
+        //run3 DAQ format
+	h22_clct0_bnd_value_ = ExtractValueFromData(data , h22_clct0_bnd_value_lo_bit , h22_clct0_bnd_value_hi_bit);
+	h22_clct0_bnd_lr_    = ExtractValueFromData(data , h22_clct0_bnd_lr_lo_bit    , h22_clct0_bnd_lr_hi_bit);
+	h22_clct1_bnd_lr_    = ExtractValueFromData(data , h22_clct1_bnd_lr_lo_bit    , h22_clct1_bnd_lr_hi_bit);
     } else if (address == 23) {
         h23_active_feb_mux_lsbs_ = ExtractValueFromData(data , h23_active_feb_mux_lsbs_lo_bit , h23_active_feb_mux_lsbs_hi_bit);
         h23_r_cfebs_read_lsbs_   = ExtractValueFromData(data , h23_r_cfebs_read_lsbs_lo_bit   , h23_r_cfebs_read_lsbs_hi_bit);
@@ -4383,6 +4437,8 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         h28_r_alct0_amu_        = ExtractValueFromData(data , h28_r_alct0_amu_lo_bit        , h28_r_alct0_amu_hi_bit);
         h28_r_alct0_key_        = ExtractValueFromData(data , h28_r_alct0_key_lo_bit        , h28_r_alct0_key_hi_bit);
         h28_r_alct_preClct_win_ = ExtractValueFromData(data , h28_r_alct_preClct_win_lo_bit , h28_r_alct_preClct_win_hi_bit);
+        //run3 DAQ format
+	h28_clct1_bnd_value_    = ExtractValueFromData(data , h28_clct1_bnd_value_lo_bit    , h28_clct1_bnd_value_hi_bit);
     } else if (address == 29) {
         h29_r_alct1_valid_   = ExtractValueFromData(data , h29_r_alct1_valid_lo_bit   , h29_r_alct1_valid_hi_bit);
         h29_r_alct1_quality_ = ExtractValueFromData(data , h29_r_alct1_quality_lo_bit , h29_r_alct1_quality_hi_bit);
@@ -4398,6 +4454,8 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         h30_cfeb_badbits_blocked_    = ExtractValueFromData(data , h30_cfeb_badbits_blocked_lo_bit    , h30_cfeb_badbits_blocked_hi_bit);
         h30_alct_cfg_done_           = ExtractValueFromData(data , h30_alct_cfg_done_lo_bit           , h30_alct_cfg_done_hi_bit);
         h30_bx0_match_               = ExtractValueFromData(data , h30_bx0_match_lo_bit               , h30_bx0_match_hi_bit);
+        //run3 DAQ format
+	h30_hmt_bit6to2_             = ExtractValueFromData(data , h30_hmt_bit6to2_lo_bit , h30_hmt_bit6to2_hi_bit);
     } else if (address == 31) {
         h31_r_mpc0_frame0_ff_lsbs_ = ExtractValueFromData(data , h31_r_mpc0_frame0_ff_lsbs_lo_bit , h31_r_mpc0_frame0_ff_lsbs_hi_bit);
     } else if (address == 32) {
@@ -4420,6 +4478,7 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         h36_rpc_read_enable_   = ExtractValueFromData(data , h36_rpc_read_enable_lo_bit   , h36_rpc_read_enable_hi_bit);
         h36_fifo_tbins_rpc_    = ExtractValueFromData(data , h36_fifo_tbins_rpc_lo_bit    , h36_fifo_tbins_rpc_hi_bit);
         h36_fifo_pretrig_rpc_  = ExtractValueFromData(data , h36_fifo_pretrig_rpc_lo_bit  , h36_fifo_pretrig_rpc_hi_bit);
+        //run3 DAQ format
         h36_gem_zero_suppress_ = ExtractValueFromData(data , h36_gem_zero_suppress_lo_bit , h36_gem_zero_suppress_hi_bit);
         h36_gem_read_enable_   = ExtractValueFromData(data , h36_gem_read_enable_lo_bit   , h36_gem_read_enable_hi_bit);
         h36_fifo_tbins_gem_    = ExtractValueFromData(data , h36_fifo_tbins_gem_lo_bit    , h36_fifo_tbins_gem_hi_bit);
@@ -4451,6 +4510,8 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         h40_chamber_is_me11_         = ExtractValueFromData(data , h40_chamber_is_me11_lo_bit         , h40_chamber_is_me11_hi_bit);
         h40_r_trig_source_vec_msbs_  = ExtractValueFromData(data , h40_r_trig_source_vec_msbs_lo_bit  , h40_r_trig_source_vec_msbs_hi_bit);
         h40_r_tmb_trig_pulse_        = ExtractValueFromData(data , h40_r_tmb_trig_pulse_lo_bit        , h40_r_tmb_trig_pulse_hi_bit);
+        //run3 DAQ format
+	h40_gem_csc_bend_enable_     = ExtractValueFromData(data , h40_gem_csc_bend_enable_lo_bit , h40_gem_csc_bend_enable_hi_bit);
     } else if (address == 41) {
         h41_tmb_allow_alct_       =  ExtractValueFromData(data , h41_tmb_allow_alct_lo_bit      , h41_tmb_allow_alct_hi_bit);
         h41_tmb_allow_clct_       =  ExtractValueFromData(data , h41_tmb_allow_clct_lo_bit      , h41_tmb_allow_clct_hi_bit);
@@ -4484,9 +4545,9 @@ void TMB::GEMRawhits() {
         status |= (igem & 0x3) << 3;
         WriteRegister (gem_debug_fifo_ctrl_adr, status);
         (*MyOutput_) <<
-        "|-------+-----+-------+-------+-------+-------+----------------|"<<std::endl <<
-        "| Fiber |  BX | clst0 | clst1 | clst2 | clst3 |  data packet   |"<<std::endl <<
-        "|-------+-----+-------+-------+-------+-------+----------------|"<<std::endl;
+        "|-------+-----+--------+--------+--------+--------+----------------|"<<std::endl <<
+        "| Fiber |  BX | clst0  | clst1  | clst2  | clst3  |  data packet   |"<<std::endl <<
+        "|-------+-----+--------+--------+--------+--------+----------------|"<<std::endl;
     for (int ibx=0; ibx<16; ibx++) {
         status = (unsigned short) ReadRegister(gem_debug_fifo_ctrl_adr);
         status &= ~(0x7FF << 5);
@@ -4506,17 +4567,20 @@ void TMB::GEMRawhits() {
 
         data = 0x3FFF & ReadRegister(gem_debug_fifo_data_adr);
 
-        unsigned short cluster_adr = (data >> 0) & 0x7FF;
-        unsigned short cluster_cnt = (data >>11) & 0x7;
+        //old GEM data format: {size[2:0], adr[10:0]}
+        //current GEM data format: {size[2:0], roll[2:0], pad[7:0]}
+        unsigned short cluster_pad  = (data >> 0) & 0xFF;
+        unsigned short cluster_roll = (data >> 8) & 0x7;
+        unsigned short cluster_cnt  = (data >>11) & 0x7;
 
         packet = packet | (((uint64_t) data)<<(14*icluster));
 
-        (*MyOutput_) << std::hex << std::setfill('0') << std::setw(1) << (cluster_cnt) << ":" << std::setw(3) << cluster_adr << " | ";
+        (*MyOutput_) << std::hex << std::setfill('0') << std::setw(1) << (cluster_cnt) << ":" << std::setw(1) << cluster_roll << ":" << std::setw(2) << cluster_pad << " | ";
     } // cluster
     (*MyOutput_) << std::hex << std::setfill('0') << std::setw(14) << (packet) << " |";
     (*MyOutput_) << std::endl;
     } // bx
-    (*MyOutput_) << "|-------+-----+-------+-------+-------+-------+----------------|"<<std::endl;
+    (*MyOutput_) << "|-------+-----+--------+--------+--------+--------+----------------|"<<std::endl;
     (*MyOutput_) << std::endl;
     } // gem
 
@@ -4531,6 +4595,9 @@ void TMB::GEMRawhits() {
 }
 //
 void TMB::PrintTMBRawHits() {
+    bool run3_daq_enable_nogem   = read_run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ == tmb_firmware_version_OTMBCCLUT_const;
+    bool run3_daq_enable_withgem = read_run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ == tmb_firmware_version_OTMBGEMCSC_const;
+
   //
   (*MyOutput_) << "Header 0:" << std::endl;
   (*MyOutput_) << " -> Beginning of Cathode record marker                      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h0_beginning_of_cathode_<<std::endl;
@@ -4575,25 +4642,60 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> CLCT pre-trigger counter, stop on ovf                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h9_r_pretrig_counter_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 10:" <<std::endl;
-  (*MyOutput_) << " -> CLCT pre-trigger counter                                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_r_pretrig_counter_msbs_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> CLCT0 comparator code                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_clct0_cc_<<std::endl;
+    (*MyOutput_) << " -> run3_trig_df                                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_run3_trig_df_<<std::endl;
+    (*MyOutput_) << " -> CLCT0 strip position 1/4 and 1/8 bits                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_clct0_key_bit10_<<std::endl;
+    (*MyOutput_) << " -> HMT in-time hits counter,bit0                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_hmt_bit0_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> CLCT pre-trigger counter                                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_r_pretrig_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 11:" <<std::endl;
   (*MyOutput_) << " -> CLCT post-drift counter, stop on ovf                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h11_r_clct_counter_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 12:" <<std::endl;
-  (*MyOutput_) << " -> CLCT post-drift counter                                 = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_r_clct_counter_msbs_<<std::endl;
+  if (run3_daq_enable_withgem){
+    (*MyOutput_) << " -> LCT0 without gem match                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct0_nogem_<<std::endl;
+    (*MyOutput_) << " -> LCT0 with gemA match                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct0_with_gemA_<<std::endl;
+    (*MyOutput_) << " -> LCT0 with gemB match                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct0_with_gemB_<<std::endl;
+    (*MyOutput_) << " -> LCT0 with copad match                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct0_with_copad_<<std::endl;
+    (*MyOutput_) << " -> LCT1 without gem match                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct1_nogem_<<std::endl;
+    (*MyOutput_) << " -> LCT1 with gemA match                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct1_with_gemA_<<std::endl;
+    (*MyOutput_) << " -> LCT1 with gemB match                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct1_with_gemB_<<std::endl;
+    (*MyOutput_) << " -> LCT1 with copad match                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct1_with_copad_<<std::endl;
+    (*MyOutput_) << " -> gemA has valid cluster                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemA_vpf_<<std::endl;
+    (*MyOutput_) << " -> gemB overflow                                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemB_overflow_<<std::endl;
+    (*MyOutput_) << " -> gemA overflow                                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemA_overflow_<<std::endl;
+    (*MyOutput_) << " -> gemB has valid cluster                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemB_vpf_<<std::endl;
+    (*MyOutput_) << " -> gemA two fibers synced                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemA_sync_<<std::endl;
+    (*MyOutput_) << " -> gemB two fibers synced                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemB_sync_<<std::endl;
+    (*MyOutput_) << " -> gemA and gemB  synced                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gems_sync_<<std::endl;
+  } else
+    (*MyOutput_) << " -> CLCT post-drift counter                                 = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_r_clct_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 13:" <<std::endl;
   (*MyOutput_) << " -> TMB trigger counter, stop on ovf                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h13_r_trig_counter_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 14:" <<std::endl;
-  (*MyOutput_) << " -> TMB trigger counter                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_r_trig_counter_msbs_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> CLCT1 comparator code                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_clct1_cc_<<std::endl;
+    (*MyOutput_) << " -> gem enable for gemcsc match                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_gem_enable_<<std::endl;
+    (*MyOutput_) << " -> CLCT1 strip position 1/4 and 1/8 bits                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_clct1_key_bit10_<<std::endl;
+    (*MyOutput_) << " -> HMT in-time hits counter,bit1                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_hmt_bit1_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> TMB trigger counter                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_r_trig_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 15:" <<std::endl;
   (*MyOutput_) << " -> Counts ALCTs received from ALCT board, stop on ovf      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h15_r_alct_counter_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 16:" <<std::endl;
-  (*MyOutput_) << " -> Counts ALCTs received from ALCT board, stop on ovf      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_r_alct_counter_msbs_<<std::endl;
+  if (run3_daq_enable_withgem){
+    (*MyOutput_) << " -> number of copads                                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_num_copad_<<std::endl;
+    (*MyOutput_) << " -> gem delay for gem-alct match                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_gem_delay_<<std::endl;
+    (*MyOutput_) << " -> gem location in clct match window                       = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_gem_clct_win_<<std::endl;
+    (*MyOutput_) << " -> alct location in gem match window                       = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_alct_gem_win_<<std::endl;
+  } else
+     (*MyOutput_) << " -> Counts ALCTs received from ALCT board, stop on ovf      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_r_alct_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 17:" <<std::endl;
   (*MyOutput_) << " -> BX0s since last hard reset, stop on ovf                 = 0x" << std::hex << std::setfill('0') << std::setw(4) << h17_r_orbit_counter_lsbs_<<std::endl;
@@ -4623,7 +4725,12 @@ void TMB::PrintTMBRawHits() {
 
   (*MyOutput_) << "Header 22:" <<std::endl;
   (*MyOutput_) << " -> Trigger source vector                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_r_trig_source_vec_lsbs_<<std::endl;
-  (*MyOutput_) << " -> CSC layers hit on layer trigger after drift             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_r_layers_hit_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> CLCT0 bend absolute value                               = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_clct0_bnd_value_<<std::endl;
+    (*MyOutput_) << " -> CLCT0 bend direction,CCLUT                              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_clct0_bnd_lr_<<std::endl;
+    (*MyOutput_) << " -> CLCT1 bend direction,CCLUT                              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_clct1_bnd_lr_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> CSC layers hit on layer trigger after drift             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_r_layers_hit_<<std::endl;
 
   (*MyOutput_) << "Header 23:" <<std::endl;
   (*MyOutput_) << " -> Active CFEB list sent to DMB                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h23_active_feb_mux_lsbs_<<std::endl;
@@ -4667,7 +4774,10 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> ALCT0 quality                                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct0_quality_<<std::endl;
   (*MyOutput_) << " -> ALCT0 accelerator muon flag                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct0_amu_<<std::endl;
   (*MyOutput_) << " -> ALCT0 key wire group                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct0_key_<<std::endl;
-  (*MyOutput_) << " -> ALCT active_feb_flag position in pretrig window         = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct_preClct_win_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> CLCT1 bend absolute value, CCLUT                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_clct1_bnd_value_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> ALCT active_feb_flag position in pretrig window         = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct_preClct_win_<<std::endl;
 
   (*MyOutput_) << "Header 29:" <<std::endl;
   (*MyOutput_) << " -> ALCT1 valid pattern flag                                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h29_r_alct1_valid_<<std::endl;
@@ -4679,7 +4789,10 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> Layer-mode trigger                                      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h29_hs_layer_trig_<<std::endl;
 
   (*MyOutput_) << "Header 30:" <<std::endl;
-  (*MyOutput_) << " -> ALCT0/1 bxn                                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_r_alct_bxn_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> HMT in-time hits counter[6:2]                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_hmt_bit6to2_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> ALCT0/1 bxn                                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_r_alct_bxn_<<std::endl;
   (*MyOutput_) << " -> ALCT trigger path ECC error code                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_r_alct_ecc_err_<<std::endl;
   (*MyOutput_) << " -> CFEB[n] has at least 1 bad bit                          = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_cfeb_badbits_found_lsbs_<<std::endl;
   (*MyOutput_) << " -> A CFEB had bad bits that were blocked                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_cfeb_badbits_blocked_<<std::endl;
@@ -4708,20 +4821,18 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> CFEBs enabled for triggering                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h35_cfeb_en_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 36:" <<std::endl;
-  if (!GetGemEnabled())
+  if (run3_daq_enable_withgem){
+  (*MyOutput_) << " -> GEM zero-suppression enabled                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_gem_zero_suppress_<<std::endl;
+  (*MyOutput_) << " -> GEM readout enabled                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_gem_read_enable_<<std::endl;
+  (*MyOutput_) << " -> Number GEM FIFO time bins to read out                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_tbins_gem_<<std::endl;
+  (*MyOutput_) << " -> Number GEM FIFO time bins before pretrigger             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_pretrig_gem_<<std::endl;
+  } else
   {
   (*MyOutput_) << " -> RPCs included in read out                               = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_rd_list_rpc_<<std::endl;
   (*MyOutput_) << " -> Number of RPCs in readout, 0,1,2, 0 if head-only event  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_r_nrpcs_read_<<std::endl;
   (*MyOutput_) << " -> RPC readout enabled                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_rpc_read_enable_<<std::endl;
   (*MyOutput_) << " -> Number RPC FIFO time bins to read out                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_tbins_rpc_<<std::endl;
   (*MyOutput_) << " -> Number RPC FIFO time bins before pretrigger             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_pretrig_rpc_<<std::endl;
-  }
-  else
-  {
-  (*MyOutput_) << " -> GEM zero-suppression enabled                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_gem_zero_suppress_<<std::endl;
-  (*MyOutput_) << " -> GEM readout enabled                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_gem_read_enable_<<std::endl;
-  (*MyOutput_) << " -> Number GEM FIFO time bins to read out                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_tbins_gem_<<std::endl;
-  (*MyOutput_) << " -> Number GEM FIFO time bins before pretrigger             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_pretrig_gem_<<std::endl;
   }
 
   (*MyOutput_) << "Header 37:" <<std::endl;
@@ -4751,7 +4862,10 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> Hdr30 CFEB[n] has at least 1 bad bit                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_cfeb_badbits_found_msbs_<<std::endl;
   (*MyOutput_) << " -> Hdr35 CFEBs enabled for triggering                      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_cfeb_en_msbs_<<std::endl;
   (*MyOutput_) << " -> Current fence is peak number of fences in RAM           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_buf_fence_cnt_is_peak_<<std::endl;
-  (*MyOutput_) << " -> chamber_is_me11                                         = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_chamber_is_me11_<<std::endl;
+  if (run3_daq_enable_withgem){
+    (*MyOutput_) << " -> enable gem-csc bend for LCT bend                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_gem_csc_bend_enable_<<std::endl;
+  } else
+    (*MyOutput_) << " -> chamber_is_me11                                         = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_chamber_is_me11_<<std::endl;
   (*MyOutput_) << " -> Pre-trigger was ME1A/ME1B                               = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_r_trig_source_vec_msbs_<<std::endl;
   (*MyOutput_) << " -> TMB trig pulse coincident with rtmb_push                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_r_tmb_trig_pulse_<<std::endl;
 
@@ -7582,6 +7696,9 @@ void TMB::SetTMBRegisterDefaults() {
   hmt_thresh1_            = hmt_thresh1_default;
   hmt_thresh2_            = hmt_thresh2_default;
   hmt_thresh3_            = hmt_thresh3_default;
+  cfeb_allow_hmt_ro_      = cfeb_allow_hmt_ro_default;
+  tmb_allow_hmt_          = tmb_allow_hmt_default;
+  tmb_allow_hmt_ro_       = tmb_allow_hmt_ro_default;
 
   ////-----------------------------------------------------------------------------
   ////ADR_LCT_INJECTION = 0x1B8
@@ -7622,10 +7739,10 @@ void TMB::SetTMBRegisterDefaults() {
   // 0X318 ADR_GEM_CSC_MATCH_WINDOW
   //-----------------------------------------------------------------------------
    
-  gem_clct_deltahs_      =  gem_clct_deltahs_default;
-  gem_clct_enable_       =  gem_clct_enable_default;
-  gem_alct_deltawire_    =  gem_alct_deltawire_default;
-  gem_alct_enable_       =  gem_alct_enable_default;
+  gem_clct_deltahs_odd_       =  gem_clct_deltahs_odd_default;
+  gem_clct_deltahs_even_      =  gem_clct_deltahs_even_default;
+  gem_alct_deltawire_odd_     =  gem_alct_deltawire_odd_default;
+  gem_alct_deltawire_even_    =  gem_alct_deltawire_even_default;
 
   ////-----------------------------------------------------------------------------
   //// 0X320 ADR_GEM_INJ_CTRL
@@ -8423,6 +8540,9 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //------------------------------------------------------------------
     read_hmt_thresh1_               = ExtractValueFromData(data,hmt_thresh1_bitlo                 ,hmt_thresh1_bithi             );
     read_hmt_thresh1_pass_          = ExtractValueFromData(data,hmt_thresh1_pass_bitlo            ,hmt_thresh1_pass_bithi        );
+    read_cfeb_allow_hmt_ro_         = ExtractValueFromData(data,cfeb_allow_hmt_ro_bitlo           ,cfeb_allow_hmt_ro_bithi        );
+    read_tmb_allow_hmt_             = ExtractValueFromData(data,tmb_allow_hmt_bitlo               ,tmb_allow_hmt_bithi        );
+    read_tmb_allow_hmt_ro_          = ExtractValueFromData(data,tmb_allow_hmt_ro_bitlo            ,tmb_allow_hmt_ro_bithi        );
   } else if ( address == hmt_thresh2_adr ) {
     //------------------------------------------------------------------
     //0X1B0 = ADR_HMT_thresh2:  HMT Thresh2  (Tao, 2020)
@@ -8991,10 +9111,10 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //---------------------------------------------------------------------
     // 0X318 = ADR_GEM_TRG
     //---------------------------------------------------------------------
-    read_gem_clct_deltahs_             = ExtractValueFromData (data , gem_clct_deltahs_bitlo         , gem_clct_deltahs_bithi);
-    read_gem_alct_deltawire_           = ExtractValueFromData (data , gem_alct_deltawire_bitlo       , gem_alct_deltawire_bithi);
-    read_gem_clct_enable_              = ExtractValueFromData (data , gem_clct_enable_bitlo          , gem_clct_enable_bithi);
-    read_gem_alct_enable_              = ExtractValueFromData (data , gem_alct_enable_bitlo          , gem_alct_enable_bithi);
+    read_gem_clct_deltahs_odd_            = ExtractValueFromData (data , gem_clct_deltahs_odd_bitlo          , gem_clct_deltahs_odd_bithi);
+    read_gem_clct_deltahs_even_           = ExtractValueFromData (data , gem_clct_deltahs_even_bitlo         , gem_clct_deltahs_even_bithi);
+    read_gem_alct_deltawire_odd_          = ExtractValueFromData (data , gem_alct_deltawire_odd_bitlo        , gem_alct_deltawire_odd_bithi);
+    read_gem_alct_deltawire_even_         = ExtractValueFromData (data , gem_alct_deltawire_even_bitlo       , gem_alct_deltawire_even_bithi);
     //
   } else if ( address == gem_copad_ctrl_adr ) {
     //---------------------------------------------------------------------
@@ -9671,34 +9791,37 @@ void TMB::PrintTMBRegister(unsigned long int address) {
   //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 format control  (Tao, 2020)
   //------------------------------------------------------------------
       (*MyOutput_) << " ->Run3 format control:" << std::endl;
-      (*MyOutput_) << "    enable CCLUT                 = " << std::dec << read_cclut_enable_ << std::endl; 
-      (*MyOutput_) << "    enable Run3 Trigger Format   = " << std::dec << read_run3_trig_dataformat_enable_ << std::endl; 
-      (*MyOutput_) << "    enable Run3 DAQ Format       = " << std::dec << read_run3_daq_dataformat_enable_ << std::endl; 
+      (*MyOutput_) << "    enable CCLUT                               = " << std::dec << read_cclut_enable_ << std::endl; 
+      (*MyOutput_) << "    enable Run3 Trigger Format                 = " << std::dec << read_run3_trig_dataformat_enable_ << std::endl; 
+      (*MyOutput_) << "    enable Run3 DAQ Format                     = " << std::dec << read_run3_daq_dataformat_enable_ << std::endl; 
   } else if ( address == hmt_ctrl_adr ) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger control:" << std::endl;
-      (*MyOutput_) << "    enable HMT                  = " << std::dec << read_hmt_enable_ << std::endl; 
-      (*MyOutput_) << "    enable HMT in ME1a          = " << std::dec << read_hmt_me1a_enable_ << std::endl; 
+      (*MyOutput_) << "    enable HMT                                 = " << std::dec << read_hmt_enable_ << std::endl; 
+      (*MyOutput_) << "    enable HMT in ME1a                         = " << std::dec << read_hmt_me1a_enable_ << std::endl; 
   } else if ( address == hmt_thresh1_adr ) {
    //------------------------------------------------------------------
    //0X1AE = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger loose thresh:" << std::endl;
-      (*MyOutput_) << "    HMT thresh1(loose)          = " << std::dec << read_hmt_thresh1_ << std::endl; 
+      (*MyOutput_) << "    HMT thresh1(loose)                         = " << std::dec << read_hmt_thresh1_ << std::endl; 
+      (*MyOutput_) << "    Allow to readout cfeb by HMT               = " << std::hex << read_cfeb_allow_hmt_ro_ << std::endl;
+      (*MyOutput_) << "    Allow to trigger  by HMT                   = " << std::hex << read_tmb_allow_hmt_ << std::endl;
+      (*MyOutput_) << "    Allow to readout OTMB by HMT               = " << std::hex << read_tmb_allow_hmt_ro_ << std::endl;
   } else if ( address == hmt_thresh2_adr ) {
    //------------------------------------------------------------------
    //0X1B0 = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger median thresh:" << std::endl;
-      (*MyOutput_) << "    HMT thresh2(median)         = " << std::dec << read_hmt_thresh2_ << std::endl; 
+      (*MyOutput_) << "    HMT thresh2(median)                        = " << std::dec << read_hmt_thresh2_ << std::endl; 
   } else if ( address == hmt_thresh3_adr ) {
    //------------------------------------------------------------------
    //0X1B2 = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger tight thresh:" << std::endl;
-      (*MyOutput_) << "    HMT thresh3(tight)          = " << std::dec << read_hmt_thresh3_ << std::endl; 
+      (*MyOutput_) << "    HMT thresh3(tight)                         = " << std::dec << read_hmt_thresh3_ << std::endl; 
   //} else if ( address == lct_injection_adr ) {
   //  //------------------------------------------------------------------
   //  //0X1B8 = ADR_LCT_INJECTION:  LCT injection from configuration  (Tao, 2020)
@@ -10079,12 +10202,12 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     if (GetGemEnabled()) {
         if (HasGroupedGemRxValues() == 1) {
         (*MyOutput_) << " ->GEM A+B to TMB communication clock delay:" << std::endl;
-        (*MyOutput_) << "    GEM A+B rx clock delay, unit=1ns    = " << std::dec << read_gem_rx_clock_delay_ << std::endl;
+        (*MyOutput_) << "    GEM A+B rx clock delay, unit=1ns     = " << std::dec << read_gem_rx_clock_delay_ << std::endl;
         (*MyOutput_) << "    GEM A+B rx fine delay, unit=0.1ns    = " << std::dec << read_gem_rx_fine_delay_ << std::endl;
-        (*MyOutput_) << "    GEM A+B posneg    = " << std::dec << read_gem_rx_posneg_ << std::endl;
+        (*MyOutput_) << "    GEM A+B posneg                       = " << std::dec << read_gem_rx_posneg_ << std::endl;
         } else {
         (*MyOutput_) << " ->GEM A to TMB communication clock delay:" << std::endl;
-        (*MyOutput_) << "    GEM A rx clock delay    = " << std::dec << read_gemA_rx_clock_delay_ << std::endl;
+        (*MyOutput_) << "    GEM A rx clock delay   = " << std::dec << read_gemA_rx_clock_delay_ << std::endl;
         (*MyOutput_) << "    GEM A rx fine delay    = " << std::dec << read_gemA_rx_fine_delay_ << std::endl;
         (*MyOutput_) << "    GEM A posneg    = " << std::dec << read_gemA_rx_posneg_ << std::endl;
         }
@@ -10097,7 +10220,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     if (GetGemEnabled()) {
         if (HasGroupedGemRxValues() == 0) {
         (*MyOutput_) << " ->GEM B to TMB communication clock delay:" << std::endl;
-        (*MyOutput_) << "    GEM B rx clock delay    = " << std::dec << read_gemB_rx_clock_delay_ << std::endl;
+        (*MyOutput_) << "    GEM B rx clock delay   = " << std::dec << read_gemB_rx_clock_delay_ << std::endl;
         (*MyOutput_) << "    GEM B rx fine delay    = " << std::dec << read_gemB_rx_fine_delay_ << std::endl;
         (*MyOutput_) << "    GEM B posneg    = " << std::dec << read_gemB_rx_posneg_ << std::endl;
         }
@@ -10363,11 +10486,11 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     // 0X310 = ADR_GEM_TBINS
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM Readout Configuration:"                            << std::endl;
-    (*MyOutput_) << "    TMB gem_fifo_tbins                                = " << read_gem_fifo_tbins_          << std::endl;
-    (*MyOutput_) << "    TMB gem_fifo_pretrig                              = " << read_gem_fifo_pretrig_        << std::endl;
-    (*MyOutput_) << "    TMB gem_fifo_decouple                             = " << read_gem_fifo_decouple_       << std::endl;
-    (*MyOutput_) << "    TMB gem_read_enable                               = " << read_gem_read_enable_         << std::endl;
-    (*MyOutput_) << "    TMB gem Zero Supression Enabled                   = " << read_gem_zero_supress_enable_ << std::endl;
+    (*MyOutput_) << "    TMB gem_fifo_tbins                                = " << std::dec << read_gem_fifo_tbins_          << std::endl;
+    (*MyOutput_) << "    TMB gem_fifo_pretrig                              = " << std::dec << read_gem_fifo_pretrig_        << std::endl;
+    (*MyOutput_) << "    TMB gem_fifo_decouple                             = " << std::dec << read_gem_fifo_decouple_       << std::endl;
+    (*MyOutput_) << "    TMB gem_read_enable                               = " << std::dec << read_gem_read_enable_         << std::endl;
+    (*MyOutput_) << "    TMB gem Zero Supression Enabled                   = " << std::dec << read_gem_zero_supress_enable_ << std::endl;
 
     } else if ( address == gem_cfg_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
@@ -10375,60 +10498,60 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM Bx Delay Configuration Register:"                  << std::endl;
     if (!HasGroupedGemRxValues()) {
-    (*MyOutput_) << "    TMB gem A rxd_int_delay                           = " << read_gemA_rxd_int_delay_         << std::endl;
-    (*MyOutput_) << "    TMB gem B rxd_int_delay                           = " << read_gemB_rxd_int_delay_         << std::endl;
+    (*MyOutput_) << "    TMB gem A rxd_int_delay                           = " << std::dec << read_gemA_rxd_int_delay_         << std::endl;
+    (*MyOutput_) << "    TMB gem B rxd_int_delay                           = " << std::dec << read_gemB_rxd_int_delay_         << std::endl;
     }
     else  {
-    (*MyOutput_) << "    TMB gem rxd_int_delay for A/B                     = " << read_gem_rxd_int_delay_          << std::endl;
+    (*MyOutput_) << "    TMB gem rxd_int_delay for A/B                     = " << std::dec << read_gem_rxd_int_delay_          << std::endl;
     }
-    (*MyOutput_) << "    TMB gem rxd_int_delays decoupled                  = " << read_decouple_gem_rxd_int_delay_ << std::endl;
-    (*MyOutput_) << "    TMB gem readout mask                              = " << read_gem_readout_mask_           << std::endl;
+    (*MyOutput_) << "    TMB gem rxd_int_delays decoupled                  = " << std::dec << read_decouple_gem_rxd_int_delay_ << std::endl;
+    (*MyOutput_) << "    TMB gem readout mask                              = " << std::dec << read_gem_readout_mask_           << std::endl;
 
     } else if ( address == gem_csc_match_window_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X318 = ADR_GEM_CSC_MATCH_WINDOW
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM CSC Match Window (position) Register:"                  << std::endl;
-    (*MyOutput_) << "    TMB gem-clct match, delta halfstrip               = " << read_gem_clct_deltahs_              << std::endl;
-    (*MyOutput_) << "    TMB gem-alct match, delta wire                    = " << read_gem_alct_deltawire_            << std::endl;
-    (*MyOutput_) << "    TMB gem-clct match, enabled                       = " << read_gem_clct_enable_              << std::endl;
-    (*MyOutput_) << "    TMB gem-alct match, enabled                       = " << read_gem_alct_enable_              << std::endl;
+    (*MyOutput_) << "    TMB gem-clct match, delta halfstrip, odd chamber  = " << std::dec << read_gem_clct_deltahs_odd_              << std::endl;
+    (*MyOutput_) << "    TMB gem-clct match, delta halfstrip,even chamber  = " << std::dec << read_gem_clct_deltahs_even_             << std::endl;
+    (*MyOutput_) << "    TMB gem-alct match, delta wire, odd chamber       = " << std::dec << read_gem_alct_deltawire_odd_            << std::endl;
+    (*MyOutput_) << "    TMB gem-alct match, delta wire,even chamber       = " << std::dec << read_gem_alct_deltawire_even_           << std::endl;
     } else if ( address == gem_copad_ctrl_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X324 = ADR_GEM_COPAD_CTRL
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM copad match control  Register:"                    << std::endl;
-    (*MyOutput_) << "    TMB gem copad match with neighbor roll            = " << read_gem_match_neighborRoll_     << std::endl;
-    (*MyOutput_) << "    TMB gem copad match with neighbor pad             = " << read_gem_match_neighborPad_      << std::endl;
-    (*MyOutput_) << "    TMB gem copad match,max pad differences           = " << read_gem_match_deltaPad_         << std::endl;
+    (*MyOutput_) << "    TMB gem copad match with neighbor roll            = " << std::dec << read_gem_match_neighborRoll_     << std::endl;
+    (*MyOutput_) << "    TMB gem copad match with neighbor pad             = " << std::dec << read_gem_match_neighborPad_      << std::endl;
+    (*MyOutput_) << "    TMB gem copad match,max pad differences           = " << std::dec << read_gem_match_deltaPad_         << std::endl;
     } else if ( address == gem_bx0_delay_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X326 = ADR_GEM_BX0_DELAY
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM BX0 delay  Register:"                              << std::endl;
-    (*MyOutput_) << "    TMB gemA bx0 delay                                = " << read_gemA_bx0_delay_     << std::endl;
-    (*MyOutput_) << "    TMB gemA bx0 Enabled                              = " << read_gemA_bx0_enable_    << std::endl;
-    (*MyOutput_) << "    TMB gemA+CLCT bx0 match                           = " << read_gemA_bx0_match_     << std::endl;
-    (*MyOutput_) << "    TMB gemB bx0 delay                                = " << read_gemB_bx0_delay_     << std::endl;
-    (*MyOutput_) << "    TMB gemB bx0 Enabled                              = " << read_gemB_bx0_enable_    << std::endl;
-    (*MyOutput_) << "    TMB gemB+CLCT bx0 match                           = " << read_gemB_bx0_match_     << std::endl;
+    (*MyOutput_) << "    TMB gemA bx0 delay                                = " << std::dec << read_gemA_bx0_delay_     << std::endl;
+    (*MyOutput_) << "    TMB gemA bx0 Enabled                              = " << std::dec << read_gemA_bx0_enable_    << std::endl;
+    (*MyOutput_) << "    TMB gemA+CLCT bx0 match                           = " << std::dec << read_gemA_bx0_match_     << std::endl;
+    (*MyOutput_) << "    TMB gemB bx0 delay                                = " << std::dec << read_gemB_bx0_delay_     << std::endl;
+    (*MyOutput_) << "    TMB gemB bx0 Enabled                              = " << std::dec << read_gemB_bx0_enable_    << std::endl;
+    (*MyOutput_) << "    TMB gemB+CLCT bx0 match                           = " << std::dec << read_gemB_bx0_match_     << std::endl;
     } else if ( address == gemA_trg_ctrl_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X328 = ADR_GEMA_TRG_CTRL
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEMA Trigger for match control  Register:"                              << std::endl;
-    (*MyOutput_) << "    TMB gemA/B-alct match window, BX                  = " << read_match_gem_alct_window_    << std::endl;
-    (*MyOutput_) << "    TMB gemA/B-clct match window, BX                  = " << read_match_gem_clct_window_    << std::endl;
-    (*MyOutput_) << "    TMB gemA fiber enabled for gem-csc match          = " << read_gemA_fiber_enable_    << std::endl;
+    (*MyOutput_) << "    TMB gemA/B-alct match window, BX                  = " << std::dec << read_match_gem_alct_window_    << std::endl;
+    (*MyOutput_) << "    TMB gemA/B-clct match window, BX                  = " << std::dec << read_match_gem_clct_window_    << std::endl;
+    (*MyOutput_) << "    TMB gemA fiber enabled for gem-csc match          = " << std::dec << read_gemA_fiber_enable_    << std::endl;
     } else if ( address == gemB_trg_ctrl_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X32a = ADR_GEMB_TRG_CTRL
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEMB Trigger for match control  Register:"                              << std::endl;
-    (*MyOutput_) << "    TMB gem delay for gem-alct match                 = " << read_match_gem_alct_delay_     << std::endl;
+    (*MyOutput_) << "    TMB gem delay for gem-alct match                  = " << std::dec << read_match_gem_alct_delay_     << std::endl;
+    (*MyOutput_) << "    TMB gemB fiber enabled for gem-csc match          = " << std::dec << read_gemB_fiber_enable_    << std::endl;
     //(*MyOutput_) << "    TMB gemB-alct match window, BX                    = " << read_match_gemB_alct_window_    << std::endl;
     //(*MyOutput_) << "    TMB gemB-clct match window, BX                    = " << read_match_gemB_clct_window_    << std::endl;
-    (*MyOutput_) << "    TMB gemB fiber enabled for gem-csc match          = " << read_gemB_fiber_enable_    << std::endl;
     } else if ( address == gem_csc_match_ctrl_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X32c = ADR_GEM_CSC_MATCH_CTRL
@@ -10447,7 +10570,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << "    TMB gem-csc match allows gemA match no position   = " << read_gemA_match_ignore_position_     << std::endl;
     (*MyOutput_) << "    TMB gem-csc match allows gemB match no position   = " << read_gemB_match_ignore_position_     << std::endl;
     (*MyOutput_) << "    TMB used gemcsc bend angle rather csc-only bend   = " << read_gemcsc_bend_enable_     << std::endl;
-    (*MyOutput_) << "    TMB ignores gemcsc bending lr and csc bending lr  = " << read_gemcsc_ignore_bend_check_     << std::endl;
+    (*MyOutput_) << "    TMB ignores check gemcsc bend lr and csc bend lr  = " << read_gemcsc_ignore_bend_check_     << std::endl;
     //(*MyOutput_) << "    TMB promote lct quality with gemcsc match in me1a = " << read_gem_me1a_match_promotequal_     << std::endl;
     //(*MyOutput_) << "    TMB promote lct quality with gemcsc match in me1b = " << read_gem_me1b_match_promotequal_     << std::endl;
     //(*MyOutput_) << "    TMB promote lct pattern with gemcsc match in me1a = " << read_gem_me1a_match_promotepat_     << std::endl;
@@ -10469,7 +10592,12 @@ void TMB::PrintFirmwareDate() {
 	       << GetReadTmbFirmwareDay() << std::endl;
   (*MyOutput_) << "-> TMB Firmware type   : " << std::hex << GetReadTmbFirmwareType()    << std::endl;
   (*MyOutput_) << "-> TMB Firmware version: " << std::hex << GetReadTmbFirmwareVersion() << std::endl;
-  (*MyOutput_) << "-> TMB Firmware RevCode: " << std::hex << GetReadTmbFirmwareRevcode() << std::endl;
+  if (read_cclut_enable_){
+	  (*MyOutput_) << "-> TMB Firmware RevCode(Run3): format_verison=0x" << std::hex << read_tmb_firmware_format_version_ 
+		<<" major_version=0x" << read_tmb_firmware_major_version_<<" minor_version=0x"<< read_tmb_firmware_minor_version_ << std::endl;
+  } else 
+	  (*MyOutput_) << "-> TMB Firmware RevCode: " << std::hex << GetReadTmbFirmwareRevcode() << std::endl;
+
   (*MyOutput_) << "... ... ...  " <<HasGroupedME11ABCFEBRxValues() <<  std::endl;
   //
   return;
@@ -10857,6 +10985,9 @@ int TMB::FillTMBRegister(unsigned long int address) {
     	      << "\n    hmt_thresh1_         " << hmt_thresh1_        
               << std::endl;
     InsertValueIntoDataWord(hmt_thresh1_,      hmt_thresh1_bithi,      hmt_thresh1_bitlo,      &data_word);
+    InsertValueIntoDataWord(cfeb_allow_hmt_ro_,cfeb_allow_hmt_ro_bithi,cfeb_allow_hmt_ro_bitlo,      &data_word);
+    InsertValueIntoDataWord(tmb_allow_hmt_,    tmb_allow_hmt_bithi,    tmb_allow_hmt_bitlo,      &data_word);
+    InsertValueIntoDataWord(tmb_allow_hmt_ro_, tmb_allow_hmt_ro_bithi, tmb_allow_hmt_ro_bitlo,      &data_word);
   } else if ( address == hmt_thresh2_adr ) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_THRESH2:  HMT thresh2  (Tao, 2020)
@@ -11252,10 +11383,10 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //---------------------------------------------------------------------
     // 0X318 = ADR_GEM_CSC_MATCH_WINDOW
     //---------------------------------------------------------------------
-    InsertValueIntoDataWord( gem_clct_deltahs_         , gem_clct_deltahs_bithi         , gem_clct_deltahs_bitlo         , &data_word);
-    InsertValueIntoDataWord( gem_clct_enable_          , gem_clct_enable_bithi          , gem_clct_enable_bitlo          , &data_word);
-    InsertValueIntoDataWord( gem_alct_deltawire_       , gem_alct_deltawire_bithi       , gem_alct_deltawire_bitlo       , &data_word);
-    InsertValueIntoDataWord( gem_alct_enable_          , gem_alct_enable_bithi          , gem_alct_enable_bitlo          , &data_word);
+    InsertValueIntoDataWord( gem_clct_deltahs_odd_         , gem_clct_deltahs_odd_bithi          , gem_clct_deltahs_odd_bitlo          , &data_word);
+    InsertValueIntoDataWord( gem_clct_deltahs_even_        , gem_clct_deltahs_even_bithi         , gem_clct_deltahs_even_bitlo         , &data_word);
+    InsertValueIntoDataWord( gem_alct_deltawire_odd_       , gem_alct_deltawire_odd_bithi        , gem_alct_deltawire_odd_bitlo        , &data_word);
+    InsertValueIntoDataWord( gem_alct_deltawire_even_      , gem_alct_deltawire_even_bithi       , gem_alct_deltawire_even_bitlo       , &data_word);
   } else if ( address == gem_copad_ctrl_adr ) {
     //---------------------------------------------------------------------
     // 0X324 = ADR_GEM_COPAD_CTRL
@@ -12026,6 +12157,29 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     // Here check only the bit (ANDed between all five CFEB bits...)
     config_ok &= compareValues("TMB cfeb_badbits_block",GetReadCFEBBadBitsBlock(),GetCFEBBadBitsBlock(),print_errors); 
     //
+    //---------------------------------------------------------------------
+    // 0X1AA = ADR_RUN3_FORMAT_CTRL:  Run3 format control  (Tao, 2020)
+    //---------------------------------------------------------------------
+    config_ok &= compareValues("TMB run3_trig_dataformat_enable",  read_run3_trig_dataformat_enable_,  run3_trig_dataformat_enable_, print_errors);
+    config_ok &= compareValues("TMB run3_daq_dataformat_enable",  read_run3_daq_dataformat_enable_,  run3_daq_dataformat_enable_, print_errors);
+    //
+    //---------------------------------------------------------------------
+    // 0X1AC = ADR_HMT_CTRL:  HMT control 
+    //---------------------------------------------------------------------
+    config_ok &= compareValues("TMB hmt_enable",  read_hmt_enable_,  hmt_enable_, print_errors);
+    config_ok &= compareValues("TMB hmt_me1a_enable",  read_hmt_me1a_enable_,  hmt_me1a_enable_, print_errors);
+    //
+    //---------------------------------------------------------------------
+    // 0X1AE = ADR_HMT_THRESH1:  HMT threshold and control
+    // 0X1B0 = ADR_HMT_THRESH2:  HMT threshold and control
+    // 0X1B2 = ADR_HMT_THRESH3:  HMT threshold and control
+    //---------------------------------------------------------------------
+    config_ok &= compareValues("TMB hmt_thresh1",  read_hmt_thresh1_,  hmt_thresh1_, print_errors);
+    config_ok &= compareValues("TMB hmt_thresh2",  read_hmt_thresh2_,  hmt_thresh2_, print_errors);
+    config_ok &= compareValues("TMB hmt_thresh3",  read_hmt_thresh3_,  hmt_thresh3_, print_errors);
+    config_ok &= compareValues("TMB cfeb_allow_hmt_ro",  read_cfeb_allow_hmt_ro_,  cfeb_allow_hmt_ro_, print_errors);
+    config_ok &= compareValues("TMB tmb_allow_hmt",      read_tmb_allow_hmt_,      tmb_allow_hmt_, print_errors);
+    config_ok &= compareValues("TMB tmb_allow_hmt_ro",   read_tmb_allow_hmt_ro_,   tmb_allow_hmt_ro_, print_errors);
     //
     //------------------------------------------------------------------
     //0X17A = ADR_V6_EXTEND: ADR_CFEB_INJ:  CFEB Injector Control; ADR_SEQ_TRIG_EN:
@@ -12084,10 +12238,10 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
         // 0X318 = ADR_GEM_TRG
         //---------------------------------------------------------------------
 
-        config_ok &= compareValues ("TMB gem_clct_deltahs"   , read_gem_clct_deltahs_        , gem_clct_deltahs_     , print_errors);
-        config_ok &= compareValues ("TMB gem_alct_deltawire" , read_gem_alct_deltawire_      , gem_alct_deltawire_   , print_errors);
-        config_ok &= compareValues ("TMB gem_clct_enable"    , read_gem_clct_enable_         , gem_clct_enable_      , print_errors);
-        config_ok &= compareValues ("TMB gem_alct_enable"    , read_gem_alct_enable_         , gem_alct_enable_      , print_errors);
+        config_ok &= compareValues ("TMB gem_clct_deltahs_odd"   , read_gem_clct_deltahs_odd_        , gem_clct_deltahs_odd_     , print_errors);
+        config_ok &= compareValues ("TMB gem_clct_deltahs_even"  , read_gem_clct_deltahs_even_       , gem_clct_deltahs_even_    , print_errors);
+        config_ok &= compareValues ("TMB gem_alct_deltawire_odd" , read_gem_alct_deltawire_odd_      , gem_alct_deltawire_odd_   , print_errors);
+        config_ok &= compareValues ("TMB gem_alct_deltawire_even", read_gem_alct_deltawire_even_     , gem_alct_deltawire_even_  , print_errors);
 
         //---------------------------------------------------------------------
         // 0X324 = ADR_GEM_COPAD_CTRL

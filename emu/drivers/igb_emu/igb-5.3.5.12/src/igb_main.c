@@ -5862,14 +5862,14 @@ static int igb_change_mtu(struct net_device *netdev, int new_mtu)
 	struct igb_adapter *adapter = netdev_priv(netdev);
 	struct e1000_hw *hw = &adapter->hw;
 	struct pci_dev *pdev = adapter->pdev;
-#ifndef HAVE_NETDEVICE_MIN_MAX_MTU
+	//#ifndef HAVE_NETDEVICE_MIN_MAX_MTU
 	int max_frame = new_mtu + ETH_HLEN + ETH_FCS_LEN + VLAN_HLEN;
 
 	if ((new_mtu < 68) || (max_frame > MAX_JUMBO_FRAME_SIZE)) {
 		dev_err(pci_dev_to_dev(pdev), "Invalid MTU setting\n");
 		return -EINVAL;
 	}
-#endif
+	//#endif
 
 #define MAX_STD_JUMBO_FRAME_SIZE 9238
 #ifndef HAVE_NETDEVICE_MIN_MAX_MTU
@@ -5886,10 +5886,10 @@ static int igb_change_mtu(struct net_device *netdev, int new_mtu)
 	while (test_and_set_bit(__IGB_RESETTING, &adapter->state))
 		usleep_range(1000, 2000);
 
-#ifndef HAVE_NETDEVICE_MIN_MAX_MTU
+	//#ifndef HAVE_NETDEVICE_MIN_MAX_MTU
 	/* igb_down has a dependency on max_frame_size */
 	adapter->max_frame_size = max_frame;
-#endif
+	//#endif
 
 	if (netif_running(netdev))
 		igb_down(adapter);

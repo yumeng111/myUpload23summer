@@ -447,6 +447,9 @@ ChamberUtilities::ChamberUtilities(){
   ALCT_bx0_delay_        = -1;
   match_trig_alct_delay_ = -1;
   tmb_bxn_offset_used_   = -1;
+  gemA_bx0_delay_         = -1;
+  gemB_bx0_delay_         = -1;
+  match_gem_alct_delay_   = -1;
   //
   best_average_aff_to_l1a_counter_ = -1.;
   best_average_alct_dav_scope_ = -1.;
@@ -5474,6 +5477,788 @@ int ChamberUtilities::ALCTBC0Scan() {
   }
   //
   return ALCT_bx0_delay_;
+  //
+}
+//
+//------------------------------------------
+// ALCT->TMB BC0 delays , using internal counter
+//------------------------------------------
+int ChamberUtilities::ALCTBC0ScanWithCounter() {
+  //
+  // The goal of this scan is to find the alct_bx0_delay value which gives the desired
+  // propagation time of the BC0 signal from TMB -> ALCT -> TMB.
+  //
+  // Thus, Before performing this scan, one should have the following defined:
+  // - alct_tof_delay and alct_txd to define the TMB -> ALCT BC0timing
+  // - alct_[rx,tx]_clock_delay and alct_[rx,tx]_posneg) to establish good communication between TMB <-> ALCT
+  //
+  if (debug_) {
+    std::cout << "*************************************************" << std::endl;
+    std::cout << "Scan to align ALCT BC0 back at TMB, with counter" << std::endl;
+    std::cout << "*************************************************" << std::endl;
+  }
+  (*MyOutput_) << "***********************************************" << std::endl;
+  (*MyOutput_) << "Scan to align ALCT BC0 back at TMB with counter" << std::endl;
+  (*MyOutput_) << "***********************************************" << std::endl;
+  //
+  // send output to std::cout except for the essential information 
+  thisTMB->RedirectOutput(&std::cout);
+  alct->RedirectOutput(&std::cout);
+  //
+  // Get initial values
+  int initial_fire_l1a_one_shot = thisTMB->GetFireL1AOneshot();
+  int initial_ignore_ccb_rx     = thisTMB->GetIgnoreCCBRx();
+  //
+  int initial_mpc_idle_blank     = thisTMB->GetMpcIdleBlank();
+  int initial_mpc_sel_ttc_bx0    = thisTMB->GetSelectMpcTtcBx0(); 
+ //
+  int initial_match_window_size  = thisTMB->GetAlctMatchWindowSize();
+  int initial_alct_vpf_delay     = thisTMB->GetAlctVpfDelay();
+  //
+  int initial_clct_bx0_delay     = thisTMB->GetClctBx0Delay();    
+  int initial_alct_bx0_delay     = thisTMB->GetAlctBx0Delay();
+  int initial_alct_bx0_enable    = thisTMB->GetAlctBx0Enable();   
+  //
+  int initial_alct_txdata_delay  = thisTMB->GetALCTTxDataDelay(); 
+  //
+  int initial_bxn_offset         = thisTMB->GetBxnOffset();
+  //
+  //
+  if (debug_>=10) {
+    std::cout << "Initial values..." << std::endl;
+    std::cout << "-> initial_mpc_idle_blank    = " << initial_mpc_idle_blank    << std::endl;
+    std::cout << "-> initial_mpc_sel_ttc_bx0   = " << initial_mpc_sel_ttc_bx0   << std::endl;
+    //
+    std::cout << "-> initial_clct_bx0_delay    = " << initial_clct_bx0_delay    << std::endl;
+    std::cout << "-> initial_alct_bx0_delay    = " << initial_alct_bx0_delay    << std::endl;
+    std::cout << "-> initial_alct_bx0_enable   = " << initial_alct_bx0_enable   << std::endl;
+    //
+    std::cout << "-> initial_alct_txdata_delay = " << initial_alct_txdata_delay << std::endl;
+    //
+    std::cout << "-> initial_bxn_offset        = " << initial_bxn_offset        << std::endl;
+  }
+  //
+  std::cout    << "This scan has the following input parameters... " << std::endl;
+  std::cout    << "alct_tof_delay          = 0x" << std::hex << thisTMB->GetAlctTOFDelay() << std::endl; 
+  std::cout    << "tmb_to_alct_data_delay  = 0x" << std::hex << thisTMB->GetALCTTxDataDelay() << std::endl;
+  (*MyOutput_) << "This scan has the following input parameters... " << std::endl;
+  (*MyOutput_) << "alct_tof_delay          = 0x" << std::hex << thisTMB->GetAlctTOFDelay() << std::endl;
+  (*MyOutput_) << "tmb_to_alct_data_delay  = 0x" << std::hex << thisTMB->GetALCTTxDataDelay() << std::endl;
+  //
+  // Set up for this test:
+  // turn off the one shot L1A (from TMB)...
+  thisTMB->SetFireL1AOneshot(0);
+  // turn on the CCB inputs to get BC0 defined from CCB
+  thisTMB->SetIgnoreCCBRx(0);
+  thisTMB->WriteRegister(ccb_cfg_adr);
+  if (debug_>=10) {
+    thisTMB->ReadRegister(ccb_cfg_adr);
+    thisTMB->PrintTMBRegister(ccb_cfg_adr);
+  }
+  //
+  // MpcIdleBlank = 0 = send BC0 signals to MPC every orbit (1 = blank unless LCT is sent to MPC)
+  thisTMB->SetMpcIdleBlank(0);
+  // SelectMpcTtcBx0 = 0 = send BC0 to MPC (on LCT0) from TMB (1 = send BC0 from CCB)
+  thisTMB->SetSelectMpcTtcBx0(0);
+  thisTMB->WriteRegister(tmb_trig_adr);
+  if (debug_>=10) {
+    thisTMB->ReadRegister(tmb_trig_adr);
+    thisTMB->PrintTMBRegister(tmb_trig_adr);
+  }
+  //
+  // AlctBx0Enable = 1 = send BC0 to MPC (on LCT1) from ALCT (0 = copy what it has from the TMB)
+  thisTMB->SetAlctBx0Enable(1);
+  thisTMB->WriteRegister(bx0_delay_adr);
+  if (debug_>=10) {
+    thisTMB->ReadRegister(bx0_delay_adr);
+    thisTMB->PrintTMBRegister(bx0_delay_adr);
+  }
+  bool useLocalBXNOffset = false;
+  //
+  //std::cout    << "Using tmb_bxn_offset = " << std::dec << local_tmb_bxn_offset_ << std::endl;
+  //(*MyOutput_) << "Using tmb_bxn_offset = " << std::dec << local_tmb_bxn_offset_ << std::endl;
+  std::cout    << "Using tmb_bxn_offset = " << std::dec << (useLocalBXNOffset ? local_tmb_bxn_offset_ : initial_bxn_offset) << std::endl;
+  (*MyOutput_) << "Using tmb_bxn_offset = " << std::dec << (useLocalBXNOffset ? local_tmb_bxn_offset_ : initial_bxn_offset )<< std::endl;
+  //
+  if (initial_bxn_offset != local_tmb_bxn_offset_ && useLocalBXNOffset) {
+    thisTMB->SetBxnOffset(local_tmb_bxn_offset_);
+    thisTMB->WriteRegister(seq_offset_adr);
+    //
+    // Send a BGo "Resync" to make sure that the BC0 offset has taken effect
+    thisCCB_->setCCBMode(CCB::VMEFPGA);
+    thisCCB_->syncReset(); 
+    thisCCB_->setCCBMode(CCB::DLOG);
+    //
+    // put in a sleep to allow the resync to take hold...
+    ::sleep(1);
+  }
+  //
+  // Values for scan over tmb_bxn_offset
+  //
+  const int minimum_delay_value=0;
+  const int maximum_delay_value=16;
+  //
+  //const int number_of_checks_per_value = 100;
+  //
+  int matched[maximum_delay_value*2] = {}; memset(matched, 0, sizeof(matched));
+  int matched2[maximum_delay_value*2] = {}; memset(matched2, 0, sizeof(matched2));
+  //
+  std::cout << "Scanning alct_bx0_delay from " << std::dec << minimum_delay_value << " to " << maximum_delay_value << std::endl;
+  //
+  for (int delay_value=minimum_delay_value; delay_value<maximum_delay_value; delay_value++) {
+    //
+    thisTMB->SetAlctBx0Delay(delay_value);
+    thisTMB->WriteRegister(bx0_delay_adr);
+    if (debug_>=10) {
+      thisTMB->ReadRegister(bx0_delay_adr);
+      thisTMB->PrintTMBRegister(bx0_delay_adr);
+    }
+    //
+    thisTMB->ResetCounters();
+    ::usleep(1000);
+    thisTMB->GetCounters();
+    matched[delay_value] = thisTMB->GetBx0MatchCounter(); //update to a constant value
+    //
+    //for (int j=0; j<number_of_checks_per_value; j++) {
+    //  thisTMB->ReadRegister(bx0_delay_adr);
+    //  int BC0_match = thisTMB->GetReadBx0Match();
+    //  //
+    //  if (debug_>=10 && BC0_match) 
+    //    std::cout << "delay " << thisTMB->GetBxnOffset() << " ---> ALCT*CLCT BC0_match = " << BC0_match << "<-----" << std::endl;
+    //  //
+    //  matched[delay_value] += BC0_match;
+    //}
+  }
+   
+  //
+  // print out the results...
+  //
+  float float_average = AverageHistogram(matched,minimum_delay_value,maximum_delay_value);
+  ALCT_bx0_delay_     = RoundOff(float_average);
+  //
+  (*MyOutput_) << "------------------------------------------" << std::endl;
+  (*MyOutput_) << "ALCT*CLCT BC0 matches vs. alct_bx0_delay" << std::endl;
+  for (int delay_value=minimum_delay_value; delay_value<maximum_delay_value; delay_value++) {
+    (*MyOutput_) << "alct_bx0_delay[" << std::dec << delay_value << "] = " << matched[delay_value] << std::endl;
+    std::cout    << "alct_bx0_delay[" << std::dec << delay_value << "] = " << matched[delay_value] << std::endl;
+    //
+  }
+  (*MyOutput_) << "Best value is alct_bx0_delay = " << ALCT_bx0_delay_ << std::endl;
+  std::cout    << "Best value is alct_bx0_delay = " << ALCT_bx0_delay_ << std::endl;
+  (*MyOutput_) << "------------------------------------------\n" << std::endl;
+
+
+  //
+  std::cout    << "Scanning match_trig_alct_delay from " << std::dec << minimum_delay_value << " to " << maximum_delay_value << std::endl;
+  std::cout    << "This scan has the following input parameters... " << std::endl;
+  std::cout    << "match_trig_alct_delay          = 0x" << std::hex << thisTMB->GetAlctVpfDelay() << std::endl; 
+  std::cout    << "match_trig_window_size         = 0x" << std::hex << thisTMB->GetAlctMatchWindowSize() << std::endl; 
+  (*MyOutput_) << "Scanning match_trig_alct_delay from " << std::dec << minimum_delay_value << " to " << maximum_delay_value << std::endl;
+  (*MyOutput_) << "This scan has the following input parameters... " << std::endl;
+  (*MyOutput_) << "match_trig_alct_delay          = 0x" << std::hex << thisTMB->GetAlctVpfDelay() << std::endl; 
+  (*MyOutput_) << "match_trig_window_size         = 0x" << std::hex << thisTMB->GetAlctMatchWindowSize() << std::endl; 
+  thisTMB->SetAlctBx0Delay(ALCT_bx0_delay_);
+  thisTMB->WriteRegister(bx0_delay_adr);
+  thisTMB->SetAlctMatchWindowSize(1);//use window =1 for timing scan
+  //
+  for (int delay_value=minimum_delay_value; delay_value<maximum_delay_value; delay_value++) {
+    //
+    thisTMB->SetAlctVpfDelay(delay_value);
+    thisTMB->WriteRegister(tmbtim_adr);
+    if (debug_>=10) {
+      thisTMB->ReadRegister(tmbtim_adr);
+      thisTMB->PrintTMBRegister(tmbtim_adr);
+    }
+    //
+    thisTMB->ResetCounters();
+    ::usleep(1000000); //unit here microsecond
+    thisTMB->GetCounters();
+    matched2[delay_value] = thisTMB->GetLCTCounter();
+  }
+  //
+  //
+  // print out the results...
+  //
+  float float_average2 = AverageHistogram(matched2,minimum_delay_value,maximum_delay_value);
+  match_trig_alct_delay_ =  RoundOff(float_average2);
+  tmb_bxn_offset_used_   = local_tmb_bxn_offset_;
+  //
+  //
+  (*MyOutput_) << "------------------------------------------" << std::endl;
+  (*MyOutput_) << "ALCT*CLCT matches vs. match_trig_alct_delay when matching window = 1BX" << std::endl;
+  for (int delay_value=minimum_delay_value; delay_value<maximum_delay_value; delay_value++) {
+    (*MyOutput_) << "match_trig_alct_delay[" << std::dec << delay_value << "] = " << matched2[delay_value] << std::endl;
+    std::cout    << "match_trig_alct_delay[" << std::dec << delay_value << "] = " << matched2[delay_value] << std::endl;
+    //
+  }
+  (*MyOutput_) << "Best value is match_trig_alct_delay = " << match_trig_alct_delay_ <<" for matching window = 1BX"<< std::endl;
+  std::cout    << "Best value is match_trig_alct_delay = " << match_trig_alct_delay_ <<" for matching window = 1BX"<< std::endl;
+  match_trig_alct_delay_ = match_trig_alct_delay_ + initial_match_window_size/2;
+  (*MyOutput_) <<" To get best value with right match window, match_trig_alct_delay = match_trig_alct_delay_for1BX + window/2 " << std::endl;
+  std::cout    <<" To get best value with right match window, match_trig_alct_delay = match_trig_alct_delay_for1BX + window/2 " << std::endl;
+  (*MyOutput_) << "Best value is match_trig_alct_delay = " << match_trig_alct_delay_ <<" for matching window = "<< initial_match_window_size << "BX"<< std::endl;
+  std::cout    << "Best value is match_trig_alct_delay = " << match_trig_alct_delay_ <<" for matching window = "<< initial_match_window_size << "BX"<<std::endl;
+  (*MyOutput_) << "------------------------------------------\n\n" << std::endl;
+  //
+  //
+  // Return back to the initial conditions...
+  thisTMB->SetFireL1AOneshot(initial_fire_l1a_one_shot);
+  thisTMB->SetIgnoreCCBRx(initial_ignore_ccb_rx);
+  thisTMB->WriteRegister(ccb_cfg_adr);
+  //
+  thisTMB->SetSelectMpcTtcBx0(initial_mpc_sel_ttc_bx0);
+  thisTMB->SetMpcIdleBlank(initial_mpc_idle_blank);
+  thisTMB->WriteRegister(tmb_trig_adr);
+  //
+  thisTMB->SetAlctMatchWindowSize(initial_match_window_size);
+  thisTMB->SetAlctVpfDelay(initial_alct_vpf_delay);
+  thisTMB->WriteRegister(tmbtim_adr);
+  //
+  thisTMB->SetClctBx0Delay(initial_clct_bx0_delay);
+  thisTMB->SetAlctBx0Delay(initial_alct_bx0_delay);
+  thisTMB->SetAlctBx0Enable(initial_alct_bx0_enable);
+  thisTMB->WriteRegister(bx0_delay_adr);
+  //
+  thisTMB->SetALCTTxDataDelay(initial_alct_txdata_delay);
+  thisTMB->WriteRegister(alct_stat_adr);
+  //
+  if (use_measured_values_) {
+    (*MyOutput_) << "Setting alct_bx0_delay and match_trig_alct_delay to measured value..." << std::endl;
+    //
+    thisTMB->SetAlctBx0Delay(ALCT_bx0_delay_);
+    thisTMB->WriteRegister(bx0_delay_adr);
+    //
+    thisTMB->SetAlctVpfDelay(match_trig_alct_delay_);
+    thisTMB->WriteRegister(tmbtim_adr);
+    //
+  } else {
+    (*MyOutput_) << "Reverting to initial values of alct_bx0_delay and match_trig_alct_delay to measured value..." << std::endl;
+    //
+    if (initial_bxn_offset != local_tmb_bxn_offset_ && useLocalBXNOffset) {
+      //
+      thisTMB->SetBxnOffset(initial_bxn_offset);
+      thisTMB->WriteRegister(seq_offset_adr);
+      //
+      // Send a BGo "Resync" to make sure that the BC0 offset has taken effect
+      thisCCB_->setCCBMode(CCB::VMEFPGA);
+      thisCCB_->syncReset(); 
+      thisCCB_->setCCBMode(CCB::DLOG);
+      //
+      // put in a sleep to allow the resync to take hold...
+      ::sleep(1);
+    }
+  }
+  //
+  return ALCT_bx0_delay_;
+  //
+}
+
+
+//
+//------------------------------------------
+// GEM->ALCT,TMB BC0 delays 
+//------------------------------------------
+int ChamberUtilities::GEMBC0Scan() {
+  //
+  // The goal of this scan is to find the gemA_bx0_delay/gemB_bx0_delay value which gives the desired
+  // propagation time of the BC0 signal from GEM -> ALCT/TMB.
+  //
+  // Thus, Before performing this scan, one should have the following defined:
+  // - gem_[rx,tx]_clock_delay and gem_[rx,tx]_posneg) to establish good communication between GEM <-> ALCT
+  //
+  if (debug_) {
+    std::cout << "**********************************" << std::endl;
+    std::cout << "Scan to align GEM BC0 back at TMB" << std::endl;
+    std::cout << "**********************************" << std::endl;
+  }
+  (*MyOutput_) << "**********************************" << std::endl;
+  (*MyOutput_) << "Scan to align GEM BC0 back at TMB" << std::endl;
+  (*MyOutput_) << "**********************************" << std::endl;
+  //
+  // send output to std::cout except for the essential information 
+  thisTMB->RedirectOutput(&std::cout);
+  //alct->RedirectOutput(&std::cout);
+  //
+  // Get initial values
+  int initial_fire_l1a_one_shot = thisTMB->GetFireL1AOneshot();
+  int initial_ignore_ccb_rx     = thisTMB->GetIgnoreCCBRx();
+  //
+  int initial_mpc_idle_blank     = thisTMB->GetMpcIdleBlank();
+  int initial_mpc_sel_ttc_bx0    = thisTMB->GetSelectMpcTtcBx0(); 
+  //
+  int initial_clct_bx0_delay     = thisTMB->GetClctBx0Delay();    
+  int initial_gemA_bx0_delay     = thisTMB->GetGemABx0Delay();
+  int initial_gemA_bx0_enable    = thisTMB->GetGemABx0Enable();   
+  int initial_gemB_bx0_delay     = thisTMB->GetGemBBx0Delay();
+  int initial_gemB_bx0_enable    = thisTMB->GetGemBBx0Enable();   
+  //
+  //
+  int initial_bxn_offset         = thisTMB->GetBxnOffset();
+  //
+  //
+  if (debug_>=10) {
+    std::cout << "Initial values..." << std::endl;
+    std::cout << "-> initial_mpc_idle_blank    = " << initial_mpc_idle_blank    << std::endl;
+    std::cout << "-> initial_mpc_sel_ttc_bx0   = " << initial_mpc_sel_ttc_bx0   << std::endl;
+    //
+    std::cout << "-> initial_clct_bx0_delay    = " << initial_clct_bx0_delay    << std::endl;
+    std::cout << "-> initial_gemA_bx0_delay    = " << initial_gemA_bx0_delay    << std::endl;
+    std::cout << "-> initial_gemA_bx0_enable   = " << initial_gemA_bx0_enable   << std::endl;
+    std::cout << "-> initial_gemB_bx0_delay    = " << initial_gemB_bx0_delay    << std::endl;
+    std::cout << "-> initial_gemB_bx0_enable   = " << initial_gemB_bx0_enable   << std::endl;
+    //
+    std::cout << "-> initial_bxn_offset        = " << initial_bxn_offset        << std::endl;
+  }
+  //
+  std::cout    << "This scan has the following input parameters... " << std::endl;
+  std::cout    << "gemA_bx0_delay          = 0x" << std::hex << thisTMB->GetGemABx0Delay() << std::endl; 
+  std::cout    << "gemB_bx0_delay          = 0x" << std::hex << thisTMB->GetGemBBx0Delay() << std::endl;
+  (*MyOutput_) << "This scan has the following input parameters... " << std::endl;
+  (*MyOutput_) << "gemA_bx0_delay          = 0x" << std::hex << thisTMB->GetGemABx0Delay() << std::endl; 
+  (*MyOutput_) << "gemB_bx0_delay          = 0x" << std::hex << thisTMB->GetGemBBx0Delay() << std::endl;
+  //
+  // Set up for this test:
+  // turn off the one shot L1A (from TMB)...
+  thisTMB->SetFireL1AOneshot(0);
+  // turn on the CCB inputs to get BC0 defined from CCB
+  //thisTMB->SetIgnoreCCBRx(0);
+  //thisTMB->WriteRegister(ccb_cfg_adr);
+  //if (debug_>=10) {
+  //  thisTMB->ReadRegister(ccb_cfg_adr);
+  //  thisTMB->PrintTMBRegister(ccb_cfg_adr);
+  //}
+  //
+  // MpcIdleBlank = 0 = send BC0 signals to MPC every orbit (1 = blank unless LCT is sent to MPC)
+  thisTMB->SetMpcIdleBlank(0);
+  // SelectMpcTtcBx0 = 0 = send BC0 to MPC (on LCT0) from TMB (1 = send BC0 from CCB)
+  thisTMB->SetSelectMpcTtcBx0(0);
+  thisTMB->WriteRegister(tmb_trig_adr);
+  if (debug_>=10) {
+    thisTMB->ReadRegister(tmb_trig_adr);
+    thisTMB->PrintTMBRegister(tmb_trig_adr);
+  }
+  //
+  // AlctBx0Enable = 1 = send BC0 to MPC (on LCT1) from ALCT (0 = copy what it has from the TMB)
+  thisTMB->SetGemABx0Enable(1);
+  thisTMB->SetGemBBx0Enable(1);
+  thisTMB->WriteRegister(gem_bx0_delay_adr);
+  if (debug_>=10) {
+    thisTMB->ReadRegister(gem_bx0_delay_adr);
+    thisTMB->PrintTMBRegister(gem_bx0_delay_adr);
+  }
+  bool useLocalBXNOffset = false;
+  //
+  std::cout    << "Using tmb_bxn_offset = " << std::dec << (useLocalBXNOffset ? local_tmb_bxn_offset_ : initial_bxn_offset) << std::endl;
+  (*MyOutput_) << "Using tmb_bxn_offset = " << std::dec << (useLocalBXNOffset ? local_tmb_bxn_offset_ : initial_bxn_offset )<< std::endl;
+  //
+  if (initial_bxn_offset != local_tmb_bxn_offset_ && useLocalBXNOffset) {
+    thisTMB->SetBxnOffset(local_tmb_bxn_offset_);
+    thisTMB->WriteRegister(seq_offset_adr);
+    //
+    // Send a BGo "Resync" to make sure that the BC0 offset has taken effect
+    thisCCB_->setCCBMode(CCB::VMEFPGA);
+    thisCCB_->syncReset(); 
+    thisCCB_->setCCBMode(CCB::DLOG);
+    //
+    // put in a sleep to allow the resync to take hold...
+    ::sleep(1);
+  }
+  //
+  // Values for scan over tmb_bxn_offset
+  //
+  const int minimum_delay_value=0;
+  //const int maximum_delay_value=16;
+  const int maximum_delay_value=64;
+  //
+  const int number_of_checks_per_value = 100;
+  //
+  int matchedA[maximum_delay_value*2] = {}; memset(matchedA, 0, sizeof(matchedA));
+  int matchedB[maximum_delay_value*2] = {}; memset(matchedB, 0, sizeof(matchedB));
+  //
+  std::cout << "Scanning gemA/B_bx0_delay from " << std::dec << minimum_delay_value << " to " << maximum_delay_value << std::endl;
+  //
+  for (int delay_value=minimum_delay_value; delay_value<maximum_delay_value; delay_value++) {
+    //
+    thisTMB->SetGemABx0Delay(delay_value);
+    thisTMB->SetGemBBx0Delay(delay_value);
+    thisTMB->WriteRegister(gem_bx0_delay_adr);
+    if (debug_>=10) {
+      thisTMB->ReadRegister(gem_bx0_delay_adr);
+      thisTMB->PrintTMBRegister(gem_bx0_delay_adr);
+    }
+    //
+    ::usleep(1000);
+    //
+    for (int j=0; j<number_of_checks_per_value; j++) {
+      thisTMB->ReadRegister(gem_bx0_delay_adr);
+      int gemA_BC0_match = thisTMB->GetReadGemABx0Match();
+      int gemB_BC0_match = thisTMB->GetReadGemBBx0Match();
+      //
+      if (debug_>=10 && (gemA_BC0_match || gemB_BC0_match)) {
+	std::cout << "delay " << thisTMB->GetBxnOffset() << " ---> ALCT*CLCT BC0_match = " << gemA_BC0_match << "<-----" << std::endl;
+	std::cout << "delay " << thisTMB->GetBxnOffset() << " ---> ALCT*CLCT BC0_match = " << gemB_BC0_match << "<-----" << std::endl;
+      }
+      //
+      matchedA[delay_value] += gemA_BC0_match;
+      matchedB[delay_value] += gemB_BC0_match;
+    }
+  }
+  //
+  // print out the results...
+  //
+  float float_averageA = AverageHistogram(matchedA,minimum_delay_value,maximum_delay_value);
+  float float_averageB = AverageHistogram(matchedB,minimum_delay_value,maximum_delay_value);
+  gemA_bx0_delay_     = RoundOff(float_averageA);
+  gemB_bx0_delay_     = RoundOff(float_averageB);
+  //match_trig_alct_delay_ = ALCT_bx0_delay_;
+  tmb_bxn_offset_used_   = local_tmb_bxn_offset_;
+  //
+  (*MyOutput_) << "------------------------------------------" << std::endl;
+  (*MyOutput_) << "GEM*CLCT BC0 matches vs. gemA/B_bx0_delay" << std::endl;
+  for (int delay_value=minimum_delay_value; delay_value<maximum_delay_value; delay_value++) {
+    (*MyOutput_) << "gemA/B_bx0_delay[" << std::dec << delay_value << "] = A:" << matchedA[delay_value] << " B:"<< matchedB[delay_value]<< std::endl;
+    std::cout    << "gemA/B_bx0_delay[" << std::dec << delay_value << "] = A:" << matchedA[delay_value] << " B:"<< matchedB[delay_value]<< std::endl;
+    //
+  }
+  (*MyOutput_) << "Best value is gemA_bx0_delay = " << gemA_bx0_delay_ <<" gemB_bx0_delay = " << gemB_bx0_delay_ << std::endl;
+  std::cout    << "Best value is gemA_bx0_delay = " << gemA_bx0_delay_ <<" gemB_bx0_delay = " << gemB_bx0_delay_ << std::endl;
+  //(*MyOutput_) << "Best value is match_trig_alct_delay = " << match_trig_alct_delay_ << std::endl;
+  //std::cout    << "Best value is match_trig_alct_delay = " << match_trig_alct_delay_ << std::endl;
+  //
+  //
+  // Return back to the initial conditions...
+  thisTMB->SetFireL1AOneshot(initial_fire_l1a_one_shot);
+  thisTMB->SetIgnoreCCBRx(initial_ignore_ccb_rx);
+  thisTMB->WriteRegister(ccb_cfg_adr);
+  //
+  thisTMB->SetSelectMpcTtcBx0(initial_mpc_sel_ttc_bx0);
+  thisTMB->SetMpcIdleBlank(initial_mpc_idle_blank);
+  thisTMB->WriteRegister(tmb_trig_adr);
+  //
+  thisTMB->SetClctBx0Delay(initial_clct_bx0_delay);
+  thisTMB->WriteRegister(bx0_delay_adr);
+///
+  thisTMB->SetGemABx0Delay( initial_gemA_bx0_delay);
+  thisTMB->SetGemABx0Enable(initial_gemA_bx0_enable);
+  thisTMB->SetGemBBx0Delay( initial_gemB_bx0_delay);
+  thisTMB->SetGemBBx0Enable(initial_gemB_bx0_enable);
+  thisTMB->WriteRegister(gem_bx0_delay_adr);
+  //
+  if (use_measured_values_) {
+    (*MyOutput_) << "Setting alct_bx0_delay and match_trig_alct_delay to measured value..." << std::endl;
+    //
+    thisTMB->SetGemABx0Delay(gemA_bx0_delay_);
+    thisTMB->SetGemBBx0Delay(gemB_bx0_delay_);
+    thisTMB->WriteRegister(gem_bx0_delay_adr);
+    //
+    //thisTMB->SetAlctVpfDelay(match_trig_alct_delay_);
+    //thisTMB->WriteRegister(tmbtim_adr);
+    //
+  } else {
+    (*MyOutput_) << "Reverting to initial values of alct_bx0_delay and match_trig_alct_delay to measured value..." << std::endl;
+    //
+    if (initial_bxn_offset != local_tmb_bxn_offset_ && useLocalBXNOffset) {
+      //
+      thisTMB->SetBxnOffset(initial_bxn_offset);
+      thisTMB->WriteRegister(seq_offset_adr);
+      //
+      // Send a BGo "Resync" to make sure that the BC0 offset has taken effect
+      thisCCB_->setCCBMode(CCB::VMEFPGA);
+      thisCCB_->syncReset(); 
+      thisCCB_->setCCBMode(CCB::DLOG);
+      //
+      // put in a sleep to allow the resync to take hold...
+      ::sleep(1);
+    }
+  }
+  //
+  return gemA_bx0_delay_;
+  //
+}
+
+//
+//------------------------------------------
+// GEM->ALCT,TMB signal delays for GEM-CSC match
+//------------------------------------------
+int ChamberUtilities::GEMCSCMatchScan(int step_time, int nstep) {
+  //
+  // The goal of this scan is to find the match_gemA_alct_delay/match_gemB_alct_delay value which gives the desired
+  // propagation time of  GEM vpf -> ALCT/TMB for matching.
+  //
+  // Thus, Before performing this scan, one should have the following defined:
+  // - gem_[rx,tx]_clock_delay and gem_[rx,tx]_posneg) to establish good communication between GEM <-> ALCT
+  //
+  if (debug_) {
+    std::cout << "*******************************************************************" << std::endl;
+    std::cout << "Scan to final GEM delay for GEM-CSC match: steptime(sec) " << step_time << std::endl;
+    std::cout << "*******************************************************************" << std::endl;
+  }
+  (*MyOutput_) << "*******************************************************************" << std::endl;
+  (*MyOutput_) << "Scan to final GEM delay for GEM-CSC match: steptime(sec) "<< step_time << std::endl;
+  (*MyOutput_) << "*******************************************************************" << std::endl;
+  //
+  // send output to std::cout except for the essential information 
+  thisTMB->RedirectOutput(&std::cout);
+  //alct->RedirectOutput(&std::cout);
+  //
+  // Get initial values
+  int initial_fire_l1a_one_shot = thisTMB->GetFireL1AOneshot();
+  int initial_ignore_ccb_rx     = thisTMB->GetIgnoreCCBRx();
+  //
+  int initial_match_window_size  = thisTMB->GetAlctMatchWindowSize();//window for alct-clct and gem-clct match
+  int initial_alct_vpf_delay     = thisTMB->GetAlctVpfDelay();
+  //
+  int initial_match_gem_alct_delay     = thisTMB->GetMatchGemAlctDelay();
+  int initial_match_gem_alct_window     = thisTMB->GetMatchGemAlctWindow(); //gem-alct match window
+  
+  //
+  //
+  if (debug_>=10) {
+    std::cout << "Initial values..." << std::endl;
+    //
+    std::cout << "-> initial_match_window_size        = " << initial_match_window_size    << std::endl;
+    std::cout << "-> initial_alct_vpf_delay           = " << initial_alct_vpf_delay    << std::endl;
+    std::cout << "-> initial_match_gem_alct_delay     = " << initial_match_gem_alct_delay    << std::endl;
+    std::cout << "-> initial_match_gem_alct_window    = " << initial_match_gem_alct_window    << std::endl;
+  }
+  //
+  std::cout    << "This scan has the following input parameters... " << std::endl;
+  std::cout    << "match_trig_alct_delay          = 0x" << std::hex << thisTMB->GetAlctVpfDelay() << std::endl; 
+  std::cout    << "match_trig_window_size         = 0x" << std::hex << thisTMB->GetAlctMatchWindowSize() << std::endl; 
+  std::cout    << "match_gem_alct_delay           = 0x" << std::hex << thisTMB->GetMatchGemAlctDelay() << std::endl; 
+  std::cout    << "match_gem_alct_window          = 0x" << std::hex << initial_match_gem_alct_window <<" changed into 1BX for scan" << std::endl; 
+  (*MyOutput_) << "This scan has the following input parameters... " << std::endl;
+  (*MyOutput_) << "match_trig_alct_delay          = 0x" << std::hex << thisTMB->GetAlctVpfDelay() << std::endl; 
+  (*MyOutput_) << "match_trig_window_size         = 0x" << std::hex << thisTMB->GetAlctMatchWindowSize() << std::endl; 
+  (*MyOutput_) << "match_gem_alct_delay           = 0x" << std::hex << thisTMB->GetMatchGemAlctDelay() << std::endl; 
+  (*MyOutput_) << "match_gem_alct_window          = 0x" << std::hex << initial_match_gem_alct_window <<" changed into 1BX for scan" << std::endl; 
+  thisTMB->GetCounters();
+  std::cout <<" Reading counters before test start:   " << std::endl;
+  std::cout <<"         GetGEMAALCTMatchCounter():  " << std::dec <<  thisTMB->GetGEMAALCTMatchCounter() << std::endl;
+  std::cout <<"         GetGEMACLCTMatchCounter():  " << std::dec <<  thisTMB->GetGEMACLCTMatchCounter() << std::endl;
+  std::cout <<"         GetGEMBALCTMatchCounter():  " << std::dec <<  thisTMB->GetGEMBALCTMatchCounter() << std::endl;
+  std::cout <<"         GetGEMBCLCTMatchCounter():  " << std::dec <<  thisTMB->GetGEMBCLCTMatchCounter() << std::endl;
+  //
+  // Set up for this test:
+  // turn off the one shot L1A (from TMB)...
+  thisTMB->SetFireL1AOneshot(0);
+  // turn on the CCB inputs to get BC0 defined from CCB
+  //thisTMB->SetIgnoreCCBRx(0);
+  //thisTMB->WriteRegister(ccb_cfg_adr);
+  //if (debug_>=10) {
+  //  thisTMB->ReadRegister(ccb_cfg_adr);
+  //  thisTMB->PrintTMBRegister(ccb_cfg_adr);
+  //}
+  //
+  // MpcIdleBlank = 0 = send BC0 signals to MPC every orbit (1 = blank unless LCT is sent to MPC)
+  thisTMB->SetMpcIdleBlank(0);
+  // SelectMpcTtcBx0 = 0 = send BC0 to MPC (on LCT0) from TMB (1 = send BC0 from CCB)
+  thisTMB->SetSelectMpcTtcBx0(0);
+  thisTMB->WriteRegister(tmb_trig_adr);
+  if (debug_>=10) {
+    thisTMB->ReadRegister(tmb_trig_adr);
+    thisTMB->PrintTMBRegister(tmb_trig_adr);
+  }
+  //
+  //
+  const int minimum_delay_value=0;
+  const int maximum_delay_value=16;
+  //NEED to set it to be 64 in future!!!
+  //const int maximum_delay_value=64;
+  int match_gemA_alct_delay = 0;
+  int match_gemB_alct_delay = 0;
+  //
+  //const int number_of_checks_per_value = 100;
+  //
+  int matchedA_alct[maximum_delay_value*2] = {}; memset(matchedA_alct, 0, sizeof(matchedA_alct));
+  int matchedB_alct[maximum_delay_value*2] = {}; memset(matchedB_alct, 0, sizeof(matchedB_alct));
+  int matchedA_clct[maximum_delay_value*2] = {}; memset(matchedA_clct, 0, sizeof(matchedA_clct));
+  int matchedB_clct[maximum_delay_value*2] = {}; memset(matchedB_clct, 0, sizeof(matchedB_clct));
+  //
+  bool foundMatch_gemAalct = false;
+  bool foundMatch_gemAclct = false;
+  bool foundMatch_gemBalct = false;
+  bool foundMatch_gemBclct = false;
+  std::cout << "Scanning match_gemA/B_alct_delay from " << std::dec << minimum_delay_value << " to " << maximum_delay_value << std::endl;
+  thisTMB->SetMatchGemAlctWindow(1);// change gem-alct window into 1;
+  //
+  for (int delay_value=minimum_delay_value; delay_value<maximum_delay_value; delay_value++) {
+    //
+    thisTMB->SetMatchGemAlctDelay(delay_value);
+    thisTMB->WriteRegister(gemA_trg_ctrl_adr);
+    thisTMB->WriteRegister(gemB_trg_ctrl_adr);
+    if (debug_>=10) {
+      thisTMB->ReadRegister(    gemA_trg_ctrl_adr);
+      thisTMB->PrintTMBRegister(gemA_trg_ctrl_adr);
+      thisTMB->ReadRegister(    gemB_trg_ctrl_adr);
+      thisTMB->PrintTMBRegister(gemB_trg_ctrl_adr);
+    }
+    //
+    thisTMB->ResetCounters();
+    ::usleep(step_time*1000000); //unit here microsecond, step_time is in second
+    thisTMB->GetCounters();
+    matchedA_alct[delay_value] = thisTMB->GetGEMAALCTMatchCounter();
+    matchedB_alct[delay_value] = thisTMB->GetGEMBALCTMatchCounter();
+    matchedA_clct[delay_value] = thisTMB->GetGEMACLCTMatchCounter();
+    matchedB_clct[delay_value] = thisTMB->GetGEMBCLCTMatchCounter();
+    if (matchedA_alct[delay_value] > 0) foundMatch_gemAalct = true;
+    if (matchedB_alct[delay_value] > 0) foundMatch_gemBalct = true;
+    if (matchedA_clct[delay_value] > 0) foundMatch_gemAclct = true;
+    if (matchedB_clct[delay_value] > 0) foundMatch_gemBclct = true;
+  }
+  //
+  // print out the results...
+  //
+  float float_averageA_alct = AverageHistogram(matchedA_alct,minimum_delay_value,maximum_delay_value);
+  float float_averageB_alct = AverageHistogram(matchedB_alct,minimum_delay_value,maximum_delay_value);
+  float float_averageA_clct = AverageHistogram(matchedA_clct,minimum_delay_value,maximum_delay_value);
+  float float_averageB_clct = AverageHistogram(matchedB_clct,minimum_delay_value,maximum_delay_value);
+  int gemA_delay_alct     = RoundOff(float_averageA_alct);
+  int gemB_delay_alct     = RoundOff(float_averageB_alct);
+  int gemA_delay_clct     = RoundOff(float_averageA_clct);
+  int gemB_delay_clct     = RoundOff(float_averageB_clct);
+  int gemA_delay_for1BX = 0;
+  int gemB_delay_for1BX = 0;
+  //
+  (*MyOutput_) << "-----------------------------------------------------------------------------------------------------" << std::endl;
+  (*MyOutput_) << "GEM*CSC mtch match_gemA/B_delay vs gemA_alct_match, gemA_clct_match, gemB_alct_match, gemB_clct_match" << std::endl;
+  std::cout << "Might upgrade the range from 0-16 to 0-64!!!!!  " << std::endl;
+  (*MyOutput_) << "Might upgrade the range from 0-16 to 0-64!!!!!  " << std::endl;
+  for (int delay_value=minimum_delay_value; delay_value<maximum_delay_value; delay_value++) {
+    (*MyOutput_) << "gemA/B_delay[" << std::dec << delay_value << "] =\t A:" << matchedA_alct[delay_value] <<" ,\t"<< matchedA_clct[delay_value] << " ,\t B:"<< matchedB_alct[delay_value] <<" ,\t"<< matchedB_clct[delay_value] << std::endl;
+    std::cout    << "gemA/B_delay[" << std::dec << delay_value << "] =\t A:" << matchedA_alct[delay_value] <<" ,\t"<< matchedA_clct[delay_value] << " ,\t B:"<< matchedB_alct[delay_value] <<" ,\t"<< matchedB_clct[delay_value] << std::endl;
+    //
+  }
+  if (!foundMatch_gemAalct && !foundMatch_gemAclct && !foundMatch_gemBalct && !foundMatch_gemBclct){
+      (*MyOutput_) <<"no valid match is found for both gemA/B-Alct, gemA/B-clct match! use default value  " << std::endl;
+      std::cout    <<"no valid match is found for both gemA/B-Alct, gemA/B-clct match! use default value " << std::endl;
+      match_gem_alct_delay_ = initial_match_gem_alct_delay;
+      match_gemA_alct_delay = initial_match_gem_alct_delay;
+      match_gemB_alct_delay = initial_match_gem_alct_delay;
+  }else {
+     if ((foundMatch_gemAalct || foundMatch_gemAclct) && (foundMatch_gemBalct || foundMatch_gemBclct)){
+          gemA_delay_for1BX  = (foundMatch_gemAalct) ? gemA_delay_alct : gemA_delay_clct;
+          gemB_delay_for1BX  = (foundMatch_gemBalct) ? gemB_delay_alct : gemB_delay_clct;
+     }else if ((foundMatch_gemAalct || foundMatch_gemAclct) && !foundMatch_gemBalct && !foundMatch_gemBclct){
+          gemA_delay_for1BX  = (foundMatch_gemAalct) ? gemA_delay_alct : gemA_delay_clct;
+          gemB_delay_for1BX  = gemA_delay_for1BX;
+     }else if (!foundMatch_gemAalct && !foundMatch_gemAclct && (foundMatch_gemBalct || foundMatch_gemBclct)){
+          gemB_delay_for1BX  = (foundMatch_gemBalct) ? gemB_delay_alct : gemB_delay_clct;
+          gemA_delay_for1BX  = gemB_delay_for1BX;
+     }
+     match_gemA_alct_delay = gemA_delay_for1BX - initial_match_gem_alct_window +1;
+     match_gemB_alct_delay = gemB_delay_for1BX - initial_match_gem_alct_window +1;
+     match_gem_alct_delay_ =  int((match_gemA_alct_delay+match_gemB_alct_delay)/2.0);
+     (*MyOutput_) << "gem-alct match window =1BX, Best value is match_gem_alct_delay from gemA = " << gemA_delay_for1BX <<" match_gem_alct_delay from gemB = " << gemB_delay_for1BX << std::endl;
+     std::cout    << "gem-alct match window =1BX, Best value is match_gem_alct_delay from gemA = " << gemA_delay_for1BX <<" match_gem_alct_delay from gemB = " << gemB_delay_for1BX << std::endl;
+     (*MyOutput_) << "Above best value is for match_gem_alct_window=1BX, final_gem_delay = gem_delay_for1BXwindow - match_gem_alct_window + 1"<<std::endl;
+     std::cout    << "Above best value is for match_gem_alct_window=1BX, final_gem_delay = gem_delay_for1BXwindow - match_gem_alct_window + 1"<<std::endl;
+      (*MyOutput_) << "Final result (average A&B ) with normal match_gem_alct_window, = " << match_gem_alct_delay_ << std::endl; 
+     std::cout     << "Final result (average A&B ) with normal match_gem_alct_window, = " << match_gem_alct_delay_ << std::endl; 
+    
+  }
+  //
+  (*MyOutput_) << "Final Best value is match_gemA_alct_delay = " << match_gemA_alct_delay <<" match_gemB_alct_delay = " << match_gemB_alct_delay << std::endl;
+  std::cout    << "Final Best value is match_gemA_alct_delay = " << match_gemA_alct_delay <<" match_gemB_alct_delay = " << match_gemB_alct_delay << std::endl;
+  //
+  //
+  //================================================================================================================================
+  //Special Test to delay ALCT for ALCT+GEM match and delay GEM for ALCT+GEM match
+  //================================================================================================================================
+  //
+  if (nstep >= 16){
+	    std::cout << "*******************************************************************" << std::endl;
+	    std::cout << "Special Test to find out whether GEM is late or ALCT is late "  << std::endl;
+	    std::cout << "Scan to GEM delay/ALCT delay for GEM-CSC match: steptime(sec) " << step_time <<" nstep "<< nstep << std::endl;
+	    std::cout << "*******************************************************************" << std::endl;
+	    (*MyOutput_) << "*******************************************************************" << std::endl;
+	    (*MyOutput_) << "Special Test to find out whether GEM is late or ALCT is late "  << std::endl;
+	    (*MyOutput_) << "Scan to GEM delay/ALCT delay for GEM-CSC match: steptime(sec) " << step_time <<" nstep "<< nstep << std::endl;
+	    (*MyOutput_) << "*******************************************************************" << std::endl;
+    //std::cout << "match_gem_alct_delay  " << std::hex << thisTMB->GetMatchGemAlctDelay() << std::endl; 
+	  const int min_delay_value=0;
+	  const int max_delay_value=256;
+	  //
+	  //const int number_of_checks_per_value = 100;
+	  //
+	  int dlyalct_gemA_match_test[max_delay_value*2] = {}; memset(dlyalct_gemA_match_test, 0, sizeof(dlyalct_gemA_match_test));
+	  int dlyalct_gemB_match_test[max_delay_value*2] = {}; memset(dlyalct_gemB_match_test, 0, sizeof(dlyalct_gemB_match_test));
+	  int alct_dlygemA_match_test[max_delay_value*2] = {}; memset(alct_dlygemA_match_test, 0, sizeof(alct_dlygemA_match_test));
+	  int alct_dlygemB_match_test[max_delay_value*2] = {}; memset(alct_dlygemB_match_test, 0, sizeof(alct_dlygemB_match_test));
+	  //
+	  std::cout << "Scanning match_gemA/B_alct_delay from " << std::dec << min_delay_value << " to " << nstep << std::endl;
+	  //
+	  for (int delay_value=min_delay_value; delay_value<nstep; delay_value++) {
+	    //
+	    thisTMB->SetMatchGemAlctDelay(delay_value);
+	    thisTMB->WriteRegister(gemA_trg_ctrl_adr);
+	    thisTMB->WriteRegister(gemB_trg_ctrl_adr);
+	    if (debug_>=10) {
+	      thisTMB->ReadRegister(    gemA_trg_ctrl_adr);
+	      thisTMB->PrintTMBRegister(gemA_trg_ctrl_adr);
+	      thisTMB->ReadRegister(    gemB_trg_ctrl_adr);
+	      thisTMB->PrintTMBRegister(gemB_trg_ctrl_adr);
+	    }
+	    //
+	    thisTMB->ResetCounters();
+	    ::usleep(step_time*1000000); //unit here microsecond, step_time is in second
+	    thisTMB->GetCounters();
+	    dlyalct_gemA_match_test[delay_value] = thisTMB->GetGEMADlyALCTMatchCounter();
+	    dlyalct_gemB_match_test[delay_value] = thisTMB->GetGEMBDlyALCTMatchCounter();
+	    alct_dlygemA_match_test[delay_value] = thisTMB->GetDlyGEMAALCTMatchCounter();
+	    alct_dlygemB_match_test[delay_value] = thisTMB->GetDlyGEMBALCTMatchCounter();
+            }
+	  //
+	  // print out the results...
+	  //
+	  float float_average_dlyalct_gemA = AverageHistogram(dlyalct_gemA_match_test,min_delay_value,nstep);
+	  float float_average_dlyalct_gemB = AverageHistogram(dlyalct_gemB_match_test,min_delay_value,nstep);
+	  float float_average_alct_dlygemA = AverageHistogram(alct_dlygemA_match_test,min_delay_value,nstep);
+	  float float_average_alct_dlygemB = AverageHistogram(alct_dlygemB_match_test,min_delay_value,nstep);
+	  int alctdelay_forgemA     = RoundOff(float_average_dlyalct_gemA);
+	  int alctdelay_forgemB     = RoundOff(float_average_dlyalct_gemB);
+	  int gemAdelay_foralct     = RoundOff(float_average_alct_dlygemA);
+	  int gemBdelay_foralct     = RoundOff(float_average_alct_dlygemB);
+	  for (int delay_value=min_delay_value; delay_value<nstep; delay_value++) {
+	    std::cout    << "delay alct [" << std::dec << delay_value << "] =\t aclt-gemA:" << dlyalct_gemA_match_test[delay_value] <<" ,\t alct-gemB: "<< dlyalct_gemB_match_test[delay_value] << "\t| delay gem  gemA-alct:"<< alct_dlygemA_match_test[delay_value] <<" ,\t gemB-alct:"<< alct_dlygemB_match_test[delay_value] << std::endl;
+	    (*MyOutput_) << "delay alct [" << std::dec << delay_value << "] =\t aclt-gemA:" << dlyalct_gemA_match_test[delay_value] <<" ,\t alct-gemB: "<< dlyalct_gemB_match_test[delay_value] << "\t| delay gem  gemA-alct:"<< alct_dlygemA_match_test[delay_value] <<" ,\t gemB-alct:"<< alct_dlygemB_match_test[delay_value] << std::endl;
+          }
+          std::cout    <<"Best Delay ALCT to find ALCT+GEM match: for gemA = " << alctdelay_forgemA << " for gemB = "<< alctdelay_forgemB << std::endl; 
+          std::cout    <<"Best Delay GEM  to find ALCT+GEM match: for gemA = " << gemAdelay_foralct << " for gemB = "<< gemBdelay_foralct << std::endl; 
+          (*MyOutput_) <<"Best Delay ALCT to find ALCT+GEM match: for gemA = " << alctdelay_forgemA << " for gemB = "<< alctdelay_forgemB << std::endl; 
+          (*MyOutput_) <<"Best Delay GEM  to find ALCT+GEM match: for gemA = " << gemAdelay_foralct << " for gemB = "<< gemBdelay_foralct << std::endl; 
+     }//end of special test
+
+  //
+  //
+  //
+  // Return back to the initial conditions...
+  thisTMB->SetFireL1AOneshot(initial_fire_l1a_one_shot);
+  thisTMB->SetIgnoreCCBRx(initial_ignore_ccb_rx);
+  thisTMB->WriteRegister(ccb_cfg_adr);
+  //
+  thisTMB->SetMatchGemAlctDelay( initial_match_gem_alct_delay);
+  //thisTMB->SetMatchGemAlctDelay( initial_match_gem_alct_delay);
+  thisTMB->SetMatchGemAlctWindow( initial_match_gem_alct_window);;
+  thisTMB->WriteRegister(gemA_trg_ctrl_adr);
+  thisTMB->WriteRegister(gemB_trg_ctrl_adr);
+  //
+  if (use_measured_values_) {
+    (*MyOutput_) << "Setting match_gemA/B_alct_delay to measured value...delay="<< match_gem_alct_delay_ << std::endl;
+    //
+    thisTMB->SetMatchGemAlctDelay(match_gem_alct_delay_);
+    thisTMB->WriteRegister(gemA_trg_ctrl_adr);
+    thisTMB->WriteRegister(gemB_trg_ctrl_adr);
+    //
+    //thisTMB->SetAlctVpfDelay(match_trig_alct_delay_);
+    //thisTMB->WriteRegister(tmbtim_adr);
+    //
+  } else {
+    (*MyOutput_) << "Reverting to initial values of  match_gemA/B_alct_delay to measured value..." << std::endl;
+    //
+  }
+  //
+  return match_gem_alct_delay_;
   //
 }
 //

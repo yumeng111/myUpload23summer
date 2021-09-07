@@ -157,6 +157,7 @@ private:
   ALCTController * broadcastALCT;
   CCB * broadcastCCB;
   std::vector <DAQMB *> otherDMBs;
+  std::vector <TMB *> otherOTMBs;
   //
   int number_of_layers_pretrig_;
   int number_of_layers_pattern_;

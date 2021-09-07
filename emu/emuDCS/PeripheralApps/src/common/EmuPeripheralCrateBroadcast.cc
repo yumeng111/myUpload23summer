@@ -316,6 +316,9 @@ void EmuPeripheralCrateBroadcast::DefineBroadcastCrate() {
          broadcastTMB = mytmbs[i];
       else if(mytmbs[i] && mytmbs[i]->GetHardwareVersion()>=2 && mytmbs[i]->slot()>21)     
          broadcastOTMB = mytmbs[i];
+
+      if(mytmbs[i] && mytmbs[i]->GetHardwareVersion()>=2 && mytmbs[i]->slot()<=21)
+         otherOTMBs.push_back(mytmbs[i]);
     }
     if( broadcastTMB ){ 
       broadcastALCT = broadcastTMB->alctController();
@@ -363,19 +366,19 @@ void EmuPeripheralCrateBroadcast::LoadDMBCFEBFPGAFirmware(xgi::Input * in, xgi::
   // load the DAQMB Controller FPGA firmware
   std::string LoadDMBvmeFPGA = toolbox::toString("/%s/LoadDMBvmeFPGAFirmware",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",LoadDMBvmeFPGA) << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","Load DMBs VME FPGA Firmware") << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Load DMBs VME Firmware") << std::endl ;
   *out << DmbVmeFPGAFirmwareFile_;
   *out << cgicc::form()<<std::endl;
   //
   std::string LoadDMBControlFPGA = toolbox::toString("/%s/LoadDMBControlFPGAFirmware",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",LoadDMBControlFPGA) << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","Load DMBs Control FPGA Firmware") << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Load DMBs Control Firmware") << std::endl ;
   *out << DmbControlFPGAFirmwareFile_;
   *out << cgicc::form()<<std::endl;
   //
   std::string LoadCFEBFPGA = toolbox::toString("/%s/LoadCFEBFPGAFirmware",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",LoadCFEBFPGA) << std::endl ;
-  *out << cgicc::input().set("type","submit").set("value","Load CFEBs FPGA Firmware") << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Load CFEBs Firmware") << std::endl ;
   *out << CfebFPGAFirmwareFile_;
   *out << cgicc::form()<<std::endl;
   //

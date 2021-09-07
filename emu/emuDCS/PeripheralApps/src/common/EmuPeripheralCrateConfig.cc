@@ -511,9 +511,12 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   // Bind BC0 methods
   //----------------------------------------------
   xgi::bind(this,&EmuPeripheralCrateConfig::ALCTBC0Scan, "ALCTBC0Scan");
+  xgi::bind(this,&EmuPeripheralCrateConfig::ALCTBC0ScanWithCounter, "ALCTBC0ScanWithCounter");
   xgi::bind(this,&EmuPeripheralCrateConfig::ALCTBC0ScanForCrate,"ALCTBC0ScanForCrate");
   xgi::bind(this,&EmuPeripheralCrateConfig::ALCTBC0ScanForSystem,"ALCTBC0ScanForSystem");
   xgi::bind(this,&EmuPeripheralCrateConfig::Settmb_bxn_offset, "Settmb_bxn_offset");
+  xgi::bind(this,&EmuPeripheralCrateConfig::GEMBC0Scan, "GEMBC0Scan");
+  xgi::bind(this,&EmuPeripheralCrateConfig::GEMCSCMatchScan, "GEMCSCMatchScan");
   //
   //----------------------------------------------------
   // Bind phase determination (commmunication)  methods
@@ -547,6 +550,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::CfebDavCableDelay, "CfebDavCableDelay");
   xgi::bind(this,&EmuPeripheralCrateConfig::ALCTScan, "ALCTScan");
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBScan, "CFEBScan");
+  xgi::bind(this,&EmuPeripheralCrateConfig::InjectMPCFrame, "InjectMPCFrame");
   //
   //----------------------------
   // Bind calibration methods
@@ -5323,7 +5327,9 @@ void EmuPeripheralCrateConfig::MPCSafeWindowScan(xgi::Input * in, xgi::Output * 
 void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {
   if(!parsed)
-  {  this->Default(in,out);
+  {  
+     std::cout <<"ChamberTests  out due to !parsed"<< std::endl;
+     this->Default(in,out);
      return;
   }
   //
@@ -5661,6 +5667,13 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   sprintf(buf,"%d",tmb);
   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
   *out << cgicc::form() << std::endl ;
+  //Tao, add timing scan using counter
+  std::string ALCTBC0ScanWithCounter = toolbox::toString("/%s/ALCTBC0ScanWithCounter",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",ALCTBC0ScanWithCounter) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Measure ALCT BC0 delay using counter") << std::endl ;
+  sprintf(buf,"%d",tmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+  *out << cgicc::form() << std::endl ;
   //
   *out << "alct_bx0_delay = " << MyTest[tmb][current_crate_].GetAlctBx0DelayTest() 
        << " ("  << MyTest[tmb][current_crate_].GetAlctBx0Delay() << ") " <<std::endl;
@@ -5668,6 +5681,42 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   *out << "match_trig_alct_delay = " << MyTest[tmb][current_crate_].GetMatchTrigAlctDelayTest() 
        << " ("  << MyTest[tmb][current_crate_].GetALCTvpf_configvalue() << ") " << std::endl;
   *out << cgicc::br();
+  *out << cgicc::br();
+  //GEM BC0 scan
+  if (thisTMB->GetHardwareVersion() >= 2 && thisTMB->GetGemEnabled() ) {
+  std::string GEMBC0Scan = toolbox::toString("/%s/GEMBC0Scan",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",GEMBC0Scan) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Measure GEM BC0 delay") << std::endl ;
+  sprintf(buf,"%d",tmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << "gemA_bx0_delay = " << MyTest[tmb][current_crate_].GetGemABx0DelayTest() 
+       << " ("  << MyTest[tmb][current_crate_].GetGemABx0Delay() << ") " <<std::endl;
+  *out << cgicc::br();
+  *out << "gemB_bx0_delay = " << MyTest[tmb][current_crate_].GetGemBBx0DelayTest() 
+       << " ("  << MyTest[tmb][current_crate_].GetGemBBx0Delay() << ") " <<std::endl;
+  *out << cgicc::br();
+  //
+  //Tao ,2020, Test
+  std::string GEMCSCMatchScan = toolbox::toString("/%s/GEMCSCMatchScan",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",GEMCSCMatchScan) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Measure GEM delay for GEM-CSC Match") << std::endl ;
+  sprintf(buf,"%d",1); // default value
+  *out <<" step time (second) "<< std::endl;;
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","gemcsc_step_time")<<std::endl;
+  sprintf(buf,"%d",0); // default value
+  *out <<" nstep for special test (only valid for >=16) "<< std::endl;;
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","gemcsc_nstep")<<std::endl;
+  sprintf(buf,"%d",tmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+  *out << cgicc::form() << std::endl ;
+  
+  *out << "match_gem_alct_delay = " << MyTest[tmb][current_crate_].GetMatchGemAlctDelayTest() 
+       << " ("  << MyTest[tmb][current_crate_].GetMatchGemAlctDelay() << ") " <<std::endl;
+  *out << cgicc::br();
+  *out << cgicc::br();
+  } //end if GEM enable
   //
   std::string QuickScanForChamber = toolbox::toString("/%s/QuickScanForChamber",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",QuickScanForChamber) << std::endl ;
@@ -5879,6 +5928,20 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   *out << cgicc::br();
   *out << cgicc::br();
   //  //
+  std::string InjectMPCFrame = toolbox::toString("/%s/InjectMPCFrame",getApplicationDescriptor()->getURN().c_str());
+  *out << "Injecting MPC Frames into OTMB and Fire: LCT0=0 means random LCT0(32bits) is generated(CSC id is inserted for Run2 trigger format)" << std::endl;
+  *out << cgicc::form().set("method","GET").set("action", InjectMPCFrame) << std::endl ;
+  sprintf(buf,"%d",10); // default value
+  *out << "NFrame : " << cgicc::input().set("type","text").set("name","InjectMPC_Nframe").set("value", buf) << endl;
+  sprintf(buf,"%08X", 0); // default value
+  *out << "LCT0(hex) : " << cgicc::input().set("type","text").set("name","InjectMPC_LCT0").set("value", buf) << endl;
+  *out << "LCT1(hex) : " << cgicc::input().set("type","text").set("name","InjectMPC_LCT1").set("value", buf) << endl;
+  sprintf(buf,"%d",tmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+  *out << cgicc::input().set("type","submit").set("value","Inject MPC Frame Into OTMB") << std::endl ;
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::br();
+  *out << cgicc::br();
   //  //
   std::string FindDistripHotChannel = toolbox::toString("/%s/FindDistripHotChannel",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",FindDistripHotChannel) << std::endl ;
@@ -6201,6 +6264,7 @@ void EmuPeripheralCrateConfig::CFEBTimingSimpleScan(xgi::Input * in, xgi::Output
   //
 }
 
+//
 void EmuPeripheralCrateConfig::ALCTBC0Scan(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {
   //
@@ -6228,6 +6292,104 @@ void EmuPeripheralCrateConfig::ALCTBC0Scan(xgi::Input * in, xgi::Output * out )
   this->ChamberTests(in,out);
   //
 }
+
+//
+void EmuPeripheralCrateConfig::ALCTBC0ScanWithCounter(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  std::cout << "ALCTBC0ScanWithCounter" << std::endl;
+  LOG4CPLUS_INFO(getApplicationLogger(), "ALCTBC0ScanWithCounter");
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  int tmb = TMB_;
+  //
+  cgicc::form_iterator name = cgi.getElement("tmb");
+  //
+  if(name != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "ALCTBC0ScanWithCounter:  TMB " << tmb << std::endl;
+    TMB_ = tmb;
+  } else {
+    std::cout << "ALCTBC0ScanWithCounter" << std::endl;
+  }
+  //
+  MyTest[tmb][current_crate_].RedirectOutput(&ChamberTestsOutput[tmb][current_crate_]);
+  MyTest[tmb][current_crate_].ALCTBC0ScanWithCounter();
+  MyTest[tmb][current_crate_].RedirectOutput(&std::cout);
+  //
+  this->ChamberTests(in,out);
+  //
+}
+
+//
+void EmuPeripheralCrateConfig::GEMBC0Scan(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  std::cout << "GEMBC0Scan" << std::endl;
+  LOG4CPLUS_INFO(getApplicationLogger(), "GEMBC0Scan");
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  int tmb = TMB_;
+  //
+  cgicc::form_iterator name = cgi.getElement("tmb");
+  //
+  if(name != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "GEMBC0Scan:  TMB " << tmb << std::endl;
+    TMB_ = tmb;
+  } else {
+    std::cout << "GEMBC0Scan" << std::endl;
+  }
+  //
+  MyTest[tmb][current_crate_].RedirectOutput(&ChamberTestsOutput[tmb][current_crate_]);
+  MyTest[tmb][current_crate_].GEMBC0Scan();
+  MyTest[tmb][current_crate_].RedirectOutput(&std::cout);
+  //
+  this->ChamberTests(in,out);
+  //
+}
+
+//
+void EmuPeripheralCrateConfig::GEMCSCMatchScan(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  std::cout << "GEMCSCMatchScan" << std::endl;
+  LOG4CPLUS_INFO(getApplicationLogger(), "GEMCSCMatchScan");
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  int tmb = TMB_;
+  //
+  cgicc::form_iterator name = cgi.getElement("tmb");
+  //
+  if(name != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "GEMCSCMatchScan:  TMB " << tmb << std::endl;
+    TMB_ = tmb;
+  } else {
+    std::cout << "GEMCSCMatchScan: no TMB" << std::endl;
+  }
+  cgicc::form_iterator name2 = cgi.getElement("gemcsc_step_time");
+  cgicc::form_iterator name3 = cgi.getElement("gemcsc_nstep");
+  //
+  long step_time    = 1;
+  long nstep = 0;
+  //
+  if(name2 != cgi.getElements().end()) 
+      step_time = strtol(cgi["gemcsc_step_time"]->getValue().c_str(),NULL,10);
+  if(name3 != cgi.getElements().end()) 
+      nstep = strtol(cgi["gemcsc_nstep"]->getValue().c_str(),NULL,10);
+  //
+  MyTest[tmb][current_crate_].RedirectOutput(&ChamberTestsOutput[tmb][current_crate_]);
+  MyTest[tmb][current_crate_].GEMCSCMatchScan((int)step_time, (int)nstep);
+  MyTest[tmb][current_crate_].RedirectOutput(&std::cout);
+  //
+  this->ChamberTests(in,out);
+  //
+}
+
 //
 void EmuPeripheralCrateConfig::Automatic(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {
@@ -7676,6 +7838,61 @@ void EmuPeripheralCrateConfig::CFEBScan(xgi::Input * in, xgi::Output * out )
   this->ChamberTests(in,out);
   //
 }
+//
+void EmuPeripheralCrateConfig::InjectMPCFrame(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  //std::cout << "InjectMPCFrame:" << std::endl;
+  LOG4CPLUS_INFO(getApplicationLogger(), "InjectMPCFrame");
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("tmb");
+  //
+  int tmb=0;
+  if(name != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "TMB " << tmb << std::endl;
+    TMB_ = tmb;
+  }else {
+    std::cout << "InjectMPCFrame in EmuPeripheralCrateConfig:  No tmb" << std::endl;
+  }
+  //
+  TMB * thisTMB = tmbVector[tmb];
+
+  cgicc::form_iterator name1 = cgi.getElement("InjectMPC_Nframe");
+  cgicc::form_iterator name2 = cgi.getElement("InjectMPC_LCT0");
+  cgicc::form_iterator name3 = cgi.getElement("InjectMPC_LCT1");
+  //
+  long  injectMPC_nframe   = 0;
+  unsigned long injectMPC_lct0   = 0;
+  unsigned long injectMPC_lct1   = 0;
+  //
+  if(name1 != cgi.getElements().end()) 
+    injectMPC_nframe = strtol(cgi["InjectMPC_Nframe"]->getValue().c_str(),NULL,0);
+  if(name2 != cgi.getElements().end()) 
+    injectMPC_lct0 = (unsigned long)strtol(cgi["InjectMPC_LCT0"]->getValue().c_str(),NULL, 16);
+  if(name3 != cgi.getElements().end()) 
+    injectMPC_lct1 = (unsigned long)strtol(cgi["InjectMPC_LCT1"]->getValue().c_str(),NULL, 16);
+  //
+    std::cout << "Inject MPC frames into OTMB RAM:  Nframes " <<  injectMPC_nframe 
+		<<" LCT0 "<< std::hex << injectMPC_lct0 
+		<<" LCT1 "<< injectMPC_lct1 << std::dec
+                <<" TMB slot " << thisTMB->slot()
+                << std::endl;
+  //
+  LOG4CPLUS_INFO(getApplicationLogger(), "Start inject MPC frame from ChamberTest");
+  thisTMB->ResetInjectedLCT(); // clear the vectors of input LCTs
+  thisTMB->InjectMPCData(injectMPC_nframe, injectMPC_lct0, injectMPC_lct1);
+  thisTMB->FireMPCInjector(injectMPC_nframe);
+  //thisCCB->injectTMBPattern();
+  //should we also do CCB->injectTMBPattern()?? like MpcTMBTes in PeripheralApps/src/common/CrateUtilities.cc
+  LOG4CPLUS_INFO(getApplicationLogger(), "Done inject MPC frame from ChamberTest");
+  //
+  this->ChamberTests(in,out);
+  //
+}
+
 //
 void EmuPeripheralCrateConfig::FindDistripHotChannel(xgi::Input * in, xgi::Output * out ) 
   throw (xgi::exception::Exception) {
@@ -10314,6 +10531,13 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
     *out << "    Link error count [DCFEB# 1-" << allcfebs << "]: \t[ ";
     for (int i=0; i < allcfebs; i++) { *out << thisTMB->GetReadGtxRxErrorCount(i) << " "; }
     *out << "]" << std::endl;
+
+    *out << "    Link notintable count [DCFEB# 1-" << allcfebs << "]: \t[ ";
+    for (int i=0; i < allcfebs; i++) { *out << thisTMB->GetReadGtxRxNotintableCount(i) << " "; }
+    *out << "]" << std::endl;
+    *out << "    Link disperr count [DCFEB# 1-" << allcfebs << "]: \t[ ";
+    for (int i=0; i < allcfebs; i++) { *out << thisTMB->GetReadGtxRxDisperrCount(i) << " "; }
+    *out << "]" << std::endl;
 //  thisTMB->PrintTMBRegister(dcfeb_gtx_rx0_adr);
 //  the above line of code is an alternative output without the colors
     //
@@ -10365,6 +10589,12 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
       *out << "]" << std::endl;
       *out << "    Link error count [GEMs 0-3]:  [ ";
       for (int i=0; i < number_of_gems; ++i){ *out << thisTMB->GetReadGemGtxRxErrorCount(i) << " "; }
+      *out << "]" << std::endl;
+      *out << "    Link notintable count [GEMs 0-3]:  [ ";
+      for (int i=0; i < number_of_gems; ++i){ *out << thisTMB->GetReadGemGtxRxNotintableCount(i) << " "; }
+      *out << "]" << std::endl;
+      *out << "    Link disperr count [GEMs 0-3]:  [ ";
+      for (int i=0; i < number_of_gems; ++i){ *out << thisTMB->GetReadGemGtxRxDisperrCount(i) << " "; }
       *out << "]" << std::endl;
     }//if (thisTMB->GetGemEnabled())
 
@@ -10518,6 +10748,10 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
   thisTMB->PrintBadBits();
   thisTMB->ReadComparatorBadBits();
   thisTMB->PrintComparatorBadBits();
+  if (thisTMB->GetGemEnabled()){
+    thisTMB->ReadGEMHotChannelMask();
+    thisTMB->PrintGEMHotChannelMask();
+  }
   thisTMB->RedirectOutput(&std::cout);
   *out << cgicc::pre();
   *out << cgicc::fieldset();
@@ -10560,9 +10794,26 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
     thisTMB->RedirectOutput(&std::cout);
     *out << cgicc::pre();
     *out << cgicc::fieldset();
+    //*out << cgicc::td(); 
+    //*out << cgicc::table();
+  }
+  if (thisTMB->GetGemEnabled()) {
+    *out << cgicc::td(); 
+    *out << cgicc::td().set("valign", "top");
+    *out << cgicc::fieldset();
+    *out << cgicc::legend("GEM Info").set("style","color:blue") << std::endl ;
+    *out << cgicc::pre();
+    thisTMB->RedirectOutput(out);
+    thisTMB->DecodeGEMHits();
+    thisTMB->PrintGEMHits();
+    thisTMB->RedirectOutput(&std::cout);
+    *out << cgicc::pre();
+    *out << cgicc::fieldset();
+   }
+   if (alct || thisTMB->GetGemEnabled()){
     *out << cgicc::td(); 
     *out << cgicc::table();
-  }
+   }
   //
   if(thisTMB->GetHardwareVersion() >= 2) {
     *out << cgicc::fieldset();

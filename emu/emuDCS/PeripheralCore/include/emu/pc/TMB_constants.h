@@ -371,6 +371,39 @@ static const unsigned long int gtx_sync_done_time_adr   = 0x000192;
 // config new trigger algorithm
 static const unsigned long int algo2016_ctrl_adr = 0x000198;
 
+//comparator code (CCLUT) algorithm
+static const unsigned long int clct0_cc_adr          = 0x00019A;
+static const unsigned long int clct1_cc_adr          = 0x00019C;
+//static const unsigned long int clct0_qlt_adr         = 0x00019E;
+//static const unsigned long int clct1_qlt_adr         = 0x0001A0;
+//static const unsigned long int clct0_xky_adr         = 0x0001A6;
+//static const unsigned long int clct1_xky_adr         = 0x0001A8;
+static const unsigned long int clct0_bndxky_adr      = 0x00019E;
+static const unsigned long int clct1_bndxky_adr      = 0x0001A0;
+static const unsigned long int run3_format_ctrl_adr  = 0x0001AA; 
+static const unsigned long int hmt_ctrl_adr          = 0x0001AC;  
+static const unsigned long int hmt_thresh1_adr       = 0x0001AE;  
+static const unsigned long int hmt_thresh2_adr       = 0x0001B0;  
+static const unsigned long int hmt_thresh3_adr       = 0x0001B2;  
+static const unsigned long int hmt_nhits_sig_adr     = 0x0001B4;  
+static const unsigned long int hmt_nhits_bkg_adr     = 0x0001B6;  
+static const unsigned long int lct_injection_adr     = 0x0001B8;  //largest OTMB register, CSC only 
+
+static const unsigned long int  dcfeb_gtx0_notintable_adr  = 0x0001BA;  //ADR_V6_GTX0_notintable
+static const unsigned long int  dcfeb_gtx1_notintable_adr  = 0x0001BC;  //ADR_V6_GTX1_notintable
+static const unsigned long int  dcfeb_gtx2_notintable_adr  = 0x0001BE;  //ADR_V6_GTX2_notintable
+static const unsigned long int  dcfeb_gtx3_notintable_adr  = 0x0001C0;  //ADR_V6_GTX3_notintable
+static const unsigned long int  dcfeb_gtx4_notintable_adr  = 0x0001C2;  //ADR_V6_GTX4_notintable
+static const unsigned long int  dcfeb_gtx5_notintable_adr  = 0x0001C4;  //ADR_V6_GTX5_notintable
+static const unsigned long int  dcfeb_gtx6_notintable_adr  = 0x0001C6;  //ADR_V6_GTX6_notintable
+static const unsigned long int  dcfeb_gtx0_disperr_adr     = 0x0001C8;  //ADR_V6_GTX0_notintable
+static const unsigned long int  dcfeb_gtx1_disperr_adr     = 0x0001CA;  //ADR_V6_GTX1_notintable
+static const unsigned long int  dcfeb_gtx2_disperr_adr     = 0x0001CC;  //ADR_V6_GTX2_notintable
+static const unsigned long int  dcfeb_gtx3_disperr_adr     = 0x0001CE;  //ADR_V6_GTX3_notintable
+static const unsigned long int  dcfeb_gtx4_disperr_adr     = 0x0001D0;  //ADR_V6_GTX4_notintable
+static const unsigned long int  dcfeb_gtx5_disperr_adr     = 0x0001D2;  //ADR_V6_GTX5_notintable
+static const unsigned long int  dcfeb_gtx6_disperr_adr     = 0x0001D4;  //ADR_V6_GTX6_notintable
+
 //GTX link control and monitoring for the GEM
 static const unsigned long int  gem_gtx_rx0_adr          = 0x000300;  //ADR_GEM_GTX_RX0
 static const unsigned long int  gem_gtx_rx1_adr          = 0x000302;  //ADR_GEM_GTX_RX1
@@ -387,10 +420,65 @@ static const unsigned long int gem_tbins_adr             = 0x000310; // GEM Time
 static const unsigned long int gem_cfg_adr               = 0x000312; // GEM Configuration Address
 static const unsigned long int gem_cnt_ctrl_adr          = 0x000314; // GEM Counter Register Control Address
 static const unsigned long int gem_cnt_rdata_adr         = 0x000316; // GEM Counter Register Data Address
+static const unsigned long int gem_csc_match_window_adr  = 0x000318; // GEM-CSC match window register Address, deltahs, deltawire
+static const unsigned long int gem_inj_ctrl_adr          = 0x000320; // GEM injector control Address
+static const unsigned long int gem_inj_data_adr          = 0x000322; // GEM inject data  Address
+static const unsigned long int gem_copad_ctrl_adr        = 0x000324; // GEM copad matching control  Address
+static const unsigned long int gem_bx0_delay_adr         = 0x000326; // GEM BX0 delay control Address
+static const unsigned long int gemA_trg_ctrl_adr         = 0x000328; // GEMA trigger match control
+static const unsigned long int gemB_trg_ctrl_adr         = 0x00032a; // GEMB trigger match control
+static const unsigned long int gem_csc_match_ctrl_adr    = 0x00032c; // GEM-CSC match control
+static const unsigned long int gem_csc_match_cluster00_adr= 0x00032e; // 1st cluster for GEMCSC match.
+static const unsigned long int gem_csc_match_cluster01_adr= 0x000330; // 1st cluster for GEMCSC match.
+static const unsigned long int gem_csc_match_cluster10_adr= 0x000332; // 2nd cluster for GEMCSC match.
+static const unsigned long int gem_csc_match_cluster11_adr= 0x000334; // 2nd cluster for GEMCSC match.
 
+
+static const unsigned long int gem_vfat_hcm0_adr         = 0x00033a; // GEM hot VFAT mask
+static const unsigned long int gem_vfat_hcm1_adr         = 0x00033c; // GEM hot VFAT mask
+static const unsigned long int gem_vfat_hcm2_adr         = 0x00033e; // GEM hot VFAT mask
+
+static const unsigned long int gemA_cluster0_adr         = 0x000340; // GEM clusters and copads
+static const unsigned long int gemA_cluster1_adr         = 0x000342; // GEM clusters and copads
+static const unsigned long int gemA_cluster2_adr         = 0x000344; // GEM clusters and copads
+static const unsigned long int gemA_cluster3_adr         = 0x000346; // GEM clusters and copads
+static const unsigned long int gemA_cluster4_adr         = 0x000348; // GEM clusters and copads
+static const unsigned long int gemA_cluster5_adr         = 0x00034a; // GEM clusters and copads
+static const unsigned long int gemA_cluster6_adr         = 0x00034c; // GEM clusters and copads
+static const unsigned long int gemA_cluster7_adr         = 0x00034e; // GEM clusters and copads
+static const unsigned long int gemB_cluster0_adr         = 0x000350; // GEM clusters and copads
+static const unsigned long int gemB_cluster1_adr         = 0x000352; // GEM clusters and copads
+static const unsigned long int gemB_cluster2_adr         = 0x000354; // GEM clusters and copads
+static const unsigned long int gemB_cluster3_adr         = 0x000356; // GEM clusters and copads
+static const unsigned long int gemB_cluster4_adr         = 0x000358; // GEM clusters and copads
+static const unsigned long int gemB_cluster5_adr         = 0x00035a; // GEM clusters and copads
+static const unsigned long int gemB_cluster6_adr         = 0x00035c; // GEM clusters and copads
+static const unsigned long int gemB_cluster7_adr         = 0x00035e; // GEM clusters and copads
+static const unsigned long int gem_copad0_adr            = 0x000360; // GEM clusters and copads
+static const unsigned long int gem_copad1_adr            = 0x000362; // GEM clusters and copads
+static const unsigned long int gem_copad2_adr            = 0x000364; // GEM clusters and copads
+static const unsigned long int gem_copad3_adr            = 0x000366; // GEM clusters and copads
+static const unsigned long int gem_copad4_adr            = 0x000368; // GEM clusters and copads
+static const unsigned long int gem_copad5_adr            = 0x00036a; // GEM clusters and copads
+static const unsigned long int gem_copad6_adr            = 0x00036c; // GEM clusters and copads
+static const unsigned long int gem_copad7_adr            = 0x00036e; // GEM clusters and copads
+
+static const unsigned long int  gem_gtx0_notintable_adr          = 0x000370;  //ADR_GEM_GTX0_NOTINTABLE
+static const unsigned long int  gem_gtx1_notintable_adr          = 0x000372;  //ADR_GEM_GTX1_NOTINTABLE
+static const unsigned long int  gem_gtx2_notintable_adr          = 0x000374;  //ADR_GEM_GTX2_NOTINTABLE
+static const unsigned long int  gem_gtx3_notintable_adr          = 0x000376;  //ADR_GEM_GTX3_NOTINTABLE
+static const unsigned long int  gem_gtx0_disperr_adr          = 0x000378;  //ADR_GEM_GTX0_NOTINTABLE
+static const unsigned long int  gem_gtx1_disperr_adr          = 0x00037A;  //ADR_GEM_GTX1_NOTINTABLE
+static const unsigned long int  gem_gtx2_disperr_adr          = 0x00037C;  //ADR_GEM_GTX2_NOTINTABLE
+static const unsigned long int  gem_gtx3_disperr_adr          = 0x00037E;  //ADR_GEM_GTX3_NOTINTABLE
 //
 static const int LARGEST_VME_ADDRESS = badbits445_adr;
-static const int OTMB_LARGEST_VME_ADDRESS = algo2016_ctrl_adr;
+//static const int OTMB_LARGEST_VME_ADDRESS = algo2016_ctrl_adr;
+//static const int OTMB_LARGEST_VME_ADDRESS = lct_injection_adr;
+static const int OTMB_LARGEST_VME_ADDRESS = dcfeb_gtx6_disperr_adr;
+static const int OTMB_GEM_VME_STARTADDRESS = gem_gtx_rx0_adr;
+//static const int OTMB_GEM_VME_ENDADDRESS = gem_copad7_adr;
+static const int OTMB_GEM_VME_ENDADDRESS = gem_gtx3_disperr_adr;
 //
 //
 // TMB counter indices:
@@ -1594,6 +1682,187 @@ const int mpc1_frame1_csc_id_vmereg                 = mpc1_frame1_adr;
 const int mpc1_frame1_csc_id_bitlo                  = 12;
 const int mpc1_frame1_csc_id_bithi                  = 15;
 const int mpc1_frame1_csc_id_default                = 0;
+//
+//
+//------------------------------------------------------------------
+//------------------------------------------------------------------
+//  Run3 data format update!!!
+//------------------------------------------------------------------
+//------------------------------------------------------------------
+//0X88 = ADR_MPC0_FRAME0:  MPC0 Frame0 Data Sent to MPC
+//------------------------------------------------------------------
+const int mpc0_run3frame0_alct_first_key_vmereg         = mpc0_frame0_adr;
+const int mpc0_run3frame0_alct_first_key_bitlo          = 0;
+const int mpc0_run3frame0_alct_first_key_bithi          = 6;
+const int mpc0_run3frame0_alct_first_key_default        = 0;
+//
+//
+//const int mpc0_run3frame0_clct_first_bend_vmereg         = mpc0_frame0_adr;
+//const int mpc0_run3frame0_clct_first_bend_bitlo          =  7;
+//const int mpc0_run3frame0_clct_first_bend_bithi          = 10;
+//const int mpc0_run3frame0_clct_first_bend_default        =  0;
+const int mpc0_run3frame0_lct_pidbit0to3_vmereg         = mpc0_frame0_adr;
+const int mpc0_run3frame0_lct_pidbit0to3_bitlo          =  7;
+const int mpc0_run3frame0_lct_pidbit0to3_bithi          = 10;
+const int mpc0_run3frame0_lct_pidbit0to3_default        =  0;
+//
+//
+const int mpc0_run3frame0_lct_first_quality_vmereg      = mpc0_frame0_adr;
+const int mpc0_run3frame0_lct_first_quality_bitlo       = 11;
+const int mpc0_run3frame0_lct_first_quality_bithi       = 13;
+const int mpc0_run3frame0_lct_first_quality_default     =  0;
+//
+//
+const int mpc0_run3frame0_clct_first_qxky_vmereg              = mpc0_frame0_adr;
+const int mpc0_run3frame0_clct_first_qxky_bitlo               = 14;// 2bits for qual strip and 1/8th strip
+const int mpc0_run3frame0_clct_first_qxky_bithi               = 14;
+const int mpc0_run3frame0_clct_first_qxky_default             =  0;
+//
+//
+const int mpc0_run3frame0_first_vpf_vmereg              = mpc0_frame0_adr;
+const int mpc0_run3frame0_first_vpf_bitlo               = 15;
+const int mpc0_run3frame0_first_vpf_bithi               = 15;
+const int mpc0_run3frame0_first_vpf_default             = 0;
+//
+//
+//------------------------------------------------------------------
+//0X8A = ADR_MPC0_FRAME1:  MPC0 Frame1 Data Sent to MPC
+//------------------------------------------------------------------
+const int mpc0_run3frame1_clct_first_key_vmereg         = mpc0_frame1_adr;
+const int mpc0_run3frame1_clct_first_key_bitlo          = 0;
+const int mpc0_run3frame1_clct_first_key_bithi          = 7;
+const int mpc0_run3frame1_clct_first_key_default        = 0;
+//
+//
+const int mpc0_run3frame1_clct_first_lr_vmereg        = mpc0_frame1_adr;
+const int mpc0_run3frame1_clct_first_lr_bitlo         = 8;
+const int mpc0_run3frame1_clct_first_lr_bithi         = 8;
+const int mpc0_run3frame1_clct_first_lr_default       = 0;
+//
+//
+const int mpc0_run3frame1_clct_first_exky_vmereg               = mpc0_frame1_adr;
+const int mpc0_run3frame1_clct_first_exky_bitlo                = 9;
+const int mpc0_run3frame1_clct_first_exky_bithi                = 9;
+const int mpc0_run3frame1_clct_first_exky_default              = 0;
+//
+//
+const int mpc0_run3frame1_alct_first_bxn_vmereg         = mpc0_frame1_adr;
+const int mpc0_run3frame1_alct_first_bxn_bitlo          = 10;
+const int mpc0_run3frame1_alct_first_bxn_bithi          = 10;
+const int mpc0_run3frame1_alct_first_bxn_default        =  0;
+//
+//
+const int mpc0_run3frame1_clct_first_bx0_local_vmereg   = mpc0_frame1_adr;
+const int mpc0_run3frame1_clct_first_bx0_local_bitlo    = 11;
+const int mpc0_run3frame1_clct_first_bx0_local_bithi    = 11;
+const int mpc0_run3frame1_clct_first_bx0_local_default  =  0;
+//
+//
+//const int mpc0_run3frame1_csc_id_vmereg                 = mpc0_frame1_adr;
+//const int mpc0_run3frame1_csc_id_bitlo                  = 12;
+//const int mpc0_run3frame1_csc_id_bithi                  = 15;
+//const int mpc0_run3frame1_csc_id_default                = 0;
+const int mpc0_run3frame1_clct_first_bend_vmereg                 = mpc0_frame1_adr;
+const int mpc0_run3frame1_clct_first_bend_bitlo                  = 12;
+const int mpc0_run3frame1_clct_first_bend_bithi                  = 15;
+const int mpc0_run3frame1_clct_first_bend_default                = 0;
+//
+//
+//------------------------------------------------------------------
+//0X8C = ADR_MPC1_FRAME0:  MPC1 Frame0 Data Sent to MPC
+//------------------------------------------------------------------
+const int mpc1_run3frame0_alct_second_key_vmereg        = mpc1_frame0_adr;
+const int mpc1_run3frame0_alct_second_key_bitlo         = 0;
+const int mpc1_run3frame0_alct_second_key_bithi         = 6;
+const int mpc1_run3frame0_alct_second_key_default       = 0;
+//
+////
+//const int mpc1_run3frame0_clct_second_bend_vmereg        = mpc1_frame0_adr;
+//const int mpc1_run3frame0_clct_second_bend_bitlo         =  7;
+//const int mpc1_run3frame0_clct_second_bend_bithi         = 10;
+//const int mpc1_run3frame0_clct_second_bend_default       =  0;
+////
+//
+const int mpc1_run3frame0_lct_pidbit4_vmereg        = mpc1_frame0_adr;
+const int mpc1_run3frame0_lct_pidbit4_bitlo         =  7;
+const int mpc1_run3frame0_lct_pidbit4_bithi         =  7;
+const int mpc1_run3frame0_lct_pidbit4_default       =  0;
+//
+//
+const int mpc1_run3frame0_hmtbit1to3_vmereg        = mpc1_frame0_adr;
+const int mpc1_run3frame0_hmtbit1to3_bitlo         =  8;
+const int mpc1_run3frame0_hmtbit1to3_bithi         =  10;
+const int mpc1_run3frame0_hmtbit1to3_default       =  0;
+//
+//
+const int mpc1_run3frame0_lct_second_quality_vmereg     = mpc1_frame0_adr;
+const int mpc1_run3frame0_lct_second_quality_bitlo      = 11;
+const int mpc1_run3frame0_lct_second_quality_bithi      = 13;
+const int mpc1_run3frame0_lct_second_quality_default    =  0;
+//
+//
+const int mpc1_run3frame0_clct_second_qxky_vmereg             = mpc1_frame0_adr;
+const int mpc1_run3frame0_clct_second_qxky_bitlo              = 14;
+const int mpc1_run3frame0_clct_second_qxky_bithi              = 14;
+const int mpc1_run3frame0_clct_second_qxky_default            = 0;
+//
+//
+const int mpc1_run3frame0_second_vpf_vmereg              = mpc1_frame0_adr;
+const int mpc1_run3frame0_second_vpf_bitlo               = 15;
+const int mpc1_run3frame0_second_vpf_bithi               = 15;
+const int mpc1_run3frame0_second_vpf_default             = 0;
+//
+//
+//------------------------------------------------------------------
+//0X8E = ADR_MPC1_FRAME1:  MPC1 Frame1 Data Sent to MPC
+//------------------------------------------------------------------
+const int mpc1_run3frame1_clct_second_key_vmereg        = mpc1_frame1_adr;
+const int mpc1_run3frame1_clct_second_key_bitlo         = 0;
+const int mpc1_run3frame1_clct_second_key_bithi         = 7;
+const int mpc1_run3frame1_clct_second_key_default       = 0;
+//
+//
+const int mpc1_run3frame1_clct_second_lr_vmereg       = mpc1_frame1_adr;
+const int mpc1_run3frame1_clct_second_lr_bitlo        = 8;//left or right
+const int mpc1_run3frame1_clct_second_lr_bithi        = 8;
+const int mpc1_run3frame1_clct_second_lr_default      = 0;
+//
+//
+const int mpc1_run3frame1_clct_second_exky_vmereg               = mpc1_frame1_adr;
+const int mpc1_run3frame1_clct_second_exky_bitlo                = 9;
+const int mpc1_run3frame1_clct_second_exky_bithi                = 9;
+const int mpc1_run3frame1_clct_second_exky_default              = 0;
+//
+//
+//const int mpc1_run3frame1_alct_second_bxn_vmereg        = mpc1_frame1_adr;
+//const int mpc1_run3frame1_alct_second_bxn_bitlo         = 10;
+//const int mpc1_run3frame1_alct_second_bxn_bithi         = 10;
+//const int mpc1_run3frame1_alct_second_bxn_default       =  0;
+const int mpc1_run3frame1_hmtbit0_vmereg        = mpc1_frame1_adr;
+const int mpc1_run3frame1_hmtbit0_bitlo         = 10;
+const int mpc1_run3frame1_hmtbit0_bithi         = 10;
+const int mpc1_run3frame1_hmtbit0_default       =  0;
+//
+//
+const int mpc1_run3frame1_clct_second_bx0_local_vmereg  = mpc1_frame1_adr;
+const int mpc1_run3frame1_clct_second_bx0_local_bitlo   = 11;
+const int mpc1_run3frame1_clct_second_bx0_local_bithi   = 11;
+const int mpc1_run3frame1_clct_second_bx0_local_default = 0;
+//
+//
+//const int mpc1_run3frame1_csc_id_vmereg                 = mpc1_frame1_adr;
+//const int mpc1_run3frame1_csc_id_bitlo                  = 12;
+//const int mpc1_run3frame1_csc_id_bithi                  = 15;
+//const int mpc1_run3frame1_csc_id_default                = 0;
+const int mpc1_run3frame1_clct_second_bend_vmereg                 = mpc1_frame1_adr;
+const int mpc1_run3frame1_clct_second_bend_bitlo                  = 12;
+const int mpc1_run3frame1_clct_second_bend_bithi                  = 15;
+const int mpc1_run3frame1_clct_second_bend_default                = 0;
+//------------------------------------------------------------------
+//------------------------------------------------------------------
+// End of Run3 data format update!!!
+//------------------------------------------------------------------
+//------------------------------------------------------------------
 //
 //
 //------------------------------------------------------------------
@@ -2960,6 +3229,35 @@ const int gem_gtx_rx3_error_count_vmereg          =  gem_gtx_rx3_adr;
 const int gtx_rx_error_count_bitlo               =  8;
 const int gtx_rx_error_count_bithi               =  15;
 
+const int gtx_rx0_notintable_count_vmereg              =  dcfeb_gtx0_notintable_adr;
+const int gtx_rx1_notintable_count_vmereg              =  dcfeb_gtx1_notintable_adr;
+const int gtx_rx2_notintable_count_vmereg              =  dcfeb_gtx2_notintable_adr;
+const int gtx_rx3_notintable_count_vmereg              =  dcfeb_gtx3_notintable_adr;
+const int gtx_rx4_notintable_count_vmereg              =  dcfeb_gtx4_notintable_adr;
+const int gtx_rx5_notintable_count_vmereg              =  dcfeb_gtx5_notintable_adr;
+const int gtx_rx6_notintable_count_vmereg              =  dcfeb_gtx6_notintable_adr;
+const int gem_gtx_rx0_notintable_count_vmereg          =  gem_gtx0_notintable_adr;
+const int gem_gtx_rx1_notintable_count_vmereg          =  gem_gtx1_notintable_adr;
+const int gem_gtx_rx2_notintable_count_vmereg          =  gem_gtx2_notintable_adr;
+const int gem_gtx_rx3_notintable_count_vmereg          =  gem_gtx3_notintable_adr;
+const int gtx_rx_notintable_count_bitlo               = 0;
+const int gtx_rx_notintable_count_bithi               = 15;
+
+const int gtx_rx0_disperr_count_vmereg              =  dcfeb_gtx0_disperr_adr;
+const int gtx_rx1_disperr_count_vmereg              =  dcfeb_gtx1_disperr_adr;
+const int gtx_rx2_disperr_count_vmereg              =  dcfeb_gtx2_disperr_adr;
+const int gtx_rx3_disperr_count_vmereg              =  dcfeb_gtx3_disperr_adr;
+const int gtx_rx4_disperr_count_vmereg              =  dcfeb_gtx4_disperr_adr;
+const int gtx_rx5_disperr_count_vmereg              =  dcfeb_gtx5_disperr_adr;
+const int gtx_rx6_disperr_count_vmereg              =  dcfeb_gtx6_disperr_adr;
+const int gem_gtx_rx0_disperr_count_vmereg          =  gem_gtx0_disperr_adr;
+const int gem_gtx_rx1_disperr_count_vmereg          =  gem_gtx1_disperr_adr;
+const int gem_gtx_rx2_disperr_count_vmereg          =  gem_gtx2_disperr_adr;
+const int gem_gtx_rx3_disperr_count_vmereg          =  gem_gtx3_disperr_adr;
+const int gtx_rx_disperr_count_bitlo               = 0;
+const int gtx_rx_disperr_count_bithi               = 15;
+
+
 //
 //---------------------------------------------------------------------
 // 0X15C ADR_V6_CFEB_BADBITS_CTRL: CFEB Bad Bits Control/Status (See Adr 0x122) (extra DCFEB Bad Bits on OTMB)
@@ -3134,6 +3432,183 @@ const int mpc1_frame1_fifo_csc_id_bitlo                  = 12;
 const int mpc1_frame1_fifo_csc_id_bithi                  = 15;
 const int mpc1_frame1_fifo_csc_id_default                = 0;
 //
+//------------------------------------------------------------------
+//------------------------------------------------------------------
+//  Run3 data format update for FIFO readout!!!
+//------------------------------------------------------------------
+//------------------------------------------------------------------
+//0X88 = ADR_MPC0_FIFO_FRAME0:  MPC0 Frame0 Data Sent to MPC
+//------------------------------------------------------------------
+const int mpc0_run3frame0_fifo_alct_first_key_vmereg         = mpc0_frame0_fifo_adr;
+const int mpc0_run3frame0_fifo_alct_first_key_bitlo          = 0;
+const int mpc0_run3frame0_fifo_alct_first_key_bithi          = 6;
+const int mpc0_run3frame0_fifo_alct_first_key_default        = 0;
+//
+//
+//const int mpc0_run3frame0_fifo_clct_first_bend_vmereg         = mpc0_frame0_fifo_adr;
+//const int mpc0_run3frame0_fifo_clct_first_bend_bitlo          =  7;
+//const int mpc0_run3frame0_fifo_clct_first_bend_bithi          = 10;
+//const int mpc0_run3frame0_fifo_clct_first_bend_default        =  0;
+const int mpc0_run3frame0_fifo_lct_pidbit0to3_vmereg         = mpc0_frame0_fifo_adr;
+const int mpc0_run3frame0_fifo_lct_pidbit0to3_bitlo          =  7;
+const int mpc0_run3frame0_fifo_lct_pidbit0to3_bithi          = 10;
+const int mpc0_run3frame0_fifo_lct_pidbit0to3_default        =  0;
+
+//
+//
+const int mpc0_run3frame0_fifo_lct_first_quality_vmereg      = mpc0_frame0_fifo_adr;
+const int mpc0_run3frame0_fifo_lct_first_quality_bitlo       = 11;
+const int mpc0_run3frame0_fifo_lct_first_quality_bithi       = 13;
+const int mpc0_run3frame0_fifo_lct_first_quality_default     =  0;
+//
+//
+const int mpc0_run3frame0_fifo_clct_first_qxky_vmereg              = mpc0_frame0_fifo_adr;
+const int mpc0_run3frame0_fifo_clct_first_qxky_bitlo               = 14;// 2bits for qual strip and 1/8th strip
+const int mpc0_run3frame0_fifo_clct_first_qxky_bithi               = 14;
+const int mpc0_run3frame0_fifo_clct_first_qxky_default             =  0;
+//
+//
+const int mpc0_run3frame0_fifo_first_vpf_vmereg              = mpc0_frame0_fifo_adr;
+const int mpc0_run3frame0_fifo_first_vpf_bitlo               = 15;
+const int mpc0_run3frame0_fifo_first_vpf_bithi               = 15;
+const int mpc0_run3frame0_fifo_first_vpf_default             = 0;
+//
+//
+//------------------------------------------------------------------
+//0X8A = ADR_MPC0_FIFO_FRAME1:  MPC0 Frame1 Data Sent to MPC
+//------------------------------------------------------------------
+const int mpc0_run3frame1_fifo_clct_first_key_vmereg         = mpc0_frame1_fifo_adr;
+const int mpc0_run3frame1_fifo_clct_first_key_bitlo          = 0;
+const int mpc0_run3frame1_fifo_clct_first_key_bithi          = 7;
+const int mpc0_run3frame1_fifo_clct_first_key_default        = 0;
+//
+//
+const int mpc0_run3frame1_fifo_clct_first_lr_vmereg        = mpc0_frame1_fifo_adr;
+const int mpc0_run3frame1_fifo_clct_first_lr_bitlo         = 8;
+const int mpc0_run3frame1_fifo_clct_first_lr_bithi         = 8;
+const int mpc0_run3frame1_fifo_clct_first_lr_default       = 0;
+//
+//
+const int mpc0_run3frame1_fifo_clct_first_exky_vmereg               = mpc0_frame1_fifo_adr;
+const int mpc0_run3frame1_fifo_clct_first_exky_bitlo                = 9;
+const int mpc0_run3frame1_fifo_clct_first_exky_bithi                = 9;
+const int mpc0_run3frame1_fifo_clct_first_exky_default              = 0;
+//
+//
+const int mpc0_run3frame1_fifo_alct_first_bxn_vmereg         = mpc0_frame1_fifo_adr;
+const int mpc0_run3frame1_fifo_alct_first_bxn_bitlo          = 10;
+const int mpc0_run3frame1_fifo_alct_first_bxn_bithi          = 10;
+const int mpc0_run3frame1_fifo_alct_first_bxn_default        =  0;
+//
+//
+const int mpc0_run3frame1_fifo_clct_first_bx0_local_vmereg   = mpc0_frame1_fifo_adr;
+const int mpc0_run3frame1_fifo_clct_first_bx0_local_bitlo    = 11;
+const int mpc0_run3frame1_fifo_clct_first_bx0_local_bithi    = 11;
+const int mpc0_run3frame1_fifo_clct_first_bx0_local_default  =  0;
+//
+//
+const int mpc0_run3frame1_fifo_clct_first_bend_vmereg                 = mpc0_frame1_fifo_adr;
+const int mpc0_run3frame1_fifo_clct_first_bend_bitlo                  = 12;
+const int mpc0_run3frame1_fifo_clct_first_bend_bithi                  = 15;
+const int mpc0_run3frame1_fifo_clct_first_bend_default                = 0;
+//
+//
+//------------------------------------------------------------------
+//0X8C = ADR_MPC1_FIFO_FRAME0:  MPC1 Frame0 Data Sent to MPC
+//------------------------------------------------------------------
+const int mpc1_run3frame0_fifo_alct_second_key_vmereg        = mpc1_frame0_fifo_adr;
+const int mpc1_run3frame0_fifo_alct_second_key_bitlo         = 0;
+const int mpc1_run3frame0_fifo_alct_second_key_bithi         = 6;
+const int mpc1_run3frame0_fifo_alct_second_key_default       = 0;
+//
+//
+//const int mpc1_run3frame0_fifo_clct_second_bend_vmereg        = mpc1_frame0_fifo_adr;
+//const int mpc1_run3frame0_fifo_clct_second_bend_bitlo         =  7;
+//const int mpc1_run3frame0_fifo_clct_second_bend_bithi         = 10;
+//const int mpc1_run3frame0_fifo_clct_second_bend_default       =  0;
+//
+const int mpc1_run3frame0_fifo_lct_pidbit4_vmereg        = mpc1_frame0_fifo_adr;
+const int mpc1_run3frame0_fifo_lct_pidbit4_bitlo         =  7;
+const int mpc1_run3frame0_fifo_lct_pidbit4_bithi         =  7;
+const int mpc1_run3frame0_fifo_lct_pidbit4_default       =  0;
+//
+//
+const int mpc1_run3frame0_fifo_hmtbit1to3_vmereg        = mpc1_frame0_fifo_adr;
+const int mpc1_run3frame0_fifo_hmtbit1to3_bitlo         =  8;
+const int mpc1_run3frame0_fifo_hmtbit1to3_bithi         =  10;
+const int mpc1_run3frame0_fifo_hmtbit1to3_default       =  0;
+//
+//
+const int mpc1_run3frame0_fifo_lct_second_quality_vmereg     = mpc1_frame0_fifo_adr;
+const int mpc1_run3frame0_fifo_lct_second_quality_bitlo      = 11;
+const int mpc1_run3frame0_fifo_lct_second_quality_bithi      = 13;
+const int mpc1_run3frame0_fifo_lct_second_quality_default    =  0;
+//
+//
+const int mpc1_run3frame0_fifo_clct_second_qxky_vmereg             = mpc1_frame0_fifo_adr;
+const int mpc1_run3frame0_fifo_clct_second_qxky_bitlo              = 14;
+const int mpc1_run3frame0_fifo_clct_second_qxky_bithi              = 14;
+const int mpc1_run3frame0_fifo_clct_second_qxky_default            = 0;
+//
+//
+const int mpc1_run3frame0_fifo_second_vpf_vmereg              = mpc1_frame0_fifo_adr;
+const int mpc1_run3frame0_fifo_second_vpf_bitlo               = 15;
+const int mpc1_run3frame0_fifo_second_vpf_bithi               = 15;
+const int mpc1_run3frame0_fifo_second_vpf_default             = 0;
+//
+//
+//------------------------------------------------------------------
+//0X8E = ADR_MPC1_FIFO_FRAME1:  MPC1 Frame1 Data Sent to MPC
+//------------------------------------------------------------------
+const int mpc1_run3frame1_fifo_clct_second_key_vmereg        = mpc1_frame1_fifo_adr;
+const int mpc1_run3frame1_fifo_clct_second_key_bitlo         = 0;
+const int mpc1_run3frame1_fifo_clct_second_key_bithi         = 7;
+const int mpc1_run3frame1_fifo_clct_second_key_default       = 0;
+//
+//
+const int mpc1_run3frame1_fifo_clct_second_lr_vmereg       = mpc1_frame1_fifo_adr;
+const int mpc1_run3frame1_fifo_clct_second_lr_bitlo        = 8;//left or right
+const int mpc1_run3frame1_fifo_clct_second_lr_bithi        = 8;
+const int mpc1_run3frame1_fifo_clct_second_lr_default      = 0;
+//
+//
+const int mpc1_run3frame1_fifo_clct_second_exky_vmereg             = mpc1_frame1_fifo_adr;
+const int mpc1_run3frame1_fifo_clct_second_exky_bitlo              = 9;
+const int mpc1_run3frame1_fifo_clct_second_exky_bithi              = 9;
+const int mpc1_run3frame1_fifo_clct_second_exky_default            = 0;
+//
+//
+const int mpc1_run3frame1_fifo_hmtbit0_vmereg               = mpc1_frame1_fifo_adr;
+const int mpc1_run3frame1_fifo_hmtbit0_bitlo                = 10;
+const int mpc1_run3frame1_fifo_hmtbit0_bithi                = 10;
+const int mpc1_run3frame1_fifo_hmtbit0_default              = 0;
+//
+//
+//const int mpc1_run3frame1_fifo_alct_second_bxn_vmereg        = mpc1_frame1_fifo_adr;
+//const int mpc1_run3frame1_fifo_alct_second_bxn_bitlo         = 10;
+//const int mpc1_run3frame1_fifo_alct_second_bxn_bithi         = 10;
+//const int mpc1_run3frame1_fifo_alct_second_bxn_default       =  0;
+//
+//
+const int mpc1_run3frame1_fifo_clct_second_bx0_local_vmereg  = mpc1_frame1_fifo_adr;
+const int mpc1_run3frame1_fifo_clct_second_bx0_local_bitlo   = 11;
+const int mpc1_run3frame1_fifo_clct_second_bx0_local_bithi   = 11;
+const int mpc1_run3frame1_fifo_clct_second_bx0_local_default = 0;
+//
+//
+//const int mpc1_run3frame1_fifo_csc_id_vmereg                 = mpc1_frame1_fifo_adr;
+//const int mpc1_run3frame1_fifo_csc_id_bitlo                  = 12;
+//const int mpc1_run3frame1_fifo_csc_id_bithi                  = 15;
+//const int mpc1_run3frame1_fifo_csc_id_default                = 0;
+const int mpc1_run3frame1_fifo_clct_second_bend_vmereg                 = mpc1_frame1_fifo_adr;
+const int mpc1_run3frame1_fifo_clct_second_bend_bitlo                  = 12;
+const int mpc1_run3frame1_fifo_clct_second_bend_bithi                  = 15;
+const int mpc1_run3frame1_fifo_clct_second_bend_default                = 0;
+//------------------------------------------------------------------
+// End of Run3 data format update for FIFO readout!!!
+//------------------------------------------------------------------
+//------------------------------------------------------------------
+//
 //
 //------------------------------------------------------------------
 //0X184 = ADR_MPC_FRAMES_FIFO_CTRL:  Controls FIFO
@@ -3236,6 +3711,244 @@ const int clct_use_corrected_bx_bitlo   = 10;
 const int clct_use_corrected_bx_bithi   = 10;
 const int clct_use_corrected_bx_default = 1; // for now this improvement is switched off by default because it is not fully functional in firmware
 //
+//------------------------------------------------------------------
+//0X19A = ADR_CLCT0_CC:  CLCT0 Comparator Code  (Tao, 2020)
+//------------------------------------------------------------------
+const int clct0_cc_vmereg  = clct0_cc_adr;
+const int clct0_cc_bitlo   = 0;
+const int clct0_cc_bithi   = 11;
+const int clct0_cc_default = 0;
+//
+//
+//------------------------------------------------------------------
+//0X19C = ADR_CLCT1_CC:  CLCT1 Comparator Code  (Tao, 2020)
+//------------------------------------------------------------------
+const int clct1_cc_vmereg  = clct1_cc_adr;
+const int clct1_cc_bitlo   = 0;
+const int clct1_cc_bithi   = 11;
+const int clct1_cc_default = 0;
+//
+//drop 9bits quality
+////------------------------------------------------------------------
+////0X19E = ADR_CLCT0_QLT:  CLCT0 new quality  (Tao, 2020)
+////------------------------------------------------------------------
+//const int clct0_qlt_vmereg  = clct0_qlt_adr;
+//const int clct0_qlt_bitlo   = 0;
+//const int clct0_qlt_bithi   = 8;
+//const int clct0_qlt_default = 0;
+////
+////
+////------------------------------------------------------------------
+////0X1A0 = ADR_CLCT1_QLT:  CLCT1 new quality  (Tao, 2020)
+////------------------------------------------------------------------
+//const int clct1_qlt_vmereg  = clct1_qlt_adr;
+//const int clct1_qlt_bitlo   = 0;
+//const int clct1_qlt_bithi   = 8;
+//const int clct1_qlt_default = 0;
+////
+//
+//------------------------------------------------------------------
+//0X19E = ADR_CLCT0_BNDXKY:  CLCT0 new bending and 1/8strip position (Tao, 2020)
+//------------------------------------------------------------------
+const int clct0_bnd_vmereg  = clct0_bndxky_adr;
+const int clct0_bnd_bitlo   = 0;
+const int clct0_bnd_bithi   = 3;
+const int clct0_bnd_default = 0;
+//
+//
+const int clct0_lr_vmereg  = clct0_bndxky_adr;
+const int clct0_lr_bitlo   = 4;
+const int clct0_lr_bithi   = 4;
+const int clct0_lr_default = 0;
+//
+//
+const int clct0_xky_vmereg  = clct0_bndxky_adr;
+const int clct0_xky_bitlo   = 5;
+const int clct0_xky_bithi   = 14;
+const int clct0_xky_default = 0;
+//
+//
+//------------------------------------------------------------------
+//0X1A0 = ADR_CLCT1_BNDXKY:  CLCT1 new bending and 1/8strip position  (Tao, 2020)
+//------------------------------------------------------------------
+const int clct1_bnd_vmereg  = clct1_bndxky_adr;
+const int clct1_bnd_bitlo   = 0;
+const int clct1_bnd_bithi   = 3;
+const int clct1_bnd_default = 0;
+//
+//
+const int clct1_lr_vmereg  = clct1_bndxky_adr;
+const int clct1_lr_bitlo   = 4;
+const int clct1_lr_bithi   = 4;
+const int clct1_lr_default = 0;
+//
+//
+const int clct1_xky_vmereg  = clct1_bndxky_adr;
+const int clct1_xky_bitlo   = 5;
+const int clct1_xky_bithi   = 14;
+const int clct1_xky_default = 0;
+//
+//
+//------------------------------------------------------------------
+//0X1AA = ADR_CCLUT_FORMAT_CTRL:  CCLUT control  (Tao, 2020)
+//------------------------------------------------------------------
+const int cclut_enable_vmereg  = run3_format_ctrl_adr;
+const int cclut_enable_bitlo   = 0;
+const int cclut_enable_bithi   = 0;
+const int cclut_enable_default = 0;
+//
+const int run3_trig_dataformat_enable_vmereg  = run3_format_ctrl_adr;
+const int run3_trig_dataformat_enable_bitlo   = 1;
+const int run3_trig_dataformat_enable_bithi   = 1;
+const int run3_trig_dataformat_enable_default = 0;
+//
+const int run3_daq_dataformat_enable_vmereg  = run3_format_ctrl_adr;
+const int run3_daq_dataformat_enable_bitlo   = 2;
+const int run3_daq_dataformat_enable_bithi   = 2;
+const int run3_daq_dataformat_enable_default = 0;
+
+//
+//------------------------------------------------------------------
+//0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
+//------------------------------------------------------------------
+const int hmt_enable_vmereg  = hmt_ctrl_adr;
+const int hmt_enable_bitlo   = 0;
+const int hmt_enable_bithi   = 0;
+const int hmt_enable_default = 0;
+//
+const int hmt_me1a_enable_vmereg  = hmt_ctrl_adr;
+const int hmt_me1a_enable_bitlo   = 1;
+const int hmt_me1a_enable_bithi   = 1;
+const int hmt_me1a_enable_default = 1;
+//
+//
+const int hmt_nhits_trig_vmereg  = hmt_ctrl_adr;
+const int hmt_nhits_trig_bitlo   = 2;
+const int hmt_nhits_trig_bithi   = 11;
+const int hmt_nhits_trig_default = 0;
+//
+const int hmt_trigger_vmereg  = hmt_ctrl_adr;
+const int hmt_trigger_bitlo   = 12;
+const int hmt_trigger_bithi   = 15;
+const int hmt_trigger_default = 0;
+//
+//
+//------------------------------------------------------------------
+//0X1AE = ADR_HMT_THRESH1:  HMT loose threshold  (Tao, 2020)
+//0X1B0 = ADR_HMT_THRESH2:  HMT median threshold  (Tao, 2020)
+//0X1B2 = ADR_HMT_THRESH3:  HMT tight threshold  (Tao, 2020)
+//------------------------------------------------------------------
+const int hmt_thresh1_vmereg       = hmt_thresh1_adr;
+const int hmt_thresh1_bitlo        = 0;
+const int hmt_thresh1_bithi        = 9;
+const int hmt_thresh1_default      = 0;
+//
+const int hmt_thresh1_pass_vmereg  = hmt_thresh1_adr;
+const int hmt_thresh1_pass_bitlo   = 10;
+const int hmt_thresh1_pass_bithi   = 10;
+const int hmt_thresh1_pass_default = 0;
+//
+const int cfeb_allow_hmt_ro_vmereg  = hmt_thresh1_adr;
+const int cfeb_allow_hmt_ro_bitlo   = 11;
+const int cfeb_allow_hmt_ro_bithi   = 11;
+const int cfeb_allow_hmt_ro_default = 0;
+//
+const int tmb_allow_hmt_ro_vmereg  = hmt_thresh1_adr;
+const int tmb_allow_hmt_ro_bitlo   = 12;
+const int tmb_allow_hmt_ro_bithi   = 12;
+const int tmb_allow_hmt_ro_default = 0;
+//
+const int tmb_allow_hmt_vmereg     = hmt_thresh1_adr;
+const int tmb_allow_hmt_bitlo      = 13;
+const int tmb_allow_hmt_bithi      = 13;
+const int tmb_allow_hmt_default    = 0;
+//
+const int hmt_thresh2_vmereg       = hmt_thresh2_adr;
+const int hmt_thresh2_bitlo        = 0;
+const int hmt_thresh2_bithi        = 9;
+const int hmt_thresh2_default      = 0;
+//
+const int hmt_thresh2_pass_vmereg  = hmt_thresh2_adr;
+const int hmt_thresh2_pass_bitlo   = 10;
+const int hmt_thresh2_pass_bithi   = 10;
+const int hmt_thresh2_pass_default = 0;
+//
+const int hmt_thresh3_vmereg       = hmt_thresh3_adr;
+const int hmt_thresh3_bitlo        = 0;
+const int hmt_thresh3_bithi        = 9;
+const int hmt_thresh3_default      = 0;
+//
+const int hmt_thresh3_pass_vmereg  = hmt_thresh3_adr;
+const int hmt_thresh3_pass_bitlo   = 10;
+const int hmt_thresh3_pass_bithi   = 10;
+const int hmt_thresh3_pass_default = 0;
+//
+//------------------------------------------------------------------
+//0X1B4 = ADR_HMT_NHITS_SIG: nhits in bx678  (Tao, 2020)
+//0X1B6 = ADR_HMT_NHITS_BKG: nhits in bx2345  (Tao, 2020)
+//------------------------------------------------------------------
+//
+const int hmt_nhits_sig_vmereg       = hmt_nhits_sig_adr;
+const int hmt_nhits_sig_bitlo        = 0;
+const int hmt_nhits_sig_bithi        = 9;
+const int hmt_nhits_sig_default      = 0;
+//
+const int hmt_nhits_bkg_vmereg       = hmt_nhits_bkg_adr;
+const int hmt_nhits_bkg_bitlo        = 0;
+const int hmt_nhits_bkg_bithi        = 9;
+const int hmt_nhits_bkg_default      = 0;
+//
+////-----------------------------------------------------------------------------
+//// 0X1B8 ADR_LCT_INJECTION
+////-----------------------------------------------------------------------------
+//const int lct_inj_hs_vmereg        = lct_injection_adr;
+//const int lct_inj_hs_bitlo         = 0;
+//const int lct_inj_hs_bithi         = 7;
+//const int lct_inj_hs_default       = 0;
+////
+//const int lct_inj_wg_vmereg        = lct_injection_adr;
+//const int lct_inj_wg_bitlo         = 8;
+//const int lct_inj_wg_bithi         = 14;
+//const int lct_inj_wg_default       = 0;
+////
+//const int lct_inj_enable_vmereg    = lct_injection_adr;
+//const int lct_inj_enable_bitlo     = 15;
+//const int lct_inj_enable_bithi     = 15;
+//const int lct_inj_enable_default   = 0;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X30c ADR_GEM_DEBUG_FIFO_CTRL 
+//-----------------------------------------------------------------------------
+const int gem_debug_fifo_reset_vmereg         = gem_debug_fifo_ctrl_adr;
+const int gem_debug_fifo_reset_bitlo          = 0;
+const int gem_debug_fifo_reset_bithi          = 0;
+const int gem_debug_fifo_reset_default        = 1;
+//
+const int gem_debug_fifo_sel_vmereg           = gem_debug_fifo_ctrl_adr;
+const int gem_debug_fifo_sel_bitlo            = 1;
+const int gem_debug_fifo_sel_bithi            = 2;
+const int gem_debug_fifo_sel_default          = 0;
+//
+const int gem_debug_fifo_igem_vmereg          = gem_debug_fifo_ctrl_adr;
+const int gem_debug_fifo_igem_bitlo           = 3;
+const int gem_debug_fifo_igem_bithi           = 4;
+const int gem_debug_fifo_igem_default         = 0;
+//
+const int gem_debug_fifo_adr_vmereg           = gem_debug_fifo_ctrl_adr;
+const int gem_debug_fifo_adr_bitlo            = 5;
+const int gem_debug_fifo_adr_bithi            = 14;
+const int gem_debug_fifo_adr_default          = 0;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X30e ADR_GEM_DEBUG_FIFO_DATA
+//-----------------------------------------------------------------------------
+const int gem_debug_fifo_data_vmereg         = gem_debug_fifo_data_adr;
+const int gem_debug_fifo_data_bitlo          = 0;
+const int gem_debug_fifo_data_bithi          = 15;
+const int gem_debug_fifo_data_default        = 0;
+//
 //
 //-----------------------------------------------------------------------------
 // 0X310 ADR_GEM_TBINS
@@ -3255,7 +3968,7 @@ const int gem_fifo_pretrig_default        = 2;
 const int gem_fifo_decouple_vmereg        = gem_tbins_adr;
 const int gem_fifo_decouple_bitlo         = 10;
 const int gem_fifo_decouple_bithi         = 10;
-const int gem_fifo_decouple_default       = 0;
+const int gem_fifo_decouple_default       = 1;
 //
 //
 const int gem_read_enable_vmereg          = gem_tbins_adr;
@@ -3296,6 +4009,707 @@ const int gem_readout_mask_vmereg            = gem_cfg_adr;
 const int gem_readout_mask_bitlo             = 9;
 const int gem_readout_mask_bithi             = 12;
 const int gem_readout_mask_default           = 0xf;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X318 ADR_GEM_CSC_MATCH_WINDOW
+//-----------------------------------------------------------------------------
+//
+const int gem_clct_deltahs_odd_vmereg               = gem_csc_match_window_adr;
+const int gem_clct_deltahs_odd_bitlo                = 0;
+const int gem_clct_deltahs_odd_bithi                = 4;
+const int gem_clct_deltahs_odd_default              = 20;
+//
+//
+const int gem_alct_deltawire_odd_vmereg             = gem_csc_match_window_adr;
+const int gem_alct_deltawire_odd_bitlo              = 5;
+const int gem_alct_deltawire_odd_bithi              = 7;
+const int gem_alct_deltawire_odd_default            = 3;
+//
+//
+const int gem_clct_deltahs_even_vmereg              = gem_csc_match_window_adr;
+const int gem_clct_deltahs_even_bitlo               = 8;
+const int gem_clct_deltahs_even_bithi               = 12;
+const int gem_clct_deltahs_even_default             = 12;
+//
+//
+const int gem_alct_deltawire_even_vmereg            = gem_csc_match_window_adr;
+const int gem_alct_deltawire_even_bitlo             = 13;
+const int gem_alct_deltawire_even_bithi             = 15;
+const int gem_alct_deltawire_even_default           = 2;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X320 ADR_GEM_INJ_CTRL
+//-----------------------------------------------------------------------------
+//
+const int gem_inj_wen_vmereg                 = gem_inj_ctrl_adr;
+const int gem_inj_wen_bitlo                  = 0;
+const int gem_inj_wen_bithi                  = 0;
+const int gem_inj_wen_default                = 0;
+//
+//
+const int gem_inj_sel_vmereg                 = gem_inj_ctrl_adr;
+const int gem_inj_sel_bitlo                  = 1;
+const int gem_inj_sel_bithi                  = 2;
+const int gem_inj_sel_default                = 0;
+//
+//
+const int gem_inj_igem_vmereg                = gem_inj_ctrl_adr;
+const int gem_inj_igem_bitlo                 = 3;
+const int gem_inj_igem_bithi                 = 4;
+const int gem_inj_igem_default               = 0;
+//
+//
+const int gem_inj_adr_vmereg                 = gem_inj_ctrl_adr;
+const int gem_inj_adr_bitlo                  = 5;
+const int gem_inj_adr_bithi                  = 14;
+const int gem_inj_adr_default                = 0;
+//
+//
+const int gem_inj_mask_vmereg                = gem_inj_ctrl_adr;
+const int gem_inj_mask_bitlo                 = 15;
+const int gem_inj_mask_bithi                 = 15;
+const int gem_inj_mask_default               = 0;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X322 ADR_GEM_INJ_DATA
+//-----------------------------------------------------------------------------
+//
+const int gem_inj_data_vmereg               = gem_inj_data_adr;
+const int gem_inj_data_bitlo                = 0;
+const int gem_inj_data_bithi                = 15;
+const int gem_inj_data_default              = 0;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X324 ADR_GEM_COPAD_CTRL
+//-----------------------------------------------------------------------------
+//
+const int gem_match_neighborRoll_vmereg     = gem_copad_ctrl_adr;
+const int gem_match_neighborRoll_bitlo      = 0;
+const int gem_match_neighborRoll_bithi      = 0;
+const int gem_match_neighborRoll_default    = 0;
+//
+//
+const int gem_match_neighborPad_vmereg     = gem_copad_ctrl_adr;
+const int gem_match_neighborPad_bitlo      = 3;
+const int gem_match_neighborPad_bithi      = 3;
+const int gem_match_neighborPad_default    = 0;
+//
+//
+const int gem_match_deltaPad_vmereg        = gem_copad_ctrl_adr;
+const int gem_match_deltaPad_bitlo         = 4;
+const int gem_match_deltaPad_bithi         = 7;
+const int gem_match_deltaPad_default       = 2;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X326 ADR_GEM_BX0_DELAY
+//-----------------------------------------------------------------------------
+////
+//const int gemA_bx0_delay_vmereg     = gem_bx0_delay_adr;
+//const int gemA_bx0_delay_bitlo      = 0;
+//const int gemA_bx0_delay_bithi      = 3;
+//const int gemA_bx0_delay_default    = 0;
+////
+//const int gemA_bx0_enable_vmereg     = gem_bx0_delay_adr;
+//const int gemA_bx0_enable_bitlo      = 4;
+//const int gemA_bx0_enable_bithi      = 4;
+//const int gemA_bx0_enable_default    = 1;
+////
+//const int gemA_bx0_match_vmereg     = gem_bx0_delay_adr;
+//const int gemA_bx0_match_bitlo      = 5;
+//const int gemA_bx0_match_bithi      = 5;
+//const int gemA_bx0_match_default    = 0;
+////
+//const int gemB_bx0_delay_vmereg     = gem_bx0_delay_adr;
+//const int gemB_bx0_delay_bitlo      = 6;
+//const int gemB_bx0_delay_bithi      = 9;
+//const int gemB_bx0_delay_default    = 0;
+////
+//const int gemB_bx0_enable_vmereg     = gem_bx0_delay_adr;
+//const int gemB_bx0_enable_bitlo      = 10;
+//const int gemB_bx0_enable_bithi      = 10;
+//const int gemB_bx0_enable_default    = 1;
+////
+//const int gemB_bx0_match_vmereg     = gem_bx0_delay_adr;
+//const int gemB_bx0_match_bitlo      = 11;
+//const int gemB_bx0_match_bithi      = 11;
+//const int gemB_bx0_match_default    = 0;
+//
+//// extended gem_bx0_delay from 4 bits to 6bits
+const int gemA_bx0_delay_vmereg     = gem_bx0_delay_adr;
+const int gemA_bx0_delay_bitlo      = 0;
+const int gemA_bx0_delay_bithi      = 5;
+const int gemA_bx0_delay_default    = 0;
+//
+const int gemA_bx0_enable_vmereg     = gem_bx0_delay_adr;
+const int gemA_bx0_enable_bitlo      = 6;
+const int gemA_bx0_enable_bithi      = 6;
+const int gemA_bx0_enable_default    = 1;
+//
+const int gemA_bx0_match_vmereg     = gem_bx0_delay_adr;
+const int gemA_bx0_match_bitlo      = 7;
+const int gemA_bx0_match_bithi      = 7;
+const int gemA_bx0_match_default    = 0;
+//
+const int gemB_bx0_delay_vmereg     = gem_bx0_delay_adr;
+const int gemB_bx0_delay_bitlo      = 8;
+const int gemB_bx0_delay_bithi      = 13;
+const int gemB_bx0_delay_default    = 0;
+//
+const int gemB_bx0_enable_vmereg     = gem_bx0_delay_adr;
+const int gemB_bx0_enable_bitlo      = 14;
+const int gemB_bx0_enable_bithi      = 14;
+const int gemB_bx0_enable_default    = 1;
+//
+const int gemB_bx0_match_vmereg     = gem_bx0_delay_adr;
+const int gemB_bx0_match_bitlo      = 15;
+const int gemB_bx0_match_bithi      = 15;
+const int gemB_bx0_match_default    = 0;
+//
+//-----------------------------------------------------------------------------
+// 0X328 ADR_GEMA_TRG_CTRL
+//-----------------------------------------------------------------------------
+//
+const int match_gem_alct_window_vmereg     = gemA_trg_ctrl_adr; // in timing 
+const int match_gem_alct_window_bitlo      = 4;
+const int match_gem_alct_window_bithi      = 7;
+const int match_gem_alct_window_default    = 3;
+//
+//
+const int match_gem_clct_window_vmereg     = gemA_trg_ctrl_adr;
+const int match_gem_clct_window_bitlo      = 8;
+const int match_gem_clct_window_bithi      = 11;
+const int match_gem_clct_window_default    = 5;
+//
+const int gemA_alct_match_vmereg            = gemA_trg_ctrl_adr; // in timing 
+const int gemA_alct_match_bitlo             = 12;
+const int gemA_alct_match_bithi             = 12;
+const int gemA_alct_match_default           = 0;
+//
+//
+const int gemA_clct_match_vmereg            = gemA_trg_ctrl_adr;
+const int gemA_clct_match_bitlo             = 13;
+const int gemA_clct_match_bithi             = 13;
+const int gemA_clct_match_default           = 0;
+//
+//
+const int gemA_fiber_enable_vmereg          = gemA_trg_ctrl_adr;
+const int gemA_fiber_enable_bitlo           = 14;
+const int gemA_fiber_enable_bithi           = 15;
+const int gemA_fiber_enable_default         = 3;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X32a ADR_GEMB_TRG_CTRL
+//-----------------------------------------------------------------------------
+//
+const int match_gem_alct_delay_vmereg      = gemB_trg_ctrl_adr;
+const int match_gem_alct_delay_bitlo       = 0;
+const int match_gem_alct_delay_bithi       = 7;
+const int match_gem_alct_delay_default     = 0;
+//
+//
+//const int match_gemB_alct_window_vmereg     = gemB_trg_ctrl_adr; // in timing 
+//const int match_gemB_alct_window_bitlo      = 4;
+//const int match_gemB_alct_window_bithi      = 7;
+//const int match_gemB_alct_window_default    = 3;
+////
+////
+//const int match_gemB_clct_window_vmereg     = gemB_trg_ctrl_adr;
+//const int match_gemB_clct_window_bitlo      = 8;
+//const int match_gemB_clct_window_bithi      = 11;
+//const int match_gemB_clct_window_default    = 5;
+//
+const int gemB_alct_match_vmereg            = gemB_trg_ctrl_adr; // in timing 
+const int gemB_alct_match_bitlo             = 12;
+const int gemB_alct_match_bithi             = 12;
+const int gemB_alct_match_default           = 0;
+//
+//
+const int gemB_clct_match_vmereg            = gemB_trg_ctrl_adr;
+const int gemB_clct_match_bitlo             = 13;
+const int gemB_clct_match_bithi             = 13;
+const int gemB_clct_match_default           = 0;
+//
+//
+const int gemB_fiber_enable_vmereg          = gemB_trg_ctrl_adr;
+const int gemB_fiber_enable_bitlo           = 14;
+const int gemB_fiber_enable_bithi           = 15;
+const int gemB_fiber_enable_default         = 3;
+//
+//-----------------------------------------------------------------------------
+// 0X32c ADR_GEM_CSC_MATCH_CTRL
+//-----------------------------------------------------------------------------
+//
+const int gem_me1a_match_enable_vmereg          = gem_csc_match_ctrl_adr;
+const int gem_me1a_match_enable_bitlo           = 0;
+const int gem_me1a_match_enable_bithi           = 0;
+const int gem_me1a_match_enable_default         = 1;
+//
+//
+const int gem_me1b_match_enable_vmereg              = gem_csc_match_ctrl_adr;
+const int gem_me1b_match_enable_bitlo               = 1;
+const int gem_me1b_match_enable_bithi               = 1;
+const int gem_me1b_match_enable_default             = 1;
+//
+//
+const int gem_me1a_match_nogem_vmereg                = gem_csc_match_ctrl_adr;
+const int gem_me1a_match_nogem_bitlo                 = 2;
+const int gem_me1a_match_nogem_bithi                 = 2;
+const int gem_me1a_match_nogem_default               = 0;
+//
+//
+const int gem_me1b_match_nogem_vmereg                = gem_csc_match_ctrl_adr;
+const int gem_me1b_match_nogem_bitlo                 = 3;
+const int gem_me1b_match_nogem_bithi                 = 3;
+const int gem_me1b_match_nogem_default               = 0;
+//
+//
+const int gem_me1a_match_noalct_vmereg               = gem_csc_match_ctrl_adr;
+const int gem_me1a_match_noalct_bitlo                = 4;
+const int gem_me1a_match_noalct_bithi                = 4;
+const int gem_me1a_match_noalct_default              = 0;
+//
+//
+const int match_drop_lowqalct_vmereg               = gem_csc_match_ctrl_adr;
+const int match_drop_lowqalct_bitlo                = 5;
+const int match_drop_lowqalct_bithi                = 5;
+const int match_drop_lowqalct_default              = 0;
+//
+//
+const int me1a_match_drop_lowqclct_vmereg               = gem_csc_match_ctrl_adr;
+const int me1a_match_drop_lowqclct_bitlo                = 6;
+const int me1a_match_drop_lowqclct_bithi                = 6;
+const int me1a_match_drop_lowqclct_default              = 0;
+//
+//
+const int me1b_match_drop_lowqclct_vmereg               = gem_csc_match_ctrl_adr;
+const int me1b_match_drop_lowqclct_bitlo                = 7;
+const int me1b_match_drop_lowqclct_bithi                = 7;
+const int me1b_match_drop_lowqclct_default              = 0;
+//
+//
+//const int gem_me1a_match_promotequal_vmereg          = gem_csc_match_ctrl_adr;
+//const int gem_me1a_match_promotequal_bitlo           = 8;
+//const int gem_me1a_match_promotequal_bithi           = 8;
+//const int gem_me1a_match_promotequal_default         = 1;
+////
+////
+//const int gem_me1b_match_promotequal_vmereg          = gem_csc_match_ctrl_adr;
+//const int gem_me1b_match_promotequal_bitlo           = 9;
+//const int gem_me1b_match_promotequal_bithi           = 9;
+//const int gem_me1b_match_promotequal_default         = 1;
+////
+////
+const int tmb_copad_alct_allow_vmereg           = gem_csc_match_ctrl_adr;
+const int tmb_copad_alct_allow_bitlo            = 10;
+const int tmb_copad_alct_allow_bithi            = 10;
+const int tmb_copad_alct_allow_default          = 1;
+//
+//
+const int tmb_copad_clct_allow_vmereg           = gem_csc_match_ctrl_adr;
+const int tmb_copad_clct_allow_bitlo            = 11;
+const int tmb_copad_clct_allow_bithi            = 11;
+const int tmb_copad_clct_allow_default          = 0;
+//
+//
+const int gemA_match_ignore_position_vmereg           = gem_csc_match_ctrl_adr;
+const int gemA_match_ignore_position_bitlo            = 12;
+const int gemA_match_ignore_position_bithi            = 12;
+const int gemA_match_ignore_position_default          = 0;
+//
+//
+const int gemB_match_ignore_position_vmereg           = gem_csc_match_ctrl_adr;
+const int gemB_match_ignore_position_bitlo            = 13;
+const int gemB_match_ignore_position_bithi            = 13;
+const int gemB_match_ignore_position_default          = 0;
+//
+//
+const int gemcsc_bend_enable_vmereg          = gem_csc_match_ctrl_adr;
+const int gemcsc_bend_enable_bitlo           = 14;
+const int gemcsc_bend_enable_bithi           = 14;
+const int gemcsc_bend_enable_default         = 1;
+//
+//
+const int gemcsc_ignore_bend_check_vmereg          = gem_csc_match_ctrl_adr;
+const int gemcsc_ignore_bend_check_bitlo           = 15;
+const int gemcsc_ignore_bend_check_bithi           = 15;
+const int gemcsc_ignore_bend_check_default         = 1;
+//
+//-----------------------------------------------------------------------------
+// 0X32e ADR_GEM_CSC_MATCH_CLUSTER0
+//-----------------------------------------------------------------------------
+//
+const int gem_csc_match_cluster0_iclst_vmereg          = gem_csc_match_cluster00_adr;
+const int gem_csc_match_cluster0_iclst_bitlo           = 0;
+const int gem_csc_match_cluster0_iclst_bithi           = 2;
+const int gem_csc_match_cluster0_iclst_default         = 0;
+//
+//
+const int gem_csc_match_cluster0_roll_vmereg          = gem_csc_match_cluster00_adr;
+const int gem_csc_match_cluster0_roll_bitlo           = 3;
+const int gem_csc_match_cluster0_roll_bithi           = 5;
+const int gem_csc_match_cluster0_roll_default         = 0;
+//
+//
+const int gem_csc_match_cluster0_cscxky_vmereg          = gem_csc_match_cluster00_adr;
+const int gem_csc_match_cluster0_cscxky_bitlo           = 6;
+const int gem_csc_match_cluster0_cscxky_bithi           = 15;
+const int gem_csc_match_cluster0_cscxky_default         = 1023;//invalid
+//
+//
+//-----------------------------------------------------------------------------
+// 0X330 ADR_GEM_CSC_MATCH_CLUSTER01
+//-----------------------------------------------------------------------------
+//
+const int gem_csc_match_cluster0_pad_vmereg          = gem_csc_match_cluster01_adr;
+const int gem_csc_match_cluster0_pad_bitlo           = 0;
+const int gem_csc_match_cluster0_pad_bithi           = 7;
+const int gem_csc_match_cluster0_pad_default         = 255;
+//
+//
+const int gem_csc_match_cluster0_angle_vmereg          = gem_csc_match_cluster01_adr;
+const int gem_csc_match_cluster0_angle_bitlo           = 8;
+const int gem_csc_match_cluster0_angle_bithi           = 14;
+const int gem_csc_match_cluster0_angle_default         = 127;//invalid
+//
+//
+const int gem_csc_match_cluster0_bend_vmereg          = gem_csc_match_cluster01_adr;
+const int gem_csc_match_cluster0_bend_bitlo           = 15;
+const int gem_csc_match_cluster0_bend_bithi           = 15;
+const int gem_csc_match_cluster0_bend_default         = 0;//invalid
+//
+//
+//-----------------------------------------------------------------------------
+// 0X332 ADR_GEM_CSC_MATCH_CLUSTER10
+//-----------------------------------------------------------------------------
+//
+const int gem_csc_match_cluster1_iclst_vmereg          = gem_csc_match_cluster10_adr;
+const int gem_csc_match_cluster1_iclst_bitlo           = 0;
+const int gem_csc_match_cluster1_iclst_bithi           = 2;
+const int gem_csc_match_cluster1_iclst_default         = 0;
+//
+//
+const int gem_csc_match_cluster1_roll_vmereg          = gem_csc_match_cluster10_adr;
+const int gem_csc_match_cluster1_roll_bitlo           = 3;
+const int gem_csc_match_cluster1_roll_bithi           = 5;
+const int gem_csc_match_cluster1_roll_default         = 0;
+//
+//
+const int gem_csc_match_cluster1_cscxky_vmereg          = gem_csc_match_cluster10_adr;
+const int gem_csc_match_cluster1_cscxky_bitlo           = 6;
+const int gem_csc_match_cluster1_cscxky_bithi           = 15;
+const int gem_csc_match_cluster1_cscxky_default         = 1023;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X334 ADR_GEM_CSC_MATCH_CLUSTER01
+//-----------------------------------------------------------------------------
+//
+const int gem_csc_match_cluster1_pad_vmereg          = gem_csc_match_cluster11_adr;
+const int gem_csc_match_cluster1_pad_bitlo           = 0;
+const int gem_csc_match_cluster1_pad_bithi           = 7;
+const int gem_csc_match_cluster1_pad_default         = 255;//invalid
+//
+//
+const int gem_csc_match_cluster1_angle_vmereg          = gem_csc_match_cluster11_adr;
+const int gem_csc_match_cluster1_angle_bitlo           = 8;
+const int gem_csc_match_cluster1_angle_bithi           = 14;
+const int gem_csc_match_cluster1_angle_default         = 127;//invalid
+//
+//
+const int gem_csc_match_cluster1_bend_vmereg          = gem_csc_match_cluster11_adr;
+const int gem_csc_match_cluster1_bend_bitlo           = 15;
+const int gem_csc_match_cluster1_bend_bithi           = 15;
+const int gem_csc_match_cluster1_bend_default         = 0;//invalid
+//
+//
+//------------------------------------------------------------------
+// GEM hot vfat mask, 
+// 0x33a ADR_GEM_VFAT_HCM0
+// 0x33c ADR_GEM_VFAT_HCM1
+// 0x33e ADR_GEM_VFAT_HCM2
+// gemA_vfat_hcm[23:0] = {gem_vfat_hcm1[7:0], gem_vfat_hcm0[15:0]]}
+// gemB_vfat_hcm[23:0] = {gem_vfat_hcm2[15:0], gem_vfat_hcm1[15:8]}
+//------------------------------------------------------------------
+//
+const int gem_vfat_hotchannelmask0_vmereg             = gem_vfat_hcm0_adr;
+const int gem_vfat_hotchannelmask1_vmereg             = gem_vfat_hcm1_adr;
+const int gem_vfat_hotchannelmask2_vmereg             = gem_vfat_hcm2_adr;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X340 ADR_GEMA_CLUSTER0
+//-----------------------------------------------------------------------------
+//
+const int gemA_cluster0_vmereg          = gemA_cluster0_adr;
+const int gemA_cluster0_bitlo           = 0;
+const int gemA_cluster0_bithi           = 13;
+const int gemA_cluster0_default         = 1536;
+//
+//
+const int gemA_overflow_vmereg          = gemA_cluster0_adr;
+const int gemA_overflow_bitlo           = 14;
+const int gemA_overflow_bithi           = 14;
+const int gemA_overflow_default         = 0;
+//
+//
+const int gemA_sync_vmereg              = gemA_cluster0_adr;
+const int gemA_sync_bitlo               = 15;
+const int gemA_sync_bithi               = 15;
+const int gemA_sync_default             = 0;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X342 ADR_GEMA_CLUSTER1
+//-----------------------------------------------------------------------------
+//
+const int gemA_cluster1_vmereg          = gemA_cluster1_adr;
+const int gemA_cluster1_bitlo           = 0;
+const int gemA_cluster1_bithi           = 13;
+const int gemA_cluster1_default         = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X344 ADR_GEMA_CLUSTER2
+//-----------------------------------------------------------------------------
+//
+const int gemA_cluster2_vmereg          = gemA_cluster2_adr;
+const int gemA_cluster2_bitlo           = 0;
+const int gemA_cluster2_bithi           = 13;
+const int gemA_cluster2_default         = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X346 ADR_GEMA_CLUSTER3
+//-----------------------------------------------------------------------------
+//
+const int gemA_cluster3_vmereg          = gemA_cluster3_adr;
+const int gemA_cluster3_bitlo           = 0;
+const int gemA_cluster3_bithi           = 13;
+const int gemA_cluster3_default         = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X348 ADR_GEMA_CLUSTER4
+//-----------------------------------------------------------------------------
+//
+const int gemA_cluster4_vmereg          = gemA_cluster4_adr;
+const int gemA_cluster4_bitlo           = 0;
+const int gemA_cluster4_bithi           = 13;
+const int gemA_cluster4_default         = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X34a ADR_GEMA_CLUSTER5
+//-----------------------------------------------------------------------------
+//
+const int gemA_cluster5_vmereg          = gemA_cluster5_adr;
+const int gemA_cluster5_bitlo           = 0;
+const int gemA_cluster5_bithi           = 13;
+const int gemA_cluster5_default         = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X34c ADR_GEMA_CLUSTER6
+//-----------------------------------------------------------------------------
+//
+const int gemA_cluster6_vmereg          = gemA_cluster6_adr;
+const int gemA_cluster6_bitlo           = 0;
+const int gemA_cluster6_bithi           = 13;
+const int gemA_cluster6_default         = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X34e ADR_GEMA_CLUSTER7
+//-----------------------------------------------------------------------------
+//
+const int gemA_cluster7_vmereg          = gemA_cluster7_adr;
+const int gemA_cluster7_bitlo           = 0;
+const int gemA_cluster7_bithi           = 13;
+const int gemA_cluster7_default         = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X350 ADR_GEMB_CLUSTER0
+//-----------------------------------------------------------------------------
+//
+const int gemB_cluster0_vmereg          = gemB_cluster0_adr;
+const int gemB_cluster0_bitlo           = 0;
+const int gemB_cluster0_bithi           = 13;
+const int gemB_cluster0_default         = 1536;
+//
+//
+const int gemB_overflow_vmereg          = gemB_cluster0_adr;
+const int gemB_overflow_bitlo           = 14;
+const int gemB_overflow_bithi           = 14;
+const int gemB_overflow_default         = 0;
+//
+//
+const int gemB_sync_vmereg              = gemB_cluster0_adr;
+const int gemB_sync_bitlo               = 15;
+const int gemB_sync_bithi               = 15;
+const int gemB_sync_default             = 0;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X352 ADR_GEMB_CLUSTER1
+//-----------------------------------------------------------------------------
+//
+const int gemB_cluster1_vmereg          = gemB_cluster1_adr;
+const int gemB_cluster1_bitlo           = 0;
+const int gemB_cluster1_bithi           = 13;
+const int gemB_cluster1_default         = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X354 ADR_GEMB_CLUSTER2
+//-----------------------------------------------------------------------------
+//
+const int gemB_cluster2_vmereg          = gemB_cluster2_adr;
+const int gemB_cluster2_bitlo           = 0;
+const int gemB_cluster2_bithi           = 13;
+const int gemB_cluster2_default         = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X356 ADR_GEMB_CLUSTER3
+//-----------------------------------------------------------------------------
+//
+const int gemB_cluster3_vmereg          = gemB_cluster3_adr;
+const int gemB_cluster3_bitlo           = 0;
+const int gemB_cluster3_bithi           = 13;
+const int gemB_cluster3_default         = 0;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X358 ADR_GEMB_CLUSTER4
+//-----------------------------------------------------------------------------
+//
+const int gemB_cluster4_vmereg          = gemB_cluster4_adr;
+const int gemB_cluster4_bitlo           = 0;
+const int gemB_cluster4_bithi           = 13;
+const int gemB_cluster4_default         = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X35a ADR_GEMB_CLUSTER5
+//-----------------------------------------------------------------------------
+//
+const int gemB_cluster5_vmereg          = gemB_cluster5_adr;
+const int gemB_cluster5_bitlo           = 0;
+const int gemB_cluster5_bithi           = 13;
+const int gemB_cluster5_default         = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X35c ADR_GEMB_CLUSTER6
+//-----------------------------------------------------------------------------
+//
+const int gemB_cluster6_vmereg          = gemB_cluster6_adr;
+const int gemB_cluster6_bitlo           = 0;
+const int gemB_cluster6_bithi           = 13;
+const int gemB_cluster6_default         = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X35e ADR_GEMB_CLUSTER7
+//-----------------------------------------------------------------------------
+//
+const int gemB_cluster7_vmereg          = gemB_cluster7_adr;
+const int gemB_cluster7_bitlo           = 0;
+const int gemB_cluster7_bithi           = 13;
+const int gemB_cluster7_default         = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X360 ADR_GEM_COPAD0
+//-----------------------------------------------------------------------------
+//
+const int gem_copad0_vmereg             = gem_copad0_adr;
+const int gem_copad0_bitlo              = 0;
+const int gem_copad0_bithi              = 13;
+const int gem_copad0_default            = 1536;
+//
+//
+const int gems_sync_low_vmereg          = gem_copad0_adr;
+const int gems_sync_low_bitlo           = 14;
+const int gems_sync_low_bithi           = 14;
+const int gems_sync_low_default         = 0;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X362 ADR_GEM_COPAD1
+//-----------------------------------------------------------------------------
+//
+const int gem_copad1_vmereg             = gem_copad1_adr;
+const int gem_copad1_bitlo              = 0;
+const int gem_copad1_bithi              = 13;
+const int gem_copad1_default            = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X364 ADR_GEM_COPAD2
+//-----------------------------------------------------------------------------
+//
+const int gem_copad2_vmereg             = gem_copad2_adr;
+const int gem_copad2_bitlo              = 0;
+const int gem_copad2_bithi              = 13;
+const int gem_copad2_default            = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X366 ADR_GEM_COPAD3
+//-----------------------------------------------------------------------------
+//
+const int gem_copad3_vmereg             = gem_copad3_adr;
+const int gem_copad3_bitlo              = 0;
+const int gem_copad3_bithi              = 13;
+const int gem_copad3_default            = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X368 ADR_GEM_COPAD4
+//-----------------------------------------------------------------------------
+//
+const int gem_copad4_vmereg             = gem_copad4_adr;
+const int gem_copad4_bitlo              = 0;
+const int gem_copad4_bithi              = 13;
+const int gem_copad4_default            = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X36a ADR_GEM_COPAD5
+//-----------------------------------------------------------------------------
+//
+const int gem_copad5_vmereg             = gem_copad5_adr;
+const int gem_copad5_bitlo              = 0;
+const int gem_copad5_bithi              = 13;
+const int gem_copad5_default            = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X36c ADR_GEM_COPAD6
+//-----------------------------------------------------------------------------
+//
+const int gem_copad6_vmereg             = gem_copad6_adr;
+const int gem_copad6_bitlo              = 0;
+const int gem_copad6_bithi              = 13;
+const int gem_copad6_default            = 1536;
+//
+//
+//-----------------------------------------------------------------------------
+// 0X36e ADR_GEM_COPAD7
+//-----------------------------------------------------------------------------
+//
+const int gem_copad7_vmereg             = gem_copad7_adr;
+const int gem_copad7_bitlo              = 0;
+const int gem_copad7_bithi              = 13;
+const int gem_copad7_default            = 1536;
 //
 //
 //////////////////////////////////////////////
@@ -3374,7 +4788,11 @@ const int h6_bd_status_hi_bit   =14;
 // Firmware version date code
 const int h7_revcode_lo_bit   =0;
 const int h7_revcode_hi_bit   =14;
-
+//for Run3 format version definition
+const int tmb_firmware_version_TMBRun2_const    = 0;
+const int tmb_firmware_version_OTMBRun2_const   = 1;
+const int tmb_firmware_version_OTMBCCLUT_const  = 2;
+const int tmb_firmware_version_OTMBGEMCSC_const = 3;
 
 // Full Header-mode words 8-to-EOB: Event Counters
 
@@ -3402,6 +4820,17 @@ const int h9_r_pretrig_counter_lsbs_hi_bit   =14;
 const int h10_r_pretrig_counter_msbs_lo_bit   =0;
 const int h10_r_pretrig_counter_msbs_hi_bit   =14;
 
+//run3 DAQ format 
+const int h10_clct0_cc_lo_bit =0;
+const int h10_clct0_cc_hi_bit =10;
+const int h10_run3_trig_df_lo_bit =11;
+const int h10_run3_trig_df_hi_bit =11;
+const int h10_clct0_key_bit10_lo_bit =12;
+const int h10_clct0_key_bit10_hi_bit =13;
+const int h10_hmt_bit0_lo_bit = 14;
+const int h10_hmt_bit0_hi_bit = 14;
+
+
 // CLCT post-drift counter, stop on ovf
 const int h11_r_clct_counter_lsbs_lo_bit   =0;
 const int h11_r_clct_counter_lsbs_hi_bit   =14;
@@ -3409,6 +4838,38 @@ const int h11_r_clct_counter_lsbs_hi_bit   =14;
 // CLCT post-drift counter
 const int h12_r_clct_counter_msbs_lo_bit   =0;
 const int h12_r_clct_counter_msbs_hi_bit   =14;
+
+  //run3 DAQ format with GEM
+const int h12_lct0_nogem_lo_bit      =0;
+const int h12_lct0_nogem_hi_bit      =0;
+const int h12_lct0_with_gemA_lo_bit  =1; 
+const int h12_lct0_with_gemA_hi_bit  =1; 
+const int h12_lct0_with_gemB_lo_bit  =2;
+const int h12_lct0_with_gemB_hi_bit  =2;
+const int h12_lct0_with_copad_lo_bit =3;
+const int h12_lct0_with_copad_hi_bit =3;
+const int h12_lct1_nogem_lo_bit      =4;
+const int h12_lct1_nogem_hi_bit      =4;
+const int h12_lct1_with_gemA_lo_bit  =5; 
+const int h12_lct1_with_gemA_hi_bit  =5; 
+const int h12_lct1_with_gemB_lo_bit  =6;
+const int h12_lct1_with_gemB_hi_bit  =6;
+const int h12_lct1_with_copad_lo_bit =7;
+const int h12_lct1_with_copad_hi_bit =7;
+const int h12_gemA_vpf_lo_bit =8;
+const int h12_gemA_vpf_hi_bit =8;
+const int h12_gemB_vpf_lo_bit =9;
+const int h12_gemB_vpf_hi_bit =9;
+const int h12_gemA_overflow_lo_bit =10;
+const int h12_gemA_overflow_hi_bit =10;
+const int h12_gemB_overflow_lo_bit =11;
+const int h12_gemB_overflow_hi_bit =11;
+const int h12_gemA_sync_lo_bit =12; 
+const int h12_gemA_sync_hi_bit =12; 
+const int h12_gemB_sync_lo_bit =13;
+const int h12_gemB_sync_hi_bit =13;
+const int h12_gems_sync_lo_bit =14;
+const int h12_gems_sync_hi_bit =14;
 
 // TMB trigger counter, stop on ovf
 const int h13_r_trig_counter_lsbs_lo_bit   =0;
@@ -3418,6 +4879,15 @@ const int h13_r_trig_counter_lsbs_hi_bit   =14;
 const int h14_r_trig_counter_msbs_lo_bit   =0;
 const int h14_r_trig_counter_msbs_hi_bit   =14;
 
+  //run3 DAQ format 
+const int h14_clct1_cc_lo_bit = 0;
+const int h14_clct1_cc_hi_bit = 10;
+const int h14_gem_enable_lo_bit = 11;
+const int h14_gem_enable_hi_bit = 11;
+const int h14_clct1_key_bit10_lo_bit =12;
+const int h14_clct1_key_bit10_hi_bit =13;
+const int h14_hmt_bit1_lo_bit =14;
+const int h14_hmt_bit1_hi_bit =14;
 // Counts ALCTs received from ALCT board, stop on ovf
 const int h15_r_alct_counter_lsbs_lo_bit   =0;
 const int h15_r_alct_counter_lsbs_hi_bit   =14;
@@ -3426,6 +4896,15 @@ const int h15_r_alct_counter_lsbs_hi_bit   =14;
 const int h16_r_alct_counter_msbs_lo_bit   =0;
 const int h16_r_alct_counter_msbs_hi_bit   =14;
 
+  //run3 DAQ format with GEM
+const int h16_num_copad_lo_bit =0;
+const int h16_num_copad_hi_bit =3;
+const int h16_gem_delay_lo_bit =4;
+const int h16_gem_delay_hi_bit =7;
+const int h16_gem_clct_win_lo_bit =8;
+const int h16_gem_clct_win_hi_bit =11;
+const int h16_alct_gem_win_lo_bit = 12;
+const int h16_alct_gem_win_hi_bit = 14;
 // BX0s since last hard reset, stop on ovf
 const int h17_r_orbit_counter_lsbs_lo_bit   =0;
 const int h17_r_orbit_counter_lsbs_hi_bit   =14;
@@ -3507,6 +4986,13 @@ const int h22_r_trig_source_vec_lsbs_hi_bit   =8;
 const int h22_r_layers_hit_lo_bit   =9;
 const int h22_r_layers_hit_hi_bit   =14;
 
+  //run3 DAQ format
+const int h22_clct0_bnd_value_lo_bit =9;
+const int h22_clct0_bnd_value_hi_bit =12;
+const int h22_clct0_bnd_lr_lo_bit    =13;
+const int h22_clct0_bnd_lr_hi_bit    =13;
+const int h22_clct1_bnd_lr_lo_bit = 14;
+const int h22_clct1_bnd_lr_hi_bit = 14;
 // Active CFEB list sent to DMB
 const int h23_active_feb_mux_lsbs_lo_bit   =0;
 const int h23_active_feb_mux_lsbs_hi_bit   =4;
@@ -3646,6 +5132,9 @@ const int h28_r_alct0_key_hi_bit   =10;
 const int h28_r_alct_preClct_win_lo_bit   =11;
 const int h28_r_alct_preClct_win_hi_bit   =14;
 
+  //run3 DAQ format
+const int h28_clct1_bnd_value_lo_bit = 11;
+const int h28_clct1_bnd_value_hi_bit = 14;
 // ALCT1 valid pattern flag
 const int h29_r_alct1_valid_lo_bit   =0;
 const int h29_r_alct1_valid_hi_bit   =0;
@@ -3698,6 +5187,9 @@ const int h30_alct_cfg_done_hi_bit   =13;
 const int h30_bx0_match_lo_bit   =14;
 const int h30_bx0_match_hi_bit   =14;
 
+  //run3 DAQ format
+const int h30_hmt_bit6to2_lo_bit =0;
+const int h30_hmt_bit6to2_hi_bit =4;
 
 // MPC Frames
 
@@ -3881,6 +5373,9 @@ const int h40_r_trig_source_vec_msbs_hi_bit   =13;
 const int h40_r_tmb_trig_pulse_lo_bit   =14;
 const int h40_r_tmb_trig_pulse_hi_bit   =14;
 
+  // run3DAQ format with GEM
+const int h40_gem_csc_bend_enable_lo_bit =11;
+const int h40_gem_csc_bend_enable_hi_bit =11;
 // Allow ALCT-only  tmb-matching trigger
 const int h41_tmb_allow_alct_lo_bit   =0;
 const int h41_tmb_allow_alct_hi_bit   =0;
@@ -3933,6 +5428,16 @@ const int h41_lyr_thresh_pretrig_hi_bit   =13;
 const int h41_layer_trig_en_lo_bit   =14;
 const int h41_layer_trig_en_hi_bit   =14;
 
+const int GEM_VFAT_MAP[24] = {
+7, 15, 23, 
+6, 14, 22, 
+5, 13, 21, 
+4, 12, 20, 
+3, 11, 19, 
+2, 10, 18,
+1, 9, 17, 
+0, 8, 16
+};
 /////////////////////////////////////////////////////////////////////////////
 // The following stuff should be deprecated
 /////////////////////////////////////////////////////////////////////////////

@@ -515,6 +515,15 @@ const int MAX_NUM_DISTRIPS_PER_LAYER_EXT = MAX_NUM_CFEBS_EXT * 8; //=7 CFEBs * 8
 //
 //
 ////////////////////////////////////////
+// GEM Section
+////////////////////////////////////////
+const int MAX_GEM_VFATS_PER_LAYER = 24; // num of vfats in one GEM layer
+const int MAX_ETAPARTIONS_PER_LAYER = 8;// 8 rolls per GEM layer
+const int MAX_TRIGGERPAD_PER_VFAT = 64;  // one vfat serve for 64 trigger pads in GE1/1
+const int MAX_NUM_GEMLAYERS = 2; // GEM superchamber consists of two GEM layers
+//
+//
+////////////////////////////////////////
 // SetUpPulsing constants:
 ////////////////////////////////////////
 const int PULSE_AFEBS      = 0;

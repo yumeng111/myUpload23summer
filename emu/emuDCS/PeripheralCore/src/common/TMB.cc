@@ -831,8 +831,16 @@ int TMB::FirmwareRevCode(){
   tmb_vme(VME_READ,vme_idreg3_adr,sndbuf,rcvbuf,NOW);
   //
   int data = (((rcvbuf[0]&0xff)<<8) | (rcvbuf[1]&0xff)) ;
+  //std::cout <<"Firwmare revcode from 0x"<< std::hex << data << std::endl; 
   //
-  read_tmb_firmware_revcode_ = (data>>12) & 0x000f ;
+  if (read_cclut_enable_){
+    read_tmb_firmware_revcode_ = data & 0x1fff;//13 bits 
+    read_tmb_firmware_format_version_       = (read_tmb_firmware_revcode_ >> 9) & 0xf;
+    read_tmb_firmware_major_version_        = (read_tmb_firmware_revcode_ >> 5) & 0xf;
+    read_tmb_firmware_minor_version_        = (read_tmb_firmware_revcode_     ) & 0x1f;
+  }
+  else 
+	  read_tmb_firmware_revcode_ = (data>>12) & 0x000f ;
   //
   return data;
   //
@@ -1063,7 +1071,10 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
   //
   unsigned short frame1, frame2, ramAdd;
   //
+  ReadRegister(run3_format_ctrl_adr);
+
   (*MyOutput_) << "TMB:  Inject " << nEvents << " events with 2 muons into MPC data to slot " << this->slot() << std::endl ;
+  //std::cout << "TMB: Inject MPC into OTMB with " << (read_run3_trig_dataformat_enable_ ? "Run3" : "Run2") <<" trigger format" <<std::endl;
   //
   for (int evtId(0); evtId<nEvents; ++evtId) {
     //
@@ -1076,6 +1087,7 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
     unsigned short BC0 = 0;  //this value should be equal for the same event in all slots...
     ReadRegister(seq_id_adr);
     unsigned short csc_id  = (unsigned short) GetCscId();
+    unsigned short run3_pid = rand()%32;
     //
     if ( lct0 == 0 ) {  // random LCT
       //
@@ -1087,24 +1099,45 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
       unsigned short bxn0   = rand()%2;
       unsigned short lr     = rand()%2;
       unsigned short halfSt = rand()%256;
+     //Run3 data format 
+      unsigned short strip_qb = rand()%2;
+      unsigned short strip_eb = rand()%2;
+      unsigned short bend     = rand()%16;
       //
-      frame1 = 
+      frame1 =  read_run3_trig_dataformat_enable_ ? 
+        (
+	((vpf   &  0x1) << 15) + 
+        ((strip_qb & 0x1) << 14) +
+	((qual1 &  0x7) << 11) + 
+	((bend  &  0xf) <<  7) + 
+	((wire  & 0x7f) <<  0)) :
+        ( 
 	((vpf   &  0x1) << 15) + 
 	((qual1 &  0xf) << 11) + 
 	((clct  &  0xf) <<  7) + 
-	((wire  & 0x7f) <<  0) ;
+	((wire  & 0x7f) <<  0)
+        );
       //
-      frame2 = 
+      frame2 = read_run3_trig_dataformat_enable_ ? 
+        (
+        ((bend     & 0xf)  << 12) +
+	((BC0      &  0x1) << 11) +
+	((bxn0     &  0x1) << 10) +
+	((strip_eb &  0x1) <<  9) +
+	((lr       &  0x1) <<  8) + 
+	((halfSt   & 0xff) <<  0)) :
+        (
 	((csc_id   &  0xf) << 12) +
 	((BC0      &  0x1) << 11) +
 	((bxn0     &  0x1) << 10) +
 	((sync_err &  0x1) <<  9) +
 	((lr       &  0x1) <<  8) + 
-	((halfSt   & 0xff) <<  0);    
+	((halfSt   & 0xff) <<  0)
+         );    
       //
     } else {
       // insert the csc_id specific for this TMB (otherwise the user has to specify...)
-      frame2 = ( ((lct0>> 0) & 0x0fff) | (csc_id & 0xf) << 12 ) ;
+      frame2 = read_run3_trig_dataformat_enable_ ? ((lct0>> 0) & 0xffff) : (((lct0>> 0) & 0x0fff) | (csc_id & 0xf) << 12 ) ;
       frame1 = (lct0>>16) & 0xffff;
     }
     //
@@ -1113,6 +1146,7 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
     InjectedLct0.push_back(lct0_);
     //
     if (debug_) printf("TMB lct0 = %x %x %x\n",frame1,frame2,(unsigned int)lct0_);
+    std::cout <<"Injecting LCT0 0x"<< std::hex << lct0 <<" MPC frame0 0x"<< frame1 <<" framer1 0x"<< frame2 << std::dec <<std::endl;
     //
     sndbuf[0] = (frame1>>8)&0xff ;
     sndbuf[1] = (frame1)&0xff ;
@@ -1148,33 +1182,58 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
     //
     if ( lct1 == 0 ) {    //random LCT
       //
-      qual2 = 15;
-      while (qual2 >= qual1)           // ensure that quality for LCT1 is always less than quality for LCT0
-	qual2 = rand()%16;            
+      qual2 = qual1;
+      //while (qual2 >= qual1)           // ensure that quality for LCT1 is always less than quality for LCT0
+      //   qual2 = rand()%16;            
       unsigned short clct   = rand()%16; 
       unsigned short wire   = rand()%128;
       unsigned short bxn0   = rand()%2;
       unsigned short lr     = rand()%2;
       unsigned short halfSt = rand()%256;
+      //run3 data format 
+      unsigned short strip_qb = rand()%2;
+      unsigned short strip_eb = rand()%2;
+      unsigned short bend     = rand()%16;
+      unsigned short hmt_bit23 = rand()%4; 
+      unsigned short hmt_bit0 = rand()%2; 
+      unsigned short hmt_bit1 = rand()%2; 
       //
-      frame1 = 
-	((vpf   &  0x1) << 15) + 
-	((qual2 &  0xf) << 11) + 
-	((clct  &  0xf) <<  7) + 
-	((wire  & 0x7f) <<  0) ;
+      frame1 = read_run3_trig_dataformat_enable_ ?
+        (
+	((vpf      & 0x1)  << 15) + 
+        ((strip_qb & 0x1)  << 14) +
+	((qual2    & 0x7)  << 11) + 
+        ((hmt_bit1 & 0x1)  << 10) +
+        ((hmt_bit23 & 0x3) <<  8) +
+        ((run3_pid & 0x10) <<  3) +
+        ((wire     & 0x7f) <<  0) )   :
+        (
+	((vpf      &  0x1) << 15) + 
+	((qual2    &  0xf) << 11) + 
+	((clct     &  0xf) <<  7) + 
+	((wire     & 0x7f) <<  0) ) ;
       //
-      frame2 = 
+      frame2 =  read_run3_trig_dataformat_enable_ ?
+        (
+	((bend     &  0xf) << 12) +
+	((BC0      &  0x1) << 11) +
+	((hmt_bit0 &  0x1) << 10) +
+	((strip_eb &  0x1) <<  9) +
+	((lr       &  0x1) <<  8) + 
+	((halfSt   & 0xff) <<  0)
+        ):
+        (
 	((csc_id   &  0xf) << 12) +
 	((BC0      &  0x1) << 11) +
 	((bxn0     &  0x1) << 10) +
 	((sync_err &  0x1) <<  9) +
 	((lr       &  0x1) <<  8) + 
-	((halfSt   & 0xff) <<  0);    
+	((halfSt   & 0xff) <<  0));    
       //
 
     } else {
       // insert the csc_id specific for this TMB (otherwise the user has to specify...)
-      frame2 = ( ((lct1>> 0) & 0x0fff) | (csc_id & 0xf) << 12 ) ;
+      frame2 = read_run3_trig_dataformat_enable_ ? ((lct1>> 0) & 0xffff) : ( ((lct1>> 0) & 0x0fff) | (csc_id & 0xf) << 12 ) ;
       frame1 = (lct1 >> 16) & 0xffff;
     }
     //
@@ -1183,6 +1242,7 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
     InjectedLct1.push_back(lct1_);
     //
     if (debug_) printf("TMB lct1 = %x %x %x\n",frame1,frame2,(unsigned int)lct1_);
+    std::cout <<"Injecting LCT1  0x"<< std::hex << lct1 <<" MPC frame0 0x"<< frame1 <<" frame1 0x"<< frame2 << std::dec <<std::endl;
     //
     sndbuf[0] = (frame1>>8)&0xff ;
     sndbuf[1] = (frame1)&0xff ;
@@ -1364,6 +1424,20 @@ void TMB::DecodeCLCT(){
   //
   CLCT0_data_ = ( (clct_msbs & 0xf) << 16 ) | (clct0_lsbs & 0xffff);
   CLCT1_data_ = ( (clct_msbs & 0xf) << 16 ) | (clct1_lsbs & 0xffff);
+
+  ReadRegister(clct0_cc_adr);
+  ReadRegister(clct1_cc_adr);
+  //ReadRegister(clct0_qlt_adr);
+  //ReadRegister(clct1_qlt_adr);
+  ReadRegister(clct0_bndxky_adr);
+  ReadRegister(clct1_bndxky_adr);
+  //ReadRegister(clct0_xky_adr);
+  //ReadRegister(clct1_xky_adr);
+  ReadRegister(run3_format_ctrl_adr);
+  ReadRegister(hmt_ctrl_adr);
+  ReadRegister(hmt_nhits_sig_adr);
+  ReadRegister(hmt_nhits_bkg_adr);
+
   //
   //   PrintCLCT();
   //
@@ -1384,6 +1458,16 @@ void TMB::PrintCLCT() {
   (*MyOutput_) << "CLCT0.Key HStrip = "   << std::dec << read_CLCT0_keyHalfStrip_ << std::endl;
   (*MyOutput_) << "CLCT0.BXN        = 0x" << std::hex << read_CLCT_BXN_           << std::endl;
   (*MyOutput_) << "CLCT0.sync err   = 0x" << std::hex << read_CLCT_sync_err_      << std::endl;
+  // CCLUT part 
+  if (read_cclut_enable_ > 0){
+   (*MyOutput_) << "CLCT0.CC         = 0x" << std::hex << read_clct0_comparatorcode_       << std::endl;
+   //(*MyOutput_) << "CLCT0.CC_qlt     = 0x" << std::hex << read_clct0_cc_quality_   << std::endl;
+   (*MyOutput_) << "CLCT0.CC_bnd     = 0x" << std::hex << read_clct0_cc_bending_   << std::endl;
+   //lr lsb for pattern id
+   (*MyOutput_) << "CLCT0.CC_lr      = 0x" << std::hex << read_clct0_cc_lr_   << std::endl;
+   (*MyOutput_) << "CLCT0.CC_xky     = "   << std::dec << read_clct0_cc_xky_   << std::endl;
+   (*MyOutput_) << "CLCT0.CC_xkyf(hs)= "   << std::dec << std::setprecision (2) << std::fixed << read_clct0_cc_xky_float_   << std::endl;
+   }
   //
   (*MyOutput_) << std::endl;
   //
@@ -1396,9 +1480,139 @@ void TMB::PrintCLCT() {
   (*MyOutput_) << "CLCT1.Key HStrip = "   << std::dec << read_CLCT1_keyHalfStrip_ << std::endl;
   (*MyOutput_) << "CLCT1.BXN        = 0x" << std::hex << read_CLCT_BXN_           << std::endl;
   (*MyOutput_) << "CLCT1.sync err   = 0x" << std::hex << read_CLCT_sync_err_      << std::dec << std::endl;
+  // CCLUT part 
+  if (read_cclut_enable_ > 0){
+   (*MyOutput_) << "CLCT1.CC         = 0x" << std::hex << read_clct1_comparatorcode_  << std::endl;
+   //(*MyOutput_) << "CLCT1.CC_qlt     = 0x" << std::hex << read_clct1_cc_quality_   << std::endl;
+   (*MyOutput_) << "CLCT1.CC_bnd     = 0x" << std::hex << read_clct1_cc_bending_   << std::endl;
+   //lr lsb for pattern id
+   (*MyOutput_) << "CLCT1.CC_lr      = 0x" << std::hex << read_clct1_cc_lr_   << std::endl;
+   (*MyOutput_) << "CLCT1.CC_xky     = "   << std::dec << read_clct1_cc_xky_   << std::endl;
+   (*MyOutput_) << "CLCT1.CC_xkyf(hs)= "   << std::dec << std::setprecision (2) << std::fixed << read_clct1_cc_xky_float_   << std::endl;
+   }
+
+  if (read_hmt_enable_ > 0){
+   (*MyOutput_) << "----------------------"                                   << std::endl;
+   (*MyOutput_) << "HMT enable, nhits centerlbx   = "   << std::dec << read_hmt_nhits_trig_       << std::endl;
+   (*MyOutput_) << "HMT enable, nhits bx[6,7,8]   = "   << std::dec << read_hmt_nhits_sig_        << std::endl;
+   (*MyOutput_) << "HMT enable, nhits bx[2,3,4,5] = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
+   (*MyOutput_) << "HMT Result(4bits) = 0x" << std::hex << read_hmt_trigger_       << std::endl;
+  }
   //
   return;
 }
+//
+void TMB::DecodeGEMHits(){
+  //
+  gemA_cluster_[0] = ReadRegister(gemA_cluster0_adr) & 0x3fff;
+  gemA_cluster_[1] = ReadRegister(gemA_cluster1_adr) & 0x3fff;
+  gemA_cluster_[2] = ReadRegister(gemA_cluster2_adr) & 0x3fff;
+  gemA_cluster_[3] = ReadRegister(gemA_cluster3_adr) & 0x3fff;
+  gemA_cluster_[4] = ReadRegister(gemA_cluster4_adr) & 0x3fff;
+  gemA_cluster_[5] = ReadRegister(gemA_cluster5_adr) & 0x3fff;
+  gemA_cluster_[6] = ReadRegister(gemA_cluster6_adr) & 0x3fff;
+  gemA_cluster_[7] = ReadRegister(gemA_cluster7_adr) & 0x3fff;
+  gemB_cluster_[0] = ReadRegister(gemB_cluster0_adr) & 0x3fff;
+  gemB_cluster_[1] = ReadRegister(gemB_cluster1_adr) & 0x3fff;
+  gemB_cluster_[2] = ReadRegister(gemB_cluster2_adr) & 0x3fff;
+  gemB_cluster_[3] = ReadRegister(gemB_cluster3_adr) & 0x3fff;
+  gemB_cluster_[4] = ReadRegister(gemB_cluster4_adr) & 0x3fff;
+  gemB_cluster_[5] = ReadRegister(gemB_cluster5_adr) & 0x3fff;
+  gemB_cluster_[6] = ReadRegister(gemB_cluster6_adr) & 0x3fff;
+  gemB_cluster_[7] = ReadRegister(gemB_cluster7_adr) & 0x3fff;
+  gem_copad_[0]    = ReadRegister(gem_copad0_adr) & 0x3fff;
+  gem_copad_[1]    = ReadRegister(gem_copad1_adr) & 0x3fff;
+  gem_copad_[2]    = ReadRegister(gem_copad2_adr) & 0x3fff;
+  gem_copad_[3]    = ReadRegister(gem_copad3_adr) & 0x3fff;
+  gem_copad_[4]    = ReadRegister(gem_copad4_adr) & 0x3fff;
+  gem_copad_[5]    = ReadRegister(gem_copad5_adr) & 0x3fff;
+  gem_copad_[6]    = ReadRegister(gem_copad6_adr) & 0x3fff;
+  gem_copad_[7]    = ReadRegister(gem_copad7_adr) & 0x3fff;
+  gemA_overflow_   = (ReadRegister(gemA_cluster0_adr) >> 14) & 0x1;
+  gemA_sync_       = (ReadRegister(gemA_cluster0_adr) >> 15) & 0x1;
+  gemB_overflow_   = (ReadRegister(gemB_cluster0_adr) >> 14) & 0x1;
+  gemB_sync_       = (ReadRegister(gemB_cluster0_adr) >> 15) & 0x1;
+  gems_sync_       = (ReadRegister(gem_copad0_adr) >> 14) & 0x1;
+  //[size=3bits, roll=3bits, strip/pad=8bits]
+  for (unsigned int icl = 0; icl<8; icl++){
+      //v2 gem trigger format {cnt, address}
+      //cnt0-7, address = global pad number(0-1535, or 0-192*8-1)
+      //gemA_cluster_globalpad_[icl]  = (gemA_cluster_[icl] & 0x7ff);
+      //gemA_cluster_pad_[icl]        = (gemA_cluster_[icl] & 0x3f);
+      //gemA_cluster_vfat_[icl]       = ((gemA_cluster_[icl]>>8) & 0x1f);
+      //int gemA_vfat = ((gemA_cluster_[icl]>>6) & 0x1f);
+      //gemA_cluster_globalpad_[icl]  = gemA_cluster_pad_[icl] + (gemA_vfat%3)*64;
+      //gemA_cluster_roll_[icl]       = gemA_vfat/3;
+      //gemA_cluster_vfat_[icl]       = (gemA_vfat <=23 ) ? GEM_VFAT_MAP[gemA_vfat] : gemA_vfat;
+      //gemA_cluster_size_[icl]       = ((gemA_cluster_[icl]>>11) & 0x7) + (gemA_vfat <= 23);
+      //gemB_cluster_pad_[icl]        = (gemB_cluster_[icl] & 0x3f);
+      //gemB_cluster_vfat_[icl]       = ((gemB_cluster_[icl]>>8) & 0x1f);
+      //int gemB_vfat = ((gemB_cluster_[icl]>>6) & 0x1f);
+      //gemB_cluster_size_[icl]       = ((gemB_cluster_[icl]>>11) & 0x7) + (gemB_vfat <= 23);
+      //gemB_cluster_roll_[icl]       = gemB_vfat/3;
+      //gemB_cluster_globalpad_[icl]  = gemB_cluster_pad_[icl] + (gemB_vfat%3)*64;
+      //gemB_cluster_vfat_[icl]       = (gemB_vfat <=23 ) ? GEM_VFAT_MAP[gemB_vfat] : gemB_vfat;
+      //gem_copad_pad_[icl]           = (gem_copad_[icl] & 0x3f);
+      //gem_copad_vfat_[icl]          = ((gem_copad_[icl]>>8) & 0x1f);
+      //int gemcopad_vfat = ((gem_copad_[icl]>>6) & 0x1f);
+      //gem_copad_size_[icl]          = ((gem_copad_[icl]>>11) & 0x7) + (gemcopad_vfat <= 23);
+      //gem_copad_roll_[icl]       = gemcopad_vfat/3;
+      //gem_copad_vfat_[icl]       = (gemcopad_vfat <=23 ) ? GEM_VFAT_MAP[gemcopad_vfat] : gemcopad_vfat;
+      //gem_copad_globalpad_[icl]  = gem_copad_pad_[icl] + (gemcopad_vfat%3)*64;
+
+
+      //v2 gem trigger format {cnt, roll, padnumber}
+      //cnt0-7, roll 0-7, padnumber 0-191
+      
+      gemA_cluster_vpf_[icl]         = (gemA_cluster_[icl] & 0xff) <= 191;// vpf = padnumber(0-191)
+      gemA_cluster_pad_[icl]         = (gemA_cluster_[icl] & 0x3f); //0-63, 6bits
+      gemA_cluster_pad2_[icl]        = (gemA_cluster_[icl] & 0xff); //0-191, 8bits, pad number within one roll
+      gemA_cluster_roll_[icl]        = ((gemA_cluster_[icl] >> 8) & 0x7);//0-7
+      gemA_cluster_vfat_[icl]        = 7-gemA_cluster_roll_[icl] + ((gemA_cluster_[icl] & 0xd0) >> 3);//0-23
+      gemA_cluster_size_[icl]        = gemA_cluster_vpf_[icl]==1 ? ((gemA_cluster_[icl]>>11) & 0x7) + 1 : 0;//starting from 1 for display, 1-8
+    
+      gemB_cluster_vpf_[icl]         = (gemB_cluster_[icl] & 0xff) <= 191;// vpf = padnumber(0-191)
+      gemB_cluster_pad_[icl]         = (gemB_cluster_[icl] & 0x3f); //0-63
+      gemB_cluster_pad2_[icl]        = (gemB_cluster_[icl] & 0xff); //0-191, 8bits, pad number within one roll
+      gemB_cluster_roll_[icl]        = ((gemB_cluster_[icl] >> 8) & 0x7);
+      gemB_cluster_vfat_[icl]        = 7-gemB_cluster_roll_[icl] + ((gemB_cluster_[icl] & 0xd0) >> 3);
+      gemB_cluster_size_[icl]        = gemB_cluster_vpf_[icl]==1 ? ((gemB_cluster_[icl]>>11) & 0x7) + 1 : 0;
+
+      gem_copad_vpf_[icl]         = (gem_copad_[icl] & 0xff) <= 191;// vpf = padnumber(0-191)
+      gem_copad_pad_[icl]         = (gem_copad_[icl] & 0x3f); //0-63
+      gem_copad_pad2_[icl]        = (gem_copad_[icl] & 0xff); //0-191, 8bits, pad number within one roll
+      gem_copad_roll_[icl]        = ((gem_copad_[icl] >> 8) & 0x7);
+      gem_copad_vfat_[icl]        = 7-gem_copad_roll_[icl] + ((gem_copad_[icl] & 0xd0) >> 3);
+      gem_copad_size_[icl]        =  gem_copad_vpf_[icl]==1 ? ((gem_copad_[icl]>>11) & 0x7) + 1 : 0;
+  }                                 
+                                    
+  //
+  return;
+}
+//
+void TMB::PrintGEMHits() {
+  //
+  //std::cout <<"Print GME hits: GEM0 cluster, GEM1 cluster, GEM copad " << std::endl;
+  //for (unsigned int icl =0; icl<8; icl++){
+  //        std::cout<< "cluster"<<icl<<" "<< std::hex << (gemA_cluster_[icl]) << std::dec <<" : global pad "<< gemA_cluster_globalpad_[icl]  << " roll "<< gemA_cluster_roll_[icl] <<" size "<< gemA_cluster_size_[icl] <<"\t|\t";
+  //        std::cout<< "cluster"<<icl<<" "<< std::hex << (gemB_cluster_[icl]) << std::dec <<" : global pad "<< gemB_cluster_globalpad_[icl]  << " roll "<< gemB_cluster_roll_[icl] <<" size "<< gemB_cluster_size_[icl] <<"\t|\t";
+  //        std::cout<<" copad"  <<icl<<" "<< std::hex << (gem_copad_[icl])    << std::dec <<" : global pad "<< gem_copad_globalpad_[icl]     << " roll "<< gem_copad_roll_[icl]    <<" size "<< gem_copad_size_[icl]  <<"\t"<< std::endl;
+  //}
+  (*MyOutput_) << "----------------------------------------------------------------------------------------------------------------------"       << std::endl;
+  (*MyOutput_) << " GEMA overflow = "<< gemA_overflow_ <<" sync = "<< gemA_sync_ <<" \t\t    |\t "<< " GEMB overflow = "<< gemB_overflow_ <<" sync = "<< gemB_sync_ <<"\t\t    |\t "<< " GEM copad sync = "<< gems_sync_ <<"\t" << std::endl;
+  (*MyOutput_) <<" valid GEM cluster: valid=1, Roll:0-7, pad:0-191, size:1-8 " << std::endl;
+  (*MyOutput_) << "----------------------------------------------------------------------------------------------------------------------"       << std::endl;
+  for (unsigned int icl = 0; icl<=7; icl++){
+          (*MyOutput_) << "Cluster"<<icl<<": valid="<< gemA_cluster_vpf_[icl]  << " roll=" << std::setw(2) << gemA_cluster_roll_[icl] << " pad="<< std::setw(3) << gemA_cluster_pad2_[icl] <<" size="<< gemA_cluster_size_[icl] <<"   | ";
+          (*MyOutput_) << "Cluster"<<icl<<": valid="<< gemB_cluster_vpf_[icl]  << " roll=" << std::setw(2) << gemB_cluster_roll_[icl] << " pad="<< std::setw(3) << gemB_cluster_pad2_[icl] <<" size="<< gemB_cluster_size_[icl] <<"   | ";
+          (*MyOutput_) << "Copad"  <<icl<<": valid="<< gem_copad_vpf_[icl]     << " roll=" << std::setw(2) << gem_copad_roll_[icl]    << " pad="<< std::setw(3) << gem_copad_pad2_[icl]    <<" size="<< gem_copad_size_[icl]  << std::endl;
+     }
+  (*MyOutput_) << "----------------------------------------------------------------------------------------------------------------------"       << std::endl;
+  //
+  return;
+ }
+      
+
 //
 void TMB::DecodeMPCFrames(){
   //
@@ -1411,6 +1625,7 @@ void TMB::DecodeMPCFrames(){
   mpc0_frame1_data_ = (mpc0_frame1 & 0xffff);
   mpc1_frame0_data_ = (mpc1_frame0 & 0xffff);
   mpc1_frame1_data_ = (mpc1_frame1 & 0xffff);
+
   //
   //   PrintCLCT();
   //
@@ -1430,6 +1645,57 @@ void TMB::PrintMPCFrames() {
   (*MyOutput_) << "MPC1 frame0 data                 = 0x" << std::hex << mpc1_frame0_data_ << std::endl;
   (*MyOutput_) << "     frame1 data                 = 0x" << std::hex << mpc1_frame1_data_ << std::endl;
   (*MyOutput_) << "----------------------"                                                                    << std::endl;
+  if (read_run3_trig_dataformat_enable_){ 
+  (*MyOutput_) << "Run3 trigger data format"                                                                  << std::endl;
+  (*MyOutput_) << "----------------------"                                                                    << std::endl;
+  (*MyOutput_) << "MPC0 frame0.alct_first_key        =   "             << read_mpc0_run3frame0_alct_first_key_    << std::endl;
+  (*MyOutput_) << "     frame0.lct_pidbit0to3        = 0x" << std::hex << read_mpc0_run3frame0_lct_pidbit0to3_    << std::endl;
+  (*MyOutput_) << "     frame0.lct_first_quality     = 0x" << std::hex << read_mpc0_run3frame0_lct_first_quality_ << std::endl;
+  (*MyOutput_) << "     frame0.clct_first_qxky       = 0x" << std::hex << read_mpc0_run3frame0_clct_first_qxky_   << std::endl;
+  (*MyOutput_) << "     frame0.first_vpf             = 0x" << std::hex << read_mpc0_run3frame0_first_vpf_         << std::endl;
+  (*MyOutput_) << "----------------------"                                                                        << std::endl;
+  (*MyOutput_) << "MPC0 frame1.clct_first_key        =   "             << read_mpc0_run3frame1_clct_first_key_       << std::endl;
+  (*MyOutput_) << "     frame1.clct_first_lr         = 0x" << std::hex << read_mpc0_run3frame1_clct_first_lr_        << std::endl;
+  (*MyOutput_) << "     frame1.clct_first_exky       = 0x" << std::hex << read_mpc0_run3frame1_clct_first_exky_      << std::endl;
+  (*MyOutput_) << "     frame1.alct_first_bxn        = 0x" << std::hex << read_mpc0_run3frame1_alct_first_bxn_       << std::endl;
+  (*MyOutput_) << "     frame1.clct_first_bx0_local  = 0x" << std::hex << read_mpc0_run3frame1_clct_first_bx0_local_ << std::endl;
+  (*MyOutput_) << "     frame1.clct_first_bend       = 0x" << std::hex << read_mpc0_run3frame1_clct_first_bend_   << std::endl;
+  (*MyOutput_) << "----------------------"                                                                           << std::endl;
+  (*MyOutput_) << "MPC1 frame0.alct_second_key       =   "             << read_mpc1_run3frame0_alct_second_key_    << std::endl;
+  (*MyOutput_) << "     frame0.lct_pidbit4           = 0x" << std::hex << read_mpc1_run3frame0_lct_pidbit4_        << std::endl;
+  (*MyOutput_) << "     frame0.hmtbit1to3            = 0x" << std::hex << read_mpc1_run3frame0_hmtbit1to3_         << std::endl;
+  (*MyOutput_) << "     frame0.lct_second_quality    = 0x" << std::hex << read_mpc1_run3frame0_lct_second_quality_ << std::endl;
+  (*MyOutput_) << "     frame0.clct_second_qxky      = 0x" << std::hex << read_mpc1_run3frame0_clct_second_qxky_   << std::endl;
+  (*MyOutput_) << "     frame0.second_vpf            = 0x" << std::hex << read_mpc1_run3frame0_second_vpf_         << std::endl;
+  (*MyOutput_) << "----------------------"                                                                         << std::endl;
+  (*MyOutput_) << "MPC1 frame1.clct_second_key       =   "             << read_mpc1_run3frame1_clct_second_key_       << std::endl;
+  (*MyOutput_) << "     frame1.clct_second_lr        = 0x" << std::hex << read_mpc1_run3frame1_clct_second_lr_        << std::endl;
+  (*MyOutput_) << "     frame1.hmtbit0               = 0x" << std::hex << read_mpc1_run3frame1_hmtbit0_               << std::endl;
+  (*MyOutput_) << "     frame1.clct_second_exky      = 0x" << std::hex << read_mpc1_run3frame1_clct_second_exky_      << std::endl;
+  (*MyOutput_) << "     frame1.clct_second_bx0_local = 0x" << std::hex << read_mpc1_run3frame1_clct_second_bx0_local_ << std::endl;
+  (*MyOutput_) << "     frame1.clct_second_bend      = 0x" << std::hex << read_mpc1_run3frame1_clct_second_bend_      << std::endl;
+
+    if (gem_enabled_ && read_run3_trig_dataformat_enable_) {
+	  ReadRegister(gem_csc_match_cluster00_adr);
+	  ReadRegister(gem_csc_match_cluster01_adr);
+	  ReadRegister(gem_csc_match_cluster10_adr);
+	  ReadRegister(gem_csc_match_cluster11_adr);
+	  (*MyOutput_) << " clusters for gem-csc match: "                                                                         << std::endl;
+	  (*MyOutput_) << "Cluster0.iclst        = " << std::dec << read_gem_csc_match_cluster0_iclst_      << std::endl;
+	  (*MyOutput_) << "Cluster0.roll         = " << std::dec << read_gem_csc_match_cluster0_roll_      << std::endl;
+	  (*MyOutput_) << "Cluster0.pad          = " << std::dec << read_gem_csc_match_cluster0_pad_      << std::endl;
+	  (*MyOutput_) << "Cluster0.bend         = " << std::dec << read_gem_csc_match_cluster0_bend_      << std::endl;
+	  (*MyOutput_) << "Cluster0.angle(hs)    = " << std::dec << std::setprecision (2) << std::fixed<< read_gem_csc_match_cluster0_angle_/4.0     << std::endl;
+	  (*MyOutput_) << "Cluster0.cscxky(hs)   = " << std::dec << std::setprecision (2) << std::fixed<< read_gem_csc_match_cluster0_cscxky_/4.0<< std::endl;
+	  (*MyOutput_) << "Cluster1.iclst        = " << std::dec << read_gem_csc_match_cluster1_iclst_      << std::endl;
+	  (*MyOutput_) << "Cluster1.roll         = " << std::dec << read_gem_csc_match_cluster1_roll_      << std::endl;
+	  (*MyOutput_) << "Cluster1.pad          = " << std::dec << read_gem_csc_match_cluster1_pad_      << std::endl;
+	  (*MyOutput_) << "Cluster1.bend         = " << std::dec << read_gem_csc_match_cluster1_bend_      << std::endl;
+	  (*MyOutput_) << "Cluster1.angle(hs)    = " << std::dec << std::setprecision (2) << std::fixed<< read_gem_csc_match_cluster1_angle_      << std::endl;
+	  (*MyOutput_) << "Cluster1.cscxky(hs)   = " << std::dec << std::setprecision (2) << std::fixed<< read_gem_csc_match_cluster1_cscxky_/4.0<< std::endl;
+   }
+  }
+  else {
   (*MyOutput_) << "MPC0 frame0.alct_first_key        =   "             << read_mpc0_frame0_alct_first_key_    << std::endl;
   (*MyOutput_) << "     frame0.clct_first_pat        = 0x" << std::hex << read_mpc0_frame0_clct_first_pat_    << std::endl;
   (*MyOutput_) << "     frame0.lct_first_quality     = 0x" << std::hex << read_mpc0_frame0_lct_first_quality_ << std::endl;
@@ -1447,12 +1713,13 @@ void TMB::PrintMPCFrames() {
   (*MyOutput_) << "     frame0.lct_second_quality    = 0x" << std::hex << read_mpc1_frame0_lct_second_quality_ << std::endl;
   (*MyOutput_) << "     frame0.second_vpf            = 0x" << std::hex << read_mpc1_frame0_second_vpf_         << std::endl;
   (*MyOutput_) << "----------------------"                                                                        << std::endl;
-  (*MyOutput_) << "MPC1 frame1.clct_first_key        =   "             << read_mpc1_frame1_clct_second_key_       << std::endl;
+  (*MyOutput_) << "MPC1 frame1.clct_second_key       =   "             << read_mpc1_frame1_clct_second_key_       << std::endl;
   (*MyOutput_) << "     frame1.clct_second_bend      = 0x" << std::hex << read_mpc1_frame1_clct_second_bend_      << std::endl;
   (*MyOutput_) << "     frame1.sync_err              = 0x" << std::hex << read_mpc1_frame1_sync_err_              << std::endl;
   (*MyOutput_) << "     frame1.alct_second_bxn       = 0x" << std::hex << read_mpc1_frame1_alct_second_bxn_       << std::endl;
   (*MyOutput_) << "     frame1.clct_second_bx0_local = 0x" << std::hex << read_mpc1_frame1_clct_second_bx0_local_ << std::endl;
   (*MyOutput_) << "     frame1.csc_id                = 0x" << std::hex << read_mpc1_frame1_csc_id_                << std::endl;
+  }
   //
   return;
 }
@@ -1503,6 +1770,37 @@ void TMB::PrintMPCFramesFromFIFO() {
   (*MyOutput_) << "MPC1 from FIFO frame0 data                  = 0x" << std::hex << mpc1_frame0_fifo_data_ << std::endl;
   (*MyOutput_) << "               frame1 data                  = 0x" << std::hex << mpc1_frame1_fifo_data_ << std::endl;
   (*MyOutput_) << "----------------------"                                                                                   << std::endl;
+  if (read_run3_trig_dataformat_enable_){ 
+  (*MyOutput_) << "Run3 trigger data format: FIFO"                                                            << std::endl;
+  (*MyOutput_) << "----------------------"                                                                    << std::endl;
+  (*MyOutput_) << "MPC0 from FIFO frame0.alct_first_key        =   "             << read_mpc0_run3frame0_fifo_alct_first_key_    << std::endl;
+  (*MyOutput_) << "     from FIFO frame0.lct_pidbit0to3        = 0x" << std::hex << read_mpc0_run3frame0_fifo_lct_pidbit0to3_    << std::endl;
+  (*MyOutput_) << "     from FIFO frame0.lct_first_quality     = 0x" << std::hex << read_mpc0_run3frame0_fifo_lct_first_quality_ << std::endl;
+  (*MyOutput_) << "     from FIFO frame0.clct_first_qxky       = 0x" << std::hex << read_mpc0_run3frame0_fifo_clct_first_qxky_   << std::endl;
+  (*MyOutput_) << "     from FIFO frame0.first_vpf             = 0x" << std::hex << read_mpc0_run3frame0_fifo_first_vpf_         << std::endl;
+  (*MyOutput_) << "--------------------------------"                                                                             << std::endl;
+  (*MyOutput_) << "MPC0 from FIFO frame1.clct_first_key        =   "             << read_mpc0_run3frame1_fifo_clct_first_key_       << std::endl;
+  (*MyOutput_) << "     from FIFO frame1.clct_first_lr         = 0x" << std::hex << read_mpc0_run3frame1_fifo_clct_first_lr_        << std::endl;
+  (*MyOutput_) << "     from FIFO frame1.clct_first_exky       = 0x" << std::hex << read_mpc0_run3frame1_fifo_clct_first_exky_      << std::endl;
+  (*MyOutput_) << "     from FIFO frame1.alct_first_bxn        = 0x" << std::hex << read_mpc0_run3frame1_fifo_alct_first_bxn_       << std::endl;
+  (*MyOutput_) << "     from FIFO frame1.clct_first_bx0_local  = 0x" << std::hex << read_mpc0_run3frame1_fifo_clct_first_bx0_local_ << std::endl;
+  (*MyOutput_) << "     from FIFO frame1.clct_first_bend       = 0x" << std::hex << read_mpc0_run3frame1_fifo_clct_first_bend_      << std::endl;
+  (*MyOutput_) << "--------------------------------"                                                                                << std::endl;
+  (*MyOutput_) << "MPC1 from FIFO frame0.alct_second_key       =   "             << read_mpc1_run3frame0_fifo_alct_second_key_    << std::endl;
+  (*MyOutput_) << "     from FIFO frame0.lct_pidbit4           = 0x" << std::hex << read_mpc1_run3frame0_fifo_lct_pidbit4_        << std::endl;
+  (*MyOutput_) << "     from FIFO frame0.hmtbit1to3            = 0x" << std::hex << read_mpc1_run3frame0_fifo_hmtbit1to3_         << std::endl;
+  (*MyOutput_) << "     from FIFO frame0.lct_second_quality    = 0x" << std::hex << read_mpc1_run3frame0_fifo_lct_second_quality_ << std::endl;
+  (*MyOutput_) << "     from FIFO frame0.clct_second_qxky      = 0x" << std::hex << read_mpc1_run3frame0_fifo_clct_second_qxky_   << std::endl;
+  (*MyOutput_) << "     from FIFO frame0.second_vpf            = 0x" << std::hex << read_mpc1_run3frame0_fifo_second_vpf_         << std::endl;
+  (*MyOutput_) << "-------------------------------"                                                                               << std::endl;
+  (*MyOutput_) << "MPC1 from FIFO frame1.clct_second_key       =   "             << read_mpc1_run3frame1_fifo_clct_second_key_       << std::endl;
+  (*MyOutput_) << "     from FIFO frame1.clct_second_lr        = 0x" << std::hex << read_mpc1_run3frame1_fifo_clct_second_lr_        << std::endl;
+  (*MyOutput_) << "     from FIFO frame1.hmtbit0               = 0x" << std::hex << read_mpc1_run3frame1_fifo_hmtbit0_               << std::endl;
+  (*MyOutput_) << "     from FIFO frame1.clct_second_exky      = 0x" << std::hex << read_mpc1_run3frame1_fifo_clct_second_exky_      << std::endl;
+  (*MyOutput_) << "     from FIFO frame1.clct_second_bx0_local = 0x" << std::hex << read_mpc1_run3frame1_fifo_clct_second_bx0_local_ << std::endl;
+  (*MyOutput_) << "     from FIFO frame1.clct_second_bend      = 0x" << std::hex << read_mpc1_run3frame1_fifo_clct_second_bend_      << std::endl;
+  }
+  else {
   (*MyOutput_) << "MPC0 from FIFO frame0.alct_first_key        =   " << std::dec << read_mpc0_frame0_fifo_alct_first_key_    << std::endl;
   (*MyOutput_) << "               frame0.clct_first_pat        = 0x" << std::hex << read_mpc0_frame0_fifo_clct_first_pat_    << std::endl;
   (*MyOutput_) << "               frame0.lct_first_quality     = 0x" << std::hex << read_mpc0_frame0_fifo_lct_first_quality_ << std::endl;
@@ -1526,6 +1824,7 @@ void TMB::PrintMPCFramesFromFIFO() {
   (*MyOutput_) << "               frame1.alct_second_bxn       = 0x" << std::hex << read_mpc1_frame1_fifo_alct_second_bxn_       << std::endl;
   (*MyOutput_) << "               frame1.clct_second_bx0_local = 0x" << std::hex << read_mpc1_frame1_fifo_clct_second_bx0_local_ << std::endl;
   (*MyOutput_) << "               frame1.csc_id                = 0x" << std::hex << read_mpc1_frame1_fifo_csc_id_                << std::endl;
+  }
   //
   return;
 }
@@ -1537,7 +1836,9 @@ void TMB::DecodeAndPrintMPCFrames(unsigned int event_n = 0) {
   // Vectors below store data from MPC frames of last event_n events
   //   we need to decode data event_n times (see below) to fill these vectors
   //   this is the reason the function is called "DecodeAndPrint"
-  //
+  //--------------------------------------------------------
+  //Attention!! update following for Run3 data format!!
+  //--------------------------------------------------------
   std::vector<int> v_mpc0_frame0_fifo_data_;
   std::vector<int> v_mpc0_frame1_fifo_data_;
   std::vector<int> v_mpc1_frame0_fifo_data_;
@@ -1579,6 +1880,39 @@ void TMB::DecodeAndPrintMPCFrames(unsigned int event_n = 0) {
   std::vector<int> v_read_mpc_frames_fifo_ctrl_sbiterr_;
   std::vector<int> v_read_mpc_frames_fifo_ctrl_sditter_;
   //
+  // Run3 trigger format update!
+  std::vector<int> v_read_mpc0_run3frame0_fifo_alct_first_key_;
+  std::vector<int> v_read_mpc0_run3frame0_fifo_lct_pidbit0to3_;
+  std::vector<int> v_read_mpc0_run3frame0_fifo_lct_first_quality_;
+  std::vector<int> v_read_mpc0_run3frame0_fifo_clct_first_qxky_;
+  std::vector<int> v_read_mpc0_run3frame0_fifo_first_vpf_;
+  //
+  std::vector<int> v_read_mpc0_run3frame1_fifo_clct_first_key_;
+  std::vector<int> v_read_mpc0_run3frame1_fifo_clct_first_lr_;
+  std::vector<int> v_read_mpc0_run3frame1_fifo_clct_first_exky_;
+  std::vector<int> v_read_mpc0_run3frame1_fifo_alct_first_bxn_;
+  std::vector<int> v_read_mpc0_run3frame1_fifo_clct_first_bx0_local_;
+  std::vector<int> v_read_mpc0_run3frame1_fifo_clct_first_bend_;
+  //std::vector<int> v_read_mpc0_run3frame1_fifo_csc_id_;
+  //
+  std::vector<int> v_read_mpc1_run3frame0_fifo_alct_second_key_;
+  std::vector<int> v_read_mpc1_run3frame0_fifo_lct_pidbit4_;
+  std::vector<int> v_read_mpc1_run3frame0_fifo_hmtbit1to3_;
+  std::vector<int> v_read_mpc1_run3frame0_fifo_lct_second_quality_;
+  std::vector<int> v_read_mpc1_run3frame0_fifo_clct_second_qxky_;
+  std::vector<int> v_read_mpc1_run3frame0_fifo_second_vpf_;
+  //
+  std::vector<int> v_read_mpc1_run3frame1_fifo_clct_second_key_;
+  std::vector<int> v_read_mpc1_run3frame1_fifo_clct_second_lr_;
+  std::vector<int> v_read_mpc1_run3frame1_fifo_clct_second_exky_;
+  std::vector<int> v_read_mpc1_run3frame1_fifo_hmtbit0_;
+  //std::vector<int> v_read_mpc1_run3frame1_fifo_alct_second_bxn_;
+  std::vector<int> v_read_mpc1_run3frame1_fifo_clct_second_bx0_local_;
+  std::vector<int> v_read_mpc1_run3frame1_fifo_clct_second_bend_;
+  //std::vector<int> v_read_mpc1_run3frame1_fifo_csc_id_;
+  //
+  //
+  //
   for (unsigned int i = 0; i < event_n; i++) {
     DecodeMPCFramesFromFIFO();
     //
@@ -1587,29 +1921,65 @@ void TMB::DecodeAndPrintMPCFrames(unsigned int event_n = 0) {
     v_mpc1_frame0_fifo_data_.push_back(mpc1_frame0_fifo_data_);
     v_mpc1_frame1_fifo_data_.push_back(mpc1_frame1_fifo_data_);
     //
-    v_read_mpc0_frame0_fifo_alct_first_key_.push_back(read_mpc0_frame0_fifo_alct_first_key_);
-    v_read_mpc0_frame0_fifo_clct_first_pat_.push_back(read_mpc0_frame0_fifo_clct_first_pat_);
-    v_read_mpc0_frame0_fifo_lct_first_quality_.push_back(read_mpc0_frame0_fifo_lct_first_quality_);
-    v_read_mpc0_frame0_fifo_first_vpf_.push_back(read_mpc0_frame0_fifo_first_vpf_);
-    //
-    v_read_mpc0_frame1_fifo_clct_first_key_.push_back(read_mpc0_frame1_fifo_clct_first_key_);
-    v_read_mpc0_frame1_fifo_clct_first_bend_.push_back(read_mpc0_frame1_fifo_clct_first_bend_);
-    v_read_mpc0_frame1_fifo_sync_err_.push_back(read_mpc0_frame1_fifo_sync_err_);
-    v_read_mpc0_frame1_fifo_alct_first_bxn_.push_back(read_mpc0_frame1_fifo_alct_first_bxn_);
-    v_read_mpc0_frame1_fifo_clct_first_bx0_local_.push_back(read_mpc0_frame1_fifo_clct_first_bx0_local_);
-    v_read_mpc0_frame1_fifo_csc_id_.push_back(read_mpc0_frame1_fifo_csc_id_);
-    //
-    v_read_mpc1_frame0_fifo_alct_second_key_.push_back(read_mpc1_frame0_fifo_alct_second_key_);
-    v_read_mpc1_frame0_fifo_clct_second_pat_.push_back(read_mpc1_frame0_fifo_clct_second_pat_);
-    v_read_mpc1_frame0_fifo_lct_second_quality_.push_back(read_mpc1_frame0_fifo_lct_second_quality_);
-    v_read_mpc1_frame0_fifo_second_vpf_.push_back(read_mpc1_frame0_fifo_second_vpf_);
-    //
-    v_read_mpc1_frame1_fifo_clct_second_key_.push_back(read_mpc1_frame1_fifo_clct_second_key_);
-    v_read_mpc1_frame1_fifo_clct_second_bend_.push_back(read_mpc1_frame1_fifo_clct_second_bend_);
-    v_read_mpc1_frame1_fifo_sync_err_.push_back(read_mpc1_frame1_fifo_sync_err_);
-    v_read_mpc1_frame1_fifo_alct_second_bxn_.push_back(read_mpc1_frame1_fifo_alct_second_bxn_);
-    v_read_mpc1_frame1_fifo_clct_second_bx0_local_.push_back(read_mpc1_frame1_fifo_clct_second_bx0_local_);
-    v_read_mpc1_frame1_fifo_csc_id_.push_back(read_mpc1_frame1_fifo_csc_id_);
+    if (read_run3_trig_dataformat_enable_){
+            // Run3 trigger data format
+	    v_read_mpc0_run3frame0_fifo_alct_first_key_.push_back(       read_mpc0_run3frame0_fifo_alct_first_key_);
+	    v_read_mpc0_run3frame0_fifo_lct_pidbit0to3_.push_back(       read_mpc0_run3frame0_fifo_lct_pidbit0to3_);
+	    v_read_mpc0_run3frame0_fifo_lct_first_quality_.push_back(    read_mpc0_run3frame0_fifo_lct_first_quality_);
+	    v_read_mpc0_run3frame0_fifo_clct_first_qxky_.push_back(      read_mpc0_run3frame0_fifo_clct_first_qxky_);
+	    v_read_mpc0_run3frame0_fifo_first_vpf_.push_back(            read_mpc0_run3frame0_fifo_first_vpf_);
+	    //
+	    v_read_mpc0_run3frame1_fifo_clct_first_key_.push_back(       read_mpc0_run3frame1_fifo_clct_first_key_);
+	    v_read_mpc0_run3frame1_fifo_clct_first_lr_.push_back(        read_mpc0_run3frame1_fifo_clct_first_lr_);
+	    v_read_mpc0_run3frame1_fifo_clct_first_exky_.push_back(      read_mpc0_run3frame1_fifo_clct_first_exky_);
+	    v_read_mpc0_run3frame1_fifo_alct_first_bxn_.push_back(       read_mpc0_run3frame1_fifo_alct_first_bxn_);
+	    v_read_mpc0_run3frame1_fifo_clct_first_bx0_local_.push_back( read_mpc0_run3frame1_fifo_clct_first_bx0_local_);
+	    v_read_mpc0_run3frame1_fifo_clct_first_bend_.push_back(      read_mpc0_run3frame1_fifo_clct_first_bend_);
+	    //v_read_mpc0_run3frame1_fifo_csc_id_.push_back(               read_mpc0_run3frame1_fifo_csc_id_);
+	    //v_read_mpc0_run3frame1_fifo_hmtbit0_.push_back(              read_mpc0_run3frame1_fifo_hmtbit0_);
+	    //
+	    v_read_mpc1_run3frame0_fifo_alct_second_key_.push_back(      read_mpc1_run3frame0_fifo_alct_second_key_);
+	    v_read_mpc1_run3frame0_fifo_lct_pidbit4_.push_back(          read_mpc1_run3frame0_fifo_lct_pidbit4_);
+	    v_read_mpc1_run3frame0_fifo_hmtbit1to3_.push_back(           read_mpc1_run3frame0_fifo_hmtbit1to3_);
+	    v_read_mpc1_run3frame0_fifo_lct_second_quality_.push_back(   read_mpc1_run3frame0_fifo_lct_second_quality_);
+	    v_read_mpc1_run3frame0_fifo_clct_second_qxky_.push_back(     read_mpc1_run3frame0_fifo_clct_second_qxky_);
+	    v_read_mpc1_run3frame0_fifo_second_vpf_.push_back(           read_mpc1_run3frame0_fifo_second_vpf_);
+	    //
+	    v_read_mpc1_run3frame1_fifo_clct_second_key_.push_back(      read_mpc1_run3frame1_fifo_clct_second_key_);
+	    v_read_mpc1_run3frame1_fifo_clct_second_lr_.push_back(       read_mpc1_run3frame1_fifo_clct_second_lr_);
+	    v_read_mpc1_run3frame1_fifo_clct_second_exky_.push_back(     read_mpc1_run3frame1_fifo_clct_second_exky_);
+	    v_read_mpc1_run3frame1_fifo_hmtbit0_.push_back(              read_mpc1_run3frame1_fifo_hmtbit0_);
+	    v_read_mpc1_run3frame1_fifo_clct_second_bx0_local_.push_back(read_mpc1_run3frame1_fifo_clct_second_bx0_local_);
+	    v_read_mpc1_run3frame1_fifo_clct_second_bend_.push_back(     read_mpc1_run3frame1_fifo_clct_second_bend_);
+	    //v_read_mpc1_run3frame1_fifo_csc_id_.push_back(               read_mpc1_run3frame1_fifo_csc_id_);
+	    //v_read_mpc1_run3frame1_fifo_alct_second_bxn_.push_back(      read_mpc1_run3frame1_fifo_alct_second_bxn_);
+    }
+    else{
+            //
+	    v_read_mpc0_frame0_fifo_alct_first_key_.push_back(read_mpc0_frame0_fifo_alct_first_key_);
+	    v_read_mpc0_frame0_fifo_clct_first_pat_.push_back(read_mpc0_frame0_fifo_clct_first_pat_);
+	    v_read_mpc0_frame0_fifo_lct_first_quality_.push_back(read_mpc0_frame0_fifo_lct_first_quality_);
+	    v_read_mpc0_frame0_fifo_first_vpf_.push_back(read_mpc0_frame0_fifo_first_vpf_);
+	    //
+	    v_read_mpc0_frame1_fifo_clct_first_key_.push_back(read_mpc0_frame1_fifo_clct_first_key_);
+	    v_read_mpc0_frame1_fifo_clct_first_bend_.push_back(read_mpc0_frame1_fifo_clct_first_bend_);
+	    v_read_mpc0_frame1_fifo_sync_err_.push_back(read_mpc0_frame1_fifo_sync_err_);
+	    v_read_mpc0_frame1_fifo_alct_first_bxn_.push_back(read_mpc0_frame1_fifo_alct_first_bxn_);
+	    v_read_mpc0_frame1_fifo_clct_first_bx0_local_.push_back(read_mpc0_frame1_fifo_clct_first_bx0_local_);
+	    v_read_mpc0_frame1_fifo_csc_id_.push_back(read_mpc0_frame1_fifo_csc_id_);
+	    //
+	    v_read_mpc1_frame0_fifo_alct_second_key_.push_back(read_mpc1_frame0_fifo_alct_second_key_);
+	    v_read_mpc1_frame0_fifo_clct_second_pat_.push_back(read_mpc1_frame0_fifo_clct_second_pat_);
+	    v_read_mpc1_frame0_fifo_lct_second_quality_.push_back(read_mpc1_frame0_fifo_lct_second_quality_);
+	    v_read_mpc1_frame0_fifo_second_vpf_.push_back(read_mpc1_frame0_fifo_second_vpf_);
+	    //
+	    v_read_mpc1_frame1_fifo_clct_second_key_.push_back(read_mpc1_frame1_fifo_clct_second_key_);
+	    v_read_mpc1_frame1_fifo_clct_second_bend_.push_back(read_mpc1_frame1_fifo_clct_second_bend_);
+	    v_read_mpc1_frame1_fifo_sync_err_.push_back(read_mpc1_frame1_fifo_sync_err_);
+	    v_read_mpc1_frame1_fifo_alct_second_bxn_.push_back(read_mpc1_frame1_fifo_alct_second_bxn_);
+	    v_read_mpc1_frame1_fifo_clct_second_bx0_local_.push_back(read_mpc1_frame1_fifo_clct_second_bx0_local_);
+	    v_read_mpc1_frame1_fifo_csc_id_.push_back(read_mpc1_frame1_fifo_csc_id_);
+    }
     //
     v_mpc_frames_fifo_ctrl_data_.push_back(mpc_frames_fifo_ctrl_data_);
     //
@@ -1658,6 +2028,10 @@ void TMB::DecodeAndPrintMPCFrames(unsigned int event_n = 0) {
   std::cout << std::endl;
   std::cout << "MPC frames FIFO control data = 0x" << std::hex << mpc_frames_fifo_ctrl_data_ << std::endl;
   //
+  if (read_run3_trig_dataformat_enable_){
+	  (*MyOutput_) << "-------------------------------------------------" << std::endl;
+          (*MyOutput_) << "Run3 Trigger data format" << std::endl;
+  }
   (*MyOutput_) << "-------------------------------------------------" << std::endl;
   if (event_n > 0) {
     (*MyOutput_) << "                                          \t| \t Last 10 MPC frames from FIFO:" << std::endl;
@@ -1692,129 +2066,292 @@ void TMB::DecodeAndPrintMPCFrames(unsigned int event_n = 0) {
     (*MyOutput_) << "\t0x" << std::hex << v_mpc1_frame1_fifo_data_[i];
   (*MyOutput_) << std::endl;
   (*MyOutput_) << "-------------------------------------------------" << std::endl;
-  (*MyOutput_) << "LCT0 MPC0 frame0.alct_first_key        = " << std::dec << read_mpc0_frame0_alct_first_key_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t" << std::dec << v_read_mpc0_frame0_fifo_alct_first_key_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC0 frame0.clct_first_pat        = 0x" << std::hex << read_mpc0_frame0_clct_first_pat_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame0_fifo_clct_first_pat_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC0 frame0.lct_first_quality     = 0x" << std::hex << read_mpc0_frame0_lct_first_quality_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame0_fifo_lct_first_quality_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC0 frame0.first_vpf             = 0x" << std::hex << read_mpc0_frame0_first_vpf_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame0_fifo_first_vpf_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "-------------------------------------------------" << std::endl;
-  (*MyOutput_) << "LCT0 MPC0 frame1.clct_first_key        = " << std::dec << read_mpc0_frame1_clct_first_key_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t" << std::dec << v_read_mpc0_frame1_fifo_clct_first_key_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC0 frame1.clct_first_bend       = 0x" << std::hex << read_mpc0_frame1_clct_first_bend_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame1_fifo_clct_first_bend_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC0 frame1.sync_err              = 0x" << std::hex << read_mpc0_frame1_sync_err_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame1_fifo_sync_err_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC0 frame1.alct_first_bxn        = 0x" << std::hex << read_mpc0_frame1_alct_first_bxn_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame1_fifo_alct_first_bxn_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC0 frame1.clct_first_bx0_local  = 0x" << std::hex << read_mpc0_frame1_clct_first_bx0_local_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame1_fifo_clct_first_bx0_local_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC0 frame1.csc_id                = 0x" << std::hex << read_mpc0_frame1_csc_id_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame1_fifo_csc_id_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "-------------------------------------------------" << std::endl;
-  (*MyOutput_) << "LCT1 MPC1 frame0.alct_second_key       = " << std::dec << read_mpc1_frame0_alct_second_key_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t" << std::dec << v_read_mpc1_frame0_fifo_alct_second_key_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC1 frame0.clct_second_pat       = 0x" << std::hex << read_mpc1_frame0_clct_second_pat_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame0_fifo_clct_second_pat_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC1 frame0.lct_second_quality    = 0x" << std::hex << read_mpc1_frame0_lct_second_quality_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame0_fifo_lct_second_quality_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC1 frame0.second_vpf            = 0x" << std::hex << read_mpc1_frame0_second_vpf_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame0_fifo_second_vpf_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "-------------------------------------------------" << std::endl;
-  (*MyOutput_) << "LCT1 MPC1 frame1.clct_second_key       = " << std::dec << read_mpc1_frame1_clct_second_key_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t" << std::dec << v_read_mpc1_frame1_fifo_clct_second_key_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC1 frame1.clct_second_bend      = 0x" << std::hex << read_mpc1_frame1_clct_second_bend_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame1_fifo_clct_second_bend_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC1 frame1.sync_err              = 0x" << std::hex << read_mpc1_frame1_sync_err_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame1_fifo_sync_err_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC1 frame1.alct_second_bxn       = 0x" << std::hex << read_mpc1_frame1_alct_second_bxn_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame1_fifo_alct_second_bxn_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC1 frame1.clct_second_bx0_local = 0x" << std::hex << read_mpc1_frame1_clct_second_bx0_local_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame1_fifo_clct_second_bx0_local_[i];
-  (*MyOutput_) << std::endl;
-  (*MyOutput_) << "     MPC1 frame1.csc_id                = 0x" << std::hex << read_mpc1_frame1_csc_id_;
-  if (event_n > 0)
-    (*MyOutput_) << "\t| ";
-  for (unsigned int i = 0; i < event_n; i++)
-    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame1_fifo_csc_id_[i];
-  (*MyOutput_) << std::endl;
+  if (read_run3_trig_dataformat_enable_){
+	  (*MyOutput_) << "LCT0 MPC0 frame0.alct_first_key        = " << std::dec << read_mpc0_run3frame0_alct_first_key_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t" << std::dec << v_read_mpc0_run3frame0_fifo_alct_first_key_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame0.lct_pidbit0to3        = 0x" << std::hex << read_mpc0_run3frame0_lct_pidbit0to3_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_run3frame0_fifo_lct_pidbit0to3_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame0.lct_first_quality     = 0x" << std::hex << read_mpc0_run3frame0_lct_first_quality_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_run3frame0_fifo_lct_first_quality_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame0.clct_first_qxky       = 0x" << std::hex << read_mpc0_run3frame0_clct_first_qxky_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_run3frame0_fifo_clct_first_qxky_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame0.first_vpf             = 0x" << std::hex << read_mpc0_run3frame0_first_vpf_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_run3frame0_fifo_first_vpf_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "-------------------------------------------------" << std::endl;
+	  (*MyOutput_) << "LCT0 MPC0 frame1.clct_first_key        = "   << std::dec << read_mpc0_run3frame1_clct_first_key_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t"   << std::dec << v_read_mpc0_run3frame1_fifo_clct_first_key_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame1.clct_first_lr         = 0x" << std::hex << read_mpc0_run3frame1_clct_first_lr_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_run3frame1_fifo_clct_first_lr_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame1.clct_first_exky       = 0x" << std::hex << read_mpc0_run3frame1_clct_first_exky_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_run3frame1_fifo_clct_first_exky_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame1.alct_first_bxn        = 0x" << std::hex << read_mpc0_run3frame1_alct_first_bxn_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_run3frame1_fifo_alct_first_bxn_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame1.clct_first_bx0_local  = 0x" << std::hex << read_mpc0_run3frame1_clct_first_bx0_local_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_run3frame1_fifo_clct_first_bx0_local_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame1.clct_first_bend       = 0x" << std::hex << read_mpc0_run3frame1_clct_first_bend_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_run3frame1_fifo_clct_first_bend_[i];
+	  (*MyOutput_) << std::endl;
+	  //(*MyOutput_) << "     MPC0 frame1.csc_id                = 0x" << std::hex << read_mpc0_run3frame1_csc_id_;
+	  //if (event_n > 0)
+	  //  (*MyOutput_) << "\t| ";
+	  //for (unsigned int i = 0; i < event_n; i++)
+	  //  (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_run3frame1_fifo_csc_id_[i];
+	  //(*MyOutput_) << std::endl;
+	  (*MyOutput_) << "-------------------------------------------------" << std::endl;
+	  (*MyOutput_) << "LCT1 MPC1 frame0.alct_second_key       = "   << std::dec << read_mpc1_run3frame0_alct_second_key_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t"   << std::dec << v_read_mpc1_run3frame0_fifo_alct_second_key_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame0.lct_pidbit4           = 0x" << std::hex << read_mpc1_run3frame0_lct_pidbit4_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_run3frame0_fifo_lct_pidbit4_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame0.hmtbit1to3            = 0x" << std::hex << read_mpc1_run3frame0_hmtbit1to3_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_run3frame0_fifo_hmtbit1to3_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame0.lct_second_quality    = 0x" << std::hex << read_mpc1_run3frame0_lct_second_quality_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_run3frame0_fifo_lct_second_quality_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame0.clct_second_qxky      = 0x" << std::hex << read_mpc1_run3frame0_clct_second_qxky_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_run3frame0_fifo_clct_second_qxky_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame0.second_vpf            = 0x" << std::hex << read_mpc1_run3frame0_second_vpf_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_run3frame0_fifo_second_vpf_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "-------------------------------------------------" << std::endl;
+	  (*MyOutput_) << "LCT1 MPC1 frame1.clct_second_key       = "   << std::dec << read_mpc1_run3frame1_clct_second_key_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t"   << std::dec << v_read_mpc1_run3frame1_fifo_clct_second_key_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame1.clct_second_lr        = 0x" << std::hex << read_mpc1_run3frame1_clct_second_lr_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_run3frame1_fifo_clct_second_lr_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame1.clct_second_exky      = 0x" << std::hex << read_mpc1_run3frame1_clct_second_exky_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_run3frame1_fifo_clct_second_exky_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame1.hmtbit0               = 0x" << std::hex << read_mpc1_run3frame1_hmtbit0_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_run3frame1_fifo_hmtbit0_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame1.clct_second_bx0_local = 0x" << std::hex << read_mpc1_run3frame1_clct_second_bx0_local_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_run3frame1_fifo_clct_second_bx0_local_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame1.clct_second_bend      = 0x" << std::hex << read_mpc1_run3frame1_clct_second_bend_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_run3frame1_fifo_clct_second_bend_[i];
+	  (*MyOutput_) << std::endl;
+	  //(*MyOutput_) << "     MPC1 frame1.alct_second_bxn       = 0x" << std::hex << read_mpc1_run3frame1_alct_second_bxn_;
+	  //if (event_n > 0)
+	  //  (*MyOutput_) << "\t| ";
+	  //for (unsigned int i = 0; i < event_n; i++)
+	  //  (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_run3frame1_fifo_alct_second_bxn_[i];
+	  //(*MyOutput_) << std::endl;
+	  //(*MyOutput_) << "     MPC1 frame1.csc_id                = 0x" << std::hex << read_mpc1_run3frame1_csc_id_;
+	  //if (event_n > 0)
+	  //  (*MyOutput_) << "\t| ";
+	  //for (unsigned int i = 0; i < event_n; i++)
+	  //  (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_run3frame1_fifo_csc_id_[i];
+	  //(*MyOutput_) << std::endl;
+  }
+  else{
+	  (*MyOutput_) << "LCT0 MPC0 frame0.alct_first_key        = " << std::dec << read_mpc0_frame0_alct_first_key_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t" << std::dec << v_read_mpc0_frame0_fifo_alct_first_key_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame0.clct_first_pat        = 0x" << std::hex << read_mpc0_frame0_clct_first_pat_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame0_fifo_clct_first_pat_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame0.lct_first_quality     = 0x" << std::hex << read_mpc0_frame0_lct_first_quality_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame0_fifo_lct_first_quality_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame0.first_vpf             = 0x" << std::hex << read_mpc0_frame0_first_vpf_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame0_fifo_first_vpf_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "-------------------------------------------------" << std::endl;
+	  (*MyOutput_) << "LCT0 MPC0 frame1.clct_first_key        = " << std::dec << read_mpc0_frame1_clct_first_key_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t" << std::dec << v_read_mpc0_frame1_fifo_clct_first_key_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame1.clct_first_bend       = 0x" << std::hex << read_mpc0_frame1_clct_first_bend_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame1_fifo_clct_first_bend_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame1.sync_err              = 0x" << std::hex << read_mpc0_frame1_sync_err_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame1_fifo_sync_err_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame1.alct_first_bxn        = 0x" << std::hex << read_mpc0_frame1_alct_first_bxn_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame1_fifo_alct_first_bxn_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame1.clct_first_bx0_local  = 0x" << std::hex << read_mpc0_frame1_clct_first_bx0_local_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame1_fifo_clct_first_bx0_local_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC0 frame1.csc_id                = 0x" << std::hex << read_mpc0_frame1_csc_id_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc0_frame1_fifo_csc_id_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "-------------------------------------------------" << std::endl;
+	  (*MyOutput_) << "LCT1 MPC1 frame0.alct_second_key       = " << std::dec << read_mpc1_frame0_alct_second_key_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t" << std::dec << v_read_mpc1_frame0_fifo_alct_second_key_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame0.clct_second_pat       = 0x" << std::hex << read_mpc1_frame0_clct_second_pat_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame0_fifo_clct_second_pat_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame0.lct_second_quality    = 0x" << std::hex << read_mpc1_frame0_lct_second_quality_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame0_fifo_lct_second_quality_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame0.second_vpf            = 0x" << std::hex << read_mpc1_frame0_second_vpf_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame0_fifo_second_vpf_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "-------------------------------------------------" << std::endl;
+	  (*MyOutput_) << "LCT1 MPC1 frame1.clct_second_key       = " << std::dec << read_mpc1_frame1_clct_second_key_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t" << std::dec << v_read_mpc1_frame1_fifo_clct_second_key_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame1.clct_second_bend      = 0x" << std::hex << read_mpc1_frame1_clct_second_bend_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame1_fifo_clct_second_bend_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame1.sync_err              = 0x" << std::hex << read_mpc1_frame1_sync_err_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame1_fifo_sync_err_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame1.alct_second_bxn       = 0x" << std::hex << read_mpc1_frame1_alct_second_bxn_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame1_fifo_alct_second_bxn_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame1.clct_second_bx0_local = 0x" << std::hex << read_mpc1_frame1_clct_second_bx0_local_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame1_fifo_clct_second_bx0_local_[i];
+	  (*MyOutput_) << std::endl;
+	  (*MyOutput_) << "     MPC1 frame1.csc_id                = 0x" << std::hex << read_mpc1_frame1_csc_id_;
+	  if (event_n > 0)
+	    (*MyOutput_) << "\t| ";
+	  for (unsigned int i = 0; i < event_n; i++)
+	    (*MyOutput_) << "\t0x" << std::hex << v_read_mpc1_frame1_fifo_csc_id_[i];
+	  (*MyOutput_) << std::endl;
+  }// end of Run2 MPC printout on Yellow page
   (*MyOutput_) << "-------------------------------------------------" << std::endl;
   //
   // Print out FIFO status and control registers
@@ -1882,6 +2419,25 @@ void TMB::DecodeAndPrintMPCFrames(unsigned int event_n = 0) {
     (*MyOutput_) << std::endl;
     (*MyOutput_) << "-------------------------------------------------" << std::endl;
   }
+  if (gem_enabled_ && read_run3_trig_dataformat_enable_) {
+	  ReadRegister(gem_csc_match_cluster00_adr);
+	  ReadRegister(gem_csc_match_cluster01_adr);
+	  ReadRegister(gem_csc_match_cluster10_adr);
+	  ReadRegister(gem_csc_match_cluster11_adr);
+	  (*MyOutput_) << " clusters for gem-csc match: "                                                                         << std::endl;
+	  (*MyOutput_) << "Cluster0.iclst        = " << std::dec << read_gem_csc_match_cluster0_iclst_      << std::endl;
+	  (*MyOutput_) << "Cluster0.roll         = " << std::dec << read_gem_csc_match_cluster0_roll_      << std::endl;
+	  (*MyOutput_) << "Cluster0.pad          = " << std::dec << read_gem_csc_match_cluster0_pad_      << std::endl;
+	  (*MyOutput_) << "Cluster0.bend         = " << std::dec << read_gem_csc_match_cluster0_bend_      << std::endl;
+	  (*MyOutput_) << "Cluster0.angle(hs)    = " << std::dec << std::setprecision (2) << std::fixed<< read_gem_csc_match_cluster0_angle_/4.0      << std::endl;
+	  (*MyOutput_) << "Cluster0.cscxky(hs)   = " << std::dec << std::setprecision (2) << std::fixed<< read_gem_csc_match_cluster0_cscxky_/4.0<< std::endl;
+	  (*MyOutput_) << "Cluster1.iclst        = " << std::dec << read_gem_csc_match_cluster1_iclst_      << std::endl;
+	  (*MyOutput_) << "Cluster1.roll         = " << std::dec << read_gem_csc_match_cluster1_roll_      << std::endl;
+	  (*MyOutput_) << "Cluster1.pad          = " << std::dec << read_gem_csc_match_cluster1_pad_      << std::endl;
+	  (*MyOutput_) << "Cluster1.bend         = " << std::dec << read_gem_csc_match_cluster1_bend_      << std::endl;
+	  (*MyOutput_) << "Cluster1.angle(hs)    = " << std::dec << std::setprecision (2) << std::fixed<< read_gem_csc_match_cluster1_angle_/4.0      << std::endl;
+	  (*MyOutput_) << "Cluster1.cscxky(hs)   = " << std::dec << std::setprecision (2) << std::fixed<< read_gem_csc_match_cluster1_cscxky_/4.0<< std::endl;
+   }
   //
   return;
 }
@@ -1910,6 +2466,7 @@ void TMB::PrintGemCounters(int counter){
         // if (counter < 0) { print all counters }
         if (counter<0) {
             (*MyOutput_) << std::endl; // put a blank line before GEMs
+	    (*MyOutput_) << std::dec << "GEM counters begin:    "<< std::endl ;
             for (int i=0; i < GetMaxGEMCounter(); i++)
                 if (GEMCounterName(i)!="Not defined")
                     (*MyOutput_) << std::dec << std::setw(4) << i << GEMCounterName(i) << FinalGEMCounter[i] << std::endl ;
@@ -1967,7 +2524,7 @@ std::string TMB::CounterName(int counter){
   if( counter == 30 ) name =  "CLCT: clct1 sent to TMB matching section                ";
   //
   if( counter == 31 ) name =  "TMB:  TMB accepted alct*clct, alct-only, or clct-only   ";
-  if( counter == 32 ) name =  "TMB:  TMB clct*alct matched trigger                     ";
+  if( counter == 32 ) name =  "TMB:  TMB alct*clct/copad matched trigger               ";
   if( counter == 33 ) name =  "TMB:  TMB alct-only trigger                             ";
   if( counter == 34 ) name =  "TMB:  TMB clct-only trigger                             ";
   //
@@ -2041,6 +2598,20 @@ std::string TMB::CounterName(int counter){
   if( counter == 90 ) name =  "CLCT: CFEB active flag sent to DMB was on ME1A CFEB4-6  ";
   if( counter == 91 ) name =  "CLCT: CFEB active flag sent to DMB was on ME1B CFEB0-3  ";
   if( counter == 92 ) name =  "CLCT: CFEB active flag sent to DMB was on any CFEB      ";
+  if( counter == 93 ) name =  "CLCT: sequential trigger counter                        ";//Tao, algo2016
+  if( counter == 94 ) name =  "CLCT: checking pretrigger in last 4BX                   ";//Tao, algo2016
+  if( counter == 95 ) name =  "TMB: ALCT-CLCT BX0 match                                ";//Tao, 201908
+  if( counter == 96 ) name =  "TMB: hmt over threshold1(loose)                         ";//Tao, 201908
+  if( counter == 97 ) name =  "TMB: hmt over threshold2(median)                        ";//Tao, 202108
+  if( counter == 98 ) name =  "TMB: hmt over threshold3(tight)                         ";//Tao, 202108
+  if( counter == 99 ) name =  "TMB: hmt+preCLCT coincidence                            ";//Tao, 202108
+  if( counter == 100) name =  "TMB: hmt+CLCT coincidence                               ";//Tao, 202108
+  if( counter == 101) name =  "TMB: hmt+LCT coincidence                                ";//Tao, 202108
+  if( counter == 102) name =  "TMB: trigger pulse source from HMT only (no LCT)        ";//Tao, 202108
+  if( counter == 103) name =  "TMB: trigger keep source from HMT only                  ";//Tao, 202108
+  if( counter == 104) name =  "TMB: fired HMT in signal time region                    ";//Tao, 202108
+  if( counter == 105) name =  "TMB: fired HMT in signal and background time region     ";//Tao, 202108
+
   //
   return name;
 }
@@ -2054,67 +2625,129 @@ std::string TMB::GEMCounterName(int counter){
     else if (counter==2)  name = "GEM: Superchamber Sync Error                            ";
 
     else if (counter==3)  name = "GEM: GEM A Overflow                                     ";
-    else if (counter==4)  name = "GEM: GEB B Overflow                                     ";
+    else if (counter==4)  name = "GEM: GEM B Overflow                                     ";
+    else if (counter==5)  name = "GEM: GEM A BC0marker                                    ";
+    else if (counter==6)  name = "GEM: GEM B BC0marker                                    ";
+    else if (counter==7)  name = "GEM: GEM A resyncmarker                                 ";
+    else if (counter==8)  name = "GEM: GEM B resyncmarker                                 ";
 
-    else if (counter==5)  name = "GEM: gem A cluster0                                     ";
-    else if (counter==6)  name = "GEM: gem A cluster1                                     ";
-    else if (counter==7)  name = "GEM: gem A cluster2                                     ";
-    else if (counter==8)  name = "GEM: gem A cluster3                                     ";
-    else if (counter==9)  name = "GEM: gem A cluster4                                     ";
-    else if (counter==10) name = "GEM: gem A cluster5                                     ";
-    else if (counter==11) name = "GEM: gem A cluster6                                     ";
-    else if (counter==12) name = "GEM: gem A cluster7                                     ";
+    else if (counter==9)  name = "GEM: GEM A cluster counts                               ";
+    else if (counter==10) name = "GEM: GEM B cluster counts                               ";
+    else if (counter==11) name = "GEM: GEM copad counts                                   ";
 
-    else if (counter==13) name = "GEM: gem B cluster0                                     ";
-    else if (counter==14) name = "GEM: gem B cluster1                                     ";
-    else if (counter==15) name = "GEM: gem B cluster2                                     ";
-    else if (counter==16) name = "GEM: gem B cluster3                                     ";
-    else if (counter==17) name = "GEM: gem B cluster4                                     ";
-    else if (counter==18) name = "GEM: gem B cluster5                                     ";
-    else if (counter==19) name = "GEM: gem B cluster6                                     ";
-    else if (counter==20) name = "GEM: gem B cluster7                                     ";
+    else if (counter==12) name = "GEM: gem A Vfat0                                        ";
+    else if (counter==13) name = "GEM: gem A Vfat1                                        ";
+    else if (counter==14) name = "GEM: gem A Vfat2                                        ";
+    else if (counter==15) name = "GEM: gem A Vfat3                                        ";
+    else if (counter==16) name = "GEM: gem A Vfat4                                        ";
+    else if (counter==17) name = "GEM: gem A Vfat5                                        ";
+    else if (counter==18) name = "GEM: gem A Vfat6                                        ";
+    else if (counter==19) name = "GEM: gem A Vfat7                                        ";
+    else if (counter==20) name = "GEM: gem A Vfat8                                        ";
+    else if (counter==21) name = "GEM: gem A Vfat9                                        ";
+    else if (counter==22) name = "GEM: gem A Vfat10                                       ";
+    else if (counter==23) name = "GEM: gem A Vfat11                                       ";
+    else if (counter==24) name = "GEM: gem A Vfat12                                       ";
+    else if (counter==25) name = "GEM: gem A Vfat13                                       ";
+    else if (counter==26) name = "GEM: gem A Vfat14                                       ";
+    else if (counter==27) name = "GEM: gem A Vfat15                                       ";
+    else if (counter==28) name = "GEM: gem A Vfat16                                       ";
+    else if (counter==29) name = "GEM: gem A Vfat17                                       ";
+    else if (counter==30) name = "GEM: gem A Vfat18                                       ";
+    else if (counter==31) name = "GEM: gem A Vfat19                                       ";
+    else if (counter==32) name = "GEM: gem A Vfat20                                       ";
+    else if (counter==33) name = "GEM: gem A Vfat21                                       ";
+    else if (counter==34) name = "GEM: gem A Vfat22                                       ";
+    else if (counter==35) name = "GEM: gem A Vfat23                                       ";
 
-    else if (counter==21) name = "GEM: Bx with at least 1 Copad Matched                   ";
+    else if (counter==36) name = "GEM: gem B Vfat0                                        ";
+    else if (counter==37) name = "GEM: gem B Vfat1                                        ";
+    else if (counter==38) name = "GEM: gem B Vfat2                                        ";
+    else if (counter==39) name = "GEM: gem B Vfat3                                        ";
+    else if (counter==40) name = "GEM: gem B Vfat4                                        ";
+    else if (counter==41) name = "GEM: gem B Vfat5                                        ";
+    else if (counter==42) name = "GEM: gem B Vfat6                                        ";
+    else if (counter==43) name = "GEM: gem B Vfat7                                        ";
+    else if (counter==44) name = "GEM: gem B Vfat8                                        ";
+    else if (counter==45) name = "GEM: gem B Vfat9                                        ";
+    else if (counter==46) name = "GEM: gem B Vfat10                                       ";
+    else if (counter==47) name = "GEM: gem B Vfat11                                       ";
+    else if (counter==48) name = "GEM: gem B Vfat12                                       ";
+    else if (counter==49) name = "GEM: gem B Vfat13                                       ";
+    else if (counter==50) name = "GEM: gem B Vfat14                                       ";
+    else if (counter==51) name = "GEM: gem B Vfat15                                       ";
+    else if (counter==52) name = "GEM: gem B Vfat16                                       ";
+    else if (counter==53) name = "GEM: gem B Vfat17                                       ";
+    else if (counter==54) name = "GEM: gem B Vfat18                                       ";
+    else if (counter==55) name = "GEM: gem B Vfat19                                       ";
+    else if (counter==56) name = "GEM: gem B Vfat20                                       ";
+    else if (counter==57) name = "GEM: gem B Vfat21                                       ";
+    else if (counter==58) name = "GEM: gem B Vfat22                                       ";
+    else if (counter==59) name = "GEM: gem B Vfat23                                       ";
 
-    else if (counter==22) name = "GEM: Copad0 Matched                                     ";
-    else if (counter==23) name = "GEM: Copad1 Matched                                     ";
-    else if (counter==24) name = "GEM: Copad2 Matched                                     ";
-    else if (counter==25) name = "GEM: Copad3 Matched                                     ";
-    else if (counter==26) name = "GEM: Copad4 Matched                                     ";
-    else if (counter==27) name = "GEM: Copad5 Matched                                     ";
-    else if (counter==28) name = "GEM: Copad6 Matched                                     ";
-    else if (counter==29) name = "GEM: Copad7 Matched                                     ";
+    else if (counter==60) name = "GEM: Copad Match in Vfat0                               ";
+    else if (counter==61) name = "GEM: Copad Match in Vfat1                               ";
+    else if (counter==62) name = "GEM: Copad Match in Vfat2                               ";
+    else if (counter==63) name = "GEM: Copad Match in Vfat3                               ";
+    else if (counter==64) name = "GEM: Copad Match in Vfat4                               ";
+    else if (counter==65) name = "GEM: Copad Match in Vfat5                               ";
+    else if (counter==66) name = "GEM: Copad Match in Vfat6                               ";
+    else if (counter==67) name = "GEM: Copad Match in Vfat7                               ";
+    else if (counter==68) name = "GEM: Copad Match in Vfat8                               ";
+    else if (counter==69) name = "GEM: Copad Match in Vfat9                               ";
+    else if (counter==70) name = "GEM: Copad Match in Vfat10                              ";
+    else if (counter==71) name = "GEM: Copad Match in Vfat11                              ";
+    else if (counter==72) name = "GEM: Copad Match in Vfat12                              ";
+    else if (counter==73) name = "GEM: Copad Match in Vfat13                              ";
+    else if (counter==74) name = "GEM: Copad Match in Vfat14                              ";
+    else if (counter==75) name = "GEM: Copad Match in Vfat15                              ";
+    else if (counter==76) name = "GEM: Copad Match in Vfat16                              ";
+    else if (counter==77) name = "GEM: Copad Match in Vfat17                              ";
+    else if (counter==78) name = "GEM: Copad Match in Vfat18                              ";
+    else if (counter==79) name = "GEM: Copad Match in Vfat19                              ";
+    else if (counter==80) name = "GEM: Copad Match in Vfat20                              ";
+    else if (counter==81) name = "GEM: Copad Match in Vfat21                              ";
+    else if (counter==82) name = "GEM: Copad Match in Vfat22                              ";
+    else if (counter==83) name = "GEM: Copad Match in Vfat23                              ";
 
-    else if (counter==30) name = "GEM: Copad Match in Vfat0                               ";
-    else if (counter==31) name = "GEM: Copad Match in Vfat1                               ";
-    else if (counter==32) name = "GEM: Copad Match in Vfat2                               ";
-    else if (counter==33) name = "GEM: Copad Match in Vfat3                               ";
-    else if (counter==34) name = "GEM: Copad Match in Vfat4                               ";
-    else if (counter==35) name = "GEM: Copad Match in Vfat5                               ";
-    else if (counter==36) name = "GEM: Copad Match in Vfat6                               ";
-    else if (counter==37) name = "GEM: Copad Match in Vfat7                               ";
-    else if (counter==38) name = "GEM: Copad Match in Vfat8                               ";
-    else if (counter==39) name = "GEM: Copad Match in Vfat9                               ";
-    else if (counter==40) name = "GEM: Copad Match in Vfat10                              ";
-    else if (counter==41) name = "GEM: Copad Match in Vfat11                              ";
-    else if (counter==42) name = "GEM: Copad Match in Vfat12                              ";
-    else if (counter==43) name = "GEM: Copad Match in Vfat13                              ";
-    else if (counter==44) name = "GEM: Copad Match in Vfat14                              ";
-    else if (counter==45) name = "GEM: Copad Match in Vfat15                              ";
-    else if (counter==46) name = "GEM: Copad Match in Vfat16                              ";
-    else if (counter==47) name = "GEM: Copad Match in Vfat17                              ";
-    else if (counter==48) name = "GEM: Copad Match in Vfat18                              ";
-    else if (counter==49) name = "GEM: Copad Match in Vfat19                              ";
-    else if (counter==50) name = "GEM: Copad Match in Vfat20                              ";
-    else if (counter==51) name = "GEM: Copad Match in Vfat21                              ";
-    else if (counter==52) name = "GEM: Copad Match in Vfat22                              ";
-    else if (counter==53) name = "GEM: Copad Match in Vfat23                              ";
+    else if (counter==84)  name = "GEM: gem A clusters in ME1a counter                     ";
+    else if (counter==85)  name = "GEM: gem B clusters in ME1a counter                     ";
+    else if (counter==86)  name = "GEM: gem A clusters in ME1b counter                     ";
+    else if (counter==87)  name = "GEM: gem B clusters in ME1b counter                     ";
 
-    else if (counter==54) name = "GEM: ALCT*GEM Match                                     ";
-    else if (counter==55) name = "GEM: CLCT*GEM Match                                     ";
-    else if (counter==56) name = "GEM: ALCT*CLCT*GEM Match                                ";
-    else if (counter==57) name = "GEM: CLCT*GEM (no ALCT)                                 ";
-    else if (counter==58) name = "GEM: ALCT*GEM (no CLCT)                                 ";
+    else if (counter==88) name = "GEM: gemA-CLCT BX0 match                                ";
+    else if (counter==89) name = "GEM: gemB-CLCT BX0 match                                ";
+    else if (counter==90) name = "GEM: gemA*ALCT Match,timing only                        ";
+    else if (counter==91) name = "GEM: gemB*ALCT Match,timing only                        ";
+    else if (counter==92) name = "GEM: gemA*CLCT Match,timing only                        ";
+    else if (counter==93) name = "GEM: gemB*CLCT Match,timing only                        ";
+    else if (counter==94) name = "GEM: gemA*ALCT*CLCT Match,timing only                   ";
+    else if (counter==95) name = "GEM: gemB*ALCT*CLCT Match,timing only                   ";
+    else if (counter==96) name = "GEM: CLCT*CoGEM (no ALCT),timing only                   ";
+    else if (counter==97) name = "GEM: ALCT*CoGEM (no CLCT),timing only                   ";
+    else if (counter==98) name = "GEM: ALCT*GEMA,timing+position                          ";
+    else if (counter==99) name = "GEM: ALCT*GEMB,timing+position                          ";
+    else if (counter==100) name = "GEM: CLCT*GEMA,timing+position                          ";
+    else if (counter==101) name = "GEM: CLCT*GEMB,timing+position                          ";
+    else if (counter==102) name = "GEM: ALCT*COGEM,timing+position                         ";
+    else if (counter==103) name = "GEM: CLCT*COGEM,timing+position                         ";
+    else if (counter==104) name = "GEM: ALCT*CLCT*COGEM,timing+position                    ";
+    else if (counter==105) name = "GEM: ALCT*CLCT*GEMA, timing+position                    ";
+    else if (counter==106) name = "GEM: ALCT*CLCT*GEMB, timing+position                    ";
+    else if (counter==107) name = "GEM: Run3 copy ALCT0 into ALCT1                         ";
+    else if (counter==108) name = "GEM: Run3 copy CLCT0 into CLCT1                         ";
+    else if (counter==109) name = "GEM: Build ALCT0 from CoGEM                             ";
+    else if (counter==110) name = "GEM: Build ALCT1 from CoGEM                             ";
+    else if (counter==111) name = "GEM: Build CLCT0 from CoGEM                             ";
+    else if (counter==112) name = "GEM: Build CLCT1 from CoGEM                             ";
+    else if (counter==113) name = "GEM: swap ALCT/CLCT from ALCTxCLCTxCoapd match          ";
+    else if (counter==114) name = "GEM: swap ALCT/CLCT from ALCTxCLCTxGEM   match          ";
+    else if (counter==115) name = "GEM: swap ALCT/CLCT from      CLCTxCopad match          ";
+    else if (counter==116) name = "GEM: Special test: delay alct, dlyalct_gemA_match       ";
+    else if (counter==117) name = "GEM: Special test: delay alct, dlyalct_gemB_match       ";
+    else if (counter==118) name = "GEM: Special test: delay gemA, alct_dlygemA_match       ";
+    else if (counter==119) name = "GEM: Special test: delay gemB, alct_dlygemB_match       ";
+    
   //
   return name;
 }
@@ -2125,7 +2758,7 @@ void TMB::ResetCounters(){
   //
   // Clear counters
   //
-  WriteRegister(cnt_ctrl_adr,0x21);
+  WriteRegister(cnt_ctrl_adr,0x21);//reset all counter
   WriteRegister(cnt_ctrl_adr,0x20);
   //
   return;
@@ -3694,19 +4327,50 @@ void TMB::DecodeTMBRawHitWord_(int address) {
     } else if (address == 9) {
         h9_r_pretrig_counter_lsbs_ = ExtractValueFromData(data , h9_r_pretrig_counter_lsbs_lo_bit , h9_r_pretrig_counter_lsbs_hi_bit);
     } else if (address == 10) {
-        h10_r_pretrig_counter_msbs_ = ExtractValueFromData(data , h10_r_pretrig_counter_msbs_lo_bit , h10_r_pretrig_counter_msbs_hi_bit);
+	h10_r_pretrig_counter_msbs_ = ExtractValueFromData(data , h10_r_pretrig_counter_msbs_lo_bit , h10_r_pretrig_counter_msbs_hi_bit);
+        //run3 DAQ format
+	h10_clct0_cc_        = ExtractValueFromData(data , h10_clct0_cc_lo_bit         , h10_clct0_cc_hi_bit);
+	h10_run3_trig_df_    = ExtractValueFromData(data , h10_run3_trig_df_lo_bit     , h10_run3_trig_df_hi_bit);
+	h10_clct0_key_bit10_ = ExtractValueFromData(data , h10_clct0_key_bit10_lo_bit  , h10_clct0_key_bit10_hi_bit);
+	h10_hmt_bit0_        = ExtractValueFromData(data , h10_hmt_bit0_lo_bit         , h10_hmt_bit0_hi_bit);
     } else if (address == 11) {
-        h11_r_clct_counter_lsbs_ = ExtractValueFromData(data, h11_r_clct_counter_lsbs_lo_bit, h11_r_clct_counter_lsbs_hi_bit);
+          h11_r_clct_counter_lsbs_ = ExtractValueFromData(data, h11_r_clct_counter_lsbs_lo_bit, h11_r_clct_counter_lsbs_hi_bit);
     } else if (address == 12) {
         h12_r_clct_counter_msbs_ = ExtractValueFromData(data , h12_r_clct_counter_msbs_lo_bit , h12_r_clct_counter_msbs_hi_bit);
+        //run3 DAQ format
+	h12_lct0_nogem_      = ExtractValueFromData(data , h12_lct0_nogem_lo_bit      , h12_lct0_nogem_hi_bit);
+	h12_lct0_with_gemA_  = ExtractValueFromData(data , h12_lct0_with_gemA_lo_bit  , h12_lct0_with_gemA_hi_bit);
+	h12_lct0_with_gemB_  = ExtractValueFromData(data , h12_lct0_with_gemB_lo_bit  , h12_lct0_with_gemB_hi_bit);
+	h12_lct0_with_copad_ = ExtractValueFromData(data , h12_lct0_with_copad_lo_bit , h12_lct0_with_copad_hi_bit);
+	h12_lct1_nogem_      = ExtractValueFromData(data , h12_lct1_nogem_lo_bit      , h12_lct1_nogem_hi_bit);
+	h12_lct1_with_gemA_  = ExtractValueFromData(data , h12_lct1_with_gemA_lo_bit  , h12_lct1_with_gemA_hi_bit);
+	h12_lct1_with_gemB_  = ExtractValueFromData(data , h12_lct1_with_gemB_lo_bit  , h12_lct1_with_gemB_hi_bit);
+	h12_lct1_with_copad_ = ExtractValueFromData(data , h12_lct1_with_copad_lo_bit , h12_lct1_with_copad_hi_bit);
+	h12_gemA_vpf_        = ExtractValueFromData(data , h12_gemA_vpf_lo_bit        , h12_gemA_vpf_hi_bit);
+	h12_gemA_overflow_   = ExtractValueFromData(data , h12_gemA_overflow_lo_bit   , h12_gemA_overflow_hi_bit);
+	h12_gemA_sync_       = ExtractValueFromData(data , h12_gemA_sync_lo_bit       , h12_gemA_sync_hi_bit);
+	h12_gemB_vpf_        = ExtractValueFromData(data , h12_gemB_vpf_lo_bit        , h12_gemB_vpf_hi_bit);
+	h12_gemB_overflow_   = ExtractValueFromData(data , h12_gemB_overflow_lo_bit   , h12_gemB_overflow_hi_bit);
+	h12_gemB_sync_       = ExtractValueFromData(data , h12_gemB_sync_lo_bit       , h12_gemB_sync_hi_bit);
+	h12_gems_sync_       = ExtractValueFromData(data , h12_gems_sync_lo_bit       , h12_gems_sync_hi_bit);
     } else if (address == 13) {
         h13_r_trig_counter_lsbs_ = ExtractValueFromData(data, h13_r_trig_counter_lsbs_lo_bit, h13_r_trig_counter_lsbs_hi_bit);
     } else if (address == 14) {
         h14_r_trig_counter_msbs_ = ExtractValueFromData(data , h14_r_trig_counter_msbs_lo_bit , h14_r_trig_counter_msbs_hi_bit);
+        //run3 DAQ format
+	h14_clct1_cc_        = ExtractValueFromData(data , h14_clct1_cc_lo_bit         , h14_clct1_cc_hi_bit);
+	h14_gem_enable_      = ExtractValueFromData(data , h14_gem_enable_lo_bit       , h14_gem_enable_hi_bit);
+	h14_clct1_key_bit10_ = ExtractValueFromData(data , h14_clct1_key_bit10_lo_bit  , h14_clct1_key_bit10_hi_bit);
+	h14_hmt_bit1_        = ExtractValueFromData(data , h14_hmt_bit1_lo_bit         , h14_hmt_bit1_hi_bit);
     } else if (address == 15) {
         h15_r_alct_counter_lsbs_ = ExtractValueFromData(data, h15_r_alct_counter_lsbs_lo_bit, h15_r_alct_counter_lsbs_hi_bit);
     } else if (address == 16) {
         h16_r_alct_counter_msbs_ = ExtractValueFromData(data , h16_r_alct_counter_msbs_lo_bit , h16_r_alct_counter_msbs_hi_bit);
+        //run3 DAQ format
+	h16_num_copad_    = ExtractValueFromData(data , h16_num_copad_lo_bit    , h16_num_copad_hi_bit);
+	h16_gem_delay_    = ExtractValueFromData(data , h16_gem_delay_lo_bit    , h16_gem_delay_hi_bit);
+	h16_gem_clct_win_ = ExtractValueFromData(data , h16_gem_clct_win_lo_bit , h16_gem_clct_win_hi_bit);
+	h16_alct_gem_win_ = ExtractValueFromData(data , h16_alct_gem_win_lo_bit , h16_alct_gem_win_hi_bit);
     } else if (address == 17) {
         h17_r_orbit_counter_lsbs_ = ExtractValueFromData(data, h17_r_orbit_counter_lsbs_lo_bit, h17_r_orbit_counter_lsbs_hi_bit);
     } else if (address == 18) {
@@ -3731,6 +4395,10 @@ void TMB::DecodeTMBRawHitWord_(int address) {
     } else if (address == 22) {
         h22_r_trig_source_vec_lsbs_ = ExtractValueFromData(data , h22_r_trig_source_vec_lsbs_lo_bit , h22_r_trig_source_vec_lsbs_hi_bit);
         h22_r_layers_hit_           = ExtractValueFromData(data , h22_r_layers_hit_lo_bit           , h22_r_layers_hit_hi_bit);
+        //run3 DAQ format
+	h22_clct0_bnd_value_ = ExtractValueFromData(data , h22_clct0_bnd_value_lo_bit , h22_clct0_bnd_value_hi_bit);
+	h22_clct0_bnd_lr_    = ExtractValueFromData(data , h22_clct0_bnd_lr_lo_bit    , h22_clct0_bnd_lr_hi_bit);
+	h22_clct1_bnd_lr_    = ExtractValueFromData(data , h22_clct1_bnd_lr_lo_bit    , h22_clct1_bnd_lr_hi_bit);
     } else if (address == 23) {
         h23_active_feb_mux_lsbs_ = ExtractValueFromData(data , h23_active_feb_mux_lsbs_lo_bit , h23_active_feb_mux_lsbs_hi_bit);
         h23_r_cfebs_read_lsbs_   = ExtractValueFromData(data , h23_r_cfebs_read_lsbs_lo_bit   , h23_r_cfebs_read_lsbs_hi_bit);
@@ -3769,6 +4437,8 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         h28_r_alct0_amu_        = ExtractValueFromData(data , h28_r_alct0_amu_lo_bit        , h28_r_alct0_amu_hi_bit);
         h28_r_alct0_key_        = ExtractValueFromData(data , h28_r_alct0_key_lo_bit        , h28_r_alct0_key_hi_bit);
         h28_r_alct_preClct_win_ = ExtractValueFromData(data , h28_r_alct_preClct_win_lo_bit , h28_r_alct_preClct_win_hi_bit);
+        //run3 DAQ format
+	h28_clct1_bnd_value_    = ExtractValueFromData(data , h28_clct1_bnd_value_lo_bit    , h28_clct1_bnd_value_hi_bit);
     } else if (address == 29) {
         h29_r_alct1_valid_   = ExtractValueFromData(data , h29_r_alct1_valid_lo_bit   , h29_r_alct1_valid_hi_bit);
         h29_r_alct1_quality_ = ExtractValueFromData(data , h29_r_alct1_quality_lo_bit , h29_r_alct1_quality_hi_bit);
@@ -3784,6 +4454,8 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         h30_cfeb_badbits_blocked_    = ExtractValueFromData(data , h30_cfeb_badbits_blocked_lo_bit    , h30_cfeb_badbits_blocked_hi_bit);
         h30_alct_cfg_done_           = ExtractValueFromData(data , h30_alct_cfg_done_lo_bit           , h30_alct_cfg_done_hi_bit);
         h30_bx0_match_               = ExtractValueFromData(data , h30_bx0_match_lo_bit               , h30_bx0_match_hi_bit);
+        //run3 DAQ format
+	h30_hmt_bit6to2_             = ExtractValueFromData(data , h30_hmt_bit6to2_lo_bit , h30_hmt_bit6to2_hi_bit);
     } else if (address == 31) {
         h31_r_mpc0_frame0_ff_lsbs_ = ExtractValueFromData(data , h31_r_mpc0_frame0_ff_lsbs_lo_bit , h31_r_mpc0_frame0_ff_lsbs_hi_bit);
     } else if (address == 32) {
@@ -3806,6 +4478,7 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         h36_rpc_read_enable_   = ExtractValueFromData(data , h36_rpc_read_enable_lo_bit   , h36_rpc_read_enable_hi_bit);
         h36_fifo_tbins_rpc_    = ExtractValueFromData(data , h36_fifo_tbins_rpc_lo_bit    , h36_fifo_tbins_rpc_hi_bit);
         h36_fifo_pretrig_rpc_  = ExtractValueFromData(data , h36_fifo_pretrig_rpc_lo_bit  , h36_fifo_pretrig_rpc_hi_bit);
+        //run3 DAQ format
         h36_gem_zero_suppress_ = ExtractValueFromData(data , h36_gem_zero_suppress_lo_bit , h36_gem_zero_suppress_hi_bit);
         h36_gem_read_enable_   = ExtractValueFromData(data , h36_gem_read_enable_lo_bit   , h36_gem_read_enable_hi_bit);
         h36_fifo_tbins_gem_    = ExtractValueFromData(data , h36_fifo_tbins_gem_lo_bit    , h36_fifo_tbins_gem_hi_bit);
@@ -3837,6 +4510,8 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         h40_chamber_is_me11_         = ExtractValueFromData(data , h40_chamber_is_me11_lo_bit         , h40_chamber_is_me11_hi_bit);
         h40_r_trig_source_vec_msbs_  = ExtractValueFromData(data , h40_r_trig_source_vec_msbs_lo_bit  , h40_r_trig_source_vec_msbs_hi_bit);
         h40_r_tmb_trig_pulse_        = ExtractValueFromData(data , h40_r_tmb_trig_pulse_lo_bit        , h40_r_tmb_trig_pulse_hi_bit);
+        //run3 DAQ format
+	h40_gem_csc_bend_enable_     = ExtractValueFromData(data , h40_gem_csc_bend_enable_lo_bit , h40_gem_csc_bend_enable_hi_bit);
     } else if (address == 41) {
         h41_tmb_allow_alct_       =  ExtractValueFromData(data , h41_tmb_allow_alct_lo_bit      , h41_tmb_allow_alct_hi_bit);
         h41_tmb_allow_clct_       =  ExtractValueFromData(data , h41_tmb_allow_clct_lo_bit      , h41_tmb_allow_clct_hi_bit);
@@ -3870,9 +4545,9 @@ void TMB::GEMRawhits() {
         status |= (igem & 0x3) << 3;
         WriteRegister (gem_debug_fifo_ctrl_adr, status);
         (*MyOutput_) <<
-        "|-------+-----+-------+-------+-------+-------+----------------|"<<std::endl <<
-        "| Fiber |  BX | clst0 | clst1 | clst2 | clst3 |  data packet   |"<<std::endl <<
-        "|-------+-----+-------+-------+-------+-------+----------------|"<<std::endl;
+        "|-------+-----+--------+--------+--------+--------+----------------|"<<std::endl <<
+        "| Fiber |  BX | clst0  | clst1  | clst2  | clst3  |  data packet   |"<<std::endl <<
+        "|-------+-----+--------+--------+--------+--------+----------------|"<<std::endl;
     for (int ibx=0; ibx<16; ibx++) {
         status = (unsigned short) ReadRegister(gem_debug_fifo_ctrl_adr);
         status &= ~(0x7FF << 5);
@@ -3892,17 +4567,20 @@ void TMB::GEMRawhits() {
 
         data = 0x3FFF & ReadRegister(gem_debug_fifo_data_adr);
 
-        unsigned short cluster_adr = (data >> 0) & 0x7FF;
-        unsigned short cluster_cnt = (data >>11) & 0x7;
+        //old GEM data format: {size[2:0], adr[10:0]}
+        //current GEM data format: {size[2:0], roll[2:0], pad[7:0]}
+        unsigned short cluster_pad  = (data >> 0) & 0xFF;
+        unsigned short cluster_roll = (data >> 8) & 0x7;
+        unsigned short cluster_cnt  = (data >>11) & 0x7;
 
         packet = packet | (((uint64_t) data)<<(14*icluster));
 
-        (*MyOutput_) << std::hex << std::setfill('0') << std::setw(1) << (cluster_cnt) << ":" << std::setw(3) << cluster_adr << " | ";
+        (*MyOutput_) << std::hex << std::setfill('0') << std::setw(1) << (cluster_cnt) << ":" << std::setw(1) << cluster_roll << ":" << std::setw(2) << cluster_pad << " | ";
     } // cluster
     (*MyOutput_) << std::hex << std::setfill('0') << std::setw(14) << (packet) << " |";
     (*MyOutput_) << std::endl;
     } // bx
-    (*MyOutput_) << "|-------+-----+-------+-------+-------+-------+----------------|"<<std::endl;
+    (*MyOutput_) << "|-------+-----+--------+--------+--------+--------+----------------|"<<std::endl;
     (*MyOutput_) << std::endl;
     } // gem
 
@@ -3917,6 +4595,9 @@ void TMB::GEMRawhits() {
 }
 //
 void TMB::PrintTMBRawHits() {
+    bool run3_daq_enable_nogem   = read_run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ == tmb_firmware_version_OTMBCCLUT_const;
+    bool run3_daq_enable_withgem = read_run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ == tmb_firmware_version_OTMBGEMCSC_const;
+
   //
   (*MyOutput_) << "Header 0:" << std::endl;
   (*MyOutput_) << " -> Beginning of Cathode record marker                      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h0_beginning_of_cathode_<<std::endl;
@@ -3961,25 +4642,60 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> CLCT pre-trigger counter, stop on ovf                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h9_r_pretrig_counter_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 10:" <<std::endl;
-  (*MyOutput_) << " -> CLCT pre-trigger counter                                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_r_pretrig_counter_msbs_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> CLCT0 comparator code                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_clct0_cc_<<std::endl;
+    (*MyOutput_) << " -> run3_trig_df                                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_run3_trig_df_<<std::endl;
+    (*MyOutput_) << " -> CLCT0 strip position 1/4 and 1/8 bits                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_clct0_key_bit10_<<std::endl;
+    (*MyOutput_) << " -> HMT in-time hits counter,bit0                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_hmt_bit0_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> CLCT pre-trigger counter                                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_r_pretrig_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 11:" <<std::endl;
   (*MyOutput_) << " -> CLCT post-drift counter, stop on ovf                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h11_r_clct_counter_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 12:" <<std::endl;
-  (*MyOutput_) << " -> CLCT post-drift counter                                 = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_r_clct_counter_msbs_<<std::endl;
+  if (run3_daq_enable_withgem){
+    (*MyOutput_) << " -> LCT0 without gem match                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct0_nogem_<<std::endl;
+    (*MyOutput_) << " -> LCT0 with gemA match                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct0_with_gemA_<<std::endl;
+    (*MyOutput_) << " -> LCT0 with gemB match                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct0_with_gemB_<<std::endl;
+    (*MyOutput_) << " -> LCT0 with copad match                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct0_with_copad_<<std::endl;
+    (*MyOutput_) << " -> LCT1 without gem match                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct1_nogem_<<std::endl;
+    (*MyOutput_) << " -> LCT1 with gemA match                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct1_with_gemA_<<std::endl;
+    (*MyOutput_) << " -> LCT1 with gemB match                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct1_with_gemB_<<std::endl;
+    (*MyOutput_) << " -> LCT1 with copad match                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_lct1_with_copad_<<std::endl;
+    (*MyOutput_) << " -> gemA has valid cluster                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemA_vpf_<<std::endl;
+    (*MyOutput_) << " -> gemB overflow                                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemB_overflow_<<std::endl;
+    (*MyOutput_) << " -> gemA overflow                                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemA_overflow_<<std::endl;
+    (*MyOutput_) << " -> gemB has valid cluster                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemB_vpf_<<std::endl;
+    (*MyOutput_) << " -> gemA two fibers synced                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemA_sync_<<std::endl;
+    (*MyOutput_) << " -> gemB two fibers synced                                  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gemB_sync_<<std::endl;
+    (*MyOutput_) << " -> gemA and gemB  synced                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_gems_sync_<<std::endl;
+  } else
+    (*MyOutput_) << " -> CLCT post-drift counter                                 = 0x" << std::hex << std::setfill('0') << std::setw(4) << h12_r_clct_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 13:" <<std::endl;
   (*MyOutput_) << " -> TMB trigger counter, stop on ovf                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h13_r_trig_counter_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 14:" <<std::endl;
-  (*MyOutput_) << " -> TMB trigger counter                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_r_trig_counter_msbs_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> CLCT1 comparator code                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_clct1_cc_<<std::endl;
+    (*MyOutput_) << " -> gem enable for gemcsc match                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_gem_enable_<<std::endl;
+    (*MyOutput_) << " -> CLCT1 strip position 1/4 and 1/8 bits                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_clct1_key_bit10_<<std::endl;
+    (*MyOutput_) << " -> HMT in-time hits counter,bit1                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_hmt_bit1_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> TMB trigger counter                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_r_trig_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 15:" <<std::endl;
   (*MyOutput_) << " -> Counts ALCTs received from ALCT board, stop on ovf      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h15_r_alct_counter_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 16:" <<std::endl;
-  (*MyOutput_) << " -> Counts ALCTs received from ALCT board, stop on ovf      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_r_alct_counter_msbs_<<std::endl;
+  if (run3_daq_enable_withgem){
+    (*MyOutput_) << " -> number of copads                                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_num_copad_<<std::endl;
+    (*MyOutput_) << " -> gem delay for gem-alct match                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_gem_delay_<<std::endl;
+    (*MyOutput_) << " -> gem location in clct match window                       = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_gem_clct_win_<<std::endl;
+    (*MyOutput_) << " -> alct location in gem match window                       = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_alct_gem_win_<<std::endl;
+  } else
+     (*MyOutput_) << " -> Counts ALCTs received from ALCT board, stop on ovf      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h16_r_alct_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 17:" <<std::endl;
   (*MyOutput_) << " -> BX0s since last hard reset, stop on ovf                 = 0x" << std::hex << std::setfill('0') << std::setw(4) << h17_r_orbit_counter_lsbs_<<std::endl;
@@ -4009,7 +4725,12 @@ void TMB::PrintTMBRawHits() {
 
   (*MyOutput_) << "Header 22:" <<std::endl;
   (*MyOutput_) << " -> Trigger source vector                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_r_trig_source_vec_lsbs_<<std::endl;
-  (*MyOutput_) << " -> CSC layers hit on layer trigger after drift             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_r_layers_hit_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> CLCT0 bend absolute value                               = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_clct0_bnd_value_<<std::endl;
+    (*MyOutput_) << " -> CLCT0 bend direction,CCLUT                              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_clct0_bnd_lr_<<std::endl;
+    (*MyOutput_) << " -> CLCT1 bend direction,CCLUT                              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_clct1_bnd_lr_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> CSC layers hit on layer trigger after drift             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_r_layers_hit_<<std::endl;
 
   (*MyOutput_) << "Header 23:" <<std::endl;
   (*MyOutput_) << " -> Active CFEB list sent to DMB                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h23_active_feb_mux_lsbs_<<std::endl;
@@ -4053,7 +4774,10 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> ALCT0 quality                                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct0_quality_<<std::endl;
   (*MyOutput_) << " -> ALCT0 accelerator muon flag                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct0_amu_<<std::endl;
   (*MyOutput_) << " -> ALCT0 key wire group                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct0_key_<<std::endl;
-  (*MyOutput_) << " -> ALCT active_feb_flag position in pretrig window         = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct_preClct_win_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> CLCT1 bend absolute value, CCLUT                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_clct1_bnd_value_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> ALCT active_feb_flag position in pretrig window         = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct_preClct_win_<<std::endl;
 
   (*MyOutput_) << "Header 29:" <<std::endl;
   (*MyOutput_) << " -> ALCT1 valid pattern flag                                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h29_r_alct1_valid_<<std::endl;
@@ -4065,7 +4789,10 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> Layer-mode trigger                                      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h29_hs_layer_trig_<<std::endl;
 
   (*MyOutput_) << "Header 30:" <<std::endl;
-  (*MyOutput_) << " -> ALCT0/1 bxn                                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_r_alct_bxn_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> HMT in-time hits counter[6:2]                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_hmt_bit6to2_<<std::endl;
+  }else 
+    (*MyOutput_) << " -> ALCT0/1 bxn                                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_r_alct_bxn_<<std::endl;
   (*MyOutput_) << " -> ALCT trigger path ECC error code                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_r_alct_ecc_err_<<std::endl;
   (*MyOutput_) << " -> CFEB[n] has at least 1 bad bit                          = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_cfeb_badbits_found_lsbs_<<std::endl;
   (*MyOutput_) << " -> A CFEB had bad bits that were blocked                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_cfeb_badbits_blocked_<<std::endl;
@@ -4094,20 +4821,18 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> CFEBs enabled for triggering                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h35_cfeb_en_lsbs_<<std::endl;
 
   (*MyOutput_) << "Header 36:" <<std::endl;
-  if (!GetGemEnabled())
+  if (run3_daq_enable_withgem){
+  (*MyOutput_) << " -> GEM zero-suppression enabled                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_gem_zero_suppress_<<std::endl;
+  (*MyOutput_) << " -> GEM readout enabled                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_gem_read_enable_<<std::endl;
+  (*MyOutput_) << " -> Number GEM FIFO time bins to read out                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_tbins_gem_<<std::endl;
+  (*MyOutput_) << " -> Number GEM FIFO time bins before pretrigger             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_pretrig_gem_<<std::endl;
+  } else
   {
   (*MyOutput_) << " -> RPCs included in read out                               = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_rd_list_rpc_<<std::endl;
   (*MyOutput_) << " -> Number of RPCs in readout, 0,1,2, 0 if head-only event  = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_r_nrpcs_read_<<std::endl;
   (*MyOutput_) << " -> RPC readout enabled                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_rpc_read_enable_<<std::endl;
   (*MyOutput_) << " -> Number RPC FIFO time bins to read out                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_tbins_rpc_<<std::endl;
   (*MyOutput_) << " -> Number RPC FIFO time bins before pretrigger             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_pretrig_rpc_<<std::endl;
-  }
-  else
-  {
-  (*MyOutput_) << " -> GEM zero-suppression enabled                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_gem_zero_suppress_<<std::endl;
-  (*MyOutput_) << " -> GEM readout enabled                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_gem_read_enable_<<std::endl;
-  (*MyOutput_) << " -> Number GEM FIFO time bins to read out                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_tbins_gem_<<std::endl;
-  (*MyOutput_) << " -> Number GEM FIFO time bins before pretrigger             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h36_fifo_pretrig_gem_<<std::endl;
   }
 
   (*MyOutput_) << "Header 37:" <<std::endl;
@@ -4137,7 +4862,10 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> Hdr30 CFEB[n] has at least 1 bad bit                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_cfeb_badbits_found_msbs_<<std::endl;
   (*MyOutput_) << " -> Hdr35 CFEBs enabled for triggering                      = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_cfeb_en_msbs_<<std::endl;
   (*MyOutput_) << " -> Current fence is peak number of fences in RAM           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_buf_fence_cnt_is_peak_<<std::endl;
-  (*MyOutput_) << " -> chamber_is_me11                                         = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_chamber_is_me11_<<std::endl;
+  if (run3_daq_enable_withgem){
+    (*MyOutput_) << " -> enable gem-csc bend for LCT bend                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_gem_csc_bend_enable_<<std::endl;
+  } else
+    (*MyOutput_) << " -> chamber_is_me11                                         = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_chamber_is_me11_<<std::endl;
   (*MyOutput_) << " -> Pre-trigger was ME1A/ME1B                               = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_r_trig_source_vec_msbs_<<std::endl;
   (*MyOutput_) << " -> TMB trig pulse coincident with rtmb_push                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_r_tmb_trig_pulse_<<std::endl;
 
@@ -5476,22 +6204,57 @@ void TMB::ReadComparatorBadBits(){
   //
   return;
 }
+
+//
+void TMB::ReadGEMHotChannelMask(){
+   ReadRegister(gem_vfat_hcm0_adr);
+   ReadRegister(gem_vfat_hcm1_adr);
+   ReadRegister(gem_vfat_hcm2_adr);
+}
 //
 void TMB::ReadDcfebGtxRxRegisters(){
   static const unsigned long int raddrs[TMB_MAX_DCFEB_FIBERS] = {
     dcfeb_gtx_rx0_adr, dcfeb_gtx_rx1_adr, dcfeb_gtx_rx2_adr, dcfeb_gtx_rx3_adr,
     dcfeb_gtx_rx4_adr, dcfeb_gtx_rx5_adr, dcfeb_gtx_rx6_adr
   };
+  static const unsigned long int notintable_adrs[TMB_MAX_DCFEB_FIBERS]   = {
+    dcfeb_gtx0_notintable_adr,
+    dcfeb_gtx1_notintable_adr,
+    dcfeb_gtx2_notintable_adr,
+    dcfeb_gtx3_notintable_adr,
+    dcfeb_gtx4_notintable_adr,
+    dcfeb_gtx5_notintable_adr,
+    dcfeb_gtx6_notintable_adr
+  };
+
+  static const unsigned long int disperr_adrs[TMB_MAX_DCFEB_FIBERS]     = {
+    dcfeb_gtx0_disperr_adr,
+    dcfeb_gtx1_disperr_adr,
+    dcfeb_gtx2_disperr_adr,
+    dcfeb_gtx3_disperr_adr,
+    dcfeb_gtx4_disperr_adr,
+    dcfeb_gtx5_disperr_adr,
+    dcfeb_gtx6_disperr_adr
+  };
   for (unsigned int ia = 0; ia < TMB_MAX_DCFEB_FIBERS; ++ia) {
     ReadRegister(raddrs[ia]);
+    ReadRegister(notintable_adrs[ia]);
+    ReadRegister(disperr_adrs[ia]);
   }
 }
 //
 void TMB::ReadGemGtxRxRegisters(){
   static const unsigned long int raddrs[MAX_GEM_FIBERS_ME11] 
     = {gem_gtx_rx0_adr, gem_gtx_rx1_adr, gem_gtx_rx2_adr, gem_gtx_rx3_adr};
+  static const unsigned long int notintable_adrs[MAX_GEM_FIBERS_ME11] 
+    = {gem_gtx0_notintable_adr, gem_gtx1_notintable_adr, gem_gtx2_notintable_adr, gem_gtx3_notintable_adr};
+  static const unsigned long int disperr_adrs[MAX_GEM_FIBERS_ME11] 
+    = {gem_gtx0_disperr_adr, gem_gtx1_disperr_adr, gem_gtx2_disperr_adr, gem_gtx3_disperr_adr};
+
   for (int ia = 0; ia < GetNGemEnabledLinks(); ++ia){
     ReadRegister(raddrs[ia]);
+    ReadRegister(notintable_adrs[ia]);
+    ReadRegister(disperr_adrs[ia]);
   }
 }
 ////////////////////////////////////////////////////////
@@ -6111,6 +6874,22 @@ void TMB::DumpAllRegisters() {
 		 << ( (register_value   >> 4) & 0xf )
 		 << ( (register_value   >> 0) & 0xf ) << std::endl;
   }
+  if(GetGemEnabled()) {
+	  (*MyOutput_) << "TMB register dump (GEM section):" << std::endl;
+	  for (int register_address=OTMB_GEM_VME_STARTADDRESS; register_address <= OTMB_GEM_VME_ENDADDRESS; register_address+=2) {
+	    //
+	    int register_value = ReadRegister(register_address);
+	    (*MyOutput_) << " " << std::hex  
+			 << ( (register_address >> 8) & 0xf ) 
+			 << ( (register_address >> 4) & 0xf ) 
+			 << ( (register_address >> 0) & 0xf ) 
+			 << "   " << std::hex
+			 << ( (register_value   >>12) & 0xf )
+			 << ( (register_value   >> 8) & 0xf )
+			 << ( (register_value   >> 4) & 0xf )
+			 << ( (register_value   >> 0) & 0xf ) << std::endl;
+          }
+  }
   //
   return;
 }
@@ -6231,6 +7010,15 @@ void TMB::DefineTMBConfigurationRegisters_(){
   TMBConfigurationRegister.push_back(tmbtim_adr  );   //0xB2 ALCT*CLCT trigger coincidence timing, MPC tx delay 
   if (hardware_version_>=2){
     TMBConfigurationRegister.push_back(algo2016_ctrl_adr); //0X198 = ADR_NEWALGO_CTRL:  Controls parameters of new trigger algorithm  (Yuriy, 2016)
+    TMBConfigurationRegister.push_back(run3_format_ctrl_adr); //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 data format
+    TMBConfigurationRegister.push_back(hmt_ctrl_adr); //0X1AC = ADR_HMT_CTRL:  Controls parameters of HMT
+    TMBConfigurationRegister.push_back(hmt_thresh1_adr); //0X1AE = ADR_HMT_THRESH1:  HMT thresh1
+    TMBConfigurationRegister.push_back(hmt_thresh2_adr); //0X1B0 = ADR_HMT_THRESH2:  HMT thresh2
+    TMBConfigurationRegister.push_back(hmt_thresh3_adr); //0X1B2 = ADR_HMT_THRESH3:  HMT thresh3
+    //TMBConfigurationRegister.push_back(hmt_nhits_sig_adr); //0X1B4 = ADR_HMT_NHITS_SIG
+    //TMBConfigurationRegister.push_back(hmt_nhits_bkg_adr); //0X1B6 = ADR_HMT_NHITS_BKG
+    //TMBConfigurationRegister.push_back(lct_injection_adr); //0X1B8  = ADR_LCT_INJECTION
+  
   }
   TMBConfigurationRegister.push_back(tmb_trig_adr);   //0x86 TMB trigger configuration/MPC accept, delays
   //
@@ -6321,7 +7109,17 @@ void TMB::DefineTMBConfigurationRegisters_(){
   TMBConfigurationRegister.push_back(gem_tbins_adr) ;       // 0x310 GEM Readout Address
   TMBConfigurationRegister.push_back(gem_cfg_adr) ;         // 0x312 GEM Config Address
   TMBConfigurationRegister.push_back(phaser_gemA_rxd_adr) ; // 0x308 GEM Config Address
-  TMBConfigurationRegister.push_back(phaser_gemB_rxd_adr) ; // 0x30A GEM Config Address
+  if (HasGroupedGemRxValues() == 0) 
+	  TMBConfigurationRegister.push_back(phaser_gemB_rxd_adr) ; // 0x30A GEM Config Address
+  TMBConfigurationRegister.push_back(gem_csc_match_window_adr) ; // 0x318 GEM-CSC match window(position) Address
+  TMBConfigurationRegister.push_back(gem_copad_ctrl_adr) ; // 0x324 GEM copad control Address
+  TMBConfigurationRegister.push_back(gem_bx0_delay_adr) ; // 0x326 GEM bx0 delay Address
+  TMBConfigurationRegister.push_back(gemA_trg_ctrl_adr); // 0x328 GEMA trigger for match control
+  TMBConfigurationRegister.push_back(gemB_trg_ctrl_adr); // 0x32a GEMB trigger for match control
+  TMBConfigurationRegister.push_back(gem_csc_match_ctrl_adr); // 0x32c GEM-CSC match control
+  TMBConfigurationRegister.push_back(gem_vfat_hcm0_adr); // 0x33a GEM VFAT hot channel mask 0
+  TMBConfigurationRegister.push_back(gem_vfat_hcm1_adr); // 0x33c GEM VFAT hot channel mask 1
+  TMBConfigurationRegister.push_back(gem_vfat_hcm2_adr); // 0x33e GEM VFAT hot channel mask 2
   }
 
   return;
@@ -6459,6 +7257,7 @@ void TMB::SetTMBRegisterDefaults() {
   for (int layer=0; layer<MAX_NUM_LAYERS; layer++)
     for (int distrip=0; distrip<MAX_NUM_DISTRIPS_PER_LAYER_EXT; distrip++)
       hot_channel_mask_[layer][distrip] = hot_channel_mask_default;
+
   //
   //
   //------------------------------------------------------------------
@@ -6877,6 +7676,37 @@ void TMB::SetTMBRegisterDefaults() {
   cross_bx_algorithm_         = cross_bx_algorithm_default        ;
   clct_use_corrected_bx_      = clct_use_corrected_bx_default     ;
   //
+  //------------------------------------------------------------------
+  //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 format control  (Tao, 2020)
+  //------------------------------------------------------------------
+  run3_trig_dataformat_enable_   = run3_trig_dataformat_enable_default;
+  run3_daq_dataformat_enable_    = run3_daq_dataformat_enable_default;
+  //
+  //------------------------------------------------------------------
+  //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
+  //------------------------------------------------------------------
+  hmt_enable_            = hmt_enable_default;
+  hmt_me1a_enable_       = hmt_me1a_enable_default;
+  //
+  //------------------------------------------------------------------
+  //0X1AE = ADR_HMT_THRESH1:  HMT loose threshold  (Tao, 2020)
+  //0X1B0 = ADR_HMT_THRESH2:  HMT median threshold  (Tao, 2020)
+  //0X1B2 = ADR_HMT_THRESH3:  HMT tight threshold  (Tao, 2020)
+  //------------------------------------------------------------------
+  hmt_thresh1_            = hmt_thresh1_default;
+  hmt_thresh2_            = hmt_thresh2_default;
+  hmt_thresh3_            = hmt_thresh3_default;
+  cfeb_allow_hmt_ro_      = cfeb_allow_hmt_ro_default;
+  tmb_allow_hmt_          = tmb_allow_hmt_default;
+  tmb_allow_hmt_ro_       = tmb_allow_hmt_ro_default;
+
+  ////-----------------------------------------------------------------------------
+  ////ADR_LCT_INJECTION = 0x1B8
+  ////-----------------------------------------------------------------------------
+  //lct_inj_hs_             = lct_inj_hs_default;
+  //lct_inj_wg_             = lct_inj_wg_default;
+  //lct_inj_enable_         = lct_inj_enable_default;
+  ////
   //-----------------------------------------------------------------------------
   // 0X300 - 0X306 = ADR_GEM_GTX_RX[0-3]: GTX link control and monitoring for GEM
   //-----------------------------------------------------------------------------
@@ -6905,6 +7735,115 @@ void TMB::SetTMBRegisterDefaults() {
   decouple_gem_rxd_int_delay_ = decouple_gem_rxd_int_delay_default;
   gem_readout_mask_           = gem_readout_mask_default;
 
+  //-----------------------------------------------------------------------------
+  // 0X318 ADR_GEM_CSC_MATCH_WINDOW
+  //-----------------------------------------------------------------------------
+   
+  gem_clct_deltahs_odd_       =  gem_clct_deltahs_odd_default;
+  gem_clct_deltahs_even_      =  gem_clct_deltahs_even_default;
+  gem_alct_deltawire_odd_     =  gem_alct_deltawire_odd_default;
+  gem_alct_deltawire_even_    =  gem_alct_deltawire_even_default;
+
+  ////-----------------------------------------------------------------------------
+  //// 0X320 ADR_GEM_INJ_CTRL
+  ////-----------------------------------------------------------------------------
+  // 
+  //gem_inj_wen_       =  gem_inj_wen_default;
+  //gem_inj_sel_       =  gem_inj_sel_default;
+  //gem_inj_igem_      =  gem_inj_igem_default;
+  //gem_inj_adr_       =  gem_inj_adr_default;
+  //gem_inj_mask_      =  gem_inj_mask_default;
+
+  ////-----------------------------------------------------------------------------
+  //// 0X322 ADR_GEM_INJ_DATA
+  ////-----------------------------------------------------------------------------
+  // 
+  //gem_inj_data_      =  gem_inj_data_default;
+
+  //-----------------------------------------------------------------------------
+  // 0X324 ADR_GEM_COPAD_CTRL
+  //-----------------------------------------------------------------------------
+   
+  gem_match_neighborRoll_      =  gem_match_neighborRoll_default;
+  gem_match_neighborPad_       =  gem_match_neighborPad_default;
+  gem_match_deltaPad_          =  gem_match_deltaPad_default;
+
+  //-----------------------------------------------------------------------------
+  // 0X326 ADR_GEM_BX0_DELAY
+  //-----------------------------------------------------------------------------
+  gemA_bx0_delay_             = gemA_bx0_delay_default;
+  gemA_bx0_enable_            = gemA_bx0_enable_default;
+  gemA_bx0_match_             = gemA_bx0_match_default;
+  gemB_bx0_delay_             = gemB_bx0_delay_default;
+  gemB_bx0_enable_            = gemB_bx0_enable_default;
+  gemB_bx0_match_             = gemB_bx0_match_default;
+   
+  //-----------------------------------------------------------------------------
+  // 0X328 ADR_GEMA_TRG_CTRL
+  //-----------------------------------------------------------------------------
+  match_gem_alct_window_      = match_gem_alct_window_default;
+  match_gem_clct_window_      = match_gem_clct_window_default;
+  gemA_alct_match_            = gemA_alct_match_default;
+  gemA_clct_match_            = gemA_clct_match_default;
+  gemA_fiber_enable_          = gemA_fiber_enable_default;
+
+  //-----------------------------------------------------------------------------
+  // 0X32a ADR_GEMB_TRG_CTRL
+  //-----------------------------------------------------------------------------
+  match_gem_alct_delay_       = match_gem_alct_delay_default;
+  //match_gemB_alct_window_     = match_gemB_alct_window_default;
+  //match_gemB_clct_window_     = match_gemB_clct_window_default;
+  gemB_alct_match_            = gemB_alct_match_default;
+  gemB_clct_match_            = gemB_clct_match_default;
+  gemB_fiber_enable_          = gemB_fiber_enable_default;
+
+  //-----------------------------------------------------------------------------
+  // 0X32c ADR_GEM_CSC_MATCH_CTRL
+  //-----------------------------------------------------------------------------
+  gem_me1a_match_enable_      = gem_me1a_match_enable_default;
+  gem_me1b_match_enable_      = gem_me1b_match_enable_default;
+  gem_me1a_match_nogem_       = gem_me1a_match_nogem_default;
+  gem_me1b_match_nogem_       = gem_me1b_match_nogem_default;
+  gem_me1a_match_noalct_      = gem_me1a_match_noalct_default;
+  match_drop_lowqalct_        = match_drop_lowqalct_default;
+  me1a_match_drop_lowqclct_   = me1a_match_drop_lowqclct_default;
+  me1b_match_drop_lowqclct_   = me1b_match_drop_lowqclct_default;
+  //gem_me1a_match_promotequ= gem_me1a_match_promotequal_default;
+  //gem_me1b_match_promotequal_ = gem_me1b_match_promotequal_default;
+  //gem_me1a_match_promotepat_ = gem_me1a_match_promotepat_default;
+  //gem_me1b_match_promotepat_ = gem_me1b_match_promotepat_default;
+  tmb_copad_alct_allow_       = tmb_copad_alct_allow_default;
+  tmb_copad_clct_allow_       = tmb_copad_clct_allow_default;
+  gemA_match_ignore_position_ = gemA_match_ignore_position_default;
+  gemB_match_ignore_position_ = gemB_match_ignore_position_default;
+  gemcsc_bend_enable_         = gemcsc_bend_enable_default;
+  gemcsc_ignore_bend_check_   = gemcsc_ignore_bend_check_default;
+
+
+  //-----------------------------------------------------------------------------
+  // 0X32e ADR_GEM_CSC_MATCH_CLUSTER0
+  // 0X330 ADR_GEM_CSC_MATCH_CLUSTER1
+  //-----------------------------------------------------------------------------
+  gem_csc_match_cluster0_iclst_ = gem_csc_match_cluster0_iclst_default;
+  gem_csc_match_cluster0_roll_  = gem_csc_match_cluster0_roll_default;
+  gem_csc_match_cluster0_cscxky_= gem_csc_match_cluster0_cscxky_default;
+  gem_csc_match_cluster0_pad_   = gem_csc_match_cluster0_pad_default;
+  gem_csc_match_cluster0_angle_ = gem_csc_match_cluster0_angle_default;
+  gem_csc_match_cluster0_bend_  = gem_csc_match_cluster0_bend_default;
+  gem_csc_match_cluster1_iclst_ = gem_csc_match_cluster1_iclst_default;
+  gem_csc_match_cluster1_roll_  = gem_csc_match_cluster1_roll_default;
+  gem_csc_match_cluster1_cscxky_= gem_csc_match_cluster1_cscxky_default;
+  gem_csc_match_cluster1_pad_   = gem_csc_match_cluster1_pad_default;
+  gem_csc_match_cluster1_angle_ = gem_csc_match_cluster1_angle_default;
+  gem_csc_match_cluster1_bend_  = gem_csc_match_cluster1_bend_default;
+
+    //---------------------------------------------------------------------
+    // 0X33a,0x33c,0x33e for GEM hot vfat mask
+    //---------------------------------------------------------------------
+  for (int ivfat=0; ivfat<MAX_GEM_VFATS_PER_LAYER; ivfat++){
+     gemA_hot_channel_mask_[ivfat] = hot_channel_mask_default;
+     gemB_hot_channel_mask_[ivfat] = hot_channel_mask_default;
+  }
   //defaults are pulled from the main parameter fields
   return;
 }
@@ -7297,7 +8236,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc_idle_blank_      = ExtractValueFromData(data,mpc_idle_blank_bitlo     ,mpc_idle_blank_bithi     );
     read_mpc_output_enable_   = ExtractValueFromData(data,mpc_output_enable_bitlo  ,mpc_output_enable_bithi  );
     //
-  } else if ( address == mpc0_frame0_adr ) {
+  } else if ( address == mpc0_frame0_adr && !read_run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X88 = ADR_MPC0_FRAME0:  MPC0 Frame0 Data Sent to MPC
     //------------------------------------------------------------------
@@ -7306,7 +8245,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc0_frame0_lct_first_quality_ = ExtractValueFromData(data,mpc0_frame0_lct_first_quality_bitlo, mpc0_frame0_lct_first_quality_bithi);
     read_mpc0_frame0_first_vpf_         = ExtractValueFromData(data,mpc0_frame0_first_vpf_bitlo,         mpc0_frame0_first_vpf_bithi);
     //
-  } else if ( address == mpc0_frame1_adr ) {
+  } else if ( address == mpc0_frame1_adr && !read_run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X8A = ADR_MPC0_FRAME1:  MPC0 Frame1 Data Sent to MPC
     //------------------------------------------------------------------
@@ -7317,7 +8256,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc0_frame1_clct_first_bx0_local_ = ExtractValueFromData(data,mpc0_frame1_clct_first_bx0_local_bitlo, mpc0_frame1_clct_first_bx0_local_bithi);
     read_mpc0_frame1_csc_id_               = ExtractValueFromData(data,mpc0_frame1_csc_id_bitlo,               mpc0_frame1_csc_id_bithi);
     //
-  } else if ( address == mpc1_frame0_adr ) {
+  } else if ( address == mpc1_frame0_adr && !read_run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X8C = ADR_MPC1_FRAME0:  MPC1 Frame0 Data Sent to MPC
     //------------------------------------------------------------------
@@ -7326,7 +8265,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc1_frame0_lct_second_quality_ = ExtractValueFromData(data,mpc1_frame0_lct_second_quality_bitlo, mpc1_frame0_lct_second_quality_bithi);
     read_mpc1_frame0_second_vpf_         = ExtractValueFromData(data,mpc1_frame0_second_vpf_bitlo,         mpc1_frame0_second_vpf_bithi);
     //
-  } else if ( address == mpc1_frame1_adr ) {
+  } else if ( address == mpc1_frame1_adr && !read_run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X8E = ADR_MPC1_FRAME1:  MPC1 Frame1 Data Sent to MPC
     //------------------------------------------------------------------
@@ -7337,7 +8276,54 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc1_frame1_clct_second_bx0_local_ = ExtractValueFromData(data,mpc1_frame1_clct_second_bx0_local_bitlo, mpc1_frame1_clct_second_bx0_local_bithi);
     read_mpc1_frame1_csc_id_                = ExtractValueFromData(data,mpc1_frame1_csc_id_bitlo,                mpc1_frame1_csc_id_bithi);
     //
-  } else if ( address == mpc0_frame0_fifo_adr ) {
+  } else if ( address == mpc0_frame0_adr && read_run3_trig_dataformat_enable_) {
+    //------------------------------------------------------------------
+    //0X88 = ADR_MPC0_FRAME0:  MPC0 Frame0 Data Sent to MPC
+    //------------------------------------------------------------------
+    read_mpc0_run3frame0_alct_first_key_    = ExtractValueFromData(data,mpc0_run3frame0_alct_first_key_bitlo,    mpc0_run3frame0_alct_first_key_bithi);
+    read_mpc0_run3frame0_lct_pidbit0to3_    = ExtractValueFromData(data,mpc0_run3frame0_lct_pidbit0to3_bitlo,    mpc0_run3frame0_lct_pidbit0to3_bithi);
+    read_mpc0_run3frame0_lct_first_quality_ = ExtractValueFromData(data,mpc0_run3frame0_lct_first_quality_bitlo, mpc0_run3frame0_lct_first_quality_bithi);
+    read_mpc0_run3frame0_clct_first_qxky_   = ExtractValueFromData(data,mpc0_run3frame0_clct_first_qxky_bitlo,   mpc0_run3frame0_clct_first_qxky_bithi);
+    read_mpc0_run3frame0_first_vpf_         = ExtractValueFromData(data,mpc0_run3frame0_first_vpf_bitlo,         mpc0_run3frame0_first_vpf_bithi);
+    //
+  } else if ( address == mpc0_frame1_adr && read_run3_trig_dataformat_enable_) {
+    //------------------------------------------------------------------
+    //0X8A = ADR_MPC0_FRAME1:  MPC0 Frame1 Data Sent to MPC
+    //------------------------------------------------------------------
+    read_mpc0_run3frame1_clct_first_key_       = ExtractValueFromData(data,mpc0_run3frame1_clct_first_key_bitlo,       mpc0_run3frame1_clct_first_key_bithi);
+    read_mpc0_run3frame1_clct_first_lr_        = ExtractValueFromData(data,mpc0_run3frame1_clct_first_lr_bitlo,        mpc0_run3frame1_clct_first_lr_bithi);
+    read_mpc0_run3frame1_clct_first_exky_      = ExtractValueFromData(data,mpc0_run3frame1_clct_first_exky_bitlo,      mpc0_run3frame1_clct_first_exky_bithi);
+    read_mpc0_run3frame1_alct_first_bxn_       = ExtractValueFromData(data,mpc0_run3frame1_alct_first_bxn_bitlo,       mpc0_run3frame1_alct_first_bxn_bithi);
+    read_mpc0_run3frame1_clct_first_bx0_local_ = ExtractValueFromData(data,mpc0_run3frame1_clct_first_bx0_local_bitlo, mpc0_run3frame1_clct_first_bx0_local_bithi);
+    read_mpc0_run3frame1_clct_first_bend_      = ExtractValueFromData(data,mpc0_run3frame1_clct_first_bend_bitlo,      mpc0_run3frame1_clct_first_bend_bithi);
+    //read_mpc0_run3frame1_hmtbit0_              = ExtractValueFromData(data,mpc0_run3frame1_hmtbit0_bitlo,              mpc0_run3frame1_hmtbit0_bithi);
+    //read_mpc0_run3frame1_csc_id_               = ExtractValueFromData(data,mpc0_run3frame1_csc_id_bitlo,               mpc0_run3frame1_csc_id_bithi);
+    //
+  } else if ( address == mpc1_frame0_adr && read_run3_trig_dataformat_enable_) {
+    //------------------------------------------------------------------
+    //0X8C = ADR_MPC1_FRAME0:  MPC1 Frame0 Data Sent to MPC
+    //------------------------------------------------------------------
+    read_mpc1_run3frame0_alct_second_key_    = ExtractValueFromData(data,mpc1_run3frame0_alct_second_key_bitlo,    mpc1_run3frame0_alct_second_key_bithi);
+    read_mpc1_run3frame0_lct_pidbit4_        = ExtractValueFromData(data,mpc1_run3frame0_lct_pidbit4_bitlo,        mpc1_run3frame0_lct_pidbit4_bithi);
+    read_mpc1_run3frame0_hmtbit1to3_         = ExtractValueFromData(data,mpc1_run3frame0_hmtbit1to3_bitlo,         mpc1_run3frame0_hmtbit1to3_bithi);
+    read_mpc1_run3frame0_lct_second_quality_ = ExtractValueFromData(data,mpc1_run3frame0_lct_second_quality_bitlo, mpc1_run3frame0_lct_second_quality_bithi);
+    read_mpc1_run3frame0_clct_second_qxky_   = ExtractValueFromData(data,mpc1_run3frame0_clct_second_qxky_bitlo,   mpc1_run3frame0_clct_second_qxky_bithi);
+    read_mpc1_run3frame0_second_vpf_         = ExtractValueFromData(data,mpc1_run3frame0_second_vpf_bitlo,         mpc1_run3frame0_second_vpf_bithi);
+    //
+  } else if ( address == mpc1_frame1_adr && read_run3_trig_dataformat_enable_) {
+    //------------------------------------------------------------------
+    //0X8E = ADR_MPC1_FRAME1:  MPC1 Frame1 Data Sent to MPC
+    //------------------------------------------------------------------
+    read_mpc1_run3frame1_clct_second_key_       = ExtractValueFromData(data,mpc1_run3frame1_clct_second_key_bitlo,       mpc1_run3frame1_clct_second_key_bithi);
+    read_mpc1_run3frame1_clct_second_lr_        = ExtractValueFromData(data,mpc1_run3frame1_clct_second_lr_bitlo,        mpc1_run3frame1_clct_second_lr_bithi);
+    read_mpc1_run3frame1_clct_second_exky_      = ExtractValueFromData(data,mpc1_run3frame1_clct_second_exky_bitlo,      mpc1_run3frame1_clct_second_exky_bithi);
+    read_mpc1_run3frame1_hmtbit0_               = ExtractValueFromData(data,mpc1_run3frame1_hmtbit0_bitlo,               mpc1_run3frame1_hmtbit0_bithi);
+    read_mpc1_run3frame1_clct_second_bx0_local_ = ExtractValueFromData(data,mpc1_run3frame1_clct_second_bx0_local_bitlo, mpc1_run3frame1_clct_second_bx0_local_bithi);
+    read_mpc1_run3frame1_clct_second_bend_      = ExtractValueFromData(data,mpc1_run3frame1_clct_second_bend_bitlo,      mpc1_run3frame1_clct_second_bend_bithi);
+    //read_mpc1_run3frame1_alct_second_bxn_       = ExtractValueFromData(data,mpc1_run3frame1_alct_second_bxn_bitlo,       mpc1_run3frame1_alct_second_bxn_bithi);
+    //read_mpc1_run3frame1_csc_id_                = ExtractValueFromData(data,mpc1_run3frame1_csc_id_bitlo,                mpc1_run3frame1_csc_id_bithi);
+    //
+  } else if ( address == mpc0_frame0_fifo_adr && !read_run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X17C = ADR_MPC0_FRAME0_FIFO:  MPC0 Frame0 Data Sent to MPC and Stored in FIFO
     //------------------------------------------------------------------
@@ -7346,7 +8332,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc0_frame0_fifo_lct_first_quality_ = ExtractValueFromData(data,mpc0_frame0_fifo_lct_first_quality_bitlo, mpc0_frame0_fifo_lct_first_quality_bithi);
     read_mpc0_frame0_fifo_first_vpf_         = ExtractValueFromData(data,mpc0_frame0_fifo_first_vpf_bitlo,         mpc0_frame0_fifo_first_vpf_bithi);
     //
-  } else if ( address == mpc0_frame1_fifo_adr ) {
+  } else if ( address == mpc0_frame1_fifo_adr && !read_run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X17E = ADR_MPC0_FRAME1_FIFO:  MPC0 Frame1 Data Sent to MPC and Stored in FIFO
     //------------------------------------------------------------------
@@ -7357,7 +8343,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc0_frame1_fifo_clct_first_bx0_local_ = ExtractValueFromData(data,mpc0_frame1_fifo_clct_first_bx0_local_bitlo, mpc0_frame1_fifo_clct_first_bx0_local_bithi);
     read_mpc0_frame1_fifo_csc_id_               = ExtractValueFromData(data,mpc0_frame1_fifo_csc_id_bitlo,               mpc0_frame1_fifo_csc_id_bithi);
     //
-  } else if ( address == mpc1_frame0_fifo_adr ) {
+  } else if ( address == mpc1_frame0_fifo_adr && !read_run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X180 = ADR_MPC1_FRAME0_FIFO:  MPC1 Frame0 Data Sent to MPC and Stored in FIFO
     //------------------------------------------------------------------
@@ -7366,7 +8352,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc1_frame0_fifo_lct_second_quality_ = ExtractValueFromData(data,mpc1_frame0_fifo_lct_second_quality_bitlo, mpc1_frame0_fifo_lct_second_quality_bithi);
     read_mpc1_frame0_fifo_second_vpf_         = ExtractValueFromData(data,mpc1_frame0_fifo_second_vpf_bitlo,         mpc1_frame0_fifo_second_vpf_bithi);
     //
-  } else if ( address == mpc1_frame1_fifo_adr ) {
+  } else if ( address == mpc1_frame1_fifo_adr && !read_run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X182 = ADR_MPC1_FRAME1_FIFO:  MPC1 Frame1 Data Sent to MPC and Stored in FIFO
     //------------------------------------------------------------------
@@ -7376,6 +8362,49 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc1_frame1_fifo_alct_second_bxn_       = ExtractValueFromData(data,mpc1_frame1_fifo_alct_second_bxn_bitlo,       mpc1_frame1_fifo_alct_second_bxn_bithi);
     read_mpc1_frame1_fifo_clct_second_bx0_local_ = ExtractValueFromData(data,mpc1_frame1_fifo_clct_second_bx0_local_bitlo, mpc1_frame1_fifo_clct_second_bx0_local_bithi);
     read_mpc1_frame1_fifo_csc_id_                = ExtractValueFromData(data,mpc1_frame1_fifo_csc_id_bitlo,                mpc1_frame1_fifo_csc_id_bithi);
+    //
+  } else if ( address == mpc0_frame0_fifo_adr && read_run3_trig_dataformat_enable_) {
+    //------------------------------------------------------------------
+    //0X17C = ADR_MPC0_FRAME0_FIFO:  MPC0 Frame0 Data Sent to MPC and Stored in FIFO
+    //------------------------------------------------------------------
+    read_mpc0_run3frame0_fifo_alct_first_key_    = ExtractValueFromData(data,mpc0_run3frame0_fifo_alct_first_key_bitlo,    mpc0_run3frame0_fifo_alct_first_key_bithi);
+    read_mpc0_run3frame0_fifo_lct_pidbit0to3_    = ExtractValueFromData(data,mpc0_run3frame0_fifo_lct_pidbit0to3_bitlo,    mpc0_run3frame0_fifo_lct_pidbit0to3_bithi);
+    read_mpc0_run3frame0_fifo_lct_first_quality_ = ExtractValueFromData(data,mpc0_run3frame0_fifo_lct_first_quality_bitlo, mpc0_run3frame0_fifo_lct_first_quality_bithi);
+    read_mpc0_run3frame0_fifo_clct_first_qxky_   = ExtractValueFromData(data,mpc0_run3frame0_fifo_clct_first_qxky_bitlo,   mpc0_run3frame0_fifo_clct_first_qxky_bithi);
+    read_mpc0_run3frame0_fifo_first_vpf_         = ExtractValueFromData(data,mpc0_run3frame0_fifo_first_vpf_bitlo,         mpc0_run3frame0_fifo_first_vpf_bithi);
+    //
+  } else if ( address == mpc0_frame1_fifo_adr && read_run3_trig_dataformat_enable_) {
+    //------------------------------------------------------------------
+    //0X17E = ADR_MPC0_FRAME1_FIFO:  MPC0 Frame1 Data Sent to MPC and Stored in FIFO
+    //------------------------------------------------------------------
+    read_mpc0_run3frame1_fifo_clct_first_key_       = ExtractValueFromData(data,mpc0_run3frame1_fifo_clct_first_key_bitlo,       mpc0_run3frame1_fifo_clct_first_key_bithi);
+    read_mpc0_run3frame1_fifo_clct_first_lr_        = ExtractValueFromData(data,mpc0_run3frame1_fifo_clct_first_lr_bitlo,        mpc0_run3frame1_fifo_clct_first_lr_bithi);
+    read_mpc0_run3frame1_fifo_clct_first_exky_      = ExtractValueFromData(data,mpc0_run3frame1_fifo_clct_first_exky_bitlo,      mpc0_run3frame1_fifo_clct_first_exky_bithi);
+    read_mpc0_run3frame1_fifo_alct_first_bxn_       = ExtractValueFromData(data,mpc0_run3frame1_fifo_alct_first_bxn_bitlo,       mpc0_run3frame1_fifo_alct_first_bxn_bithi);
+    read_mpc0_run3frame1_fifo_clct_first_bx0_local_ = ExtractValueFromData(data,mpc0_run3frame1_fifo_clct_first_bx0_local_bitlo, mpc0_run3frame1_fifo_clct_first_bx0_local_bithi);
+    read_mpc0_run3frame1_fifo_clct_first_bend_      = ExtractValueFromData(data,mpc0_run3frame1_fifo_clct_first_bend_bitlo,      mpc0_run3frame1_fifo_clct_first_bend_bithi);
+    //
+  } else if ( address == mpc1_frame0_fifo_adr && read_run3_trig_dataformat_enable_) {
+    //------------------------------------------------------------------
+    //0X180 = ADR_MPC1_FRAME0_FIFO:  MPC1 Frame0 Data Sent to MPC and Stored in FIFO
+    //------------------------------------------------------------------
+    read_mpc1_run3frame0_fifo_alct_second_key_    = ExtractValueFromData(data,mpc1_run3frame0_fifo_alct_second_key_bitlo,    mpc1_run3frame0_fifo_alct_second_key_bithi);
+    read_mpc1_run3frame0_fifo_lct_pidbit4_        = ExtractValueFromData(data,mpc1_run3frame0_fifo_lct_pidbit4_bitlo,        mpc1_run3frame0_fifo_lct_pidbit4_bithi);
+    read_mpc1_run3frame0_fifo_hmtbit1to3_         = ExtractValueFromData(data,mpc1_run3frame0_fifo_hmtbit1to3_bitlo,         mpc1_run3frame0_fifo_hmtbit1to3_bithi);
+    read_mpc1_run3frame0_fifo_lct_second_quality_ = ExtractValueFromData(data,mpc1_run3frame0_fifo_lct_second_quality_bitlo, mpc1_run3frame0_fifo_lct_second_quality_bithi);
+    read_mpc1_run3frame0_fifo_clct_second_qxky_   = ExtractValueFromData(data,mpc1_run3frame0_fifo_clct_second_qxky_bitlo,   mpc1_run3frame0_fifo_clct_second_qxky_bithi);
+    read_mpc1_run3frame0_fifo_second_vpf_         = ExtractValueFromData(data,mpc1_run3frame0_fifo_second_vpf_bitlo,         mpc1_run3frame0_fifo_second_vpf_bithi);
+    //
+  } else if ( address == mpc1_frame1_fifo_adr && read_run3_trig_dataformat_enable_) {
+    //------------------------------------------------------------------
+    //0X182 = ADR_MPC1_FRAME1_FIFO:  MPC1 Frame1 Data Sent to MPC and Stored in FIFO
+    //------------------------------------------------------------------
+    read_mpc1_run3frame1_fifo_clct_second_key_       = ExtractValueFromData(data,mpc1_run3frame1_fifo_clct_second_key_bitlo,       mpc1_run3frame1_fifo_clct_second_key_bithi);
+    read_mpc1_run3frame1_fifo_clct_second_lr_        = ExtractValueFromData(data,mpc1_run3frame1_fifo_clct_second_lr_bitlo,        mpc1_run3frame1_fifo_clct_second_lr_bithi);
+    read_mpc1_run3frame1_fifo_clct_second_exky_      = ExtractValueFromData(data,mpc1_run3frame1_fifo_clct_second_exky_bitlo,      mpc1_run3frame1_fifo_clct_second_exky_bithi);
+    read_mpc1_run3frame1_fifo_hmtbit0_               = ExtractValueFromData(data,mpc1_run3frame1_fifo_hmtbit0_bitlo,               mpc1_run3frame1_fifo_hmtbit0_bithi);
+    read_mpc1_run3frame1_fifo_clct_second_bx0_local_ = ExtractValueFromData(data,mpc1_run3frame1_fifo_clct_second_bx0_local_bitlo, mpc1_run3frame1_fifo_clct_second_bx0_local_bithi);
+    read_mpc1_run3frame1_fifo_clct_second_bend_      = ExtractValueFromData(data,mpc1_run3frame1_fifo_clct_second_bend_bitlo,      mpc1_run3frame1_fifo_clct_second_bend_bithi);
     //
   } else if ( address == mpc_frames_fifo_ctrl_adr ) {
     //------------------------------------------------------------------
@@ -7465,6 +8494,84 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_cross_bx_algorithm_         = ExtractValueFromData(data,cross_bx_algorithm_bitlo        ,cross_bx_algorithm_bithi        );
     read_clct_use_corrected_bx_      = ExtractValueFromData(data,clct_use_corrected_bx_bitlo     ,clct_use_corrected_bx_bithi     );
     //
+  } else if ( address == clct0_cc_adr ) {
+    //---------------------------------------------------------------------
+    //0X19A = ADR_CLCT0_CC:  CLCT0 Comparator Code  (Tao, 2020)
+    //---------------------------------------------------------------------
+    read_clct0_comparatorcode_       = ExtractValueFromData(data,clct0_cc_bitlo                  ,clct0_cc_bithi        );
+  } else if ( address == clct1_cc_adr ) {
+    //---------------------------------------------------------------------
+    //0X19C = ADR_CLCT1_CC:  CLCT1 Comparator Code  (Tao, 2020)
+    //---------------------------------------------------------------------
+    read_clct1_comparatorcode_       = ExtractValueFromData(data,clct1_cc_bitlo                  ,clct1_cc_bithi        );
+  } else if ( address == clct0_bndxky_adr ) {
+    //---------------------------------------------------------------------
+    //0X1A2 = ADR_CLCT0_BND:  CLCT0 new bending+1/8 strip position  (Tao, 2020)
+    //---------------------------------------------------------------------
+    read_clct0_cc_bending_          = ExtractValueFromData(data,clct0_bnd_bitlo                  ,clct0_bnd_bithi        );
+    read_clct0_cc_lr_               = ExtractValueFromData(data,clct0_lr_bitlo                   ,clct0_lr_bithi        );
+    read_clct0_cc_xky_              = ExtractValueFromData(data,clct0_xky_bitlo                  ,clct0_xky_bithi        );
+    read_clct0_cc_xky_float_        = read_clct0_cc_xky_*0.25; // half strip level
+  } else if ( address == clct1_bndxky_adr ) {
+    //---------------------------------------------------------------------
+    //0X1A2 = ADR_CLCT1_BND:  CLCT1 new bending+1/8 strip position  (Tao, 2020)
+    //---------------------------------------------------------------------
+    read_clct1_cc_bending_          = ExtractValueFromData(data,clct1_bnd_bitlo                  ,clct1_bnd_bithi        );
+    read_clct1_cc_lr_               = ExtractValueFromData(data,clct1_lr_bitlo                   ,clct1_lr_bithi        );
+    read_clct1_cc_xky_              = ExtractValueFromData(data,clct1_xky_bitlo                  ,clct1_xky_bithi        );
+    read_clct1_cc_xky_float_        = read_clct1_cc_xky_*0.25;//halfstrip level
+  } else if ( address == run3_format_ctrl_adr ) {
+    //---------------------------------------------------------------------
+    //0X1AA = ADR_RUN3_FORMAT_CTRL:  CCLUT control  (Tao, 2020)
+    //---------------------------------------------------------------------
+    read_cclut_enable_                   = ExtractValueFromData(data,cclut_enable_bitlo                ,cclut_enable_bithi                );
+    read_run3_trig_dataformat_enable_    = ExtractValueFromData(data,run3_trig_dataformat_enable_bitlo ,run3_trig_dataformat_enable_bithi );
+    read_run3_daq_dataformat_enable_     = ExtractValueFromData(data,run3_daq_dataformat_enable_bitlo  ,run3_daq_dataformat_enable_bithi  );
+  } else if ( address == hmt_ctrl_adr ) {
+    //------------------------------------------------------------------
+    //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
+    //------------------------------------------------------------------
+    read_hmt_enable_                = ExtractValueFromData(data,hmt_enable_bitlo                 ,hmt_enable_bithi        );
+    read_hmt_me1a_enable_           = ExtractValueFromData(data,hmt_me1a_enable_bitlo            ,hmt_me1a_enable_bithi        );
+    read_hmt_nhits_trig_            = ExtractValueFromData(data,hmt_nhits_trig_bitlo             ,hmt_nhits_trig_bithi        );
+  } else if ( address == hmt_thresh1_adr ) {
+    //------------------------------------------------------------------
+    //0X1AE = ADR_HMT_thresh1:  HMT Thresh1  (Tao, 2020)
+    //------------------------------------------------------------------
+    read_hmt_thresh1_               = ExtractValueFromData(data,hmt_thresh1_bitlo                 ,hmt_thresh1_bithi             );
+    read_hmt_thresh1_pass_          = ExtractValueFromData(data,hmt_thresh1_pass_bitlo            ,hmt_thresh1_pass_bithi        );
+    read_cfeb_allow_hmt_ro_         = ExtractValueFromData(data,cfeb_allow_hmt_ro_bitlo           ,cfeb_allow_hmt_ro_bithi        );
+    read_tmb_allow_hmt_             = ExtractValueFromData(data,tmb_allow_hmt_bitlo               ,tmb_allow_hmt_bithi        );
+    read_tmb_allow_hmt_ro_          = ExtractValueFromData(data,tmb_allow_hmt_ro_bitlo            ,tmb_allow_hmt_ro_bithi        );
+  } else if ( address == hmt_thresh2_adr ) {
+    //------------------------------------------------------------------
+    //0X1B0 = ADR_HMT_thresh2:  HMT Thresh2  (Tao, 2020)
+    //------------------------------------------------------------------
+    read_hmt_thresh2_               = ExtractValueFromData(data,hmt_thresh2_bitlo                 ,hmt_thresh2_bithi             );
+    read_hmt_thresh2_pass_          = ExtractValueFromData(data,hmt_thresh2_pass_bitlo            ,hmt_thresh2_pass_bithi        );
+  } else if ( address == hmt_thresh3_adr ) {
+    //------------------------------------------------------------------
+    //0X1B2 = ADR_HMT_thresh3:  HMT Thresh3  (Tao, 2020)
+    //------------------------------------------------------------------
+    read_hmt_thresh3_               = ExtractValueFromData(data,hmt_thresh3_bitlo                 ,hmt_thresh3_bithi             );
+    read_hmt_thresh3_pass_          = ExtractValueFromData(data,hmt_thresh3_pass_bitlo            ,hmt_thresh3_pass_bithi        );
+  } else if ( address == hmt_nhits_sig_adr ) {
+    //------------------------------------------------------------------
+    //0X1B4 = ADR_HMT_NHITS_SIG: nhits in bx678  (Tao, 2020)
+    //------------------------------------------------------------------
+    read_hmt_nhits_sig_             = ExtractValueFromData(data,hmt_nhits_sig_bitlo                ,hmt_nhits_sig_bithi             );
+  } else if ( address == hmt_nhits_bkg_adr ) {
+    //------------------------------------------------------------------
+    //0X1B6 = ADR_HMT_NHITS_BKG: nhits in bx2345  (Tao, 2020)
+    //------------------------------------------------------------------
+    read_hmt_nhits_bkg_             = ExtractValueFromData(data,hmt_nhits_bkg_bitlo                ,hmt_nhits_bkg_bithi             );
+  //} else if ( address == lct_injection_adr ) {
+  //  //------------------------------------------------------------------
+  //  //0X1B8 = ADR_LCT_INJECTION:  LCT injection from configuration  (Tao, 2020)
+  //  //------------------------------------------------------------------
+  //  read_lct_inj_hs_                = ExtractValueFromData(data,lct_inj_hs_bitlo                  ,lct_inj_hs_bithi        );
+  //  read_lct_inj_wg_                = ExtractValueFromData(data,lct_inj_wg_bitlo                  ,lct_inj_wg_bithi        );
+  //  read_lct_inj_enable_            = ExtractValueFromData(data,lct_inj_enable_bitlo              ,lct_inj_enable_bithi        );
   } else if ( address == rpc_cfg_adr ) {
     //------------------------------------------------------------------
     //0XB6 = ADR_RPC_CFG:  RPC Configuration
@@ -7863,6 +8970,32 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_gtx_rx_pol_swap_[inputNum] = ExtractValueFromData(data,gtx_rx_pol_swap_bitlo,gtx_rx_pol_swap_bithi);
     read_gtx_rx_error_count_[inputNum] = ExtractValueFromData(data,gtx_rx_error_count_bitlo,gtx_rx_error_count_bithi);
     
+  } else if ( address == dcfeb_gtx0_notintable_adr || 
+              address == dcfeb_gtx1_notintable_adr || 
+              address == dcfeb_gtx2_notintable_adr ||
+              address == dcfeb_gtx3_notintable_adr || 
+              address == dcfeb_gtx4_notintable_adr || 
+              address == dcfeb_gtx5_notintable_adr ||
+              address == dcfeb_gtx6_notintable_adr ) {
+    //---------------------------------------------------------------------
+    // 0X1BA - 0X1C6 = ADR_V6_GTX_NOITNTABLE[CFEB]: GTX link control and monitoring
+    //---------------------------------------------------------------------
+    int inputNum = (address - dcfeb_gtx0_notintable_adr) / 2;
+    read_gtx_rx_notintable_count_[inputNum] = ExtractValueFromData(data,gtx_rx_notintable_count_bitlo,gtx_rx_notintable_count_bithi);
+
+  } else if ( address == dcfeb_gtx0_disperr_adr || 
+              address == dcfeb_gtx1_disperr_adr || 
+              address == dcfeb_gtx2_disperr_adr ||
+              address == dcfeb_gtx3_disperr_adr || 
+              address == dcfeb_gtx4_disperr_adr || 
+              address == dcfeb_gtx5_disperr_adr ||
+              address == dcfeb_gtx6_disperr_adr ) {
+    //---------------------------------------------------------------------
+    // 0X1C8 - 0X1D4 = ADR_V6_GTX_NOITNTABLE[CFEB]: GTX link control and monitoring
+    //---------------------------------------------------------------------
+    int inputNum = (address - dcfeb_gtx0_disperr_adr) / 2;
+    read_gtx_rx_disperr_count_[inputNum] = ExtractValueFromData(data,gtx_rx_disperr_count_bitlo,gtx_rx_disperr_count_bithi);
+
   } else if (hardware_version_ >= 2 && (address == dcfeb_badbits_ctrl_adr) ) {
     //---------------------------------------------------------------------
     // 0X15C ADR_V6_CFEB_BADBITS_CTRL: CFEB Bad Bits Control/Status (See Adr 0x122) (extra DCFEB Bad Bits on OTMB)
@@ -7935,6 +9068,26 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_gem_gtx_rx_pol_swap_[inputNum] = ExtractValueFromData(data,gtx_rx_pol_swap_bitlo,gtx_rx_pol_swap_bithi);
     read_gem_gtx_rx_error_count_[inputNum] = ExtractValueFromData(data,gtx_rx_error_count_bitlo,gtx_rx_error_count_bithi);
 
+  } else if (address == gem_gtx0_notintable_adr || 
+             address == gem_gtx1_notintable_adr ||
+             address == gem_gtx2_notintable_adr || 
+             address == gem_gtx3_notintable_adr) {
+    //---------------------------------------------------------------------
+    // 0X370 - 0X376 = ADR_GEM_GTX[0-3]_NOTINTABLE_GEM: GTX link control and monitoring for GEM
+    //---------------------------------------------------------------------
+    int inputNum = (address - gem_gtx0_notintable_adr) / 2;
+    read_gem_gtx_rx_notintable_count_[inputNum] = ExtractValueFromData(data,gtx_rx_notintable_count_bitlo,gtx_rx_notintable_count_bithi);
+
+  } else if (address == gem_gtx0_disperr_adr || 
+             address == gem_gtx1_disperr_adr ||
+             address == gem_gtx2_disperr_adr || 
+             address == gem_gtx3_disperr_adr) {
+    //---------------------------------------------------------------------
+    // 0X378 - 0X37E = ADR_GEM_GTX[0-3]_DISPERR_GEM: GTX link control and monitoring for GEM
+    //---------------------------------------------------------------------
+    int inputNum = (address - gem_gtx0_disperr_adr) / 2;
+    read_gem_gtx_rx_disperr_count_[inputNum] = ExtractValueFromData(data,gtx_rx_disperr_count_bitlo,gtx_rx_disperr_count_bithi);
+
   } else if ( address == gem_tbins_adr ) {
     //---------------------------------------------------------------------
     // 0X310 = ADR_GEM_TBINS
@@ -7954,6 +9107,115 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_gemB_rxd_int_delay_         = ExtractValueFromData (data , gemB_rxd_int_delay_bitlo         , gemB_rxd_int_delay_bithi);
     read_decouple_gem_rxd_int_delay_ = ExtractValueFromData (data , decouple_gem_rxd_int_delay_bitlo , decouple_gem_rxd_int_delay_bithi);
     read_gem_readout_mask_           = ExtractValueFromData (data , gem_readout_mask_bitlo           , gem_readout_mask_bithi);
+  } else if ( address == gem_csc_match_window_adr ) {
+    //---------------------------------------------------------------------
+    // 0X318 = ADR_GEM_TRG
+    //---------------------------------------------------------------------
+    read_gem_clct_deltahs_odd_            = ExtractValueFromData (data , gem_clct_deltahs_odd_bitlo          , gem_clct_deltahs_odd_bithi);
+    read_gem_clct_deltahs_even_           = ExtractValueFromData (data , gem_clct_deltahs_even_bitlo         , gem_clct_deltahs_even_bithi);
+    read_gem_alct_deltawire_odd_          = ExtractValueFromData (data , gem_alct_deltawire_odd_bitlo        , gem_alct_deltawire_odd_bithi);
+    read_gem_alct_deltawire_even_         = ExtractValueFromData (data , gem_alct_deltawire_even_bitlo       , gem_alct_deltawire_even_bithi);
+    //
+  } else if ( address == gem_copad_ctrl_adr ) {
+    //---------------------------------------------------------------------
+    // 0X324 = ADR_GEM_COPAD_CTRL
+    //---------------------------------------------------------------------
+    read_gem_match_neighborRoll_          = ExtractValueFromData (data , gem_match_neighborRoll_bitlo        , gem_match_neighborRoll_bithi);
+    read_gem_match_neighborPad_           = ExtractValueFromData (data , gem_match_neighborPad_bitlo         , gem_match_neighborPad_bithi);
+    read_gem_match_deltaPad_              = ExtractValueFromData (data , gem_match_deltaPad_bitlo            , gem_match_deltaPad_bithi);
+  } else if ( address == gem_bx0_delay_adr ) {
+    //---------------------------------------------------------------------
+    // 0X326 = ADR_GEM_BX0_DELAY
+    //---------------------------------------------------------------------
+    read_gemA_bx0_delay_              = ExtractValueFromData (data , gemA_bx0_delay_bitlo        , gemA_bx0_delay_bithi);
+    read_gemA_bx0_enable_             = ExtractValueFromData (data , gemA_bx0_enable_bitlo       , gemA_bx0_enable_bithi);
+    read_gemA_bx0_match_              = ExtractValueFromData (data , gemA_bx0_match_bitlo        , gemA_bx0_match_bithi);
+    read_gemB_bx0_delay_              = ExtractValueFromData (data , gemB_bx0_delay_bitlo        , gemB_bx0_delay_bithi);
+    read_gemB_bx0_enable_             = ExtractValueFromData (data , gemB_bx0_enable_bitlo       , gemB_bx0_enable_bithi);
+    read_gemB_bx0_match_              = ExtractValueFromData (data , gemB_bx0_match_bitlo        , gemB_bx0_match_bithi);
+  } else if ( address == gemA_trg_ctrl_adr ) {
+    //---------------------------------------------------------------------
+    // 0X328 = ADR_GEMA_TRG_CTRL
+    //---------------------------------------------------------------------
+    read_match_gem_alct_window_          = ExtractValueFromData (data , match_gem_alct_window_bitlo        , match_gem_alct_window_bithi);
+    read_match_gem_clct_window_          = ExtractValueFromData (data , match_gem_clct_window_bitlo        , match_gem_clct_window_bithi);
+    read_gemA_alct_match_                = ExtractValueFromData (data , gemA_alct_match_bitlo              , gemA_alct_match_bithi);
+    read_gemA_clct_match_                = ExtractValueFromData (data , gemA_clct_match_bitlo              , gemA_clct_match_bithi);
+    read_gemA_fiber_enable_              = ExtractValueFromData (data , gemA_fiber_enable_bitlo            , gemA_fiber_enable_bithi);
+  } else if ( address == gemB_trg_ctrl_adr ) {
+    //---------------------------------------------------------------------
+    // 0X32a = ADR_GEMB_TRG_CTRL
+    //---------------------------------------------------------------------
+    read_match_gem_alct_delay_           = ExtractValueFromData (data , match_gem_alct_delay_bitlo        , match_gem_alct_delay_bithi);
+    //read_match_gemB_alct_window_         = ExtractValueFromData (data , match_gemB_alct_window_bitlo       , match_gemB_alct_window_bithi);
+    //read_match_gemB_clct_window_         = ExtractValueFromData (data , match_gemB_clct_window_bitlo       , match_gemB_clct_window_bithi);
+    read_gemB_alct_match_                = ExtractValueFromData (data , gemB_alct_match_bitlo              , gemB_alct_match_bithi);
+    read_gemB_clct_match_                = ExtractValueFromData (data , gemB_clct_match_bitlo              , gemB_clct_match_bithi);
+    read_gemB_fiber_enable_              = ExtractValueFromData (data , gemB_fiber_enable_bitlo            , gemB_fiber_enable_bithi);
+  } else if ( address == gem_csc_match_ctrl_adr ) {
+    //---------------------------------------------------------------------
+    // 0X32c = ADR_GEM_CSC_MATCH_CTRL
+    //---------------------------------------------------------------------
+    read_gem_me1a_match_enable_          = ExtractValueFromData (data , gem_me1a_match_enable_bitlo        , gem_me1a_match_enable_bithi);
+    read_gem_me1b_match_enable_          = ExtractValueFromData (data , gem_me1b_match_enable_bitlo        , gem_me1b_match_enable_bithi);
+    read_gem_me1a_match_nogem_           = ExtractValueFromData (data , gem_me1a_match_nogem_bitlo         , gem_me1a_match_nogem_bithi);
+    read_gem_me1b_match_nogem_           = ExtractValueFromData (data , gem_me1b_match_nogem_bitlo         , gem_me1b_match_nogem_bithi);
+    read_gem_me1a_match_noalct_          = ExtractValueFromData (data , gem_me1a_match_noalct_bitlo        , gem_me1a_match_noalct_bithi);
+    read_match_drop_lowqalct_            = ExtractValueFromData (data , match_drop_lowqalct_bitlo          , match_drop_lowqalct_bithi);
+    read_me1a_match_drop_lowqclct_       = ExtractValueFromData (data , me1a_match_drop_lowqclct_bitlo     , me1a_match_drop_lowqclct_bithi);
+    read_me1b_match_drop_lowqclct_       = ExtractValueFromData (data , me1b_match_drop_lowqclct_bitlo     , me1b_match_drop_lowqclct_bithi);
+    //read_gem_me1a_match_promotequal_     = ExtractValueFromData (data , gem_me1a_match_promotequal_bitlo   , gem_me1a_match_promotequal_bithi);
+    //read_gem_me1b_match_promotequal_     = ExtractValueFromData (data , gem_me1b_match_promotequal_bitlo   , gem_me1b_match_promotequal_bithi);
+    read_tmb_copad_alct_allow_           = ExtractValueFromData (data , tmb_copad_alct_allow_bitlo         , tmb_copad_alct_allow_bithi);
+    read_tmb_copad_clct_allow_           = ExtractValueFromData (data , tmb_copad_clct_allow_bitlo         , tmb_copad_clct_allow_bithi);
+    read_gemA_match_ignore_position_     = ExtractValueFromData (data , gemA_match_ignore_position_bitlo   , gemA_match_ignore_position_bithi);
+    read_gemB_match_ignore_position_     = ExtractValueFromData (data , gemB_match_ignore_position_bitlo   , gemB_match_ignore_position_bithi);
+    read_gemcsc_bend_enable_             = ExtractValueFromData (data , gemcsc_bend_enable_bitlo           , gemcsc_bend_enable_bithi);
+    read_gemcsc_ignore_bend_check_       = ExtractValueFromData (data , gemcsc_ignore_bend_check_bitlo     , gemcsc_ignore_bend_check_bithi);
+
+  } else if ( address == gem_csc_match_cluster00_adr ) {
+  //-----------------------------------------------------------------------------
+  // 0X32e ADR_GEM_CSC_MATCH_CLUSTER00
+  //-----------------------------------------------------------------------------
+    read_gem_csc_match_cluster0_iclst_  = ExtractValueFromData (data , gem_csc_match_cluster0_iclst_bitlo        , gem_csc_match_cluster0_iclst_bithi);
+    read_gem_csc_match_cluster0_roll_   = ExtractValueFromData (data , gem_csc_match_cluster0_roll_bitlo         , gem_csc_match_cluster0_roll_bithi);
+    read_gem_csc_match_cluster0_cscxky_ = ExtractValueFromData (data , gem_csc_match_cluster0_cscxky_bitlo       , gem_csc_match_cluster0_cscxky_bithi);
+  } else if ( address == gem_csc_match_cluster01_adr ) {
+  //-----------------------------------------------------------------------------
+  // 0X32e ADR_GEM_CSC_MATCH_CLUSTER01
+  //-----------------------------------------------------------------------------
+    read_gem_csc_match_cluster0_pad_    = ExtractValueFromData (data , gem_csc_match_cluster0_pad_bitlo        , gem_csc_match_cluster0_pad_bithi);
+    read_gem_csc_match_cluster0_angle_  = ExtractValueFromData (data , gem_csc_match_cluster0_angle_bitlo      , gem_csc_match_cluster0_angle_bithi);
+    read_gem_csc_match_cluster0_bend_   = ExtractValueFromData (data , gem_csc_match_cluster0_bend_bitlo       , gem_csc_match_cluster0_bend_bithi);
+  } else if ( address == gem_csc_match_cluster10_adr ) {
+  //-----------------------------------------------------------------------------
+  // 0X330 ADR_GEM_CSC_MATCH_CLUSTER10
+  //-----------------------------------------------------------------------------
+    read_gem_csc_match_cluster1_iclst_  = ExtractValueFromData (data , gem_csc_match_cluster1_iclst_bitlo        , gem_csc_match_cluster1_iclst_bithi);
+    read_gem_csc_match_cluster1_roll_   = ExtractValueFromData (data , gem_csc_match_cluster1_roll_bitlo         , gem_csc_match_cluster1_roll_bithi);
+    read_gem_csc_match_cluster1_cscxky_ = ExtractValueFromData (data , gem_csc_match_cluster1_cscxky_bitlo       , gem_csc_match_cluster1_cscxky_bithi);
+  } else if ( address == gem_csc_match_cluster11_adr ) {
+  //-----------------------------------------------------------------------------
+  // 0X32e ADR_GEM_CSC_MATCH_CLUSTER01
+  //-----------------------------------------------------------------------------
+    read_gem_csc_match_cluster1_pad_    = ExtractValueFromData (data , gem_csc_match_cluster1_pad_bitlo        , gem_csc_match_cluster1_pad_bithi);
+    read_gem_csc_match_cluster1_angle_  = ExtractValueFromData (data , gem_csc_match_cluster1_angle_bitlo      , gem_csc_match_cluster1_angle_bithi);
+    read_gem_csc_match_cluster1_bend_   = ExtractValueFromData (data , gem_csc_match_cluster1_bend_bitlo       , gem_csc_match_cluster1_bend_bithi);
+  } else if ( address == gem_vfat_hcm0_adr || address == gem_vfat_hcm1_adr || address == gem_vfat_hcm2_adr ) {
+    //---------------------------------------------------------------------
+    // 0X33a,0x33c,0x33e for GEM hot vfat mask
+    //---------------------------------------------------------------------
+   
+    for (int bit_in_register=0; bit_in_register<16; bit_in_register++) {
+        if (address == gem_vfat_hcm0_adr || (address == gem_vfat_hcm1_adr && bit_in_register<8)){
+	   int vfat = (address - gem_vfat_hcm0_adr)*8 + bit_in_register;
+           read_gemA_hot_channel_mask_[vfat]  =  ExtractValueFromData (data , bit_in_register, bit_in_register); 
+        }
+	else{ //GEMB part
+           int vfat = (address - gem_vfat_hcm1_adr)*8 + bit_in_register - 8;
+           read_gemB_hot_channel_mask_[vfat]  =  ExtractValueFromData (data , bit_in_register, bit_in_register); 
+        }
+    }
   }
   //
   // combinations of bits which say which trgmode_ we are using....
@@ -7995,7 +9257,7 @@ void TMB::DecodeBootRegister_(int data) {
 ////////////////////////////////////////////////////////////////////////////////////////
 void TMB::PrintTMBConfiguration() {
   //
-  (*MyOutput_) << "TMB READ configuration in slot = " << (int) slot() << std::endl;
+  (*MyOutput_) << "TMB READ configuration in slot = " << (int) slot() <<" CscId "<< GetCscId()<< std::endl;
   //
   PrintFirmwareDate();
   PrintBootRegister();
@@ -8013,11 +9275,15 @@ void TMB::PrintTMBConfiguration() {
 	( ((hardware_version_ >= 2 && (
 				       VMEregister != hcm501_adr && VMEregister != hcm523_adr && VMEregister != hcm545_adr &&
 				       VMEregister != hcm601_adr && VMEregister != hcm623_adr && VMEregister != hcm645_adr)) )
-	  || hardware_version_ < 2) )
+	  || hardware_version_ < 2) &&
+        (!GetGemEnabled() || (GetGemEnabled() && VMEregister != gem_vfat_hcm0_adr  && VMEregister != gem_vfat_hcm1_adr && VMEregister != gem_vfat_hcm2_adr        ))
+        )
       PrintTMBRegister(VMEregister);
   }
   //
   PrintHotChannelMask();
+  if (GetGemEnabled())
+    PrintGEMHotChannelMask();
   //
   return;
 }
@@ -8083,6 +9349,32 @@ void TMB::PrintComparatorBadBits() {
     (*MyOutput_) << std::endl;
   }
   return;
+}
+
+//
+void TMB::PrintGEMHotChannelMask() {
+  (*MyOutput_) << "-------------------------------------------" << std::endl;
+  (*MyOutput_) << "GEM Hot VFAT Mask (from right to left)" << std::endl;
+  (*MyOutput_) << "-------------------------------------------" << std::endl;
+  //read_gemA_hot_channel_mask_[MAX_GEM_VFATS_PER_LAYER]
+  ReadGEMHotChannelMask();
+  char gemA_hot_channel_mask[MAX_GEM_VFATS_PER_LAYER/8];
+  char gemB_hot_channel_mask[MAX_GEM_VFATS_PER_LAYER/8];
+  packCharBuffer(read_gemA_hot_channel_mask_, MAX_GEM_VFATS_PER_LAYER, gemA_hot_channel_mask);
+  packCharBuffer(read_gemB_hot_channel_mask_, MAX_GEM_VFATS_PER_LAYER, gemB_hot_channel_mask);
+  (*MyOutput_) << "GEMA     -> " <<  std::hex;
+  for (int count = MAX_GEM_VFATS_PER_LAYER/8-1; count >=0; count--)
+	(*MyOutput_) << ((gemA_hot_channel_mask[count] >> 4) & 0xf) <<" "
+		<< (gemA_hot_channel_mask[count] & 0xf) <<" ";
+  (*MyOutput_) << std::endl;
+  (*MyOutput_) << "GEMB     -> " <<  std::hex;
+  for (int count = MAX_GEM_VFATS_PER_LAYER/8-1; count >=0; count--)
+	(*MyOutput_) << ((gemB_hot_channel_mask[count] >> 4) & 0xf) << " "
+		<< (gemB_hot_channel_mask[count] & 0xf) <<" ";
+  (*MyOutput_) << std::endl;
+  (*MyOutput_) << "-------------------------------------------" << std::endl;
+
+
 }
 //
 void TMB::PrintVMEStateMachine() {
@@ -8494,6 +9786,50 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << "    Toggle dropping CLCTs from matching in ALCT-centric algorithm = " << std::dec << read_drop_used_clcts_            << std::endl;
     (*MyOutput_) << "    Toggle LCT sorting using cross BX algorithm                   = " << std::dec << read_cross_bx_algorithm_         << std::endl;
     (*MyOutput_) << "    Toggle use of medians for CLCT timing                         = " << std::dec << read_clct_use_corrected_bx_      << std::endl;
+  } else if ( address == run3_format_ctrl_adr ) {
+  //------------------------------------------------------------------
+  //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 format control  (Tao, 2020)
+  //------------------------------------------------------------------
+      (*MyOutput_) << " ->Run3 format control:" << std::endl;
+      (*MyOutput_) << "    enable CCLUT                               = " << std::dec << read_cclut_enable_ << std::endl; 
+      (*MyOutput_) << "    enable Run3 Trigger Format                 = " << std::dec << read_run3_trig_dataformat_enable_ << std::endl; 
+      (*MyOutput_) << "    enable Run3 DAQ Format                     = " << std::dec << read_run3_daq_dataformat_enable_ << std::endl; 
+  } else if ( address == hmt_ctrl_adr ) {
+   //------------------------------------------------------------------
+   //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
+   //------------------------------------------------------------------
+      (*MyOutput_) << " ->High Multiplicity Trigger control:" << std::endl;
+      (*MyOutput_) << "    enable HMT                                 = " << std::dec << read_hmt_enable_ << std::endl; 
+      (*MyOutput_) << "    enable HMT in ME1a                         = " << std::dec << read_hmt_me1a_enable_ << std::endl; 
+  } else if ( address == hmt_thresh1_adr ) {
+   //------------------------------------------------------------------
+   //0X1AE = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
+   //------------------------------------------------------------------
+      (*MyOutput_) << " ->High Multiplicity Trigger loose thresh:" << std::endl;
+      (*MyOutput_) << "    HMT thresh1(loose)                         = " << std::dec << read_hmt_thresh1_ << std::endl; 
+      (*MyOutput_) << "    Allow to readout cfeb by HMT               = " << std::hex << read_cfeb_allow_hmt_ro_ << std::endl;
+      (*MyOutput_) << "    Allow to trigger  by HMT                   = " << std::hex << read_tmb_allow_hmt_ << std::endl;
+      (*MyOutput_) << "    Allow to readout OTMB by HMT               = " << std::hex << read_tmb_allow_hmt_ro_ << std::endl;
+  } else if ( address == hmt_thresh2_adr ) {
+   //------------------------------------------------------------------
+   //0X1B0 = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
+   //------------------------------------------------------------------
+      (*MyOutput_) << " ->High Multiplicity Trigger median thresh:" << std::endl;
+      (*MyOutput_) << "    HMT thresh2(median)                        = " << std::dec << read_hmt_thresh2_ << std::endl; 
+  } else if ( address == hmt_thresh3_adr ) {
+   //------------------------------------------------------------------
+   //0X1B2 = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
+   //------------------------------------------------------------------
+      (*MyOutput_) << " ->High Multiplicity Trigger tight thresh:" << std::endl;
+      (*MyOutput_) << "    HMT thresh3(tight)                         = " << std::dec << read_hmt_thresh3_ << std::endl; 
+  //} else if ( address == lct_injection_adr ) {
+  //  //------------------------------------------------------------------
+  //  //0X1B8 = ADR_LCT_INJECTION:  LCT injection from configuration  (Tao, 2020)
+  //  //------------------------------------------------------------------
+  //    (*MyOutput_) << " ->LCT injection from configuration:" << std::endl;
+  //    (*MyOutput_) << "    injected lct halfstrip      = " << std::dec << read_lct_inj_hs_ << std::endl; 
+  //    (*MyOutput_) << "    injected lct wiregroup      = " << std::dec << read_lct_inj_wg_ << std::endl; 
+  //    (*MyOutput_) << "    injected lct enable         = " << std::dec << read_lct_inj_enable_ << std::endl; 
   } else if ( address == rpc_cfg_adr ) {
     //------------------------------------------------------------------
     //0XB6 = ADR_RPC_CFG:  RPC Configuration
@@ -8783,8 +10119,8 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //--------------------------------------------------------------
     if (HasGroupedME11ABCFEBRxValues() == 1) (*MyOutput_) << " ->CFEB0 to TMB communication clock IGNORED IN THIS VERSION:" << std::endl;
     (*MyOutput_) << " ->CFEB0 to TMB communication clock delay:" << std::endl;
-    (*MyOutput_) << "    CFEB0 rx clock delay    = " << std::dec << read_cfeb0_rx_clock_delay_ << std::endl;
-    (*MyOutput_) << "    CFEB0 rx fine delay          = " << std::dec << read_cfeb0_rx_fine_delay_ << std::endl;
+    (*MyOutput_) << "    CFEB0 rx clock delay, unit=1ns(same below)   = " << std::dec << read_cfeb0_rx_clock_delay_ << std::endl;
+    (*MyOutput_) << "    CFEB0 rx fine delay, unit=~0.1ns(same below) = " << std::dec << read_cfeb0_rx_fine_delay_ << std::endl;
     (*MyOutput_) << "    CFEB0 posneg    = " << std::dec << read_cfeb0_rx_posneg_ << std::endl;
     //
   } else if ( address == phaser_cfeb1_rxd_adr ) {
@@ -8833,8 +10169,8 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //--------------------------------------------------------------
     if (HasGroupedME11ABCFEBRxValues() == 1){
       (*MyOutput_) << " ->CFEB456 to TMB communication clock delay:" << std::endl;
-      (*MyOutput_) << "    CFEB456 rx clock delay    = " << std::dec << read_cfeb456_rx_clock_delay_ << std::endl;
-      (*MyOutput_) << "    CFEB456 rx fine delay      = " << std::dec << read_cfeb456_rx_fine_delay_ << std::endl;
+      (*MyOutput_) << "    CFEB456 rx clock delay, unit=1ns    = " << std::dec << read_cfeb456_rx_clock_delay_ << std::endl;
+      (*MyOutput_) << "    CFEB456 rx fine delay, unit=0.1ns   = " << std::dec << read_cfeb456_rx_fine_delay_ << std::endl;
       (*MyOutput_) << "    CFEB456 posneg    = " << std::dec << read_cfeb456_rx_posneg_ << std::endl;
     } else {
       (*MyOutput_) << " ->CFEB5 to TMB communication clock delay:" << std::endl;
@@ -8849,8 +10185,8 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //--------------------------------------------------------------
     if (HasGroupedME11ABCFEBRxValues() == 1){
       (*MyOutput_) << " ->CFEB0123 to TMB communication clock delay:" << std::endl;
-      (*MyOutput_) << "    CFEB0123 rx clock delay    = " << std::dec << read_cfeb0123_rx_clock_delay_ << std::endl;
-      (*MyOutput_) << "    CFEB0123 rx fine delay     = " << std::dec << read_cfeb0123_rx_fine_delay_ << std::endl;
+      (*MyOutput_) << "    CFEB0123 rx clock delay, unit=1ns    = " << std::dec << read_cfeb0123_rx_clock_delay_ << std::endl;
+      (*MyOutput_) << "    CFEB0123 rx fine delay, unit=0.1ns   = " << std::dec << read_cfeb0123_rx_fine_delay_ << std::endl;
       (*MyOutput_) << "    CFEB0123 posneg    = " << std::dec << read_cfeb0123_rx_posneg_ << std::endl;	
     } else {
       (*MyOutput_) << " ->CFEB6 to TMB communication clock delay:" << std::endl;
@@ -8866,11 +10202,13 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     if (GetGemEnabled()) {
         if (HasGroupedGemRxValues() == 1) {
         (*MyOutput_) << " ->GEM A+B to TMB communication clock delay:" << std::endl;
-        (*MyOutput_) << "    GEM A+B rx clock delay    = " << std::dec << read_gem_rx_clock_delay_ << std::endl;
-        (*MyOutput_) << "    GEM A+B posneg    = " << std::dec << read_gem_rx_posneg_ << std::endl;
+        (*MyOutput_) << "    GEM A+B rx clock delay, unit=1ns     = " << std::dec << read_gem_rx_clock_delay_ << std::endl;
+        (*MyOutput_) << "    GEM A+B rx fine delay, unit=0.1ns    = " << std::dec << read_gem_rx_fine_delay_ << std::endl;
+        (*MyOutput_) << "    GEM A+B posneg                       = " << std::dec << read_gem_rx_posneg_ << std::endl;
         } else {
         (*MyOutput_) << " ->GEM A to TMB communication clock delay:" << std::endl;
-        (*MyOutput_) << "    GEM A rx clock delay    = " << std::dec << read_gemA_rx_clock_delay_ << std::endl;
+        (*MyOutput_) << "    GEM A rx clock delay   = " << std::dec << read_gemA_rx_clock_delay_ << std::endl;
+        (*MyOutput_) << "    GEM A rx fine delay    = " << std::dec << read_gemA_rx_fine_delay_ << std::endl;
         (*MyOutput_) << "    GEM A posneg    = " << std::dec << read_gemA_rx_posneg_ << std::endl;
         }
         //
@@ -8882,7 +10220,8 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     if (GetGemEnabled()) {
         if (HasGroupedGemRxValues() == 0) {
         (*MyOutput_) << " ->GEM B to TMB communication clock delay:" << std::endl;
-        (*MyOutput_) << "    GEM B rx clock delay    = " << std::dec << read_gemB_rx_clock_delay_ << std::endl;
+        (*MyOutput_) << "    GEM B rx clock delay   = " << std::dec << read_gemB_rx_clock_delay_ << std::endl;
+        (*MyOutput_) << "    GEM B rx fine delay    = " << std::dec << read_gemB_rx_fine_delay_ << std::endl;
         (*MyOutput_) << "    GEM B posneg    = " << std::dec << read_gemB_rx_posneg_ << std::endl;
         }
     }
@@ -9029,7 +10368,35 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << "    Link error count [DCFEBs 0-6]: \t[ ";
     for (int i=0; i < 7; i++) { (*MyOutput_) << read_gtx_rx_error_count_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
-    
+
+  } else if ( address == dcfeb_gtx0_notintable_adr || 
+              address == dcfeb_gtx1_notintable_adr || 
+              address == dcfeb_gtx2_notintable_adr ||
+              address == dcfeb_gtx3_notintable_adr || 
+              address == dcfeb_gtx4_notintable_adr || 
+              address == dcfeb_gtx5_notintable_adr ||
+              address == dcfeb_gtx6_notintable_adr ) {
+    //---------------------------------------------------------------------
+    // 0X1BA - 0X1C6 = ADR_V6_GTX_NOITNTABLE[CFEB]: GTX link control and monitoring
+    //---------------------------------------------------------------------
+    (*MyOutput_) << "    Link notintable count [DCFEBs 0-6]: \t[ ";
+    for (int i=0; i < 7; i++) { (*MyOutput_) << read_gtx_rx_notintable_count_[i] << " "; }
+    (*MyOutput_) << "]" << std::endl;
+
+  } else if ( address == dcfeb_gtx0_disperr_adr || 
+              address == dcfeb_gtx1_disperr_adr || 
+              address == dcfeb_gtx2_disperr_adr ||
+              address == dcfeb_gtx3_disperr_adr || 
+              address == dcfeb_gtx4_disperr_adr || 
+              address == dcfeb_gtx5_disperr_adr ||
+              address == dcfeb_gtx6_disperr_adr ) {
+    //---------------------------------------------------------------------
+    // 0X1C8 - 0X1D4 = ADR_V6_GTX_NOITNTABLE[CFEB]: GTX link control and monitoring
+    //---------------------------------------------------------------------
+    (*MyOutput_) << "    Link disperr count [DCFEBs 0-6]: \t[ ";
+    for (int i=0; i < 7; i++) { (*MyOutput_) << read_gtx_rx_disperr_count_[i] << " "; }
+    (*MyOutput_) << "]" << std::endl;
+
   } else if ( address == dcfeb_badbits_ctrl_adr ) {
     //---------------------------------------------------------------------
     // 0X15C ADR_V6_CFEB_BADBITS_CTRL: and 0X122 = ADR_CFEB_BADBITS_CTRL:  CFEB badbits control/status
@@ -9052,31 +10419,31 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << " ->GEM GTX optical input control and monitoring:" << std::endl;
 
     (*MyOutput_) << "    Input enable [GEMs 0-3]: \t\t[ ";
-    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gtx_rx_enable_[i] << " "; }
+    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gem_gtx_rx_enable_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
 
     (*MyOutput_) << "    Input reset [GEMs 0-3]: \t\t[ ";
-    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gtx_rx_reset_[i] << " "; }
+    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gem_gtx_rx_reset_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
 
     (*MyOutput_) << "    PRBS test enable [GEMs 0-3]: \t[ ";
-    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gtx_rx_prbs_test_enable_[i] << " "; }
+    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gem_gtx_rx_prbs_test_enable_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
 
     (*MyOutput_) << "    Input ready [GEMs 0-3]: \t\t[ ";
-    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gtx_rx_ready_[i] << " "; }
+    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gem_gtx_rx_ready_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
 
     (*MyOutput_) << "    Link good [GEMs 0-3]: \t\t[ ";
-    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gtx_rx_link_good_[i] << " "; }
+    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gem_gtx_rx_link_good_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
 
     (*MyOutput_) << "    Link had errors [GEMs 0-3]: \t[ ";
-    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gtx_rx_link_had_error_[i] << " "; }
+    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gem_gtx_rx_link_had_error_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
 
     (*MyOutput_) << "    Link unstable [GEMs 0-3]: \t[ ";
-    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gtx_rx_link_bad_[i] << " "; }
+    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gem_gtx_rx_link_bad_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
 
     //    Not sure if the comment below has any applicability to the GEMs
@@ -9085,34 +10452,129 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //    (*MyOutput_) << "]" << std::endl;
 
     (*MyOutput_) << "    Link error count [GEMs 0-3]: \t[ ";
-    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gtx_rx_error_count_[i] << " "; }
+    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gem_gtx_rx_error_count_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
 
-    } else if ( address == gem_tbins_adr ) {
+  } else if (address == gem_gtx0_notintable_adr || 
+             address == gem_gtx1_notintable_adr ||
+             address == gem_gtx2_notintable_adr || 
+             address == gem_gtx3_notintable_adr) {
+    //---------------------------------------------------------------------
+    // 0X370 - 0X376 = ADR_GEM_GTX[0-3]_NOTINTABLE_GEM: GTX link control and monitoring for GEM
+    //---------------------------------------------------------------------
+    int NumOfGEMs = MAX_GEM_FIBERS_ME11;
+    //When all 4 gems are added this section may be un-commented
+    (*MyOutput_) << "    Link notintable count [GEMs 0-3]: \t[ ";
+    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gem_gtx_rx_notintable_count_[i] << " "; }
+    (*MyOutput_) << "]" << std::endl;
+
+  } else if (address == gem_gtx0_disperr_adr || 
+             address == gem_gtx1_disperr_adr ||
+             address == gem_gtx2_disperr_adr || 
+             address == gem_gtx3_disperr_adr) {
+    //---------------------------------------------------------------------
+    // 0X378 - 0X37E = ADR_GEM_GTX[0-3]_DISPERR_GEM: GTX link control and monitoring for GEM
+    //---------------------------------------------------------------------
+    int NumOfGEMs = MAX_GEM_FIBERS_ME11;
+    //When all 4 gems are added this section may be un-commented
+    (*MyOutput_) << "    Link disperr count [GEMs 0-3]: \t[ ";
+    for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gem_gtx_rx_disperr_count_[i] << " "; }
+    (*MyOutput_) << "]" << std::endl;
+
+    } else if ( address == gem_tbins_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X310 = ADR_GEM_TBINS
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM Readout Configuration:"                            << std::endl;
-    (*MyOutput_) << "    TMB gem_fifo_tbins                                = " << read_gem_fifo_tbins_          << std::endl;
-    (*MyOutput_) << "    TMB gem_fifo_pretrig                              = " << read_gem_fifo_pretrig_        << std::endl;
-    (*MyOutput_) << "    TMB gem_fifo_decouple                             = " << read_gem_fifo_decouple_       << std::endl;
-    (*MyOutput_) << "    TMB gem_read_enable                               = " << read_gem_read_enable_         << std::endl;
-    (*MyOutput_) << "    TMB gem Zero Supression Enabled                   = " << read_gem_zero_supress_enable_ << std::endl;
+    (*MyOutput_) << "    TMB gem_fifo_tbins                                = " << std::dec << read_gem_fifo_tbins_          << std::endl;
+    (*MyOutput_) << "    TMB gem_fifo_pretrig                              = " << std::dec << read_gem_fifo_pretrig_        << std::endl;
+    (*MyOutput_) << "    TMB gem_fifo_decouple                             = " << std::dec << read_gem_fifo_decouple_       << std::endl;
+    (*MyOutput_) << "    TMB gem_read_enable                               = " << std::dec << read_gem_read_enable_         << std::endl;
+    (*MyOutput_) << "    TMB gem Zero Supression Enabled                   = " << std::dec << read_gem_zero_supress_enable_ << std::endl;
 
-    } else if ( address == gem_cfg_adr ) {
+    } else if ( address == gem_cfg_adr && GetGemEnabled()) {
     //---------------------------------------------------------------------
     // 0X312 = ADR_CFG_ADR
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM Bx Delay Configuration Register:"                  << std::endl;
     if (!HasGroupedGemRxValues()) {
-    (*MyOutput_) << "    TMB gem A rxd_int_delay                           = " << read_gemA_rxd_int_delay_         << std::endl;
-    (*MyOutput_) << "    TMB gem B rxd_int_delay                           = " << read_gemB_rxd_int_delay_         << std::endl;
+    (*MyOutput_) << "    TMB gem A rxd_int_delay                           = " << std::dec << read_gemA_rxd_int_delay_         << std::endl;
+    (*MyOutput_) << "    TMB gem B rxd_int_delay                           = " << std::dec << read_gemB_rxd_int_delay_         << std::endl;
     }
     else  {
-    (*MyOutput_) << "    TMB gem rxd_int_delay                             = " << read_gem_rxd_int_delay_          << std::endl;
+    (*MyOutput_) << "    TMB gem rxd_int_delay for A/B                     = " << std::dec << read_gem_rxd_int_delay_          << std::endl;
     }
-    (*MyOutput_) << "    TMB gem rxd_int_delays decoupled                  = " << read_decouple_gem_rxd_int_delay_ << std::endl;
-    (*MyOutput_) << "    TMB gem readout mask                              = " << read_gem_readout_mask_           << std::endl;
+    (*MyOutput_) << "    TMB gem rxd_int_delays decoupled                  = " << std::dec << read_decouple_gem_rxd_int_delay_ << std::endl;
+    (*MyOutput_) << "    TMB gem readout mask                              = " << std::dec << read_gem_readout_mask_           << std::endl;
+
+    } else if ( address == gem_csc_match_window_adr && GetGemEnabled()) {
+    //---------------------------------------------------------------------
+    // 0X318 = ADR_GEM_CSC_MATCH_WINDOW
+    //---------------------------------------------------------------------
+    (*MyOutput_) << " ->GEM CSC Match Window (position) Register:"                  << std::endl;
+    (*MyOutput_) << "    TMB gem-clct match, delta halfstrip, odd chamber  = " << std::dec << read_gem_clct_deltahs_odd_              << std::endl;
+    (*MyOutput_) << "    TMB gem-clct match, delta halfstrip,even chamber  = " << std::dec << read_gem_clct_deltahs_even_             << std::endl;
+    (*MyOutput_) << "    TMB gem-alct match, delta wire, odd chamber       = " << std::dec << read_gem_alct_deltawire_odd_            << std::endl;
+    (*MyOutput_) << "    TMB gem-alct match, delta wire,even chamber       = " << std::dec << read_gem_alct_deltawire_even_           << std::endl;
+    } else if ( address == gem_copad_ctrl_adr && GetGemEnabled()) {
+    //---------------------------------------------------------------------
+    // 0X324 = ADR_GEM_COPAD_CTRL
+    //---------------------------------------------------------------------
+    (*MyOutput_) << " ->GEM copad match control  Register:"                    << std::endl;
+    (*MyOutput_) << "    TMB gem copad match with neighbor roll            = " << std::dec << read_gem_match_neighborRoll_     << std::endl;
+    (*MyOutput_) << "    TMB gem copad match with neighbor pad             = " << std::dec << read_gem_match_neighborPad_      << std::endl;
+    (*MyOutput_) << "    TMB gem copad match,max pad differences           = " << std::dec << read_gem_match_deltaPad_         << std::endl;
+    } else if ( address == gem_bx0_delay_adr && GetGemEnabled()) {
+    //---------------------------------------------------------------------
+    // 0X326 = ADR_GEM_BX0_DELAY
+    //---------------------------------------------------------------------
+    (*MyOutput_) << " ->GEM BX0 delay  Register:"                              << std::endl;
+    (*MyOutput_) << "    TMB gemA bx0 delay                                = " << std::dec << read_gemA_bx0_delay_     << std::endl;
+    (*MyOutput_) << "    TMB gemA bx0 Enabled                              = " << std::dec << read_gemA_bx0_enable_    << std::endl;
+    (*MyOutput_) << "    TMB gemA+CLCT bx0 match                           = " << std::dec << read_gemA_bx0_match_     << std::endl;
+    (*MyOutput_) << "    TMB gemB bx0 delay                                = " << std::dec << read_gemB_bx0_delay_     << std::endl;
+    (*MyOutput_) << "    TMB gemB bx0 Enabled                              = " << std::dec << read_gemB_bx0_enable_    << std::endl;
+    (*MyOutput_) << "    TMB gemB+CLCT bx0 match                           = " << std::dec << read_gemB_bx0_match_     << std::endl;
+    } else if ( address == gemA_trg_ctrl_adr && GetGemEnabled()) {
+    //---------------------------------------------------------------------
+    // 0X328 = ADR_GEMA_TRG_CTRL
+    //---------------------------------------------------------------------
+    (*MyOutput_) << " ->GEMA Trigger for match control  Register:"                              << std::endl;
+    (*MyOutput_) << "    TMB gemA/B-alct match window, BX                  = " << std::dec << read_match_gem_alct_window_    << std::endl;
+    (*MyOutput_) << "    TMB gemA/B-clct match window, BX                  = " << std::dec << read_match_gem_clct_window_    << std::endl;
+    (*MyOutput_) << "    TMB gemA fiber enabled for gem-csc match          = " << std::dec << read_gemA_fiber_enable_    << std::endl;
+    } else if ( address == gemB_trg_ctrl_adr && GetGemEnabled()) {
+    //---------------------------------------------------------------------
+    // 0X32a = ADR_GEMB_TRG_CTRL
+    //---------------------------------------------------------------------
+    (*MyOutput_) << " ->GEMB Trigger for match control  Register:"                              << std::endl;
+    (*MyOutput_) << "    TMB gem delay for gem-alct match                  = " << std::dec << read_match_gem_alct_delay_     << std::endl;
+    (*MyOutput_) << "    TMB gemB fiber enabled for gem-csc match          = " << std::dec << read_gemB_fiber_enable_    << std::endl;
+    //(*MyOutput_) << "    TMB gemB-alct match window, BX                    = " << read_match_gemB_alct_window_    << std::endl;
+    //(*MyOutput_) << "    TMB gemB-clct match window, BX                    = " << read_match_gemB_clct_window_    << std::endl;
+    } else if ( address == gem_csc_match_ctrl_adr && GetGemEnabled()) {
+    //---------------------------------------------------------------------
+    // 0X32c = ADR_GEM_CSC_MATCH_CTRL
+    //---------------------------------------------------------------------
+    (*MyOutput_) << " ->GEM-CSC match control  Register:"                              << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match enable in me1a                  = " << read_gem_me1a_match_enable_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match enable in me1b                  = " << read_gem_me1b_match_enable_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match allows nogem in me1a            = " << read_gem_me1a_match_nogem_      << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match allows nogem in me1b            = " << read_gem_me1b_match_nogem_      << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match allows noalct in me1a           = " << read_gem_me1a_match_noalct_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match drop lowQ alct without gem      = " << read_match_drop_lowqalct_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match drop lowQ clct without gem,ME1a = " << read_me1a_match_drop_lowqclct_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match drop lowQ clct without gem,ME1b = " << read_me1b_match_drop_lowqclct_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match allows copad+ALCT               = " << read_tmb_copad_alct_allow_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match allows copad+CLCT               = " << read_tmb_copad_clct_allow_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match allows gemA match no position   = " << read_gemA_match_ignore_position_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match allows gemB match no position   = " << read_gemB_match_ignore_position_     << std::endl;
+    (*MyOutput_) << "    TMB used gemcsc bend angle rather csc-only bend   = " << read_gemcsc_bend_enable_     << std::endl;
+    (*MyOutput_) << "    TMB ignores check gemcsc bend lr and csc bend lr  = " << read_gemcsc_ignore_bend_check_     << std::endl;
+    //(*MyOutput_) << "    TMB promote lct quality with gemcsc match in me1a = " << read_gem_me1a_match_promotequal_     << std::endl;
+    //(*MyOutput_) << "    TMB promote lct quality with gemcsc match in me1b = " << read_gem_me1b_match_promotequal_     << std::endl;
+    //(*MyOutput_) << "    TMB promote lct pattern with gemcsc match in me1a = " << read_gem_me1a_match_promotepat_     << std::endl;
+    //(*MyOutput_) << "    TMB promote lct pattern with gemcsc match in me1b = " << read_gem_me1b_match_promotepat_     << std::endl;
 
     }else {
     //
@@ -9130,7 +10592,12 @@ void TMB::PrintFirmwareDate() {
 	       << GetReadTmbFirmwareDay() << std::endl;
   (*MyOutput_) << "-> TMB Firmware type   : " << std::hex << GetReadTmbFirmwareType()    << std::endl;
   (*MyOutput_) << "-> TMB Firmware version: " << std::hex << GetReadTmbFirmwareVersion() << std::endl;
-  (*MyOutput_) << "-> TMB Firmware RevCode: " << std::hex << GetReadTmbFirmwareRevcode() << std::endl;
+  if (read_cclut_enable_){
+	  (*MyOutput_) << "-> TMB Firmware RevCode(Run3): format_verison=0x" << std::hex << read_tmb_firmware_format_version_ 
+		<<" major_version=0x" << read_tmb_firmware_major_version_<<" minor_version=0x"<< read_tmb_firmware_minor_version_ << std::endl;
+  } else 
+	  (*MyOutput_) << "-> TMB Firmware RevCode: " << std::hex << GetReadTmbFirmwareRevcode() << std::endl;
+
   (*MyOutput_) << "... ... ...  " <<HasGroupedME11ABCFEBRxValues() <<  std::endl;
   //
   return;
@@ -9490,6 +10957,63 @@ int TMB::FillTMBRegister(unsigned long int address) {
     InsertValueIntoDataWord(drop_used_clcts_           ,drop_used_clcts_bithi           ,drop_used_clcts_bitlo           ,&data_word);
     InsertValueIntoDataWord(cross_bx_algorithm_        ,cross_bx_algorithm_bithi        ,cross_bx_algorithm_bitlo        ,&data_word);
     InsertValueIntoDataWord(clct_use_corrected_bx_     ,clct_use_corrected_bx_bithi     ,clct_use_corrected_bx_bitlo     ,&data_word);
+  } else if ( address == run3_format_ctrl_adr ) {
+   //------------------------------------------------------------------
+   //0X1AA = ADR_RUN3_FORMAT_CTRL:  Run3 format control  (Tao, 2020)
+   //------------------------------------------------------------------
+    std::cout << "Inserting values for register ADR_RUN3_FORMAT_CTRL at 0X1AA"
+    	      << "\n    run3_trig_dataformat_enable_         " << run3_trig_dataformat_enable_        
+    	      << "\n    run3_daq_dataformat_enable_         " << run3_daq_dataformat_enable_        
+              << std::endl;
+    InsertValueIntoDataWord(run3_trig_dataformat_enable_,     run3_trig_dataformat_enable_bithi,     run3_trig_dataformat_enable_bitlo,   &data_word);
+    InsertValueIntoDataWord(run3_daq_dataformat_enable_,      run3_daq_dataformat_enable_bithi,      run3_daq_dataformat_enable_bitlo,   &data_word);
+  } else if ( address == hmt_ctrl_adr ) {
+   //------------------------------------------------------------------
+   //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
+   //------------------------------------------------------------------
+    std::cout << "Inserting values for register ADR_HMT_CTRL at 0X1AC"
+    	      << "\n    hmt_enable_         " << hmt_enable_        
+    	      << "\n    hmt_me1a_enable_         " << hmt_me1a_enable_        
+              << std::endl;
+    InsertValueIntoDataWord(hmt_enable_,      hmt_enable_bithi,      hmt_enable_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_me1a_enable_, hmt_me1a_enable_bithi, hmt_me1a_enable_bitlo, &data_word);
+  } else if ( address == hmt_thresh1_adr ) {
+   //------------------------------------------------------------------
+   //0X1AC = ADR_HMT_THRESH1:  HMT thresh1  (Tao, 2020)
+   //------------------------------------------------------------------
+    std::cout << "Inserting values for register ADR_HMT_THRESH1 at 0X1AE"
+    	      << "\n    hmt_thresh1_         " << hmt_thresh1_        
+              << std::endl;
+    InsertValueIntoDataWord(hmt_thresh1_,      hmt_thresh1_bithi,      hmt_thresh1_bitlo,      &data_word);
+    InsertValueIntoDataWord(cfeb_allow_hmt_ro_,cfeb_allow_hmt_ro_bithi,cfeb_allow_hmt_ro_bitlo,      &data_word);
+    InsertValueIntoDataWord(tmb_allow_hmt_,    tmb_allow_hmt_bithi,    tmb_allow_hmt_bitlo,      &data_word);
+    InsertValueIntoDataWord(tmb_allow_hmt_ro_, tmb_allow_hmt_ro_bithi, tmb_allow_hmt_ro_bitlo,      &data_word);
+  } else if ( address == hmt_thresh2_adr ) {
+   //------------------------------------------------------------------
+   //0X1AC = ADR_HMT_THRESH2:  HMT thresh2  (Tao, 2020)
+   //------------------------------------------------------------------
+    std::cout << "Inserting values for register ADR_HMT_THRESH2 at 0X1B0"
+    	      << "\n    hmt_thresh2_         " << hmt_thresh2_        
+              << std::endl;
+    InsertValueIntoDataWord(hmt_thresh2_,      hmt_thresh2_bithi,      hmt_thresh2_bitlo,      &data_word);
+  } else if ( address == hmt_thresh3_adr ) {
+   //------------------------------------------------------------------
+   //0X1AC = ADR_HMT_THRESH3:  HMT thresh3  (Tao, 2020)
+   //------------------------------------------------------------------
+    std::cout << "Inserting values for register ADR_HMT_THRESH3 at 0X1B2"
+    	      << "\n    hmt_thresh3_         " << hmt_thresh3_        
+              << std::endl;
+    InsertValueIntoDataWord(hmt_thresh3_,      hmt_thresh3_bithi,      hmt_thresh3_bitlo,      &data_word);
+  //} else if ( address == lct_injection_adr ) {
+  //  //------------------------------------------------------------------
+  //  //0X1B8 = ADR_LCT_INJECTION:  LCT injection from configuration  (Tao, 2020)
+  //  //------------------------------------------------------------------
+  //  std::cout << "Inserting values for register ADR_LCT_INJECTION at 0X1B8"
+  //  	      << "\n    lct_injection_enable_         " << lct_inj_enable_
+  //            << std::endl;
+  //  InsertValueIntoDataWord(lct_inj_hs_,          lct_inj_hs_bithi,      lct_inj_hs_bitlo,      &data_word);
+  //  InsertValueIntoDataWord(lct_inj_wg_,          lct_inj_wg_bithi,      lct_inj_wg_bitlo,      &data_word);
+  //  InsertValueIntoDataWord(lct_inj_enable_,      lct_inj_enable_bithi,      lct_inj_enable_bitlo,      &data_word);
   } else if ( address == rpc_cfg_adr ) {
     //------------------------------------------------------------------
     //0XB6 = ADR_RPC_CFG:  RPC Configuration
@@ -9846,11 +11370,89 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //---------------------------------------------------------------------
     // 0X312 = ADR_GEM_CFG
     //---------------------------------------------------------------------
-    InsertValueIntoDataWord( gemA_rxd_int_delay_         , gemA_rxd_int_delay_bithi         , gemA_rxd_int_delay_bitlo         , &data_word);
-    InsertValueIntoDataWord( gemB_rxd_int_delay_         , gemB_rxd_int_delay_bithi         , gemB_rxd_int_delay_bitlo         , &data_word);
+    if (!HasGroupedGemRxValues()) {
+	    InsertValueIntoDataWord( gemA_rxd_int_delay_         , gemA_rxd_int_delay_bithi         , gemA_rxd_int_delay_bitlo         , &data_word);
+	    InsertValueIntoDataWord( gemB_rxd_int_delay_         , gemB_rxd_int_delay_bithi         , gemB_rxd_int_delay_bitlo         , &data_word);
+    }else{
+	    InsertValueIntoDataWord( gemA_rxd_int_delay_         , gemA_rxd_int_delay_bithi         , gemA_rxd_int_delay_bitlo         , &data_word);
+	    InsertValueIntoDataWord( gemA_rxd_int_delay_         , gemB_rxd_int_delay_bithi         , gemB_rxd_int_delay_bitlo         , &data_word);
+    }
     InsertValueIntoDataWord( decouple_gem_rxd_int_delay_ , decouple_gem_rxd_int_delay_bithi , decouple_gem_rxd_int_delay_bitlo , &data_word);
     InsertValueIntoDataWord( gem_readout_mask_           , gem_readout_mask_bithi           , gem_readout_mask_bitlo           , &data_word);
+  } else if ( address == gem_csc_match_window_adr ) {
+    //---------------------------------------------------------------------
+    // 0X318 = ADR_GEM_CSC_MATCH_WINDOW
+    //---------------------------------------------------------------------
+    InsertValueIntoDataWord( gem_clct_deltahs_odd_         , gem_clct_deltahs_odd_bithi          , gem_clct_deltahs_odd_bitlo          , &data_word);
+    InsertValueIntoDataWord( gem_clct_deltahs_even_        , gem_clct_deltahs_even_bithi         , gem_clct_deltahs_even_bitlo         , &data_word);
+    InsertValueIntoDataWord( gem_alct_deltawire_odd_       , gem_alct_deltawire_odd_bithi        , gem_alct_deltawire_odd_bitlo        , &data_word);
+    InsertValueIntoDataWord( gem_alct_deltawire_even_      , gem_alct_deltawire_even_bithi       , gem_alct_deltawire_even_bitlo       , &data_word);
+  } else if ( address == gem_copad_ctrl_adr ) {
+    //---------------------------------------------------------------------
+    // 0X324 = ADR_GEM_COPAD_CTRL
+    //---------------------------------------------------------------------
+    InsertValueIntoDataWord( gem_match_neighborRoll_         , gem_match_neighborRoll_bithi         , gem_match_neighborRoll_bitlo         , &data_word);
+    InsertValueIntoDataWord( gem_match_neighborPad_         , gem_match_neighborPad_bithi         , gem_match_neighborPad_bitlo         , &data_word);
+    InsertValueIntoDataWord( gem_match_deltaPad_         , gem_match_deltaPad_bithi         , gem_match_deltaPad_bitlo         , &data_word);
+  } else if ( address == gem_bx0_delay_adr ) {
+    //---------------------------------------------------------------------
+    // 0X326 = ADR_GEM_BX0_DELAY
+    //---------------------------------------------------------------------
+    InsertValueIntoDataWord( gemA_bx0_delay_         , gemA_bx0_delay_bithi         , gemA_bx0_delay_bitlo         , &data_word);
+    InsertValueIntoDataWord( gemA_bx0_enable_        , gemA_bx0_enable_bithi        , gemA_bx0_enable_bitlo         , &data_word);
+    InsertValueIntoDataWord( gemB_bx0_delay_         , gemB_bx0_delay_bithi         , gemB_bx0_delay_bitlo         , &data_word);
+    InsertValueIntoDataWord( gemB_bx0_enable_        , gemB_bx0_enable_bithi        , gemB_bx0_enable_bitlo         , &data_word);
+  } else if ( address == gemA_trg_ctrl_adr ) {
+    //---------------------------------------------------------------------
+    // 0X328 = ADR_GEMA_TRG_CTRL
+    //---------------------------------------------------------------------
+    InsertValueIntoDataWord( match_gem_alct_window_       , match_gem_alct_window_bithi         , match_gem_alct_window_bitlo        , &data_word);
+    InsertValueIntoDataWord( match_gem_clct_window_       , match_gem_clct_window_bithi         , match_gem_clct_window_bitlo        , &data_word);
+    InsertValueIntoDataWord( gemA_fiber_enable_           , gemA_fiber_enable_bithi             , gemA_fiber_enable_bitlo             , &data_word);
+  } else if ( address == gemB_trg_ctrl_adr ) {
+    //---------------------------------------------------------------------
+    // 0X32a = ADR_GEMB_TRG_CTRL
+    //---------------------------------------------------------------------
+    InsertValueIntoDataWord( match_gem_alct_delay_        , match_gem_alct_delay_bithi          , match_gem_alct_delay_bitlo         , &data_word);
+    InsertValueIntoDataWord( gemB_fiber_enable_           , gemB_fiber_enable_bithi             , gemB_fiber_enable_bitlo             , &data_word);
+  } else if ( address == gem_csc_match_ctrl_adr ) {
+    //---------------------------------------------------------------------
+    // 0X32a = ADR_GEM_CSC_MATCH_CTRL
+    //---------------------------------------------------------------------
+    InsertValueIntoDataWord( gem_me1a_match_enable_       , gem_me1a_match_enable_bithi         , gem_me1a_match_enable_bitlo         , &data_word);
+    InsertValueIntoDataWord( gem_me1b_match_enable_       , gem_me1b_match_enable_bithi         , gem_me1b_match_enable_bitlo         , &data_word);
+    InsertValueIntoDataWord( gem_me1a_match_nogem_        , gem_me1a_match_nogem_bithi          , gem_me1a_match_nogem_bitlo          , &data_word);
+    InsertValueIntoDataWord( gem_me1b_match_nogem_        , gem_me1b_match_nogem_bithi          , gem_me1b_match_nogem_bitlo          , &data_word);
+    InsertValueIntoDataWord( gem_me1a_match_noalct_       , gem_me1a_match_noalct_bithi         , gem_me1a_match_noalct_bitlo         , &data_word);
+    InsertValueIntoDataWord( match_drop_lowqalct_         , match_drop_lowqalct_bithi           , match_drop_lowqalct_bitlo           , &data_word);
+    InsertValueIntoDataWord( me1a_match_drop_lowqclct_    , me1a_match_drop_lowqclct_bithi      , me1a_match_drop_lowqclct_bitlo      , &data_word);
+    InsertValueIntoDataWord( me1b_match_drop_lowqclct_    , me1b_match_drop_lowqclct_bithi      , me1b_match_drop_lowqclct_bitlo      , &data_word);
+    InsertValueIntoDataWord( tmb_copad_alct_allow_        , tmb_copad_alct_allow_bithi          , tmb_copad_alct_allow_bitlo          , &data_word);
+    InsertValueIntoDataWord( tmb_copad_clct_allow_        , tmb_copad_clct_allow_bithi          , tmb_copad_clct_allow_bitlo          , &data_word);
+    InsertValueIntoDataWord( gemA_match_ignore_position_  , gemA_match_ignore_position_bithi    , gemA_match_ignore_position_bitlo    , &data_word);
+    InsertValueIntoDataWord( gemB_match_ignore_position_  , gemB_match_ignore_position_bithi    , gemB_match_ignore_position_bitlo    , &data_word);
+    InsertValueIntoDataWord( gemcsc_bend_enable_          , gemcsc_bend_enable_bithi            , gemcsc_bend_enable_bitlo            , &data_word);
+    InsertValueIntoDataWord( gemcsc_ignore_bend_check_    , gemcsc_ignore_bend_check_bithi      , gemcsc_ignore_bend_check_bitlo      , &data_word);
+    //InsertValueIntoDataWord( gem_me1a_match_promotequal_  , gem_me1a_match_promotequal_bithi    , gem_me1a_match_promotequal_bitlo    , &data_word);
+    //InsertValueIntoDataWord( gem_me1b_match_promotequal_  , gem_me1b_match_promotequal_bithi    , gem_me1b_match_promotequal_bitlo    , &data_word);
+    //InsertValueIntoDataWord( gem_me1a_match_promotepat_   , gem_me1a_match_promotepat_bithi     , gem_me1a_match_promotepat_bitlo     , &data_word);
+    //InsertValueIntoDataWord( gem_me1b_match_promotepat_   , gem_me1b_match_promotepat_bithi     , gem_me1b_match_promotepat_bitlo     , &data_word);
     //
+  } else if ( address == gem_vfat_hcm0_adr || address == gem_vfat_hcm1_adr || address == gem_vfat_hcm2_adr ) {
+    //---------------------------------------------------------------------
+    // 0X33a,0x33c,0x33e for GEM hot vfat mask
+    //---------------------------------------------------------------------
+   
+    for (int bit_in_register=0; bit_in_register<16; bit_in_register++) {
+        if (address == gem_vfat_hcm0_adr || (address == gem_vfat_hcm1_adr && bit_in_register<8)){
+	   int vfat = (address - gem_vfat_hcm0_adr)*8 + bit_in_register;
+           InsertValueIntoDataWord(gemA_hot_channel_mask_[vfat],bit_in_register,bit_in_register,&data_word);
+        }
+	else{ //GEMB part
+           int vfat = (address - gem_vfat_hcm1_adr)*8 + bit_in_register - 8;
+           InsertValueIntoDataWord(gemB_hot_channel_mask_[vfat],bit_in_register,bit_in_register,&data_word);
+        }
+    }
   } else {
     //
     (*MyOutput_) << "TMB: ERROR in FillTMBRegister, VME address = " << address << " not supported to be filled" << std::endl;
@@ -9894,16 +11496,19 @@ void TMB::ConvertVMERegisterValuesToDigitalPhases_(unsigned long int vme_address
     ( read_phase_value_within_quadrant_   & 0x3f)        | 
     ((read_quarter_cycle_quadrant_select_ &  0x1) << 6 ) |
     ((read_half_cycle_quadrant_select_    &  0x1) << 7 ) ;
-  //
+  //25.0/256.0
   float float_number_of_available_bins_per_clock_cycle = (float) number_of_available_bins_per_clock_cycle;
   //
   float float_maximum_number_of_phase_delay_values = (float) maximum_number_of_phase_delay_values;
   //
-  float float_read_digital_phase = ( (float) full_digital_phase * 
-				     ( float_maximum_number_of_phase_delay_values / float_number_of_available_bins_per_clock_cycle  ) + 0.5);
+  //float float_read_digital_phase = ( (float) full_digital_phase * 
+  //				     ( float_maximum_number_of_phase_delay_values / float_number_of_available_bins_per_clock_cycle  ) + 0.5);
+  //	Tao: why 0.5 is added ?? should (full_digital_phase+0.5)*...???
+  float float_read_digital_phase = ( (float) full_digital_phase) * 
+				     ( float_maximum_number_of_phase_delay_values / float_number_of_available_bins_per_clock_cycle  );
   //
-  int read_digital_phase = ( (int) float_read_digital_phase ) & 0xff;
-  int read_fine_phase    = (int) (( float_read_digital_phase ) - read_digital_phase * 10.0);
+  int read_digital_phase = ( (int) float_read_digital_phase ) & 0xff; //phase delay, unit is 1 second
+  int read_fine_phase    = (int) (( float_read_digital_phase  - read_digital_phase) * 10.0);//fine phase delay, unit is 0.1second
   //
   if ( vme_address == phaser_alct_rxd_adr ) {
     //
@@ -9919,26 +11524,31 @@ void TMB::ConvertVMERegisterValuesToDigitalPhases_(unsigned long int vme_address
     //
     read_cfeb0_rx_posneg_      = posneg       ;
     read_cfeb0_rx_clock_delay_ = read_digital_phase;
+    read_cfeb0_rx_fine_delay_ = read_fine_phase;
     //
   } else if ( vme_address == phaser_cfeb1_rxd_adr ) { 
     //
     read_cfeb1_rx_posneg_      = posneg       ;
     read_cfeb1_rx_clock_delay_ = read_digital_phase;
+    read_cfeb1_rx_fine_delay_ = read_fine_phase;
     //
   } else if ( vme_address == phaser_cfeb2_rxd_adr ) { 
     //
     read_cfeb2_rx_posneg_      = posneg       ;
     read_cfeb2_rx_clock_delay_ = read_digital_phase;
+    read_cfeb2_rx_fine_delay_ = read_fine_phase;
     //
   } else if ( vme_address == phaser_cfeb3_rxd_adr ) { 
     //
     read_cfeb3_rx_posneg_      = posneg       ;
     read_cfeb3_rx_clock_delay_ = read_digital_phase;
+    read_cfeb3_rx_fine_delay_ = read_fine_phase;
     //
   } else if ( vme_address == phaser_cfeb4_rxd_adr ) { 
     //
     read_cfeb4_rx_posneg_      = posneg       ;
     read_cfeb4_rx_clock_delay_ = read_digital_phase;
+    read_cfeb4_rx_fine_delay_ = read_fine_phase;
     //
   } else if ( vme_address == phaser_cfeb456_rxd_adr ) {
     //
@@ -9946,31 +11556,41 @@ void TMB::ConvertVMERegisterValuesToDigitalPhases_(unsigned long int vme_address
     {  // OTMB with ME1/1
        read_cfeb4_rx_posneg_      = posneg       ;
        read_cfeb4_rx_clock_delay_ = read_digital_phase;
+       read_cfeb4_rx_fine_delay_ = read_fine_phase;
     } 
     read_cfeb5_rx_posneg_      = posneg       ;
     read_cfeb5_rx_clock_delay_ = read_digital_phase;
+    read_cfeb5_rx_fine_delay_ = read_fine_phase;
     read_cfeb6_rx_posneg_      = posneg       ;
     read_cfeb6_rx_clock_delay_ = read_digital_phase;
+    read_cfeb6_rx_fine_delay_ = read_fine_phase;
     read_cfeb456_rx_posneg_      = posneg       ;
     read_cfeb456_rx_clock_delay_ = read_digital_phase;
+    read_cfeb456_rx_fine_delay_  = read_fine_phase;
     //
   } else if ( vme_address == phaser_cfeb0123_rxd_adr ) {
     //
     read_cfeb0_rx_posneg_      = posneg       ;
     read_cfeb0_rx_clock_delay_ = read_digital_phase;
+    read_cfeb0_rx_fine_delay_ = read_fine_phase;
     read_cfeb1_rx_posneg_      = posneg       ;
     read_cfeb1_rx_clock_delay_ = read_digital_phase;
+    read_cfeb1_rx_fine_delay_ = read_fine_phase;
     read_cfeb2_rx_posneg_      = posneg       ;
     read_cfeb2_rx_clock_delay_ = read_digital_phase;
+    read_cfeb2_rx_fine_delay_ = read_fine_phase;
     read_cfeb3_rx_posneg_      = posneg       ;
     read_cfeb3_rx_clock_delay_ = read_digital_phase;
+    read_cfeb3_rx_fine_delay_  = read_fine_phase;
     if(GetHardwareVersion()>1 && (GetTMBFirmwareCompileType()==0xA || GetTMBFirmwareCompileType()==0xB)) 
     {  // OTMB with MEx/1
        read_cfeb4_rx_posneg_      = posneg       ;
        read_cfeb4_rx_clock_delay_ = read_digital_phase;
+       read_cfeb4_rx_fine_delay_ = read_fine_phase;
     } 
     read_cfeb0123_rx_posneg_      = posneg       ;
     read_cfeb0123_rx_clock_delay_ = read_digital_phase;
+    read_cfeb0123_rx_fine_delay_ = read_fine_phase;
     //
   } else if ( vme_address == phaser_gem_rxd_adr ) {
     //
@@ -10537,6 +12157,29 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     // Here check only the bit (ANDed between all five CFEB bits...)
     config_ok &= compareValues("TMB cfeb_badbits_block",GetReadCFEBBadBitsBlock(),GetCFEBBadBitsBlock(),print_errors); 
     //
+    //---------------------------------------------------------------------
+    // 0X1AA = ADR_RUN3_FORMAT_CTRL:  Run3 format control  (Tao, 2020)
+    //---------------------------------------------------------------------
+    config_ok &= compareValues("TMB run3_trig_dataformat_enable",  read_run3_trig_dataformat_enable_,  run3_trig_dataformat_enable_, print_errors);
+    config_ok &= compareValues("TMB run3_daq_dataformat_enable",  read_run3_daq_dataformat_enable_,  run3_daq_dataformat_enable_, print_errors);
+    //
+    //---------------------------------------------------------------------
+    // 0X1AC = ADR_HMT_CTRL:  HMT control 
+    //---------------------------------------------------------------------
+    config_ok &= compareValues("TMB hmt_enable",  read_hmt_enable_,  hmt_enable_, print_errors);
+    config_ok &= compareValues("TMB hmt_me1a_enable",  read_hmt_me1a_enable_,  hmt_me1a_enable_, print_errors);
+    //
+    //---------------------------------------------------------------------
+    // 0X1AE = ADR_HMT_THRESH1:  HMT threshold and control
+    // 0X1B0 = ADR_HMT_THRESH2:  HMT threshold and control
+    // 0X1B2 = ADR_HMT_THRESH3:  HMT threshold and control
+    //---------------------------------------------------------------------
+    config_ok &= compareValues("TMB hmt_thresh1",  read_hmt_thresh1_,  hmt_thresh1_, print_errors);
+    config_ok &= compareValues("TMB hmt_thresh2",  read_hmt_thresh2_,  hmt_thresh2_, print_errors);
+    config_ok &= compareValues("TMB hmt_thresh3",  read_hmt_thresh3_,  hmt_thresh3_, print_errors);
+    config_ok &= compareValues("TMB cfeb_allow_hmt_ro",  read_cfeb_allow_hmt_ro_,  cfeb_allow_hmt_ro_, print_errors);
+    config_ok &= compareValues("TMB tmb_allow_hmt",      read_tmb_allow_hmt_,      tmb_allow_hmt_, print_errors);
+    config_ok &= compareValues("TMB tmb_allow_hmt_ro",   read_tmb_allow_hmt_ro_,   tmb_allow_hmt_ro_, print_errors);
     //
     //------------------------------------------------------------------
     //0X17A = ADR_V6_EXTEND: ADR_CFEB_INJ:  CFEB Injector Control; ADR_SEQ_TRIG_EN:
@@ -10572,7 +12215,8 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
             //--------------------------------------------------------------
             //[0X308] = ADR_PHASER9:  GEM A+B
             //--------------------------------------------------------------
-            config_ok &= compareValues("TMB gem_delay"     , read_gem_rx_clock_delay_ , gem_rx_clock_delay_ , print_errors);
+            config_ok &= compareValues("TMB gem_rx_delay"     , read_gem_rx_clock_delay_ , gem_rx_clock_delay_ , print_errors);
+            //config_ok &= compareValues("TMB gem_fine_delay"   , read_gem_rx_fine_delay_  , gem_rx_fine_delay_ , print_errors);
             config_ok &= compareValues("TMB gem_rx_posneg" , read_gem_rx_posneg_      , gem_rx_posneg_      , print_errors);
         }
         else {
@@ -10580,15 +12224,82 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
             //[0X308] = ADR_PHASER9:  GEM A
             //--------------------------------------------------------------
             config_ok &= compareValues("TMB gemA_delay"     , read_gemA_rx_clock_delay_ , gemA_rx_clock_delay_ , print_errors);
-            config_ok &= compareValues("TMB gemA_fine_delay", read_gemA_rx_fine_delay_  , gemA_rx_fine_delay_  , print_errors);
+            //config_ok &= compareValues("TMB gemA_fine_delay", read_gemA_rx_fine_delay_  , gemA_rx_fine_delay_  , print_errors);
             config_ok &= compareValues("TMB gemA_rx_posneg" , read_gemA_rx_posneg_      , gemA_rx_posneg_      , print_errors);
             //--------------------------------------------------------------
             //[0X30A] = ADR_PHASER10:  GEM B
             //--------------------------------------------------------------
             config_ok &= compareValues("TMB gemB_delay"     , read_gemB_rx_clock_delay_ , gemB_rx_clock_delay_ , print_errors);
-            config_ok &= compareValues("TMB gemB_fine_delay", read_gemB_rx_fine_delay_  , gemB_rx_fine_delay_  , print_errors);
+            //config_ok &= compareValues("TMB gemB_fine_delay", read_gemB_rx_fine_delay_  , gemB_rx_fine_delay_  , print_errors);
             config_ok &= compareValues("TMB gemB_rx_posneg" , read_gemB_rx_posneg_      , gemB_rx_posneg_      , print_errors);
         }
+
+        //---------------------------------------------------------------------
+        // 0X318 = ADR_GEM_TRG
+        //---------------------------------------------------------------------
+
+        config_ok &= compareValues ("TMB gem_clct_deltahs_odd"   , read_gem_clct_deltahs_odd_        , gem_clct_deltahs_odd_     , print_errors);
+        config_ok &= compareValues ("TMB gem_clct_deltahs_even"  , read_gem_clct_deltahs_even_       , gem_clct_deltahs_even_    , print_errors);
+        config_ok &= compareValues ("TMB gem_alct_deltawire_odd" , read_gem_alct_deltawire_odd_      , gem_alct_deltawire_odd_   , print_errors);
+        config_ok &= compareValues ("TMB gem_alct_deltawire_even", read_gem_alct_deltawire_even_     , gem_alct_deltawire_even_  , print_errors);
+
+        //---------------------------------------------------------------------
+        // 0X324 = ADR_GEM_COPAD_CTRL
+        //---------------------------------------------------------------------
+
+        config_ok &= compareValues ("TMB gem_match_neighborRoll"    , read_gem_match_neighborRoll_         , gem_match_neighborRoll_     , print_errors);
+        config_ok &= compareValues ("TMB gem_match_neighborPad"     , read_gem_match_neighborPad_          , gem_match_neighborPad_      , print_errors);
+        config_ok &= compareValues ("TMB gem_match_deltaPad"        , read_gem_match_deltaPad_             , gem_match_deltaPad_         , print_errors);
+
+        //---------------------------------------------------------------------
+        // 0X326 = ADR_GEM_BX0_DELAY
+        //---------------------------------------------------------------------
+
+        config_ok &= compareValues ("TMB gemA_bx0_delay"    , read_gemA_bx0_delay_         , gemA_bx0_delay_     , print_errors);
+        config_ok &= compareValues ("TMB gemA_bx0_enable"   , read_gemA_bx0_enable_        , gemA_bx0_enable_     , print_errors);
+        config_ok &= compareValues ("TMB gemB_bx0_delay"    , read_gemB_bx0_delay_         , gemB_bx0_delay_     , print_errors);
+        config_ok &= compareValues ("TMB gemB_bx0_enable"   , read_gemB_bx0_enable_        , gemB_bx0_enable_     , print_errors);
+
+        //---------------------------------------------------------------------
+        // 0X328 = ADR_GEMA_TRG_CTRL
+        //---------------------------------------------------------------------
+
+        config_ok &= compareValues ("TMB match_gem_alct_window"   , read_match_gem_alct_window_     , match_gem_alct_window_  , print_errors);
+        config_ok &= compareValues ("TMB match_gem_clct_window"   , read_match_gem_clct_window_     , match_gem_clct_window_  , print_errors);
+        config_ok &= compareValues ("TMB gemA_fiber_enable"       , read_gemA_fiber_enable_         , gemA_fiber_enable_  , print_errors);
+
+        //---------------------------------------------------------------------
+        // 0X32a = ADR_GEMA_TRG_CTRL
+        //---------------------------------------------------------------------
+
+        config_ok &= compareValues ("TMB match_gem_alct_delay"   , read_match_gem_alct_delay_     , match_gem_alct_delay_   , print_errors);
+        //config_ok &= compareValues ("TMB match_gemB_alct_window"  , read_match_gemB_alct_window_    , match_gemB_alct_window_  , print_errors);
+        //config_ok &= compareValues ("TMB match_gemB_clct_window"  , read_match_gemB_clct_window_    , match_gemB_clct_window_  , print_errors);
+        config_ok &= compareValues ("TMB gemB_fiber_enable"       , read_gemB_fiber_enable_         , gemB_fiber_enable_  , print_errors);
+
+        //---------------------------------------------------------------------
+        // 0X32c = ADR_GEM_CSC_MATCH_CTRL
+        //---------------------------------------------------------------------
+
+        config_ok &= compareValues ("TMB gem_me1a_match_enable"      , read_gem_me1a_match_enable_      , gem_me1a_match_enable_  , print_errors);
+        config_ok &= compareValues ("TMB gem_me1b_match_enable"      , read_gem_me1b_match_enable_      , gem_me1b_match_enable_  , print_errors);
+        config_ok &= compareValues ("TMB gem_me1a_match_nogem"       , read_gem_me1a_match_nogem_       , gem_me1a_match_nogem_  , print_errors);
+        config_ok &= compareValues ("TMB gem_me1b_match_nogem"       , read_gem_me1b_match_nogem_       , gem_me1b_match_nogem_  , print_errors);
+        config_ok &= compareValues ("TMB gem_me1a_match_noalct"      , read_gem_me1a_match_noalct_      , gem_me1a_match_noalct_  , print_errors);
+        config_ok &= compareValues ("TMB match_drop_lowqalct"        , read_match_drop_lowqalct_        , match_drop_lowqalct_  , print_errors);
+        config_ok &= compareValues ("TMB me1a_match_drop_lowqclct"   , read_me1a_match_drop_lowqclct_   , me1a_match_drop_lowqclct_  , print_errors);
+        config_ok &= compareValues ("TMB me1b_match_drop_lowqclct"   , read_me1b_match_drop_lowqclct_   , me1b_match_drop_lowqclct_  , print_errors);
+        config_ok &= compareValues ("TMB tmb_copad_alct_allow"       , read_tmb_copad_alct_allow_       , tmb_copad_alct_allow_   , print_errors);
+        config_ok &= compareValues ("TMB tmb_copad_clct_allow"       , read_tmb_copad_clct_allow_       , tmb_copad_clct_allow_   , print_errors);
+        config_ok &= compareValues ("TMB gemA_match_ignore_position" , read_gemA_match_ignore_position_ , gemA_match_ignore_position_, print_errors);
+        config_ok &= compareValues ("TMB gemB_match_ignore_position" , read_gemB_match_ignore_position_ , gemB_match_ignore_position_, print_errors);
+        config_ok &= compareValues ("TMB gemcsc_bend_enable"         , read_gemcsc_bend_enable_         , gemcsc_bend_enable_     , print_errors);
+        config_ok &= compareValues ("TMB gemcsc_ignore_bend_check"   , read_gemcsc_ignore_bend_check_   , gemcsc_ignore_bend_check_   , print_errors);
+        //config_ok &= compareValues ("TMB gem_me1a_match_promotequal" , read_gem_me1a_match_promotequal_ , gem_me1a_match_promotequal_  , print_errors);
+        //config_ok &= compareValues ("TMB gem_me1b_match_promotequal" , read_gem_me1b_match_promotequal_ , gem_me1b_match_promotequal_  , print_errors);
+        //config_ok &= compareValues ("TMB gem_me1a_match_promotepat"  , read_gem_me1a_match_promotepat_  , gem_me1a_match_promotepat_  , print_errors);
+        //config_ok &= compareValues ("TMB gem_me1b_match_promotepat"  , read_gem_me1b_match_promotepat_  , gem_me1b_match_promotepat_  , print_errors);
+
     }
     //
   }

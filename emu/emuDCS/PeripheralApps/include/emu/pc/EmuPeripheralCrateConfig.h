@@ -645,6 +645,7 @@ private:
   void SetGEMPhase (xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void SetGEMPosneg (xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void SetGEMIntDelay (xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
+  void InjectMPCFrame (xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   //
   // synchronization functions looping over CSC's
   void MeasureL1AsAndDAVsForCrate(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
@@ -670,11 +671,14 @@ private:
   void CFEBTimingSimpleScanSystem_non_me11(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
 
   //
-  // BC0 scan functions
+  // BC0 scan functions, Tao
   void ALCTBC0Scan(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void ALCTBC0ScanWithCounter(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void ALCTBC0ScanForCrate(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void ALCTBC0ScanForSystem(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void Settmb_bxn_offset(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void GEMBC0Scan(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void GEMCSCMatchScan(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   //
   // Output logging
   void LogCCBTestsOutput(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 

@@ -331,7 +331,7 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
 
   int slot = 0;
   fillInt("slot", slot);
-//  std::cout << "Inside TMBParser..."<<std::endl;
+  //std::cout << "Inside TMBParser... slot "<< slot <<std::endl;
   if(slot == 0) {
     std::cerr << "No slot specified for TMB! " << std::endl;
   } else {
@@ -533,6 +533,25 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
     if (fillInt("drop_used_clcts"           ,value)) { tmb_->Set_drop_used_clcts           (value); }
     if (fillInt("cross_bx_algorithm"        ,value)) { tmb_->Set_cross_bx_algorithm        (value); }
     if (fillInt("clct_use_corrected_bx"     ,value)) { tmb_->Set_clct_use_corrected_bx     (value); }
+    //0x1AA = ADR_RUN3_FORMAT_CTRL: control run3 format
+    if (fillInt("run3_trig_dataformat_enable"                ,value)) { tmb_->Setrun3_trig_dataformat_enable                 (value);}
+    if (fillInt("run3_daq_dataformat_enable"                 ,value)) { tmb_->Setrun3_daq_dataformat_enable                 (value);}
+    //0x1AC = ADR_HMT_CTRL: control High multiplicity trigger
+    if (fillInt("hmt_enable"                ,value)) { tmb_->Sethmt_enable                 (value);}
+    if (fillInt("hmt_me1a_enable"           ,value)) { tmb_->Sethmt_me1a_enable            (value);}
+    //0x1AE = ADR_HMT_THRESH1
+    //0x1B0 = ADR_HMT_THRESH2
+    //0x1B2 = ADR_HMT_THRESH3
+    if (fillInt("hmt_thresh1"               ,value)) { tmb_->Sethmt_thresh1                (value);}
+    if (fillInt("hmt_thresh2"               ,value)) { tmb_->Sethmt_thresh2                (value);}
+    if (fillInt("hmt_thresh3"               ,value)) { tmb_->Sethmt_thresh3                (value);}
+    if (fillInt("cfeb_allow_hmt_ro"         ,value)) { tmb_->SetCfebAllowHmtRo          (value);}
+    if (fillInt("tmb_allow_hmt"             ,value)) { tmb_->SetTmbAllowHmt              (value);}
+    if (fillInt("tmb_allow_hmt_ro"          ,value)) { tmb_->SetTmbAllowHmtRo           (value);}
+    ////0x1B8 = ADR_LCT_INJECTION
+    //if (fillInt("lct_inj_hs"               ,value)) { tmb_->Setlct_inj_hs                (value);}
+    //if (fillInt("lct_inj_wg"               ,value)) { tmb_->Setlct_inj_wg                (value);}
+    //if (fillInt("lct_inj_enable"           ,value)) { tmb_->Setlct_inj_enable            (value);}
     //
     //0XB6:
     if (fillInt("rpc_exists"     ,value)) { tmb_->SetRpcExist(value);           }
@@ -677,15 +696,15 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
     if (gemEnabled) {
         //
         if (tmb_->HasGroupedGemRxValues() == 1){
-            if (fillInt("gem_delay",      value)) { tmb_->SetGemRxClockDelay(value); }
-            if (fillInt("gem_fine_delay" ,value)) { tmb_->SetGemRxFineDelay(value); }
-            if (fillInt("gem_posneg",     value)) { tmb_->SetGemRxPosNeg(value);     }
+            if (fillInt("gem_rx_delay"   ,  value)) { tmb_->SetGemRxClockDelay(value); }
+            //if (fillInt("gem_fine_delay" ,  value)) { tmb_->SetGemRxFineDelay(value); }
+            if (fillInt("gem_posneg"     ,  value)) { tmb_->SetGemRxPosNeg(value);     }
         }
         //
         //0x310
         if (fillInt ("gem_fifo_tbins"          , value)) { tmb_->SetGemFifoTbins         (value);}
         if (fillInt ("gem_fifo_pretrig"        , value)) { tmb_->SetGemFifoPreTrig       (value);}
-        if (fillInt ("gem_decouple"            , value)) { tmb_->SetGemDecoupleTbins     (value);}
+        if (fillInt ("gem_fifo_decouple"            , value)) { tmb_->SetGemDecoupleTbins     (value);}
         if (fillInt ("gem_read_enable"         , value)) { tmb_->SetGemReadEnable        (value);}
         if (fillInt ("gem_zero_supress_enable" , value)) { tmb_->SetGemZeroSupressEnable (value);}
 
@@ -694,7 +713,59 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
         if (fillInt ("gemB_fifo_rxd_int_delay"    , value)) { tmb_->SetGemBRxdIntDelay        (value);}
         if (fillInt ("gem_decouple_rxd_int_delay" , value)) { tmb_->SetDecoupleGemRxdIntDelay (value);}
         if (fillInt ("gem_fifo_rxd_int_delay"     , value)) { tmb_->SetGemRxdIntDelay         (value);}
+        if (fillInt ("gem_readout_mask"           , value)) { tmb_->SetGemReadoutMask         (value);}
 
+        //0x318
+        if (fillInt ("gem_clct_deltahs_odd"      , value)) { tmb_->SetGemClctDeltahsOdd     (value);}
+        if (fillInt ("gem_clct_deltahs_even"     , value)) { tmb_->SetGemClctDeltahsEven    (value);}
+        if (fillInt ("gem_alct_deltawire_odd"    , value)) { tmb_->SetGemAlctDeltawireOdd        (value);}
+        if (fillInt ("gem_alct_deltawire_even"   , value)) { tmb_->SetGemAlctDeltawireEven       (value);}
+
+        //0x324
+        if (fillInt ("gem_match_neighborRoll"    , value)) { tmb_->SetGemMatchNeighborRoll        (value);}
+        if (fillInt ("gem_match_neighborPad"     , value)) { tmb_->SetGemMatchNeighborPad         (value);}
+        if (fillInt ("gem_match_deltaPad"        , value)) { tmb_->SetGemMatchDeltaPad            (value);}
+
+        //0x326
+        if (fillInt ("gemA_bx0_delay"        , value)) { tmb_->SetGemABx0Delay            (value);}
+        if (fillInt ("gemA_bx0_enable"       , value)) { tmb_->SetGemABx0Enable            (value);}
+        if (fillInt ("gemB_bx0_delay"        , value)) { tmb_->SetGemBBx0Delay            (value);}
+        if (fillInt ("gemB_bx0_enable"       , value)) { tmb_->SetGemBBx0Enable            (value);}
+
+        //0x328
+        if (fillInt ("match_gem_alct_window"  , value))  { tmb_->SetMatchGemAlctWindow           (value);}
+        if (fillInt ("match_gem_clct_window"  , value))  { tmb_->SetMatchGemClctWindow           (value);}
+        if (fillInt ("gemA_fiber_enable"       , value)) { tmb_->SetGemAFiberEnable               (value);}
+
+        //0x32a
+        if (fillInt ("match_gem_alct_delay"   , value))  { tmb_->SetMatchGemAlctDelay            (value);}
+        if (fillInt ("gemB_fiber_enable"       , value)) { tmb_->SetGemBFiberEnable               (value);}
+
+        //0x32c
+        if (fillInt ("gem_me1a_match_enable"      , value)) { tmb_->SetGemMe1aMatchEnable          (value);}
+        if (fillInt ("gem_me1b_match_enable"      , value)) { tmb_->SetGemMe1bMatchEnable          (value);}
+        if (fillInt ("gem_me1a_match_nogem"       , value)) { tmb_->SetGemMe1aMatchNoGem          (value);}
+        if (fillInt ("gem_me1b_match_nogem"       , value)) { tmb_->SetGemMe1bMatchNoGem          (value);}
+        if (fillInt ("gem_me1a_match_noalct"      , value)) { tmb_->SetGemMe1aMatchNoAlct          (value);}
+        if (fillInt ("match_drop_lowqalct"      , value))   { tmb_->SetMatchDropLowqalct          (value);}
+        if (fillInt ("me1a_match_drop_lowqclct"      , value)) { tmb_->SetMe1aMatchDropLowqclct          (value);}
+        if (fillInt ("me1b_match_drop_lowqclct"      , value)) { tmb_->SetMe1bMatchDropLowqclct          (value);}
+        //if (fillInt ("gem_me1a_match_promotequal" , value)) { tmb_->SetGemMe1aMatchPromoteQual          (value);}
+        //if (fillInt ("gem_me1b_match_promotequal" , value)) { tmb_->SetGemMe1bMatchPromoteQual          (value);}
+        //if (fillInt ("gem_me1a_match_promotepat"  , value)) { tmb_->SetGemMe1aMatchPromotePat          (value);}
+        //if (fillInt ("gem_me1b_match_promotepat"  , value)) { tmb_->SetGemMe1bMatchPromotePat          (value);}
+        if (fillInt ("tmb_copad_alct_allow"       , value)) { tmb_->SetTmbCopadAlctAllow          (value);}
+        if (fillInt ("tmb_copad_clct_allow"       , value)) { tmb_->SetTmbCopadClctAllow          (value);}
+        if (fillInt ("gemA_match_ignore_position" , value))         { tmb_->SetGemAMatchIgnorePosition   (value);}
+        if (fillInt ("gemB_match_ignore_position" , value))         { tmb_->SetGemBMatchIgnorePosition   (value);}
+        if (fillInt ("gemcsc_bend_enable"  , value))                { tmb_->SetGemcscBendEnable          (value);}
+        if (fillInt ("gemcsc_ignore_bend_check"  , value))          { tmb_->SetGemcscIgnoreBendCheck     (value);}
+
+       //---------------------------------------------------------------------
+       // 0X33a,0x33c,0x33e for GEM hot vfat mask
+       //---------------------------------------------------------------------
+       if (fillIntX ("gemA_vfat_hcm"  , value)) { tmb_->SetGemVfatHotChannelMask       (value, true );} //GEMA
+       if (fillIntX ("gemB_vfat_hcm"  , value)) { tmb_->SetGemVfatHotChannelMask       (value, false);} //GEMB
     }
     //
     xercesc::DOMNode * daughterNode = pNode->getFirstChild();
@@ -1057,7 +1128,7 @@ void XMLParser::CSCParser(xercesc::DOMNode * pNode, Crate * theCrate, xercesc::D
   //
   while (pNode1) {
     if (pNode1->getNodeType() == xercesc::DOMNode::ELEMENT_NODE) {
-      // std::cout << "PeripheralCrateParser: pNode1=" << xercesc::XMLString::transcode(pNode1->getNodeName()) << std::endl;
+       //std::cout << "PeripheralCrateParser: pNode1=" << xercesc::XMLString::transcode(pNode1->getNodeName()) << std::endl;
       //
       if (strcmp("DAQMB",xercesc::XMLString::transcode(pNode1->getNodeName()))==0) {  
 	DAQMBParser(pNode1, theCrate, csc_);

@@ -5207,6 +5207,7 @@ unsigned ALCTController::spartan6_readreg(int reg)
     int  rd_data,  wr_data;
     int  adc_sdo, adc_sck, adc_sdi, adc_ncs,  adc_shiftin;
 
+    jtag_RestoreIdle(ChainAlctFastFpga);
 ///------------------------------------------------------------------------------
 //  Fast Control's ADC register
 //------------------------------------------------------------------------------

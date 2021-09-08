@@ -12638,6 +12638,25 @@ int TMB::DCSreadAll(char *data)
   unsigned short tt, tr; //SK: unused: , sysm[6];
 
   if(checkvme_fail()) return 0;
+
+// Liu, Sept. 8,2021: for OTMB, reading ALCT Mez (all ADCs)
+if(hardware_version_==2)
+{
+  ALCTController * thisALCT = alctController();
+  if(thisALCT)
+  {
+     thisALCT->read_all_adc();
+     double temp=0.0;
+     if(thisALCT->ALCTversion()==2) temp=thisALCT->get_adc(5);
+     else if(thisALCT->ALCTversion()==3) temp=thisALCT->get_adc(6);
+     else if(thisALCT->ALCTversion()==4) temp=thisALCT->get_adc(9);
+     // std::cout << "ALCT Temperature=" << temp << std::endl;
+     tr=int((temp/100.+0.5)*1023/1.225);
+  }
+  else tr = 585;  // dummy data, 20.05C
+}
+else
+{
   start(6,1);
   // RestoreIdle();
   // send out register number
@@ -12656,6 +12675,7 @@ int TMB::DCSreadAll(char *data)
       tt >>= 1;
   } 
   tr |= (tt & 1);
+}
   
   memcpy(data, &tr, 2);
 

@@ -1491,13 +1491,6 @@ void TMB::PrintCLCT() {
    (*MyOutput_) << "CLCT1.CC_xkyf(hs)= "   << std::dec << std::setprecision (2) << std::fixed << read_clct1_cc_xky_float_   << std::endl;
    }
 
-  if (read_hmt_enable_ > 0){
-   (*MyOutput_) << "----------------------"                                   << std::endl;
-   (*MyOutput_) << "HMT enable, nhits centerlbx   = "   << std::dec << read_hmt_nhits_trig_       << std::endl;
-   (*MyOutput_) << "HMT enable, nhits bx[6,7,8]   = "   << std::dec << read_hmt_nhits_sig_        << std::endl;
-   (*MyOutput_) << "HMT enable, nhits bx[2,3,4,5] = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
-   (*MyOutput_) << "HMT Result(4bits) = 0x" << std::hex << read_hmt_trigger_       << std::endl;
-  }
   //
   return;
 }
@@ -1674,12 +1667,20 @@ void TMB::PrintMPCFrames() {
   (*MyOutput_) << "     frame1.clct_second_exky      = 0x" << std::hex << read_mpc1_run3frame1_clct_second_exky_      << std::endl;
   (*MyOutput_) << "     frame1.clct_second_bx0_local = 0x" << std::hex << read_mpc1_run3frame1_clct_second_bx0_local_ << std::endl;
   (*MyOutput_) << "     frame1.clct_second_bend      = 0x" << std::hex << read_mpc1_run3frame1_clct_second_bend_      << std::endl;
+  (*MyOutput_) << "----------------------"                                                                         << std::endl;
+    if (read_hmt_enable_ > 0){
+     (*MyOutput_) << "HMT enable, nhits in centerbx   = "   << std::dec << read_hmt_nhits_trig_       << std::endl;
+     (*MyOutput_) << "HMT enable, nhits bx[6,7,8]     = "   << std::dec << read_hmt_nhits_sig_        << std::endl;
+     (*MyOutput_) << "HMT enable, nhits bx[2,3,4,5]   = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
+     (*MyOutput_) << "HMT(cathode) Result(4bits) = 0x" << std::hex << read_hmt_cathode_trigger_       << std::endl;
+    }
 
     if (gem_enabled_ && read_run3_trig_dataformat_enable_) {
 	  ReadRegister(gem_csc_match_cluster00_adr);
 	  ReadRegister(gem_csc_match_cluster01_adr);
 	  ReadRegister(gem_csc_match_cluster10_adr);
 	  ReadRegister(gem_csc_match_cluster11_adr);
+          (*MyOutput_) << "----------------------"                                                                         << std::endl;
 	  (*MyOutput_) << " clusters for gem-csc match: "                                                                         << std::endl;
 	  (*MyOutput_) << "Cluster0.iclst        = " << std::dec << read_gem_csc_match_cluster0_iclst_      << std::endl;
 	  (*MyOutput_) << "Cluster0.roll         = " << std::dec << read_gem_csc_match_cluster0_roll_      << std::endl;
@@ -1799,6 +1800,13 @@ void TMB::PrintMPCFramesFromFIFO() {
   (*MyOutput_) << "     from FIFO frame1.clct_second_exky      = 0x" << std::hex << read_mpc1_run3frame1_fifo_clct_second_exky_      << std::endl;
   (*MyOutput_) << "     from FIFO frame1.clct_second_bx0_local = 0x" << std::hex << read_mpc1_run3frame1_fifo_clct_second_bx0_local_ << std::endl;
   (*MyOutput_) << "     from FIFO frame1.clct_second_bend      = 0x" << std::hex << read_mpc1_run3frame1_fifo_clct_second_bend_      << std::endl;
+  (*MyOutput_) << "-------------------------------"                                                                               << std::endl;
+    if (read_hmt_enable_ > 0){
+     (*MyOutput_) << "HMT enable, nhits in centerbx   = "   << std::dec << read_hmt_nhits_trig_       << std::endl;
+     (*MyOutput_) << "HMT enable, nhits bx[6,7,8]     = "   << std::dec << read_hmt_nhits_sig_        << std::endl;
+     (*MyOutput_) << "HMT enable, nhits bx[2,3,4,5]   = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
+     (*MyOutput_) << "HMT(cathode) Result(4bits) = 0x" << std::hex << read_hmt_cathode_trigger_       << std::endl;
+    }
   }
   else {
   (*MyOutput_) << "MPC0 from FIFO frame0.alct_first_key        =   " << std::dec << read_mpc0_frame0_fifo_alct_first_key_    << std::endl;
@@ -2419,11 +2427,18 @@ void TMB::DecodeAndPrintMPCFrames(unsigned int event_n = 0) {
     (*MyOutput_) << std::endl;
     (*MyOutput_) << "-------------------------------------------------" << std::endl;
   }
+  if (read_hmt_enable_ > 0){
+   (*MyOutput_) << "HMT enable, nhits in centerbx   = "   << std::dec << read_hmt_nhits_trig_       << std::endl;
+   (*MyOutput_) << "HMT enable, nhits bx[6,7,8]     = "   << std::dec << read_hmt_nhits_sig_        << std::endl;
+   (*MyOutput_) << "HMT enable, nhits bx[2,3,4,5]   = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
+   (*MyOutput_) << "HMT(cathode) Result(4bits) = 0x" << std::hex << read_hmt_cathode_trigger_       << std::endl;
+  }
   if (gem_enabled_ && read_run3_trig_dataformat_enable_) {
 	  ReadRegister(gem_csc_match_cluster00_adr);
 	  ReadRegister(gem_csc_match_cluster01_adr);
 	  ReadRegister(gem_csc_match_cluster10_adr);
 	  ReadRegister(gem_csc_match_cluster11_adr);
+          (*MyOutput_) << "-------------------------------------------------" << std::endl;
 	  (*MyOutput_) << " clusters for gem-csc match: "                                                                         << std::endl;
 	  (*MyOutput_) << "Cluster0.iclst        = " << std::dec << read_gem_csc_match_cluster0_iclst_      << std::endl;
 	  (*MyOutput_) << "Cluster0.roll         = " << std::dec << read_gem_csc_match_cluster0_roll_      << std::endl;
@@ -2601,16 +2616,28 @@ std::string TMB::CounterName(int counter){
   if( counter == 93 ) name =  "CLCT: sequential trigger counter                        ";//Tao, algo2016
   if( counter == 94 ) name =  "CLCT: checking pretrigger in last 4BX                   ";//Tao, algo2016
   if( counter == 95 ) name =  "TMB: ALCT-CLCT BX0 match                                ";//Tao, 201908
-  if( counter == 96 ) name =  "TMB: hmt over threshold1(loose)                         ";//Tao, 201908
-  if( counter == 97 ) name =  "TMB: hmt over threshold2(median)                        ";//Tao, 202108
-  if( counter == 98 ) name =  "TMB: hmt over threshold3(tight)                         ";//Tao, 202108
-  if( counter == 99 ) name =  "TMB: hmt+preCLCT coincidence                            ";//Tao, 202108
-  if( counter == 100) name =  "TMB: hmt+CLCT coincidence                               ";//Tao, 202108
-  if( counter == 101) name =  "TMB: hmt+LCT coincidence                                ";//Tao, 202108
-  if( counter == 102) name =  "TMB: trigger pulse source from HMT only (no LCT)        ";//Tao, 202108
-  if( counter == 103) name =  "TMB: trigger keep source from HMT only                  ";//Tao, 202108
-  if( counter == 104) name =  "TMB: fired HMT in signal time region                    ";//Tao, 202108
-  if( counter == 105) name =  "TMB: fired HMT in signal and background time region     ";//Tao, 202108
+  if( counter == 96 ) name =  "TMB: fired anode HMT in in time region                  ";//Tao, 202108
+  if( counter == 97 ) name =  "TMB: fired anode HMT in in and out- time region         ";//Tao, 202108
+  if( counter == 98 ) name =  "TMB: fired cathode HMT in in time region                ";//Tao, 202108
+  if( counter == 99 ) name =  "TMB: fired cathode HMT in in and out- time region       ";//Tao, 202108
+  if( counter == 100) name =  "TMB: cathode hmt over threshold1(loose)                 ";//Tao, 201908
+  if( counter == 101) name =  "TMB: cathode hmt over threshold2(median)                ";//Tao, 202108
+  if( counter == 102) name =  "TMB: cathode hmt over threshold3(tight)                 ";//Tao, 202108
+  if( counter == 103) name =  "TMB:   anode hmt+ALCT coincidence                       ";//Tao, 202108
+  if( counter == 104) name =  "TMB: cathode hmt+preCLCT coincidence                    ";//Tao, 202108
+  if( counter == 105) name =  "TMB: cathode hmt+CLCT coincidence                       ";//Tao, 202108
+  if( counter == 106) name =  "TMB: cathode hmt+ALCT coincidence                       ";//Tao, 202108
+  if( counter == 107) name =  "TMB: cathode hmt+LCT coincidence                        ";//Tao, 202108
+  if( counter == 108) name =  "TMB: anode hmt fired only                               ";//Tao, 202108
+  if( counter == 109) name =  "TMB: cathode hmt fired only                             ";//Tao, 202108
+  if( counter == 110) name =  "TMB: anode or cathode hmt fired                         ";//Tao, 202108
+  if( counter == 111) name =  "TMB: anode and cathode hmt fired                        ";//Tao, 202108
+  if( counter == 112) name =  "TMB: anode and cathode hmt fired, with valid LCT        ";//Tao, 202108
+  if( counter == 113) name =  "TMB: anode and cathode hmt fired, without ALCT          ";//Tao, 202108
+  if( counter == 114) name =  "TMB: trigger pulse source from HMT only (no LCT)        ";//Tao, 202108
+  if( counter == 115) name =  "TMB: trigger keep source from HMT only                  ";//Tao, 202108
+  if( counter == 116) name =  "TMB: HMT trigger counter                                ";//Tao, 202108
+  if( counter == 117) name =  "TMB: HMT readout counter                                ";//Tao, 202108
 
   //
   return name;
@@ -7697,8 +7724,16 @@ void TMB::SetTMBRegisterDefaults() {
   hmt_thresh2_            = hmt_thresh2_default;
   hmt_thresh3_            = hmt_thresh3_default;
   cfeb_allow_hmt_ro_      = cfeb_allow_hmt_ro_default;
-  tmb_allow_hmt_          = tmb_allow_hmt_default;
-  tmb_allow_hmt_ro_       = tmb_allow_hmt_ro_default;
+  hmt_aff_thresh_         = hmt_aff_thresh_default;
+  hmt_delay_              = hmt_delay_default;
+  hmt_alct_win_size_      = hmt_alct_win_size_default;
+  hmt_allow_anode_        = hmt_allow_anode_default;
+  hmt_allow_cathode_      = hmt_allow_cathode_default;
+  hmt_allow_match_        = hmt_allow_match_default;
+  hmt_allow_anode_ro_        = hmt_allow_anode_ro_default;
+  hmt_allow_cathode_ro_      = hmt_allow_cathode_ro_default;
+  hmt_allow_match_ro_        = hmt_allow_match_ro_default;
+  hmt_outtime_check_        = hmt_outtime_check_default;
 
   ////-----------------------------------------------------------------------------
   ////ADR_LCT_INJECTION = 0x1B8
@@ -8493,6 +8528,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_drop_used_clcts_            = ExtractValueFromData(data,drop_used_clcts_bitlo           ,drop_used_clcts_bithi           );
     read_cross_bx_algorithm_         = ExtractValueFromData(data,cross_bx_algorithm_bitlo        ,cross_bx_algorithm_bithi        );
     read_clct_use_corrected_bx_      = ExtractValueFromData(data,clct_use_corrected_bx_bitlo     ,clct_use_corrected_bx_bithi     );
+    read_seq_trigger_nodeadtime_     = ExtractValueFromData(data,seq_trigger_nodeadtime_bitlo    ,seq_trigger_nodeadtime_bithi              );
     //
   } else if ( address == clct0_cc_adr ) {
     //---------------------------------------------------------------------
@@ -8534,27 +8570,33 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_hmt_enable_                = ExtractValueFromData(data,hmt_enable_bitlo                 ,hmt_enable_bithi        );
     read_hmt_me1a_enable_           = ExtractValueFromData(data,hmt_me1a_enable_bitlo            ,hmt_me1a_enable_bithi        );
     read_hmt_nhits_trig_            = ExtractValueFromData(data,hmt_nhits_trig_bitlo             ,hmt_nhits_trig_bithi        );
+    read_hmt_cathode_trigger_       = ExtractValueFromData(data,hmt_cathode_trigger_bitlo        ,hmt_cathode_trigger_bithi        );
   } else if ( address == hmt_thresh1_adr ) {
     //------------------------------------------------------------------
     //0X1AE = ADR_HMT_thresh1:  HMT Thresh1  (Tao, 2020)
     //------------------------------------------------------------------
     read_hmt_thresh1_               = ExtractValueFromData(data,hmt_thresh1_bitlo                 ,hmt_thresh1_bithi             );
-    read_hmt_thresh1_pass_          = ExtractValueFromData(data,hmt_thresh1_pass_bitlo            ,hmt_thresh1_pass_bithi        );
     read_cfeb_allow_hmt_ro_         = ExtractValueFromData(data,cfeb_allow_hmt_ro_bitlo           ,cfeb_allow_hmt_ro_bithi        );
-    read_tmb_allow_hmt_             = ExtractValueFromData(data,tmb_allow_hmt_bitlo               ,tmb_allow_hmt_bithi        );
-    read_tmb_allow_hmt_ro_          = ExtractValueFromData(data,tmb_allow_hmt_ro_bitlo            ,tmb_allow_hmt_ro_bithi        );
+    read_hmt_aff_thresh_            = ExtractValueFromData(data,hmt_aff_thresh_bitlo              ,hmt_aff_thresh_bithi        );
   } else if ( address == hmt_thresh2_adr ) {
     //------------------------------------------------------------------
     //0X1B0 = ADR_HMT_thresh2:  HMT Thresh2  (Tao, 2020)
     //------------------------------------------------------------------
     read_hmt_thresh2_               = ExtractValueFromData(data,hmt_thresh2_bitlo                 ,hmt_thresh2_bithi             );
-    read_hmt_thresh2_pass_          = ExtractValueFromData(data,hmt_thresh2_pass_bitlo            ,hmt_thresh2_pass_bithi        );
+    read_hmt_delay_                 = ExtractValueFromData(data,hmt_delay_bitlo                   ,hmt_delay_bithi        );
+    read_hmt_alct_win_size_         = ExtractValueFromData(data,hmt_alct_win_size_bitlo           ,hmt_alct_win_size_bithi        );
   } else if ( address == hmt_thresh3_adr ) {
     //------------------------------------------------------------------
     //0X1B2 = ADR_HMT_thresh3:  HMT Thresh3  (Tao, 2020)
     //------------------------------------------------------------------
     read_hmt_thresh3_               = ExtractValueFromData(data,hmt_thresh3_bitlo                 ,hmt_thresh3_bithi             );
-    read_hmt_thresh3_pass_          = ExtractValueFromData(data,hmt_thresh3_pass_bitlo            ,hmt_thresh3_pass_bithi        );
+    read_hmt_allow_anode_           = ExtractValueFromData(data,hmt_allow_anode_bitlo             ,hmt_allow_anode_bithi        );
+    read_hmt_allow_cathode_         = ExtractValueFromData(data,hmt_allow_cathode_bitlo           ,hmt_allow_cathode_bithi        );
+    read_hmt_allow_match_           = ExtractValueFromData(data,hmt_allow_match_bitlo             ,hmt_allow_match_bithi        );
+    read_hmt_allow_anode_ro_        = ExtractValueFromData(data,hmt_allow_anode_ro_bitlo          ,hmt_allow_anode_ro_bithi        );
+    read_hmt_allow_cathode_ro_      = ExtractValueFromData(data,hmt_allow_cathode_ro_bitlo        ,hmt_allow_cathode_ro_bithi        );
+    read_hmt_allow_match_ro_        = ExtractValueFromData(data,hmt_allow_match_ro_bitlo          ,hmt_allow_match_ro_bithi        );
+    read_hmt_outtime_check_         = ExtractValueFromData(data,hmt_outtime_check_bitlo           ,hmt_outtime_check_bithi        );
   } else if ( address == hmt_nhits_sig_adr ) {
     //------------------------------------------------------------------
     //0X1B4 = ADR_HMT_NHITS_SIG: nhits in bx678  (Tao, 2020)
@@ -9786,6 +9828,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << "    Toggle dropping CLCTs from matching in ALCT-centric algorithm = " << std::dec << read_drop_used_clcts_            << std::endl;
     (*MyOutput_) << "    Toggle LCT sorting using cross BX algorithm                   = " << std::dec << read_cross_bx_algorithm_         << std::endl;
     (*MyOutput_) << "    Toggle use of medians for CLCT timing                         = " << std::dec << read_clct_use_corrected_bx_      << std::endl;
+    (*MyOutput_) << "    Allow to two trigger in a row (Run3 trigger rule)             = " << std::dec << read_seq_trigger_nodeadtime_     << std::endl;
   } else if ( address == run3_format_ctrl_adr ) {
   //------------------------------------------------------------------
   //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 format control  (Tao, 2020)
@@ -9794,6 +9837,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
       (*MyOutput_) << "    enable CCLUT                               = " << std::dec << read_cclut_enable_ << std::endl; 
       (*MyOutput_) << "    enable Run3 Trigger Format                 = " << std::dec << read_run3_trig_dataformat_enable_ << std::endl; 
       (*MyOutput_) << "    enable Run3 DAQ Format                     = " << std::dec << read_run3_daq_dataformat_enable_ << std::endl; 
+      (*MyOutput_) << "    enable Run3 ALCT Format                    = " << std::dec << read_run3_alct_dataformat_enable_ << std::endl; 
   } else if ( address == hmt_ctrl_adr ) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
@@ -9808,20 +9852,28 @@ void TMB::PrintTMBRegister(unsigned long int address) {
       (*MyOutput_) << " ->High Multiplicity Trigger loose thresh:" << std::endl;
       (*MyOutput_) << "    HMT thresh1(loose)                         = " << std::dec << read_hmt_thresh1_ << std::endl; 
       (*MyOutput_) << "    Allow to readout cfeb by HMT               = " << std::hex << read_cfeb_allow_hmt_ro_ << std::endl;
-      (*MyOutput_) << "    Allow to trigger  by HMT                   = " << std::hex << read_tmb_allow_hmt_ << std::endl;
-      (*MyOutput_) << "    Allow to readout OTMB by HMT               = " << std::hex << read_tmb_allow_hmt_ro_ << std::endl;
+      (*MyOutput_) << "    HMT thresh for active feb flag             = " << std::dec << read_hmt_aff_thresh_ << std::endl;
   } else if ( address == hmt_thresh2_adr ) {
    //------------------------------------------------------------------
    //0X1B0 = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger median thresh:" << std::endl;
       (*MyOutput_) << "    HMT thresh2(median)                        = " << std::dec << read_hmt_thresh2_ << std::endl; 
+      (*MyOutput_) << "    HMT delay for HMT-ACLT match               = " << std::dec << read_hmt_delay_ << std::endl; 
+      (*MyOutput_) << "    HMT window for HMT-ACLT match              = " << std::dec << read_hmt_alct_win_size_ << std::endl; 
   } else if ( address == hmt_thresh3_adr ) {
    //------------------------------------------------------------------
    //0X1B2 = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger tight thresh:" << std::endl;
       (*MyOutput_) << "    HMT thresh3(tight)                         = " << std::dec << read_hmt_thresh3_ << std::endl; 
+      (*MyOutput_) << "    Allow to trigger on anode HMT bits         = " << std::dec << read_hmt_allow_anode_ << std::endl;
+      (*MyOutput_) << "    Allow to trigger on cathode HMT bits       = " << std::dec << read_hmt_allow_cathode_ << std::endl;
+      (*MyOutput_) << "    Allow to trigger on matched HMT bits       = " << std::dec << read_hmt_allow_match_ << std::endl;
+      (*MyOutput_) << "    Allow to readout on anode HMT bits         = " << std::dec << read_hmt_allow_anode_ro_ << std::endl;
+      (*MyOutput_) << "    Allow to readout on cathode HMT bits       = " << std::dec << read_hmt_allow_cathode_ro_ << std::endl;
+      (*MyOutput_) << "    Allow to readout on matched HMT bits       = " << std::dec << read_hmt_allow_match_ro_ << std::endl;
+      (*MyOutput_) << "    HMT checks outtime hits lower than thresh  = " << std::dec << read_hmt_outtime_check_ << std::endl;
   //} else if ( address == lct_injection_adr ) {
   //  //------------------------------------------------------------------
   //  //0X1B8 = ADR_LCT_INJECTION:  LCT injection from configuration  (Tao, 2020)
@@ -9836,7 +9888,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //------------------------------------------------------------------
     (*MyOutput_) << " ->RPC configuration register:" << std::endl;
     (*MyOutput_) << "    RPC exists                                     = 0x" << std::hex << read_rpc_exists_      << std::endl;
-    (*MyOutput_) << "    RPC read enable                                = "   << std::hex << read_rpc_read_enable_ << std::endl;
+    (*MyOutput_) << "    RPC read enable                                = 0x" << std::hex << read_rpc_read_enable_ << std::endl;
     (*MyOutput_) << "    RPC BXN offset                                 = "   << std::dec << read_rpc_bxn_offset_  << std::endl;
     (*MyOutput_) << "    RPC bank address (for reading rdata sync mode) = "   << std::dec << read_rpc_bank_        << std::endl;
     (*MyOutput_) << "    RPC rdata [18:16] msbs for sync mode           = "   << std::dec << read_rpc_rbxn_        << std::endl;
@@ -10957,6 +11009,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     InsertValueIntoDataWord(drop_used_clcts_           ,drop_used_clcts_bithi           ,drop_used_clcts_bitlo           ,&data_word);
     InsertValueIntoDataWord(cross_bx_algorithm_        ,cross_bx_algorithm_bithi        ,cross_bx_algorithm_bitlo        ,&data_word);
     InsertValueIntoDataWord(clct_use_corrected_bx_     ,clct_use_corrected_bx_bithi     ,clct_use_corrected_bx_bitlo     ,&data_word);
+    InsertValueIntoDataWord(seq_trigger_nodeadtime_    ,seq_trigger_nodeadtime_bithi    ,seq_trigger_nodeadtime_bitlo    ,&data_word);
   } else if ( address == run3_format_ctrl_adr ) {
    //------------------------------------------------------------------
    //0X1AA = ADR_RUN3_FORMAT_CTRL:  Run3 format control  (Tao, 2020)
@@ -10967,6 +11020,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
               << std::endl;
     InsertValueIntoDataWord(run3_trig_dataformat_enable_,     run3_trig_dataformat_enable_bithi,     run3_trig_dataformat_enable_bitlo,   &data_word);
     InsertValueIntoDataWord(run3_daq_dataformat_enable_,      run3_daq_dataformat_enable_bithi,      run3_daq_dataformat_enable_bitlo,   &data_word);
+    InsertValueIntoDataWord(run3_alct_dataformat_enable_,      run3_alct_dataformat_enable_bithi,      run3_alct_dataformat_enable_bitlo,   &data_word);
   } else if ( address == hmt_ctrl_adr ) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
@@ -10984,10 +11038,9 @@ int TMB::FillTMBRegister(unsigned long int address) {
     std::cout << "Inserting values for register ADR_HMT_THRESH1 at 0X1AE"
     	      << "\n    hmt_thresh1_         " << hmt_thresh1_        
               << std::endl;
-    InsertValueIntoDataWord(hmt_thresh1_,      hmt_thresh1_bithi,      hmt_thresh1_bitlo,      &data_word);
-    InsertValueIntoDataWord(cfeb_allow_hmt_ro_,cfeb_allow_hmt_ro_bithi,cfeb_allow_hmt_ro_bitlo,      &data_word);
-    InsertValueIntoDataWord(tmb_allow_hmt_,    tmb_allow_hmt_bithi,    tmb_allow_hmt_bitlo,      &data_word);
-    InsertValueIntoDataWord(tmb_allow_hmt_ro_, tmb_allow_hmt_ro_bithi, tmb_allow_hmt_ro_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_thresh1_,         hmt_thresh1_bithi,      hmt_thresh1_bitlo,      &data_word);
+    InsertValueIntoDataWord(cfeb_allow_hmt_ro_,   cfeb_allow_hmt_ro_bithi,cfeb_allow_hmt_ro_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_aff_thresh_,      hmt_aff_thresh_bithi,      hmt_aff_thresh_bitlo,      &data_word);
   } else if ( address == hmt_thresh2_adr ) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_THRESH2:  HMT thresh2  (Tao, 2020)
@@ -10995,7 +11048,9 @@ int TMB::FillTMBRegister(unsigned long int address) {
     std::cout << "Inserting values for register ADR_HMT_THRESH2 at 0X1B0"
     	      << "\n    hmt_thresh2_         " << hmt_thresh2_        
               << std::endl;
-    InsertValueIntoDataWord(hmt_thresh2_,      hmt_thresh2_bithi,      hmt_thresh2_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_thresh2_,            hmt_thresh2_bithi,      hmt_thresh2_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_delay_,              hmt_delay_bithi,      hmt_delay_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_alct_win_size_,      hmt_alct_win_size_bithi,      hmt_alct_win_size_bitlo,      &data_word);
   } else if ( address == hmt_thresh3_adr ) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_THRESH3:  HMT thresh3  (Tao, 2020)
@@ -11003,7 +11058,13 @@ int TMB::FillTMBRegister(unsigned long int address) {
     std::cout << "Inserting values for register ADR_HMT_THRESH3 at 0X1B2"
     	      << "\n    hmt_thresh3_         " << hmt_thresh3_        
               << std::endl;
-    InsertValueIntoDataWord(hmt_thresh3_,      hmt_thresh3_bithi,      hmt_thresh3_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_thresh3_,        hmt_thresh3_bithi,        hmt_thresh3_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_allow_anode_,    hmt_allow_anode_bithi,    hmt_allow_anode_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_allow_cathode_,    hmt_allow_cathode_bithi,    hmt_allow_cathode_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_allow_match_,      hmt_allow_match_bithi,      hmt_allow_match_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_allow_anode_ro_,   hmt_allow_anode_ro_bithi,   hmt_allow_anode_ro_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_allow_cathode_ro_, hmt_allow_cathode_ro_bithi, hmt_allow_cathode_ro_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_outtime_check_,    hmt_outtime_check_bithi,    hmt_outtime_check_bitlo,      &data_word);
   //} else if ( address == lct_injection_adr ) {
   //  //------------------------------------------------------------------
   //  //0X1B8 = ADR_LCT_INJECTION:  LCT injection from configuration  (Tao, 2020)
@@ -11931,24 +11992,19 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     config_ok &= compareValues("TMB match_trig_alct_delay"         ,read_alct_vpf_delay_        ,alct_vpf_delay_        , print_errors);
     config_ok &= compareValues("TMB match_trig_window_size"        ,read_alct_match_window_size_,alct_match_window_size_, print_errors);
     config_ok &= compareValues("TMB mpc_tx_delay"                  ,read_mpc_tx_delay_          ,mpc_tx_delay_          , print_errors);
-/* disable checking the following new parameters for now, wait until all OTMBs have the new firmwware. Feb. 9, 2017, Liu */
-/*
     config_ok &= compareValues("TMB clct_match_window_size"        ,read_clct_match_window_size_,clct_match_window_size_, print_errors);
     //
     //---------------------------------------------------------------------
     // 0X198 = ADR_NEWALGO_CTRL:  Controls parameters of new trigger algorithm (Yuriy, 2016)
     //---------------------------------------------------------------------
-    if(hardware_version_>=2)
-    {
-       config_ok &= compareValues("TMB use_dead_time_zone"        ,read_use_dead_time_zone_        ,use_dead_time_zone_        , print_errors);
-       config_ok &= compareValues("TMB dead_time_zone_size"       ,read_dead_time_zone_size_       ,dead_time_zone_size_       , print_errors);
-       config_ok &= compareValues("TMB use_dynamic_dead_time_zone",read_use_dynamic_dead_time_zone_,use_dynamic_dead_time_zone_, print_errors);
-       config_ok &= compareValues("TMB clct_to_alct"              ,read_clct_to_alct_              ,clct_to_alct_              , print_errors);
-       config_ok &= compareValues("TMB drop_used_clcts"           ,read_drop_used_clcts_           ,drop_used_clcts_           , print_errors);
-       config_ok &= compareValues("TMB cross_bx_algorithm"        ,read_cross_bx_algorithm_        ,cross_bx_algorithm_        , print_errors);
-       config_ok &= compareValues("TMB clct_use_corrected_bx"     ,read_clct_use_corrected_bx_     ,clct_use_corrected_bx_     , print_errors);
-    }
-*/
+    config_ok &= compareValues("TMB use_dead_time_zone"        ,read_use_dead_time_zone_        ,use_dead_time_zone_        , print_errors);
+    config_ok &= compareValues("TMB dead_time_zone_size"       ,read_dead_time_zone_size_       ,dead_time_zone_size_       , print_errors);
+    config_ok &= compareValues("TMB use_dynamic_dead_time_zone",read_use_dynamic_dead_time_zone_,use_dynamic_dead_time_zone_, print_errors);
+    config_ok &= compareValues("TMB clct_to_alct"              ,read_clct_to_alct_              ,clct_to_alct_              , print_errors);
+    config_ok &= compareValues("TMB drop_used_clcts"           ,read_drop_used_clcts_           ,drop_used_clcts_           , print_errors);
+    config_ok &= compareValues("TMB cross_bx_algorithm"        ,read_cross_bx_algorithm_        ,cross_bx_algorithm_        , print_errors);
+    config_ok &= compareValues("TMB clct_use_corrected_bx"     ,read_clct_use_corrected_bx_     ,clct_use_corrected_bx_     , print_errors);
+    config_ok &= compareValues("TMB seq_trigger_nodeadtime"    ,read_seq_trigger_nodeadtime_    ,seq_trigger_nodeadtime_    , print_errors);
     //
     //------------------------------------------------------------------
     //0XB6 = ADR_RPC_CFG:  RPC Configuration
@@ -12162,6 +12218,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     //---------------------------------------------------------------------
     config_ok &= compareValues("TMB run3_trig_dataformat_enable",  read_run3_trig_dataformat_enable_,  run3_trig_dataformat_enable_, print_errors);
     config_ok &= compareValues("TMB run3_daq_dataformat_enable",  read_run3_daq_dataformat_enable_,  run3_daq_dataformat_enable_, print_errors);
+    config_ok &= compareValues("TMB run3_alct_dataformat_enable",  read_run3_alct_dataformat_enable_,  run3_alct_dataformat_enable_, print_errors);
     //
     //---------------------------------------------------------------------
     // 0X1AC = ADR_HMT_CTRL:  HMT control 
@@ -12178,8 +12235,15 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     config_ok &= compareValues("TMB hmt_thresh2",  read_hmt_thresh2_,  hmt_thresh2_, print_errors);
     config_ok &= compareValues("TMB hmt_thresh3",  read_hmt_thresh3_,  hmt_thresh3_, print_errors);
     config_ok &= compareValues("TMB cfeb_allow_hmt_ro",  read_cfeb_allow_hmt_ro_,  cfeb_allow_hmt_ro_, print_errors);
-    config_ok &= compareValues("TMB tmb_allow_hmt",      read_tmb_allow_hmt_,      tmb_allow_hmt_, print_errors);
-    config_ok &= compareValues("TMB tmb_allow_hmt_ro",   read_tmb_allow_hmt_ro_,   tmb_allow_hmt_ro_, print_errors);
+    config_ok &= compareValues("TMB hmt_aff_thresh",     read_hmt_aff_thresh_,     hmt_aff_thresh_, print_errors);
+    config_ok &= compareValues("TMB hmt_delay",          read_hmt_delay_,     hmt_delay_, print_errors);
+    config_ok &= compareValues("TMB hmt_allow_anode",      read_hmt_allow_anode_,      hmt_allow_anode_, print_errors);
+    config_ok &= compareValues("TMB hmt_allow_cathode",      read_hmt_allow_cathode_,      hmt_allow_cathode_, print_errors);
+    config_ok &= compareValues("TMB hmt_allow_match",      read_hmt_allow_match_,      hmt_allow_match_, print_errors);
+    config_ok &= compareValues("TMB hmt_allow_match_ro",   read_hmt_allow_match_ro_,   hmt_allow_match_ro_, print_errors);
+    config_ok &= compareValues("TMB hmt_allow_cathode_ro",   read_hmt_allow_cathode_ro_,   hmt_allow_cathode_ro_, print_errors);
+    config_ok &= compareValues("TMB hmt_allow_anode_ro",   read_hmt_allow_anode_ro_,   hmt_allow_anode_ro_, print_errors);
+    config_ok &= compareValues("TMB hmt_outtime_check",      read_hmt_outtime_check_,      hmt_outtime_check_, print_errors);
     //
     //------------------------------------------------------------------
     //0X17A = ADR_V6_EXTEND: ADR_CFEB_INJ:  CFEB Injector Control; ADR_SEQ_TRIG_EN:

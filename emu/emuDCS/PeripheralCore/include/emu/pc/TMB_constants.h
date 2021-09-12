@@ -3711,6 +3711,12 @@ const int clct_use_corrected_bx_bitlo   = 10;
 const int clct_use_corrected_bx_bithi   = 10;
 const int clct_use_corrected_bx_default = 1; // for now this improvement is switched off by default because it is not fully functional in firmware
 //
+//
+const int seq_trigger_nodeadtime_vmereg  = algo2016_ctrl_adr;
+const int seq_trigger_nodeadtime_bitlo   = 11;
+const int seq_trigger_nodeadtime_bithi   = 11;
+const int seq_trigger_nodeadtime_default = 0;
+//
 //------------------------------------------------------------------
 //0X19A = ADR_CLCT0_CC:  CLCT0 Comparator Code  (Tao, 2020)
 //------------------------------------------------------------------
@@ -3800,13 +3806,18 @@ const int cclut_enable_default = 0;
 const int run3_trig_dataformat_enable_vmereg  = run3_format_ctrl_adr;
 const int run3_trig_dataformat_enable_bitlo   = 1;
 const int run3_trig_dataformat_enable_bithi   = 1;
-const int run3_trig_dataformat_enable_default = 0;
+const int run3_trig_dataformat_enable_default = 1;
 //
 const int run3_daq_dataformat_enable_vmereg  = run3_format_ctrl_adr;
 const int run3_daq_dataformat_enable_bitlo   = 2;
 const int run3_daq_dataformat_enable_bithi   = 2;
-const int run3_daq_dataformat_enable_default = 0;
-
+const int run3_daq_dataformat_enable_default = 1;
+//
+const int run3_alct_dataformat_enable_vmereg  = run3_format_ctrl_adr;
+const int run3_alct_dataformat_enable_bitlo   = 3;
+const int run3_alct_dataformat_enable_bithi   = 3;
+const int run3_alct_dataformat_enable_default = 0;
+//
 //
 //------------------------------------------------------------------
 //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
@@ -3827,10 +3838,10 @@ const int hmt_nhits_trig_bitlo   = 2;
 const int hmt_nhits_trig_bithi   = 11;
 const int hmt_nhits_trig_default = 0;
 //
-const int hmt_trigger_vmereg  = hmt_ctrl_adr;
-const int hmt_trigger_bitlo   = 12;
-const int hmt_trigger_bithi   = 15;
-const int hmt_trigger_default = 0;
+const int hmt_cathode_trigger_vmereg  = hmt_ctrl_adr;
+const int hmt_cathode_trigger_bitlo   = 12;
+const int hmt_cathode_trigger_bithi   = 15;
+const int hmt_cathode_trigger_default = 0;
 //
 //
 //------------------------------------------------------------------
@@ -3840,48 +3851,73 @@ const int hmt_trigger_default = 0;
 //------------------------------------------------------------------
 const int hmt_thresh1_vmereg       = hmt_thresh1_adr;
 const int hmt_thresh1_bitlo        = 0;
-const int hmt_thresh1_bithi        = 9;
-const int hmt_thresh1_default      = 0;
-//
-const int hmt_thresh1_pass_vmereg  = hmt_thresh1_adr;
-const int hmt_thresh1_pass_bitlo   = 10;
-const int hmt_thresh1_pass_bithi   = 10;
-const int hmt_thresh1_pass_default = 0;
+const int hmt_thresh1_bithi        = 7;
+const int hmt_thresh1_default      = 90;
 //
 const int cfeb_allow_hmt_ro_vmereg  = hmt_thresh1_adr;
-const int cfeb_allow_hmt_ro_bitlo   = 11;
-const int cfeb_allow_hmt_ro_bithi   = 11;
-const int cfeb_allow_hmt_ro_default = 0;
+const int cfeb_allow_hmt_ro_bitlo   = 8;
+const int cfeb_allow_hmt_ro_bithi   = 8;
+const int cfeb_allow_hmt_ro_default = 1;
 //
-const int tmb_allow_hmt_ro_vmereg  = hmt_thresh1_adr;
-const int tmb_allow_hmt_ro_bitlo   = 12;
-const int tmb_allow_hmt_ro_bithi   = 12;
-const int tmb_allow_hmt_ro_default = 0;
-//
-const int tmb_allow_hmt_vmereg     = hmt_thresh1_adr;
-const int tmb_allow_hmt_bitlo      = 13;
-const int tmb_allow_hmt_bithi      = 13;
-const int tmb_allow_hmt_default    = 0;
+const int hmt_aff_thresh_vmereg       = hmt_thresh1_adr;
+const int hmt_aff_thresh_bitlo        = 9;
+const int hmt_aff_thresh_bithi        = 15;
+const int hmt_aff_thresh_default      = 30;
 //
 const int hmt_thresh2_vmereg       = hmt_thresh2_adr;
 const int hmt_thresh2_bitlo        = 0;
-const int hmt_thresh2_bithi        = 9;
-const int hmt_thresh2_default      = 0;
+const int hmt_thresh2_bithi        = 7;
+const int hmt_thresh2_default      = 95;
 //
-const int hmt_thresh2_pass_vmereg  = hmt_thresh2_adr;
-const int hmt_thresh2_pass_bitlo   = 10;
-const int hmt_thresh2_pass_bithi   = 10;
-const int hmt_thresh2_pass_default = 0;
+const int hmt_delay_vmereg       = hmt_thresh2_adr;
+const int hmt_delay_bitlo        = 8;
+const int hmt_delay_bithi        = 11;
+const int hmt_delay_default      = 5;
 //
-const int hmt_thresh3_vmereg       = hmt_thresh3_adr;
-const int hmt_thresh3_bitlo        = 0;
-const int hmt_thresh3_bithi        = 9;
-const int hmt_thresh3_default      = 0;
+const int hmt_alct_win_size_vmereg       = hmt_thresh2_adr;
+const int hmt_alct_win_size_bitlo        = 12;
+const int hmt_alct_win_size_bithi        = 15;
+const int hmt_alct_win_size_default      = 7;
 //
-const int hmt_thresh3_pass_vmereg  = hmt_thresh3_adr;
-const int hmt_thresh3_pass_bitlo   = 10;
-const int hmt_thresh3_pass_bithi   = 10;
-const int hmt_thresh3_pass_default = 0;
+const int hmt_thresh3_vmereg             = hmt_thresh3_adr;
+const int hmt_thresh3_bitlo              = 0;
+const int hmt_thresh3_bithi              = 7;
+const int hmt_thresh3_default            = 100;
+//
+const int hmt_allow_anode_vmereg         = hmt_thresh3_adr;
+const int hmt_allow_anode_bitlo          = 8;
+const int hmt_allow_anode_bithi          = 8;
+const int hmt_allow_anode_default        = 0;
+//
+const int hmt_allow_cathode_vmereg       = hmt_thresh3_adr;
+const int hmt_allow_cathode_bitlo        = 9;
+const int hmt_allow_cathode_bithi        = 9;
+const int hmt_allow_cathode_default      = 1;
+//
+const int hmt_allow_match_vmereg         = hmt_thresh3_adr;
+const int hmt_allow_match_bitlo          = 10;
+const int hmt_allow_match_bithi          = 10;
+const int hmt_allow_match_default        = 0;
+//
+const int hmt_allow_anode_ro_vmereg      = hmt_thresh3_adr;
+const int hmt_allow_anode_ro_bitlo       = 11;
+const int hmt_allow_anode_ro_bithi       = 11;
+const int hmt_allow_anode_ro_default     = 0;
+//
+const int hmt_allow_cathode_ro_vmereg    = hmt_thresh3_adr;
+const int hmt_allow_cathode_ro_bitlo     = 12;
+const int hmt_allow_cathode_ro_bithi     = 12;
+const int hmt_allow_cathode_ro_default   = 1;
+//
+const int hmt_allow_match_ro_vmereg      = hmt_thresh3_adr;
+const int hmt_allow_match_ro_bitlo       = 13;
+const int hmt_allow_match_ro_bithi       = 13;
+const int hmt_allow_match_ro_default     = 0;
+//
+const int hmt_outtime_check_vmereg       = hmt_thresh3_adr;
+const int hmt_outtime_check_bitlo        = 14;
+const int hmt_outtime_check_bithi        = 14;
+const int hmt_outtime_check_default      = 0;
 //
 //------------------------------------------------------------------
 //0X1B4 = ADR_HMT_NHITS_SIG: nhits in bx678  (Tao, 2020)

@@ -625,6 +625,7 @@ public:
   int  GetGemCounter(int counter);         /// return gem counter value
   int  GetLCTCounter() {return GetCounter(alctclctmatch_counter_index_); } /// return the  counter value for alct*clct match
   int  GetBx0MatchCounter() {return GetCounter(bx0match_counter_index_); }
+  int  GetCathodeHMTALCTMatchCounter() {return GetCounter(cathodehmtalctmatch_counter_index_); }
    
   int  GetGemABx0MatchCounter()  {return GetGemCounter(gemA_bx0match_counter_index_); } 
   int  GetGemBBx0MatchCounter()  {return GetGemCounter(gemB_bx0match_counter_index_); } 
@@ -2502,6 +2503,9 @@ public:
   inline int  Get_clct_use_corrected_bx() { return clct_use_corrected_bx_; }
   inline int  GetRead_clct_use_corrected_bx() { return read_clct_use_corrected_bx_; }
   
+  inline void Set_seq_trigger_nodeadtime(int seq_trigger_nodeadtime) { seq_trigger_nodeadtime_ = seq_trigger_nodeadtime; }
+  inline int  Get_seq_trigger_nodeadtime() { return seq_trigger_nodeadtime_ ; }
+  inline int  GetRead_seq_trigger_nodeadtime() { return read_seq_trigger_nodeadtime_ ; }
   //---------------------------------------------------------------------
   //ADR_CLCT0_CC = 0x19A
   //ADR_CLCT1_CC = 0x19C
@@ -2510,8 +2514,6 @@ public:
   //---------------------------------------------------------------------
   inline int GetRead_clct0_comparatorcode() {return  read_clct0_comparatorcode_;}
   inline int GetRead_clct1_comparatorcode() {return  read_clct1_comparatorcode_;}
-  //inline int GetRead_clct0_cc_quality() {return  read_clct0_cc_quality_;}
-  //inline int GetRead_clct1_cc_quality() {return  read_clct1_cc_quality_;}
   inline int GetRead_clct0_cc_bending() {return  read_clct0_cc_bending_;}
   inline int GetRead_clct1_cc_bending() {return  read_clct1_cc_bending_;}
   inline int GetRead_clct0_cc_bendinglr() {return  read_clct0_cc_lr_;}
@@ -2522,37 +2524,39 @@ public:
   //---------------------------------------------------------------------
   //ADR_RUN3_FORMAT_CTRL = 0x1AA
   //---------------------------------------------------------------------
-  int GetRead_cclut_enable() {return read_cclut_enable_;}
-  int GetRead_run3_trig_dataformat_enable() {return read_run3_trig_dataformat_enable_;}
-  int GetRead_run3_daq_dataformat_enable() {return read_run3_daq_dataformat_enable_;}
+  inline int GetRead_cclut_enable() {return read_cclut_enable_;}
+  inline int GetRead_run3_trig_dataformat_enable() {return read_run3_trig_dataformat_enable_;}
+  inline int GetRead_run3_daq_dataformat_enable() {return read_run3_daq_dataformat_enable_;}
+  inline int GetRead_run3_alct_dataformat_enable() {return read_run3_alct_dataformat_enable_;}
   void Setrun3_trig_dataformat_enable(int run3_trig_df_enable) { run3_trig_dataformat_enable_ = run3_trig_df_enable;}
   void Setrun3_daq_dataformat_enable(int run3_daq_df_enable)   { run3_daq_dataformat_enable_  = run3_daq_df_enable;}
+  void Setrun3_alct_dataformat_enable(int run3_alct_df_enable)   { run3_alct_dataformat_enable_  = run3_alct_df_enable;}
   
   inline int Getrun3_trig_dataformat_enable() {return run3_trig_dataformat_enable_;}
   inline int Getrun3_daq_dataformat_enable()  {return run3_daq_dataformat_enable_;}
+  inline int Getrun3_alct_dataformat_enable() {return run3_alct_dataformat_enable_;}
   //
   //---------------------------------------------------------------------
   //ADR_HMT_CTRL = 0x1AC
   //---------------------------------------------------------------------
-  int GetRead_hmt_enable()      {return read_hmt_enable_;}
-  int GetRead_hmt_me1a_enable() {return read_hmt_me1a_enable_;}
+  inline int GetRead_hmt_enable()      {return read_hmt_enable_;}
+  inline int GetRead_hmt_me1a_enable() {return read_hmt_me1a_enable_;}
   void Sethmt_enable(int hmt_enable)     {hmt_enable_ = hmt_enable;}
   void Sethmt_me1a_enable(int hmt_me1a_enable)     {hmt_me1a_enable_ = hmt_me1a_enable;}
+
   int GetRead_hmt_nhits_trig()  {return read_hmt_nhits_trig_;}
-  int GetRead_hmt_trigger()  {return read_hmt_trigger_;}
+  int GetRead_hmt_cathode_trigger()  {return read_hmt_cathode_trigger_;}
 
   inline int Gethmt_enable()      {return hmt_enable_;}
   inline int Gethmt_me1a_enable()      {return hmt_me1a_enable_;}
-  //inline int Gethmt_nhits_trig()      {return hmt_nhits_trig_;}
-  //inline int Gethmt_trigger()      {return hmt_trigger_;}
   //------------------------------------------------------------------
   //0X1B4 = ADR_HMT_NHITS_SIG: nhits in bx678  (Tao, 2020)
   //0X1B6 = ADR_HMT_NHITS_BKG: nhits in bx2345  (Tao, 2020)
   //------------------------------------------------------------------
   int GetRead_hmt_nhits_sig()  {return read_hmt_nhits_sig_; }
   int GetRead_hmt_nhits_bkg()  {return read_hmt_nhits_bkg_; }
-  void Sethmt_nhits_sig(int hmt_nhits_sig)  { hmt_nhits_sig_= hmt_nhits_sig;}  
-  void Sethmt_nhits_bkg(int hmt_nhits_bkg)  { hmt_nhits_bkg_= hmt_nhits_bkg;}  
+  //void Sethmt_nhits_sig(int hmt_nhits_sig)  { hmt_nhits_sig_= hmt_nhits_sig;}  
+  //void Sethmt_nhits_bkg(int hmt_nhits_bkg)  { hmt_nhits_bkg_= hmt_nhits_bkg;}  
 
   inline int Gethmt_nhits_sig() {return hmt_nhits_sig_;}
   inline int Gethmt_nhits_bkg() {return hmt_nhits_bkg_;}
@@ -2562,32 +2566,56 @@ public:
   //0X1B0 = ADR_HMT_THRESH2:  HMT median threshold  (Tao, 2020)
   //0X1B2 = ADR_HMT_THRESH3:  HMT tight threshold  (Tao, 2020)
   //------------------------------------------------------------------
-  int GetRead_hmt_thresh1()         {return read_hmt_thresh1_;}
-  int GetRead_hmt_thresh1_pass()    {return read_hmt_thresh1_pass_;}
-  int GetRead_hmt_thresh2()         {return read_hmt_thresh2_;}
-  int GetRead_hmt_thresh2_pass()    {return read_hmt_thresh2_pass_;}
-  int GetRead_hmt_thresh3()         {return read_hmt_thresh3_;}
-  int GetRead_hmt_thresh3_pass()    {return read_hmt_thresh3_pass_;}
+  int GetReadHmtThresh1()         {return read_hmt_thresh1_;}
+  int GetReadHmtThresh2()         {return read_hmt_thresh2_;}
+  int GetReadHmtThresh3()         {return read_hmt_thresh3_;}
 
-  void Sethmt_thresh1(int hmt_thresh)  {hmt_thresh1_ = hmt_thresh;}            
-  void Sethmt_thresh2(int hmt_thresh)  {hmt_thresh2_ = hmt_thresh;}            
-  void Sethmt_thresh3(int hmt_thresh)  {hmt_thresh3_ = hmt_thresh;}            
+  void SetHmtThresh1(int hmt_thresh)  {hmt_thresh1_ = hmt_thresh;}            
+  void SetHmtThresh2(int hmt_thresh)  {hmt_thresh2_ = hmt_thresh;}            
+  void SetHmtThresh3(int hmt_thresh)  {hmt_thresh3_ = hmt_thresh;}            
 
-  inline int Gethmt_thresh1()      {return hmt_thresh1_;}
-  inline int Gethmt_thresh2()      {return hmt_thresh2_;}
-  inline int Gethmt_thresh3()      {return hmt_thresh3_;}
+  inline int GetHmtThresh1()      {return hmt_thresh1_;}
+  inline int GetHmtThresh2()      {return hmt_thresh2_;}
+  inline int GetHmtThresh3()      {return hmt_thresh3_;}
 
   int GetReadCfebAllowHmtRo()         {return read_cfeb_allow_hmt_ro_;}
-  int GetReadTmbAllowHmt()            {return read_tmb_allow_hmt_;}
-  int GetReadTmbAllowHmtRo()            {return read_tmb_allow_hmt_ro_;}
+  int GetReadHmtAffThresh()           {return read_hmt_aff_thresh_;}
   
   void SetCfebAllowHmtRo(int cfeb_allow_hmt_ro)         { cfeb_allow_hmt_ro_ = cfeb_allow_hmt_ro;}
-  void SetTmbAllowHmt   (int tmb_allow_hmt)             { tmb_allow_hmt_     = tmb_allow_hmt;}
-  void SetTmbAllowHmtRo (int tmb_allow_hmt_ro)          { tmb_allow_hmt_ro_  = tmb_allow_hmt_ro;}
+  void  SetHmtAffThresh  (int hmt_aff_thresh)            { hmt_aff_thresh_  = hmt_aff_thresh;}
   
   inline int GetCfebAllowHmtRo()         {return cfeb_allow_hmt_ro_;}
-  inline int GetTmbAllowHmt()            {return tmb_allow_hmt_;}
-  inline int GetTmbAllowHmtRo()          {return tmb_allow_hmt_ro_;}
+  inline int GetHmtAffThresh  ()            { return hmt_aff_thresh_ ;}
+
+  inline int GetReadHmtDelay()                {return read_hmt_delay_;}
+  inline int GetReadHmtAlctWinSize()          {return read_hmt_alct_win_size_;}
+  void SetHmtDelay(int hmt_delay)               {    hmt_delay_ = hmt_delay;}
+  void SetHmtAlctWinSize(int hmt_alct_win_size)               {    hmt_alct_win_size_ = hmt_alct_win_size;}
+  inline int GetHmtDelay()                {return hmt_delay_;}
+  inline int GetHmtAlctWinSize()          {return hmt_alct_win_size_;}
+
+   
+  inline int   GetReadHmtAllowAnode()                                    {return read_hmt_allow_anode_;}
+  void             SetHmtAllowAnode(int hmt_allow_anode)          {hmt_allow_anode_ = hmt_allow_anode;}
+  inline int       GetHmtAllowAnode()                                    {return      hmt_allow_anode_;}
+  inline int GetReadHmtAllowCathode()                                  {return read_hmt_allow_cathode_;}
+  void           SetHmtAllowCathode(int hmt_allow_cathode)    {hmt_allow_cathode_ = hmt_allow_cathode;}
+  inline int     GetHmtAllowCathode()                                  {return      hmt_allow_cathode_;}
+  inline int   GetReadHmtAllowMatch()                                    {return read_hmt_allow_match_;}
+  void             SetHmtAllowMatch(int hmt_allow_match)          {hmt_allow_match_ = hmt_allow_match;}
+  inline int       GetHmtAllowMatch()                                    {return      hmt_allow_match_;}
+  inline int   GetReadHmtAllowAnodeRo()                                    {return read_hmt_allow_anode_ro_;}
+  void             SetHmtAllowAnodeRo(int hmt_allow_anode_ro)          {hmt_allow_anode_ro_ = hmt_allow_anode_ro;}
+  inline int       GetHmtAllowAnodeRo()                                    {return      hmt_allow_anode_ro_;}
+  inline int GetReadHmtAllowCathodeRo()                                  {return read_hmt_allow_cathode_ro_;}
+  void           SetHmtAllowCathodeRo(int hmt_allow_cathode_ro)    {hmt_allow_cathode_ro_ = hmt_allow_cathode_ro;}
+  inline int     GetHmtAllowCathodeRo()                                  {return      hmt_allow_cathode_ro_;}
+  inline int   GetReadHmtAllowMatchRo()                                    {return read_hmt_allow_match_ro_;}
+  void             SetHmtAllowMatchRo(int hmt_allow_match_ro)          {hmt_allow_match_ro_ = hmt_allow_match_ro;}
+  inline int       GetHmtAllowMatchRo()                                    {return      hmt_allow_match_ro_;}
+  inline int   GetReadHmtOuttimeCheck()                                    {return read_hmt_outtime_check_;}
+  inline int   GetHmtOuttimeCheck()                                    {return hmt_outtime_check_;}
+  void         SetHmtOuttimeCheck(int hmt_outtime_check)               {hmt_outtime_check_ = hmt_outtime_check;}
   //
   ////---------------------------------------------------------------------
   ////ADR_LCT_INJECTION = 0x1B8
@@ -3207,7 +3235,7 @@ private:
   int ALCT1_data_;
   //
   // The following is actually the MaxCounter in TMB + 1 (i.e., they count from 0)
-  static const int MaxCounter = 106;//add 10 counters for HMT
+  static const int MaxCounter = 118;//add 20 counters for HMT
   static const int MaxGEMCounter = 120;
   int FinalCounter[MaxCounter+40];
   int FinalGEMCounter[MaxGEMCounter+1];
@@ -3223,6 +3251,7 @@ private:
 
   static const int alctclctmatch_counter_index_ = 32;
   static const int bx0match_counter_index_ = 95;
+  static const int cathodehmtalctmatch_counter_index_ = 106;
 
   static const int gemA_bx0match_counter_index_ = 88;
   static const int gemB_bx0match_counter_index_ = gemA_bx0match_counter_index_+1;
@@ -4674,6 +4703,7 @@ private:
   int drop_used_clcts_;
   int cross_bx_algorithm_;
   int clct_use_corrected_bx_;
+  int seq_trigger_nodeadtime_;
 
   int read_use_dead_time_zone_;
   int read_dead_time_zone_size_;
@@ -4682,6 +4712,7 @@ private:
   int read_drop_used_clcts_;
   int read_cross_bx_algorithm_;
   int read_clct_use_corrected_bx_;
+  int read_seq_trigger_nodeadtime_;
   //
   //---------------------------------------------------------------------
   //ADR_CLCT0_CC = 0x19A
@@ -4713,8 +4744,10 @@ private:
   int read_cclut_enable_;
   int run3_trig_dataformat_enable_;
   int run3_daq_dataformat_enable_;
+  int run3_alct_dataformat_enable_;
   int read_run3_trig_dataformat_enable_;
   int read_run3_daq_dataformat_enable_;
+  int read_run3_alct_dataformat_enable_;
 
   //---------------------------------------------------------------------
   //ADR_HMT_CTRL = 0x1AC
@@ -4722,11 +4755,11 @@ private:
   int hmt_enable_;
   int hmt_me1a_enable_;
   int hmt_nhits_trig_;
-  int hmt_trigger_;
+  int hmt_cathode_trigger_;
   int read_hmt_enable_;
   int read_hmt_me1a_enable_;
   int read_hmt_nhits_trig_;
-  int read_hmt_trigger_;
+  int read_hmt_cathode_trigger_;
 
   //------------------------------------------------------------------
   //0X1AE = ADR_HMT_THRESH1:  HMT loose threshold  (Tao, 2020)
@@ -4734,23 +4767,33 @@ private:
   //0X1B2 = ADR_HMT_THRESH3:  HMT tight threshold  (Tao, 2020)
   //------------------------------------------------------------------
   int hmt_thresh1_;
-  int hmt_thresh1_pass_;
   int hmt_thresh2_;
-  int hmt_thresh2_pass_;
   int hmt_thresh3_;
-  int hmt_thresh3_pass_;
   int cfeb_allow_hmt_ro_;
-  int tmb_allow_hmt_;
-  int tmb_allow_hmt_ro_;
+  int hmt_aff_thresh_;
+  int hmt_delay_;
+  int hmt_alct_win_size_;
+  int hmt_allow_anode_;
+  int hmt_allow_cathode_;
+  int hmt_allow_match_;
+  int hmt_allow_anode_ro_;
+  int hmt_allow_cathode_ro_;
+  int hmt_allow_match_ro_;
+  int hmt_outtime_check_;
   int read_hmt_thresh1_;
-  int read_hmt_thresh1_pass_;
   int read_hmt_thresh2_;
-  int read_hmt_thresh2_pass_;
   int read_hmt_thresh3_;
-  int read_hmt_thresh3_pass_;
   int read_cfeb_allow_hmt_ro_;
-  int read_tmb_allow_hmt_;
-  int read_tmb_allow_hmt_ro_;
+  int read_hmt_aff_thresh_;
+  int read_hmt_delay_;
+  int read_hmt_alct_win_size_;
+  int read_hmt_allow_anode_;
+  int read_hmt_allow_cathode_;
+  int read_hmt_allow_match_;
+  int read_hmt_allow_anode_ro_;
+  int read_hmt_allow_cathode_ro_;
+  int read_hmt_allow_match_ro_;
+  int read_hmt_outtime_check_;
   //------------------------------------------------------------------
   //0X1B4 = ADR_HMT_NHITS_SIG: nhits in bx678  (Tao, 2020)
   //0X1B6 = ADR_HMT_NHITS_BKG: nhits in bx2345  (Tao, 2020)

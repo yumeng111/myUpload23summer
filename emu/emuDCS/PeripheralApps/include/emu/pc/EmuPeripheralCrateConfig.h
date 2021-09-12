@@ -679,6 +679,7 @@ private:
   void Settmb_bxn_offset(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void GEMBC0Scan(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   void GEMCSCMatchScan(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void HMTTimingScan(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   //
   // Output logging
   void LogCCBTestsOutput(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 

@@ -8563,6 +8563,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_cclut_enable_                   = ExtractValueFromData(data,cclut_enable_bitlo                ,cclut_enable_bithi                );
     read_run3_trig_dataformat_enable_    = ExtractValueFromData(data,run3_trig_dataformat_enable_bitlo ,run3_trig_dataformat_enable_bithi );
     read_run3_daq_dataformat_enable_     = ExtractValueFromData(data,run3_daq_dataformat_enable_bitlo  ,run3_daq_dataformat_enable_bithi  );
+    read_run3_alct_dataformat_enable_    = ExtractValueFromData(data,run3_alct_dataformat_enable_bitlo ,run3_alct_dataformat_enable_bithi  );
   } else if ( address == hmt_ctrl_adr ) {
     //------------------------------------------------------------------
     //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
@@ -11020,7 +11021,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
               << std::endl;
     InsertValueIntoDataWord(run3_trig_dataformat_enable_,     run3_trig_dataformat_enable_bithi,     run3_trig_dataformat_enable_bitlo,   &data_word);
     InsertValueIntoDataWord(run3_daq_dataformat_enable_,      run3_daq_dataformat_enable_bithi,      run3_daq_dataformat_enable_bitlo,   &data_word);
-    InsertValueIntoDataWord(run3_alct_dataformat_enable_,      run3_alct_dataformat_enable_bithi,      run3_alct_dataformat_enable_bitlo,   &data_word);
+    InsertValueIntoDataWord(run3_alct_dataformat_enable_,     run3_alct_dataformat_enable_bithi,     run3_alct_dataformat_enable_bitlo,   &data_word);
   } else if ( address == hmt_ctrl_adr ) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
@@ -11994,6 +11995,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     config_ok &= compareValues("TMB mpc_tx_delay"                  ,read_mpc_tx_delay_          ,mpc_tx_delay_          , print_errors);
     config_ok &= compareValues("TMB clct_match_window_size"        ,read_clct_match_window_size_,clct_match_window_size_, print_errors);
     //
+    if (hardware_version_>=2){
     //---------------------------------------------------------------------
     // 0X198 = ADR_NEWALGO_CTRL:  Controls parameters of new trigger algorithm (Yuriy, 2016)
     //---------------------------------------------------------------------
@@ -12005,6 +12007,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     config_ok &= compareValues("TMB cross_bx_algorithm"        ,read_cross_bx_algorithm_        ,cross_bx_algorithm_        , print_errors);
     config_ok &= compareValues("TMB clct_use_corrected_bx"     ,read_clct_use_corrected_bx_     ,clct_use_corrected_bx_     , print_errors);
     config_ok &= compareValues("TMB seq_trigger_nodeadtime"    ,read_seq_trigger_nodeadtime_    ,seq_trigger_nodeadtime_    , print_errors);
+    }
     //
     //------------------------------------------------------------------
     //0XB6 = ADR_RPC_CFG:  RPC Configuration
@@ -12213,6 +12216,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     // Here check only the bit (ANDed between all five CFEB bits...)
     config_ok &= compareValues("TMB cfeb_badbits_block",GetReadCFEBBadBitsBlock(),GetCFEBBadBitsBlock(),print_errors); 
     //
+    if (hardware_version_>=2){
     //---------------------------------------------------------------------
     // 0X1AA = ADR_RUN3_FORMAT_CTRL:  Run3 format control  (Tao, 2020)
     //---------------------------------------------------------------------
@@ -12244,6 +12248,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     config_ok &= compareValues("TMB hmt_allow_cathode_ro",   read_hmt_allow_cathode_ro_,   hmt_allow_cathode_ro_, print_errors);
     config_ok &= compareValues("TMB hmt_allow_anode_ro",   read_hmt_allow_anode_ro_,   hmt_allow_anode_ro_, print_errors);
     config_ok &= compareValues("TMB hmt_outtime_check",      read_hmt_outtime_check_,      hmt_outtime_check_, print_errors);
+    }
     //
     //------------------------------------------------------------------
     //0X17A = ADR_V6_EXTEND: ADR_CFEB_INJ:  CFEB Injector Control; ADR_SEQ_TRIG_EN:

@@ -2544,8 +2544,8 @@ public:
   void Sethmt_enable(int hmt_enable)     {hmt_enable_ = hmt_enable;}
   void Sethmt_me1a_enable(int hmt_me1a_enable)     {hmt_me1a_enable_ = hmt_me1a_enable;}
 
-  int GetRead_hmt_nhits_trig()  {return read_hmt_nhits_trig_;}
-  int GetRead_hmt_cathode_trigger()  {return read_hmt_cathode_trigger_;}
+  inline int GetRead_hmt_nhits_trig()  {return read_hmt_nhits_trig_;}
+  inline int GetRead_hmt_cathode_trigger()  {return read_hmt_cathode_trigger_;}
 
   inline int Gethmt_enable()      {return hmt_enable_;}
   inline int Gethmt_me1a_enable()      {return hmt_me1a_enable_;}
@@ -2553,8 +2553,8 @@ public:
   //0X1B4 = ADR_HMT_NHITS_SIG: nhits in bx678  (Tao, 2020)
   //0X1B6 = ADR_HMT_NHITS_BKG: nhits in bx2345  (Tao, 2020)
   //------------------------------------------------------------------
-  int GetRead_hmt_nhits_sig()  {return read_hmt_nhits_sig_; }
-  int GetRead_hmt_nhits_bkg()  {return read_hmt_nhits_bkg_; }
+  inline int GetRead_hmt_nhits_sig()  {return read_hmt_nhits_sig_; }
+  inline int GetRead_hmt_nhits_bkg()  {return read_hmt_nhits_bkg_; }
   //void Sethmt_nhits_sig(int hmt_nhits_sig)  { hmt_nhits_sig_= hmt_nhits_sig;}  
   //void Sethmt_nhits_bkg(int hmt_nhits_bkg)  { hmt_nhits_bkg_= hmt_nhits_bkg;}  
 
@@ -2566,9 +2566,9 @@ public:
   //0X1B0 = ADR_HMT_THRESH2:  HMT median threshold  (Tao, 2020)
   //0X1B2 = ADR_HMT_THRESH3:  HMT tight threshold  (Tao, 2020)
   //------------------------------------------------------------------
-  int GetReadHmtThresh1()         {return read_hmt_thresh1_;}
-  int GetReadHmtThresh2()         {return read_hmt_thresh2_;}
-  int GetReadHmtThresh3()         {return read_hmt_thresh3_;}
+  inline int GetReadHmtThresh1()         {return read_hmt_thresh1_;}
+  inline int GetReadHmtThresh2()         {return read_hmt_thresh2_;}
+  inline int GetReadHmtThresh3()         {return read_hmt_thresh3_;}
 
   void SetHmtThresh1(int hmt_thresh)  {hmt_thresh1_ = hmt_thresh;}            
   void SetHmtThresh2(int hmt_thresh)  {hmt_thresh2_ = hmt_thresh;}            
@@ -2578,8 +2578,8 @@ public:
   inline int GetHmtThresh2()      {return hmt_thresh2_;}
   inline int GetHmtThresh3()      {return hmt_thresh3_;}
 
-  int GetReadCfebAllowHmtRo()         {return read_cfeb_allow_hmt_ro_;}
-  int GetReadHmtAffThresh()           {return read_hmt_aff_thresh_;}
+  inline int GetReadCfebAllowHmtRo()         {return read_cfeb_allow_hmt_ro_;}
+  inline int GetReadHmtAffThresh()           {return read_hmt_aff_thresh_;}
   
   void SetCfebAllowHmtRo(int cfeb_allow_hmt_ro)         { cfeb_allow_hmt_ro_ = cfeb_allow_hmt_ro;}
   void  SetHmtAffThresh  (int hmt_aff_thresh)            { hmt_aff_thresh_  = hmt_aff_thresh;}

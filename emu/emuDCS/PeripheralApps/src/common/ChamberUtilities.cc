@@ -6297,7 +6297,7 @@ int ChamberUtilities::HMTTimingScan(int step_time) {
   int initial_alct_vpf_delay     = thisTMB->GetAlctVpfDelay();
   //
   int initial_hmt_delay                 = thisTMB->GetHmtDelay();
-  int initial_hmt_alct_win_size         = thisTMB->GetHmtAlctWinSize(); //gem-alct match window
+  int initial_hmt_alct_win_size         = thisTMB->GetHmtAlctWinSize(); //hmt-alct match window
   
   //
   //
@@ -6355,7 +6355,7 @@ int ChamberUtilities::HMTTimingScan(int step_time) {
   //
   bool foundMatch = false;
   std::cout << "Scanning hmt_delay from " << std::dec << minimum_delay_value << " to " << maximum_delay_value << std::endl;
-  thisTMB->SetHmtAlctWinSize(1);// change gem-alct window into 1;
+  thisTMB->SetHmtAlctWinSize(1);// change hmt-alct window into 1;
   //
   for (int delay_value=minimum_delay_value; delay_value<maximum_delay_value; delay_value++) {
     //
@@ -6387,8 +6387,8 @@ int ChamberUtilities::HMTTimingScan(int step_time) {
   }
 
   hmt_delay_ = hmt_delay_for1BX - int(initial_hmt_alct_win_size/2) +1;
-  (*MyOutput_) << "gem-alct match window =1BX, Best value is hmt_delay = " << hmt_delay_for1BX  << std::endl;
-  std::cout    << "gem-alct match window =1BX, Best value is hmt_delay = " << hmt_delay_for1BX  << std::endl;
+  (*MyOutput_) << "hmt-alct match window =1BX, Best value is hmt_delay = " << hmt_delay_for1BX  << std::endl;
+  std::cout    << "hmt-alct match window =1BX, Best value is hmt_delay = " << hmt_delay_for1BX  << std::endl;
   (*MyOutput_) << "Above best value is for hmt_alct_win_size=1BX, True hmt_delay = hmt_delay_for1BXwindow - hmt_alct_win_size/2 + 1"<<std::endl;
   std::cout    << "Above best value is for hmt_alct_win_size=1BX, True hmt_delay = hmt_delay_for1BXwindow - hmt_alct_win_size/2 + 1"<<std::endl;
   (*MyOutput_) << "\t Final result with initial hmt_alct_win_size="<< initial_hmt_alct_win_size <<", hmt_delay = " << hmt_delay_ <<"\n"<< std::endl; 

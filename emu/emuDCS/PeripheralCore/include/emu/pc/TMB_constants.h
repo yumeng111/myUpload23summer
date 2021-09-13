@@ -3691,13 +3691,13 @@ const int use_dynamic_dead_time_zone_default = 1;
 const int clct_to_alct_vmereg  = algo2016_ctrl_adr;
 const int clct_to_alct_bitlo   = 7;
 const int clct_to_alct_bithi   = 7;
-const int clct_to_alct_default = 1;
+const int clct_to_alct_default = 0;
 //
 //
 const int drop_used_clcts_vmereg  = algo2016_ctrl_adr;
 const int drop_used_clcts_bitlo   = 8;
 const int drop_used_clcts_bithi   = 8;
-const int drop_used_clcts_default = 0;
+const int drop_used_clcts_default = 0;//0 = turn on CLCT reuse
 //
 //
 const int cross_bx_algorithm_vmereg  = algo2016_ctrl_adr;
@@ -3709,7 +3709,7 @@ const int cross_bx_algorithm_default = 1; // for now this improvement is switche
 const int clct_use_corrected_bx_vmereg  = algo2016_ctrl_adr;
 const int clct_use_corrected_bx_bitlo   = 10;
 const int clct_use_corrected_bx_bithi   = 10;
-const int clct_use_corrected_bx_default = 1; // for now this improvement is switched off by default because it is not fully functional in firmware
+const int clct_use_corrected_bx_default = 0; // for now this improvement is switched off by default because it is not fully functional in firmware
 //
 //
 const int seq_trigger_nodeadtime_vmereg  = algo2016_ctrl_adr;
@@ -3825,7 +3825,7 @@ const int run3_alct_dataformat_enable_default = 0;
 const int hmt_enable_vmereg  = hmt_ctrl_adr;
 const int hmt_enable_bitlo   = 0;
 const int hmt_enable_bithi   = 0;
-const int hmt_enable_default = 0;
+const int hmt_enable_default = 1;
 //
 const int hmt_me1a_enable_vmereg  = hmt_ctrl_adr;
 const int hmt_me1a_enable_bitlo   = 1;
@@ -3934,24 +3934,6 @@ const int hmt_nhits_bkg_bitlo        = 0;
 const int hmt_nhits_bkg_bithi        = 9;
 const int hmt_nhits_bkg_default      = 0;
 //
-////-----------------------------------------------------------------------------
-//// 0X1B8 ADR_LCT_INJECTION
-////-----------------------------------------------------------------------------
-//const int lct_inj_hs_vmereg        = lct_injection_adr;
-//const int lct_inj_hs_bitlo         = 0;
-//const int lct_inj_hs_bithi         = 7;
-//const int lct_inj_hs_default       = 0;
-////
-//const int lct_inj_wg_vmereg        = lct_injection_adr;
-//const int lct_inj_wg_bitlo         = 8;
-//const int lct_inj_wg_bithi         = 14;
-//const int lct_inj_wg_default       = 0;
-////
-//const int lct_inj_enable_vmereg    = lct_injection_adr;
-//const int lct_inj_enable_bitlo     = 15;
-//const int lct_inj_enable_bithi     = 15;
-//const int lct_inj_enable_default   = 0;
-//
 //
 //-----------------------------------------------------------------------------
 // 0X30c ADR_GEM_DEBUG_FIFO_CTRL 
@@ -3992,7 +3974,7 @@ const int gem_debug_fifo_data_default        = 0;
 const int gem_fifo_tbins_vmereg           = gem_tbins_adr;
 const int gem_fifo_tbins_bitlo            = 0;
 const int gem_fifo_tbins_bithi            = 4;
-const int gem_fifo_tbins_default          = 7;
+const int gem_fifo_tbins_default          = 10;
 //
 //
 const int gem_fifo_pretrig_vmereg         = gem_tbins_adr;
@@ -4010,7 +3992,7 @@ const int gem_fifo_decouple_default       = 1;
 const int gem_read_enable_vmereg          = gem_tbins_adr;
 const int gem_read_enable_bitlo           = 11;
 const int gem_read_enable_bithi           = 11;
-const int gem_read_enable_default         = 0;
+const int gem_read_enable_default         = 1;
 //
 //
 const int gem_zero_supress_enable_vmereg  = gem_tbins_adr;
@@ -4132,7 +4114,7 @@ const int gem_match_neighborRoll_default    = 0;
 const int gem_match_neighborPad_vmereg     = gem_copad_ctrl_adr;
 const int gem_match_neighborPad_bitlo      = 3;
 const int gem_match_neighborPad_bithi      = 3;
-const int gem_match_neighborPad_default    = 0;
+const int gem_match_neighborPad_default    = 1;
 //
 //
 const int gem_match_deltaPad_vmereg        = gem_copad_ctrl_adr;
@@ -4209,6 +4191,7 @@ const int gemB_bx0_match_default    = 0;
 //-----------------------------------------------------------------------------
 // 0X328 ADR_GEMA_TRG_CTRL
 //-----------------------------------------------------------------------------
+//first 4bits are not used
 //
 const int match_gem_alct_window_vmereg     = gemA_trg_ctrl_adr; // in timing 
 const int match_gem_alct_window_bitlo      = 4;
@@ -4219,7 +4202,7 @@ const int match_gem_alct_window_default    = 3;
 const int match_gem_clct_window_vmereg     = gemA_trg_ctrl_adr;
 const int match_gem_clct_window_bitlo      = 8;
 const int match_gem_clct_window_bithi      = 11;
-const int match_gem_clct_window_default    = 5;
+const int match_gem_clct_window_default    = 7;
 //
 const int gemA_alct_match_vmereg            = gemA_trg_ctrl_adr; // in timing 
 const int gemA_alct_match_bitlo             = 12;
@@ -4246,7 +4229,7 @@ const int gemA_fiber_enable_default         = 3;
 const int match_gem_alct_delay_vmereg      = gemB_trg_ctrl_adr;
 const int match_gem_alct_delay_bitlo       = 0;
 const int match_gem_alct_delay_bithi       = 7;
-const int match_gem_alct_delay_default     = 0;
+const int match_gem_alct_delay_default     = 2;
 //
 //
 //const int match_gemB_alct_window_vmereg     = gemB_trg_ctrl_adr; // in timing 
@@ -4350,7 +4333,7 @@ const int tmb_copad_alct_allow_default          = 1;
 const int tmb_copad_clct_allow_vmereg           = gem_csc_match_ctrl_adr;
 const int tmb_copad_clct_allow_bitlo            = 11;
 const int tmb_copad_clct_allow_bithi            = 11;
-const int tmb_copad_clct_allow_default          = 0;
+const int tmb_copad_clct_allow_default          = 1;
 //
 //
 const int gemA_match_ignore_position_vmereg           = gem_csc_match_ctrl_adr;

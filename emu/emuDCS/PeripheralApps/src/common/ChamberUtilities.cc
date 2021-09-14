@@ -6386,11 +6386,11 @@ int ChamberUtilities::HMTTimingScan(int step_time) {
     //
   }
 
-  hmt_delay_ = hmt_delay_for1BX - int(initial_hmt_alct_win_size/2) +1;
+  hmt_delay_ = hmt_delay_for1BX - int(initial_hmt_alct_win_size/2) ;
   (*MyOutput_) << "hmt-alct match window =1BX, Best value is hmt_delay = " << hmt_delay_for1BX  << std::endl;
   std::cout    << "hmt-alct match window =1BX, Best value is hmt_delay = " << hmt_delay_for1BX  << std::endl;
-  (*MyOutput_) << "Above best value is for hmt_alct_win_size=1BX, True hmt_delay = hmt_delay_for1BXwindow - hmt_alct_win_size/2 + 1"<<std::endl;
-  std::cout    << "Above best value is for hmt_alct_win_size=1BX, True hmt_delay = hmt_delay_for1BXwindow - hmt_alct_win_size/2 + 1"<<std::endl;
+  (*MyOutput_) << "Above best value is for hmt_alct_win_size=1BX, True hmt_delay = hmt_delay_for1BXwindow - hmt_alct_win_size/2"<<std::endl;
+  std::cout    << "Above best value is for hmt_alct_win_size=1BX, True hmt_delay = hmt_delay_for1BXwindow - hmt_alct_win_size/2"<<std::endl;
   (*MyOutput_) << "\t Final result with initial hmt_alct_win_size="<< initial_hmt_alct_win_size <<", hmt_delay = " << hmt_delay_ <<"\n"<< std::endl; 
   std::cout    << "\t Final result with initial hmt_alct_win_size="<< initial_hmt_alct_win_size <<", hmt_delay = " << hmt_delay_ <<"\n"<< std::endl; 
   //

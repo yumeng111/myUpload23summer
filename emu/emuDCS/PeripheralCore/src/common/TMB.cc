@@ -2628,10 +2628,10 @@ std::string TMB::CounterName(int counter){
   if( counter == 105) name =  "TMB: cathode hmt+CLCT coincidence                       ";//Tao, 202108
   if( counter == 106) name =  "TMB: cathode hmt+ALCT coincidence                       ";//Tao, 202108
   if( counter == 107) name =  "TMB: cathode hmt+LCT coincidence                        ";//Tao, 202108
-  if( counter == 108) name =  "TMB: anode hmt fired only                               ";//Tao, 202108
-  if( counter == 109) name =  "TMB: cathode hmt fired only                             ";//Tao, 202108
-  if( counter == 110) name =  "TMB: anode or cathode hmt fired                         ";//Tao, 202108
-  if( counter == 111) name =  "TMB: anode and cathode hmt fired                        ";//Tao, 202108
+  if( counter == 108) name =  "TMB: anode hmt fired only for trigger or readout        ";//Tao, 202108
+  if( counter == 109) name =  "TMB: cathode hmt fired only for trigger or readout      ";//Tao, 202108
+  if( counter == 110) name =  "TMB: anode or cathode hmt fired for trigger or readout  ";//Tao, 202108
+  if( counter == 111) name =  "TMB: anode and cathode hmt fired for trigger or readout ";//Tao, 202108
   if( counter == 112) name =  "TMB: anode and cathode hmt fired, with valid LCT        ";//Tao, 202108
   if( counter == 113) name =  "TMB: anode and cathode hmt fired, without ALCT          ";//Tao, 202108
   if( counter == 114) name =  "TMB: trigger pulse source from HMT only (no LCT)        ";//Tao, 202108

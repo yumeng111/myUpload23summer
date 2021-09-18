@@ -2638,6 +2638,8 @@ std::string TMB::CounterName(int counter){
   if( counter == 115) name =  "TMB: trigger keep source from HMT only                  ";//Tao, 202108
   if( counter == 116) name =  "TMB: HMT trigger counter                                ";//Tao, 202108
   if( counter == 117) name =  "TMB: HMT readout counter                                ";//Tao, 202108
+  if( counter == 118) name =  "TMB: HMT active cfeb flag counter                       ";//Tao, 202108
+  if( counter == 119) name =  "TMB: buffer stall counter since last resync/hardset     ";//Tao, 202108
 
   //
   return name;

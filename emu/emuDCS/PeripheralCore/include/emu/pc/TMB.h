@@ -3235,7 +3235,7 @@ private:
   int ALCT1_data_;
   //
   // The following is actually the MaxCounter in TMB + 1 (i.e., they count from 0)
-  static const int MaxCounter = 118;//add 20 counters for HMT
+  static const int MaxCounter = 120;//add 20 counters for HMT
   static const int MaxGEMCounter = 120;
   int FinalCounter[MaxCounter+40];
   int FinalGEMCounter[MaxGEMCounter+1];

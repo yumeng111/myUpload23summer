@@ -4359,7 +4359,6 @@ void TMB::DecodeTMBRawHitWord_(int address) {
 	h10_r_pretrig_counter_msbs_ = ExtractValueFromData(data , h10_r_pretrig_counter_msbs_lo_bit , h10_r_pretrig_counter_msbs_hi_bit);
         //run3 DAQ format
 	h10_clct0_cc_        = ExtractValueFromData(data , h10_clct0_cc_lo_bit         , h10_clct0_cc_hi_bit);
-	h10_run3_trig_df_    = ExtractValueFromData(data , h10_run3_trig_df_lo_bit     , h10_run3_trig_df_hi_bit);
 	h10_clct0_key_bit10_ = ExtractValueFromData(data , h10_clct0_key_bit10_lo_bit  , h10_clct0_key_bit10_hi_bit);
 	h10_hmt_bit0_        = ExtractValueFromData(data , h10_hmt_bit0_lo_bit         , h10_hmt_bit0_hi_bit);
     } else if (address == 11) {
@@ -4388,7 +4387,6 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         h14_r_trig_counter_msbs_ = ExtractValueFromData(data , h14_r_trig_counter_msbs_lo_bit , h14_r_trig_counter_msbs_hi_bit);
         //run3 DAQ format
 	h14_clct1_cc_        = ExtractValueFromData(data , h14_clct1_cc_lo_bit         , h14_clct1_cc_hi_bit);
-	h14_gem_enable_      = ExtractValueFromData(data , h14_gem_enable_lo_bit       , h14_gem_enable_hi_bit);
 	h14_clct1_key_bit10_ = ExtractValueFromData(data , h14_clct1_key_bit10_lo_bit  , h14_clct1_key_bit10_hi_bit);
 	h14_hmt_bit1_        = ExtractValueFromData(data , h14_hmt_bit1_lo_bit         , h14_hmt_bit1_hi_bit);
     } else if (address == 15) {
@@ -4542,6 +4540,9 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         //run3 DAQ format
 	h40_gem_csc_bend_enable_     = ExtractValueFromData(data , h40_gem_csc_bend_enable_lo_bit , h40_gem_csc_bend_enable_hi_bit);
     } else if (address == 41) {
+	h41_run3_trig_df_    = ExtractValueFromData(data , h41_run3_trig_df_lo_bit     , h41_run3_trig_df_hi_bit);
+	h41_gem_enable_      = ExtractValueFromData(data , h41_gem_enable_lo_bit       , h41_gem_enable_hi_bit);
+        h41_hmt_match_win_   = ExtractValueFromData(data , h41_hmt_match_win_lo_bit    , h41_hmt_match_win_hi_bit);
         h41_tmb_allow_alct_       =  ExtractValueFromData(data , h41_tmb_allow_alct_lo_bit      , h41_tmb_allow_alct_hi_bit);
         h41_tmb_allow_clct_       =  ExtractValueFromData(data , h41_tmb_allow_clct_lo_bit      , h41_tmb_allow_clct_hi_bit);
         h41_tmb_allow_match_      =  ExtractValueFromData(data , h41_tmb_allow_match_lo_bit     , h41_tmb_allow_match_hi_bit);
@@ -4673,7 +4674,6 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << "Header 10:" <<std::endl;
   if (run3_daq_enable_nogem){
     (*MyOutput_) << " -> CLCT0 comparator code                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_clct0_cc_<<std::endl;
-    (*MyOutput_) << " -> run3_trig_df                                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_run3_trig_df_<<std::endl;
     (*MyOutput_) << " -> CLCT0 strip position 1/4 and 1/8 bits                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_clct0_key_bit10_<<std::endl;
     (*MyOutput_) << " -> HMT in-time hits counter,bit0                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_hmt_bit0_<<std::endl;
   }else 
@@ -4708,7 +4708,6 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << "Header 14:" <<std::endl;
   if (run3_daq_enable_nogem){
     (*MyOutput_) << " -> CLCT1 comparator code                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_clct1_cc_<<std::endl;
-    (*MyOutput_) << " -> gem enable for gemcsc match                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_gem_enable_<<std::endl;
     (*MyOutput_) << " -> CLCT1 strip position 1/4 and 1/8 bits                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_clct1_key_bit10_<<std::endl;
     (*MyOutput_) << " -> HMT in-time hits counter,bit1                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_hmt_bit1_<<std::endl;
   }else 
@@ -4899,12 +4898,18 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> TMB trig pulse coincident with rtmb_push                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h40_r_tmb_trig_pulse_<<std::endl;
 
   (*MyOutput_) << "Header 41:" <<std::endl;
-  (*MyOutput_) << " -> Allow ALCT-only  tmb-matching trigger                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_alct_<<std::endl;
-  (*MyOutput_) << " -> Allow CLCT-only  tmb-matching trigger                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_clct_<<std::endl;
-  (*MyOutput_) << " -> Allow Match-only tmb-matching trigger                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_match_<<std::endl;
-  (*MyOutput_) << " -> Allow ALCT-only  tmb-matching readout only              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_alct_ro_<<std::endl;
-  (*MyOutput_) << " -> Allow CLCT-only  tmb-matching readout only              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_clct_ro_<<std::endl;
-  (*MyOutput_) << " -> Allow Match-only tmb-matching readout only              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_match_ro_<<std::endl;
+  if (run3_daq_enable_nogem){
+    (*MyOutput_) << " -> run3_trig_df                                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_run3_trig_df_<<std::endl;
+    (*MyOutput_) << " -> gem enable for gemcsc match                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_gem_enable_<<std::endl;
+    (*MyOutput_) << " -> location of ALCT/anodeHMT in Cathdode HMT window        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_hmt_match_win_<<std::endl;
+   }else {
+	  (*MyOutput_) << " -> Allow ALCT-only  tmb-matching trigger                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_alct_<<std::endl;
+	  (*MyOutput_) << " -> Allow CLCT-only  tmb-matching trigger                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_clct_<<std::endl;
+	  (*MyOutput_) << " -> Allow Match-only tmb-matching trigger                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_match_<<std::endl;
+	  (*MyOutput_) << " -> Allow ALCT-only  tmb-matching readout only              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_alct_ro_<<std::endl;
+	  (*MyOutput_) << " -> Allow CLCT-only  tmb-matching readout only              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_clct_ro_<<std::endl;
+	  (*MyOutput_) << " -> Allow Match-only tmb-matching readout only              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_match_ro_<<std::endl;
+   }
   (*MyOutput_) << " -> Only ALCT triggered, non-triggering readout             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_r_tmb_alct_only_ro_<<std::endl;
   (*MyOutput_) << " -> Only CLCT triggered, non-triggering readout             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_r_tmb_clct_only_ro_<<std::endl;
   (*MyOutput_) << " -> ALCT and CLCT matched in time, non-triggering readout   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_r_tmb_match_ro_<<std::endl;
@@ -7710,6 +7715,8 @@ void TMB::SetTMBRegisterDefaults() {
   //------------------------------------------------------------------
   run3_trig_dataformat_enable_   = run3_trig_dataformat_enable_default;
   run3_daq_dataformat_enable_    = run3_daq_dataformat_enable_default;
+  run3_alct_dataformat_enable_   = run3_alct_dataformat_enable_default;
+  run2_revcode_enable_           = run2_revcode_enable_default;
   //
   //------------------------------------------------------------------
   //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
@@ -8566,6 +8573,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_run3_trig_dataformat_enable_    = ExtractValueFromData(data,run3_trig_dataformat_enable_bitlo ,run3_trig_dataformat_enable_bithi );
     read_run3_daq_dataformat_enable_     = ExtractValueFromData(data,run3_daq_dataformat_enable_bitlo  ,run3_daq_dataformat_enable_bithi  );
     read_run3_alct_dataformat_enable_    = ExtractValueFromData(data,run3_alct_dataformat_enable_bitlo ,run3_alct_dataformat_enable_bithi  );
+    read_run2_revcode_enable_            = ExtractValueFromData(data,run2_revcode_enable_bitlo         ,run2_revcode_enable_bithi  );
   } else if ( address == hmt_ctrl_adr ) {
     //------------------------------------------------------------------
     //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
@@ -9841,6 +9849,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
       (*MyOutput_) << "    enable Run3 Trigger Format                 = " << std::dec << read_run3_trig_dataformat_enable_ << std::endl; 
       (*MyOutput_) << "    enable Run3 DAQ Format                     = " << std::dec << read_run3_daq_dataformat_enable_ << std::endl; 
       (*MyOutput_) << "    enable Run3 ALCT Format                    = " << std::dec << read_run3_alct_dataformat_enable_ << std::endl; 
+      (*MyOutput_) << "    enable Run2 legacy revision code           = " << std::dec << read_run2_revcode_enable_ << std::endl; 
   } else if ( address == hmt_ctrl_adr ) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
@@ -10647,7 +10656,11 @@ void TMB::PrintFirmwareDate() {
 	       << GetReadTmbFirmwareDay() << std::endl;
   (*MyOutput_) << "-> TMB Firmware type   : " << std::hex << GetReadTmbFirmwareType()    << std::endl;
   (*MyOutput_) << "-> TMB Firmware version: " << std::hex << GetReadTmbFirmwareVersion() << std::endl;
-  if (read_cclut_enable_){
+  bool run2_legacy_revcode = read_run2_revcode_enable_ && !read_run3_daq_dataformat_enable_;
+  if (read_cclut_enable_ ){
+       if (run2_legacy_revcode)
+	  (*MyOutput_) << "-> TMB Firmware RevCode, Run2 legacy with Run3 firmware: 0x" << std::hex << GetReadTmbFirmwareRevcode() << std::endl;
+       else
 	  (*MyOutput_) << "-> TMB Firmware RevCode(Run3): format_verison=0x" << std::hex << read_tmb_firmware_format_version_ 
 		<<" major_version=0x" << read_tmb_firmware_major_version_<<" minor_version=0x"<< read_tmb_firmware_minor_version_ << std::endl;
   } else 
@@ -11022,8 +11035,9 @@ int TMB::FillTMBRegister(unsigned long int address) {
     	      << "\n    run3_daq_dataformat_enable_         " << run3_daq_dataformat_enable_        
               << std::endl;
     InsertValueIntoDataWord(run3_trig_dataformat_enable_,     run3_trig_dataformat_enable_bithi,     run3_trig_dataformat_enable_bitlo,   &data_word);
-    InsertValueIntoDataWord(run3_daq_dataformat_enable_,      run3_daq_dataformat_enable_bithi,      run3_daq_dataformat_enable_bitlo,   &data_word);
+    InsertValueIntoDataWord(run3_daq_dataformat_enable_,      run3_daq_dataformat_enable_bithi,      run3_daq_dataformat_enable_bitlo,    &data_word);
     InsertValueIntoDataWord(run3_alct_dataformat_enable_,     run3_alct_dataformat_enable_bithi,     run3_alct_dataformat_enable_bitlo,   &data_word);
+    InsertValueIntoDataWord(run2_revcode_enable_,             run2_revcode_enable_bithi,             run2_revcode_enable_bitlo,           &data_word);
   } else if ( address == hmt_ctrl_adr ) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
@@ -12223,8 +12237,9 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     // 0X1AA = ADR_RUN3_FORMAT_CTRL:  Run3 format control  (Tao, 2020)
     //---------------------------------------------------------------------
     config_ok &= compareValues("TMB run3_trig_dataformat_enable",  read_run3_trig_dataformat_enable_,  run3_trig_dataformat_enable_, print_errors);
-    config_ok &= compareValues("TMB run3_daq_dataformat_enable",  read_run3_daq_dataformat_enable_,  run3_daq_dataformat_enable_, print_errors);
+    config_ok &= compareValues("TMB run3_daq_dataformat_enable",  read_run3_daq_dataformat_enable_,    run3_daq_dataformat_enable_, print_errors);
     config_ok &= compareValues("TMB run3_alct_dataformat_enable",  read_run3_alct_dataformat_enable_,  run3_alct_dataformat_enable_, print_errors);
+    config_ok &= compareValues("TMB run2_revcode_enable",          read_run2_revcode_enable_,          run2_revcode_enable_, print_errors);
     //
     //---------------------------------------------------------------------
     // 0X1AC = ADR_HMT_CTRL:  HMT control 

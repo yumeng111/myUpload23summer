@@ -537,7 +537,8 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
     //0x1AA = ADR_RUN3_FORMAT_CTRL: control run3 format
     if (fillInt("run3_trig_dataformat_enable"                ,value)) { tmb_->Setrun3_trig_dataformat_enable                 (value);}
     if (fillInt("run3_daq_dataformat_enable"                 ,value)) { tmb_->Setrun3_daq_dataformat_enable                  (value);}
-    if (fillInt("run3_alct_dataformat_enable"                 ,value)) { tmb_->Setrun3_alct_dataformat_enable                (value);}
+    if (fillInt("run3_alct_dataformat_enable"                ,value)) { tmb_->Setrun3_alct_dataformat_enable                (value);}
+    if (fillInt("run2_revcode_enable"                        ,value)) { tmb_->Setrun2_revcode_enable                (value);}
     //0x1AC = ADR_HMT_CTRL: control High multiplicity trigger
     if (fillInt("hmt_enable"                ,value)) { tmb_->Sethmt_enable                 (value);}
     if (fillInt("hmt_me1a_enable"           ,value)) { tmb_->Sethmt_me1a_enable            (value);}

@@ -2526,15 +2526,18 @@ public:
   //---------------------------------------------------------------------
   inline int GetRead_cclut_enable() {return read_cclut_enable_;}
   inline int GetRead_run3_trig_dataformat_enable() {return read_run3_trig_dataformat_enable_;}
-  inline int GetRead_run3_daq_dataformat_enable() {return read_run3_daq_dataformat_enable_;}
+  inline int GetRead_run3_daq_dataformat_enable()  {return read_run3_daq_dataformat_enable_;}
   inline int GetRead_run3_alct_dataformat_enable() {return read_run3_alct_dataformat_enable_;}
-  void Setrun3_trig_dataformat_enable(int run3_trig_df_enable) { run3_trig_dataformat_enable_ = run3_trig_df_enable;}
-  void Setrun3_daq_dataformat_enable(int run3_daq_df_enable)   { run3_daq_dataformat_enable_  = run3_daq_df_enable;}
+  inline int GetRead_run2_revcode_enable()         {return read_run2_revcode_enable_;}
+  void Setrun3_trig_dataformat_enable(int run3_trig_df_enable)   { run3_trig_dataformat_enable_ = run3_trig_df_enable;}
+  void Setrun3_daq_dataformat_enable(int run3_daq_df_enable)     { run3_daq_dataformat_enable_  = run3_daq_df_enable;}
   void Setrun3_alct_dataformat_enable(int run3_alct_df_enable)   { run3_alct_dataformat_enable_  = run3_alct_df_enable;}
+  void Setrun2_revcode_enable(int run2_revcode_enable)           { run2_revcode_enable_  = run2_revcode_enable;}
   
   inline int Getrun3_trig_dataformat_enable() {return run3_trig_dataformat_enable_;}
   inline int Getrun3_daq_dataformat_enable()  {return run3_daq_dataformat_enable_;}
   inline int Getrun3_alct_dataformat_enable() {return run3_alct_dataformat_enable_;}
+  inline int Getrun2_revcode_enable()         {return run2_revcode_enable_;}
   //
   //---------------------------------------------------------------------
   //ADR_HMT_CTRL = 0x1AC
@@ -4745,9 +4748,11 @@ private:
   int run3_trig_dataformat_enable_;
   int run3_daq_dataformat_enable_;
   int run3_alct_dataformat_enable_;
+  int run2_revcode_enable_;
   int read_run3_trig_dataformat_enable_;
   int read_run3_daq_dataformat_enable_;
   int read_run3_alct_dataformat_enable_;
+  int read_run2_revcode_enable_;
 
   //---------------------------------------------------------------------
   //ADR_HMT_CTRL = 0x1AC
@@ -5069,7 +5074,6 @@ private:
   //run3 DAQ format 
   int h10_hmt_bit0_;
   int h10_clct0_key_bit10_;
-  int h10_run3_trig_df_;
   int h10_clct0_cc_;
   int h11_r_clct_counter_lsbs_;
   int h12_r_clct_counter_msbs_;
@@ -5084,7 +5088,6 @@ private:
   //run3 DAQ format 
   int h14_hmt_bit1_;
   int h14_clct1_key_bit10_;
-  int h14_gem_enable_;
   int h14_clct1_cc_;
   int h15_r_alct_counter_lsbs_;
   int h16_r_alct_counter_msbs_;
@@ -5210,6 +5213,9 @@ private:
   int h40_r_tmb_trig_pulse_;
   // run3DAQ format with GEM
   int h40_gem_csc_bend_enable_;
+  int h41_gem_enable_;
+  int h41_run3_trig_df_;
+  int h41_hmt_match_win_;
   int h41_tmb_allow_alct_;
   int h41_tmb_allow_clct_;
   int h41_tmb_allow_match_;

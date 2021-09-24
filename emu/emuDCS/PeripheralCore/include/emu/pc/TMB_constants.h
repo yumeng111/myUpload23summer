@@ -3819,6 +3819,12 @@ const int run3_alct_dataformat_enable_bithi   = 3;
 const int run3_alct_dataformat_enable_default = 0;
 //
 //
+const int run2_revcode_enable_vmereg  = run3_format_ctrl_adr;
+const int run2_revcode_enable_bitlo   = 4;
+const int run2_revcode_enable_bithi   = 4;
+const int run2_revcode_enable_default = 0;
+//
+//
 //------------------------------------------------------------------
 //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
 //------------------------------------------------------------------
@@ -4841,9 +4847,7 @@ const int h10_r_pretrig_counter_msbs_hi_bit   =14;
 
 //run3 DAQ format 
 const int h10_clct0_cc_lo_bit =0;
-const int h10_clct0_cc_hi_bit =10;
-const int h10_run3_trig_df_lo_bit =11;
-const int h10_run3_trig_df_hi_bit =11;
+const int h10_clct0_cc_hi_bit =11;
 const int h10_clct0_key_bit10_lo_bit =12;
 const int h10_clct0_key_bit10_hi_bit =13;
 const int h10_hmt_bit0_lo_bit = 14;
@@ -4900,9 +4904,7 @@ const int h14_r_trig_counter_msbs_hi_bit   =14;
 
   //run3 DAQ format 
 const int h14_clct1_cc_lo_bit = 0;
-const int h14_clct1_cc_hi_bit = 10;
-const int h14_gem_enable_lo_bit = 11;
-const int h14_gem_enable_hi_bit = 11;
+const int h14_clct1_cc_hi_bit = 11;
 const int h14_clct1_key_bit10_lo_bit =12;
 const int h14_clct1_key_bit10_hi_bit =13;
 const int h14_hmt_bit1_lo_bit =14;
@@ -5395,6 +5397,14 @@ const int h40_r_tmb_trig_pulse_hi_bit   =14;
   // run3DAQ format with GEM
 const int h40_gem_csc_bend_enable_lo_bit =11;
 const int h40_gem_csc_bend_enable_hi_bit =11;
+
+//Run3
+const int h41_run3_trig_df_lo_bit =0;
+const int h41_run3_trig_df_hi_bit =0;
+const int h41_gem_enable_lo_bit = 1;
+const int h41_gem_enable_hi_bit = 1;
+const int h41_hmt_match_win_lo_bit = 2;
+const int h41_hmt_match_win_hi_bit = 5;
 // Allow ALCT-only  tmb-matching trigger
 const int h41_tmb_allow_alct_lo_bit   =0;
 const int h41_tmb_allow_alct_hi_bit   =0;

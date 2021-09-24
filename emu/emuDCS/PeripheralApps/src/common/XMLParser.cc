@@ -533,21 +533,36 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
     if (fillInt("drop_used_clcts"           ,value)) { tmb_->Set_drop_used_clcts           (value); }
     if (fillInt("cross_bx_algorithm"        ,value)) { tmb_->Set_cross_bx_algorithm        (value); }
     if (fillInt("clct_use_corrected_bx"     ,value)) { tmb_->Set_clct_use_corrected_bx     (value); }
+    if (fillInt("seq_trigger_nodeadtime"    ,value)) { tmb_->Set_seq_trigger_nodeadtime    (value); }
     //0x1AA = ADR_RUN3_FORMAT_CTRL: control run3 format
     if (fillInt("run3_trig_dataformat_enable"                ,value)) { tmb_->Setrun3_trig_dataformat_enable                 (value);}
-    if (fillInt("run3_daq_dataformat_enable"                 ,value)) { tmb_->Setrun3_daq_dataformat_enable                 (value);}
+    if (fillInt("run3_daq_dataformat_enable"                 ,value)) { tmb_->Setrun3_daq_dataformat_enable                  (value);}
+    if (fillInt("run3_alct_dataformat_enable"                ,value)) { tmb_->Setrun3_alct_dataformat_enable                (value);}
+    if (fillInt("run2_revcode_enable"                        ,value)) { tmb_->Setrun2_revcode_enable                (value);}
     //0x1AC = ADR_HMT_CTRL: control High multiplicity trigger
     if (fillInt("hmt_enable"                ,value)) { tmb_->Sethmt_enable                 (value);}
     if (fillInt("hmt_me1a_enable"           ,value)) { tmb_->Sethmt_me1a_enable            (value);}
     //0x1AE = ADR_HMT_THRESH1
     //0x1B0 = ADR_HMT_THRESH2
     //0x1B2 = ADR_HMT_THRESH3
-    if (fillInt("hmt_thresh1"               ,value)) { tmb_->Sethmt_thresh1                (value);}
-    if (fillInt("hmt_thresh2"               ,value)) { tmb_->Sethmt_thresh2                (value);}
-    if (fillInt("hmt_thresh3"               ,value)) { tmb_->Sethmt_thresh3                (value);}
+    if (fillInt("hmt_thresh1"               ,value)) { tmb_->SetHmtThresh1                (value);}
+    if (fillInt("hmt_thresh2"               ,value)) { tmb_->SetHmtThresh2                (value);}
+    if (fillInt("hmt_thresh3"               ,value)) { tmb_->SetHmtThresh3                (value);}
     if (fillInt("cfeb_allow_hmt_ro"         ,value)) { tmb_->SetCfebAllowHmtRo          (value);}
-    if (fillInt("tmb_allow_hmt"             ,value)) { tmb_->SetTmbAllowHmt              (value);}
-    if (fillInt("tmb_allow_hmt_ro"          ,value)) { tmb_->SetTmbAllowHmtRo           (value);}
+    if (fillInt("hmt_aff_thresh"            ,value)) { tmb_->SetHmtAffThresh            (value);}
+    if (fillInt("hmt_delay"                 ,value)) { tmb_->SetHmtDelay                (value);}
+    if (fillInt("hmt_alct_win_size"         ,value)) { tmb_->SetHmtAlctWinSize           (value);}
+    if (fillInt("hmt_allow_anode"           ,value)) { tmb_->SetHmtAllowAnode            (value);}
+    if (fillInt("hmt_allow_cathode"         ,value)) { tmb_->SetHmtAllowCathode            (value);}
+    if (fillInt("hmt_allow_match"           ,value)) { tmb_->SetHmtAllowMatch              (value);}
+    if (fillInt("hmt_allow_anode_ro"        ,value)) { tmb_->SetHmtAllowAnodeRo            (value);}
+    if (fillInt("hmt_allow_cathode_ro"      ,value)) { tmb_->SetHmtAllowCathodeRo          (value);}
+    if (fillInt("hmt_allow_match_ro"        ,value)) { tmb_->SetHmtAllowMatchRo            (value);}
+    if (fillInt("hmt_outtime_check"         ,value)) { tmb_->SetHmtOuttimeCheck            (value);}
+    
+    
+    //if (fillInt("tmb_allow_hmt"             ,value)) { tmb_->SetTmbAllowHmt              (value);}
+    //if (fillInt("tmb_allow_hmt_ro"          ,value)) { tmb_->SetTmbAllowHmtRo           (value);}
     ////0x1B8 = ADR_LCT_INJECTION
     //if (fillInt("lct_inj_hs"               ,value)) { tmb_->Setlct_inj_hs                (value);}
     //if (fillInt("lct_inj_wg"               ,value)) { tmb_->Setlct_inj_wg                (value);}

@@ -517,6 +517,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::Settmb_bxn_offset, "Settmb_bxn_offset");
   xgi::bind(this,&EmuPeripheralCrateConfig::GEMBC0Scan, "GEMBC0Scan");
   xgi::bind(this,&EmuPeripheralCrateConfig::GEMCSCMatchScan, "GEMCSCMatchScan");
+  xgi::bind(this,&EmuPeripheralCrateConfig::HMTTimingScan, "HMTTimingScan");
   //
   //----------------------------------------------------
   // Bind phase determination (commmunication)  methods
@@ -5682,6 +5683,23 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
        << " ("  << MyTest[tmb][current_crate_].GetALCTvpf_configvalue() << ") " << std::endl;
   *out << cgicc::br();
   *out << cgicc::br();
+  //Tao ,2020, HMT timing scan
+  std::string HMTTimingScan = toolbox::toString("/%s/HMTTimingScan",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action", HMTTimingScan) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Measure HMT delay for cathode HMT x ALCT match") << std::endl ;
+  sprintf(buf,"%d",1); // default value
+  *out <<" step time (second) "<< std::endl;;
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","hmt_step_time")<<std::endl;
+  sprintf(buf,"%d",tmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+  *out << cgicc::form() << std::endl ;
+  
+  *out << "hmt_delay = " << MyTest[tmb][current_crate_].GetHmtDelayTest() 
+       << " ("  << MyTest[tmb][current_crate_].GetHmtDelay() << ") " <<std::endl;
+  *out << cgicc::br();
+  *out << cgicc::br();
+
+
   //GEM BC0 scan
   if (thisTMB->GetHardwareVersion() >= 2 && thisTMB->GetGemEnabled() ) {
   std::string GEMBC0Scan = toolbox::toString("/%s/GEMBC0Scan",getApplicationDescriptor()->getURN().c_str());
@@ -6350,6 +6368,42 @@ void EmuPeripheralCrateConfig::GEMBC0Scan(xgi::Input * in, xgi::Output * out )
   this->ChamberTests(in,out);
   //
 }
+
+//
+void EmuPeripheralCrateConfig::HMTTimingScan(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  std::cout << "HMTTimingScan" << std::endl;
+  LOG4CPLUS_INFO(getApplicationLogger(), "HMTTimingScan");
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  int tmb = TMB_;
+  //
+  cgicc::form_iterator name = cgi.getElement("tmb");
+  //
+  if(name != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "HMTTimingScan:  TMB " << tmb << std::endl;
+    TMB_ = tmb;
+  } else {
+    std::cout << "HMTTimingScan: no TMB" << std::endl;
+  }
+  cgicc::form_iterator name2 = cgi.getElement("hmt_step_time");
+  //
+  long step_time    = 1;
+  //
+  if(name2 != cgi.getElements().end()) 
+      step_time = strtol(cgi["hmt_step_time"]->getValue().c_str(),NULL,10);
+  //
+  MyTest[tmb][current_crate_].RedirectOutput(&ChamberTestsOutput[tmb][current_crate_]);
+  MyTest[tmb][current_crate_].HMTTimingScan((int)step_time);
+  MyTest[tmb][current_crate_].RedirectOutput(&std::cout);
+  //
+  this->ChamberTests(in,out);
+  //
+}
+
 
 //
 void EmuPeripheralCrateConfig::GEMCSCMatchScan(xgi::Input * in, xgi::Output * out ) 

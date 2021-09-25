@@ -832,8 +832,8 @@ int TMB::FirmwareRevCode(){
   //
   int data = (((rcvbuf[0]&0xff)<<8) | (rcvbuf[1]&0xff)) ;
   //std::cout <<"Firwmare revcode from 0x"<< std::hex << data << std::endl; 
-  //
-  if (read_cclut_enable_){
+  bool run2_legacy_revcode = run2_revcode_enable_ && !run3_daq_dataformat_enable_;
+  if (read_cclut_enable_ && !run2_legacy_revcode){
     read_tmb_firmware_revcode_ = data & 0x1fff;//13 bits 
     read_tmb_firmware_format_version_       = (read_tmb_firmware_revcode_ >> 9) & 0xf;
     read_tmb_firmware_major_version_        = (read_tmb_firmware_revcode_ >> 5) & 0xf;
@@ -1104,7 +1104,7 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
       unsigned short strip_eb = rand()%2;
       unsigned short bend     = rand()%16;
       //
-      frame1 =  read_run3_trig_dataformat_enable_ ? 
+      frame1 =  run3_trig_dataformat_enable_ ? 
         (
 	((vpf   &  0x1) << 15) + 
         ((strip_qb & 0x1) << 14) +
@@ -1118,7 +1118,7 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
 	((wire  & 0x7f) <<  0)
         );
       //
-      frame2 = read_run3_trig_dataformat_enable_ ? 
+      frame2 = run3_trig_dataformat_enable_ ? 
         (
         ((bend     & 0xf)  << 12) +
 	((BC0      &  0x1) << 11) +
@@ -1137,7 +1137,7 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
       //
     } else {
       // insert the csc_id specific for this TMB (otherwise the user has to specify...)
-      frame2 = read_run3_trig_dataformat_enable_ ? ((lct0>> 0) & 0xffff) : (((lct0>> 0) & 0x0fff) | (csc_id & 0xf) << 12 ) ;
+      frame2 = run3_trig_dataformat_enable_ ? ((lct0>> 0) & 0xffff) : (((lct0>> 0) & 0x0fff) | (csc_id & 0xf) << 12 ) ;
       frame1 = (lct0>>16) & 0xffff;
     }
     //
@@ -1198,7 +1198,7 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
       unsigned short hmt_bit0 = rand()%2; 
       unsigned short hmt_bit1 = rand()%2; 
       //
-      frame1 = read_run3_trig_dataformat_enable_ ?
+      frame1 = run3_trig_dataformat_enable_ ?
         (
 	((vpf      & 0x1)  << 15) + 
         ((strip_qb & 0x1)  << 14) +
@@ -1213,7 +1213,7 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
 	((clct     &  0xf) <<  7) + 
 	((wire     & 0x7f) <<  0) ) ;
       //
-      frame2 =  read_run3_trig_dataformat_enable_ ?
+      frame2 =  run3_trig_dataformat_enable_ ?
         (
 	((bend     &  0xf) << 12) +
 	((BC0      &  0x1) << 11) +
@@ -1233,7 +1233,7 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
 
     } else {
       // insert the csc_id specific for this TMB (otherwise the user has to specify...)
-      frame2 = read_run3_trig_dataformat_enable_ ? ((lct1>> 0) & 0xffff) : ( ((lct1>> 0) & 0x0fff) | (csc_id & 0xf) << 12 ) ;
+      frame2 = run3_trig_dataformat_enable_ ? ((lct1>> 0) & 0xffff) : ( ((lct1>> 0) & 0x0fff) | (csc_id & 0xf) << 12 ) ;
       frame1 = (lct1 >> 16) & 0xffff;
     }
     //
@@ -1638,7 +1638,7 @@ void TMB::PrintMPCFrames() {
   (*MyOutput_) << "MPC1 frame0 data                 = 0x" << std::hex << mpc1_frame0_data_ << std::endl;
   (*MyOutput_) << "     frame1 data                 = 0x" << std::hex << mpc1_frame1_data_ << std::endl;
   (*MyOutput_) << "----------------------"                                                                    << std::endl;
-  if (read_run3_trig_dataformat_enable_){ 
+  if (run3_trig_dataformat_enable_){ 
   (*MyOutput_) << "Run3 trigger data format"                                                                  << std::endl;
   (*MyOutput_) << "----------------------"                                                                    << std::endl;
   (*MyOutput_) << "MPC0 frame0.alct_first_key        =   "             << read_mpc0_run3frame0_alct_first_key_    << std::endl;
@@ -1668,14 +1668,14 @@ void TMB::PrintMPCFrames() {
   (*MyOutput_) << "     frame1.clct_second_bx0_local = 0x" << std::hex << read_mpc1_run3frame1_clct_second_bx0_local_ << std::endl;
   (*MyOutput_) << "     frame1.clct_second_bend      = 0x" << std::hex << read_mpc1_run3frame1_clct_second_bend_      << std::endl;
   (*MyOutput_) << "----------------------"                                                                         << std::endl;
-    if (read_hmt_enable_ > 0){
+    if (hmt_enable_){
      (*MyOutput_) << "HMT enable, nhits in centerbx   = "   << std::dec << read_hmt_nhits_trig_       << std::endl;
      (*MyOutput_) << "HMT enable, nhits bx[6,7,8]     = "   << std::dec << read_hmt_nhits_sig_        << std::endl;
      (*MyOutput_) << "HMT enable, nhits bx[2,3,4,5]   = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
      (*MyOutput_) << "HMT(cathode) Result(4bits) = 0x" << std::hex << read_hmt_cathode_trigger_       << std::endl;
     }
 
-    if (gem_enabled_ && read_run3_trig_dataformat_enable_) {
+    if (gem_enabled_ && run3_trig_dataformat_enable_) {
 	  ReadRegister(gem_csc_match_cluster00_adr);
 	  ReadRegister(gem_csc_match_cluster01_adr);
 	  ReadRegister(gem_csc_match_cluster10_adr);
@@ -1771,7 +1771,7 @@ void TMB::PrintMPCFramesFromFIFO() {
   (*MyOutput_) << "MPC1 from FIFO frame0 data                  = 0x" << std::hex << mpc1_frame0_fifo_data_ << std::endl;
   (*MyOutput_) << "               frame1 data                  = 0x" << std::hex << mpc1_frame1_fifo_data_ << std::endl;
   (*MyOutput_) << "----------------------"                                                                                   << std::endl;
-  if (read_run3_trig_dataformat_enable_){ 
+  if (run3_trig_dataformat_enable_){ 
   (*MyOutput_) << "Run3 trigger data format: FIFO"                                                            << std::endl;
   (*MyOutput_) << "----------------------"                                                                    << std::endl;
   (*MyOutput_) << "MPC0 from FIFO frame0.alct_first_key        =   "             << read_mpc0_run3frame0_fifo_alct_first_key_    << std::endl;
@@ -1801,7 +1801,7 @@ void TMB::PrintMPCFramesFromFIFO() {
   (*MyOutput_) << "     from FIFO frame1.clct_second_bx0_local = 0x" << std::hex << read_mpc1_run3frame1_fifo_clct_second_bx0_local_ << std::endl;
   (*MyOutput_) << "     from FIFO frame1.clct_second_bend      = 0x" << std::hex << read_mpc1_run3frame1_fifo_clct_second_bend_      << std::endl;
   (*MyOutput_) << "-------------------------------"                                                                               << std::endl;
-    if (read_hmt_enable_ > 0){
+    if (hmt_enable_ > 0){
      (*MyOutput_) << "HMT enable, nhits in centerbx   = "   << std::dec << read_hmt_nhits_trig_       << std::endl;
      (*MyOutput_) << "HMT enable, nhits bx[6,7,8]     = "   << std::dec << read_hmt_nhits_sig_        << std::endl;
      (*MyOutput_) << "HMT enable, nhits bx[2,3,4,5]   = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
@@ -1929,7 +1929,7 @@ void TMB::DecodeAndPrintMPCFrames(unsigned int event_n = 0) {
     v_mpc1_frame0_fifo_data_.push_back(mpc1_frame0_fifo_data_);
     v_mpc1_frame1_fifo_data_.push_back(mpc1_frame1_fifo_data_);
     //
-    if (read_run3_trig_dataformat_enable_){
+    if (run3_trig_dataformat_enable_){
             // Run3 trigger data format
 	    v_read_mpc0_run3frame0_fifo_alct_first_key_.push_back(       read_mpc0_run3frame0_fifo_alct_first_key_);
 	    v_read_mpc0_run3frame0_fifo_lct_pidbit0to3_.push_back(       read_mpc0_run3frame0_fifo_lct_pidbit0to3_);
@@ -2036,7 +2036,7 @@ void TMB::DecodeAndPrintMPCFrames(unsigned int event_n = 0) {
   std::cout << std::endl;
   std::cout << "MPC frames FIFO control data = 0x" << std::hex << mpc_frames_fifo_ctrl_data_ << std::endl;
   //
-  if (read_run3_trig_dataformat_enable_){
+  if (run3_trig_dataformat_enable_){
 	  (*MyOutput_) << "-------------------------------------------------" << std::endl;
           (*MyOutput_) << "Run3 Trigger data format" << std::endl;
   }
@@ -2074,7 +2074,7 @@ void TMB::DecodeAndPrintMPCFrames(unsigned int event_n = 0) {
     (*MyOutput_) << "\t0x" << std::hex << v_mpc1_frame1_fifo_data_[i];
   (*MyOutput_) << std::endl;
   (*MyOutput_) << "-------------------------------------------------" << std::endl;
-  if (read_run3_trig_dataformat_enable_){
+  if (run3_trig_dataformat_enable_){
 	  (*MyOutput_) << "LCT0 MPC0 frame0.alct_first_key        = " << std::dec << read_mpc0_run3frame0_alct_first_key_;
 	  if (event_n > 0)
 	    (*MyOutput_) << "\t| ";
@@ -2427,13 +2427,13 @@ void TMB::DecodeAndPrintMPCFrames(unsigned int event_n = 0) {
     (*MyOutput_) << std::endl;
     (*MyOutput_) << "-------------------------------------------------" << std::endl;
   }
-  if (read_hmt_enable_ > 0){
+  if (hmt_enable_ > 0){
    (*MyOutput_) << "HMT enable, nhits in centerbx   = "   << std::dec << read_hmt_nhits_trig_       << std::endl;
    (*MyOutput_) << "HMT enable, nhits bx[6,7,8]     = "   << std::dec << read_hmt_nhits_sig_        << std::endl;
    (*MyOutput_) << "HMT enable, nhits bx[2,3,4,5]   = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
    (*MyOutput_) << "HMT(cathode) Result(4bits) = 0x" << std::hex << read_hmt_cathode_trigger_       << std::endl;
   }
-  if (gem_enabled_ && read_run3_trig_dataformat_enable_) {
+  if (gem_enabled_ && run3_trig_dataformat_enable_) {
 	  ReadRegister(gem_csc_match_cluster00_adr);
 	  ReadRegister(gem_csc_match_cluster01_adr);
 	  ReadRegister(gem_csc_match_cluster10_adr);
@@ -2616,6 +2616,7 @@ std::string TMB::CounterName(int counter){
   if( counter == 93 ) name =  "CLCT: sequential trigger counter                        ";//Tao, algo2016
   if( counter == 94 ) name =  "CLCT: checking pretrigger in last 4BX                   ";//Tao, algo2016
   if( counter == 95 ) name =  "TMB: ALCT-CLCT BX0 match                                ";//Tao, 201908
+  //New counters for HMT
   if( counter == 96 ) name =  "TMB: fired anode HMT in in time region                  ";//Tao, 202108
   if( counter == 97 ) name =  "TMB: fired anode HMT in in and out- time region         ";//Tao, 202108
   if( counter == 98 ) name =  "TMB: fired cathode HMT in in time region                ";//Tao, 202108
@@ -4625,8 +4626,8 @@ void TMB::GEMRawhits() {
 }
 //
 void TMB::PrintTMBRawHits() {
-    bool run3_daq_enable_nogem   = read_run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ == tmb_firmware_version_OTMBCCLUT_const;
-    bool run3_daq_enable_withgem = read_run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ == tmb_firmware_version_OTMBGEMCSC_const;
+    bool run3_daq_enable_nogem   = run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ == tmb_firmware_version_OTMBCCLUT_const;
+    bool run3_daq_enable_withgem = run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ == tmb_firmware_version_OTMBGEMCSC_const;
 
   //
   (*MyOutput_) << "Header 0:" << std::endl;
@@ -8280,7 +8281,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc_idle_blank_      = ExtractValueFromData(data,mpc_idle_blank_bitlo     ,mpc_idle_blank_bithi     );
     read_mpc_output_enable_   = ExtractValueFromData(data,mpc_output_enable_bitlo  ,mpc_output_enable_bithi  );
     //
-  } else if ( address == mpc0_frame0_adr && !read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc0_frame0_adr && !run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X88 = ADR_MPC0_FRAME0:  MPC0 Frame0 Data Sent to MPC
     //------------------------------------------------------------------
@@ -8289,7 +8290,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc0_frame0_lct_first_quality_ = ExtractValueFromData(data,mpc0_frame0_lct_first_quality_bitlo, mpc0_frame0_lct_first_quality_bithi);
     read_mpc0_frame0_first_vpf_         = ExtractValueFromData(data,mpc0_frame0_first_vpf_bitlo,         mpc0_frame0_first_vpf_bithi);
     //
-  } else if ( address == mpc0_frame1_adr && !read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc0_frame1_adr && !run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X8A = ADR_MPC0_FRAME1:  MPC0 Frame1 Data Sent to MPC
     //------------------------------------------------------------------
@@ -8300,7 +8301,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc0_frame1_clct_first_bx0_local_ = ExtractValueFromData(data,mpc0_frame1_clct_first_bx0_local_bitlo, mpc0_frame1_clct_first_bx0_local_bithi);
     read_mpc0_frame1_csc_id_               = ExtractValueFromData(data,mpc0_frame1_csc_id_bitlo,               mpc0_frame1_csc_id_bithi);
     //
-  } else if ( address == mpc1_frame0_adr && !read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc1_frame0_adr && !run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X8C = ADR_MPC1_FRAME0:  MPC1 Frame0 Data Sent to MPC
     //------------------------------------------------------------------
@@ -8309,7 +8310,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc1_frame0_lct_second_quality_ = ExtractValueFromData(data,mpc1_frame0_lct_second_quality_bitlo, mpc1_frame0_lct_second_quality_bithi);
     read_mpc1_frame0_second_vpf_         = ExtractValueFromData(data,mpc1_frame0_second_vpf_bitlo,         mpc1_frame0_second_vpf_bithi);
     //
-  } else if ( address == mpc1_frame1_adr && !read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc1_frame1_adr && !run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X8E = ADR_MPC1_FRAME1:  MPC1 Frame1 Data Sent to MPC
     //------------------------------------------------------------------
@@ -8320,7 +8321,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc1_frame1_clct_second_bx0_local_ = ExtractValueFromData(data,mpc1_frame1_clct_second_bx0_local_bitlo, mpc1_frame1_clct_second_bx0_local_bithi);
     read_mpc1_frame1_csc_id_                = ExtractValueFromData(data,mpc1_frame1_csc_id_bitlo,                mpc1_frame1_csc_id_bithi);
     //
-  } else if ( address == mpc0_frame0_adr && read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc0_frame0_adr && run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X88 = ADR_MPC0_FRAME0:  MPC0 Frame0 Data Sent to MPC
     //------------------------------------------------------------------
@@ -8330,7 +8331,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc0_run3frame0_clct_first_qxky_   = ExtractValueFromData(data,mpc0_run3frame0_clct_first_qxky_bitlo,   mpc0_run3frame0_clct_first_qxky_bithi);
     read_mpc0_run3frame0_first_vpf_         = ExtractValueFromData(data,mpc0_run3frame0_first_vpf_bitlo,         mpc0_run3frame0_first_vpf_bithi);
     //
-  } else if ( address == mpc0_frame1_adr && read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc0_frame1_adr && run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X8A = ADR_MPC0_FRAME1:  MPC0 Frame1 Data Sent to MPC
     //------------------------------------------------------------------
@@ -8343,7 +8344,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //read_mpc0_run3frame1_hmtbit0_              = ExtractValueFromData(data,mpc0_run3frame1_hmtbit0_bitlo,              mpc0_run3frame1_hmtbit0_bithi);
     //read_mpc0_run3frame1_csc_id_               = ExtractValueFromData(data,mpc0_run3frame1_csc_id_bitlo,               mpc0_run3frame1_csc_id_bithi);
     //
-  } else if ( address == mpc1_frame0_adr && read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc1_frame0_adr && run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X8C = ADR_MPC1_FRAME0:  MPC1 Frame0 Data Sent to MPC
     //------------------------------------------------------------------
@@ -8354,7 +8355,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc1_run3frame0_clct_second_qxky_   = ExtractValueFromData(data,mpc1_run3frame0_clct_second_qxky_bitlo,   mpc1_run3frame0_clct_second_qxky_bithi);
     read_mpc1_run3frame0_second_vpf_         = ExtractValueFromData(data,mpc1_run3frame0_second_vpf_bitlo,         mpc1_run3frame0_second_vpf_bithi);
     //
-  } else if ( address == mpc1_frame1_adr && read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc1_frame1_adr && run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X8E = ADR_MPC1_FRAME1:  MPC1 Frame1 Data Sent to MPC
     //------------------------------------------------------------------
@@ -8367,7 +8368,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //read_mpc1_run3frame1_alct_second_bxn_       = ExtractValueFromData(data,mpc1_run3frame1_alct_second_bxn_bitlo,       mpc1_run3frame1_alct_second_bxn_bithi);
     //read_mpc1_run3frame1_csc_id_                = ExtractValueFromData(data,mpc1_run3frame1_csc_id_bitlo,                mpc1_run3frame1_csc_id_bithi);
     //
-  } else if ( address == mpc0_frame0_fifo_adr && !read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc0_frame0_fifo_adr && !run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X17C = ADR_MPC0_FRAME0_FIFO:  MPC0 Frame0 Data Sent to MPC and Stored in FIFO
     //------------------------------------------------------------------
@@ -8376,7 +8377,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc0_frame0_fifo_lct_first_quality_ = ExtractValueFromData(data,mpc0_frame0_fifo_lct_first_quality_bitlo, mpc0_frame0_fifo_lct_first_quality_bithi);
     read_mpc0_frame0_fifo_first_vpf_         = ExtractValueFromData(data,mpc0_frame0_fifo_first_vpf_bitlo,         mpc0_frame0_fifo_first_vpf_bithi);
     //
-  } else if ( address == mpc0_frame1_fifo_adr && !read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc0_frame1_fifo_adr && !run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X17E = ADR_MPC0_FRAME1_FIFO:  MPC0 Frame1 Data Sent to MPC and Stored in FIFO
     //------------------------------------------------------------------
@@ -8387,7 +8388,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc0_frame1_fifo_clct_first_bx0_local_ = ExtractValueFromData(data,mpc0_frame1_fifo_clct_first_bx0_local_bitlo, mpc0_frame1_fifo_clct_first_bx0_local_bithi);
     read_mpc0_frame1_fifo_csc_id_               = ExtractValueFromData(data,mpc0_frame1_fifo_csc_id_bitlo,               mpc0_frame1_fifo_csc_id_bithi);
     //
-  } else if ( address == mpc1_frame0_fifo_adr && !read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc1_frame0_fifo_adr && !run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X180 = ADR_MPC1_FRAME0_FIFO:  MPC1 Frame0 Data Sent to MPC and Stored in FIFO
     //------------------------------------------------------------------
@@ -8396,7 +8397,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc1_frame0_fifo_lct_second_quality_ = ExtractValueFromData(data,mpc1_frame0_fifo_lct_second_quality_bitlo, mpc1_frame0_fifo_lct_second_quality_bithi);
     read_mpc1_frame0_fifo_second_vpf_         = ExtractValueFromData(data,mpc1_frame0_fifo_second_vpf_bitlo,         mpc1_frame0_fifo_second_vpf_bithi);
     //
-  } else if ( address == mpc1_frame1_fifo_adr && !read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc1_frame1_fifo_adr && !run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X182 = ADR_MPC1_FRAME1_FIFO:  MPC1 Frame1 Data Sent to MPC and Stored in FIFO
     //------------------------------------------------------------------
@@ -8407,7 +8408,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc1_frame1_fifo_clct_second_bx0_local_ = ExtractValueFromData(data,mpc1_frame1_fifo_clct_second_bx0_local_bitlo, mpc1_frame1_fifo_clct_second_bx0_local_bithi);
     read_mpc1_frame1_fifo_csc_id_                = ExtractValueFromData(data,mpc1_frame1_fifo_csc_id_bitlo,                mpc1_frame1_fifo_csc_id_bithi);
     //
-  } else if ( address == mpc0_frame0_fifo_adr && read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc0_frame0_fifo_adr && run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X17C = ADR_MPC0_FRAME0_FIFO:  MPC0 Frame0 Data Sent to MPC and Stored in FIFO
     //------------------------------------------------------------------
@@ -8417,7 +8418,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc0_run3frame0_fifo_clct_first_qxky_   = ExtractValueFromData(data,mpc0_run3frame0_fifo_clct_first_qxky_bitlo,   mpc0_run3frame0_fifo_clct_first_qxky_bithi);
     read_mpc0_run3frame0_fifo_first_vpf_         = ExtractValueFromData(data,mpc0_run3frame0_fifo_first_vpf_bitlo,         mpc0_run3frame0_fifo_first_vpf_bithi);
     //
-  } else if ( address == mpc0_frame1_fifo_adr && read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc0_frame1_fifo_adr && run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X17E = ADR_MPC0_FRAME1_FIFO:  MPC0 Frame1 Data Sent to MPC and Stored in FIFO
     //------------------------------------------------------------------
@@ -8428,7 +8429,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc0_run3frame1_fifo_clct_first_bx0_local_ = ExtractValueFromData(data,mpc0_run3frame1_fifo_clct_first_bx0_local_bitlo, mpc0_run3frame1_fifo_clct_first_bx0_local_bithi);
     read_mpc0_run3frame1_fifo_clct_first_bend_      = ExtractValueFromData(data,mpc0_run3frame1_fifo_clct_first_bend_bitlo,      mpc0_run3frame1_fifo_clct_first_bend_bithi);
     //
-  } else if ( address == mpc1_frame0_fifo_adr && read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc1_frame0_fifo_adr && run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X180 = ADR_MPC1_FRAME0_FIFO:  MPC1 Frame0 Data Sent to MPC and Stored in FIFO
     //------------------------------------------------------------------
@@ -8439,7 +8440,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_mpc1_run3frame0_fifo_clct_second_qxky_   = ExtractValueFromData(data,mpc1_run3frame0_fifo_clct_second_qxky_bitlo,   mpc1_run3frame0_fifo_clct_second_qxky_bithi);
     read_mpc1_run3frame0_fifo_second_vpf_         = ExtractValueFromData(data,mpc1_run3frame0_fifo_second_vpf_bitlo,         mpc1_run3frame0_fifo_second_vpf_bithi);
     //
-  } else if ( address == mpc1_frame1_fifo_adr && read_run3_trig_dataformat_enable_) {
+  } else if ( address == mpc1_frame1_fifo_adr && run3_trig_dataformat_enable_) {
     //------------------------------------------------------------------
     //0X182 = ADR_MPC1_FRAME1_FIFO:  MPC1 Frame1 Data Sent to MPC and Stored in FIFO
     //------------------------------------------------------------------
@@ -10656,8 +10657,8 @@ void TMB::PrintFirmwareDate() {
 	       << GetReadTmbFirmwareDay() << std::endl;
   (*MyOutput_) << "-> TMB Firmware type   : " << std::hex << GetReadTmbFirmwareType()    << std::endl;
   (*MyOutput_) << "-> TMB Firmware version: " << std::hex << GetReadTmbFirmwareVersion() << std::endl;
-  bool run2_legacy_revcode = read_run2_revcode_enable_ && !read_run3_daq_dataformat_enable_;
-  if (read_cclut_enable_ ){
+  bool run2_legacy_revcode = run2_revcode_enable_ && !run3_daq_dataformat_enable_;
+  if (read_cclut_enable_){
        if (run2_legacy_revcode)
 	  (*MyOutput_) << "-> TMB Firmware RevCode, Run2 legacy with Run3 firmware: 0x" << std::hex << GetReadTmbFirmwareRevcode() << std::endl;
        else

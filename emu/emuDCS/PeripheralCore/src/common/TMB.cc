@@ -570,6 +570,7 @@ namespace emu {
 {
   hardware_version_=hardware_version;
   gem_enabled_ = gem_enabled;
+  read_cclut_enable_ = 0;
 
   //
   debug_ = false;
@@ -11586,8 +11587,8 @@ void TMB::ConvertVMERegisterValuesToDigitalPhases_(unsigned long int vme_address
   float float_read_digital_phase = ( (float) full_digital_phase) * 
 				     ( float_maximum_number_of_phase_delay_values / float_number_of_available_bins_per_clock_cycle  );
   //
-  int read_digital_phase = ( (int) float_read_digital_phase ) & 0xff; //phase delay, unit is 1 second
-  int read_fine_phase    = (int) (( float_read_digital_phase  - read_digital_phase) * 10.0);//fine phase delay, unit is 0.1second
+  int read_digital_phase = ( (int) (float_read_digital_phase+0.5) ) & 0xff; //phase delay, unit is 1 second
+  int read_fine_phase    = (int) (( float_read_digital_phase  - read_digital_phase) * 10.0+0.5);//fine phase delay, unit is 0.1second
   //
   if ( vme_address == phaser_alct_rxd_adr ) {
     //

@@ -7848,16 +7848,14 @@ void TMB::SetTMBRegisterDefaults() {
   //-----------------------------------------------------------------------------
   gem_me1a_match_enable_      = gem_me1a_match_enable_default;
   gem_me1b_match_enable_      = gem_me1b_match_enable_default;
-  gem_me1a_match_nogem_       = gem_me1a_match_nogem_default;
-  gem_me1b_match_nogem_       = gem_me1b_match_nogem_default;
-  gem_me1a_match_noalct_      = gem_me1a_match_noalct_default;
+  gemcsc_match_extrapolate_   = gemcsc_match_extrapolate_default;
+  gemcsc_match_bend_correction_   = gemcsc_match_bend_correction_default;
+  gemcsc_match_tightwindow_   = gemcsc_match_tightwindow_default;
   match_drop_lowqalct_        = match_drop_lowqalct_default;
   me1a_match_drop_lowqclct_   = me1a_match_drop_lowqclct_default;
   me1b_match_drop_lowqclct_   = me1b_match_drop_lowqclct_default;
-  //gem_me1a_match_promotequ= gem_me1a_match_promotequal_default;
-  //gem_me1b_match_promotequal_ = gem_me1b_match_promotequal_default;
-  //gem_me1a_match_promotepat_ = gem_me1a_match_promotepat_default;
-  //gem_me1b_match_promotepat_ = gem_me1b_match_promotepat_default;
+  tmb_copad_alct_allow_ro_    = tmb_copad_alct_allow_ro_default;
+  tmb_copad_clct_allow_ro_    = tmb_copad_clct_allow_ro_default;
   tmb_copad_alct_allow_       = tmb_copad_alct_allow_default;
   tmb_copad_clct_allow_       = tmb_copad_clct_allow_default;
   gemA_match_ignore_position_ = gemA_match_ignore_position_default;
@@ -9213,14 +9211,14 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //---------------------------------------------------------------------
     read_gem_me1a_match_enable_          = ExtractValueFromData (data , gem_me1a_match_enable_bitlo        , gem_me1a_match_enable_bithi);
     read_gem_me1b_match_enable_          = ExtractValueFromData (data , gem_me1b_match_enable_bitlo        , gem_me1b_match_enable_bithi);
-    read_gem_me1a_match_nogem_           = ExtractValueFromData (data , gem_me1a_match_nogem_bitlo         , gem_me1a_match_nogem_bithi);
-    read_gem_me1b_match_nogem_           = ExtractValueFromData (data , gem_me1b_match_nogem_bitlo         , gem_me1b_match_nogem_bithi);
-    read_gem_me1a_match_noalct_          = ExtractValueFromData (data , gem_me1a_match_noalct_bitlo        , gem_me1a_match_noalct_bithi);
+    read_gemcsc_match_extrapolate_       = ExtractValueFromData (data , gemcsc_match_extrapolate_bitlo     , gemcsc_match_extrapolate_bithi);
+    read_gemcsc_match_bend_correction_   = ExtractValueFromData (data , gemcsc_match_bend_correction_bitlo     , gemcsc_match_bend_correction_bithi);
+    read_gemcsc_match_tightwindow_       = ExtractValueFromData (data , gemcsc_match_tightwindow_bitlo     , gemcsc_match_tightwindow_bithi);
     read_match_drop_lowqalct_            = ExtractValueFromData (data , match_drop_lowqalct_bitlo          , match_drop_lowqalct_bithi);
     read_me1a_match_drop_lowqclct_       = ExtractValueFromData (data , me1a_match_drop_lowqclct_bitlo     , me1a_match_drop_lowqclct_bithi);
     read_me1b_match_drop_lowqclct_       = ExtractValueFromData (data , me1b_match_drop_lowqclct_bitlo     , me1b_match_drop_lowqclct_bithi);
-    //read_gem_me1a_match_promotequal_     = ExtractValueFromData (data , gem_me1a_match_promotequal_bitlo   , gem_me1a_match_promotequal_bithi);
-    //read_gem_me1b_match_promotequal_     = ExtractValueFromData (data , gem_me1b_match_promotequal_bitlo   , gem_me1b_match_promotequal_bithi);
+    read_tmb_copad_alct_allow_ro_        = ExtractValueFromData (data , tmb_copad_alct_allow_ro_bitlo      , tmb_copad_alct_allow_ro_bithi);
+    read_tmb_copad_clct_allow_ro_        = ExtractValueFromData (data , tmb_copad_clct_allow_ro_bitlo      , tmb_copad_clct_allow_ro_bithi);
     read_tmb_copad_alct_allow_           = ExtractValueFromData (data , tmb_copad_alct_allow_bitlo         , tmb_copad_alct_allow_bithi);
     read_tmb_copad_clct_allow_           = ExtractValueFromData (data , tmb_copad_clct_allow_bitlo         , tmb_copad_clct_allow_bithi);
     read_gemA_match_ignore_position_     = ExtractValueFromData (data , gemA_match_ignore_position_bitlo   , gemA_match_ignore_position_bithi);
@@ -10623,20 +10621,22 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     // 0X32c = ADR_GEM_CSC_MATCH_CTRL
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->GEM-CSC match control  Register:"                              << std::endl;
-    (*MyOutput_) << "    TMB gem-csc match enable in me1a                  = " << read_gem_me1a_match_enable_     << std::endl;
-    (*MyOutput_) << "    TMB gem-csc match enable in me1b                  = " << read_gem_me1b_match_enable_     << std::endl;
-    (*MyOutput_) << "    TMB gem-csc match allows nogem in me1a            = " << read_gem_me1a_match_nogem_      << std::endl;
-    (*MyOutput_) << "    TMB gem-csc match allows nogem in me1b            = " << read_gem_me1b_match_nogem_      << std::endl;
-    (*MyOutput_) << "    TMB gem-csc match allows noalct in me1a           = " << read_gem_me1a_match_noalct_     << std::endl;
-    (*MyOutput_) << "    TMB gem-csc match drop lowQ alct without gem      = " << read_match_drop_lowqalct_     << std::endl;
-    (*MyOutput_) << "    TMB gem-csc match drop lowQ clct without gem,ME1a = " << read_me1a_match_drop_lowqclct_     << std::endl;
-    (*MyOutput_) << "    TMB gem-csc match drop lowQ clct without gem,ME1b = " << read_me1b_match_drop_lowqclct_     << std::endl;
-    (*MyOutput_) << "    TMB gem-csc match allows copad+ALCT               = " << read_tmb_copad_alct_allow_     << std::endl;
-    (*MyOutput_) << "    TMB gem-csc match allows copad+CLCT               = " << read_tmb_copad_clct_allow_     << std::endl;
-    (*MyOutput_) << "    TMB gem-csc match allows gemA match no position   = " << read_gemA_match_ignore_position_     << std::endl;
-    (*MyOutput_) << "    TMB gem-csc match allows gemB match no position   = " << read_gemB_match_ignore_position_     << std::endl;
-    (*MyOutput_) << "    TMB used gemcsc bend angle rather csc-only bend   = " << read_gemcsc_bend_enable_     << std::endl;
-    (*MyOutput_) << "    TMB ignores check gemcsc bend lr and csc bend lr  = " << read_gemcsc_ignore_bend_check_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match enable in me1a                        = " << read_gem_me1a_match_enable_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match enable in me1b                        = " << read_gem_me1b_match_enable_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match use csc extrapolation                 = " << read_gemcsc_match_extrapolate_      << std::endl;
+    (*MyOutput_) << "    TMB corrects bending with gemcsc bending+extrapolation  = " << read_gemcsc_match_bend_correction_      << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match uses tight window with extrapolation  = " << read_gemcsc_match_tightwindow_      << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match drop lowQ alct without gem            = " << read_match_drop_lowqalct_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match drop lowQ clct without gem,ME1a       = " << read_me1a_match_drop_lowqclct_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match drop lowQ clct without gem,ME1b       = " << read_me1b_match_drop_lowqclct_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match allows copad+ALCT for readout         = " << read_tmb_copad_alct_allow_ro_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match allows copad+CLCT for readout         = " << read_tmb_copad_clct_allow_ro_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match allows copad+ALCT for trigger         = " << read_tmb_copad_alct_allow_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match allows copad+CLCT for trigger         = " << read_tmb_copad_clct_allow_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match allows gemA match no position         = " << read_gemA_match_ignore_position_     << std::endl;
+    (*MyOutput_) << "    TMB gem-csc match allows gemB match no position         = " << read_gemB_match_ignore_position_     << std::endl;
+    (*MyOutput_) << "    TMB used gemcsc bend angle rather csc-only bend         = " << read_gemcsc_bend_enable_     << std::endl;
+    (*MyOutput_) << "    TMB ignores check gemcsc bend lr and csc bend lr        = " << read_gemcsc_ignore_bend_check_     << std::endl;
     //(*MyOutput_) << "    TMB promote lct quality with gemcsc match in me1a = " << read_gem_me1a_match_promotequal_     << std::endl;
     //(*MyOutput_) << "    TMB promote lct quality with gemcsc match in me1b = " << read_gem_me1b_match_promotequal_     << std::endl;
     //(*MyOutput_) << "    TMB promote lct pattern with gemcsc match in me1a = " << read_gem_me1a_match_promotepat_     << std::endl;
@@ -10661,7 +10661,7 @@ void TMB::PrintFirmwareDate() {
   bool run2_legacy_revcode = run2_revcode_enable_ && !run3_daq_dataformat_enable_;
   if (read_cclut_enable_){
        if (run2_legacy_revcode)
-	  (*MyOutput_) << "-> TMB Firmware RevCode, Run2 legacy with Run3 firmware: 0x" << std::hex << GetReadTmbFirmwareRevcode() << std::endl;
+	  (*MyOutput_) << "-> TMB Firmware RevCode, Run2 legacy : 0x" << std::hex << GetReadTmbFirmwareRevcode() << std::endl;
        else
 	  (*MyOutput_) << "-> TMB Firmware RevCode(Run3): format_verison=0x" << std::hex << read_tmb_firmware_format_version_ 
 		<<" major_version=0x" << read_tmb_firmware_major_version_<<" minor_version=0x"<< read_tmb_firmware_minor_version_ << std::endl;
@@ -11501,22 +11501,20 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //---------------------------------------------------------------------
     InsertValueIntoDataWord( gem_me1a_match_enable_       , gem_me1a_match_enable_bithi         , gem_me1a_match_enable_bitlo         , &data_word);
     InsertValueIntoDataWord( gem_me1b_match_enable_       , gem_me1b_match_enable_bithi         , gem_me1b_match_enable_bitlo         , &data_word);
-    InsertValueIntoDataWord( gem_me1a_match_nogem_        , gem_me1a_match_nogem_bithi          , gem_me1a_match_nogem_bitlo          , &data_word);
-    InsertValueIntoDataWord( gem_me1b_match_nogem_        , gem_me1b_match_nogem_bithi          , gem_me1b_match_nogem_bitlo          , &data_word);
-    InsertValueIntoDataWord( gem_me1a_match_noalct_       , gem_me1a_match_noalct_bithi         , gem_me1a_match_noalct_bitlo         , &data_word);
+    InsertValueIntoDataWord( gemcsc_match_extrapolate_    , gemcsc_match_extrapolate_bithi      , gemcsc_match_extrapolate_bitlo      , &data_word);
+    InsertValueIntoDataWord( gemcsc_match_bend_correction_, gemcsc_match_bend_correction_bithi  , gemcsc_match_bend_correction_bitlo  , &data_word);
+    InsertValueIntoDataWord( gemcsc_match_tightwindow_    , gemcsc_match_tightwindow_bithi      , gemcsc_match_tightwindow_bitlo      , &data_word);
     InsertValueIntoDataWord( match_drop_lowqalct_         , match_drop_lowqalct_bithi           , match_drop_lowqalct_bitlo           , &data_word);
     InsertValueIntoDataWord( me1a_match_drop_lowqclct_    , me1a_match_drop_lowqclct_bithi      , me1a_match_drop_lowqclct_bitlo      , &data_word);
     InsertValueIntoDataWord( me1b_match_drop_lowqclct_    , me1b_match_drop_lowqclct_bithi      , me1b_match_drop_lowqclct_bitlo      , &data_word);
+    InsertValueIntoDataWord( tmb_copad_alct_allow_ro_     , tmb_copad_alct_allow_ro_bithi       , tmb_copad_alct_allow_ro_bitlo       , &data_word);
+    InsertValueIntoDataWord( tmb_copad_clct_allow_ro_     , tmb_copad_clct_allow_ro_bithi       , tmb_copad_clct_allow_ro_bitlo       , &data_word);
     InsertValueIntoDataWord( tmb_copad_alct_allow_        , tmb_copad_alct_allow_bithi          , tmb_copad_alct_allow_bitlo          , &data_word);
     InsertValueIntoDataWord( tmb_copad_clct_allow_        , tmb_copad_clct_allow_bithi          , tmb_copad_clct_allow_bitlo          , &data_word);
     InsertValueIntoDataWord( gemA_match_ignore_position_  , gemA_match_ignore_position_bithi    , gemA_match_ignore_position_bitlo    , &data_word);
     InsertValueIntoDataWord( gemB_match_ignore_position_  , gemB_match_ignore_position_bithi    , gemB_match_ignore_position_bitlo    , &data_word);
     InsertValueIntoDataWord( gemcsc_bend_enable_          , gemcsc_bend_enable_bithi            , gemcsc_bend_enable_bitlo            , &data_word);
     InsertValueIntoDataWord( gemcsc_ignore_bend_check_    , gemcsc_ignore_bend_check_bithi      , gemcsc_ignore_bend_check_bitlo      , &data_word);
-    //InsertValueIntoDataWord( gem_me1a_match_promotequal_  , gem_me1a_match_promotequal_bithi    , gem_me1a_match_promotequal_bitlo    , &data_word);
-    //InsertValueIntoDataWord( gem_me1b_match_promotequal_  , gem_me1b_match_promotequal_bithi    , gem_me1b_match_promotequal_bitlo    , &data_word);
-    //InsertValueIntoDataWord( gem_me1a_match_promotepat_   , gem_me1a_match_promotepat_bithi     , gem_me1a_match_promotepat_bitlo     , &data_word);
-    //InsertValueIntoDataWord( gem_me1b_match_promotepat_   , gem_me1b_match_promotepat_bithi     , gem_me1b_match_promotepat_bitlo     , &data_word);
     //
   } else if ( address == gem_vfat_hcm0_adr || address == gem_vfat_hcm1_adr || address == gem_vfat_hcm2_adr ) {
     //---------------------------------------------------------------------
@@ -12371,12 +12369,14 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
 
         config_ok &= compareValues ("TMB gem_me1a_match_enable"      , read_gem_me1a_match_enable_      , gem_me1a_match_enable_  , print_errors);
         config_ok &= compareValues ("TMB gem_me1b_match_enable"      , read_gem_me1b_match_enable_      , gem_me1b_match_enable_  , print_errors);
-        config_ok &= compareValues ("TMB gem_me1a_match_nogem"       , read_gem_me1a_match_nogem_       , gem_me1a_match_nogem_  , print_errors);
-        config_ok &= compareValues ("TMB gem_me1b_match_nogem"       , read_gem_me1b_match_nogem_       , gem_me1b_match_nogem_  , print_errors);
-        config_ok &= compareValues ("TMB gem_me1a_match_noalct"      , read_gem_me1a_match_noalct_      , gem_me1a_match_noalct_  , print_errors);
+        config_ok &= compareValues ("TMB gemcsc_match_extrapolate"    , read_gemcsc_match_extrapolate_    , gemcsc_match_extrapolate_  , print_errors);
+        config_ok &= compareValues ("TMB gemcsc_match_tightwindow"    , read_gemcsc_match_tightwindow_    , gemcsc_match_tightwindow_  , print_errors);
+        config_ok &= compareValues ("TMB gemcsc_match_bend_correction", read_gemcsc_match_bend_correction_, gemcsc_match_bend_correction_  , print_errors);
         config_ok &= compareValues ("TMB match_drop_lowqalct"        , read_match_drop_lowqalct_        , match_drop_lowqalct_  , print_errors);
         config_ok &= compareValues ("TMB me1a_match_drop_lowqclct"   , read_me1a_match_drop_lowqclct_   , me1a_match_drop_lowqclct_  , print_errors);
         config_ok &= compareValues ("TMB me1b_match_drop_lowqclct"   , read_me1b_match_drop_lowqclct_   , me1b_match_drop_lowqclct_  , print_errors);
+        config_ok &= compareValues ("TMB tmb_copad_alct_allow_ro"    , read_tmb_copad_alct_allow_ro_    , tmb_copad_alct_allow_ro_   , print_errors);
+        config_ok &= compareValues ("TMB tmb_copad_clct_allow_ro"    , read_tmb_copad_clct_allow_ro_    , tmb_copad_clct_allow_ro_   , print_errors);
         config_ok &= compareValues ("TMB tmb_copad_alct_allow"       , read_tmb_copad_alct_allow_       , tmb_copad_alct_allow_   , print_errors);
         config_ok &= compareValues ("TMB tmb_copad_clct_allow"       , read_tmb_copad_clct_allow_       , tmb_copad_clct_allow_   , print_errors);
         config_ok &= compareValues ("TMB gemA_match_ignore_position" , read_gemA_match_ignore_position_ , gemA_match_ignore_position_, print_errors);

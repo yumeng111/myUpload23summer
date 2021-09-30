@@ -2900,14 +2900,14 @@ public:
 
   inline int   GetGemMe1aMatchEnable ()                                { return gem_me1a_match_enable_ ;}
   inline int   GetGemMe1bMatchEnable ()                                { return gem_me1b_match_enable_ ;}
-  inline int   GetGemMe1aMatchNoGem  ()                                { return gem_me1a_match_nogem_ ;}
-  inline int   GetGemMe1bMatchNoGem  ()                                { return gem_me1b_match_nogem_ ;}
-  inline int   GetGemMe1aMatchNoAlct ()                                { return gem_me1a_match_noalct_ ;}
+  inline int   GetGemcscMatchExtrapolate  ()                           { return gemcsc_match_extrapolate_ ;}
+  inline int   GetGemcscMatchBendCorrection  ()                        { return gemcsc_match_bend_correction_ ;}
+  inline int   GetGemcscMatchTightwindow  ()                           { return gemcsc_match_tightwindow_ ;}
   inline int   GetMatchDropLowqalct ()                                 { return match_drop_lowqalct_ ;}
   inline int   GetMe1aMatchDropLowqclct ()                             { return me1a_match_drop_lowqclct_ ;}
   inline int   GetMe1bMatchDropLowqclct ()                             { return me1b_match_drop_lowqclct_ ;}
-  //inline int   GetGemMe1aMatchPromoteQual ()                           { return gem_me1a_match_promotequal_ ;}
-  //inline int   GetGemMe1bMatchPromoteQual ()                           { return gem_me1b_match_promotequal_ ;}
+  inline int   GetTmbCopadAlctAllowRo  ()                              { return tmb_copad_alct_allow_ro_ ;}
+  inline int   GetTmbCopadClctAllowRo  ()                              { return tmb_copad_clct_allow_ro_ ;}
   inline int   GetTmbCopadAlctAllow  ()                                { return tmb_copad_alct_allow_ ;}
   inline int   GetTmbCopadClctAllow  ()                                { return tmb_copad_clct_allow_ ;}
   inline int   GetGemAMatchIgnorePosition  ()                          { return gemA_match_ignore_position_ ;}
@@ -2917,12 +2917,14 @@ public:
 
   inline int   GetReadGemMe1aMatchEnable ()                         { return read_gem_me1a_match_enable_ ;}
   inline int   GetReadGemMe1bMatchEnable ()                         { return read_gem_me1b_match_enable_ ;}
-  inline int   GetReadGemMe1aMatchNoGem  ()                         { return read_gem_me1a_match_nogem_ ;}
-  inline int   GetReadGemMe1bMatchNoGem  ()                         { return read_gem_me1b_match_nogem_ ;}
-  inline int   GetReadGemMe1aMatchNoAlct ()                         { return read_gem_me1a_match_noalct_ ;}
+  inline int   GetReadGemcscMatchExtrapolate  ()                    { return read_gemcsc_match_extrapolate_ ;}
+  inline int   GetReadGemcscMatchBendCorrection  ()                 { return read_gemcsc_match_bend_correction_ ;}
+  inline int   GetReadGemcscMatchTightwindow  ()                    { return read_gemcsc_match_tightwindow_ ;}
   inline int   GetReadMatchDropLowqalct ()                          { return read_match_drop_lowqalct_ ;}
   inline int   GetReadMe1aMatchDropLowqclct ()                      { return read_me1a_match_drop_lowqclct_ ;}
   inline int   GetReadMe1bMatchDropLowqclct ()                      { return read_me1b_match_drop_lowqclct_ ;}
+  inline int   GetReadTmbCopadAlctAllowRo  ()                       { return read_tmb_copad_alct_allow_ro_ ;}
+  inline int   GetReadTmbCopadClctAllowRo  ()                       { return read_tmb_copad_clct_allow_ro_ ;}
   inline int   GetReadTmbCopadAlctAllow  ()                         { return read_tmb_copad_alct_allow_ ;}
   inline int   GetReadTmbCopadClctAllow  ()                         { return read_tmb_copad_clct_allow_ ;}
   inline int   GetReadGemAMatchIgnorePosition  ()                   { return read_gemA_match_ignore_position_ ;}
@@ -2932,14 +2934,14 @@ public:
 
   inline void  SetGemMe1aMatchEnable (int gem_me1a_match_enable)                { gem_me1a_match_enable_ = gem_me1a_match_enable;}
   inline void  SetGemMe1bMatchEnable (int gem_me1b_match_enable)                { gem_me1b_match_enable_ = gem_me1b_match_enable;}
-  inline void  SetGemMe1aMatchNoGem  (int gem_me1a_match_nogem )                { gem_me1a_match_nogem_  = gem_me1a_match_nogem;}
-  inline void  SetGemMe1bMatchNoGem  (int gem_me1b_match_nogem )                { gem_me1b_match_nogem_  = gem_me1b_match_nogem;}
-  inline void  SetGemMe1aMatchNoAlct (int gem_me1a_match_noalct)                { gem_me1a_match_noalct_ = gem_me1a_match_noalct;}
+  inline void  SetGemcscMatchExtrapolate (int gemcsc_match_extrapolate)         { gemcsc_match_extrapolate_ = gemcsc_match_extrapolate;}
+  inline void  SetGemcscMatchBendCorrection (int gemcsc_match_bend_correction)  { gemcsc_match_bend_correction_ = gemcsc_match_bend_correction;}
+  inline void  SetGemcscMatchTightwindow (int gemcsc_match_tightwindow)         { gemcsc_match_tightwindow_ = gemcsc_match_tightwindow;}
   inline void  SetMatchDropLowqalct  (int match_drop_lowqalct)                  { match_drop_lowqalct_ = match_drop_lowqalct;}
   inline void  SetMe1aMatchDropLowqclct (int me1a_match_drop_lowqclct)          { me1a_match_drop_lowqclct_ = me1a_match_drop_lowqclct;}
   inline void  SetMe1bMatchDropLowqclct (int me1b_match_drop_lowqclct)          { me1b_match_drop_lowqclct_ = me1b_match_drop_lowqclct;}
-  //inline void  SetGemMe1aMatchPromoteQual (int gem_me1a_match_promotequal)      { gem_me1a_match_promotequal_ = gem_me1a_match_promotequal;}
-  //inline void  SetGemMe1bMatchPromoteQual (int gem_me1b_match_promotequal)      { gem_me1b_match_promotequal_ = gem_me1b_match_promotequal;}
+  inline void  SetTmbCopadAlctAllowRo(int tmb_copad_alct_allow_ro )             { tmb_copad_alct_allow_ro_ = tmb_copad_alct_allow_ro;}
+  inline void  SetTmbCopadClctAllowRo(int tmb_copad_clct_allow_ro )             { tmb_copad_clct_allow_ro_ = tmb_copad_clct_allow_ro;}
   inline void  SetTmbCopadAlctAllow  (int tmb_copad_alct_allow )                { tmb_copad_alct_allow_ = tmb_copad_alct_allow;}
   inline void  SetTmbCopadClctAllow  (int tmb_copad_clct_allow )                { tmb_copad_clct_allow_ = tmb_copad_clct_allow;}
   inline void  SetGemAMatchIgnorePosition  (int gemA_match_ignore_position)     {  gemA_match_ignore_position_  = gemA_match_ignore_position;}
@@ -4964,16 +4966,14 @@ private:
   //
   int gem_me1a_match_enable_;
   int gem_me1b_match_enable_;
-  int gem_me1a_match_nogem_;
-  int gem_me1b_match_nogem_;
-  int gem_me1a_match_noalct_;
+  int gemcsc_match_extrapolate_;
+  int gemcsc_match_bend_correction_;
+  int gemcsc_match_tightwindow_;
   int match_drop_lowqalct_;
   int me1a_match_drop_lowqclct_;
   int me1b_match_drop_lowqclct_;
-  //int gem_me1a_match_promotequal_;
-  //int gem_me1b_match_promotequal_;
-  //int gem_me1a_match_promotepat_;
-  //int gem_me1b_match_promotepat_;
+  int tmb_copad_alct_allow_ro_;
+  int tmb_copad_clct_allow_ro_;
   int tmb_copad_alct_allow_;
   int tmb_copad_clct_allow_;
   int gemA_match_ignore_position_;
@@ -4983,16 +4983,14 @@ private:
 
   int read_gem_me1a_match_enable_;
   int read_gem_me1b_match_enable_;
-  int read_gem_me1a_match_nogem_;
-  int read_gem_me1b_match_nogem_;
-  int read_gem_me1a_match_noalct_;
+  int read_gemcsc_match_extrapolate_;
+  int read_gemcsc_match_bend_correction_;
+  int read_gemcsc_match_tightwindow_;
   int read_match_drop_lowqalct_;
   int read_me1a_match_drop_lowqclct_;
   int read_me1b_match_drop_lowqclct_;
-  //int read_gem_me1a_match_promotequal_;
-  //int read_gem_me1b_match_promotequal_;
-  //int read_gem_me1a_match_promotepat_;
-  //int read_gem_me1b_match_promotepat_;
+  int read_tmb_copad_alct_allow_ro_;
+  int read_tmb_copad_clct_allow_ro_;
   int read_tmb_copad_alct_allow_;
   int read_tmb_copad_clct_allow_;
   int read_gemA_match_ignore_position_;

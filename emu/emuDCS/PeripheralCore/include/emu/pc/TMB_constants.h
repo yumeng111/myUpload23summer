@@ -4282,22 +4282,22 @@ const int gem_me1b_match_enable_bithi               = 1;
 const int gem_me1b_match_enable_default             = 1;
 //
 //
-const int gem_me1a_match_nogem_vmereg                = gem_csc_match_ctrl_adr;
-const int gem_me1a_match_nogem_bitlo                 = 2;
-const int gem_me1a_match_nogem_bithi                 = 2;
-const int gem_me1a_match_nogem_default               = 0;
+const int gemcsc_match_extrapolate_vmereg                = gem_csc_match_ctrl_adr;
+const int gemcsc_match_extrapolate_bitlo                 = 2;
+const int gemcsc_match_extrapolate_bithi                 = 2;
+const int gemcsc_match_extrapolate_default               = 0;
 //
 //
-const int gem_me1b_match_nogem_vmereg                = gem_csc_match_ctrl_adr;
-const int gem_me1b_match_nogem_bitlo                 = 3;
-const int gem_me1b_match_nogem_bithi                 = 3;
-const int gem_me1b_match_nogem_default               = 0;
+const int gemcsc_match_bend_correction_vmereg            = gem_csc_match_ctrl_adr;
+const int gemcsc_match_bend_correction_bitlo             = 3;
+const int gemcsc_match_bend_correction_bithi             = 3;
+const int gemcsc_match_bend_correction_default           = 0;
 //
 //
-const int gem_me1a_match_noalct_vmereg               = gem_csc_match_ctrl_adr;
-const int gem_me1a_match_noalct_bitlo                = 4;
-const int gem_me1a_match_noalct_bithi                = 4;
-const int gem_me1a_match_noalct_default              = 0;
+const int gemcsc_match_tightwindow_vmereg                = gem_csc_match_ctrl_adr;
+const int gemcsc_match_tightwindow_bitlo                 = 4;
+const int gemcsc_match_tightwindow_bithi                 = 4;
+const int gemcsc_match_tightwindow_default               = 0;
 //
 //
 const int match_drop_lowqalct_vmereg               = gem_csc_match_ctrl_adr;
@@ -4318,18 +4318,18 @@ const int me1b_match_drop_lowqclct_bithi                = 7;
 const int me1b_match_drop_lowqclct_default              = 0;
 //
 //
-//const int gem_me1a_match_promotequal_vmereg          = gem_csc_match_ctrl_adr;
-//const int gem_me1a_match_promotequal_bitlo           = 8;
-//const int gem_me1a_match_promotequal_bithi           = 8;
-//const int gem_me1a_match_promotequal_default         = 1;
-////
-////
-//const int gem_me1b_match_promotequal_vmereg          = gem_csc_match_ctrl_adr;
-//const int gem_me1b_match_promotequal_bitlo           = 9;
-//const int gem_me1b_match_promotequal_bithi           = 9;
-//const int gem_me1b_match_promotequal_default         = 1;
-////
-////
+const int tmb_copad_alct_allow_ro_vmereg           = gem_csc_match_ctrl_adr;
+const int tmb_copad_alct_allow_ro_bitlo            = 8;
+const int tmb_copad_alct_allow_ro_bithi            = 8;
+const int tmb_copad_alct_allow_ro_default          = 1;
+//
+//
+const int tmb_copad_clct_allow_ro_vmereg           = gem_csc_match_ctrl_adr;
+const int tmb_copad_clct_allow_ro_bitlo            = 9;
+const int tmb_copad_clct_allow_ro_bithi            = 9;
+const int tmb_copad_clct_allow_ro_default          = 1;
+//
+//
 const int tmb_copad_alct_allow_vmereg           = gem_csc_match_ctrl_adr;
 const int tmb_copad_alct_allow_bitlo            = 10;
 const int tmb_copad_alct_allow_bithi            = 10;

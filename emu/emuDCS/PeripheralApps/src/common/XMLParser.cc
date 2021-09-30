@@ -759,16 +759,14 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
         //0x32c
         if (fillInt ("gem_me1a_match_enable"      , value)) { tmb_->SetGemMe1aMatchEnable          (value);}
         if (fillInt ("gem_me1b_match_enable"      , value)) { tmb_->SetGemMe1bMatchEnable          (value);}
-        if (fillInt ("gem_me1a_match_nogem"       , value)) { tmb_->SetGemMe1aMatchNoGem          (value);}
-        if (fillInt ("gem_me1b_match_nogem"       , value)) { tmb_->SetGemMe1bMatchNoGem          (value);}
-        if (fillInt ("gem_me1a_match_noalct"      , value)) { tmb_->SetGemMe1aMatchNoAlct          (value);}
+        if (fillInt ("gemcsc_match_extrapolate"   , value)) { tmb_->SetGemcscMatchExtrapolate          (value);}
+        if (fillInt ("gemcsc_match_bend_correction"   , value)) { tmb_->SetGemcscMatchBendCorrection          (value);}
+        if (fillInt ("gemcsc_match_tightwindow"   , value)) { tmb_->SetGemcscMatchTightwindow          (value);}
         if (fillInt ("match_drop_lowqalct"      , value))   { tmb_->SetMatchDropLowqalct          (value);}
         if (fillInt ("me1a_match_drop_lowqclct"      , value)) { tmb_->SetMe1aMatchDropLowqclct          (value);}
         if (fillInt ("me1b_match_drop_lowqclct"      , value)) { tmb_->SetMe1bMatchDropLowqclct          (value);}
-        //if (fillInt ("gem_me1a_match_promotequal" , value)) { tmb_->SetGemMe1aMatchPromoteQual          (value);}
-        //if (fillInt ("gem_me1b_match_promotequal" , value)) { tmb_->SetGemMe1bMatchPromoteQual          (value);}
-        //if (fillInt ("gem_me1a_match_promotepat"  , value)) { tmb_->SetGemMe1aMatchPromotePat          (value);}
-        //if (fillInt ("gem_me1b_match_promotepat"  , value)) { tmb_->SetGemMe1bMatchPromotePat          (value);}
+        if (fillInt ("tmb_copad_alct_allow_ro"       , value)) { tmb_->SetTmbCopadAlctAllowRo          (value);}
+        if (fillInt ("tmb_copad_clct_allow_ro"       , value)) { tmb_->SetTmbCopadClctAllowRo          (value);}
         if (fillInt ("tmb_copad_alct_allow"       , value)) { tmb_->SetTmbCopadAlctAllow          (value);}
         if (fillInt ("tmb_copad_clct_allow"       , value)) { tmb_->SetTmbCopadClctAllow          (value);}
         if (fillInt ("gemA_match_ignore_position" , value))         { tmb_->SetGemAMatchIgnorePosition   (value);}

@@ -762,18 +762,74 @@ oldconfig.DROP_USED_CLCTS  "DROP_USED_CLCTS $OLD_EMU_CONFIG_ID", newconfig.DROP_
 oldconfig.CROSS_BX_ALGORITHM  "CROSS_BX_ALGORITHM $OLD_EMU_CONFIG_ID", newconfig.CROSS_BX_ALGORITHM  "CROSS_BX_ALGORITHM $NEW_EMU_CONFIG_ID",
 oldconfig.CLCT_USE_CORRECTED_BX  "CLCT_USE_CORRECTED_BX $OLD_EMU_CONFIG_ID", newconfig.CLCT_USE_CORRECTED_BX  "CLCT_USE_CORRECTED_BX $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_ENABLED  "GEM_ENABLED $OLD_EMU_CONFIG_ID", newconfig.GEM_ENABLED  "GEM_ENABLED $NEW_EMU_CONFIG_ID",
-oldconfig.GEM_DELAY  "GEM_DELAY $OLD_EMU_CONFIG_ID", newconfig.GEM_DELAY  "GEM_DELAY $NEW_EMU_CONFIG_ID",
+oldconfig.GEM_RX_DELAY  "GEM_RX_DELAY $OLD_EMU_CONFIG_ID", newconfig.GEM_RX_DELAY  "GEM_RX_DELAY $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_FINE_DELAY  "GEM_FINE_DELAY $OLD_EMU_CONFIG_ID", newconfig.GEM_FINE_DELAY  "GEM_FINE_DELAY $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_POSNEG  "GEM_POSNEG $OLD_EMU_CONFIG_ID", newconfig.GEM_POSNEG  "GEM_POSNEG $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_FIFO_TBINS  "GEM_FIFO_TBINS $OLD_EMU_CONFIG_ID", newconfig.GEM_FIFO_TBINS  "GEM_FIFO_TBINS $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_FIFO_PRETRIG  "GEM_FIFO_PRETRIG $OLD_EMU_CONFIG_ID", newconfig.GEM_FIFO_PRETRIG  "GEM_FIFO_PRETRIG $NEW_EMU_CONFIG_ID",
-oldconfig.GEM_DECOUPLE  "GEM_DECOUPLE $OLD_EMU_CONFIG_ID", newconfig.GEM_DECOUPLE  "GEM_DECOUPLE $NEW_EMU_CONFIG_ID",
+oldconfig.GEM_FIFO_DECOUPLE  "GEM_FIFO_DECOUPLE $OLD_EMU_CONFIG_ID", newconfig.GEM_FIFO_DECOUPLE  "GEM_FIFO_DECOUPLE $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_READ_ENABLE  "GEM_READ_ENABLE $OLD_EMU_CONFIG_ID", newconfig.GEM_READ_ENABLE  "GEM_READ_ENABLE $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_ZERO_SUPRESS_ENABLE  "GEM_ZERO_SUPRESS_ENABLE $OLD_EMU_CONFIG_ID", newconfig.GEM_ZERO_SUPRESS_ENABLE  "GEM_ZERO_SUPRESS_ENABLE $NEW_EMU_CONFIG_ID",
 oldconfig.GEMA_FIFO_RXD_INT_DELAY  "GEMA_FIFO_RXD_INT_DELAY $OLD_EMU_CONFIG_ID", newconfig.GEMA_FIFO_RXD_INT_DELAY  "GEMA_FIFO_RXD_INT_DELAY $NEW_EMU_CONFIG_ID",
 oldconfig.GEMB_FIFO_RXD_INT_DELAY  "GEMB_FIFO_RXD_INT_DELAY $OLD_EMU_CONFIG_ID", newconfig.GEMB_FIFO_RXD_INT_DELAY  "GEMB_FIFO_RXD_INT_DELAY $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_DECOUPLE_RXD_INT_DELAY  "GEM_DECOUPLE_RXD_INT_DELAY $OLD_EMU_CONFIG_ID", newconfig.GEM_DECOUPLE_RXD_INT_DELAY  "GEM_DECOUPLE_RXD_INT_DELAY $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_FIFO_RXD_INT_DELAY  "GEM_FIFO_RXD_INT_DELAY $OLD_EMU_CONFIG_ID", newconfig.GEM_FIFO_RXD_INT_DELAY  "GEM_FIFO_RXD_INT_DELAY $NEW_EMU_CONFIG_ID",
+oldconfig.GEM_ALCT_DELTAWIRE_EVEN "GEM_ALCT_DELTAWIRE_EVEN $OLD_EMU_CONFIG_ID",newconfig.GEM_ALCT_DELTAWIRE_EVEN "GEM_ALCT_DELTAWIRE_EVEN $NEW_EMU_CONFIG_ID",
+oldconfig.GEM_ALCT_DELTAWIRE_ODD "GEM_ALCT_DELTAWIRE_ODD $OLD_EMU_CONFIG_ID",newconfig.GEM_ALCT_DELTAWIRE_ODD "GEM_ALCT_DELTAWIRE_ODD $NEW_EMU_CONFIG_ID",
+oldconfig.GEM_CLCT_DELTAHS_EVEN "GEM_CLCT_DELTAHS_EVEN $OLD_EMU_CONFIG_ID",newconfig.GEM_CLCT_DELTAHS_EVEN "GEM_CLCT_DELTAHS_EVEN $NEW_EMU_CONFIG_ID",
+oldconfig.GEM_CLCT_DELTAHS_ODD "GEM_CLCT_DELTAHS_ODD $OLD_EMU_CONFIG_ID",newconfig.GEM_CLCT_DELTAHS_ODD "GEM_CLCT_DELTAHS_ODD $NEW_EMU_CONFIG_ID",
+oldconfig.GEM_FIFO_RXD_INT_DELAY "GEM_FIFO_RXD_INT_DELAY $OLD_EMU_CONFIG_ID",newconfig.GEM_FIFO_RXD_INT_DELAY "GEM_FIFO_RXD_INT_DELAY $NEW_EMU_CONFIG_ID",
+oldconfig.GEM_MATCH_DELTAPAD "GEM_MATCH_DELTAPAD $OLD_EMU_CONFIG_ID",newconfig.GEM_MATCH_DELTAPAD "GEM_MATCH_DELTAPAD $NEW_EMU_CONFIG_ID",
+oldconfig.GEM_MATCH_NEIGHBORPAD "GEM_MATCH_NEIGHBORPAD $OLD_EMU_CONFIG_ID",newconfig.GEM_MATCH_NEIGHBORPAD "GEM_MATCH_NEIGHBORPAD $NEW_EMU_CONFIG_ID",
+oldconfig.GEM_MATCH_NEIGHBORROLL "GEM_MATCH_NEIGHBORROLL $OLD_EMU_CONFIG_ID",newconfig.GEM_MATCH_NEIGHBORROLL "GEM_MATCH_NEIGHBORROLL $NEW_EMU_CONFIG_ID",
+oldconfig.GEM_ME1A_MATCH_ENABLE "GEM_ME1A_MATCH_ENABLE $OLD_EMU_CONFIG_ID",newconfig.GEM_ME1A_MATCH_ENABLE "GEM_ME1A_MATCH_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.GEM_ME1B_MATCH_ENABLE "GEM_ME1B_MATCH_ENABLE $OLD_EMU_CONFIG_ID",newconfig.GEM_ME1B_MATCH_ENABLE "GEM_ME1B_MATCH_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.GEMA_BX0_DELAY "GEMA_BX0_DELAY $OLD_EMU_CONFIG_ID",newconfig.GEMA_BX0_DELAY "GEMA_BX0_DELAY $NEW_EMU_CONFIG_ID",
+oldconfig.GEMA_BX0_ENABLE "GEMA_BX0_ENABLE $OLD_EMU_CONFIG_ID",newconfig.GEMA_BX0_ENABLE "GEMA_BX0_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.GEMA_FIBER_ENABLE "GEMA_FIBER_ENABLE $OLD_EMU_CONFIG_ID",newconfig.GEMA_FIBER_ENABLE "GEMA_FIBER_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.GEMA_MATCH_IGNORE_POSITION "GEMA_MATCH_IGNORE_POSITION $OLD_EMU_CONFIG_ID",newconfig.GEMA_MATCH_IGNORE_POSITION "GEMA_MATCH_IGNORE_POSITION $NEW_EMU_CONFIG_ID",
+oldconfig.GEMB_BX0_DELAY "GEMB_BX0_DELAY $OLD_EMU_CONFIG_ID",newconfig.GEMB_BX0_DELAY "GEMB_BX0_DELAY $NEW_EMU_CONFIG_ID",
+oldconfig.GEMB_BX0_ENABLE "GEMB_BX0_ENABLE $OLD_EMU_CONFIG_ID",newconfig.GEMB_BX0_ENABLE "GEMB_BX0_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.GEMB_FIBER_ENABLE "GEMB_FIBER_ENABLE $OLD_EMU_CONFIG_ID",newconfig.GEMB_FIBER_ENABLE "GEMB_FIBER_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.GEMB_MATCH_IGNORE_POSITION "GEMB_MATCH_IGNORE_POSITION $OLD_EMU_CONFIG_ID",newconfig.GEMB_MATCH_IGNORE_POSITION "GEMB_MATCH_IGNORE_POSITION $NEW_EMU_CONFIG_ID",
+oldconfig.GEMCSC_BEND_ENABLE "GEMCSC_BEND_ENABLE $OLD_EMU_CONFIG_ID",newconfig.GEMCSC_BEND_ENABLE "GEMCSC_BEND_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.GEMCSC_IGNORE_BEND_CHECK "GEMCSC_IGNORE_BEND_CHECK $OLD_EMU_CONFIG_ID",newconfig.GEMCSC_IGNORE_BEND_CHECK "GEMCSC_IGNORE_BEND_CHECK $NEW_EMU_CONFIG_ID",
+oldconfig.GEMCSC_MATCH_BEND_CORRECTION "GEMCSC_MATCH_BEND_CORRECTION $OLD_EMU_CONFIG_ID",newconfig.GEMCSC_MATCH_BEND_CORRECTION "GEMCSC_MATCH_BEND_CORRECTION $NEW_EMU_CONFIG_ID",
+oldconfig.GEMCSC_MATCH_EXTRAPOLATE "GEMCSC_MATCH_EXTRAPOLATE $OLD_EMU_CONFIG_ID",newconfig.GEMCSC_MATCH_EXTRAPOLATE "GEMCSC_MATCH_EXTRAPOLATE $NEW_EMU_CONFIG_ID",
+oldconfig.GEMCSC_MATCH_TIGHTWINDOW "GEMCSC_MATCH_TIGHTWINDOW $OLD_EMU_CONFIG_ID",newconfig.GEMCSC_MATCH_TIGHTWINDOW "GEMCSC_MATCH_TIGHTWINDOW $NEW_EMU_CONFIG_ID",
+oldconfig.MATCH_DROP_LOWQALCT "MATCH_DROP_LOWQALCT $OLD_EMU_CONFIG_ID",newconfig.MATCH_DROP_LOWQALCT "MATCH_DROP_LOWQALCT $NEW_EMU_CONFIG_ID",
+oldconfig.MATCH_GEM_ALCT_DELAY "MATCH_GEM_ALCT_DELAY $OLD_EMU_CONFIG_ID",newconfig.MATCH_GEM_ALCT_DELAY "MATCH_GEM_ALCT_DELAY $NEW_EMU_CONFIG_ID",
+oldconfig.MATCH_GEM_ALCT_WINDOW "MATCH_GEM_ALCT_WINDOW $OLD_EMU_CONFIG_ID",newconfig.MATCH_GEM_ALCT_WINDOW "MATCH_GEM_ALCT_WINDOW $NEW_EMU_CONFIG_ID",
+oldconfig.MATCH_GEM_CLCT_WINDOW "MATCH_GEM_CLCT_WINDOW $OLD_EMU_CONFIG_ID",newconfig.MATCH_GEM_CLCT_WINDOW "MATCH_GEM_CLCT_WINDOW $NEW_EMU_CONFIG_ID",
+oldconfig.ME1A_MATCH_DROP_LOWQCLCT "ME1A_MATCH_DROP_LOWQCLCT $OLD_EMU_CONFIG_ID",newconfig.ME1A_MATCH_DROP_LOWQCLCT "ME1A_MATCH_DROP_LOWQCLCT $NEW_EMU_CONFIG_ID",
+oldconfig.ME1B_MATCH_DROP_LOWQCLCT "ME1B_MATCH_DROP_LOWQCLCT $OLD_EMU_CONFIG_ID",newconfig.ME1B_MATCH_DROP_LOWQCLCT "ME1B_MATCH_DROP_LOWQCLCT $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_AFF_THRESH "HMT_AFF_THRESH $OLD_EMU_CONFIG_ID",newconfig.HMT_AFF_THRESH "HMT_AFF_THRESH $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_ALCT_WIN_SIZE "HMT_ALCT_WIN_SIZE $OLD_EMU_CONFIG_ID",newconfig.HMT_ALCT_WIN_SIZE "HMT_ALCT_WIN_SIZE $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_ALLOW_ANODE "HMT_ALLOW_ANODE $OLD_EMU_CONFIG_ID",newconfig.HMT_ALLOW_ANODE "HMT_ALLOW_ANODE $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_ALLOW_ANODE_RO "HMT_ALLOW_ANODE_RO $OLD_EMU_CONFIG_ID",newconfig.HMT_ALLOW_ANODE_RO "HMT_ALLOW_ANODE_RO $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_ALLOW_CATHODE "HMT_ALLOW_CATHODE $OLD_EMU_CONFIG_ID",newconfig.HMT_ALLOW_CATHODE "HMT_ALLOW_CATHODE $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_ALLOW_CATHODE_RO "HMT_ALLOW_CATHODE_RO $OLD_EMU_CONFIG_ID",newconfig.HMT_ALLOW_CATHODE_RO "HMT_ALLOW_CATHODE_RO $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_ALLOW_MATCH "HMT_ALLOW_MATCH $OLD_EMU_CONFIG_ID",newconfig.HMT_ALLOW_MATCH "HMT_ALLOW_MATCH $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_ALLOW_MATCH_RO "HMT_ALLOW_MATCH_RO $OLD_EMU_CONFIG_ID",newconfig.HMT_ALLOW_MATCH_RO "HMT_ALLOW_MATCH_RO $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_DELAY "HMT_DELAY $OLD_EMU_CONFIG_ID",newconfig.HMT_DELAY "HMT_DELAY $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_ENABLE "HMT_ENABLE $OLD_EMU_CONFIG_ID",newconfig.HMT_ENABLE "HMT_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_ME1A_ENABLE "HMT_ME1A_ENABLE $OLD_EMU_CONFIG_ID",newconfig.HMT_ME1A_ENABLE "HMT_ME1A_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_OUTTIME_CHECK "HMT_OUTTIME_CHECK $OLD_EMU_CONFIG_ID",newconfig.HMT_OUTTIME_CHECK "HMT_OUTTIME_CHECK $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_THRESH1 "HMT_THRESH1 $OLD_EMU_CONFIG_ID",newconfig.HMT_THRESH1 "HMT_THRESH1 $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_THRESH2 "HMT_THRESH2 $OLD_EMU_CONFIG_ID",newconfig.HMT_THRESH2 "HMT_THRESH2 $NEW_EMU_CONFIG_ID",
+oldconfig.HMT_THRESH3 "HMT_THRESH3 $OLD_EMU_CONFIG_ID",newconfig.HMT_THRESH3 "HMT_THRESH3 $NEW_EMU_CONFIG_ID",
+oldconfig.CFEB_ALLOW_HMT_RO "CFEB_ALLOW_HMT_RO $OLD_EMU_CONFIG_ID",newconfig.CFEB_ALLOW_HMT_RO "CFEB_ALLOW_HMT_RO $NEW_EMU_CONFIG_ID",
+oldconfig.RUN2_REVCODE_ENABLE "RUN2_REVCODE_ENABLE $OLD_EMU_CONFIG_ID",newconfig.RUN2_REVCODE_ENABLE "RUN2_REVCODE_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.RUN3_ALCT_DATAFORMAT_ENABLE "RUN3_ALCT_DATAFORMAT_ENABLE $OLD_EMU_CONFIG_ID",newconfig.RUN3_ALCT_DATAFORMAT_ENABLE "RUN3_ALCT_DATAFORMAT_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.RUN3_DAQ_DATAFORMAT_ENABLE "RUN3_DAQ_DATAFORMAT_ENABLE $OLD_EMU_CONFIG_ID",newconfig.RUN3_DAQ_DATAFORMAT_ENABLE "RUN3_DAQ_DATAFORMAT_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.RUN3_TRIG_DATAFORMAT_ENABLE "RUN3_TRIG_DATAFORMAT_ENABLE $OLD_EMU_CONFIG_ID",newconfig.RUN3_TRIG_DATAFORMAT_ENABLE "RUN3_TRIG_DATAFORMAT_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.SEQ_TRIGGER_NODEADTIME "SEQ_TRIGGER_NODEADTIME $OLD_EMU_CONFIG_ID",newconfig.SEQ_TRIGGER_NODEADTIME "SEQ_TRIGGER_NODEADTIME $NEW_EMU_CONFIG_ID",
+oldconfig.TMB_COPAD_ALCT_ALLOW "TMB_COPAD_ALCT_ALLOW $OLD_EMU_CONFIG_ID",newconfig.TMB_COPAD_ALCT_ALLOW "TMB_COPAD_ALCT_ALLOW $NEW_EMU_CONFIG_ID",
+oldconfig.TMB_COPAD_ALCT_ALLOW_RO "TMB_COPAD_ALCT_ALLOW_RO $OLD_EMU_CONFIG_ID",newconfig.TMB_COPAD_ALCT_ALLOW_RO "TMB_COPAD_ALCT_ALLOW_RO $NEW_EMU_CONFIG_ID",
+oldconfig.TMB_COPAD_CLCT_ALLOW "TMB_COPAD_CLCT_ALLOW $OLD_EMU_CONFIG_ID",newconfig.TMB_COPAD_CLCT_ALLOW "TMB_COPAD_CLCT_ALLOW $NEW_EMU_CONFIG_ID",
+oldconfig.TMB_COPAD_CLCT_ALLOW_RO "TMB_COPAD_CLCT_ALLOW_RO $OLD_EMU_CONFIG_ID",newconfig.TMB_COPAD_CLCT_ALLOW_RO "TMB_COPAD_CLCT_ALLOW_RO $NEW_EMU_CONFIG_ID",
+oldconfig.GEMA_VFAT_HCM "GEMA_VFAT_HCM $OLD_EMU_CONFIG_ID",newconfig.GEMA_VFAT_HCM "GEMA_VFAT_HCM $NEW_EMU_CONFIG_ID",
+oldconfig.GEMB_VFAT_HCM "GEMB_VFAT_HCM $OLD_EMU_CONFIG_ID",newconfig.GEMB_VFAT_HCM "GEMB_VFAT_HCM $NEW_EMU_CONFIG_ID",
 oldconfig.TMB_CONFIG_ID "TMB_CONFIG_ID $OLD_EMU_CONFIG_ID",newconfig.TMB_CONFIG_ID "TMB_CONFIG_ID $NEW_EMU_CONFIG_ID"
 from EMU_TMB oldconfig,EMU_TMB newconfig,emu_alct oldalct,emu_alct newalct
 where oldconfig.EMU_CONFIG_ID=$OLD_EMU_CONFIG_ID and oldconfig.csc_CONFIG_ID=$OLD_XXX_CONFIG_ID
@@ -913,18 +969,74 @@ oldconfig.DROP_USED_CLCTS!=newconfig.DROP_USED_CLCTS or
 oldconfig.CROSS_BX_ALGORITHM!=newconfig.CROSS_BX_ALGORITHM or
 oldconfig.CLCT_USE_CORRECTED_BX!=newconfig.CLCT_USE_CORRECTED_BX or
 oldconfig.GEM_ENABLED!=newconfig.GEM_ENABLED or
-oldconfig.GEM_DELAY!=newconfig.GEM_DELAY or
+oldconfig.GEM_RX_DELAY!=newconfig.GEM_RX_DELAY or
 oldconfig.GEM_FINE_DELAY!=newconfig.GEM_FINE_DELAY or
 oldconfig.GEM_POSNEG!=newconfig.GEM_POSNEG or
 oldconfig.GEM_FIFO_TBINS!=newconfig.GEM_FIFO_TBINS or
 oldconfig.GEM_FIFO_PRETRIG!=newconfig.GEM_FIFO_PRETRIG or
-oldconfig.GEM_DECOUPLE!=newconfig.GEM_DECOUPLE or
+oldconfig.GEM_FIFO_DECOUPLE!=newconfig.GEM_FIFO_DECOUPLE or
 oldconfig.GEM_READ_ENABLE!=newconfig.GEM_READ_ENABLE or
 oldconfig.GEM_ZERO_SUPRESS_ENABLE!=newconfig.GEM_ZERO_SUPRESS_ENABLE or
 oldconfig.GEMA_FIFO_RXD_INT_DELAY!=newconfig.GEMA_FIFO_RXD_INT_DELAY or
 oldconfig.GEMB_FIFO_RXD_INT_DELAY!=newconfig.GEMB_FIFO_RXD_INT_DELAY or
 oldconfig.GEM_DECOUPLE_RXD_INT_DELAY!=newconfig.GEM_DECOUPLE_RXD_INT_DELAY or
 oldconfig.GEM_FIFO_RXD_INT_DELAY!=newconfig.GEM_FIFO_RXD_INT_DELAY or
+oldconfig.GEM_ALCT_DELTAWIRE_EVEN!=newconfig.GEM_ALCT_DELTAWIRE_EVEN or
+oldconfig.GEM_ALCT_DELTAWIRE_ODD!=newconfig.GEM_ALCT_DELTAWIRE_ODD or
+oldconfig.GEM_CLCT_DELTAHS_EVEN!=newconfig.GEM_CLCT_DELTAHS_EVEN or
+oldconfig.GEM_CLCT_DELTAHS_ODD!=newconfig.GEM_CLCT_DELTAHS_ODD or
+oldconfig.GEM_FIFO_RXD_INT_DELAY!=newconfig.GEM_FIFO_RXD_INT_DELAY or
+oldconfig.GEM_MATCH_DELTAPAD!=newconfig.GEM_MATCH_DELTAPAD or
+oldconfig.GEM_MATCH_NEIGHBORPAD!=newconfig.GEM_MATCH_NEIGHBORPAD or
+oldconfig.GEM_MATCH_NEIGHBORROLL!=newconfig.GEM_MATCH_NEIGHBORROLL or
+oldconfig.GEM_ME1A_MATCH_ENABLE!=newconfig.GEM_ME1A_MATCH_ENABLE or
+oldconfig.GEM_ME1B_MATCH_ENABLE!=newconfig.GEM_ME1B_MATCH_ENABLE or
+oldconfig.GEMA_BX0_DELAY!=newconfig.GEMA_BX0_DELAY or
+oldconfig.GEMA_BX0_ENABLE!=newconfig.GEMA_BX0_ENABLE or
+oldconfig.GEMA_FIBER_ENABLE!=newconfig.GEMA_FIBER_ENABLE or
+oldconfig.GEMA_MATCH_IGNORE_POSITION!=newconfig.GEMA_MATCH_IGNORE_POSITION or
+oldconfig.GEMB_BX0_DELAY!=newconfig.GEMB_BX0_DELAY or
+oldconfig.GEMB_BX0_ENABLE!=newconfig.GEMB_BX0_ENABLE or
+oldconfig.GEMB_FIBER_ENABLE!=newconfig.GEMB_FIBER_ENABLE or
+oldconfig.GEMB_MATCH_IGNORE_POSITION!=newconfig.GEMB_MATCH_IGNORE_POSITION or
+oldconfig.GEMCSC_BEND_ENABLE!=newconfig.GEMCSC_BEND_ENABLE or
+oldconfig.GEMCSC_IGNORE_BEND_CHECK!=newconfig.GEMCSC_IGNORE_BEND_CHECK or
+oldconfig.GEMCSC_MATCH_BEND_CORRECTION!=newconfig.GEMCSC_MATCH_BEND_CORRECTION or
+oldconfig.GEMCSC_MATCH_EXTRAPOLATE!=newconfig.GEMCSC_MATCH_EXTRAPOLATE or
+oldconfig.GEMCSC_MATCH_TIGHTWINDOW!=newconfig.GEMCSC_MATCH_TIGHTWINDOW or
+oldconfig.MATCH_DROP_LOWQALCT!=newconfig.MATCH_DROP_LOWQALCT or
+oldconfig.MATCH_GEM_ALCT_DELAY!=newconfig.MATCH_GEM_ALCT_DELAY or
+oldconfig.MATCH_GEM_ALCT_WINDOW!=newconfig.MATCH_GEM_ALCT_WINDOW or
+oldconfig.MATCH_GEM_CLCT_WINDOW!=newconfig.MATCH_GEM_CLCT_WINDOW or
+oldconfig.ME1A_MATCH_DROP_LOWQCLCT!=newconfig.ME1A_MATCH_DROP_LOWQCLCT or
+oldconfig.ME1B_MATCH_DROP_LOWQCLCT!=newconfig.ME1B_MATCH_DROP_LOWQCLCT or
+oldconfig.HMT_AFF_THRESH!=newconfig.HMT_AFF_THRESH or
+oldconfig.HMT_ALCT_WIN_SIZE!=newconfig.HMT_ALCT_WIN_SIZE or
+oldconfig.HMT_ALLOW_ANODE!=newconfig.HMT_ALLOW_ANODE or
+oldconfig.HMT_ALLOW_ANODE_RO!=newconfig.HMT_ALLOW_ANODE_RO or
+oldconfig.HMT_ALLOW_CATHODE!=newconfig.HMT_ALLOW_CATHODE or
+oldconfig.HMT_ALLOW_CATHODE_RO!=newconfig.HMT_ALLOW_CATHODE_RO or
+oldconfig.HMT_ALLOW_MATCH!=newconfig.HMT_ALLOW_MATCH or
+oldconfig.HMT_ALLOW_MATCH_RO!=newconfig.HMT_ALLOW_MATCH_RO or
+oldconfig.HMT_DELAY!=newconfig.HMT_DELAY or
+oldconfig.HMT_ENABLE!=newconfig.HMT_ENABLE or
+oldconfig.HMT_ME1A_ENABLE!=newconfig.HMT_ME1A_ENABLE or
+oldconfig.HMT_OUTTIME_CHECK!=newconfig.HMT_OUTTIME_CHECK or
+oldconfig.HMT_THRESH1!=newconfig.HMT_THRESH1 or
+oldconfig.HMT_THRESH2!=newconfig.HMT_THRESH2 or
+oldconfig.HMT_THRESH3!=newconfig.HMT_THRESH3 or
+oldconfig.CFEB_ALLOW_HMT_RO!=newconfig.CFEB_ALLOW_HMT_RO or
+oldconfig.RUN2_REVCODE_ENABLE!=newconfig.RUN2_REVCODE_ENABLE or
+oldconfig.RUN3_ALCT_DATAFORMAT_ENABLE!=newconfig.RUN3_ALCT_DATAFORMAT_ENABLE or
+oldconfig.RUN3_DAQ_DATAFORMAT_ENABLE!=newconfig.RUN3_DAQ_DATAFORMAT_ENABLE or
+oldconfig.RUN3_TRIG_DATAFORMAT_ENABLE!=newconfig.RUN3_TRIG_DATAFORMAT_ENABLE or
+oldconfig.SEQ_TRIGGER_NODEADTIME!=newconfig.SEQ_TRIGGER_NODEADTIME or
+oldconfig.TMB_COPAD_ALCT_ALLOW!=newconfig.TMB_COPAD_ALCT_ALLOW or
+oldconfig.TMB_COPAD_ALCT_ALLOW_RO!=newconfig.TMB_COPAD_ALCT_ALLOW_RO or
+oldconfig.TMB_COPAD_CLCT_ALLOW!=newconfig.TMB_COPAD_CLCT_ALLOW or
+oldconfig.TMB_COPAD_CLCT_ALLOW_RO!=newconfig.TMB_COPAD_CLCT_ALLOW_RO or
+oldconfig.GEMA_VFAT_HCM!=newconfig.GEMA_VFAT_HCM or
+oldconfig.GEMB_VFAT_HCM!=newconfig.GEMB_VFAT_HCM or
   oldalct.ALCT_ACCEL_MODE!=newalct.ALCT_ACCEL_MODE or
   oldalct.ALCT_BXN_OFFSET!=newalct.ALCT_BXN_OFFSET or
   oldalct.ALCT_CCB_ENABLE!=newalct.ALCT_CCB_ENABLE or
@@ -1507,18 +1619,74 @@ where rownum=1]]>
       <tstore:column name="cross_bx_algorithm" type="unsigned short"/>
       <tstore:column name="clct_use_corrected_bx" type="unsigned short"/>
       <tstore:column name="gem_enabled" type="unsigned short"/>
-      <tstore:column name="gem_delay" type="unsigned short"/>
+      <tstore:column name="gem_rx_delay" type="unsigned short"/>
       <tstore:column name="gem_fine_delay" type="unsigned short"/>
       <tstore:column name="gem_posneg" type="unsigned short"/>
       <tstore:column name="gem_fifo_tbins" type="unsigned short"/>
       <tstore:column name="gem_fifo_pretrig" type="unsigned short"/>
-      <tstore:column name="gem_decouple" type="unsigned short"/>
+      <tstore:column name="gem_fifo_decouple" type="unsigned short"/>
       <tstore:column name="gem_read_enable" type="unsigned short"/>
       <tstore:column name="gem_zero_supress_enable" type="unsigned short"/>
       <tstore:column name="gema_fifo_rxd_int_delay" type="unsigned short"/>
       <tstore:column name="gemb_fifo_rxd_int_delay" type="unsigned short"/>
       <tstore:column name="gem_decouple_rxd_int_delay" type="unsigned short"/>
       <tstore:column name="gem_fifo_rxd_int_delay" type="unsigned short"/>
+    <tstore:column name="gem_alct_deltawire_even" type="unsigned short"/>
+    <tstore:column name="gem_alct_deltawire_odd" type="unsigned short"/>
+    <tstore:column name="gem_clct_deltahs_even" type="unsigned short"/>
+    <tstore:column name="gem_clct_deltahs_odd" type="unsigned short"/>
+    <tstore:column name="gem_fifo_rxd_int_delay" type="unsigned short"/>
+    <tstore:column name="gem_match_deltapad" type="unsigned short"/>
+    <tstore:column name="gem_match_neighborpad" type="unsigned short"/>
+    <tstore:column name="gem_match_neighborroll" type="unsigned short"/>
+    <tstore:column name="gem_me1a_match_enable" type="unsigned short"/>
+    <tstore:column name="gem_me1b_match_enable" type="unsigned short"/>
+    <tstore:column name="gema_bx0_delay" type="unsigned short"/>
+    <tstore:column name="gema_bx0_enable" type="unsigned short"/>
+    <tstore:column name="gema_fiber_enable" type="unsigned short"/>
+    <tstore:column name="gema_match_ignore_position" type="unsigned short"/>
+    <tstore:column name="gemb_bx0_delay" type="unsigned short"/>
+    <tstore:column name="gemb_bx0_enable" type="unsigned short"/>
+    <tstore:column name="gemb_fiber_enable" type="unsigned short"/>
+    <tstore:column name="gemb_match_ignore_position" type="unsigned short"/>
+    <tstore:column name="gemcsc_bend_enable" type="unsigned short"/>
+    <tstore:column name="gemcsc_ignore_bend_check" type="unsigned short"/>
+    <tstore:column name="gemcsc_match_bend_correction" type="unsigned short"/>
+    <tstore:column name="gemcsc_match_extrapolate" type="unsigned short"/>
+    <tstore:column name="gemcsc_match_tightwindow" type="unsigned short"/>
+    <tstore:column name="match_drop_lowqalct" type="unsigned short"/>
+    <tstore:column name="match_gem_alct_delay" type="unsigned short"/>
+    <tstore:column name="match_gem_alct_window" type="unsigned short"/>
+    <tstore:column name="match_gem_clct_window" type="unsigned short"/>
+    <tstore:column name="me1a_match_drop_lowqclct" type="unsigned short"/>
+    <tstore:column name="me1b_match_drop_lowqclct" type="unsigned short"/>
+    <tstore:column name="hmt_aff_thresh" type="unsigned short"/>
+    <tstore:column name="hmt_alct_win_size" type="unsigned short"/>
+    <tstore:column name="hmt_allow_anode" type="unsigned short"/>
+    <tstore:column name="hmt_allow_anode_ro" type="unsigned short"/>
+    <tstore:column name="hmt_allow_cathode" type="unsigned short"/>
+    <tstore:column name="hmt_allow_cathode_ro" type="unsigned short"/>
+    <tstore:column name="hmt_allow_match" type="unsigned short"/>
+    <tstore:column name="hmt_allow_match_ro" type="unsigned short"/>
+    <tstore:column name="hmt_delay" type="unsigned short"/>
+    <tstore:column name="hmt_enable" type="unsigned short"/>
+    <tstore:column name="hmt_me1a_enable" type="unsigned short"/>
+    <tstore:column name="hmt_outtime_check" type="unsigned short"/>
+    <tstore:column name="hmt_thresh1" type="unsigned short"/>
+    <tstore:column name="hmt_thresh2" type="unsigned short"/>
+    <tstore:column name="hmt_thresh3" type="unsigned short"/>
+    <tstore:column name="cfeb_allow_hmt_ro" type="unsigned short"/>
+    <tstore:column name="run2_revcode_enable" type="unsigned short"/>
+    <tstore:column name="run3_alct_dataformat_enable" type="unsigned short"/>
+    <tstore:column name="run3_daq_dataformat_enable" type="unsigned short"/>
+    <tstore:column name="run3_trig_dataformat_enable" type="unsigned short"/>
+    <tstore:column name="seq_trigger_nodeadtime" type="unsigned short"/>
+    <tstore:column name="tmb_copad_alct_allow" type="unsigned short"/>
+    <tstore:column name="tmb_copad_alct_allow_ro" type="unsigned short"/>
+    <tstore:column name="tmb_copad_clct_allow" type="unsigned short"/>
+    <tstore:column name="tmb_copad_clct_allow_ro" type="unsigned short"/>
+    <tstore:column name="gema_vfat_hcm" type="string"/>
+    <tstore:column name="gemb_vfat_hcm" type="string"/>
 
       <tstore:foreignkey references="EMU_CSC">
         <tstore:keycolumn column="csc_config_id" references="csc_config_id"/>

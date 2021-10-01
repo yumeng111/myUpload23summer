@@ -579,20 +579,78 @@ throw (emu::exception::ConfigurationException)
   if (conf->has("DROP_USED_CLCTS"))       tmb_->Set_drop_used_clcts( getInt(conf, "DROP_USED_CLCTS"));
   if (conf->has("CROSS_BX_ALGORITHM"))       tmb_->Set_cross_bx_algorithm( getInt(conf, "CROSS_BX_ALGORITHM"));
   if (conf->has("CLCT_USE_CORRECTED_BX"))       tmb_->Set_clct_use_corrected_bx( getInt(conf, "CLCT_USE_CORRECTED_BX"));
+  if (conf->has("RUN3_TRIG_DATAFORMAT_ENABLE"))      tmb_->Setrun3_trig_dataformat_enable(getInt(conf, "RUN3_TRIG_DATAFORMAT_ENABLE"));
+  if (conf->has("RUN3_DAQ_DATAFORMAT_ENABLE"))      tmb_->Setrun3_daq_dataformat_enable(  getInt(conf, "RUN3_DAQ_DATAFORMAT_ENABLE"));
+  if (conf->has("HMT_ENABLE"))       tmb_->Sethmt_enable( getInt(conf, "HMT_ENABLE"));
+  if (conf->has("HMT_ME1A_ENABLE"))       tmb_->Sethmt_me1a_enable( getInt(conf, "HMT_ME1A_ENABLE"));
+  if (conf->has("HMT_THRESH1"))       tmb_->SetHmtThresh1( getInt(conf, "HMT_THRESH1"));
+  if (conf->has("HMT_THRESH2"))       tmb_->SetHmtThresh2( getInt(conf, "HMT_THRESH2"));
+  if (conf->has("HMT_THRESH3"))       tmb_->SetHmtThresh3( getInt(conf, "HMT_THRESH3"));
+  if (conf->has("HMT_AFF_THRESH")) tmb_->SetHmtAffThresh( getInt(conf, "HMT_AFF_THRESH"));
+  if (conf->has("HMT_ALCT_WIN_SIZE")) tmb_->SetHmtAlctWinSize( getInt(conf, "HMT_ALCT_WIN_SIZE"));
+  if (conf->has("HMT_ALLOW_ANODE")) tmb_->SetHmtAllowAnode( getInt(conf, "HMT_ALLOW_ANODE"));
+  if (conf->has("HMT_ALLOW_ANODE_RO")) tmb_->SetHmtAllowAnodeRo( getInt(conf, "HMT_ALLOW_ANODE_RO"));
+  if (conf->has("HMT_ALLOW_CATHODE")) tmb_->SetHmtAllowCathode( getInt(conf, "HMT_ALLOW_CATHODE"));
+  if (conf->has("HMT_ALLOW_CATHODE_RO")) tmb_->SetHmtAllowCathodeRo( getInt(conf, "HMT_ALLOW_CATHODE_RO"));
+  if (conf->has("HMT_ALLOW_MATCH")) tmb_->SetHmtAllowMatch( getInt(conf, "HMT_ALLOW_MATCH"));
+  if (conf->has("HMT_ALLOW_MATCH_RO")) tmb_->SetHmtAllowMatchRo( getInt(conf, "HMT_ALLOW_MATCH_RO"));
+  if (conf->has("HMT_DELAY")) tmb_->SetHmtDelay( getInt(conf, "HMT_DELAY"));
+  if (conf->has("HMT_OUTTIME_CHECK")) tmb_->SetHmtOuttimeCheck( getInt(conf, "HMT_OUTTIME_CHECK"));
+  if (conf->has("CFEB_ALLOW_HMT_RO")) tmb_->SetCfebAllowHmtRo( getInt(conf, "CFEB_ALLOW_HMT_RO"));
+  if (conf->has("RUN2_REVCODE_ENABLE")) tmb_->Setrun2_revcode_enable( getInt(conf, "RUN2_REVCODE_ENABLE"));
+  if (conf->has("RUN3_ALCT_DATAFORMAT_ENABLE")) tmb_->Setrun3_alct_dataformat_enable( getInt(conf, "RUN3_ALCT_DATAFORMAT_ENABLE"));
+  if (conf->has("SEQ_TRIGGER_NODEADTIME")) tmb_->Set_seq_trigger_nodeadtime( getInt(conf, "SEQ_TRIGGER_NODEADTIME"));
+  if (conf->has("TMB_COPAD_ALCT_ALLOW_RO")) tmb_->SetTmbCopadAlctAllowRo( getInt(conf, "TMB_COPAD_ALCT_ALLOW_RO"));
+  if (conf->has("TMB_COPAD_CLCT_ALLOW_RO")) tmb_->SetTmbCopadClctAllowRo( getInt(conf, "TMB_COPAD_CLCT_ALLOW_RO"));
+
   if(gemEnabled)
   {
-    if (conf->has("GEM_DELAY"))       tmb_->SetGemRxClockDelay( getInt(conf, "GEM_DELAY"));
+    if (conf->has("GEM_RX_DELAY"))       tmb_->SetGemRxClockDelay( getInt(conf, "GEM_RX_DELAY"));
     if (conf->has("GEM_FINE_DELAY"))       tmb_->SetGemRxFineDelay( getInt(conf, "GEM_FINE_DELAY"));
     if (conf->has("GEM_POSNEG"))       tmb_->SetGemRxPosNeg( getInt(conf, "GEM_POSNEG"));
     if (conf->has("GEM_FIFO_TBINS"))       tmb_->SetGemFifoTbins( getInt(conf, "GEM_FIFO_TBINS"));
     if (conf->has("GEM_FIFO_PRETRIG"))       tmb_->SetGemFifoPreTrig( getInt(conf, "GEM_FIFO_PRETRIG"));
-    if (conf->has("GEM_DECOUPLE"))       tmb_->SetGemDecoupleTbins( getInt(conf, "GEM_DECOUPLE"));
+    if (conf->has("GEM_FIFO_DECOUPLE"))       tmb_->SetGemDecoupleTbins( getInt(conf, "GEM_FIFO_DECOUPLE"));
     if (conf->has("GEM_READ_ENABLE"))       tmb_->SetGemReadEnable( getInt(conf, "GEM_READ_ENABLE"));
     if (conf->has("GEM_ZERO_SUPRESS_ENABLE"))       tmb_->SetGemZeroSupressEnable( getInt(conf, "GEM_ZERO_SUPRESS_ENABLE"));
     if (conf->has("GEMA_FIFO_RXD_INT_DELAY"))       tmb_->SetGemARxdIntDelay( getInt(conf, "GEMA_FIFO_RXD_INT_DELAY"));
     if (conf->has("GEMB_FIFO_RXD_INT_DELAY"))       tmb_->SetGemBRxdIntDelay( getInt(conf, "GEMB_FIFO_RXD_INT_DELAY"));
     if (conf->has("GEM_DECOUPLE_RXD_INT_DELAY"))       tmb_->SetDecoupleGemRxdIntDelay( getInt(conf, "GEM_DECOUPLE_RXD_INT_DELAY"));
     if (conf->has("GEM_FIFO_RXD_INT_DELAY"))       tmb_->SetGemRxdIntDelay( getInt(conf, "GEM_FIFO_RXD_INT_DELAY"));
+    if (conf->has("GEM_READOUT_MASK"))       tmb_->SetGemReadoutMask( getInt(conf, "GEM_READOUT_MASK"));
+    if (conf->has("GEM_CLCT_DELTAHS_ODD"))         tmb_->SetGemClctDeltahsOdd(    getInt(conf, "GEM_CLCT_DELTAHS_ODD"));
+    if (conf->has("GEM_CLCT_DELTAHS_EVEN"))        tmb_->SetGemClctDeltahsEven(   getInt(conf, "GEM_CLCT_DELTAHS_EVEN"));
+    if (conf->has("GEM_ALCT_DELTAWIRE_ODD"))       tmb_->SetGemAlctDeltawireOdd(  getInt(conf, "GEM_ALCT_DELTAWIRE_ODD"));
+    if (conf->has("GEM_ALCT_DELTAWIRE_EVEN"))      tmb_->SetGemAlctDeltawireEven( getInt(conf, "GEM_ALCT_DELTAWIRE_EVEN"));
+    if (conf->has("GEM_MATCH_NEIGHBORROLL"))       tmb_->SetGemMatchNeighborRoll( getInt(conf, "GEM_MATCH_NEIGHBORROLL"));
+    if (conf->has("GEM_MATCH_NEIGHBORPAD"))       tmb_->SetGemMatchNeighborPad( getInt(conf, "GEM_MATCH_NEIGHBORPAD"));
+    if (conf->has("GEM_MATCH_DELTAPAD"))       tmb_->SetGemMatchDeltaPad( getInt(conf, "GEM_MATCH_DELTAPAD"));
+    if (conf->has("GEMA_BX0_DELAY"))       tmb_->SetGemABx0Delay( getInt(conf, "GEMA_BX0_DELAY"));
+    if (conf->has("GEMA_BX0_ENABLE"))      tmb_->SetGemABx0Enable(getInt(conf, "GEMA_BX0_ENABLE"));
+    if (conf->has("GEMB_BX0_DELAY"))       tmb_->SetGemBBx0Delay( getInt(conf, "GEMB_BX0_DELAY"));
+    if (conf->has("GEMB_BX0_ENABLE"))      tmb_->SetGemBBx0Enable(getInt(conf, "GEMB_BX0_ENABLE"));
+    if (conf->has("MATCH_GEM_ALCT_DELAY"))      tmb_->SetMatchGemAlctDelay( getInt(conf, "MATCH_GEM_ALCT_DELAY"));
+    if (conf->has("MATCH_GEM_ALCT_WINDOW"))      tmb_->SetMatchGemAlctWindow(getInt(conf, "MATCH_GEM_ALCT_WINDOW"));
+    if (conf->has("MATCH_GEM_CLCT_WINDOW"))      tmb_->SetMatchGemClctWindow(getInt(conf, "MATCH_GEM_CLCT_WINDOW"));
+    if (conf->has("GEMA_FIBER_ENABLE"))          tmb_->SetGemAFiberEnable(    getInt(conf, "GEMA_FIBER_ENABLE"));
+    if (conf->has("GEMB_FIBER_ENABLE"))          tmb_->SetGemBFiberEnable(    getInt(conf, "GEMB_FIBER_ENABLE"));
+    if (conf->has("GEM_ME1A_MATCH_ENABLE"))        tmb_->SetGemMe1aMatchEnable(      getInt(conf, "GEM_ME1A_MATCH_ENABLE"));
+    if (conf->has("GEM_ME1B_MATCH_ENABLE"))        tmb_->SetGemMe1bMatchEnable(      getInt(conf, "GEM_ME1B_MATCH_ENABLE"));
+    if (conf->has("MATCH_DROP_LOWQALCT"))         tmb_->SetMatchDropLowqalct(       getInt(conf, "MATCH_DROP_LOWQALCT"));
+    if (conf->has("ME1A_MATCH_DROP_LOWQCLCT"))    tmb_->SetMe1aMatchDropLowqclct(   getInt(conf, "ME1A_MATCH_DROP_LOWQCLCT"));
+    if (conf->has("ME1B_MATCH_DROP_LOWQCLCT"))    tmb_->SetMe1bMatchDropLowqclct(   getInt(conf, "ME1B_MATCH_DROP_LOWQCLCT"));
+    if (conf->has("TMB_COPAD_ALCT_ALLOW"))         tmb_->SetTmbCopadAlctAllow(       getInt(conf, "TMB_COPAD_ALCT_ALLOW"));
+    if (conf->has("TMB_COPAD_CLCT_ALLOW"))         tmb_->SetTmbCopadClctAllow(       getInt(conf, "TMB_COPAD_CLCT_ALLOW"));
+    if (conf->has("GEMCSC_BEND_ENABLE"))            tmb_->SetGemcscBendEnable(         getInt(conf, "GEMCSC_BEND_ENABLE"));
+    if (conf->has("GEMCSC_IGNORE_BEND_CHECK"))      tmb_->SetGemcscIgnoreBendCheck(    getInt(conf, "GEMCSC_IGNORE_BEND_CHECK"));
+    if (conf->has("GEMA_VFAT_HCM"))               tmb_->SetGemVfatHotChannelMask( getHexStringAsInt(conf, "GEMA_VFAT_HCM"), true);
+    if (conf->has("GEMB_VFAT_HCM"))               tmb_->SetGemVfatHotChannelMask( getHexStringAsInt(conf, "GEMB_VFAT_HCM"), false);
+    if (conf->has("GEMA_MATCH_IGNORE_POSITION")) tmb_->SetGemAMatchIgnorePosition( getInt(conf, "GEMA_MATCH_IGNORE_POSITION"));
+    if (conf->has("GEMB_MATCH_IGNORE_POSITION")) tmb_->SetGemBMatchIgnorePosition( getInt(conf, "GEMB_MATCH_IGNORE_POSITION"));
+    if (conf->has("GEMCSC_MATCH_BEND_CORRECTION")) tmb_->SetGemcscMatchBendCorrection( getInt(conf, "GEMCSC_MATCH_BEND_CORRECTION"));
+    if (conf->has("GEMCSC_MATCH_EXTRAPOLATE")) tmb_->SetGemcscMatchExtrapolate( getInt(conf, "GEMCSC_MATCH_EXTRAPOLATE"));
+    if (conf->has("GEMCSC_MATCH_TIGHTWINDOW")) tmb_->SetGemcscMatchTightwindow( getInt(conf, "GEMCSC_MATCH_TIGHTWINDOW"));
+    
   }
   if(verbose_)
   {

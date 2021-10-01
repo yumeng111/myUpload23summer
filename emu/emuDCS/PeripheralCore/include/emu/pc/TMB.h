@@ -3000,6 +3000,8 @@ public:
         gemB_hot_channel_mask_[ivfat] = (value >> ivfat) & 0x1;
   }
 
+  int GetGemVfatHotChannelMask(bool gemA) { return 0; }  //dummy return
+   
   void ReadGEMHotChannelMask();
   
   //

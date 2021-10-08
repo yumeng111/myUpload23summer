@@ -4197,40 +4197,34 @@ const int gemB_bx0_match_default    = 0;
 //-----------------------------------------------------------------------------
 // 0X328 ADR_GEMA_TRG_CTRL
 //-----------------------------------------------------------------------------
-//first 4bits are not used
+//GE2/1 has 5 fibers per layer while GE1/1 only has 2 fibers per layer
+//gemA_trg_ctrl_wr[10: 8]      = 3'b0;  //RW, not used for ge11
+//gemA_trg_ctrl_wr[15:13]      = 3'b0;  //RW, not used for ge11
 //
 const int match_gem_alct_window_vmereg     = gemA_trg_ctrl_adr; // in timing 
-const int match_gem_alct_window_bitlo      = 4;
-const int match_gem_alct_window_bithi      = 7;
+const int match_gem_alct_window_bitlo      = 0;
+const int match_gem_alct_window_bithi      = 3;
 const int match_gem_alct_window_default    = 3;
 //
 //
 const int match_gem_clct_window_vmereg     = gemA_trg_ctrl_adr;
-const int match_gem_clct_window_bitlo      = 8;
-const int match_gem_clct_window_bithi      = 11;
+const int match_gem_clct_window_bitlo      = 4;
+const int match_gem_clct_window_bithi      = 7;
 const int match_gem_clct_window_default    = 7;
-//
-const int gemA_alct_match_vmereg            = gemA_trg_ctrl_adr; // in timing 
-const int gemA_alct_match_bitlo             = 12;
-const int gemA_alct_match_bithi             = 12;
-const int gemA_alct_match_default           = 0;
-//
-//
-const int gemA_clct_match_vmereg            = gemA_trg_ctrl_adr;
-const int gemA_clct_match_bitlo             = 13;
-const int gemA_clct_match_bithi             = 13;
-const int gemA_clct_match_default           = 0;
 //
 //
 const int gemA_fiber_enable_vmereg          = gemA_trg_ctrl_adr;
-const int gemA_fiber_enable_bitlo           = 14;
-const int gemA_fiber_enable_bithi           = 15;
+const int gemA_fiber_enable_bitlo           = 11;
+const int gemA_fiber_enable_bithi           = 12;
 const int gemA_fiber_enable_default         = 3;
 //
 //
 //-----------------------------------------------------------------------------
 // 0X32a ADR_GEMB_TRG_CTRL
 //-----------------------------------------------------------------------------
+//GE2/1 has 5 fibers per layer while GE1/1 only has 2 fibers per layer
+//gemB_trg_ctrl_wr[10: 8]      = 3'b0;  //RW, not used for ge11, 
+//gemB_trg_ctrl_wr[15:13]      = 3'b0;  //RW, not used for ge11,
 //
 const int match_gem_alct_delay_vmereg      = gemB_trg_ctrl_adr;
 const int match_gem_alct_delay_bitlo       = 0;
@@ -4238,32 +4232,9 @@ const int match_gem_alct_delay_bithi       = 7;
 const int match_gem_alct_delay_default     = 2;
 //
 //
-//const int match_gemB_alct_window_vmereg     = gemB_trg_ctrl_adr; // in timing 
-//const int match_gemB_alct_window_bitlo      = 4;
-//const int match_gemB_alct_window_bithi      = 7;
-//const int match_gemB_alct_window_default    = 3;
-////
-////
-//const int match_gemB_clct_window_vmereg     = gemB_trg_ctrl_adr;
-//const int match_gemB_clct_window_bitlo      = 8;
-//const int match_gemB_clct_window_bithi      = 11;
-//const int match_gemB_clct_window_default    = 5;
-//
-const int gemB_alct_match_vmereg            = gemB_trg_ctrl_adr; // in timing 
-const int gemB_alct_match_bitlo             = 12;
-const int gemB_alct_match_bithi             = 12;
-const int gemB_alct_match_default           = 0;
-//
-//
-const int gemB_clct_match_vmereg            = gemB_trg_ctrl_adr;
-const int gemB_clct_match_bitlo             = 13;
-const int gemB_clct_match_bithi             = 13;
-const int gemB_clct_match_default           = 0;
-//
-//
 const int gemB_fiber_enable_vmereg          = gemB_trg_ctrl_adr;
-const int gemB_fiber_enable_bitlo           = 14;
-const int gemB_fiber_enable_bithi           = 15;
+const int gemB_fiber_enable_bitlo           = 11;
+const int gemB_fiber_enable_bithi           = 12;
 const int gemB_fiber_enable_default         = 3;
 //
 //-----------------------------------------------------------------------------

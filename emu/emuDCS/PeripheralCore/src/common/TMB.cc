@@ -7829,8 +7829,6 @@ void TMB::SetTMBRegisterDefaults() {
   //-----------------------------------------------------------------------------
   match_gem_alct_window_      = match_gem_alct_window_default;
   match_gem_clct_window_      = match_gem_clct_window_default;
-  gemA_alct_match_            = gemA_alct_match_default;
-  gemA_clct_match_            = gemA_clct_match_default;
   gemA_fiber_enable_          = gemA_fiber_enable_default;
 
   //-----------------------------------------------------------------------------
@@ -7839,8 +7837,6 @@ void TMB::SetTMBRegisterDefaults() {
   match_gem_alct_delay_       = match_gem_alct_delay_default;
   //match_gemB_alct_window_     = match_gemB_alct_window_default;
   //match_gemB_clct_window_     = match_gemB_clct_window_default;
-  gemB_alct_match_            = gemB_alct_match_default;
-  gemB_clct_match_            = gemB_clct_match_default;
   gemB_fiber_enable_          = gemB_fiber_enable_default;
 
   //-----------------------------------------------------------------------------
@@ -9192,8 +9188,6 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //---------------------------------------------------------------------
     read_match_gem_alct_window_          = ExtractValueFromData (data , match_gem_alct_window_bitlo        , match_gem_alct_window_bithi);
     read_match_gem_clct_window_          = ExtractValueFromData (data , match_gem_clct_window_bitlo        , match_gem_clct_window_bithi);
-    read_gemA_alct_match_                = ExtractValueFromData (data , gemA_alct_match_bitlo              , gemA_alct_match_bithi);
-    read_gemA_clct_match_                = ExtractValueFromData (data , gemA_clct_match_bitlo              , gemA_clct_match_bithi);
     read_gemA_fiber_enable_              = ExtractValueFromData (data , gemA_fiber_enable_bitlo            , gemA_fiber_enable_bithi);
   } else if ( address == gemB_trg_ctrl_adr ) {
     //---------------------------------------------------------------------
@@ -9202,8 +9196,6 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_match_gem_alct_delay_           = ExtractValueFromData (data , match_gem_alct_delay_bitlo        , match_gem_alct_delay_bithi);
     //read_match_gemB_alct_window_         = ExtractValueFromData (data , match_gemB_alct_window_bitlo       , match_gemB_alct_window_bithi);
     //read_match_gemB_clct_window_         = ExtractValueFromData (data , match_gemB_clct_window_bitlo       , match_gemB_clct_window_bithi);
-    read_gemB_alct_match_                = ExtractValueFromData (data , gemB_alct_match_bitlo              , gemB_alct_match_bithi);
-    read_gemB_clct_match_                = ExtractValueFromData (data , gemB_clct_match_bitlo              , gemB_clct_match_bithi);
     read_gemB_fiber_enable_              = ExtractValueFromData (data , gemB_fiber_enable_bitlo            , gemB_fiber_enable_bithi);
   } else if ( address == gem_csc_match_ctrl_adr ) {
     //---------------------------------------------------------------------
@@ -9257,6 +9249,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
   } else if ( address == gem_vfat_hcm0_adr || address == gem_vfat_hcm1_adr || address == gem_vfat_hcm2_adr ) {
     //---------------------------------------------------------------------
     // 0X33a,0x33c,0x33e for GEM hot vfat mask
+    // Need to add GE2/1 hot VFAT mask
     //---------------------------------------------------------------------
    
     for (int bit_in_register=0; bit_in_register<16; bit_in_register++) {
@@ -9269,7 +9262,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
            read_gemB_hot_channel_mask_[vfat]  =  ExtractValueFromData (data , bit_in_register, bit_in_register); 
         }
     }
-  }
+  } //end of fill extra VME register
   //
   // combinations of bits which say which trgmode_ we are using....
   //

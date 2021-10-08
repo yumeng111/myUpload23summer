@@ -2861,11 +2861,6 @@ public:
   inline int   GetMatchGemAlctWindow ()                               { return match_gem_alct_window_ ;}
   inline int   GetMatchGemClctWindow ()                               { return match_gem_clct_window_ ;}
 
-  inline int   GetGemAAlctMatch ()                                         { return gemA_alct_match_ ;}
-  inline int   GetReadGemAAlctMatch ()                                     { return read_gemA_alct_match_ ;}
-  inline int   GetGemAClctMatch ()                                         { return gemA_clct_match_ ;}
-  inline int   GetReadGemAClctMatch ()                                     { return read_gemA_clct_match_ ;}
-  
   inline int   GetGemAFiberEnable ()                                         { return gemA_fiber_enable_ ;}
 
   inline void  SetMatchGemAlctWindow (int match_gem_alct_window)           { match_gem_alct_window_= match_gem_alct_window;}
@@ -2881,11 +2876,6 @@ public:
   //inline int   GetMatchGemBAlctWindow ()                               { return match_gemB_alct_window_ ;}
   //inline int   GetMatchGemBClctWindow ()                               { return match_gemB_clct_window_ ;}
 
-  inline int   GetGemBAlctMatch ()                                         { return gemB_alct_match_ ;}
-  inline int   GetReadGemBAlctMatch ()                                     { return read_gemB_alct_match_ ;}
-  inline int   GetGemBClctMatch ()                                         { return gemB_clct_match_ ;}
-  inline int   GetReadGemBClctMatch ()                                     { return read_gemB_clct_match_ ;}
-  
   inline int   GetGemBFiberEnable ()                                         { return gemB_fiber_enable_ ;}
 
   inline void  SetMatchGemAlctDelay  (int match_gem_alct_delay)            { match_gem_alct_delay_ = match_gem_alct_delay ;}
@@ -2992,7 +2982,11 @@ public:
   inline void  SettGemAHotVfat(int vfat, int on_or_off)       {gemA_hot_channel_mask_[vfat] = on_or_off;}
   inline void  SettGemBHotVfat(int vfat, int on_or_off)       {gemB_hot_channel_mask_[vfat] = on_or_off;}
 
-  void  SetGemVfatHotChannelMask(int value, bool gemA)  {
+  void  SetGemVfatHotChannelMask(long long int value, bool gemA)  {
+    if (gemA)
+	    gemA_hotvfat_mask_ = value;
+    else 
+	    gemB_hotvfat_mask_ = value;
     for (int ivfat = MAX_GEM_VFATS_PER_LAYER; ivfat >=0; ivfat--)
        if (gemA)
         gemA_hot_channel_mask_[ivfat] = (value >> ivfat) & 0x1;
@@ -3000,7 +2994,10 @@ public:
         gemB_hot_channel_mask_[ivfat] = (value >> ivfat) & 0x1;
   }
 
-  int GetGemVfatHotChannelMask(bool gemA) { return 0; }  //dummy return
+  long long int GetGemVfatHotChannelMask(bool gemA) { 
+      if (gemA)   return gemA_hotvfat_mask_; 
+      else gemB_hotvfat_mask_;
+  }  //dummy return
    
   void ReadGEMHotChannelMask();
   
@@ -4932,14 +4929,10 @@ private:
   //
   int match_gem_alct_window_;
   int match_gem_clct_window_;
-  int gemA_alct_match_;
-  int gemA_clct_match_;
   int gemA_fiber_enable_;
 
   int read_match_gem_alct_window_;
   int read_match_gem_clct_window_;
-  int read_gemA_alct_match_;
-  int read_gemA_clct_match_;
   int read_gemA_fiber_enable_;
   //
   //
@@ -4950,15 +4943,11 @@ private:
   int match_gem_alct_delay_;
   //int match_gemB_alct_window_;
   //int match_gemB_clct_window_;
-  int gemB_alct_match_;
-  int gemB_clct_match_;
   int gemB_fiber_enable_;
 
   int read_match_gem_alct_delay_;
   //int read_match_gemB_alct_window_;
   //int read_match_gemB_clct_window_;
-  int read_gemB_alct_match_;
-  int read_gemB_clct_match_;
   int read_gemB_fiber_enable_;
   //
   //
@@ -5036,6 +5025,9 @@ private:
   // 0X33e ADR_GEM_VFAT_HCM2
   //-----------------------------------------------------------------------------
   //
+  
+  long long int gemA_hotvfat_mask_;
+  long long int gemB_hotvfat_mask_;
 
   int gemA_hot_channel_mask_[MAX_GEM_VFATS_PER_LAYER];
   int gemB_hot_channel_mask_[MAX_GEM_VFATS_PER_LAYER];

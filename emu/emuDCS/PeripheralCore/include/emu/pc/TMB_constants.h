@@ -4244,13 +4244,13 @@ const int gemB_fiber_enable_default         = 3;
 const int gem_me1a_match_enable_vmereg          = gem_csc_match_ctrl_adr;
 const int gem_me1a_match_enable_bitlo           = 0;
 const int gem_me1a_match_enable_bithi           = 0;
-const int gem_me1a_match_enable_default         = 1;
+const int gem_me1a_match_enable_default         = 0;
 //
 //
 const int gem_me1b_match_enable_vmereg              = gem_csc_match_ctrl_adr;
 const int gem_me1b_match_enable_bitlo               = 1;
 const int gem_me1b_match_enable_bithi               = 1;
-const int gem_me1b_match_enable_default             = 1;
+const int gem_me1b_match_enable_default             = 0;
 //
 //
 const int gemcsc_match_extrapolate_vmereg                = gem_csc_match_ctrl_adr;

@@ -777,8 +777,9 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
        //---------------------------------------------------------------------
        // 0X33a,0x33c,0x33e for GEM hot vfat mask
        //---------------------------------------------------------------------
-       if (fillIntX ("gemA_vfat_hcm"  , value)) { tmb_->SetGemVfatHotChannelMask       (value, true );} //GEMA
-       if (fillIntX ("gemB_vfat_hcm"  , value)) { tmb_->SetGemVfatHotChannelMask       (value, false);} //GEMB
+       long long int hot_vfat_mask = 0;
+       if (fillLongLongIntX ("gemA_vfat_hcm"  , hot_vfat_mask)) { tmb_->SetGemVfatHotChannelMask       (hot_vfat_mask, true );} //GEMA
+       if (fillLongLongIntX ("gemB_vfat_hcm"  , hot_vfat_mask)) { tmb_->SetGemVfatHotChannelMask       (hot_vfat_mask, false);} //GEMB
     }
     //
     xercesc::DOMNode * daughterNode = pNode->getFirstChild();

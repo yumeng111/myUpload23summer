@@ -9335,9 +9335,9 @@ void TMB::PrintTMBConfiguration() {
 }
 //
 void TMB::PrintHotChannelMask() {
-  (*MyOutput_) << "-------------------------------------------" << std::endl;
-  (*MyOutput_) << "TMB Hot Channel Mask (from right to left)" << std::endl;
-  (*MyOutput_) << "-------------------------------------------" << std::endl;
+  (*MyOutput_) << "---------------------------------------------------" << std::endl;
+  (*MyOutput_) << "TMB Hot Channel Mask (from right to left, 1=enable)" << std::endl;
+  (*MyOutput_) << "--------------------------------------------------" << std::endl;
   //
   int N_DISTRIPS;
   if (hardware_version_ >= 2) {
@@ -9399,9 +9399,9 @@ void TMB::PrintComparatorBadBits() {
 
 //
 void TMB::PrintGEMHotChannelMask() {
-  (*MyOutput_) << "-------------------------------------------" << std::endl;
-  (*MyOutput_) << "GEM Hot VFAT Mask (from right to left)" << std::endl;
-  (*MyOutput_) << "-------------------------------------------" << std::endl;
+  (*MyOutput_) << "-------------------------------------------------------" << std::endl;
+  (*MyOutput_) << "GEM Hot VFAT Mask in Hex (from right to left, 0=enable)" << std::endl;
+  (*MyOutput_) << "-------------------------------------------------------" << std::endl;
   //read_gemA_hot_channel_mask_[MAX_GEM_VFATS_PER_LAYER]
   ReadGEMHotChannelMask();
   char gemA_hot_channel_mask[MAX_GEM_VFATS_PER_LAYER/8];

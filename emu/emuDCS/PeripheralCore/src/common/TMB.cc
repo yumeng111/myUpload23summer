@@ -2539,7 +2539,7 @@ std::string TMB::CounterName(int counter){
   if( counter == 29 ) name =  "CLCT: clct0 sent to TMB matching section                ";
   if( counter == 30 ) name =  "CLCT: clct1 sent to TMB matching section                ";
   //
-  if( counter == 31 ) name =  "TMB:  TMB accepted alct*clct, alct-only, or clct-only   ";
+  if( counter == 31 ) name =  "TMB:  TMB accepted alct*clct/copad,alct-only,clct-only  ";
   if( counter == 32 ) name =  "TMB:  TMB alct*clct/copad matched trigger               ";
   if( counter == 33 ) name =  "TMB:  TMB alct-only trigger                             ";
   if( counter == 34 ) name =  "TMB:  TMB clct-only trigger                             ";
@@ -2636,8 +2636,8 @@ std::string TMB::CounterName(int counter){
   if( counter == 111) name =  "TMB: anode and cathode hmt fired for trigger or readout ";//Tao, 202108
   if( counter == 112) name =  "TMB: anode and cathode hmt fired, with valid LCT        ";//Tao, 202108
   if( counter == 113) name =  "TMB: anode and cathode hmt fired, without ALCT          ";//Tao, 202108
-  if( counter == 114) name =  "TMB: trigger pulse source from HMT only (no LCT)        ";//Tao, 202108
-  if( counter == 115) name =  "TMB: trigger keep source from HMT only                  ";//Tao, 202108
+  if( counter == 114) name =  "TMB: trigger pulse source from HMT only (non-muon trig) ";//Tao, 202108
+  if( counter == 115) name =  "TMB: trigger keep source from HMT only (non-muon trig)  ";//Tao, 202108
   if( counter == 116) name =  "TMB: HMT trigger counter                                ";//Tao, 202108
   if( counter == 117) name =  "TMB: HMT readout counter                                ";//Tao, 202108
   if( counter == 118) name =  "TMB: HMT active cfeb flag counter                       ";//Tao, 202108
@@ -2773,7 +2773,7 @@ std::string TMB::GEMCounterName(int counter){
     else if (counter==112) name = "GEM: Build CLCT1 from CoGEM                             ";
     else if (counter==113) name = "GEM: swap ALCT/CLCT from ALCTxCLCTxCoapd match          ";
     else if (counter==114) name = "GEM: swap ALCT/CLCT from ALCTxCLCTxGEM   match          ";
-    else if (counter==115) name = "GEM: swap ALCT/CLCT from      CLCTxCopad match          ";
+    else if (counter==115) name = "GEM: swap ALCT/CLCT from ALCT/CLCTxCopad match          ";
     else if (counter==116) name = "GEM: Special test: delay alct, dlyalct_gemA_match       ";
     else if (counter==117) name = "GEM: Special test: delay alct, dlyalct_gemB_match       ";
     else if (counter==118) name = "GEM: Special test: delay gemA, alct_dlygemA_match       ";

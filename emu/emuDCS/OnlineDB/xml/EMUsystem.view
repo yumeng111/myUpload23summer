@@ -778,7 +778,6 @@ oldconfig.GEM_ALCT_DELTAWIRE_EVEN "GEM_ALCT_DELTAWIRE_EVEN $OLD_EMU_CONFIG_ID",n
 oldconfig.GEM_ALCT_DELTAWIRE_ODD "GEM_ALCT_DELTAWIRE_ODD $OLD_EMU_CONFIG_ID",newconfig.GEM_ALCT_DELTAWIRE_ODD "GEM_ALCT_DELTAWIRE_ODD $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_CLCT_DELTAHS_EVEN "GEM_CLCT_DELTAHS_EVEN $OLD_EMU_CONFIG_ID",newconfig.GEM_CLCT_DELTAHS_EVEN "GEM_CLCT_DELTAHS_EVEN $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_CLCT_DELTAHS_ODD "GEM_CLCT_DELTAHS_ODD $OLD_EMU_CONFIG_ID",newconfig.GEM_CLCT_DELTAHS_ODD "GEM_CLCT_DELTAHS_ODD $NEW_EMU_CONFIG_ID",
-oldconfig.GEM_FIFO_RXD_INT_DELAY "GEM_FIFO_RXD_INT_DELAY $OLD_EMU_CONFIG_ID",newconfig.GEM_FIFO_RXD_INT_DELAY "GEM_FIFO_RXD_INT_DELAY $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_MATCH_DELTAPAD "GEM_MATCH_DELTAPAD $OLD_EMU_CONFIG_ID",newconfig.GEM_MATCH_DELTAPAD "GEM_MATCH_DELTAPAD $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_MATCH_NEIGHBORPAD "GEM_MATCH_NEIGHBORPAD $OLD_EMU_CONFIG_ID",newconfig.GEM_MATCH_NEIGHBORPAD "GEM_MATCH_NEIGHBORPAD $NEW_EMU_CONFIG_ID",
 oldconfig.GEM_MATCH_NEIGHBORROLL "GEM_MATCH_NEIGHBORROLL $OLD_EMU_CONFIG_ID",newconfig.GEM_MATCH_NEIGHBORROLL "GEM_MATCH_NEIGHBORROLL $NEW_EMU_CONFIG_ID",
@@ -985,7 +984,6 @@ oldconfig.GEM_ALCT_DELTAWIRE_EVEN!=newconfig.GEM_ALCT_DELTAWIRE_EVEN or
 oldconfig.GEM_ALCT_DELTAWIRE_ODD!=newconfig.GEM_ALCT_DELTAWIRE_ODD or
 oldconfig.GEM_CLCT_DELTAHS_EVEN!=newconfig.GEM_CLCT_DELTAHS_EVEN or
 oldconfig.GEM_CLCT_DELTAHS_ODD!=newconfig.GEM_CLCT_DELTAHS_ODD or
-oldconfig.GEM_FIFO_RXD_INT_DELAY!=newconfig.GEM_FIFO_RXD_INT_DELAY or
 oldconfig.GEM_MATCH_DELTAPAD!=newconfig.GEM_MATCH_DELTAPAD or
 oldconfig.GEM_MATCH_NEIGHBORPAD!=newconfig.GEM_MATCH_NEIGHBORPAD or
 oldconfig.GEM_MATCH_NEIGHBORROLL!=newconfig.GEM_MATCH_NEIGHBORROLL or
@@ -1635,7 +1633,6 @@ where rownum=1]]>
     <tstore:column name="gem_alct_deltawire_odd" type="unsigned short"/>
     <tstore:column name="gem_clct_deltahs_even" type="unsigned short"/>
     <tstore:column name="gem_clct_deltahs_odd" type="unsigned short"/>
-    <tstore:column name="gem_fifo_rxd_int_delay" type="unsigned short"/>
     <tstore:column name="gem_match_deltapad" type="unsigned short"/>
     <tstore:column name="gem_match_neighborpad" type="unsigned short"/>
     <tstore:column name="gem_match_neighborroll" type="unsigned short"/>

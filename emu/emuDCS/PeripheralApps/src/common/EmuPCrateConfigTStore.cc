@@ -2601,7 +2601,6 @@ void EmuPCrateConfigTStore::copyTMBToTable(xdata::Table &newRows, TMB * TStore_t
     newRows.setValueAt(rowId, GEM_ALCT_DELTAWIRE_ODD , _gem_alct_deltawire_odd);
     newRows.setValueAt(rowId, GEM_CLCT_DELTAHS_EVEN , _gem_clct_deltahs_even);
     newRows.setValueAt(rowId, GEM_CLCT_DELTAHS_ODD , _gem_clct_deltahs_odd);
-    newRows.setValueAt(rowId, GEM_FIFO_RXD_INT_DELAY , _gem_fifo_rxd_int_delay);
     newRows.setValueAt(rowId, GEM_MATCH_DELTAPAD , _gem_match_deltapad);
     newRows.setValueAt(rowId, GEM_MATCH_NEIGHBORPAD , _gem_match_neighborpad);
     newRows.setValueAt(rowId, GEM_MATCH_NEIGHBORROLL , _gem_match_neighborroll);
@@ -3998,7 +3997,6 @@ void EmuPCrateConfigTStore::readTMB(
     if (*column == "GEM_ALCT_DELTAWIRE_ODD")     tmb_->SetGemAlctDeltawireOdd(IntValue);
     if (*column == "GEM_CLCT_DELTAHS_EVEN")     tmb_->SetGemClctDeltahsEven(IntValue);
     if (*column == "GEM_CLCT_DELTAHS_ODD")     tmb_->SetGemClctDeltahsOdd(IntValue);
-    if (*column == "GEM_FIFO_RXD_INT_DELAY")     tmb_->SetGemRxdIntDelay(IntValue);
     if (*column == "GEM_MATCH_DELTAPAD")     tmb_->SetGemMatchDeltaPad(IntValue);
     if (*column == "GEM_MATCH_NEIGHBORPAD")     tmb_->SetGemMatchNeighborPad(IntValue);
     if (*column == "GEM_MATCH_NEIGHBORROLL")     tmb_->SetGemMatchNeighborRoll(IntValue);

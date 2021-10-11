@@ -2995,9 +2995,8 @@ public:
   }
 
   long long int GetGemVfatHotChannelMask(bool gemA) { 
-      if (gemA)   return gemA_hotvfat_mask_; 
-      else gemB_hotvfat_mask_;
-  }  //dummy return
+      return (gemA ? gemA_hotvfat_mask_ : gemB_hotvfat_mask_);
+  }  
    
   void ReadGEMHotChannelMask();
   

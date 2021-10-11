@@ -643,8 +643,8 @@ throw (emu::exception::ConfigurationException)
     if (conf->has("TMB_COPAD_CLCT_ALLOW"))         tmb_->SetTmbCopadClctAllow(       getInt(conf, "TMB_COPAD_CLCT_ALLOW"));
     if (conf->has("GEMCSC_BEND_ENABLE"))            tmb_->SetGemcscBendEnable(         getInt(conf, "GEMCSC_BEND_ENABLE"));
     if (conf->has("GEMCSC_IGNORE_BEND_CHECK"))      tmb_->SetGemcscIgnoreBendCheck(    getInt(conf, "GEMCSC_IGNORE_BEND_CHECK"));
-    if (conf->has("GEMA_VFAT_HCM"))               tmb_->SetGemVfatHotChannelMask( getHexStringAsInt(conf, "GEMA_VFAT_HCM"), true);
-    if (conf->has("GEMB_VFAT_HCM"))               tmb_->SetGemVfatHotChannelMask( getHexStringAsInt(conf, "GEMB_VFAT_HCM"), false);
+    if (conf->has("GEMA_VFAT_HCM"))               tmb_->SetGemVfatHotChannelMask( getStringAsLongLongInt(conf, "GEMA_VFAT_HCM"), true);
+    if (conf->has("GEMB_VFAT_HCM"))               tmb_->SetGemVfatHotChannelMask( getStringAsLongLongInt(conf, "GEMB_VFAT_HCM"), false);
     if (conf->has("GEMA_MATCH_IGNORE_POSITION")) tmb_->SetGemAMatchIgnorePosition( getInt(conf, "GEMA_MATCH_IGNORE_POSITION"));
     if (conf->has("GEMB_MATCH_IGNORE_POSITION")) tmb_->SetGemBMatchIgnorePosition( getInt(conf, "GEMB_MATCH_IGNORE_POSITION"));
     if (conf->has("GEMCSC_MATCH_BEND_CORRECTION")) tmb_->SetGemcscMatchBendCorrection( getInt(conf, "GEMCSC_MATCH_BEND_CORRECTION"));

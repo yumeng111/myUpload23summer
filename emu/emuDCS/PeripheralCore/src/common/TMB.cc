@@ -11774,7 +11774,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     config_ok &= compareValues("TMB tmb_firmware_day"    ,GetReadTmbFirmwareDay()    ,GetExpectedTmbFirmwareDay()    , print_errors);
     config_ok &= compareValues("TMB tmb_firmware_year"   ,GetReadTmbFirmwareYear()   ,GetExpectedTmbFirmwareYear()   , print_errors);
     config_ok &= compareValues("TMB tmb_firmware_version",GetReadTmbFirmwareVersion(),GetExpectedTmbFirmwareVersion(), print_errors);
-    config_ok &= compareValues("TMB tmb_firmware_revcode",GetReadTmbFirmwareRevcode(),GetExpectedTmbFirmwareRevcode(), print_errors);
+    //config_ok &= compareValues("TMB tmb_firmware_revcode",GetReadTmbFirmwareRevcode(),GetExpectedTmbFirmwareRevcode(), print_errors);
     config_ok &= compareValues("TMB tmb_firmware_type"   ,GetReadTmbFirmwareType()   ,GetExpectedTmbFirmwareType()   , print_errors);
     //
     //-----------------------------------------------------------------
@@ -12225,39 +12225,43 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     // Here check only the bit (ANDed between all five CFEB bits...)
     config_ok &= compareValues("TMB cfeb_badbits_block",GetReadCFEBBadBitsBlock(),GetCFEBBadBitsBlock(),print_errors); 
     //
-    if (hardware_version_>=2){
-    //---------------------------------------------------------------------
-    // 0X1AA = ADR_RUN3_FORMAT_CTRL:  Run3 format control  (Tao, 2020)
-    //---------------------------------------------------------------------
-    config_ok &= compareValues("TMB run3_trig_dataformat_enable",  read_run3_trig_dataformat_enable_,  run3_trig_dataformat_enable_, print_errors);
-    config_ok &= compareValues("TMB run3_daq_dataformat_enable",  read_run3_daq_dataformat_enable_,    run3_daq_dataformat_enable_, print_errors);
-    config_ok &= compareValues("TMB run3_alct_dataformat_enable",  read_run3_alct_dataformat_enable_,  run3_alct_dataformat_enable_, print_errors);
-    config_ok &= compareValues("TMB run2_revcode_enable",          read_run2_revcode_enable_,          run2_revcode_enable_, print_errors);
-    //
-    //---------------------------------------------------------------------
-    // 0X1AC = ADR_HMT_CTRL:  HMT control 
-    //---------------------------------------------------------------------
-    config_ok &= compareValues("TMB hmt_enable",  read_hmt_enable_,  hmt_enable_, print_errors);
-    config_ok &= compareValues("TMB hmt_me1a_enable",  read_hmt_me1a_enable_,  hmt_me1a_enable_, print_errors);
-    //
-    //---------------------------------------------------------------------
-    // 0X1AE = ADR_HMT_THRESH1:  HMT threshold and control
-    // 0X1B0 = ADR_HMT_THRESH2:  HMT threshold and control
-    // 0X1B2 = ADR_HMT_THRESH3:  HMT threshold and control
-    //---------------------------------------------------------------------
-    config_ok &= compareValues("TMB hmt_thresh1",  read_hmt_thresh1_,  hmt_thresh1_, print_errors);
-    config_ok &= compareValues("TMB hmt_thresh2",  read_hmt_thresh2_,  hmt_thresh2_, print_errors);
-    config_ok &= compareValues("TMB hmt_thresh3",  read_hmt_thresh3_,  hmt_thresh3_, print_errors);
-    config_ok &= compareValues("TMB cfeb_allow_hmt_ro",  read_cfeb_allow_hmt_ro_,  cfeb_allow_hmt_ro_, print_errors);
-    config_ok &= compareValues("TMB hmt_aff_thresh",     read_hmt_aff_thresh_,     hmt_aff_thresh_, print_errors);
-    config_ok &= compareValues("TMB hmt_delay",          read_hmt_delay_,     hmt_delay_, print_errors);
-    config_ok &= compareValues("TMB hmt_allow_anode",      read_hmt_allow_anode_,      hmt_allow_anode_, print_errors);
-    config_ok &= compareValues("TMB hmt_allow_cathode",      read_hmt_allow_cathode_,      hmt_allow_cathode_, print_errors);
-    config_ok &= compareValues("TMB hmt_allow_match",      read_hmt_allow_match_,      hmt_allow_match_, print_errors);
-    config_ok &= compareValues("TMB hmt_allow_match_ro",   read_hmt_allow_match_ro_,   hmt_allow_match_ro_, print_errors);
-    config_ok &= compareValues("TMB hmt_allow_cathode_ro",   read_hmt_allow_cathode_ro_,   hmt_allow_cathode_ro_, print_errors);
-    config_ok &= compareValues("TMB hmt_allow_anode_ro",   read_hmt_allow_anode_ro_,   hmt_allow_anode_ro_, print_errors);
-    config_ok &= compareValues("TMB hmt_outtime_check",      read_hmt_outtime_check_,      hmt_outtime_check_, print_errors);
+    if (hardware_version_>=2)
+    {
+      //---------------------------------------------------------------------
+      // 0X1AA = ADR_RUN3_FORMAT_CTRL:  Run3 format control  (Tao, 2020)
+      //---------------------------------------------------------------------
+      config_ok &= compareValues("TMB run3_trig_dataformat_enable",  read_run3_trig_dataformat_enable_,  run3_trig_dataformat_enable_, print_errors);
+      config_ok &= compareValues("TMB run3_daq_dataformat_enable",  read_run3_daq_dataformat_enable_,    run3_daq_dataformat_enable_, print_errors);
+      config_ok &= compareValues("TMB run3_alct_dataformat_enable",  read_run3_alct_dataformat_enable_,  run3_alct_dataformat_enable_, print_errors);
+      config_ok &= compareValues("TMB run2_revcode_enable",          read_run2_revcode_enable_,          run2_revcode_enable_, print_errors);
+      //
+      //---------------------------------------------------------------------
+      // 0X1AC = ADR_HMT_CTRL:  HMT control 
+      //---------------------------------------------------------------------
+      config_ok &= compareValues("TMB hmt_enable",  read_hmt_enable_,  hmt_enable_, print_errors);
+      if (Gethmt_enable())
+      {
+         config_ok &= compareValues("TMB hmt_me1a_enable",  read_hmt_me1a_enable_,  hmt_me1a_enable_, print_errors);
+         //
+         //---------------------------------------------------------------------
+         // 0X1AE = ADR_HMT_THRESH1:  HMT threshold and control
+         // 0X1B0 = ADR_HMT_THRESH2:  HMT threshold and control
+         // 0X1B2 = ADR_HMT_THRESH3:  HMT threshold and control
+         //---------------------------------------------------------------------
+         config_ok &= compareValues("TMB hmt_thresh1",  read_hmt_thresh1_,  hmt_thresh1_, print_errors);
+         config_ok &= compareValues("TMB hmt_thresh2",  read_hmt_thresh2_,  hmt_thresh2_, print_errors);
+         config_ok &= compareValues("TMB hmt_thresh3",  read_hmt_thresh3_,  hmt_thresh3_, print_errors);
+         config_ok &= compareValues("TMB cfeb_allow_hmt_ro",  read_cfeb_allow_hmt_ro_,  cfeb_allow_hmt_ro_, print_errors);
+         config_ok &= compareValues("TMB hmt_aff_thresh",     read_hmt_aff_thresh_,     hmt_aff_thresh_, print_errors);
+         config_ok &= compareValues("TMB hmt_delay",          read_hmt_delay_,     hmt_delay_, print_errors);
+         config_ok &= compareValues("TMB hmt_allow_anode",      read_hmt_allow_anode_,      hmt_allow_anode_, print_errors);
+         config_ok &= compareValues("TMB hmt_allow_cathode",      read_hmt_allow_cathode_,      hmt_allow_cathode_, print_errors);
+         config_ok &= compareValues("TMB hmt_allow_match",      read_hmt_allow_match_,      hmt_allow_match_, print_errors);
+         config_ok &= compareValues("TMB hmt_allow_match_ro",   read_hmt_allow_match_ro_,   hmt_allow_match_ro_, print_errors);
+         config_ok &= compareValues("TMB hmt_allow_cathode_ro",   read_hmt_allow_cathode_ro_,   hmt_allow_cathode_ro_, print_errors);
+         config_ok &= compareValues("TMB hmt_allow_anode_ro",   read_hmt_allow_anode_ro_,   hmt_allow_anode_ro_, print_errors);
+         config_ok &= compareValues("TMB hmt_outtime_check",      read_hmt_outtime_check_,      hmt_outtime_check_, print_errors);
+      }
     }
     //
     //------------------------------------------------------------------

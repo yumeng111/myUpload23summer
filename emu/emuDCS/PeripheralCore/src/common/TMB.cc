@@ -11021,6 +11021,12 @@ int TMB::FillTMBRegister(unsigned long int address) {
     InsertValueIntoDataWord(cross_bx_algorithm_        ,cross_bx_algorithm_bithi        ,cross_bx_algorithm_bitlo        ,&data_word);
     InsertValueIntoDataWord(clct_use_corrected_bx_     ,clct_use_corrected_bx_bithi     ,clct_use_corrected_bx_bitlo     ,&data_word);
     InsertValueIntoDataWord(seq_trigger_nodeadtime_    ,seq_trigger_nodeadtime_bithi    ,seq_trigger_nodeadtime_bitlo    ,&data_word);
+    //
+    // 2021-10-15, Liu:temporarily add chamber number parity bit to bit[12] so that new OTMB firmware can use it
+    char *namestr=(char *)(label_.c_str());
+    int chamber_num_parity=1&namestr[strlen(namestr)-1]; // lowest bit of the last byte
+    InsertValueIntoDataWord(chamber_num_parity  ,12  ,12  ,&data_word);
+   //
   } else if ( address == run3_format_ctrl_adr ) {
    //------------------------------------------------------------------
    //0X1AA = ADR_RUN3_FORMAT_CTRL:  Run3 format control  (Tao, 2020)

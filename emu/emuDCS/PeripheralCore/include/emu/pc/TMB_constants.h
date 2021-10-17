@@ -3717,6 +3717,11 @@ const int seq_trigger_nodeadtime_bitlo   = 11;
 const int seq_trigger_nodeadtime_bithi   = 11;
 const int seq_trigger_nodeadtime_default = 0;
 //
+const int chamber_num_parity_vmereg  = algo2016_ctrl_adr;
+const int chamber_num_parity_bitlo   = 12;
+const int chamber_num_parity_bithi   = 12;
+//const int chamber_num_parity_default = 0;  //do not need the default value for chamber number parity. extract from chamber string
+//
 //------------------------------------------------------------------
 //0X19A = ADR_CLCT0_CC:  CLCT0 Comparator Code  (Tao, 2020)
 //------------------------------------------------------------------

@@ -4707,6 +4707,7 @@ private:
   int cross_bx_algorithm_;
   int clct_use_corrected_bx_;
   int seq_trigger_nodeadtime_;
+  int chamber_num_parity_;
 
   int read_use_dead_time_zone_;
   int read_dead_time_zone_size_;
@@ -4716,6 +4717,7 @@ private:
   int read_cross_bx_algorithm_;
   int read_clct_use_corrected_bx_;
   int read_seq_trigger_nodeadtime_;
+  int read_chamber_num_parity_;
   //
   //---------------------------------------------------------------------
   //ADR_CLCT0_CC = 0x19A

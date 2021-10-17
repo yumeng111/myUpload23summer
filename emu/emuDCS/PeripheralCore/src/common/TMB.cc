@@ -7711,6 +7711,9 @@ void TMB::SetTMBRegisterDefaults() {
   drop_used_clcts_            = drop_used_clcts_default           ;
   cross_bx_algorithm_         = cross_bx_algorithm_default        ;
   clct_use_corrected_bx_      = clct_use_corrected_bx_default     ;
+  // 2021-10-15, Liu:temporarily add chamber number parity bit to bit[12] so that new OTMB firmware can use it
+  char *namestr=(char *)(label_.c_str());
+  chamber_num_parity_         = 1&namestr[strlen(namestr)-1]; // lowest bit of the last byte
   //
   //------------------------------------------------------------------
   //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 format control  (Tao, 2020)
@@ -8533,7 +8536,8 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_drop_used_clcts_            = ExtractValueFromData(data,drop_used_clcts_bitlo           ,drop_used_clcts_bithi           );
     read_cross_bx_algorithm_         = ExtractValueFromData(data,cross_bx_algorithm_bitlo        ,cross_bx_algorithm_bithi        );
     read_clct_use_corrected_bx_      = ExtractValueFromData(data,clct_use_corrected_bx_bitlo     ,clct_use_corrected_bx_bithi     );
-    read_seq_trigger_nodeadtime_     = ExtractValueFromData(data,seq_trigger_nodeadtime_bitlo    ,seq_trigger_nodeadtime_bithi              );
+    read_seq_trigger_nodeadtime_     = ExtractValueFromData(data,seq_trigger_nodeadtime_bitlo    ,seq_trigger_nodeadtime_bithi    );
+    read_chamber_num_parity_         = ExtractValueFromData(data,chamber_num_parity_bitlo        ,chamber_num_parity_bithi        );
     //
   } else if ( address == clct0_cc_adr ) {
     //---------------------------------------------------------------------
@@ -9832,7 +9836,8 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << "    Toggle dropping CLCTs from matching in ALCT-centric algorithm = " << std::dec << read_drop_used_clcts_            << std::endl;
     (*MyOutput_) << "    Toggle LCT sorting using cross BX algorithm                   = " << std::dec << read_cross_bx_algorithm_         << std::endl;
     (*MyOutput_) << "    Toggle use of medians for CLCT timing                         = " << std::dec << read_clct_use_corrected_bx_      << std::endl;
-    (*MyOutput_) << "    Allow to two trigger in a row (Run3 trigger rule)             = " << std::dec << read_seq_trigger_nodeadtime_     << std::endl;
+    (*MyOutput_) << "    Allow to two triggers in a row (Run3 trigger rule)            = " << std::dec << read_seq_trigger_nodeadtime_     << std::endl;
+    (*MyOutput_) << "    chamber number parity, 1 for odd and 0 for even               = " << std::dec << read_chamber_num_parity_         << std::endl;
   } else if ( address == run3_format_ctrl_adr ) {
   //------------------------------------------------------------------
   //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 format control  (Tao, 2020)
@@ -11012,6 +11017,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     	      << "\n    drop_used_clcts_            " << drop_used_clcts_           
     	      << "\n    cross_bx_algorithm_         " << cross_bx_algorithm_        
     	      << "\n    clct_use_corrected_bx_      " << clct_use_corrected_bx_     
+    	      << "\n    chamber_num_parity_         " << chamber_num_parity_     
     	      << std::endl;
     InsertValueIntoDataWord(use_dead_time_zone_        ,use_dead_time_zone_bithi        ,use_dead_time_zone_bitlo        ,&data_word);
     InsertValueIntoDataWord(dead_time_zone_size_       ,dead_time_zone_size_bithi       ,dead_time_zone_size_bitlo       ,&data_word);
@@ -11021,11 +11027,8 @@ int TMB::FillTMBRegister(unsigned long int address) {
     InsertValueIntoDataWord(cross_bx_algorithm_        ,cross_bx_algorithm_bithi        ,cross_bx_algorithm_bitlo        ,&data_word);
     InsertValueIntoDataWord(clct_use_corrected_bx_     ,clct_use_corrected_bx_bithi     ,clct_use_corrected_bx_bitlo     ,&data_word);
     InsertValueIntoDataWord(seq_trigger_nodeadtime_    ,seq_trigger_nodeadtime_bithi    ,seq_trigger_nodeadtime_bitlo    ,&data_word);
-    //
-    // 2021-10-15, Liu:temporarily add chamber number parity bit to bit[12] so that new OTMB firmware can use it
-    char *namestr=(char *)(label_.c_str());
-    int chamber_num_parity=1&namestr[strlen(namestr)-1]; // lowest bit of the last byte
-    InsertValueIntoDataWord(chamber_num_parity  ,12  ,12  ,&data_word);
+    // add chamber parity: 1 for odd chamber and 0 for even chamber
+    InsertValueIntoDataWord(chamber_num_parity_        ,chamber_num_parity_bithi        ,chamber_num_parity_bitlo        ,&data_word);
    //
   } else if ( address == run3_format_ctrl_adr ) {
    //------------------------------------------------------------------
@@ -12022,6 +12025,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     config_ok &= compareValues("TMB cross_bx_algorithm"        ,read_cross_bx_algorithm_        ,cross_bx_algorithm_        , print_errors);
     config_ok &= compareValues("TMB clct_use_corrected_bx"     ,read_clct_use_corrected_bx_     ,clct_use_corrected_bx_     , print_errors);
     config_ok &= compareValues("TMB seq_trigger_nodeadtime"    ,read_seq_trigger_nodeadtime_    ,seq_trigger_nodeadtime_    , print_errors);
+    config_ok &= compareValues("TMB chamber_num_parity"        ,read_chamber_num_parity_        ,chamber_num_parity_        , print_errors);
     }
     //
     //------------------------------------------------------------------

@@ -4449,10 +4449,14 @@ void EmuPeripheralCrateConfig::StartNewPRBS(xgi::Input * in, xgi::Output * out )
   //  
   std::cout << getLocalDateTime() << " Button: Start New PRBS Test" << std::endl;
   //
+  const int mode=4;
   if(total_crates_>0)
   {
      for(unsigned i=0; i< crateVector.size(); i++) {
-        if ( crateVector[i]->IsAlive() ) crateVector[i]->mpc()->newPRBS(1);
+       if ( crateVector[i]->IsAlive() ){
+	 std::cout << getLocalDateTime() << "        " << setw(2) << i+1 << " Starting new PRBS test in mode " << mode << " in crate " << crateVector[i]->GetLabel() << std::endl;
+	 crateVector[i]->mpc()->newPRBS( mode );
+       }
      }
      prbs_test_=true;
   }

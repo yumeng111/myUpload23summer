@@ -1672,7 +1672,7 @@ void TMB::PrintMPCFrames() {
     if (hmt_enable_){
      (*MyOutput_) << "HMT enable, nhits in centerbx   = "   << std::dec << read_hmt_nhits_trig_       << std::endl;
      (*MyOutput_) << "HMT enable, nhits bx[6,7,8]     = "   << std::dec << read_hmt_nhits_sig_        << std::endl;
-     (*MyOutput_) << "HMT enable, nhits bx[2,3,4,5]   = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
+     (*MyOutput_) << "HMT enable, nhits bx[2,3,4]     = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
      (*MyOutput_) << "HMT(cathode) Result(4bits) = 0x" << std::hex << read_hmt_cathode_trigger_       << std::endl;
     }
 
@@ -1805,7 +1805,7 @@ void TMB::PrintMPCFramesFromFIFO() {
     if (hmt_enable_ > 0){
      (*MyOutput_) << "HMT enable, nhits in centerbx   = "   << std::dec << read_hmt_nhits_trig_       << std::endl;
      (*MyOutput_) << "HMT enable, nhits bx[6,7,8]     = "   << std::dec << read_hmt_nhits_sig_        << std::endl;
-     (*MyOutput_) << "HMT enable, nhits bx[2,3,4,5]   = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
+     (*MyOutput_) << "HMT enable, nhits bx[2,3,4]     = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
      (*MyOutput_) << "HMT(cathode) Result(4bits) = 0x" << std::hex << read_hmt_cathode_trigger_       << std::endl;
     }
   }
@@ -2431,7 +2431,7 @@ void TMB::DecodeAndPrintMPCFrames(unsigned int event_n = 0) {
   if (hmt_enable_ > 0){
    (*MyOutput_) << "HMT enable, nhits in centerbx   = "   << std::dec << read_hmt_nhits_trig_       << std::endl;
    (*MyOutput_) << "HMT enable, nhits bx[6,7,8]     = "   << std::dec << read_hmt_nhits_sig_        << std::endl;
-   (*MyOutput_) << "HMT enable, nhits bx[2,3,4,5]   = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
+   (*MyOutput_) << "HMT enable, nhits bx[2,3,4]     = "   << std::dec << read_hmt_nhits_bkg_        << std::endl;
    (*MyOutput_) << "HMT(cathode) Result(4bits) = 0x" << std::hex << read_hmt_cathode_trigger_       << std::endl;
   }
   if (gem_enabled_ && run3_trig_dataformat_enable_) {

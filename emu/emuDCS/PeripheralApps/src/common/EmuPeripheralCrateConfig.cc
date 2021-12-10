@@ -8241,7 +8241,17 @@ throw (xgi::exception::Exception) {
     cgicc::Cgicc cgi(in);
 
     int tmb=0;
+    cgicc::form_iterator name = cgi.getElement("tmb");
+    if(name != cgi.getElements().end()) {
+      tmb = cgi["tmb"]->getIntegerValue();
+      std::cout << "ScanOTMBFiberDelays:  TMB " << tmb << std::endl;
+      //TMB_ = tmb;
+    } else {
+      std::cout << "ScanOTMBFiberDelays:  No tmb" << std::endl;
+    }
+
     TMB * thisTMB = tmbVector[tmb];
+
     cgicc::form_iterator name2 = cgi.getElement("sleep_time");
     int sleeptime=-1;
     if(name2 != cgi.getElements().end())
@@ -8261,9 +8271,16 @@ throw (xgi::exception::Exception) {
         return;
     }
 
+   
+    //another way to implement OTMB fiber phase scan
+    //MyTest[tmb][current_crate_].RedirectOutput(&ChamberTestsOutput[tmb][current_crate_]);
+    //MyTest[tmb][current_crate_].ScanOTMBFiberDelays(sleeptime, steptime);
+    //MyTest[tmb][current_crate_].RedirectOutput(&std::cout);
+    //
     int fine_delayloops=1000/steptime;
 
     //get the initial cfeb,gem delay/posneg value progress so we can reset them after testing
+    //std::cout <<" get the initial cfeb,gem delay/posneg value progress so we can reset them after testing "<< std::endl;
 
     thisTMB->ReadRegister(phaser_cfeb456_rxd_adr);
     thisTMB->ReadRegister(phaser_cfeb0123_rxd_adr);
@@ -8276,6 +8293,8 @@ throw (xgi::exception::Exception) {
     int initial_gem_phase       = thisTMB->GetReadGemRxClockDelay();
     int initial_gem_posneg      = thisTMB->GetReadGemRxPosNeg();
 
+    ChamberTestsOutput[tmb][current_crate_] <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME1A sync errors (cfeb5, 6, 7), ME1B sync errors(cfeb1,2,3,4)"<< std::endl;
+    std::cout <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME1A sync errors (cfeb5, 6, 7), ME1B sync errors(cfeb1,2,3,4)"<< std::endl;
     for (posneg=0; posneg<2; posneg++) {
 
         for (coarse_delay=0; coarse_delay<25; coarse_delay++) {
@@ -8358,11 +8377,12 @@ throw (xgi::exception::Exception) {
                 char *output;
 
                 asprintf(&output,
-                        "posneg=%1d, delay=%4.1f, gemA=%7d, gemB=%7d, me1A=%7d (%4d + %4d + %4d), me1B=%7d (%4d + %4d + %4d + %4d)\n",
+                        "posneg=%1d, delay=%4.1f, gemA=%7d, gemB=%7d, superch=%7d, me1A=%7d (%4d + %4d + %4d), me1B=%7d (%4d + %4d + %4d + %4d)\n",
                         posneg,
                         float(coarse_delay) + float(fine_delay)/fine_delayloops,
-                        thisTMB->GetGemCounter(0),
-                        thisTMB->GetGemCounter(1),
+                        thisTMB->GetGemCounter(0),//gemA sync error
+                        thisTMB->GetGemCounter(1),//gemB sync error
+                        thisTMB->GetGemCounter(2),//superchamber sync error
                         cfeb456_errors,
                         cfeb456_errors_vec[0],
                         cfeb456_errors_vec[1],
@@ -8384,7 +8404,11 @@ throw (xgi::exception::Exception) {
             center[i][posneg] = MyTest[tmb][current_crate_].me11_wraparound_best_center(                   errorcount[i][posneg]);
             size  [i][posneg] = MyTest[tmb][current_crate_].me11_window_width          (center[i][posneg], errorcount[i][posneg]);
         }
-        std::cout<<std::dec<<std::endl<<"for posneg "<<posneg
+        std::cout<<std::dec<<"for posneg "<<posneg
+                <<" best center for gem = " << center[0][posneg] << " width=" << size[0][posneg]<< std::endl
+                <<" best center for me1a= " << center[1][posneg] << " width=" << size[1][posneg]<< std::endl
+                <<" best center for me1b= " << center[2][posneg] << " width=" << size[2][posneg]<< std::endl;
+        ChamberTestsOutput[tmb][current_crate_] <<std::dec<<"for posneg "<<posneg
                 <<" best center for gem = " << center[0][posneg] << " width=" << size[0][posneg]<< std::endl
                 <<" best center for me1a= " << center[1][posneg] << " width=" << size[1][posneg]<< std::endl
                 <<" best center for me1b= " << center[2][posneg] << " width=" << size[2][posneg]<< std::endl;
@@ -8398,6 +8422,13 @@ throw (xgi::exception::Exception) {
     }
 
     std::cout<<std::endl<<"best posneg for gem= " << best_posneg[0] <<" center= " << center[0][best_posneg[0]]
+                                                                    <<" width=" << size[0][best_posneg[0]] << std::endl
+                        <<"best posneg for me1a= " << best_posneg[1] <<" center= " << center[1][best_posneg[1]]
+                                                                     << " width=" << size[1][best_posneg[1]] << std::endl
+                        <<"best posneg for me1b= " << best_posneg[2] <<" center= " << center[2][best_posneg[2]]
+                                                                     << " width=" << size[2][best_posneg[2]] << std::endl;
+    ChamberTestsOutput[tmb][current_crate_] <<"\n Phase scan with framemarker, final results:\n " 
+                        <<"best posneg for gem= " << best_posneg[0] <<" center= " << center[0][best_posneg[0]]
                                                                     <<" width=" << size[0][best_posneg[0]] << std::endl
                         <<"best posneg for me1a= " << best_posneg[1] <<" center= " << center[1][best_posneg[1]]
                                                                      << " width=" << size[1][best_posneg[1]] << std::endl

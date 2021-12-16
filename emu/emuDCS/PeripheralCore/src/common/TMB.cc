@@ -11085,6 +11085,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     InsertValueIntoDataWord(hmt_allow_match_,      hmt_allow_match_bithi,      hmt_allow_match_bitlo,      &data_word);
     InsertValueIntoDataWord(hmt_allow_anode_ro_,   hmt_allow_anode_ro_bithi,   hmt_allow_anode_ro_bitlo,      &data_word);
     InsertValueIntoDataWord(hmt_allow_cathode_ro_, hmt_allow_cathode_ro_bithi, hmt_allow_cathode_ro_bitlo,      &data_word);
+    InsertValueIntoDataWord(hmt_allow_match_ro_,   hmt_allow_match_ro_bithi,   hmt_allow_match_ro_bitlo,      &data_word);
     InsertValueIntoDataWord(hmt_outtime_check_,    hmt_outtime_check_bithi,    hmt_outtime_check_bitlo,      &data_word);
   //} else if ( address == lct_injection_adr ) {
   //  //------------------------------------------------------------------

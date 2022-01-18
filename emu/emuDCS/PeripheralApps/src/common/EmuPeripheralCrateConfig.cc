@@ -111,6 +111,11 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   thisMPC = 0;
   rat = 0;
   alct = 0;
+  ALCTHMTReadValue_=0;
+  ALCTHMTWriteValue1_=0;
+  ALCTHMTWriteValue2_=0;
+  ALCTHMTWriteValue3_=0;
+
   nTrigger_ = 100;
   MenuMonitor_ = 2;
   //
@@ -484,6 +489,9 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::ReadOTMBVirtex6Reg, "ReadOTMBVirtex6Reg");
   xgi::bind(this,&EmuPeripheralCrateConfig::SerialLoadCrateTMBFirmware, "SerialLoadCrateTMBFirmware");
 
+  //---------------------
+  // ALCT Utils
+  //---------------------
   xgi::bind(this,&EmuPeripheralCrateConfig::ALCTUtils,  "ALCTUtils");
   xgi::bind(this,&EmuPeripheralCrateConfig::LoadALCTFirmware, "LoadALCTFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::ALCTReadFirmware, "ALCTReadFirmware");
@@ -493,6 +501,8 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::ReadALCTSpartan6Reg, "ReadALCTSpartan6Reg");
   xgi::bind(this,&EmuPeripheralCrateConfig::VerifySpartan6ALCTFirmware, "VerifySpartan6ALCTFirmware");
   xgi::bind(this,&EmuPeripheralCrateConfig::DisableALCTTestPulse, "DisableALCTTestPulse");
+  xgi::bind(this,&EmuPeripheralCrateConfig::ReadALCTHMT, "ReadALCTHMT");
+  xgi::bind(this,&EmuPeripheralCrateConfig::WriteALCTHMT, "WriteALCTHMT");
 
   //
   //----------------------------
@@ -14673,6 +14683,41 @@ void EmuPeripheralCrateConfig::ALCTUtils(xgi::Input * in, xgi::Output * out )
 
   *out << cgicc::fieldset() << cgicc::br() << std::endl;
 
+  // ALCT HMT functions
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+  *out << std::endl ;
+  //
+  *out << cgicc::legend("ALCT High-Multiplicity Trigger (HMT) setting").set("style","color:blue") ;
+  if (alct->GetHardwareVersion()>1)
+  {
+     std::string ReadALCTHMT = toolbox::toString("/%s/ReadALCTHMT",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",ReadALCTHMT) << std::endl ;
+     sprintf(buf,"Read ALCT HMT thresholds register");
+     *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
+     sprintf(buf,"%d",tmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+     *out << " Read back value (hex): " << std::hex << ALCTHMTReadValue_ << std::dec;
+     *out << "----> HMT thresholds (decimal): " << (ALCTHMTReadValue_ & 0x3FF) << ", " << ((ALCTHMTReadValue_>>10) & 0x3FF) << ", " <<((ALCTHMTReadValue_>>20) & 0x3FF) << cgicc::br() << std::endl ;
+     *out << cgicc::form();
+
+     std::string WriteALCTHMT = toolbox::toString("/%s/WriteALCTHMT",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",WriteALCTHMT) << std::endl ;
+     *out << "Set ALCT HMT thresholds (decimal): Loose: " << std::endl;
+     sprintf(buf, "%d", ALCTHMTWriteValue1_);
+     *out << cgicc::input().set("type","text").set("style", "width: 64px").set("value",buf).set("name","HMTThresh1") << std::endl ;
+     *out << " Nominal: " << std::endl;
+     sprintf(buf, "%d", ALCTHMTWriteValue2_);
+     *out << cgicc::input().set("type","text").set("style", "width: 64px").set("value",buf).set("name","HMTThresh2") << std::endl ;
+     *out << " Tight: " << std::endl;
+     sprintf(buf, "%d", ALCTHMTWriteValue3_);
+     *out << cgicc::input().set("type","text").set("style", "width: 64px").set("value",buf).set("name","HMTThresh3") << std::endl ;
+     sprintf(buf,"%d",tmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+     sprintf(buf,"Write ALCT HMT thresholds register");
+     *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
+     *out << cgicc::form() << cgicc::br() << std::endl ;
+  }
+  *out << cgicc::fieldset() << cgicc::br() << std::endl;
         
   // other ALCT functions
   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
@@ -14693,11 +14738,12 @@ void EmuPeripheralCrateConfig::ALCTUtils(xgi::Input * in, xgi::Output * out )
   {
      std::string ReadALCTSpartan6 = toolbox::toString("/%s/ReadALCTSpartan6Reg",getApplicationDescriptor()->getURN().c_str());
      *out << cgicc::form().set("method","GET").set("action",ReadALCTSpartan6) << std::endl ;
-     sprintf(buf,"Read ALCT Mez FPGA Spartan-6 registers",tmbVector[tmb]->slot());
+     sprintf(buf,"Read ALCT Mez FPGA Spartan-6 registers");
      *out << cgicc::input().set("type","submit").set("value",buf) << std::endl ;
      sprintf(buf,"%d",tmb);
      *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
      *out << cgicc::form() << cgicc::br() << std::endl ;
+
   }
   *out << cgicc::fieldset() << cgicc::br() << std::endl;
   //
@@ -14790,6 +14836,91 @@ void EmuPeripheralCrateConfig::ReadALCTSpartan6Reg(xgi::Input * in, xgi::Output 
        OutputStringTMBStatus[tmb] << "BOOTST =" << std::hex << thisALCT->spartan6_readreg(0x20) << std::dec << std::endl;
 
        std::cout << OutputStringTMBStatus[tmb].str() << std::endl;      
+    }
+  }
+  //
+  this->ALCTUtils(in,out);
+}
+//
+void EmuPeripheralCrateConfig::ReadALCTHMT(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) 
+{
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name2 = cgi.getElement("tmb");
+  int tmb;
+  if(name2 != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "Select TMB " << tmb << std::endl;
+  } else {
+    std::cout << "No TMB" << std::endl ;
+    tmb=-1;
+  }
+  //
+  TMB * thisTMB=NULL;
+  if(tmb>=0 && (unsigned)tmb<tmbVector.size())  thisTMB = tmbVector[tmb];
+  if(thisTMB)
+  {
+    ALCTController * thisALCT = thisTMB->alctController();
+    if(thisALCT && (thisALCT->GetHardwareVersion()>=2))
+    {
+       ALCTHMTReadValue_ = thisALCT->read_HMT();
+       std::cout << "ALCT HMT register read back (hex): " << std::hex << ALCTHMTReadValue_ << std::dec << std::endl;      
+
+       // to set reasonable default values in the GUI
+       ALCTHMTWriteValue1_ = ALCTHMTReadValue_ & 0x3FF;
+       ALCTHMTWriteValue2_ = (ALCTHMTReadValue_>>10) & 0x3FF;
+       ALCTHMTWriteValue3_ = (ALCTHMTReadValue_>>20) & 0x3FF;
+    }
+  }
+  //
+  this->ALCTUtils(in,out);
+}
+//
+void EmuPeripheralCrateConfig::WriteALCTHMT(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) 
+{
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name2 = cgi.getElement("tmb");
+  int tmb;
+  if(name2 != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "Select TMB " << tmb << std::endl;
+  } else {
+    std::cout << "No TMB" << std::endl ;
+    tmb=-1;
+  }
+  //
+  TMB * thisTMB=NULL;
+  if(tmb>=0 && (unsigned)tmb<tmbVector.size())  thisTMB = tmbVector[tmb];
+  if(thisTMB)
+  {
+    cgicc::form_iterator value1 = cgi.getElement("HMTThresh1");
+    cgicc::form_iterator value2 = cgi.getElement("HMTThresh2");
+    cgicc::form_iterator value3 = cgi.getElement("HMTThresh3");
+    int HMTvalue1=-1, HMTvalue2=-1, HMTvalue3=-1;
+    if(value1 != cgi.getElements().end()) {
+        HMTvalue1 = strtol(cgi["HMTThresh1"]->getValue().c_str(),NULL,10);
+        if(HMTvalue1!=-1) ALCTHMTWriteValue1_=HMTvalue1;
+    }
+    if(value2 != cgi.getElements().end()) {
+        HMTvalue2 = strtol(cgi["HMTThresh2"]->getValue().c_str(),NULL,10);
+        if(HMTvalue2!=-1) ALCTHMTWriteValue2_=HMTvalue2;
+    }
+    if(value3 != cgi.getElements().end()) {
+        HMTvalue3 = strtol(cgi["HMTThresh3"]->getValue().c_str(),NULL,10);
+        if(HMTvalue3!=-1) ALCTHMTWriteValue3_=HMTvalue3;
+    }
+
+    ALCTController * thisALCT = thisTMB->alctController();
+    if(thisALCT && (thisALCT->GetHardwareVersion()>=2))
+    {
+       int tmp=ALCTHMTWriteValue1_ + (ALCTHMTWriteValue2_<<10) + (ALCTHMTWriteValue3_<<20);
+       thisALCT->write_HMT(tmp);
+       std::cout << "Write ALCT HMT register with (hex): " << std::hex << tmp << std::dec << std::endl;      
     }
   }
   //

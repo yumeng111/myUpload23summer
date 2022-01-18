@@ -5308,5 +5308,18 @@ unsigned ALCTController::spartan6_readreg(int reg)
         return 0;
      }
 
+    int ALCTController::read_HMT()
+    {
+        int tmp=-1;
+        fastcontrol_read( ALCT_FAST_RD_HMT_REG, RegSizeAlctFastFpga_RD_HMT_REG, (char *)&tmp);
+        return tmp;
+    }
+
+    void ALCTController::write_HMT(int hmt)
+    {
+        int tmp=hmt;
+        fastcontrol_write( ALCT_FAST_WRT_HMT_REG, RegSizeAlctFastFpga_WRT_HMT_REG, (char *)&tmp);
+    }
+
   } // namespace emu::pc
   } // namespace emu

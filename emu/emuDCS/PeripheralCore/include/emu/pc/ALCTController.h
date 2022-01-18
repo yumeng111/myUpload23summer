@@ -703,6 +703,8 @@ class ALCTController : public EmuLogger
   unsigned spartan6_readreg(int reg);
   void read_all_adc();  // data stored in array adc_out[16]
   double get_adc(int channel);  
+  int read_HMT();
+  void write_HMT(int hmt);
 
   int dummy_test();
   

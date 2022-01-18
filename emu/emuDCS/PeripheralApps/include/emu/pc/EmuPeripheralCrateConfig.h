@@ -174,6 +174,7 @@ protected:
   int MPCRegisterRead_, MPCRegisterValue_, MPCRegisterWrite_, MPCWriteValue_;
   int DMBRegisterRead_, DMBRegisterValue_, DMBRegisterWrite_, DMBWriteValue_;
   int TMBRegisterRead_, TMBRegisterValue_, TMBRegisterWrite_, TMBWriteValue_;
+  int ALCTHMTReadValue_, ALCTHMTWriteValue1_, ALCTHMTWriteValue2_, ALCTHMTWriteValue3_;
   std::vector<TMB*>   tmbVector;
   std::vector<TMBTester>   tmbTestVector;
   std::vector<DAQMB*> dmbVector;
@@ -545,6 +546,8 @@ private:
   void VerifySpartan6ALCTFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void ALCTReadFirmware(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void DisableALCTTestPulse(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void ReadALCTHMT(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
+  void WriteALCTHMT(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 
   
   //
   // VCC utils

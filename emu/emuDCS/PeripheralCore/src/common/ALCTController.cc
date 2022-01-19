@@ -5310,6 +5310,9 @@ unsigned ALCTController::spartan6_readreg(int reg)
 
     int ALCTController::read_HMT()
     {
+        //restore idle;
+        jtag_RestoreIdle(ChainAlctFastMezz);
+
         int tmp=-1;
         fastcontrol_read( ALCT_FAST_RD_HMT_REG, RegSizeAlctFastFpga_RD_HMT_REG, (char *)&tmp);
         return tmp;

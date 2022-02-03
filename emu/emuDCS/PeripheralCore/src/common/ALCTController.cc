@@ -4859,6 +4859,10 @@ int ALCTController::load_firmware(const char *mcsfile, int broadcast)
    }
    int mcssize=tmb_->read_mcs(bufin, fin);
    fclose(fin);
+
+   // if read_mcs() aborted, return with error.
+   if(mcssize<0) return mcssize;
+
    FIRMWARE_SIZE=mcssize;
    int mcssize2=0;
    if(mcssize==PROM_SIZE)
@@ -5046,6 +5050,10 @@ void ALCTController::program_fpga(const char *mcsfile)
    }
    int mcssize=tmb_->read_mcs(bufin, fin);
    fclose(fin);
+
+   // if read_mcs() aborted, return with error.
+   if(mcssize<0) return;
+
    if((hardware_version_==2 || hardware_version_==3) && mcssize==PROM_SIZE)
    {   // try to read a 2nd file if it exists
       filename[strlen(filename)-5]++;

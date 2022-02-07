@@ -684,6 +684,18 @@ class ALCTController : public EmuLogger
   void Set_PulseDirection(std::string afebs_or_strips); //afebs_or_strips = [afebs,strips]
   std::string Get_PulseDirection(); 
   //
+  // HMT thresholds
+  inline void SetHmtEnable(int e) { alct_hmt_enable_ = e?1:0; }
+  inline int GetHmtEnable() { return alct_hmt_enable_; }
+  inline void SetHmtThresh1(int th) { alct_hmt_thresh1_=th & 0x3FF; } 
+  inline int GetHmtThresh1() { return alct_hmt_thresh1_; }
+  inline void SetHmtThresh2(int th) { alct_hmt_thresh2_=th & 0x3FF; } 
+  inline int GetHmtThresh2() { return alct_hmt_thresh2_; }
+  inline void SetHmtThresh3(int th) { alct_hmt_thresh3_=th & 0x3FF; } 
+  inline int GetHmtThresh3() { return alct_hmt_thresh3_; }
+  inline int GetReadHmtThresh1() { return read_alct_hmt_thresh1_; }  
+  inline int GetReadHmtThresh2() { return read_alct_hmt_thresh2_; }
+  inline int GetReadHmtThresh3() { return read_alct_hmt_thresh3_; }
   //
   inline TMB * GetTMB(){ return tmb_;}
   //
@@ -708,75 +720,6 @@ class ALCTController : public EmuLogger
 
   int dummy_test();
   
-protected:
-  //
-  //
-private:
-  //
-  TMB * tmb_ ;
-  int debug_;
-  //
-  int hardware_version_;
-  int alct_configuration_status_;
-  int number_of_configuration_reads_;
-  //
-  //
-  ////////////////////////////////////////////////////////////////////
-  // Private variables specific to the chamber-type:                //
-  ////////////////////////////////////////////////////////////////////
-  void SetChamberCharacteristics_(std::string chamberType);
-  std::string chamber_type_string_;  
-  int NumberOfWireGroupsInChamber_;
-  int NumberOfChannelsPerLayer_;
-  //
-  ///////////////////////////////////////////////////////////////////////////////////
-  // transformation from "user-interface" to "hardware-interface" delay chip index
-  //////////////////////////////////////////////////////////////////////////////////
-  int UserIndexToHardwareIndex_(int index);
-  //
-  ////////////////////////////////////////////////////////////////////
-  // Private variables specific to the ALCT-type:                   //
-  ////////////////////////////////////////////////////////////////////
-  void SetFastControlAlctType_(int type_of_fast_control_alct);
-  int NumberOfChannelsInAlct_;
-  int NumberOfGroupsOfDelayChips_;
-  int NumberOfCollisionPatternGroups_; 
-  int RegSizeAlctFastFpga_RD_HOTCHAN_MASK_;
-  int RegSizeAlctFastFpga_WRT_HOTCHAN_MASK_;
-  int RegSizeAlctFastFpga_RD_COLLISION_MASK_REG_;
-  int RegSizeAlctFastFpga_WRT_COLLISION_MASK_REG_;
-  int RegSizeAlctFastFpga_RD_DELAYLINE_CTRL_REG_;
-  int RegSizeAlctFastFpga_WRT_DELAYLINE_CTRL_REG_;
-  //
-  void SetSlowControlAlctType_(int type_of_slow_control_alct);
-  int NumberOfAFEBs_;
-  int lowest_afeb_index_;
-  int highest_afeb_index_;
-  //
-  //////////////////////////////////////////////////////
-  // Slow-control registers private variables:        //
-  //////////////////////////////////////////////////////
-  char read_slowcontrol_id_[RegSizeAlctSlowFpga_RD_ID_REG/8+1];
-  int  alct_slow_prom_idcode_;
-  //
-  int write_afeb_threshold_[MAX_NUM_AFEBS];
-  int read_afeb_threshold_[MAX_NUM_AFEBS];
-  float read_alct_temperature_celcius_;
-  float read_alct_1p8_voltage_;
-  float read_alct_3p3_voltage_;
-  float read_alct_5p5a_voltage_;
-  float read_alct_5p5b_voltage_;
-  float read_alct_1p8_current_;
-  float read_alct_3p3_current_;
-  float read_alct_5p5a_current_;
-  float read_alct_5p5b_current_;
-  //
-  int read_adc_(int ADCchipNumber, int ADCchannel);
-  float ConvertADCtoVoltage_(int adc_value);  
-  float ConvertADCtoCurrent_(int adc_value);
-  float ConvertADCtoTemperature_(int adc_value);
-  //
-public:
   //////////////////////////
   //TESTPULSE POWERSWITCH
   //////////////////////////
@@ -848,7 +791,74 @@ public:
   int write_standby_register_[RegSizeAlctSlowFpga_WRT_STANDBY_REG];
   int read_standby_register_[RegSizeAlctSlowFpga_RD_STANDBY_REG];
 
+  void WriteHmtThresholds_();
+  void ReadHmtThresholds_();
+  void PrintHmtThresholds_();
+
 private:
+  //
+  TMB * tmb_ ;
+  int debug_;
+  //
+  int hardware_version_;
+  int alct_configuration_status_;
+  int number_of_configuration_reads_;
+  //
+  //
+  ////////////////////////////////////////////////////////////////////
+  // Private variables specific to the chamber-type:                //
+  ////////////////////////////////////////////////////////////////////
+  void SetChamberCharacteristics_(std::string chamberType);
+  std::string chamber_type_string_;  
+  int NumberOfWireGroupsInChamber_;
+  int NumberOfChannelsPerLayer_;
+  //
+  ///////////////////////////////////////////////////////////////////////////////////
+  // transformation from "user-interface" to "hardware-interface" delay chip index
+  //////////////////////////////////////////////////////////////////////////////////
+  int UserIndexToHardwareIndex_(int index);
+  //
+  ////////////////////////////////////////////////////////////////////
+  // Private variables specific to the ALCT-type:                   //
+  ////////////////////////////////////////////////////////////////////
+  void SetFastControlAlctType_(int type_of_fast_control_alct);
+  int NumberOfChannelsInAlct_;
+  int NumberOfGroupsOfDelayChips_;
+  int NumberOfCollisionPatternGroups_; 
+  int RegSizeAlctFastFpga_RD_HOTCHAN_MASK_;
+  int RegSizeAlctFastFpga_WRT_HOTCHAN_MASK_;
+  int RegSizeAlctFastFpga_RD_COLLISION_MASK_REG_;
+  int RegSizeAlctFastFpga_WRT_COLLISION_MASK_REG_;
+  int RegSizeAlctFastFpga_RD_DELAYLINE_CTRL_REG_;
+  int RegSizeAlctFastFpga_WRT_DELAYLINE_CTRL_REG_;
+  //
+  void SetSlowControlAlctType_(int type_of_slow_control_alct);
+  int NumberOfAFEBs_;
+  int lowest_afeb_index_;
+  int highest_afeb_index_;
+  //
+  //////////////////////////////////////////////////////
+  // Slow-control registers private variables:        //
+  //////////////////////////////////////////////////////
+  char read_slowcontrol_id_[RegSizeAlctSlowFpga_RD_ID_REG/8+1];
+  int  alct_slow_prom_idcode_;
+  //
+  int write_afeb_threshold_[MAX_NUM_AFEBS];
+  int read_afeb_threshold_[MAX_NUM_AFEBS];
+  float read_alct_temperature_celcius_;
+  float read_alct_1p8_voltage_;
+  float read_alct_3p3_voltage_;
+  float read_alct_5p5a_voltage_;
+  float read_alct_5p5b_voltage_;
+  float read_alct_1p8_current_;
+  float read_alct_3p3_current_;
+  float read_alct_5p5a_current_;
+  float read_alct_5p5b_current_;
+  //
+  int read_adc_(int ADCchipNumber, int ADCchannel);
+  float ConvertADCtoVoltage_(int adc_value);  
+  float ConvertADCtoCurrent_(int adc_value);
+  float ConvertADCtoTemperature_(int adc_value);
   //
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // vectors of bits for the fast-control registers, variables in these registers, and methods to translate between the two... //
@@ -878,6 +888,13 @@ private:
   //
   int expected_alct_fpga_idcode_;
   //
+  int alct_hmt_enable_;
+  int alct_hmt_thresh1_;
+  int alct_hmt_thresh2_;
+  int alct_hmt_thresh3_;
+  int read_alct_hmt_thresh1_;
+  int read_alct_hmt_thresh2_;
+  int read_alct_hmt_thresh3_;
   //
   int write_asic_delays_and_patterns_[RegSizeAlctFastFpga_WRT_ASIC_DELAY_LINES]; 
   int write_asic_delay_[MAX_NUM_AFEBS];

@@ -5318,9 +5318,6 @@ unsigned ALCTController::spartan6_readreg(int reg)
 
     int ALCTController::read_HMT()
     {
-        //restore idle;
-        jtag_RestoreIdle(ChainAlctFastFpga);
-
         int tmp=-1;
         fastcontrol_read( ALCT_FAST_RD_HMT_REG, RegSizeAlctFastFpga_RD_HMT_REG, (char *)&tmp);
         return tmp;
@@ -5330,6 +5327,30 @@ unsigned ALCTController::spartan6_readreg(int reg)
     {
         int tmp=hmt;
         fastcontrol_write( ALCT_FAST_WRT_HMT_REG, RegSizeAlctFastFpga_WRT_HMT_REG, (char *)&tmp);
+    }
+
+    void ALCTController::ReadHmtThresholds_()
+    {
+        int hmt=read_HMT();
+        read_alct_hmt_thresh1_ = (hmt >> alct_hmt_thresh1_bitlo) & 0x3FF;
+        read_alct_hmt_thresh2_ = (hmt >> alct_hmt_thresh2_bitlo) & 0x3FF;
+        read_alct_hmt_thresh3_ = (hmt >> alct_hmt_thresh3_bitlo) & 0x3FF;
+    }
+
+    void ALCTController::WriteHmtThresholds_()
+    {
+        int hmt = (alct_hmt_thresh1_ << alct_hmt_thresh1_bitlo) 
+                + (alct_hmt_thresh2_ << alct_hmt_thresh2_bitlo)
+                + (alct_hmt_thresh3_ << alct_hmt_thresh3_bitlo);
+        write_HMT(hmt);
+    }
+
+    void ALCTController::PrintHmtThresholds_() 
+    {
+        (*MyOutput_) << "ALCT HMT Thresholds: " << std::dec
+	       << "Loose: "   << read_alct_hmt_thresh1_  << " "
+	       << "Nominal: " << read_alct_hmt_thresh2_  << " "
+	       << "Tight: "   << read_alct_hmt_thresh3_  << std::endl;
     }
 
   } // namespace emu::pc

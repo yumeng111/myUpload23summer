@@ -75,8 +75,8 @@ const int ALCT_FAST_RD_CONFIG_REG          =   0x6;
 const int ALCT_FAST_WRT_CONFIG_REG         =   0x7;
 const int ALCT_FAST_RD_ADC_REG             =   0x8;
 const int ALCT_FAST_WRT_ADC_REG            =   0x9;
-const int ALCT_FAST_RD_HMT_REG             =   0xa;
-const int ALCT_FAST_WRT_HMT_REG            =   0xb;
+const int ALCT_FAST_RD_HMT_REG             =   0x12;
+const int ALCT_FAST_WRT_HMT_REG            =   0xf;
 const int ALCT_FAST_WRT_ASIC_DELAY_LINES   =   0xd;
 const int ALCT_FAST_RD_ASIC_DELAY_LINES    =   0xe;
 const int ALCT_FAST_RD_COLLISION_MASK_REG  =  0x13;
@@ -694,6 +694,12 @@ const int sn_select_bitlo                  = 68;
 const int sn_select_bithi                  = 68;
 const int sn_select_default                = 0;
 //
+const int alct_hmt_thresh1_bitlo           =  0;
+const int alct_hmt_thresh1_size            = 10;
+const int alct_hmt_thresh2_bitlo           = 10;
+const int alct_hmt_thresh2_size            = 10;
+const int alct_hmt_thresh3_bitlo           = 20;
+const int alct_hmt_thresh3_size            = 10;
 //
 /////////////////////////////////////////////////////
 // ASIC delay/pattern chip characteristics/bit-maps:

@@ -65,6 +65,7 @@ namespace emu{
       xdata::String partition_;
       xdata::String actionRequestorId_;
       xdata::String fedEnableMask_;
+      xdata::String ttcPartitionMap_;
       const xdaq::ApplicationDescriptor* const tcdsApplicationDescriptor_;
       RunType_t runType_;
       auto_ptr<TCDSHardwareLease> hardwareLease_;

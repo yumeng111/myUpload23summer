@@ -31,7 +31,14 @@ emu::supervisor::PMControl& emu::supervisor::PMControl::configure( xdata::String
   fedEnableMask_ = fedId.toString() + "&0%";
 
   //
-  // Now configure with that FED enable mask.
+  // Next, set the TTC partition map
+  //
+  // See https://cmsdoc.cern.ch/cms/TRIDAS/RCMS/Docs/Manuals/manuals/level1FMFSM_1_10_2.pdf
+  // Jeroen 2022-02-11: "All partitions known to the CPMController/LPMController need to be specified in the TTC partition vector."
+  ttcPartitionMap_ = "CSC+&3%CSC-&3%GEM+&0%GEM-&0%GEMPILOT&0%";
+
+  //
+  // Now configure with that FED enable mask and TTC partition map.
   //
   hardwareConfiguration_ = hardwareConfigurationString;
   string initialState( waitForASteadyState( 20 ) );
@@ -39,7 +46,8 @@ emu::supervisor::PMControl& emu::supervisor::PMControl::configure( xdata::String
     messenger_->sendCommand( tcdsApplicationDescriptor_, "Configure",
 			     emu::soap::Parameters()
 			     .add( "hardwareConfigurationString", &hardwareConfiguration_ )
-			     .add( "fedEnableMask"              , &fedEnableMask_         ), 
+			     .add( "fedEnableMask"              , &fedEnableMask_         ) 
+			     .add( "ttcPartitionMap"            , &ttcPartitionMap_       ), 
 			     emu::soap::Attributes().add( "actionRequestorId", &actionRequestorId_ ) );
   }
   else{

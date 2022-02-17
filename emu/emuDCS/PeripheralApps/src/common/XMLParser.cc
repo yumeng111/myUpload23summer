@@ -857,6 +857,10 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
 	if (fillInt("alct_trig_info_en"        ,value)) { alct_->SetTriggerInfoEnable(value);        }
 	if (fillInt("alct_sn_select"           ,value)) { alct_->SetSnSelect(value);                 }
 	if (fillInt("alct_testpulse_amplitude" ,value)) { alct_->SetTestpulseAmplitude(value);       }
+        if (fillInt("alct_hmt_enable"          ,value)) { alct_->SetHmtEnable(value);}
+        if (fillInt("alct_hmt_thresh1"         ,value)) { alct_->SetHmtThresh1(value);}
+        if (fillInt("alct_hmt_thresh2"         ,value)) { alct_->SetHmtThresh2(value);}
+        if (fillInt("alct_hmt_thresh3"         ,value)) { alct_->SetHmtThresh3(value);}
 	std::string on_or_off;
 	if (fillString("alct_testpulse_invert",on_or_off)) { alct_->Set_InvertPulse(on_or_off); }
 	std::string afebs_or_strips;

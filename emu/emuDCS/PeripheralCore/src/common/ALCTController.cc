@@ -728,6 +728,10 @@ void ALCTController::configure(int c) {
   //  WriteTriggerRegister_();
   //    PrintTriggerRegister_();
   //
+  // ALCT HMT Thresholds
+  if( GetHmtEnable() )
+     WriteHmtThresholds_();
+  //
   tmb_->SetCheckJtagWrite(true);                //re-enable the checking of JTAG writes (default)
   //
   // The flag to fill the VME register vector is set => program the user PROM:
@@ -797,6 +801,9 @@ void ALCTController::PrintALCTConfiguration() {
   //
   PrintTestpulseStripMask_();
   //
+  if( GetHmtEnable() )
+     PrintHmtThresholds_();
+  //
   PrintTriggerRegister_();
   //
   return;
@@ -828,6 +835,9 @@ void ALCTController::ReadALCTConfiguration() {
   ReadTestpulseGroupMask_();
   //
   ReadTestpulseStripMask_();
+  //
+  if( GetHmtEnable() )
+     ReadHmtThresholds_();
   //
   ReadTriggerRegister_();
   //
@@ -5318,6 +5328,7 @@ unsigned ALCTController::spartan6_readreg(int reg)
 
     int ALCTController::read_HMT()
     {
+        jtag_RestoreIdle(ChainAlctFastFpga);
         int tmp=-1;
         fastcontrol_read( ALCT_FAST_RD_HMT_REG, RegSizeAlctFastFpga_RD_HMT_REG, (char *)&tmp);
         return tmp;
@@ -5329,12 +5340,13 @@ unsigned ALCTController::spartan6_readreg(int reg)
         fastcontrol_write( ALCT_FAST_WRT_HMT_REG, RegSizeAlctFastFpga_WRT_HMT_REG, (char *)&tmp);
     }
 
-    void ALCTController::ReadHmtThresholds_()
+    int ALCTController::ReadHmtThresholds_()
     {
         int hmt=read_HMT();
         read_alct_hmt_thresh1_ = (hmt >> alct_hmt_thresh1_bitlo) & 0x3FF;
         read_alct_hmt_thresh2_ = (hmt >> alct_hmt_thresh2_bitlo) & 0x3FF;
         read_alct_hmt_thresh3_ = (hmt >> alct_hmt_thresh3_bitlo) & 0x3FF;
+        return hmt;
     }
 
     void ALCTController::WriteHmtThresholds_()
@@ -5342,7 +5354,26 @@ unsigned ALCTController::spartan6_readreg(int reg)
         int hmt = (alct_hmt_thresh1_ << alct_hmt_thresh1_bitlo) 
                 + (alct_hmt_thresh2_ << alct_hmt_thresh2_bitlo)
                 + (alct_hmt_thresh3_ << alct_hmt_thresh3_bitlo);
-        write_HMT(hmt);
+
+        if (debug_)
+           (*MyOutput_) << "ALCT: WRITE HMT THRESHOLDS (hex) " << std::hex << hmt << std::dec << std::endl;
+
+        // this is a silly way to store value in array, but necessary in order to use ShfIR_ShfDR(), 
+        //  which is in turn necessary to save the VME sequences in the User Prom. 
+        int hmtbits[31];
+        for(int i=0; i<RegSizeAlctFastFpga_WRT_HMT_REG; i++) 
+        {   
+            hmtbits[i]= hmt & 1;
+            hmt >>= 1;
+        }
+        tmb_->setup_jtag(ChainAlctFastFpga);  
+        tmb_->ShfIR_ShfDR(ChipLocationAlctFastFpga,
+		          ALCT_FAST_WRT_HMT_REG,
+		          RegSizeAlctFastFpga_WRT_HMT_REG,
+		          hmtbits);  
+        usleep(100);
+  
+        return;
     }
 
     void ALCTController::PrintHmtThresholds_() 

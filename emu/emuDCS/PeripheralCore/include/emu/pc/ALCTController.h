@@ -792,7 +792,7 @@ class ALCTController : public EmuLogger
   int read_standby_register_[RegSizeAlctSlowFpga_RD_STANDBY_REG];
 
   void WriteHmtThresholds_();
-  void ReadHmtThresholds_();
+  int ReadHmtThresholds_();
   void PrintHmtThresholds_();
 
 private:

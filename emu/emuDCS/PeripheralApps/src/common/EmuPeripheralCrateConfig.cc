@@ -14697,19 +14697,19 @@ void EmuPeripheralCrateConfig::ALCTUtils(xgi::Input * in, xgi::Output * out )
      sprintf(buf,"%d",tmb);
      *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
      *out << " Read back value (hex): " << std::hex << ALCTHMTReadValue_ << std::dec;
-     *out << "----> HMT thresholds (decimal): " << (ALCTHMTReadValue_ & 0x3FF) << ", " << ((ALCTHMTReadValue_>>10) & 0x3FF) << ", " <<((ALCTHMTReadValue_>>20) & 0x3FF) << cgicc::br() << std::endl ;
+     *out << "----> HMT thresholds (decimal): " << alct->GetReadHmtThresh1() << ", " << alct->GetReadHmtThresh2() << ", " << alct->GetReadHmtThresh3() << cgicc::br() << std::endl ;
      *out << cgicc::form();
 
      std::string WriteALCTHMT = toolbox::toString("/%s/WriteALCTHMT",getApplicationDescriptor()->getURN().c_str());
      *out << cgicc::form().set("method","GET").set("action",WriteALCTHMT) << std::endl ;
      *out << "Set ALCT HMT thresholds (decimal): Loose: " << std::endl;
-     sprintf(buf, "%d", ALCTHMTWriteValue1_);
+     sprintf(buf, "%d", alct->GetHmtThresh1());
      *out << cgicc::input().set("type","text").set("style", "width: 64px").set("value",buf).set("name","HMTThresh1") << std::endl ;
      *out << " Nominal: " << std::endl;
-     sprintf(buf, "%d", ALCTHMTWriteValue2_);
+     sprintf(buf, "%d", alct->GetHmtThresh2());
      *out << cgicc::input().set("type","text").set("style", "width: 64px").set("value",buf).set("name","HMTThresh2") << std::endl ;
      *out << " Tight: " << std::endl;
-     sprintf(buf, "%d", ALCTHMTWriteValue3_);
+     sprintf(buf, "%d", alct->GetHmtThresh3());
      *out << cgicc::input().set("type","text").set("style", "width: 64px").set("value",buf).set("name","HMTThresh3") << std::endl ;
      sprintf(buf,"%d",tmb);
      *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
@@ -14865,13 +14865,8 @@ void EmuPeripheralCrateConfig::ReadALCTHMT(xgi::Input * in, xgi::Output * out )
     ALCTController * thisALCT = thisTMB->alctController();
     if(thisALCT && (thisALCT->GetHardwareVersion()>=2))
     {
-       ALCTHMTReadValue_ = thisALCT->read_HMT();
-       std::cout << "ALCT HMT register read back (hex): " << std::hex << ALCTHMTReadValue_ << std::dec << std::endl;      
-
-       // to set reasonable default values in the GUI
-       ALCTHMTWriteValue1_ = ALCTHMTReadValue_ & 0x3FF;
-       ALCTHMTWriteValue2_ = (ALCTHMTReadValue_>>10) & 0x3FF;
-       ALCTHMTWriteValue3_ = (ALCTHMTReadValue_>>20) & 0x3FF;
+       ALCTHMTReadValue_ = thisALCT->ReadHmtThresholds_();
+       std::cout << "ALCT HMT register read back (hex): " << std::hex << ALCTHMTReadValue_ << std::dec << std::endl;
     }
   }
   //

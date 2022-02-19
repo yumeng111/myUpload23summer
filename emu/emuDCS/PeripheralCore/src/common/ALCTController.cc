@@ -1025,6 +1025,10 @@ void ALCTController::CheckALCTConfiguration(int max_number_of_reads) {
 			       read_accelerator_pretrig_thresh_,write_accelerator_pretrig_thresh_,print_errors);
     config_ok &= compareValues("alct_accel_pattern_thresh",
 			       read_accelerator_pattern_thresh_,write_accelerator_pattern_thresh_,print_errors);
+    // for HMT thresholds
+    config_ok &= compareValues("alct_hmt_thresh1"     ,read_alct_hmt_thresh1_   ,alct_hmt_thresh1_   ,print_errors);
+    config_ok &= compareValues("alct_hmt_thresh2"     ,read_alct_hmt_thresh2_   ,alct_hmt_thresh2_   ,print_errors);
+    config_ok &= compareValues("alct_hmt_thresh3"     ,read_alct_hmt_thresh3_   ,alct_hmt_thresh3_   ,print_errors);    
     //
     for (int layer=0; layer<MAX_NUM_LAYERS; layer++) 
       for (int channel=0; channel<GetNumberOfChannelsPerLayer(); channel++) {
@@ -5360,7 +5364,7 @@ unsigned ALCTController::spartan6_readreg(int reg)
 
         // this is a silly way to store value in array, but necessary in order to use ShfIR_ShfDR(), 
         //  which is in turn necessary to save the VME sequences in the User Prom. 
-        int hmtbits[31];
+        int hmtbits[RegSizeAlctFastFpga_WRT_HMT_REG];
         for(int i=0; i<RegSizeAlctFastFpga_WRT_HMT_REG; i++) 
         {   
             hmtbits[i]= hmt & 1;

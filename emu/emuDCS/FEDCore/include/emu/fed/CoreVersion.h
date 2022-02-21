@@ -10,7 +10,7 @@
 namespace EmuFEDCore {
 	const std::string project     = "emu";
 	const std::string package     = "EmuFEDCore";
-	const std::string versions    = "15.01.00";
+	const std::string versions    = "15.02.00";
 	const std::string description = "Emu (CSC) FED Core Libraries";
 
 	const std::string summary     = "Core libraries for controlling Front End Device (FED) crates for the CMS Emu (CSC) subdetector";

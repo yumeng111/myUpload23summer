@@ -394,6 +394,7 @@ ALCTController::ALCTController(TMB * tmb, std::string chamberType) :  EmuLogger(
   debug_ = 0;
   //
   alct_configuration_status_ = -1;
+  alct_hmt_enable_ = 0;
   //
   expected_fastcontrol_backward_forward_  = DO_NOT_CARE;
   expected_fastcontrol_negative_positive_ = DO_NOT_CARE;
@@ -1025,10 +1026,13 @@ void ALCTController::CheckALCTConfiguration(int max_number_of_reads) {
 			       read_accelerator_pretrig_thresh_,write_accelerator_pretrig_thresh_,print_errors);
     config_ok &= compareValues("alct_accel_pattern_thresh",
 			       read_accelerator_pattern_thresh_,write_accelerator_pattern_thresh_,print_errors);
-    // for HMT thresholds
-    config_ok &= compareValues("alct_hmt_thresh1"     ,read_alct_hmt_thresh1_   ,alct_hmt_thresh1_   ,print_errors);
-    config_ok &= compareValues("alct_hmt_thresh2"     ,read_alct_hmt_thresh2_   ,alct_hmt_thresh2_   ,print_errors);
-    config_ok &= compareValues("alct_hmt_thresh3"     ,read_alct_hmt_thresh3_   ,alct_hmt_thresh3_   ,print_errors);    
+    if( GetHmtEnable() )  
+    {   
+       // for HMT thresholds
+       config_ok &= compareValues("alct_hmt_thresh1"     ,read_alct_hmt_thresh1_   ,alct_hmt_thresh1_   ,print_errors);
+       config_ok &= compareValues("alct_hmt_thresh2"     ,read_alct_hmt_thresh2_   ,alct_hmt_thresh2_   ,print_errors);
+       config_ok &= compareValues("alct_hmt_thresh3"     ,read_alct_hmt_thresh3_   ,alct_hmt_thresh3_   ,print_errors);    
+    }
     //
     for (int layer=0; layer<MAX_NUM_LAYERS; layer++) 
       for (int channel=0; channel<GetNumberOfChannelsPerLayer(); channel++) {

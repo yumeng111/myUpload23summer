@@ -665,7 +665,7 @@ function Panel( name, refreshPeriod, dataURL ) {
 
 		    var inputLCTRate = 0;
 		    $.each(row, function(name,value){
-			if ( name.substr(0,8) == 'rateLct_' ) inputLCTRate += value;
+			if ( name.substr(0,13) == 'algo_rateLct_' ) inputLCTRate += value;
 			// console.log( name+":"+value+"  " );
 		    });
 		    if (inputLCTRate < minInputLCTRate){
@@ -681,7 +681,7 @@ function Panel( name, refreshPeriod, dataURL ) {
     		    sortedInputTriggerSectors.push({name: row.id, value: inputLCTRate});
 		    totalInputLCTRate += inputLCTRate;
 			
-    		    var outputTrackRate = row.outputTrack0Rate + row.outputTrack1Rate + row.outputTrack2Rate;
+    		    var outputTrackRate = row.algo_outputAllTrackRate;
     		    if (outputTrackRate < minOutputTrackRate){
     			minOutputTrackRate = outputTrackRate;
     			minOutputTriggerSector = row.id;
@@ -694,6 +694,11 @@ function Panel( name, refreshPeriod, dataURL ) {
     		    }
     		    sortedOutputTriggerSectors.push({name: row.id, value: outputTrackRate});
     		    totalOutputTrackRate += outputTrackRate;
+    		});
+    		sortedInputTriggerSectors.sort(function(a,b){
+    		    if(a.name < b.name) return -1;
+    		    if(a.name > b.name) return 1;
+    		    return 0;
     		});
     		sortedOutputTriggerSectors.sort(function(a,b){
     		    if(a.name < b.name) return -1;

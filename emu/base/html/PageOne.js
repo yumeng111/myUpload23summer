@@ -807,7 +807,7 @@ function Panel( name, refreshPeriod, dataURL ) {
 		$.getJSON('http://tcds-control-csc-'+TCDS_system+'.cms:2104/urn:xdaq-application:service=lpm-csc-1-'+TCDS_system+'/update', function(json){
 		    var time = toUnixTime( json["Application state"]["Latest monitoring update time"] );
 		    $('#'+self.name+'-td_localDateTime').text( timeToString( time ) );
-		    var L1As = json["itemset-trigger-counter"]["# L1As"];
+		    var L1As = json["itemset-trigger-counter"]["Total # L1As in the current run"];
 		    self.trends[2].add( time, Number(L1As) );
 		    var graphPoint = { name:'CSC LPM L1A rate [Hz]', time:time, value:self.trends[2].rate( 2 ) };
 		    // console.log("# L1As" + L1As);

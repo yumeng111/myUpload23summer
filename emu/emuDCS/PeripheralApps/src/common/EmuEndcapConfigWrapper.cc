@@ -725,6 +725,10 @@ throw (emu::exception::ConfigurationException)
   if (conf->has("ALCT_LAYER4_HOT_CHANN_MASK"))     alct_->SetALCTHotChanMaskString(4, getString(conf, "ALCT_LAYER4_HOT_CHANN_MASK"));
   if (conf->has("ALCT_LAYER5_HOT_CHANN_MASK"))     alct_->SetALCTHotChanMaskString(5, getString(conf, "ALCT_LAYER5_HOT_CHANN_MASK"));
   if (conf->has("ALCT_ZERO_SUPPRESS"))             alct_->SetAlctZeroSuppress( getInt(conf, "ALCT_ZERO_SUPPRESS"));
+  if (conf->has("ALCT_HMT_ENABLE"))                alct_->SetHmtEnable( getInt(conf, "ALCT_HMT_ENABLE"));
+  if (conf->has("ALCT_HMT_THRESH1"))               alct_->SetHmtThresh1( getInt(conf, "ALCT_HMT_THRESH1"));
+  if (conf->has("ALCT_HMT_THRESH2"))               alct_->SetHmtThresh2( getInt(conf, "ALCT_HMT_THRESH2"));
+  if (conf->has("ALCT_HMT_THRESH3"))               alct_->SetHmtThresh3( getInt(conf, "ALCT_HMT_THRESH3"));
   if (conf->has("HARDWARE_VERSION"))               alct_->SetHardwareVersion( getInt(conf, "HARDWARE_VERSION"));
 
   if(verbose_)

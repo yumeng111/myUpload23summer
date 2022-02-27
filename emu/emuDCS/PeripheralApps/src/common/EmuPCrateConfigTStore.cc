@@ -2736,6 +2736,10 @@ void EmuPCrateConfigTStore::copyALCTToTable(xdata::Table &newRows, ALCTControlle
   std::string ALCT_TRIG_INFO_EN("ALCT_TRIG_INFO_EN");
   std::string ALCT_TRIG_MODE("ALCT_TRIG_MODE");
   std::string ALCT_ZERO_SUPPRESS("ALCT_ZERO_SUPPRESS");
+  std::string ALCT_HMT_ENABLE("ALCT_HMT_ENABLE");
+  std::string ALCT_HMT_THRESH1("ALCT_HMT_THRESH1");
+  std::string ALCT_HMT_THRESH2("ALCT_HMT_THRESH2");
+  std::string ALCT_HMT_THRESH3("ALCT_HMT_THRESH3");  
   std::string CHAMBER_TYPE("CHAMBER_TYPE");
   std::string HARDWARE_VERSION("HARDWARE_VERSION");
   
@@ -2777,6 +2781,10 @@ void EmuPCrateConfigTStore::copyALCTToTable(xdata::Table &newRows, ALCTControlle
   xdata::UnsignedShort _alct_trig_info_en              = TStore_thisALCT->GetWriteTriggerInfoEnable();
   xdata::UnsignedShort _alct_trig_mode                 = TStore_thisALCT->GetWriteTriggerMode();
   xdata::UnsignedShort _alct_zero_suppress             = TStore_thisALCT->GetWriteAlctZeroSuppress();
+  xdata::UnsignedShort _alct_hmt_enable                = TStore_thisALCT->GetHmtEnable();
+  xdata::UnsignedShort _alct_hmt_thresh1               = TStore_thisALCT->GetHmtThresh1();
+  xdata::UnsignedShort _alct_hmt_thresh2               = TStore_thisALCT->GetHmtThresh2();
+  xdata::UnsignedShort _alct_hmt_thresh3               = TStore_thisALCT->GetHmtThresh3();
   xdata::String        _chamber_type                   = TStore_thisALCT->GetChamberType();
   xdata::UnsignedShort _hardware_version               = TStore_thisALCT->GetHardwareVersion();
   
@@ -2860,6 +2868,10 @@ void EmuPCrateConfigTStore::copyALCTToTable(xdata::Table &newRows, ALCTControlle
   newRows.setValueAt(rowId, ALCT_TRIG_INFO_EN,              _alct_trig_info_en);
   newRows.setValueAt(rowId, ALCT_TRIG_MODE,                 _alct_trig_mode);
   newRows.setValueAt(rowId, ALCT_ZERO_SUPPRESS,             _alct_zero_suppress);
+  newRows.setValueAt(rowId, ALCT_HMT_ENABLE,                _alct_hmt_enable);
+  newRows.setValueAt(rowId, ALCT_HMT_THRESH1,               _alct_hmt_thresh1);
+  newRows.setValueAt(rowId, ALCT_HMT_THRESH2,               _alct_hmt_thresh2);
+  newRows.setValueAt(rowId, ALCT_HMT_THRESH3,               _alct_hmt_thresh3);
   newRows.setValueAt(rowId, CHAMBER_TYPE,                   _chamber_type);
   newRows.setValueAt(rowId, HARDWARE_VERSION,               _hardware_version);
 }
@@ -4191,6 +4203,10 @@ void EmuPCrateConfigTStore::readALCT(
       if (*column == "ALCT_LAYER4_HOT_CHANN_MASK"    ) alct_->SetALCTHotChanMaskString(4,StrgValue);
       if (*column == "ALCT_LAYER5_HOT_CHANN_MASK"    ) alct_->SetALCTHotChanMaskString(5,StrgValue);
       if (*column == "ALCT_ZERO_SUPPRESS"            ) alct_->SetAlctZeroSuppress(IntValue);
+      if (*column == "ALCT_HMT_ENABLE"               ) alct_->SetHmtEnable(IntValue);
+      if (*column == "ALCT_HMT_THRESH1"              ) alct_->SetHmtThresh1(IntValue);
+      if (*column == "ALCT_HMT_THRESH2"              ) alct_->SetHmtThresh2(IntValue);
+      if (*column == "ALCT_HMT_THRESH3"              ) alct_->SetHmtThresh3(IntValue);
       if (*column == "HARDWARE_VERSION"              ) alct_->SetHardwareVersion(IntValue);
       if (*column == "ALCT_CONFIG_ID"                ) alct_config_id_ = StrgValue;
       

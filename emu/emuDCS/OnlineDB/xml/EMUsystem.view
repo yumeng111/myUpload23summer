@@ -1072,6 +1072,10 @@ oldconfig.GEMB_VFAT_HCM!=newconfig.GEMB_VFAT_HCM or
   oldalct.ALCT_TRIG_INFO_EN!=newalct.ALCT_TRIG_INFO_EN or
   oldalct.ALCT_TRIG_MODE!=newalct.ALCT_TRIG_MODE or
   oldalct.ALCT_ZERO_SUPPRESS!=newalct.ALCT_ZERO_SUPPRESS or
+  oldalct.ALCT_HMT_ENABLE!=newalct.ALCT_HMT_ENABLE or
+  oldalct.ALCT_HMT_THRESH1!=newalct.ALCT_HMT_THRESH1 or
+  oldalct.ALCT_HMT_THRESH2!=newalct.ALCT_HMT_THRESH2 or
+  oldalct.ALCT_HMT_THRESH3!=newalct.ALCT_HMT_THRESH3 or
   oldalct.CHAMBER_TYPE!=newalct.CHAMBER_TYPE or 
   oldalct.HARDWARE_VERSION!=newalct.HARDWARE_VERSION
   or exists (
@@ -1164,6 +1168,10 @@ oldconfig.ALCT_LAYER5_HOT_CHANN_MASK "ALCT_LAYER5_HOT_CHANN_MASK $OLD_EMU_CONFIG
 oldconfig.ALCT_TRIG_INFO_EN "ALCT_TRIG_INFO_EN $OLD_EMU_CONFIG_ID",newconfig.ALCT_TRIG_INFO_EN "ALCT_TRIG_INFO_EN $NEW_EMU_CONFIG_ID",
 oldconfig.ALCT_TRIG_MODE "ALCT_TRIG_MODE $OLD_EMU_CONFIG_ID",newconfig.ALCT_TRIG_MODE "ALCT_TRIG_MODE $NEW_EMU_CONFIG_ID",
 oldconfig.ALCT_ZERO_SUPPRESS "ALCT_ZERO_SUPPRESS $OLD_EMU_CONFIG_ID",newconfig.ALCT_ZERO_SUPPRESS "ALCT_ZERO_SUPPRESS $NEW_EMU_CONFIG_ID",
+oldconfig.ALCT_HMT_ENABLE "ALCT_HMT_ENABLE $OLD_EMU_CONFIG_ID",newconfig.ALCT_HMT_ENABLE "ALCT_HMT_ENABLE $NEW_EMU_CONFIG_ID",
+oldconfig.ALCT_HMT_THRESH1 "ALCT_HMT_THRESH1 $OLD_EMU_CONFIG_ID",newconfig.ALCT_HMT_THRESH1 "ALCT_HMT_THRESH1 $NEW_EMU_CONFIG_ID",
+oldconfig.ALCT_HMT_THRESH2 "ALCT_HMT_THRESH3 $OLD_EMU_CONFIG_ID",newconfig.ALCT_HMT_THRESH2 "ALCT_HMT_THRESH2 $NEW_EMU_CONFIG_ID",
+oldconfig.ALCT_HMT_THRESH3 "ALCT_HMT_THRESH3 $OLD_EMU_CONFIG_ID",newconfig.ALCT_HMT_THRESH3 "ALCT_HMT_THRESH3 $NEW_EMU_CONFIG_ID",
 oldconfig.CHAMBER_TYPE "CHAMBER_TYPE $OLD_EMU_CONFIG_ID",newconfig.CHAMBER_TYPE "CHAMBER_TYPE $NEW_EMU_CONFIG_ID", 
 oldconfig.HARDWARE_VERSION "HARDWARE_VERSION $OLD_EMU_CONFIG_ID",newconfig.HARDWARE_VERSION "HARDWARE_VERSION $NEW_EMU_CONFIG_ID"
 
@@ -1210,6 +1218,10 @@ oldconfig.ALCT_LAYER5_HOT_CHANN_MASK!=newconfig.ALCT_LAYER5_HOT_CHANN_MASK or
 oldconfig.ALCT_TRIG_INFO_EN!=newconfig.ALCT_TRIG_INFO_EN or 
 oldconfig.ALCT_TRIG_MODE!=newconfig.ALCT_TRIG_MODE or 
 oldconfig.ALCT_ZERO_SUPPRESS!=newconfig.ALCT_ZERO_SUPPRESS or 
+oldconfig.ALCT_HMT_ENABLE!=newconfig.ALCT_HMT_ENABLE or 
+oldconfig.ALCT_HMT_THRESH1!=newconfig.ALCT_HMT_THRESH1 or 
+oldconfig.ALCT_HMT_THRESH2!=newconfig.ALCT_HMT_THRESH4 or 
+oldconfig.ALCT_HMT_THRESH3!=newconfig.ALCT_HMT_THRESH3 or 
 oldconfig.CHAMBER_TYPE!=newconfig.CHAMBER_TYPE or 
 oldconfig.HARDWARE_VERSION!=newconfig.HARDWARE_VERSION or 
 /*also select any whose afebs have changed*/
@@ -1732,6 +1744,10 @@ where rownum=1]]>
       <tstore:column name="alct_trig_info_en" type="unsigned short"/>
       <tstore:column name="alct_trig_mode" type="unsigned short"/>
       <tstore:column name="alct_zero_suppress" type="unsigned short"/>
+      <tstore:column name="alct_hmt_enable" type="unsigned short"/>
+      <tstore:column name="alct_hmt_thresh1" type="unsigned short"/>
+      <tstore:column name="alct_hmt_thresh2" type="unsigned short"/>
+      <tstore:column name="alct_hmt_thresh3" type="unsigned short"/>
       <tstore:column name="chamber_type" type="string"/>
       <tstore:column name="emu_config_id" type="unsigned int 64"/>
       <tstore:column name="tmb_config_id" type="unsigned int 64"/>

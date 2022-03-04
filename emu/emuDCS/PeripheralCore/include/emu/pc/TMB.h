@@ -626,6 +626,8 @@ public:
   int  GetLCTCounter() {return GetCounter(alctclctmatch_counter_index_); } /// return the  counter value for alct*clct match
   int  GetBx0MatchCounter() {return GetCounter(bx0match_counter_index_); }
   int  GetCathodeHMTALCTMatchCounter() {return GetCounter(cathodehmtalctmatch_counter_index_); }
+  int  GetHMTMatchCounter() {return GetCounter(hmtmatch_counter_index_); }
+  int  GetHMTALCTMatchCounter() {return GetCounter(hmtalctmatch_counter_index_); }
    
   int  GetGemABx0MatchCounter()  {return GetGemCounter(gemA_bx0match_counter_index_); } 
   int  GetGemBBx0MatchCounter()  {return GetGemCounter(gemB_bx0match_counter_index_); } 
@@ -2503,6 +2505,10 @@ public:
   inline int  Get_clct_use_corrected_bx() { return clct_use_corrected_bx_; }
   inline int  GetRead_clct_use_corrected_bx() { return read_clct_use_corrected_bx_; }
   
+  inline void Set_chamber_num_parity(int chamber_num_parity) { chamber_num_parity_ = chamber_num_parity; }
+  inline int  Get_chamber_num_parity() { return chamber_num_parity_; }
+  inline int  GetRead_chamber_num_parity() { return read_chamber_num_parity_; }
+  
   inline void Set_seq_trigger_nodeadtime(int seq_trigger_nodeadtime) { seq_trigger_nodeadtime_ = seq_trigger_nodeadtime; }
   inline int  Get_seq_trigger_nodeadtime() { return seq_trigger_nodeadtime_ ; }
   inline int  GetRead_seq_trigger_nodeadtime() { return read_seq_trigger_nodeadtime_ ; }
@@ -3255,6 +3261,8 @@ private:
   static const int alctclctmatch_counter_index_ = 32;
   static const int bx0match_counter_index_ = 95;
   static const int cathodehmtalctmatch_counter_index_ = 106;
+  static const int hmtmatch_counter_index_ = 111;
+  static const int hmtalctmatch_counter_index_ = 112;
 
   static const int gemA_bx0match_counter_index_ = 88;
   static const int gemB_bx0match_counter_index_ = gemA_bx0match_counter_index_+1;

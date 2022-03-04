@@ -534,6 +534,7 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
     if (fillInt("cross_bx_algorithm"        ,value)) { tmb_->Set_cross_bx_algorithm        (value); }
     if (fillInt("clct_use_corrected_bx"     ,value)) { tmb_->Set_clct_use_corrected_bx     (value); }
     if (fillInt("seq_trigger_nodeadtime"    ,value)) { tmb_->Set_seq_trigger_nodeadtime    (value); }
+    if (fillInt("chamber_num_parity"        ,value)) { tmb_->Set_chamber_num_parity        (value); }
     //0x1AA = ADR_RUN3_FORMAT_CTRL: control run3 format
     if (fillInt("run3_trig_dataformat_enable"                ,value)) { tmb_->Setrun3_trig_dataformat_enable                 (value);}
     if (fillInt("run3_daq_dataformat_enable"                 ,value)) { tmb_->Setrun3_daq_dataformat_enable                  (value);}

@@ -6320,6 +6320,8 @@ int ChamberUtilities::HMTTimingScan(int step_time) {
   thisTMB->GetCounters();
   std::cout <<" Reading counters before test start:   " << std::endl;
   std::cout <<"     GetCathodeHMTALCTMatchCounter():  " << std::dec <<  thisTMB->GetCathodeHMTALCTMatchCounter() << std::endl;
+  std::cout <<"     GetHMTMatchCounter():  " << std::dec <<  thisTMB->GetHMTMatchCounter() << std::endl;
+  std::cout <<"     GetHMTALCTMatchCounter():  " << std::dec <<  thisTMB->GetHMTALCTMatchCounter() << std::endl;
   //
   // Set up for this test:
   // turn off the one shot L1A (from TMB)...
@@ -6352,6 +6354,8 @@ int ChamberUtilities::HMTTimingScan(int step_time) {
   //const int number_of_checks_per_value = 100;
   //
   int matched[maximum_delay_value*2] = {}; memset(matched, 0, sizeof(matched));
+  int matched1[maximum_delay_value*2] = {}; memset(matched1, 0, sizeof(matched1));
+  int matched2[maximum_delay_value*2] = {}; memset(matched2, 0, sizeof(matched2));
   //
   bool foundMatch = false;
   std::cout << "Scanning hmt_delay from " << std::dec << minimum_delay_value << " to " << maximum_delay_value << std::endl;
@@ -6370,6 +6374,8 @@ int ChamberUtilities::HMTTimingScan(int step_time) {
     ::usleep(step_time*1000000); //unit here microsecond, step_time is in second
     thisTMB->GetCounters();
     matched[delay_value] = thisTMB->GetCathodeHMTALCTMatchCounter();
+    matched1[delay_value] = thisTMB->GetHMTMatchCounter();
+    matched2[delay_value] = thisTMB->GetHMTALCTMatchCounter();
     if (matched[delay_value] > 0) foundMatch = true;
   }
   //
@@ -6379,10 +6385,10 @@ int ChamberUtilities::HMTTimingScan(int step_time) {
   int hmt_delay_for1BX     = RoundOff(float_average);
   //
   (*MyOutput_) << "-----------------------------------------------------------------------------------------------------" << std::endl;
-  (*MyOutput_) << "cathodeHMTxALCT matches vs hmt_delay:" << std::endl;
+  (*MyOutput_) << "hmt_delay vs  cathodeHMT_ALCT matches,\t cathodeHMT_anodeHMT matches,\t cathodeHMT_anodeHMT_ALCT matches :" << std::endl;
   for (int delay_value=minimum_delay_value; delay_value<maximum_delay_value; delay_value++) {
-    (*MyOutput_) << "hmt_delay[" << std::dec << delay_value << "] =\t :" << matched[delay_value] << std::endl;
-    std::cout    << "hmt_delay[" << std::dec << delay_value << "] =\t :" << matched[delay_value] << std::endl;
+    (*MyOutput_) << "hmt_delay[" << std::dec << delay_value << "] =\t " << matched[delay_value] <<",\t "<< matched1[delay_value] <<",\t "<< matched2[delay_value]<< std::endl;
+    std::cout    << "hmt_delay[" << std::dec << delay_value << "] =\t " << matched[delay_value] <<",\t "<< matched1[delay_value] <<",\t "<< matched2[delay_value]<< std::endl;
     //
   }
 

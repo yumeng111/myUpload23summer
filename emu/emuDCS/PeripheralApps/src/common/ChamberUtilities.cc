@@ -5982,7 +5982,7 @@ int ChamberUtilities::GEMBC0Scan() {
 //------------------------------------------
 // GEM->ALCT,TMB signal delays for GEM-CSC match
 //------------------------------------------
-int ChamberUtilities::GEMCSCMatchScan(int step_time, int nstep) {
+int ChamberUtilities::GEMCSCMatchScan(int step_time, int mindelay, int nstep) {
   //
   // The goal of this scan is to find the match_gemA_alct_delay/match_gemB_alct_delay value which gives the desired
   // propagation time of  GEM vpf -> ALCT/TMB for matching.
@@ -5992,11 +5992,11 @@ int ChamberUtilities::GEMCSCMatchScan(int step_time, int nstep) {
   //
   if (debug_) {
     std::cout << "*******************************************************************" << std::endl;
-    std::cout << "Scan to final GEM delay for GEM-CSC match: steptime(sec) " << step_time << std::endl;
+    std::cout << "Scan to final GEM delay for GEM-CSC match:  "  << std::endl;
     std::cout << "*******************************************************************" << std::endl;
   }
   (*MyOutput_) << "*******************************************************************" << std::endl;
-  (*MyOutput_) << "Scan to final GEM delay for GEM-CSC match: steptime(sec) "<< step_time << std::endl;
+  (*MyOutput_) << "Scan to final GEM delay for GEM-CSC match: " << std::endl;
   (*MyOutput_) << "*******************************************************************" << std::endl;
   //
   // send output to std::cout except for the essential information 
@@ -6081,10 +6081,18 @@ int ChamberUtilities::GEMCSCMatchScan(int step_time, int nstep) {
   bool foundMatch_gemAclct = false;
   bool foundMatch_gemBalct = false;
   bool foundMatch_gemBclct = false;
-  std::cout << "Scanning match_gemA/B_alct_delay from " << std::dec << minimum_delay_value << " to " << maximum_delay_value << std::endl;
+  int min_gemdelay_value = minimum_delay_value;
+  if (mindelay > 0 and mindelay < 16) min_gemdelay_value = mindelay;
+  int max_gemdelay_value = maximum_delay_value;
+  if (min_gemdelay_value+nstep < 16 and nstep > 0) max_gemdelay_value = min_gemdelay_value+nstep;
+
+  (*MyOutput_) << "-----------------------------------------------------------------------------------------------------" << std::endl;
+  (*MyOutput_) << "Scanning match_gemA/B_alct_delay from " << std::dec << min_gemdelay_value << " to " << max_gemdelay_value-1 <<"; steptime(sec) "<< step_time << std::endl;
+  std::cout    << "Scanning match_gemA/B_alct_delay from " << std::dec << min_gemdelay_value << " to " << max_gemdelay_value-1 <<"; steptime(sec) "<< step_time << std::endl;
   thisTMB->SetMatchGemAlctWindow(1);// change gem-alct window into 1;
   //
-  for (int delay_value=minimum_delay_value; delay_value<maximum_delay_value; delay_value++) {
+  //for (int delay_value=minimum_delay_value; delay_value<maximum_delay_value; delay_value++) {
+  for (int delay_value=min_gemdelay_value; delay_value<max_gemdelay_value; delay_value++) {
     //
     thisTMB->SetMatchGemAlctDelay(delay_value);
     thisTMB->WriteRegister(gemA_trg_ctrl_adr);
@@ -6111,10 +6119,10 @@ int ChamberUtilities::GEMCSCMatchScan(int step_time, int nstep) {
   //
   // print out the results...
   //
-  float float_averageA_alct = AverageHistogram(matchedA_alct,minimum_delay_value,maximum_delay_value);
-  float float_averageB_alct = AverageHistogram(matchedB_alct,minimum_delay_value,maximum_delay_value);
-  float float_averageA_clct = AverageHistogram(matchedA_clct,minimum_delay_value,maximum_delay_value);
-  float float_averageB_clct = AverageHistogram(matchedB_clct,minimum_delay_value,maximum_delay_value);
+  float float_averageA_alct = AverageHistogram(matchedA_alct,min_gemdelay_value,max_gemdelay_value);
+  float float_averageB_alct = AverageHistogram(matchedB_alct,min_gemdelay_value,max_gemdelay_value);
+  float float_averageA_clct = AverageHistogram(matchedA_clct,min_gemdelay_value,max_gemdelay_value);
+  float float_averageB_clct = AverageHistogram(matchedB_clct,min_gemdelay_value,max_gemdelay_value);
   int gemA_delay_alct     = RoundOff(float_averageA_alct);
   int gemB_delay_alct     = RoundOff(float_averageB_alct);
   int gemA_delay_clct     = RoundOff(float_averageA_clct);
@@ -6123,10 +6131,8 @@ int ChamberUtilities::GEMCSCMatchScan(int step_time, int nstep) {
   int gemB_delay_for1BX = 0;
   //
   (*MyOutput_) << "-----------------------------------------------------------------------------------------------------" << std::endl;
-  (*MyOutput_) << "GEM*CSC mtch match_gemA/B_delay vs gemA_alct_match, gemA_clct_match, gemB_alct_match, gemB_clct_match" << std::endl;
-  std::cout << "Might upgrade the range from 0-16 to 0-64!!!!!  " << std::endl;
-  (*MyOutput_) << "Might upgrade the range from 0-16 to 0-64!!!!!  " << std::endl;
-  for (int delay_value=minimum_delay_value; delay_value<maximum_delay_value; delay_value++) {
+  (*MyOutput_) << "match_gemA/B_delay vs gemA_alct_match, gemA_clct_match, gemB_alct_match, gemB_clct_match" << std::endl;
+  for (int delay_value=min_gemdelay_value; delay_value<max_gemdelay_value; delay_value++) {
     (*MyOutput_) << "gemA/B_delay[" << std::dec << delay_value << "] =\t A:" << matchedA_alct[delay_value] <<" ,\t"<< matchedA_clct[delay_value] << " ,\t B:"<< matchedB_alct[delay_value] <<" ,\t"<< matchedB_clct[delay_value] << std::endl;
     std::cout    << "gemA/B_delay[" << std::dec << delay_value << "] =\t A:" << matchedA_alct[delay_value] <<" ,\t"<< matchedA_clct[delay_value] << " ,\t B:"<< matchedB_alct[delay_value] <<" ,\t"<< matchedB_clct[delay_value] << std::endl;
     //
@@ -6169,7 +6175,7 @@ int ChamberUtilities::GEMCSCMatchScan(int step_time, int nstep) {
   //Special Test to delay ALCT for ALCT+GEM match and delay GEM for ALCT+GEM match
   //================================================================================================================================
   //
-  if (nstep >= 16){
+  if (nstep > 16){
 	    std::cout << "*******************************************************************" << std::endl;
 	    std::cout << "Special Test to find out whether GEM is late or ALCT is late "  << std::endl;
 	    std::cout << "Scan to GEM delay/ALCT delay for GEM-CSC match: steptime(sec) " << step_time <<" nstep "<< nstep << std::endl;
@@ -6358,6 +6364,7 @@ int ChamberUtilities::HMTTimingScan(int step_time) {
   int matched2[maximum_delay_value*2] = {}; memset(matched2, 0, sizeof(matched2));
   //
   bool foundMatch = false;
+   (*MyOutput_) << "Scanning hmt_delay from " << std::dec << minimum_delay_value << " to " << maximum_delay_value << std::endl;
   std::cout << "Scanning hmt_delay from " << std::dec << minimum_delay_value << " to " << maximum_delay_value << std::endl;
   thisTMB->SetHmtAlctWinSize(1);// change hmt-alct window into 1;
   //

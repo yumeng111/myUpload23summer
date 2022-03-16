@@ -5738,7 +5738,10 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   *out <<" step time (second) "<< std::endl;;
   *out << cgicc::input().set("type","text").set("value",buf).set("name","gemcsc_step_time")<<std::endl;
   sprintf(buf,"%d",0); // default value
-  *out <<" nstep for special test (only valid for >=16) "<< std::endl;;
+  *out <<" min gem_delay(bx) "<< std::endl;;
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","gemcsc_mindelay")<<std::endl;
+  sprintf(buf,"%d",16); // default value
+  *out <<" nstep (bx, >16 activates special test) "<< std::endl;;
   *out << cgicc::input().set("type","text").set("value",buf).set("name","gemcsc_nstep")<<std::endl;
   sprintf(buf,"%d",tmb);
   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
@@ -6440,18 +6443,22 @@ void EmuPeripheralCrateConfig::GEMCSCMatchScan(xgi::Input * in, xgi::Output * ou
     std::cout << "GEMCSCMatchScan: no TMB" << std::endl;
   }
   cgicc::form_iterator name2 = cgi.getElement("gemcsc_step_time");
-  cgicc::form_iterator name3 = cgi.getElement("gemcsc_nstep");
+  cgicc::form_iterator name3 = cgi.getElement("gemcsc_mindelay");
+  cgicc::form_iterator name4 = cgi.getElement("gemcsc_nstep");
   //
   long step_time    = 1;
+  long mindelay = 0;
   long nstep = 0;
   //
   if(name2 != cgi.getElements().end()) 
       step_time = strtol(cgi["gemcsc_step_time"]->getValue().c_str(),NULL,10);
   if(name3 != cgi.getElements().end()) 
+      mindelay = strtol(cgi["gemcsc_mindelay"]->getValue().c_str(),NULL,10);
+  if(name4 != cgi.getElements().end()) 
       nstep = strtol(cgi["gemcsc_nstep"]->getValue().c_str(),NULL,10);
   //
   MyTest[tmb][current_crate_].RedirectOutput(&ChamberTestsOutput[tmb][current_crate_]);
-  MyTest[tmb][current_crate_].GEMCSCMatchScan((int)step_time, (int)nstep);
+  MyTest[tmb][current_crate_].GEMCSCMatchScan((int)step_time, (int) mindelay, (int)nstep);
   MyTest[tmb][current_crate_].RedirectOutput(&std::cout);
   //
   this->ChamberTests(in,out);
@@ -8380,7 +8387,7 @@ throw (xgi::exception::Exception) {
                     }
                 }
 
-                errorcount[0][posneg][coarse_delay]+= (thisTMB->GetGemCounter(0)+thisTMB->GetGemCounter(1));
+                errorcount[0][posneg][coarse_delay]+= (thisTMB->GetGemCounter(0)+thisTMB->GetGemCounter(1)+thisTMB->GetGemCounter(2));
                 errorcount[1][posneg][coarse_delay]+= cfeb456_errors;
                 errorcount[2][posneg][coarse_delay]+= cfeb0123_errors;
 

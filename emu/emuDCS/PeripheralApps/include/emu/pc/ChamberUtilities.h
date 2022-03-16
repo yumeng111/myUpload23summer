@@ -250,7 +250,7 @@ public:
   int ALCTBC0Scan();
   int ALCTBC0ScanWithCounter();
   int GEMBC0Scan();
-  int GEMCSCMatchScan(int step_time, int nstep);
+  int GEMCSCMatchScan(int step_time, int mindelay, int nstep);
   int HMTTimingScan (int step_time);
   //
   inline void setLocalTmbBxnOffset(int value) { local_tmb_bxn_offset_ = value; }

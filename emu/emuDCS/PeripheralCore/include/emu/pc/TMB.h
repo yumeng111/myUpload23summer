@@ -628,6 +628,8 @@ public:
   int  GetCathodeHMTALCTMatchCounter() {return GetCounter(cathodehmtalctmatch_counter_index_); }
   int  GetHMTMatchCounter() {return GetCounter(hmtmatch_counter_index_); }
   int  GetHMTALCTMatchCounter() {return GetCounter(hmtalctmatch_counter_index_); }
+  int  GetME1BCFEBSYNCERRCounter() {return GetCounter(me1bcfebsyncerr_counter_index_); }
+  int  GetME1ACFEBSYNCERRCounter() {return GetCounter(me1bcfebsyncerr_counter_index_+1); }
    
   int  GetGemABx0MatchCounter()  {return GetGemCounter(gemA_bx0match_counter_index_); } 
   int  GetGemBBx0MatchCounter()  {return GetGemCounter(gemB_bx0match_counter_index_); } 
@@ -3244,7 +3246,7 @@ private:
   int ALCT1_data_;
   //
   // The following is actually the MaxCounter in TMB + 1 (i.e., they count from 0)
-  static const int MaxCounter = 120;//add 20 counters for HMT
+  static const int MaxCounter = 122;//add 20 counters for HMT, and 2 counters for CFEB sync err
   static const int MaxGEMCounter = 120;
   int FinalCounter[MaxCounter+40];
   int FinalGEMCounter[MaxGEMCounter+1];
@@ -3263,6 +3265,7 @@ private:
   static const int cathodehmtalctmatch_counter_index_ = 106;
   static const int hmtmatch_counter_index_ = 111;
   static const int hmtalctmatch_counter_index_ = 112;
+  static const int me1bcfebsyncerr_counter_index_ = 120;
 
   static const int gemA_bx0match_counter_index_ = 88;
   static const int gemB_bx0match_counter_index_ = gemA_bx0match_counter_index_+1;

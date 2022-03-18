@@ -5517,7 +5517,7 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   //*out << cgicc::table() << std::endl;
 
 
-  if (thisTMB->GetHardwareVersion() >= 2 && thisTMB->GetGemEnabled() ) {
+  if (thisTMB->GetHardwareVersion() >= 2 ) {
   *out << cgicc::br();
   std::string ScanOTMBFiberDelays = toolbox::toString("/%s/ScanOTMBFiberDelays",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",ScanOTMBFiberDelays) << std::endl ;
@@ -5537,20 +5537,26 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
   *out << cgicc::form() << std::endl ;
 
-  thisTMB->ReadRegister(phaser_gem_rxd_adr);
-  thisTMB->ReadRegister(phaser_cfeb456_rxd_adr);
+  bool isME11 = thisTMB->GetTMBFirmwareCompileType()==0xc || thisTMB->GetReadTMBFirmwareCompileType()==0xd; 
+  if (thisTMB->GetGemEnabled())
+	  thisTMB->ReadRegister(phaser_gem_rxd_adr);
+  if (isME11)
+          thisTMB->ReadRegister(phaser_cfeb456_rxd_adr);
   thisTMB->ReadRegister(phaser_cfeb0123_rxd_adr);
 
-  for(int i=0;i<2;i++) {
-    *out << "gem" << i
-         << "delay = " << MyTest[tmb][current_crate_].GetGEMrxPhaseResult(i)
-         << " ("  << thisTMB->GetReadGemRxClockDelay() << ") "
-         <<"    posneg = " << MyTest[tmb][current_crate_].GetGEMrxPosnegResult(i)
-         << " ("  << thisTMB->GetReadGemRxPosNeg() << ") " <<std::endl;
-    *out << cgicc::br();
+  if (thisTMB->GetGemEnabled()){
+	  for(int i=0;i<2;i++) {
+	    *out << "gem" << i
+		 << "delay = " << MyTest[tmb][current_crate_].GetGEMrxPhaseResult(i)
+		 << " ("  << thisTMB->GetReadGemRxClockDelay() << ") "
+		 <<"    posneg = " << MyTest[tmb][current_crate_].GetGEMrxPosnegResult(i)
+		 << " ("  << thisTMB->GetReadGemRxPosNeg() << ") " <<std::endl;
+	    *out << cgicc::br();
+	  }
   }
-
-  for(int i=0;i<7;i++) {
+  int ncfeb = 5;
+  if (isME11) ncfeb = 7;
+  for(int i=0;i<ncfeb;i++) {
     *out << "cfeb" << i
          << "delay = " << MyTest[tmb][current_crate_].GetCFEBrxPhaseResult(i)
          << " ("  <<MyTest[tmb][current_crate_].GetCfebRxClockDelay(i) << ") "
@@ -5560,6 +5566,7 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   }
 
 
+  if (thisTMB->GetGemEnabled()){
   *out << cgicc::br();
   std::string SetGEMPhase = toolbox::toString("/%s/SetGEMPhase",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",SetGEMPhase) << std::endl ;
@@ -5589,6 +5596,7 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   *out << cgicc::input().set("type","text").set("value",buf).set("name","GEM_rxd_delay")<<std::endl;
   *out << cgicc::input().set("type","submit").set("value","Set GEM rxd int delay value") << std::endl ;
   *out << cgicc::form() << std::endl ;
+  }//enabled GEM
   } // end if GEM
   ////////////////////////////////////////
 
@@ -8288,7 +8296,9 @@ throw (xgi::exception::Exception) {
         return;
     }
 
-   
+    bool isME11 = thisTMB->GetTMBFirmwareCompileType()==0xc || thisTMB->GetReadTMBFirmwareCompileType()==0xd; 
+    int ncfeb = 5;
+    if (isME11) ncfeb = 4;
     //another way to implement OTMB fiber phase scan
     //MyTest[tmb][current_crate_].RedirectOutput(&ChamberTestsOutput[tmb][current_crate_]);
     //MyTest[tmb][current_crate_].ScanOTMBFiberDelays(sleeptime, steptime);
@@ -8310,8 +8320,17 @@ throw (xgi::exception::Exception) {
     int initial_gem_phase       = thisTMB->GetReadGemRxClockDelay();
     int initial_gem_posneg      = thisTMB->GetReadGemRxPosNeg();
 
-    ChamberTestsOutput[tmb][current_crate_] <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME1A sync errors (cfeb5, 6, 7), ME1B sync errors(cfeb1,2,3,4)"<< std::endl;
-    std::cout <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME1A sync errors (cfeb5, 6, 7), ME1B sync errors(cfeb1,2,3,4)"<< std::endl;
+    std::cout <<"OTMB Link Phaser scan:  sleep_time for one step, unit microseconds "<< sleeptime<<" steptime for scan, unit picoseconds "<< steptime << endl;
+    if(isME11){
+       ChamberTestsOutput[tmb][current_crate_] <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME1A sync errors (cfeb5, 6, 7), ME1B sync errors(cfeb1,2,3,4)"<< std::endl;
+       std::cout <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME1A sync errors (cfeb5, 6, 7), ME1B sync errors(cfeb1,2,3,4)"<< std::endl;
+    }else if(thisTMB->GetGemEnabled()){
+       ChamberTestsOutput[tmb][current_crate_] <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME21 sync errors(cfeb1,2,3,4,5)"<< std::endl;
+       std::cout <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME21 sync errors(cfeb1,2,3,4,5)"<< std::endl;
+    }else{
+       ChamberTestsOutput[tmb][current_crate_] <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, MEX1 sync errors(cfeb1,2,3,4,5)"<< std::endl;
+       std::cout <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, MEX1 sync errors(cfeb1,2,3,4,5)"<< std::endl;
+    }
     for (posneg=0; posneg<2; posneg++) {
 
         for (coarse_delay=0; coarse_delay<25; coarse_delay++) {
@@ -8320,7 +8339,7 @@ throw (xgi::exception::Exception) {
             for (int i=0;i<3;i++)
                 errorcount[i][posneg][coarse_delay]=0;
 
-            int cfeb0123_errors_vec[4];
+            int cfeb0123_errors_vec[5];//also accounts for 5CFEB for MEX/1
             int cfeb456_errors_vec[3];
 
             for (fine_delay=0; fine_delay<fine_delayloops; fine_delay+=1) {
@@ -8328,26 +8347,25 @@ throw (xgi::exception::Exception) {
                 int cfeb0123_errors = 0;
                 int cfeb456_errors = 0;
 
-                thisTMB->SetGemRxPosNeg     ( posneg);
-                thisTMB->SetGemRxClockDelay ( coarse_delay);
-                thisTMB->SetGemRxFineDelay  ( fine_delay);
+                if (thisTMB->GetGemEnabled()){ //GEM is added for ME21. 
+			thisTMB->SetGemRxPosNeg     ( posneg);
+			thisTMB->SetGemRxClockDelay ( coarse_delay);
+			thisTMB->SetGemRxFineDelay  ( fine_delay);
 
-                thisTMB->FillTMBRegister ( phaser_gem_rxd_adr);
-                thisTMB->WriteRegister   ( phaser_gem_rxd_adr);
-                thisTMB->FirePhaser      ( phaser_gem_rxd_adr);
+			thisTMB->FillTMBRegister ( phaser_gem_rxd_adr);
+			thisTMB->WriteRegister   ( phaser_gem_rxd_adr);
+			thisTMB->FirePhaser      ( phaser_gem_rxd_adr);
+                }
 
+	        thisTMB->SetCfeb0123RxPosNeg     ( posneg);
+	        thisTMB->SetCfeb0123RxClockDelay ( coarse_delay);
+	        thisTMB->SetCfeb0123RxFineDelay  ( fine_delay);
 
-                bool cfeb=true;
-                if (cfeb) {
+	        thisTMB->FillTMBRegister ( phaser_cfeb0123_rxd_adr);
+	        thisTMB->WriteRegister   ( phaser_cfeb0123_rxd_adr);
+	        thisTMB->FirePhaser      ( phaser_cfeb0123_rxd_adr);
 
-                    thisTMB->SetCfeb0123RxPosNeg     ( posneg);
-                    thisTMB->SetCfeb0123RxClockDelay ( coarse_delay);
-                    thisTMB->SetCfeb0123RxFineDelay  ( fine_delay);
-
-                    thisTMB->FillTMBRegister ( phaser_cfeb0123_rxd_adr);
-                    thisTMB->WriteRegister   ( phaser_cfeb0123_rxd_adr);
-                    thisTMB->FirePhaser      ( phaser_cfeb0123_rxd_adr);
-
+                if (isME11) {
                     thisTMB->SetCfeb456RxPosNeg     ( posneg);
                     thisTMB->SetCfeb456RxClockDelay ( coarse_delay);
                     thisTMB->SetCfeb456RxFineDelay  ( fine_delay);
@@ -8356,35 +8374,42 @@ throw (xgi::exception::Exception) {
                     thisTMB->WriteRegister   ( phaser_cfeb456_rxd_adr);
                     thisTMB->FirePhaser      ( phaser_cfeb456_rxd_adr);
 
-                    // Send a resync to clear CFEB counters;
-                    // redirect the CCB output to shut it up from clogging cout
-                    streambuf *old = cout.rdbuf(); // save
-                    stringstream ss;
-                    cout.rdbuf (ss.rdbuf());       // redirect cout to outer space
-
-                    thisCCB->setCCBMode(CCB::VMEFPGA);
-                    thisCCB->syncReset();
-                    thisCCB->setCCBMode(CCB::DLOG);
-                    //thisCCB->bc0(); // Start triggering
-                    cout.rdbuf (old);              // restore cout
                 }
+                // Send a resync to clear CFEB counters;
+                // redirect the CCB output to shut it up from clogging cout
+                streambuf *old = cout.rdbuf(); // save
+                stringstream ss;
+                cout.rdbuf (ss.rdbuf());       // redirect cout to outer space
+
+                thisCCB->setCCBMode(CCB::VMEFPGA);
+                thisCCB->syncReset();
+                thisCCB->setCCBMode(CCB::DLOG);
+                //thisCCB->bc0(); // Start triggering
+                cout.rdbuf (old);              // restore cout
 
                 thisTMB->ResetCounters();
-                //std::cout<<std::endl<<"sleeping, fine delay = "<<fine_delay<<" coarse delay is "<<coarse_delay<<std::endl;
+                thisTMB->ReadDcfebGtxRxRegisters();
+                std::cout<<std::endl<<"sleeping, fine delay = "<<fine_delay<<" coarse delay is "<<coarse_delay<<" posneg "<< posneg <<" ME1b phase delay "<< thisTMB->GetReadCfeb0123RxClockDelay() <<std::endl;
                 usleep(sleeptime);
 
                 thisTMB->GetCounters();
 
-                if (cfeb) {
-                    thisTMB->ReadDcfebGtxRxRegisters();
-                    for (int i=0; i<4; i++) {
-                        cfeb0123_errors_vec[i] = thisTMB->GetReadGtxRxErrorCount(i);
-                        cfeb0123_errors += cfeb0123_errors_vec[i];
-                    }
-                    for (int i=0; i<3; i++) {
-                        cfeb456_errors_vec[i] = thisTMB->GetReadGtxRxErrorCount(i+4);
-                        cfeb456_errors += cfeb456_errors_vec[i];
-                    }
+                thisTMB->ReadDcfebGtxRxRegisters();
+                for (int i=0; i<ncfeb; i++) {
+                    cfeb0123_errors_vec[i] = thisTMB->GetReadGtxRxErrorCount(i);
+                    cfeb0123_errors += cfeb0123_errors_vec[i];
+                }
+                if (isME11){//ME1A for ME11 chamber
+                  for (int i=0; i<3; i++) {
+                      cfeb456_errors_vec[i] = thisTMB->GetReadGtxRxErrorCount(i+4);
+                      cfeb456_errors += cfeb456_errors_vec[i];
+                  }
+                }
+                for (int i=0; i<7; i++) {
+                    std::cout <<"cfeb "<<i <<" GetReadGtxRxNotintableCount "<< thisTMB->GetReadGtxRxNotintableCount(i) << " GetReadGtxRxDisperrCount "<< thisTMB->GetReadGtxRxDisperrCount(i) <<" linkgood " <<thisTMB->GetReadGtxRxLinkGood(i)  << " linkbad "<< thisTMB->GetReadGtxRxLinkBad(i) <<" thisTMB->GetReadGtxRxErrorCount "<< thisTMB->GetReadGtxRxErrorCount(i)<< std::endl;
+                }
+                for (int i=0; i<4; i++) {
+                    std::cout <<"GEM "<<i <<" GetReadGtxRxNotintableCount "<< thisTMB->GetReadGemGtxRxNotintableCount(i) << " GetReadGtxRxDisperrCount "<< thisTMB->GetReadGemGtxRxDisperrCount(i) <<" linkgood " <<thisTMB->GetReadGemGtxRxLinkGood(i)  << " linkbad "<< thisTMB->GetReadGemGtxRxLinkBad(i) << std::endl;
                 }
 
                 errorcount[0][posneg][coarse_delay]+= (thisTMB->GetGemCounter(0)+thisTMB->GetGemCounter(1)+thisTMB->GetGemCounter(2));
@@ -8393,23 +8418,58 @@ throw (xgi::exception::Exception) {
 
                 char *output;
 
-                asprintf(&output,
-                        "posneg=%1d, delay=%4.1f, gemA=%7d, gemB=%7d, superch=%7d, me1A=%7d (%4d + %4d + %4d), me1B=%7d (%4d + %4d + %4d + %4d)\n",
-                        posneg,
-                        float(coarse_delay) + float(fine_delay)/fine_delayloops,
-                        thisTMB->GetGemCounter(0),//gemA sync error
-                        thisTMB->GetGemCounter(1),//gemB sync error
-                        thisTMB->GetGemCounter(2),//superchamber sync error
-                        cfeb456_errors,
-                        cfeb456_errors_vec[0],
-                        cfeb456_errors_vec[1],
-                        cfeb456_errors_vec[2],
-                        cfeb0123_errors,
-                        cfeb0123_errors_vec[0],
-                        cfeb0123_errors_vec[1],
-                        cfeb0123_errors_vec[2],
-                        cfeb0123_errors_vec[3]
-                );
+                if (isME11){//GEM is included by default for GE11-ME11
+			asprintf(&output,
+				"posneg=%1d, delay=%4.1f, gemA=%7d, gemB=%7d, superch=%7d, me1A=%7d (%4d + %4d + %4d) syncerr %7d, me1B=%7d (%4d + %4d + %4d + %4d) syncerr %7d\n",
+				posneg,
+				float(coarse_delay) + float(fine_delay)/fine_delayloops,
+				thisTMB->GetGemCounter(0),//gemA sync error
+				thisTMB->GetGemCounter(1),//gemB sync error
+				thisTMB->GetGemCounter(2),//superchamber sync error
+				cfeb456_errors,
+				cfeb456_errors_vec[0],
+				cfeb456_errors_vec[1],
+				cfeb456_errors_vec[2],
+                                thisTMB->GetME1ACFEBSYNCERRCounter(),
+				cfeb0123_errors,
+				cfeb0123_errors_vec[0],
+				cfeb0123_errors_vec[1],
+				cfeb0123_errors_vec[2],
+				cfeb0123_errors_vec[3],
+                                thisTMB->GetME1BCFEBSYNCERRCounter()
+			);
+                }
+                else if (thisTMB->GetGemEnabled()){ //GEM is added for ME21. 
+			asprintf(&output,
+				"posneg=%1d, delay=%4.1f, gemA=%7d, gemB=%7d, superch=%7d, me21=%7d (%4d + %4d + %4d + %4d + %4d) syncerr %7d\n",
+				posneg,
+				float(coarse_delay) + float(fine_delay)/fine_delayloops,
+				thisTMB->GetGemCounter(0),//gemA sync error
+				thisTMB->GetGemCounter(1),//gemB sync error
+				thisTMB->GetGemCounter(2),//superchamber sync error
+				cfeb0123_errors,
+				cfeb0123_errors_vec[0],
+				cfeb0123_errors_vec[1],
+				cfeb0123_errors_vec[2],
+				cfeb0123_errors_vec[3],
+				cfeb0123_errors_vec[4],
+                                thisTMB->GetME1BCFEBSYNCERRCounter()
+			);
+                }
+                else { //MEX/1, CSC only
+			asprintf(&output,
+				"posneg=%1d, delay=%4.1f,  meX1 =%7d (%4d + %4d + %4d + %4d + %4d) syncerr %7d\n",
+				posneg,
+				float(coarse_delay) + float(fine_delay)/fine_delayloops,
+				cfeb0123_errors,
+				cfeb0123_errors_vec[0],
+				cfeb0123_errors_vec[1],
+				cfeb0123_errors_vec[2],
+				cfeb0123_errors_vec[3],
+				cfeb0123_errors_vec[4],
+                                thisTMB->GetME1BCFEBSYNCERRCounter()
+			);
+                }
 
                 std::cout << output;
                 ChamberTestsOutput[tmb][current_crate_] << output; // copy to on-screen web printout
@@ -8421,14 +8481,28 @@ throw (xgi::exception::Exception) {
             center[i][posneg] = MyTest[tmb][current_crate_].me11_wraparound_best_center(                   errorcount[i][posneg]);
             size  [i][posneg] = MyTest[tmb][current_crate_].me11_window_width          (center[i][posneg], errorcount[i][posneg]);
         }
-        std::cout<<std::dec<<"for posneg "<<posneg
-                <<" best center for gem = " << center[0][posneg] << " width=" << size[0][posneg]<< std::endl
-                <<" best center for me1a= " << center[1][posneg] << " width=" << size[1][posneg]<< std::endl
-                <<" best center for me1b= " << center[2][posneg] << " width=" << size[2][posneg]<< std::endl;
-        ChamberTestsOutput[tmb][current_crate_] <<std::dec<<"for posneg "<<posneg
-                <<" best center for gem = " << center[0][posneg] << " width=" << size[0][posneg]<< std::endl
-                <<" best center for me1a= " << center[1][posneg] << " width=" << size[1][posneg]<< std::endl
-                <<" best center for me1b= " << center[2][posneg] << " width=" << size[2][posneg]<< std::endl;
+        if (isME11){
+		std::cout<<std::dec<<"for posneg "<<posneg
+			<<" best center for gem = " << center[0][posneg] << " width=" << size[0][posneg]<< std::endl
+			<<" best center for me1a= " << center[1][posneg] << " width=" << size[1][posneg]<< std::endl
+			<<" best center for me1b= " << center[2][posneg] << " width=" << size[2][posneg]<< std::endl;
+		ChamberTestsOutput[tmb][current_crate_] <<std::dec<<"for posneg "<<posneg
+			<<" best center for gem = " << center[0][posneg] << " width=" << size[0][posneg]<< std::endl
+			<<" best center for me1a= " << center[1][posneg] << " width=" << size[1][posneg]<< std::endl
+			<<" best center for me1b= " << center[2][posneg] << " width=" << size[2][posneg]<< std::endl;
+        }else if (thisTMB->GetGemEnabled()){ //GEM is added for ME21. 
+		std::cout<<std::dec<<"for posneg "<<posneg
+			<<" best center for gem = " << center[0][posneg] << " width=" << size[0][posneg]<< std::endl
+			<<" best center for me21= " << center[2][posneg] << " width=" << size[2][posneg]<< std::endl;
+		ChamberTestsOutput[tmb][current_crate_] <<std::dec<<"for posneg "<<posneg
+			<<" best center for gem = " << center[0][posneg] << " width=" << size[0][posneg]<< std::endl
+			<<" best center for me21= " << center[2][posneg] << " width=" << size[2][posneg]<< std::endl;
+        }else{
+		std::cout<<std::dec<<"for posneg "<<posneg
+			<<" best center for mex1= " << center[2][posneg] << " width=" << size[2][posneg]<< std::endl;
+		ChamberTestsOutput[tmb][current_crate_] <<std::dec<<"for posneg "<<posneg
+			<<" best center for mex1= " << center[2][posneg] << " width=" << size[2][posneg]<< std::endl;
+        }
 
     }
 
@@ -8438,6 +8512,7 @@ throw (xgi::exception::Exception) {
         best_posneg[i] = size[i][0] > size[i][1] ? 0 : 1;
     }
 
+    if (isME11){
     std::cout<<std::endl<<"best posneg for gem= " << best_posneg[0] <<" center= " << center[0][best_posneg[0]]
                                                                     <<" width=" << size[0][best_posneg[0]] << std::endl
                         <<"best posneg for me1a= " << best_posneg[1] <<" center= " << center[1][best_posneg[1]]
@@ -8451,38 +8526,65 @@ throw (xgi::exception::Exception) {
                                                                      << " width=" << size[1][best_posneg[1]] << std::endl
                         <<"best posneg for me1b= " << best_posneg[2] <<" center= " << center[2][best_posneg[2]]
                                                                      << " width=" << size[2][best_posneg[2]] << std::endl;
-
-    for (int i=0; i<2; i++) { // 2 GEMs
-         MyTest[tmb][current_crate_].SetGEMrxPhaseResult(i,center[0][best_posneg[0]]);
-         MyTest[tmb][current_crate_].SetGEMrxPosnegResult(i,best_posneg[0]);
+    }else if (thisTMB->GetGemEnabled()){ //GEM is added for ME21. 
+    std::cout<<std::endl<<"best posneg for gem= " << best_posneg[0] <<" center= " << center[0][best_posneg[0]]
+                                                                    <<" width=" << size[0][best_posneg[0]] << std::endl
+                        <<"best posneg for me21= " << best_posneg[2] <<" center= " << center[2][best_posneg[2]]
+                                                                     << " width=" << size[2][best_posneg[2]] << std::endl;
+    ChamberTestsOutput[tmb][current_crate_] <<"\n Phase scan with framemarker, final results:\n " 
+                        <<"best posneg for gem= " << best_posneg[0] <<" center= " << center[0][best_posneg[0]]
+                                                                    <<" width=" << size[0][best_posneg[0]] << std::endl
+                        <<"best posneg for me21= " << best_posneg[2] <<" center= " << center[2][best_posneg[2]]
+                                                                     << " width=" << size[2][best_posneg[2]] << std::endl;
+    }else{
+    std::cout<<std::endl<<"best posneg for mex1= " << best_posneg[2] <<" center= " << center[2][best_posneg[2]]
+                                                                     << " width=" << size[2][best_posneg[2]] << std::endl;
+    ChamberTestsOutput[tmb][current_crate_] <<"\n Phase scan with framemarker, final results:\n " 
+                        <<"best posneg for mex1= " << best_posneg[2] <<" center= " << center[2][best_posneg[2]]
+                                                                     << " width=" << size[2][best_posneg[2]] << std::endl;
     }
 
-    for (int i=0; i<3; i++) { // 3 CFEBs in ME1a
-         MyTest[tmb][current_crate_].SetCFEBrxPhaseResult(i+4,center[1][best_posneg[1]]);
-         MyTest[tmb][current_crate_].SetCFEBrxPosnegResult(i+4,best_posneg[1]);
+    
+    if (thisTMB->GetGemEnabled()){ //GEM is added for ME21. 
+	    for (int i=0; i<2; i++) { // 2 GEMs
+		 MyTest[tmb][current_crate_].SetGEMrxPhaseResult(i,center[0][best_posneg[0]]);
+		 MyTest[tmb][current_crate_].SetGEMrxPosnegResult(i,best_posneg[0]);
+	    }
     }
-
-    for (int i=0; i<4; i++) { // 4 CFEBs in ME1b
+    //ME1b or MEX/1
+    for (int i=0; i<ncfeb; i++) { // 4 CFEBs in ME1b
          MyTest[tmb][current_crate_].SetCFEBrxPhaseResult(i,center[2][best_posneg[2]]);
          MyTest[tmb][current_crate_].SetCFEBrxPosnegResult(i,best_posneg[2]);
     }
+    //ME1a
+    if (isME11){
+	    for (int i=0; i<3; i++) { // 3 CFEBs in ME1a
+		 MyTest[tmb][current_crate_].SetCFEBrxPhaseResult(i+4,center[1][best_posneg[1]]);
+		 MyTest[tmb][current_crate_].SetCFEBrxPosnegResult(i+4,best_posneg[1]);
+	    }
+    }
 
-    //Reverting back to original cfeb/gem delay values
-    thisTMB->SetCfeb456RxClockDelay(initial_cfeb456_phase);
-    thisTMB->SetCfeb456RxPosNeg(initial_cfeb456_posneg);
-    thisTMB->WriteRegister(phaser_cfeb456_rxd_adr);
-    thisTMB->FirePhaser(phaser_cfeb456_rxd_adr);
+
+    if (isME11){
+	    //Reverting back to original cfeb/gem delay values
+	    thisTMB->SetCfeb456RxClockDelay(initial_cfeb456_phase);
+	    thisTMB->SetCfeb456RxPosNeg(initial_cfeb456_posneg);
+	    thisTMB->WriteRegister(phaser_cfeb456_rxd_adr);
+	    thisTMB->FirePhaser(phaser_cfeb456_rxd_adr);
+    }
     //
     thisTMB->SetCfeb0123RxClockDelay(initial_cfeb0123_phase);
     thisTMB->SetCfeb0123RxPosNeg(initial_cfeb0123_posneg);
     thisTMB->WriteRegister(phaser_cfeb0123_rxd_adr);
     thisTMB->FirePhaser(phaser_cfeb0123_rxd_adr);
     //
-    thisTMB->SetGemRxPosNeg     ( initial_gem_posneg);
-    thisTMB->SetGemRxClockDelay ( initial_gem_phase);
-    thisTMB->FillTMBRegister ( phaser_gem_rxd_adr);
-    thisTMB->WriteRegister   ( phaser_gem_rxd_adr);
-    thisTMB->FirePhaser      ( phaser_gem_rxd_adr);
+    if (thisTMB->GetGemEnabled()){ //GEM is added for ME21. 
+	    thisTMB->SetGemRxPosNeg     ( initial_gem_posneg);
+	    thisTMB->SetGemRxClockDelay ( initial_gem_phase);
+	    thisTMB->FillTMBRegister ( phaser_gem_rxd_adr);
+	    thisTMB->WriteRegister   ( phaser_gem_rxd_adr);
+	    thisTMB->FirePhaser      ( phaser_gem_rxd_adr);
+    }
 
     this->ChamberTests(in,out);
 }

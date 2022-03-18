@@ -872,8 +872,8 @@ void ConfigurationEditor::outputTableEditControls( xgi::Output * out,
   set << cgicc::form() << std::endl;
 
   //view all
-  view << cgicc::form().set("method", "POST").set("action",
-      toolbox::toString("/%s/viewValues", getApplicationDescriptor()->getURN().c_str()))
+  view << cgicc::form().set("method", "GET").set("action",
+      toolbox::toString("/%s/viewValues", getApplicationDescriptor()->getURN().c_str())).set("target","_blank")
       << std::endl;
   view << cgicc::input().set("type", "hidden").set("name", "table").set("value", tableName);
   view << cgicc::input().set("type", "hidden").set("name", "prefix").set("value", prefix);
@@ -1557,11 +1557,15 @@ void ConfigurationEditor::setValueFromString(xdata::Serializable *value, const s
   }
   else if (columnType == "float")
   {
-    set<xdata::Float> (value, newValue);
+  //  set<xdata::Float> (value, newValue);
+    xdata::Float t= (float)strtod(newValue.c_str(), NULL);
+    value->setValue(t);
   }
   else if (columnType == "double")
   {
-    set<xdata::Double> (value, newValue);
+  //  set<xdata::Double> (value, newValue);
+    xdata::Double t= strtod(newValue.c_str(), NULL);
+    value->setValue(t);
   }
   else if (columnType == "unsigned int")
   {
@@ -1573,11 +1577,15 @@ void ConfigurationEditor::setValueFromString(xdata::Serializable *value, const s
   }
   else if (columnType == "unsigned int 64")
   {
-    set<xdata::UnsignedInteger64> (value, newValue);
+  //  set<xdata::UnsignedInteger64> (value, atoll(newValue.c_str()));
+    xdata::UnsignedInteger64 t=atoll(newValue.c_str());
+    value->setValue(t);
   }
   else if (columnType == "unsigned short")
   {
-    set<xdata::UnsignedShort> (value, newValue);
+  //  set<xdata::UnsignedShort> (value, atoi(newValue.c_str()));
+     xdata::UnsignedShort t=atoi(newValue.c_str());
+     value->setValue(t);
   }
   else if (columnType == "string")
   {
@@ -1740,8 +1748,9 @@ void ConfigurationEditor::changeSingleValue(xgi::Input * in, xgi::Output * out) 
         if (tableHasColumn(table, fieldName) && canChangeColumn(fieldName, tableName))
         {
           xdata::Serializable *value = table.getValueAt(rowIndex, fieldName);
-          std::cout << "changing value from " << value->toString() << " to " << newValue << std::endl;
-          setValueFromString(value, newValue);
+          std::cout << "Parameter " << fieldName << " changing value from " << value->toString() << " to \"" << newValue  << "\""<< std::endl;
+          std::string columnType = value->type();
+          if (columnType=="string" || newValue!="")  setValueFromString(value, newValue); 
         }
         else
         {

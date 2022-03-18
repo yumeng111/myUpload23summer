@@ -2984,12 +2984,6 @@ public:
   // 0X33c ADR_GEM_VFAT_HCM1
   // 0X33e ADR_GEM_VFAT_HCM2
   //-----------------------------------------------------------------------------
-  inline int   GetGemAHotVfat(int vfat)                       {return gemA_hot_channel_mask_[vfat];} 
-  inline int   GetGemBHotVfat(int vfat)                       {return gemB_hot_channel_mask_[vfat];} 
-
-  inline void  SettGemAHotVfat(int vfat, int on_or_off)       {gemA_hot_channel_mask_[vfat] = on_or_off;}
-  inline void  SettGemBHotVfat(int vfat, int on_or_off)       {gemB_hot_channel_mask_[vfat] = on_or_off;}
-
   void  SetGemVfatHotChannelMask(long long int value, bool gemA)  {
     if (gemA)
 	    gemA_hotvfat_mask_ = value;

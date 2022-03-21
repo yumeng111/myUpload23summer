@@ -1767,15 +1767,8 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 //	      thisCCB_->setCCBMode(CCB::DLOG);
 
 	      thisCCB_->bc0(); // Start triggering
-	      
-	      if(is_random_halfstrip)
-		CFEBTiming_PulseInject(0, cfeb, layers, pattern, random_ihs_list[ihs]); // Pulse or inject
-	      else
-		CFEBTiming_PulseInject(0, cfeb, layers, pattern, halfstrip); // Pulse or inject
-	      MyOutput_ = temp_os;
-	      
-	      //out_file << "###UID:" << std::dec << uid << "###" << std::endl;
-	      //thisTMB->RedirectOutput(&out_file);
+	      (*MyOutput_) << "###UID:" << std::dec << uid << "###" << std::endl;
+              (*MyOutput_) << "Before injection "<< std::endl;
 	      thisTMB->GetCounters();
 	      thisTMB->PrintCounters(13);
 	      thisTMB->PrintCounters(14);
@@ -1786,27 +1779,20 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 	      thisTMB->PrintCounters(19);
 	      thisTMB->PrintCounters(20);
 	      thisTMB->PrintCounters(21);
-	      thisTMB->PrintCounters(22);
-	      thisTMB->PrintCounters(26);
-	      thisTMB->PrintCounters(27);
-	      thisTMB->PrintCounters(28);
-	      thisTMB->PrintCounters(29);
-	      thisTMB->PrintCounters(30);
-	      thisTMB->PrintCounters(44);
-	      thisTMB->PrintCounters(46);
-	      thisTMB->PrintCounters(61);
-	      thisTMB->PrintCounters(62);
-	      thisTMB->PrintCounters(63);
-	      thisTMB->PrintCounters(90);
-	      thisTMB->PrintCounters(91);
-	      thisTMB->PrintCounters(92);
-	      thisTMB->PrintCounters(93);
-	      thisTMB->PrintCounters(94);
+	      
+	      if(is_random_halfstrip)
+		CFEBTiming_PulseInject(0, cfeb, layers, pattern, random_ihs_list[ihs]); // Pulse or inject
+	      else
+		CFEBTiming_PulseInject(0, cfeb, layers, pattern, halfstrip); // Pulse or inject
+	      MyOutput_ = temp_os;
+	      
+	      thisTMB->DecodeCLCT();
+	      //out_file << "###UID:" << std::dec << uid << "###" << std::endl;
+	      //thisTMB->RedirectOutput(&out_file);
 	      //thisTMB->RedirectOutput(&std::cout);
 	      //out_file << std::endl;
 	      //out_file << std::endl;
 	      
-	      thisTMB->DecodeCLCT();
 	      
 	      //MyOutput_ = &clct_file;
 	      //(*MyOutput_) << "###UID:" << std::dec << uid << "###" << std::endl;
@@ -1856,10 +1842,38 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 		  //fill only when we are really scanning: 32 and -1 inputs are possible for special cases
 		  ++timing_2d_results[posneg][cfeb_phase][TimeDelay];
 		}
-	      (*MyOutput_) << "###UID:" << std::dec << uid << "###" << std::endl;
               (*MyOutput_) <<"Failed CFEB timing, here is the injected patterns and received pattern "<< std::endl;
               (*MyOutput_) <<"expected HS "<<expected_key_hs<<" pattern "<< expected_pattern <<" nhit "<< expected_hit <<" valid "<< expected_valid<<std::endl;
-	      Print_CLCT0();
+	      //Print_CLCT0();
+	      thisTMB->PrintCLCT();
+              thisTMB->DecodeAndPrintMPCFrames(0);
+              (*MyOutput_) << "After injection "<< std::endl;
+	      thisTMB->GetCounters();
+	      thisTMB->PrintCounters(13);
+	      thisTMB->PrintCounters(14);
+	      thisTMB->PrintCounters(15);
+	      thisTMB->PrintCounters(16);
+	      thisTMB->PrintCounters(17);
+	      thisTMB->PrintCounters(18);
+	      thisTMB->PrintCounters(19);
+	      thisTMB->PrintCounters(20);
+	      thisTMB->PrintCounters(21);
+	      thisTMB->PrintCounters(22);
+	      thisTMB->PrintCounters(26);
+	      thisTMB->PrintCounters(27);
+	      thisTMB->PrintCounters(28);
+	      thisTMB->PrintCounters(29);
+	      thisTMB->PrintCounters(30);
+	      thisTMB->PrintCounters(44);
+	      thisTMB->PrintCounters(46);
+	      thisTMB->PrintCounters(61);
+	      thisTMB->PrintCounters(62);
+	      thisTMB->PrintCounters(63);
+	      thisTMB->PrintCounters(90);
+	      thisTMB->PrintCounters(91);
+	      thisTMB->PrintCounters(92);
+	      thisTMB->PrintCounters(93);
+	      thisTMB->PrintCounters(94);
 	      }
 	      
 	      if(!good_valid)

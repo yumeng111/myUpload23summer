@@ -1700,8 +1700,12 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
   //clct_file << "Prescan CLCT0: " << std::endl;
   
   //thisTMB->RedirectOutput(&clct_file);
+  //Tao debug
   (*MyOutput_) <<"Before test, here is received CLCT0 "<< std::endl;
   Print_CLCT0();
+  thisTMB->PrintTMBConfiguration();
+  thisTMB->GetCounters();
+  thisTMB->PrintCounters();
   thisTMB->RedirectOutput(web_out);
   
   //clct_file << "--------------" << std::endl << std::endl;
@@ -1772,10 +1776,10 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 	      
 	      //out_file << "###UID:" << std::dec << uid << "###" << std::endl;
 	      //thisTMB->RedirectOutput(&out_file);
-	      //thisTMB->GetCounters();
-	      //thisTMB->PrintCounters(14);
-	      //thisTMB->PrintCounters(44);
-	      //thisTMB->PrintCounters(46);
+	      thisTMB->GetCounters();
+	      thisTMB->PrintCounters(14);
+	      thisTMB->PrintCounters(44);
+	      thisTMB->PrintCounters(46);
 	      //thisTMB->RedirectOutput(&std::cout);
 	      //out_file << std::endl;
 	      //out_file << std::endl;
@@ -1884,6 +1888,8 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
   (*MyOutput_) << std::endl;
   web_backup << std::endl;
   
+  thisTMB->GetCounters();
+  thisTMB->PrintCounters();
   (*MyOutput_) << "Errors per cfeb: " << std::endl;
   web_backup << "Errors per cfeb: " << std::endl;
   for(int cfeb = (is_cfeb_scan)?(0):(cfeb_num); (is_cfeb_scan)?(cfeb<MaxCFEB):(cfeb==cfeb_num); ++cfeb) {
@@ -8772,7 +8778,8 @@ void ChamberUtilities::PulseHalfstrips(int * hs_normal, bool enableL1aEmulator) 
   }
   //
   // Shift the pulsing information to the CFEBs
-  thisDMB->chan2shift(chan); //use chan2shift(chan, true) to enable debug
+  // Tao debug
+  thisDMB->chan2shift(chan, true); //use chan2shift(chan, true) to enable debug
   //
   thisTMB->EnableCLCTInputs(CLCTInputs);
   //

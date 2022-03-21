@@ -8827,6 +8827,9 @@ void ChamberUtilities::PulseHalfstrips(int * hs_normal, bool enableL1aEmulator) 
   //
   // Shift the pulsing information to the CFEBs
   // Tao debug
+    (*MyOutput_) << "PulseHalfstrips step0 " << std::endl;
+	      thisTMB->GetCounters();
+	      thisTMB->PrintCounters(13);
   thisDMB->chan2shift(chan, true); //use chan2shift(chan, true) to enable debug
   //
   thisTMB->EnableCLCTInputs(CLCTInputs);
@@ -8842,8 +8845,14 @@ void ChamberUtilities::PulseHalfstrips(int * hs_normal, bool enableL1aEmulator) 
   else {
     thisDMB->inject(1,0x4f);
   }
+    (*MyOutput_) << "PulseHalfstrips step1 " << std::endl;
+	      thisTMB->GetCounters();
+	      thisTMB->PrintCounters(13);
   ::usleep(100);
   //
+    (*MyOutput_) << "PulseHalfstrips step2 " << std::endl;
+	      thisTMB->GetCounters();
+	      thisTMB->PrintCounters(13);
 	  // Decode the TMB CLCTs (0 and 1)
 	  //
   thisTMB->DecodeCLCT();

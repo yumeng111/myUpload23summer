@@ -5523,7 +5523,7 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   *out << cgicc::form().set("method","GET").set("action",ScanOTMBFiberDelays) << std::endl ;
   *out << "OTMB Link Phaser Scan:" << std::endl;
   *out << cgicc::br();
-  sprintf(buf,"%d",10); // default value
+  sprintf(buf,"%d",100); // default value
   *out << cgicc::input().set("type","text").set("value",buf).set("name","sleep_time")<<std::endl;
   sprintf(buf,"%d",100); // default value
   *out << "microseconds/bin"<<std::endl;
@@ -5544,6 +5544,7 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
           thisTMB->ReadRegister(phaser_cfeb456_rxd_adr);
   thisTMB->ReadRegister(phaser_cfeb0123_rxd_adr);
 
+    *out << cgicc::br();
   if (thisTMB->GetGemEnabled()){
 	  for(int i=0;i<2;i++) {
 	    *out << "gem" << i
@@ -8386,31 +8387,36 @@ throw (xgi::exception::Exception) {
                 thisCCB->setCCBMode(CCB::DLOG);
                 //thisCCB->bc0(); // Start triggering
                 cout.rdbuf (old);              // restore cout
+                usleep(1000);//microsecond, wait for resync
+                //thisTMB->ReadDcfebGtxRxRegisters();
 
                 thisTMB->ResetCounters();
-                thisTMB->ReadDcfebGtxRxRegisters();
                 std::cout<<std::endl<<"sleeping, fine delay = "<<fine_delay<<" coarse delay is "<<coarse_delay<<" posneg "<< posneg <<" ME1b phase delay "<< thisTMB->GetReadCfeb0123RxClockDelay() <<std::endl;
                 usleep(sleeptime);
 
                 thisTMB->GetCounters();
 
                 thisTMB->ReadDcfebGtxRxRegisters();
+
                 for (int i=0; i<ncfeb; i++) {
                     cfeb0123_errors_vec[i] = thisTMB->GetReadGtxRxErrorCount(i);
                     cfeb0123_errors += cfeb0123_errors_vec[i];
+                    //cfeb0123_errors += thisTMB->GetReadGtxRxLinkBad(i)*10;
                 }
                 if (isME11){//ME1A for ME11 chamber
                   for (int i=0; i<3; i++) {
                       cfeb456_errors_vec[i] = thisTMB->GetReadGtxRxErrorCount(i+4);
                       cfeb456_errors += cfeb456_errors_vec[i];
+                      //cfeb456_errors += thisTMB->GetReadGtxRxLinkBad(i+4)*10;
                   }
                 }
-                for (int i=0; i<7; i++) {
-                    std::cout <<"cfeb "<<i <<" GetReadGtxRxNotintableCount "<< thisTMB->GetReadGtxRxNotintableCount(i) << " GetReadGtxRxDisperrCount "<< thisTMB->GetReadGtxRxDisperrCount(i) <<" linkgood " <<thisTMB->GetReadGtxRxLinkGood(i)  << " linkbad "<< thisTMB->GetReadGtxRxLinkBad(i) <<" thisTMB->GetReadGtxRxErrorCount "<< thisTMB->GetReadGtxRxErrorCount(i)<< std::endl;
-                }
-                for (int i=0; i<4; i++) {
-                    std::cout <<"GEM "<<i <<" GetReadGtxRxNotintableCount "<< thisTMB->GetReadGemGtxRxNotintableCount(i) << " GetReadGtxRxDisperrCount "<< thisTMB->GetReadGemGtxRxDisperrCount(i) <<" linkgood " <<thisTMB->GetReadGemGtxRxLinkGood(i)  << " linkbad "<< thisTMB->GetReadGemGtxRxLinkBad(i) << std::endl;
-                }
+                //for (int i=0; i<7; i++) {
+                //    std::cout <<"cfeb "<<i <<" GetReadGtxRxNotintableCount "<< thisTMB->GetReadGtxRxNotintableCount(i) << " GetReadGtxRxDisperrCount "<< thisTMB->GetReadGtxRxDisperrCount(i) <<" linkgood " <<thisTMB->GetReadGtxRxLinkGood(i)  << " linkbad "<< thisTMB->GetReadGtxRxLinkBad(i) <<" thisTMB->GetReadGtxRxErrorCount "<< thisTMB->GetReadGtxRxErrorCount(i)<< std::endl;
+                //}
+                //if (thisTMB->GetGemEnabled())
+		//	for (int i=0; i<4; i++) {
+		//	    std::cout <<"GEM "<<i <<" GetReadGtxRxNotintableCount "<< thisTMB->GetReadGemGtxRxNotintableCount(i) << " GetReadGtxRxDisperrCount "<< thisTMB->GetReadGemGtxRxDisperrCount(i) <<" linkgood " <<thisTMB->GetReadGemGtxRxLinkGood(i)  << " linkbad "<< thisTMB->GetReadGemGtxRxLinkBad(i) << std::endl;
+		//	}
 
                 errorcount[0][posneg][coarse_delay]+= (thisTMB->GetGemCounter(0)+thisTMB->GetGemCounter(1)+thisTMB->GetGemCounter(2));
                 errorcount[1][posneg][coarse_delay]+= cfeb456_errors;
@@ -10748,7 +10754,6 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
     *out << "]" << std::endl;
 //  thisTMB->PrintTMBRegister(dcfeb_gtx_rx0_adr);
 //  the above line of code is an alternative output without the colors
-    //
 
     if (thisTMB->GetGemEnabled()) {
       thisTMB->ReadGemGtxRxRegisters();

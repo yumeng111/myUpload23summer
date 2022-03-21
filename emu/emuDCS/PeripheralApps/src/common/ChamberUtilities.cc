@@ -1700,6 +1700,7 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
   //clct_file << "Prescan CLCT0: " << std::endl;
   
   //thisTMB->RedirectOutput(&clct_file);
+  (*MyOutput_) <<"Before test, here is received CLCT0 "<< std::endl;
   Print_CLCT0();
   thisTMB->RedirectOutput(web_out);
   
@@ -1829,6 +1830,10 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 		  //fill only when we are really scanning: 32 and -1 inputs are possible for special cases
 		  ++timing_2d_results[posneg][cfeb_phase][TimeDelay];
 		}
+	      (*MyOutput_) << "###UID:" << std::dec << uid << "###" << std::endl;
+              (*MyOutput_) <<"Failed CFEB timing, here is the injected patterns and received pattern "<< std::endl;
+              (*MyOutput_) <<"expected HS "<<expected_key_hs<<" pattern "<< expected_pattern <<" nhit "<< expected_hit <<" valid "<< expected_valid<<std::endl;
+	      Print_CLCT0();
 	      }
 	      
 	      if(!good_valid)

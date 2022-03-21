@@ -8323,14 +8323,14 @@ throw (xgi::exception::Exception) {
 
     std::cout <<"OTMB Link Phaser scan:  sleep_time for one step, unit microseconds "<< sleeptime<<" steptime for scan, unit picoseconds "<< steptime << endl;
     if(isME11){
-       ChamberTestsOutput[tmb][current_crate_] <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME1A sync errors (cfeb5, 6, 7), ME1B sync errors(cfeb1,2,3,4)"<< std::endl;
-       std::cout <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME1A sync errors (cfeb5, 6, 7), ME1B sync errors(cfeb1,2,3,4)"<< std::endl;
+       ChamberTestsOutput[tmb][current_crate_] <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME1A sync errors (cfeb gtx error for cfeb5, 6, 7), ME1B sync errors(cfeb gtx error for cfeb1,2,3,4)"<< std::endl;
+       std::cout <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME1A sync errors (cfeb gtx error for cfeb5, 6, 7), ME1B sync errors(cfeb gtx error for cfeb1,2,3,4)"<< std::endl;
     }else if(thisTMB->GetGemEnabled()){
-       ChamberTestsOutput[tmb][current_crate_] <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME21 sync errors(cfeb1,2,3,4,5)"<< std::endl;
-       std::cout <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME21 sync errors(cfeb1,2,3,4,5)"<< std::endl;
+       ChamberTestsOutput[tmb][current_crate_] <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME21 sync errors(cfeb gtx error for cfeb1,2,3,4,5)"<< std::endl;
+       std::cout <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, ME21 sync errors(gtx error for  cfeb1,2,3,4,5)"<< std::endl;
     }else{
-       ChamberTestsOutput[tmb][current_crate_] <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, MEX1 sync errors(cfeb1,2,3,4,5)"<< std::endl;
-       std::cout <<"Posneg (0/1), phase delay, gemA sync errors, gemB sync errors,superchamber sync errors, MEX1 sync errors(cfeb1,2,3,4,5)"<< std::endl;
+       ChamberTestsOutput[tmb][current_crate_] <<"Posneg (0/1), phase delay,  MEX1 sync errors(cfeb gtx error for cfeb1,2,3,4,5)"<< std::endl;
+       std::cout <<"Posneg (0/1), phase delay,  MEX1 sync errors(cfeb gtx error cfeb1,2,3,4,5)"<< std::endl;
     }
     for (posneg=0; posneg<2; posneg++) {
 
@@ -8400,14 +8400,16 @@ throw (xgi::exception::Exception) {
 
                 for (int i=0; i<ncfeb; i++) {
                     cfeb0123_errors_vec[i] = thisTMB->GetReadGtxRxErrorCount(i);
-                    cfeb0123_errors += cfeb0123_errors_vec[i];
+                    //cfeb0123_errors += cfeb0123_errors_vec[i];
                     //cfeb0123_errors += thisTMB->GetReadGtxRxLinkBad(i)*10;
+                    cfeb0123_errors += thisTMB->GetME1BCFEBSYNCERRCounter();
+
                 }
                 if (isME11){//ME1A for ME11 chamber
                   for (int i=0; i<3; i++) {
                       cfeb456_errors_vec[i] = thisTMB->GetReadGtxRxErrorCount(i+4);
-                      cfeb456_errors += cfeb456_errors_vec[i];
-                      //cfeb456_errors += thisTMB->GetReadGtxRxLinkBad(i+4)*10;
+                      //cfeb456_errors += cfeb456_errors_vec[i];
+                      cfeb456_errors += thisTMB->GetME1ACFEBSYNCERRCounter();
                   }
                 }
                 //for (int i=0; i<7; i++) {
@@ -8426,7 +8428,7 @@ throw (xgi::exception::Exception) {
 
                 if (isME11){//GEM is included by default for GE11-ME11
 			asprintf(&output,
-				"posneg=%1d, delay=%4.1f, gemA=%7d, gemB=%7d, superch=%7d, me1A=%7d (%4d + %4d + %4d) syncerr %7d, me1B=%7d (%4d + %4d + %4d + %4d) syncerr %7d\n",
+				"posneg=%1d, delay=%4.1f, gemA=%7d, gemB=%7d, superch=%7d, me1A=%7d (%4d, %4d, %4d), me1B=%7d (%4d, %4d, %4d, %4d)\n",
 				posneg,
 				float(coarse_delay) + float(fine_delay)/fine_delayloops,
 				thisTMB->GetGemCounter(0),//gemA sync error
@@ -8436,18 +8438,18 @@ throw (xgi::exception::Exception) {
 				cfeb456_errors_vec[0],
 				cfeb456_errors_vec[1],
 				cfeb456_errors_vec[2],
-                                thisTMB->GetME1ACFEBSYNCERRCounter(),
+                                //thisTMB->GetME1ACFEBSYNCERRCounter(),
 				cfeb0123_errors,
 				cfeb0123_errors_vec[0],
 				cfeb0123_errors_vec[1],
 				cfeb0123_errors_vec[2],
-				cfeb0123_errors_vec[3],
-                                thisTMB->GetME1BCFEBSYNCERRCounter()
+				cfeb0123_errors_vec[3]
+                                //thisTMB->GetME1BCFEBSYNCERRCounter()
 			);
                 }
                 else if (thisTMB->GetGemEnabled()){ //GEM is added for ME21. 
 			asprintf(&output,
-				"posneg=%1d, delay=%4.1f, gemA=%7d, gemB=%7d, superch=%7d, me21=%7d (%4d + %4d + %4d + %4d + %4d) syncerr %7d\n",
+				"posneg=%1d, delay=%4.1f, gemA=%7d, gemB=%7d, superch=%7d, me21=%7d (%4d, %4d, %4d, %4d, %4d)\n",
 				posneg,
 				float(coarse_delay) + float(fine_delay)/fine_delayloops,
 				thisTMB->GetGemCounter(0),//gemA sync error
@@ -8458,13 +8460,13 @@ throw (xgi::exception::Exception) {
 				cfeb0123_errors_vec[1],
 				cfeb0123_errors_vec[2],
 				cfeb0123_errors_vec[3],
-				cfeb0123_errors_vec[4],
-                                thisTMB->GetME1BCFEBSYNCERRCounter()
+				cfeb0123_errors_vec[4]
+                                //thisTMB->GetME1BCFEBSYNCERRCounter()
 			);
                 }
                 else { //MEX/1, CSC only
 			asprintf(&output,
-				"posneg=%1d, delay=%4.1f,  meX1 =%7d (%4d + %4d + %4d + %4d + %4d) syncerr %7d\n",
+				"posneg=%1d, delay=%4.1f,  meX1 syncerr =%7d (%4d, %4d, %4d, %4d, %4d) \n",
 				posneg,
 				float(coarse_delay) + float(fine_delay)/fine_delayloops,
 				cfeb0123_errors,
@@ -8472,8 +8474,8 @@ throw (xgi::exception::Exception) {
 				cfeb0123_errors_vec[1],
 				cfeb0123_errors_vec[2],
 				cfeb0123_errors_vec[3],
-				cfeb0123_errors_vec[4],
-                                thisTMB->GetME1BCFEBSYNCERRCounter()
+				cfeb0123_errors_vec[4]
+                                //thisTMB->GetME1BCFEBSYNCERRCounter()
 			);
                 }
 

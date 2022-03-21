@@ -292,15 +292,15 @@ void EmuPCrateConfigTStore::outputStandardInterface(xgi::Output * out)
   *out << "<tr><td align=\"right\">" << endl;
   *out << input().set("type", "submit").set("value", "Set Descriptions").set("onclick", "return validateShortDescription()") << endl;
   *out << "</td><td>" << endl;
-  *out << input().set("type", "text").set("style", "width:50em").set("maxlength", "50").set("value", descr.shortDescription()).set("name", "ShortConfigDesc").set("id", "ShortConfigDesc") << endl;
-  *out << " <b>required short description</b> (5-50 characters) " << endl;
+  *out << input().set("type", "text").set("style", "width:80em").set("maxlength", "120").set("value", descr.shortDescription()).set("name", "ShortConfigDesc").set("id", "ShortConfigDesc") << endl;
+  *out << " <b>required short description</b> (5-120 characters) " << endl;
   *out << "</td></tr> " << endl;
 
   *out << "<tr><td align=\"right\">" << endl;
   //*out << input().set("type", "submit").set("value", "Set Long Description") << endl;
   *out << "</td><td>" << endl;
-  *out << cgicc::textarea().set("rows","3").set("cols","92").set("maxlength", "949").set("name", "LongConfigDesc") << descr.longDescription() << cgicc::textarea() << endl;
-  *out << " optional long description (limit 949 characters)" << endl;
+  *out << cgicc::textarea().set("rows","3").set("cols","92").set("maxlength", "879").set("name", "LongConfigDesc") << descr.longDescription() << cgicc::textarea() << endl;
+  *out << " optional long description (limit 879 characters)" << endl;
   *out << "</td></tr> </table>" << endl;
   *out << form() << endl;
 

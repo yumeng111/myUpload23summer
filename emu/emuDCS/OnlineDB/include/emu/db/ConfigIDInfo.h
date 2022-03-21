@@ -66,7 +66,7 @@ public:
    * It's either contents of this field until the 1st '\n' character or everything if there's no '\n'.
    * The \c max_length parameter allows to limit the short description's length.
    */
-  const std::string shortDescription(size_t max_length = 100) const;
+  const std::string shortDescription(size_t max_length = 120) const;
 
   /**
    * Long description.

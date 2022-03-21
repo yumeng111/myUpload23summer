@@ -1779,6 +1779,15 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 	      thisTMB->PrintCounters(19);
 	      thisTMB->PrintCounters(20);
 	      thisTMB->PrintCounters(21);
+	      thisTMB->PrintCounters(22);
+	      thisTMB->PrintCounters(25);
+	      thisTMB->PrintCounters(26);
+	      thisTMB->PrintCounters(27);
+	      thisTMB->PrintCounters(28);
+	      thisTMB->PrintCounters(29);
+	      thisTMB->PrintCounters(30);
+	      thisTMB->PrintCounters(31);
+	      thisTMB->PrintCounters(34);
 	      
 	      if(is_random_halfstrip)
 		CFEBTiming_PulseInject(0, cfeb, layers, pattern, random_ihs_list[ihs]); // Pulse or inject
@@ -1859,11 +1868,14 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 	      thisTMB->PrintCounters(20);
 	      thisTMB->PrintCounters(21);
 	      thisTMB->PrintCounters(22);
+	      thisTMB->PrintCounters(25);
 	      thisTMB->PrintCounters(26);
 	      thisTMB->PrintCounters(27);
 	      thisTMB->PrintCounters(28);
 	      thisTMB->PrintCounters(29);
 	      thisTMB->PrintCounters(30);
+	      thisTMB->PrintCounters(31);
+	      thisTMB->PrintCounters(34);
 	      thisTMB->PrintCounters(44);
 	      thisTMB->PrintCounters(46);
 	      thisTMB->PrintCounters(61);

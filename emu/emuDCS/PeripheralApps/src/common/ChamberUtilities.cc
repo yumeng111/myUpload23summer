@@ -1544,8 +1544,8 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
   config.clct_pattern_trig_en = 1;
   config.clct_ext_trig_en = 1;
   config.tmb_allow_clct = 1;
-  config.hs_pretrig_hit_thresh = 3;
-  config.min_hits_pattern = 5;
+  config.hs_pretrig_hit_thresh = 5;
+  config.min_hits_pattern = 1;
   config.ignore_ccb_startstop = 0;
   config.layer_trigger_en = 0;
   config.fifo_mode = 1;
@@ -1780,6 +1780,8 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 	      thisTMB->PrintCounters(20);
 	      thisTMB->PrintCounters(21);
 	      thisTMB->PrintCounters(22);
+	      thisTMB->PrintCounters(23);
+	      thisTMB->PrintCounters(24);
 	      thisTMB->PrintCounters(25);
 	      thisTMB->PrintCounters(26);
 	      thisTMB->PrintCounters(27);
@@ -1868,6 +1870,8 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 	      thisTMB->PrintCounters(20);
 	      thisTMB->PrintCounters(21);
 	      thisTMB->PrintCounters(22);
+	      thisTMB->PrintCounters(23);
+	      thisTMB->PrintCounters(24);
 	      thisTMB->PrintCounters(25);
 	      thisTMB->PrintCounters(26);
 	      thisTMB->PrintCounters(27);

@@ -8834,10 +8834,22 @@ void ChamberUtilities::PulseHalfstrips(int * hs_normal, bool enableL1aEmulator) 
     (*MyOutput_) << "PulseHalfstrips step0 " << std::endl;
 	      thisTMB->GetCounters();
 	      thisTMB->PrintCounters(13);
+	      thisTMB->PrintCounters(25);
+	      thisTMB->PrintCounters(29);
   thisDMB->chan2shift(chan, true); //use chan2shift(chan, true) to enable debug
   //
+    (*MyOutput_) << "PulseHalfstrips step1, CLCTinputs " << CLCTInputs<< std::endl;
+	      thisTMB->GetCounters();
+	      thisTMB->PrintCounters(13);
+	      thisTMB->PrintCounters(25);
+	      thisTMB->PrintCounters(29);
   thisTMB->EnableCLCTInputs(CLCTInputs);
   //
+    (*MyOutput_) << "PulseHalfstrips step2 " << std::endl;
+	      thisTMB->GetCounters();
+	      thisTMB->PrintCounters(13);
+	      thisTMB->PrintCounters(25);
+	      thisTMB->PrintCounters(29);
   // Inject it (pulse the CFEBs)
   //
   // thisCCB_->setCCBMode(CCB::VMEFPGA);
@@ -8849,14 +8861,18 @@ void ChamberUtilities::PulseHalfstrips(int * hs_normal, bool enableL1aEmulator) 
   else {
     thisDMB->inject(1,0x4f);
   }
-    (*MyOutput_) << "PulseHalfstrips step1 " << std::endl;
+    (*MyOutput_) << "PulseHalfstrips step3 " << std::endl;
 	      thisTMB->GetCounters();
 	      thisTMB->PrintCounters(13);
+	      thisTMB->PrintCounters(25);
+	      thisTMB->PrintCounters(29);
   ::usleep(100);
   //
-    (*MyOutput_) << "PulseHalfstrips step2 " << std::endl;
+    (*MyOutput_) << "PulseHalfstrips step4 " << std::endl;
 	      thisTMB->GetCounters();
 	      thisTMB->PrintCounters(13);
+	      thisTMB->PrintCounters(25);
+	      thisTMB->PrintCounters(29);
 	  // Decode the TMB CLCTs (0 and 1)
 	  //
   thisTMB->DecodeCLCT();

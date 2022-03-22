@@ -1542,7 +1542,7 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
   config.dac = (float) 160 * 5. / 4095.;
   config.comp_thresh = (float) 50 / 1000.;
   config.clct_pattern_trig_en = 1;
-  config.clct_ext_trig_en = 0;//Tao
+  config.clct_ext_trig_en = 1;
   config.tmb_allow_clct = 1;
   config.hs_pretrig_hit_thresh = 5;
   config.min_hits_pattern = 1;
@@ -8836,14 +8836,7 @@ void ChamberUtilities::PulseHalfstrips(int * hs_normal, bool enableL1aEmulator) 
 	      thisTMB->PrintCounters(13);
   thisDMB->chan2shift(chan, true); //use chan2shift(chan, true) to enable debug
   //
-    (*MyOutput_) << "PulseHalfstrips step1 " << std::endl;
-	      thisTMB->GetCounters();
-	      thisTMB->PrintCounters(13);
-
   thisTMB->EnableCLCTInputs(CLCTInputs);
-    (*MyOutput_) << "PulseHalfstrips step2, CLCTInputs" << CLCTInputs << std::endl;
-	      thisTMB->GetCounters();
-	      thisTMB->PrintCounters(13);
   //
   // Inject it (pulse the CFEBs)
   //
@@ -8856,12 +8849,12 @@ void ChamberUtilities::PulseHalfstrips(int * hs_normal, bool enableL1aEmulator) 
   else {
     thisDMB->inject(1,0x4f);
   }
-    (*MyOutput_) << "PulseHalfstrips step3 " << std::endl;
+    (*MyOutput_) << "PulseHalfstrips step1 " << std::endl;
 	      thisTMB->GetCounters();
 	      thisTMB->PrintCounters(13);
   ::usleep(100);
   //
-    (*MyOutput_) << "PulseHalfstrips step4 " << std::endl;
+    (*MyOutput_) << "PulseHalfstrips step2 " << std::endl;
 	      thisTMB->GetCounters();
 	      thisTMB->PrintCounters(13);
 	  // Decode the TMB CLCTs (0 and 1)

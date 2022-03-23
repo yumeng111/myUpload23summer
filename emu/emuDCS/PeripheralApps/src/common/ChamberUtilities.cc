@@ -1700,12 +1700,7 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
   //clct_file << "Prescan CLCT0: " << std::endl;
   
   //thisTMB->RedirectOutput(&clct_file);
-  //Tao debug
-  (*MyOutput_) <<"Before test, here is received CLCT0 "<< std::endl;
   Print_CLCT0();
-  thisTMB->PrintTMBConfiguration();
-  thisTMB->GetCounters();
-  thisTMB->PrintCounters();
   thisTMB->RedirectOutput(web_out);
   
   //clct_file << "--------------" << std::endl << std::endl;
@@ -1767,29 +1762,6 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 //	      thisCCB_->setCCBMode(CCB::DLOG);
 
 	      thisCCB_->bc0(); // Start triggering
-	      (*MyOutput_) << "###UID:" << std::dec << uid << "###" << std::endl;
-              (*MyOutput_) << "Before injection "<< std::endl;
-	      thisTMB->GetCounters();
-	      thisTMB->PrintCounters(13);
-	      thisTMB->PrintCounters(14);
-	      thisTMB->PrintCounters(15);
-	      thisTMB->PrintCounters(16);
-	      thisTMB->PrintCounters(17);
-	      thisTMB->PrintCounters(18);
-	      thisTMB->PrintCounters(19);
-	      thisTMB->PrintCounters(20);
-	      thisTMB->PrintCounters(21);
-	      thisTMB->PrintCounters(22);
-	      thisTMB->PrintCounters(23);
-	      thisTMB->PrintCounters(24);
-	      thisTMB->PrintCounters(25);
-	      thisTMB->PrintCounters(26);
-	      thisTMB->PrintCounters(27);
-	      thisTMB->PrintCounters(28);
-	      thisTMB->PrintCounters(29);
-	      thisTMB->PrintCounters(30);
-	      thisTMB->PrintCounters(31);
-	      thisTMB->PrintCounters(34);
 	      
 	      if(is_random_halfstrip)
 		CFEBTiming_PulseInject(0, cfeb, layers, pattern, random_ihs_list[ihs]); // Pulse or inject
@@ -1797,13 +1769,17 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 		CFEBTiming_PulseInject(0, cfeb, layers, pattern, halfstrip); // Pulse or inject
 	      MyOutput_ = temp_os;
 	      
-	      thisTMB->DecodeCLCT();
 	      //out_file << "###UID:" << std::dec << uid << "###" << std::endl;
 	      //thisTMB->RedirectOutput(&out_file);
+	      //thisTMB->GetCounters();
+	      //thisTMB->PrintCounters(14);
+	      //thisTMB->PrintCounters(44);
+	      //thisTMB->PrintCounters(46);
 	      //thisTMB->RedirectOutput(&std::cout);
 	      //out_file << std::endl;
 	      //out_file << std::endl;
 	      
+	      thisTMB->DecodeCLCT();
 	      
 	      //MyOutput_ = &clct_file;
 	      //(*MyOutput_) << "###UID:" << std::dec << uid << "###" << std::endl;
@@ -1853,43 +1829,6 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
 		  //fill only when we are really scanning: 32 and -1 inputs are possible for special cases
 		  ++timing_2d_results[posneg][cfeb_phase][TimeDelay];
 		}
-              (*MyOutput_) <<"Failed CFEB timing, here is the injected patterns and received pattern "<< std::endl;
-              (*MyOutput_) <<"expected HS "<<expected_key_hs<<" pattern "<< expected_pattern <<" nhit "<< expected_hit <<" valid "<< expected_valid<<std::endl;
-	      //Print_CLCT0();
-	      thisTMB->PrintCLCT();
-              thisTMB->DecodeAndPrintMPCFrames(0);
-              (*MyOutput_) << "After injection "<< std::endl;
-	      thisTMB->GetCounters();
-	      thisTMB->PrintCounters(13);
-	      thisTMB->PrintCounters(14);
-	      thisTMB->PrintCounters(15);
-	      thisTMB->PrintCounters(16);
-	      thisTMB->PrintCounters(17);
-	      thisTMB->PrintCounters(18);
-	      thisTMB->PrintCounters(19);
-	      thisTMB->PrintCounters(20);
-	      thisTMB->PrintCounters(21);
-	      thisTMB->PrintCounters(22);
-	      thisTMB->PrintCounters(23);
-	      thisTMB->PrintCounters(24);
-	      thisTMB->PrintCounters(25);
-	      thisTMB->PrintCounters(26);
-	      thisTMB->PrintCounters(27);
-	      thisTMB->PrintCounters(28);
-	      thisTMB->PrintCounters(29);
-	      thisTMB->PrintCounters(30);
-	      thisTMB->PrintCounters(31);
-	      thisTMB->PrintCounters(34);
-	      thisTMB->PrintCounters(44);
-	      thisTMB->PrintCounters(46);
-	      thisTMB->PrintCounters(61);
-	      thisTMB->PrintCounters(62);
-	      thisTMB->PrintCounters(63);
-	      thisTMB->PrintCounters(90);
-	      thisTMB->PrintCounters(91);
-	      thisTMB->PrintCounters(92);
-	      thisTMB->PrintCounters(93);
-	      thisTMB->PrintCounters(94);
 	      }
 	      
 	      if(!good_valid)
@@ -1940,8 +1879,6 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
   (*MyOutput_) << std::endl;
   web_backup << std::endl;
   
-  thisTMB->GetCounters();
-  thisTMB->PrintCounters();
   (*MyOutput_) << "Errors per cfeb: " << std::endl;
   web_backup << "Errors per cfeb: " << std::endl;
   for(int cfeb = (is_cfeb_scan)?(0):(cfeb_num); (is_cfeb_scan)?(cfeb<MaxCFEB):(cfeb==cfeb_num); ++cfeb) {
@@ -8830,26 +8767,10 @@ void ChamberUtilities::PulseHalfstrips(int * hs_normal, bool enableL1aEmulator) 
   }
   //
   // Shift the pulsing information to the CFEBs
-  // Tao debug
-    (*MyOutput_) << "PulseHalfstrips step0 " << std::endl;
-	      thisTMB->GetCounters();
-	      thisTMB->PrintCounters(13);
-	      thisTMB->PrintCounters(25);
-	      thisTMB->PrintCounters(29);
-  thisDMB->chan2shift(chan, true); //use chan2shift(chan, true) to enable debug
+  thisDMB->chan2shift(chan); //use chan2shift(chan, true) to enable debug
   //
-    (*MyOutput_) << "PulseHalfstrips step1, CLCTinputs " << CLCTInputs<< std::endl;
-	      thisTMB->GetCounters();
-	      thisTMB->PrintCounters(13);
-	      thisTMB->PrintCounters(25);
-	      thisTMB->PrintCounters(29);
   thisTMB->EnableCLCTInputs(CLCTInputs);
   //
-    (*MyOutput_) << "PulseHalfstrips step2 " << std::endl;
-	      thisTMB->GetCounters();
-	      thisTMB->PrintCounters(13);
-	      thisTMB->PrintCounters(25);
-	      thisTMB->PrintCounters(29);
   // Inject it (pulse the CFEBs)
   //
   // thisCCB_->setCCBMode(CCB::VMEFPGA);
@@ -8861,18 +8782,8 @@ void ChamberUtilities::PulseHalfstrips(int * hs_normal, bool enableL1aEmulator) 
   else {
     thisDMB->inject(1,0x4f);
   }
-    (*MyOutput_) << "PulseHalfstrips step3 " << std::endl;
-	      thisTMB->GetCounters();
-	      thisTMB->PrintCounters(13);
-	      thisTMB->PrintCounters(25);
-	      thisTMB->PrintCounters(29);
   ::usleep(100);
   //
-    (*MyOutput_) << "PulseHalfstrips step4 " << std::endl;
-	      thisTMB->GetCounters();
-	      thisTMB->PrintCounters(13);
-	      thisTMB->PrintCounters(25);
-	      thisTMB->PrintCounters(29);
 	  // Decode the TMB CLCTs (0 and 1)
 	  //
   thisTMB->DecodeCLCT();

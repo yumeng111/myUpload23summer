@@ -347,7 +347,7 @@ void EmuDim::MyHeader(xgi::Input * in, xgi::Output * out, std::string title )
     *out << " {  border: none; width: auto; padding: 0.35em; }" << std::endl;  
     *out << " </style>" << std::endl << " </head> " << std::endl;
     *out << "<h1 style=\"text-align: center\"> " << title << "</h1>" << std::endl;
-    *out << "<h5 style=\" font-weight: regular; text-align: center\"> " << "( time stamp: " << getLocalDateTime()  << " ) </h5>" << std::endl;
+    *out << "<h5 style=\" font-weight: regular; text-align: center\"> " << "( time stamp: " << getLocalDateTime()  << ", X2P version: " << xtopversion << " ) </h5>" << std::endl;
 }
 
 void EmuDim::Setup()
@@ -426,6 +426,7 @@ int EmuDim::ReadFromXmas()
    readin_=1;
    readtime_=time(NULL);
    readin_=2; 
+   outdated_ch=0;
 
    // read
    XmasLoader->reload(xmas_load);
@@ -434,7 +435,10 @@ int EmuDim::ReadFromXmas()
    XmasLoader->reload(xmas_load2);
    ch2=ParseTXT(XmasLoader->Content(), XmasLoader->Content_Size(), 0, 2);
    ch=ch1+ch2;
-   std::cout << "Cycle " << heartbeat << " read " << ch << " Chambers and ";
+   std::cout << "Cycle " << heartbeat << " read " << ch << " Chambers ";
+
+   // if XMAS is ON, report total outdated chambers if any
+   if(outdated_ch>0 && (xmas_state_ & 2)) std::cout << "( " << outdated_ch << " outdated ) ";
    
    // if no chamber info read back, report Xmas state as error
    if(ch>0 && (xmas_state_ & 0x100)) xmas_state_ &= 0xfffffeff;
@@ -449,7 +453,7 @@ int EmuDim::ReadFromXmas()
    readin_=4;
    // then fill the structure
    du=ParseDDU(FedcLoader->Content(), FedcLoader->Content_Size(), inited?0:1);
-   std::cout << du << " DDUs at " << getLocalDateTime() << std::endl;
+   std::cout << "and " << du << " DDUs at " << getLocalDateTime() << std::endl;
    // 
    readin_=0;
    return ch;
@@ -506,6 +510,8 @@ int EmuDim::FillChamber(char *buff, int source, int type)
    if(chnumb>=0 && chnumb <TOTAL_CHAMBERS)
    {   chamb[chnumb].SetLabel(label);
        chamb[chnumb].Fill(content, source);
+       // check if the data is outdated --older than 10 minutes
+       if(readtime_-chamb[chnumb].GetTime()>600) outdated_ch++;
        return 1;
    }
    else

@@ -1935,9 +1935,9 @@ void ConfigurationEditor::uploadConfigToDB(xgi::Input * in, xgi::Output * out) t
     startUpload(in);
 
     lastUploadedConfigurationTime_ = emu::utils::getDateTime();
-    lastUploadedConfiguration_     = emu_config_id_;
+    lastUploadedConfiguration_     = emu_config_id_.toString();
     *out << "<br>Uploading finished at: " << lastUploadedConfigurationTime_ << std::endl;
-    *out << "<br>EMU_Config_ID " << emu_config_id_ << " uploaded to Database." << std::endl;
+    *out << "<br>EMU_Config_ID " << lastUploadedConfiguration_ << " uploaded to Database." << std::endl;
 
     outputStandardInterface(out);
     outputCurrentConfiguration(out);

@@ -4544,9 +4544,12 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         //run3 DAQ format
 	h40_gem_csc_bend_enable_     = ExtractValueFromData(data , h40_gem_csc_bend_enable_lo_bit , h40_gem_csc_bend_enable_hi_bit);
     } else if (address == 41) {
+        //hmt 
 	h41_run3_trig_df_    = ExtractValueFromData(data , h41_run3_trig_df_lo_bit     , h41_run3_trig_df_hi_bit);
 	h41_gem_enable_      = ExtractValueFromData(data , h41_gem_enable_lo_bit       , h41_gem_enable_hi_bit);
         h41_hmt_match_win_   = ExtractValueFromData(data , h41_hmt_match_win_lo_bit    , h41_hmt_match_win_hi_bit);
+        h41_anode_hmt_       = ExtractValueFromData(data , h41_anode_hmt_lo_bit        , h41_anode_hmt_hi_bit);
+        h41_cathode_hmt_     = ExtractValueFromData(data , h41_cathode_hmt_lo_bit      , h41_cathode_hmt_hi_bit);
         h41_tmb_allow_alct_       =  ExtractValueFromData(data , h41_tmb_allow_alct_lo_bit      , h41_tmb_allow_alct_hi_bit);
         h41_tmb_allow_clct_       =  ExtractValueFromData(data , h41_tmb_allow_clct_lo_bit      , h41_tmb_allow_clct_hi_bit);
         h41_tmb_allow_match_      =  ExtractValueFromData(data , h41_tmb_allow_match_lo_bit     , h41_tmb_allow_match_hi_bit);
@@ -4906,6 +4909,8 @@ void TMB::PrintTMBRawHits() {
     (*MyOutput_) << " -> run3_trig_df                                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_run3_trig_df_<<std::endl;
     (*MyOutput_) << " -> gem enable for gemcsc match                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_gem_enable_<<std::endl;
     (*MyOutput_) << " -> location of ALCT/anodeHMT in Cathdode HMT window        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_hmt_match_win_<<std::endl;
+    (*MyOutput_) << " -> anode hmt, in time (2bits)                              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_anode_hmt_<<std::endl;
+    (*MyOutput_) << " -> cathode hmt, in time (2bits)                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_cathode_hmt_<<std::endl;
    }else {
 	  (*MyOutput_) << " -> Allow ALCT-only  tmb-matching trigger                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_alct_<<std::endl;
 	  (*MyOutput_) << " -> Allow CLCT-only  tmb-matching trigger                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_clct_<<std::endl;
@@ -4913,14 +4918,14 @@ void TMB::PrintTMBRawHits() {
 	  (*MyOutput_) << " -> Allow ALCT-only  tmb-matching readout only              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_alct_ro_<<std::endl;
 	  (*MyOutput_) << " -> Allow CLCT-only  tmb-matching readout only              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_clct_ro_<<std::endl;
 	  (*MyOutput_) << " -> Allow Match-only tmb-matching readout only              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_tmb_allow_match_ro_<<std::endl;
+	  (*MyOutput_) << " -> Layer pre-trigger threshold                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_lyr_thresh_pretrig_<<std::endl;
+	  (*MyOutput_) << " -> Layer trigger mode enabled                              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_layer_trig_en_<<std::endl;
    }
   (*MyOutput_) << " -> Only ALCT triggered, non-triggering readout             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_r_tmb_alct_only_ro_<<std::endl;
   (*MyOutput_) << " -> Only CLCT triggered, non-triggering readout             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_r_tmb_clct_only_ro_<<std::endl;
   (*MyOutput_) << " -> ALCT and CLCT matched in time, non-triggering readout   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_r_tmb_match_ro_<<std::endl;
   (*MyOutput_) << " -> Triggering readout event                                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_r_tmb_trig_keep_<<std::endl;
   (*MyOutput_) << " -> Non-triggering readout event                            = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_r_tmb_non_trig_keep_<<std::endl;
-  (*MyOutput_) << " -> Layer pre-trigger threshold                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_lyr_thresh_pretrig_<<std::endl;
-  (*MyOutput_) << " -> Layer trigger mode enabled                              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h41_layer_trig_en_<<std::endl;
 //
   return;
 }
@@ -7046,9 +7051,10 @@ void TMB::DefineTMBConfigurationRegisters_(){
   //
   // TMB trigger configuration:
   TMBConfigurationRegister.push_back(tmbtim_adr  );   //0xB2 ALCT*CLCT trigger coincidence timing, MPC tx delay 
+  //add Run3 control for TMB FW, 2022
+  TMBConfigurationRegister.push_back(run3_format_ctrl_adr); //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 data format
   if (hardware_version_>=2){
     TMBConfigurationRegister.push_back(algo2016_ctrl_adr); //0X198 = ADR_NEWALGO_CTRL:  Controls parameters of new trigger algorithm  (Yuriy, 2016)
-    TMBConfigurationRegister.push_back(run3_format_ctrl_adr); //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 data format
     TMBConfigurationRegister.push_back(hmt_ctrl_adr); //0X1AC = ADR_HMT_CTRL:  Controls parameters of HMT
     TMBConfigurationRegister.push_back(hmt_thresh1_adr); //0X1AE = ADR_HMT_THRESH1:  HMT thresh1
     TMBConfigurationRegister.push_back(hmt_thresh2_adr); //0X1B0 = ADR_HMT_THRESH2:  HMT thresh2

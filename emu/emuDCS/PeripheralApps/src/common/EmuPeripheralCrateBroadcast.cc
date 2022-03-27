@@ -53,9 +53,9 @@ EmuPeripheralCrateBroadcast::EmuPeripheralCrateBroadcast(xdaq::ApplicationStub *
 
   std::string endcap = emu::utils::performExpansions("$ENDCAP");
   if (endcap == "P") {
-    OTMBFirmwareFile_ = FirmwareDir_+"tmb/tmb_me11_virtex6_typeC.svf";
+    OTMBFirmwareFile_ = FirmwareDir_+"tmb/tmb_me11_virtex6_typeC.mcs";
   } else if (endcap == "M") {
-    OTMBFirmwareFile_ = FirmwareDir_+"tmb/tmb_me11_virtex6_typeD.svf";
+    OTMBFirmwareFile_ = FirmwareDir_+"tmb/tmb_me11_virtex6_typeD.mcs";
   }
   //
   number_of_layers_pretrig_ = 2;

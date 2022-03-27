@@ -50,6 +50,7 @@
 #include "dim/dis.hxx"
 #include "dim/dic.hxx"
 
+#include "emu/x2p/XtopVersion.h"
 #include "emu/x2p/LOAD.h"
 #include "emu/x2p/Chamber.h"
 #include "emu/x2p/DDU.h"
@@ -156,7 +157,7 @@ private:
   xdata::UnsignedShort fastloop, slowloop, extraloop;
   int current_state_, xmas_state_, blue_state_, yp_state_; 
   int old_x2p_state, old_xmas_state, old_blue_state, old_yp_state;
-  int heartbeat, readin_, read_timeout;
+  int heartbeat, readin_, read_timeout, outdated_ch;
   int lastread_ch;
   time_t readtime_;
 

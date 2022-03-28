@@ -5214,6 +5214,8 @@ private:
   int h41_gem_enable_;
   int h41_run3_trig_df_;
   int h41_hmt_match_win_;
+  int h41_cathode_hmt_;
+  int h41_anode_hmt_;
   int h41_tmb_allow_alct_;
   int h41_tmb_allow_clct_;
   int h41_tmb_allow_match_;

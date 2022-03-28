@@ -5381,6 +5381,10 @@ const int h41_gem_enable_lo_bit = 1;
 const int h41_gem_enable_hi_bit = 1;
 const int h41_hmt_match_win_lo_bit = 2;
 const int h41_hmt_match_win_hi_bit = 5;
+const int h41_cathode_hmt_lo_bit = 11;
+const int h41_cathode_hmt_hi_bit = 12;
+const int h41_anode_hmt_lo_bit = 13;
+const int h41_anode_hmt_hi_bit = 14;
 // Allow ALCT-only  tmb-matching trigger
 const int h41_tmb_allow_alct_lo_bit   =0;
 const int h41_tmb_allow_alct_hi_bit   =0;

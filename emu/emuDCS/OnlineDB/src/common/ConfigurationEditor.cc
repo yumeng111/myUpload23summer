@@ -64,6 +64,8 @@ ConfigurationEditor::ConfigurationEditor(xdaq::ApplicationStub * s) throw (xdaq:
   crateRealNames.resize( 65, "" );
   lastReadConfiguration_     = "n/a";
   lastUploadedConfiguration_ = "n/a";
+  last_read_description_ = "";
+  lastTimeUploadedConfiguration_ = 0;
 }
 
 
@@ -1328,7 +1330,7 @@ void ConfigurationEditor::viewValues(xgi::Input * in, xgi::Output * out) throw (
   std::string tableName = **cgi["table"];
   std::string fieldName = **cgi["fieldName"];
   outputHeader(out);
-  outputStandardInterface(out);
+  // outputStandardInterface(out);
   if (currentTables.count(tableName))
   {
     std::map<std::string, xdata::Table> &tables = currentTables[tableName];
@@ -1442,7 +1444,7 @@ std::string ConfigurationEditor::configIDOptionsWithDescription(std::vector<Conf
   //for (std::vector<std::string>::reverse_iterator configID = configIDs.rbegin(); configID != configIDs.rend(); ++configID)
   for (std::vector<ConfigIDInfo>::const_iterator configID = configIDs.begin(); configID != configIDs.end(); ++configID)
   {
-    menu << cgicc::option().set("value", configID->id()) << configID->id() + " - " + configID->shortDescription() << cgicc::option() << std::endl;
+    menu << cgicc::option().set("value", configID->id()+ "-" + configID->shortDescription()) << configID->id() + " - " + configID->shortDescription() << cgicc::option() << std::endl;
   }
   return menu.str();
 }
@@ -1928,17 +1930,21 @@ void ConfigurationEditor::uploadConfigToDB(xgi::Input * in, xgi::Output * out) t
   {
     outputHeader(out);
 
-    *out << "<br>Upload started at: " << emu::utils::getDateTime() << std::endl;
-    // *out << "<br>Uploading to Database is in progress. This may take over a minute. Please be patient!<br><br>"
-    //     << std::endl;
+    time_t nowtime=time(NULL);
+    if (nowtime-lastTimeUploadedConfiguration_>60) // prevent accidental duplicate uploading
+    {
+       *out << "<br>Upload started at: " << emu::utils::getDateTime() << std::endl;
+       // *out << "<br>Uploading to Database is in progress. This may take over a minute. Please be patient!<br><br>"
+       //     << std::endl;
 
-    startUpload(in);
+       startUpload(in);
 
-    lastUploadedConfigurationTime_ = emu::utils::getDateTime();
-    lastUploadedConfiguration_     = emu_config_id_.toString();
-    *out << "<br>Uploading finished at: " << lastUploadedConfigurationTime_ << std::endl;
-    *out << "<br>EMU_Config_ID " << lastUploadedConfiguration_ << " uploaded to Database." << std::endl;
-
+       lastTimeUploadedConfiguration_ = time(NULL);
+       lastUploadedConfigurationTime_ = emu::utils::getDateTime();
+       lastUploadedConfiguration_     = emu_config_id_.toString();
+       *out << "<br>Uploading finished at: " << lastUploadedConfigurationTime_ << std::endl;
+       *out << "<br>EMU_Config_ID " << lastUploadedConfiguration_ << " uploaded to Database." << std::endl;
+    }
     outputStandardInterface(out);
     outputCurrentConfiguration(out);
   }

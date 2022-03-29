@@ -215,7 +215,7 @@ void EmuPCrateConfigTStore::outputStandardInterface(xgi::Output * out)
        << cgicc::tr() 
        << cgicc::td() << "Last read in" << cgicc::td() 
        << cgicc::td().set("style", "font-weight: bold;") << lastReadConfiguration_ << cgicc::td() 
-       << cgicc::td() << ( lastReadConfigurationTime_.size() ? "at " : "" ) << lastReadConfigurationTime_ <<cgicc:: td() 
+       << cgicc::td() << ( lastReadConfigurationTime_.size() ? "at " : "" ) << lastReadConfigurationTime_  << "; " << last_read_description_  << cgicc:: td() 
        << cgicc::tr()
        << cgicc::tr() 
        << cgicc::td() << "Last uploaded" << cgicc::td() 
@@ -885,7 +885,11 @@ void EmuPCrateConfigTStore::readConfigFromDB(xgi::Input * in, xgi::Output * out)
     cgicc::Cgicc cgi(in);
     outputHeader(out);
     std::string endcap_side;
-    std::string emu_config_id = cgi("configID");
+    std::string emu_config_id_long = cgi("configID");
+    size_t new_line = emu_config_id_long.find('-');
+    std::string emu_config_id= (new_line!=std::string::npos)?emu_config_id_long.substr(0, new_line):emu_config_id_long;
+    last_read_description_ = emu_config_id_long;
+
     if (emu_config_id.empty())
     { //if no config ID is specified, we load the latest one for the given side
       endcap_side = **cgi["side"];

@@ -2428,14 +2428,14 @@ void EmuPCrateConfigTStore::copyTMBToTable(xdata::Table &newRows, TMB * TStore_t
     xdata::UnsignedShort  _tmb_copad_alct_allow_ro = TStore_thisTMB->GetTmbCopadAlctAllowRo();
     xdata::UnsignedShort  _tmb_copad_clct_allow = TStore_thisTMB->GetTmbCopadClctAllow();
     xdata::UnsignedShort  _tmb_copad_clct_allow_ro = TStore_thisTMB->GetTmbCopadClctAllowRo();
-    xdata::String         _gema_vfat_hcm ="";
+    xdata::String         _gema_vfat_hcm ="0";
     if(TStore_thisTMB->GetGemVfatHotChannelMask(true)!=0)
     {
        std::stringstream hcm;
        hcm << std::hex << TStore_thisTMB->GetGemVfatHotChannelMask(true) << std::dec;
        _gema_vfat_hcm =  hcm.str();
     }
-    xdata::String         _gemb_vfat_hcm ="";
+    xdata::String         _gemb_vfat_hcm ="0";
     if(TStore_thisTMB->GetGemVfatHotChannelMask(false)!=0)
     {
        std::stringstream hcm;

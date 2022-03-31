@@ -1413,7 +1413,7 @@ void ConfigurationEditor::viewValues(xgi::Input * in, xgi::Output * out) throw (
       outputTable(out, allTables);
     }
   }
-  outputFooter(out);
+  //  outputFooter(out);
 }
 
 

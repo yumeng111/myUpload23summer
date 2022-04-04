@@ -3836,7 +3836,7 @@ const int run2_revcode_enable_default = 0;
 const int hmt_enable_vmereg  = hmt_ctrl_adr;
 const int hmt_enable_bitlo   = 0;
 const int hmt_enable_bithi   = 0;
-const int hmt_enable_default = 1;
+const int hmt_enable_default = 0;
 //
 const int hmt_me1a_enable_vmereg  = hmt_ctrl_adr;
 const int hmt_me1a_enable_bitlo   = 1;

@@ -11030,7 +11030,7 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
     *out << cgicc::table();
    }
   //
-  if(thisTMB->GetHardwareVersion() >= 2) {
+  //if(thisTMB->GetHardwareVersion() >= 2) {
     *out << cgicc::fieldset();
     *out
       << cgicc::legend("LCT Info: Frames Sent to MPC").set("style", "color:blue")
@@ -11063,7 +11063,7 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
     thisTMB->RedirectOutput(&std::cout);
     *out << cgicc::pre();
     *out << cgicc::fieldset();
-  }
+  //}//end of if(thisTMB->GetHardwareVersion() >= 2)
   //
   *out << std::endl;    
   //

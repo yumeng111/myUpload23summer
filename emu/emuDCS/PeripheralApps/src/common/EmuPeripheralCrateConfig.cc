@@ -11030,11 +11030,12 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
     *out << cgicc::table();
    }
   //
-  //if(thisTMB->GetHardwareVersion() >= 2) {
+  // if(thisTMB->GetHardwareVersion() >= 2) {
     *out << cgicc::fieldset();
     *out
       << cgicc::legend("LCT Info: Frames Sent to MPC").set("style", "color:blue")
       << std::endl;
+  
     bool boxChecked = cgi.queryCheckbox("ShowMPCFIFOs");
     *out << cgicc::form().set("method", "GET").set("action", "");
     if (boxChecked ){
@@ -11043,20 +11044,20 @@ void EmuPeripheralCrateConfig::TMBStatus(xgi::Input * in, xgi::Output * out )
     else {
       *out << cgicc::input().set("type", "checkbox").set("checked","").set("name", "ShowMPCFIFOs");
     }
-    *out << "Show MPC FIFOs";
+    *out << "Show MPC FIFOs For OTMB";
     *out << cgicc::input().set("type", "submit").set("value", "Select");
     sprintf(buf,"%d",tmb);
     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
     *out << cgicc::form() << std::endl;
     *out << cgicc::pre();
-    thisTMB->RedirectOutput(out);
     // thisTMB->DecodeMPCFrames(); // Decode MPC frames for LAST trigger. VME registers: 0x88, 0x8a, 0x8c, 0x8e
     // thisTMB->PrintMPCFrames();  // Print  MPC frames for LAST trigger. VME registers: 0x88, 0x8a, 0x8c, 0x8e
     //
     // thisTMB->DecodeMPCFramesFromFIFO(); // Decode MPC frames for ONE trigger from FIFO. VME registers: 0x17C, 0x17E, 0x180, 0x182
     // thisTMB->PrintMPCFramesFromFIFO();  // Print  MPC frames for ONE trigger from FIFO. VME registers: 0x17C, 0x17E, 0x180, 0x182
     //
-    int nEvt = cgi.queryCheckbox("ShowMPCFIFOs") ? 10 : 0;
+    thisTMB->RedirectOutput(out);
+    int nEvt = (cgi.queryCheckbox("ShowMPCFIFOs") && thisTMB->GetHardwareVersion() >= 2) ? 10 : 0;
     thisTMB->DecodeAndPrintMPCFrames(nEvt); // Decode and print MPC frames for both cases:
                       //   1. LAST trigger. VME registers: 0x88, 0x8a, 0x8c, 0x8e
                       //   2. ONE trigger from FIFO. VME registers: 0x17C, 0x17E, 0x180, 0x182

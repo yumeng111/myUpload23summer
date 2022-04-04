@@ -22,6 +22,7 @@
 #include "xdata/UnsignedInteger64.h"
 
 #include <sstream>
+#include <time.h>
 
 namespace emu {
 namespace db {
@@ -248,6 +249,8 @@ public:
   std::string lastUploadedConfiguration_;
   std::string lastReadConfigurationTime_;
   std::string lastUploadedConfigurationTime_;
+  time_t lastTimeUploadedConfiguration_;
+  std::string last_read_description_;
   std::string configurationDirectory_;
   //std::vector<std::string> topLevelIdentifiersInDiff;
   std::string topLevelTableName_;

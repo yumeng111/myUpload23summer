@@ -30,7 +30,7 @@ function validateShortDescription()
   }
   if (elem.value.length <5)
   {
-    alert("Short description must be filled (5-50 characters)!");
+    alert("Short description must be filled (5-120 characters)!");
     elem.focus();
     return false;
   }

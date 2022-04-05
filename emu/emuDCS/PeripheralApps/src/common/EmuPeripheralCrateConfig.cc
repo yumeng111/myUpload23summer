@@ -5695,7 +5695,7 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   std::string ALCTBC0ScanWithCounter = toolbox::toString("/%s/ALCTBC0ScanWithCounter",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",ALCTBC0ScanWithCounter) << std::endl ;
   *out << cgicc::input().set("type","submit").set("value","Measure ALCT BC0 delay using counter") << std::endl ;
-  sprintf(buf,"%d",10); // default value
+  sprintf(buf,"%d",1); // default value
   *out <<" step time (second) "<< std::endl;;
   *out << cgicc::input().set("type","text").set("value",buf).set("name","alctscan_step_time")<<std::endl;
   sprintf(buf,"%d",tmb);

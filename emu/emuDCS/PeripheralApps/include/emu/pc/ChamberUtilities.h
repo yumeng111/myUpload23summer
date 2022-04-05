@@ -248,7 +248,7 @@ public:
   //
   // Define the timing of the BC0 from TMB -> ALCT -> TMB
   int ALCTBC0Scan();
-  int ALCTBC0ScanWithCounter();
+  int ALCTBC0ScanWithCounter(int step_time);
   int GEMBC0Scan();
   int GEMCSCMatchScan(int step_time, int mindelay, int nstep);
   int HMTTimingScan (int step_time);

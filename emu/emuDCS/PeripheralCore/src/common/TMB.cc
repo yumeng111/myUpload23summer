@@ -834,7 +834,15 @@ int TMB::FirmwareRevCode(){
   int data = (((rcvbuf[0]&0xff)<<8) | (rcvbuf[1]&0xff)) ;
   //std::cout <<"Firwmare revcode from 0x"<< std::hex << data << std::endl; 
   bool run2_legacy_revcode = run2_revcode_enable_ && !run3_daq_dataformat_enable_;
-  if (read_cclut_enable_ && !run2_legacy_revcode){
+  bool new_convention_run3 =  (data & 0x6fff) > 0; //rev code new convention since run3
+//===================================================================================
+//run3 convention for firmware revision code
+//  [12:09]; 0=TMB standard, 1=OTMB Standard, 2=CCLUT, 3=GEM+CCLUT, 4=TMBRun3
+//  [08:05];5 bits = Major Version (major features which breaks compatibility, requires changes to other board firmware) 
+//  [04:00];6 bits = Minor version  (minor features, internal fixes, bug fixes, etc).
+//===================================================================================
+  //if (read_cclut_enable_ && !run2_legacy_revcode){
+  if (new_convention_run3){
     read_tmb_firmware_revcode_ = data & 0x1fff;//13 bits 
     read_tmb_firmware_format_version_       = (read_tmb_firmware_revcode_ >> 9) & 0xf;
     read_tmb_firmware_major_version_        = (read_tmb_firmware_revcode_ >> 5) & 0xf;
@@ -4632,7 +4640,8 @@ void TMB::GEMRawhits() {
 }
 //
 void TMB::PrintTMBRawHits() {
-    bool run3_daq_enable_nogem   = run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ == tmb_firmware_version_OTMBCCLUT_const;
+    //bool run3_daq_enable_nogem   = run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ == tmb_firmware_version_OTMBCCLUT_const;
+    bool run3_daq_enable_nogem   = run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ != tmb_firmware_version_OTMBGEMCSC_const;
     bool run3_daq_enable_withgem = run3_daq_dataformat_enable_ && read_tmb_firmware_format_version_ == tmb_firmware_version_OTMBGEMCSC_const;
 
   //
@@ -10665,7 +10674,8 @@ void TMB::PrintFirmwareDate() {
   (*MyOutput_) << "-> TMB Firmware type   : " << std::hex << GetReadTmbFirmwareType()    << std::endl;
   (*MyOutput_) << "-> TMB Firmware version: " << std::hex << GetReadTmbFirmwareVersion() << std::endl;
   bool run2_legacy_revcode = run2_revcode_enable_ && !run3_daq_dataformat_enable_;
-  if (read_cclut_enable_){
+  bool new_convention_run3 = (GetReadTmbFirmwareRevcode() & 0xfff0) > 0;
+  if (new_convention_run3){//new convention since Run3
        if (run2_legacy_revcode)
 	  (*MyOutput_) << "-> TMB Firmware RevCode, Run2 legacy : 0x" << std::hex << GetReadTmbFirmwareRevcode() << std::endl;
        else

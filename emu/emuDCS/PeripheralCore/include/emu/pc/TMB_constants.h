@@ -4789,11 +4789,19 @@ const int h6_bd_status_hi_bit   =14;
 // Firmware version date code
 const int h7_revcode_lo_bit   =0;
 const int h7_revcode_hi_bit   =14;
+//===================================================================================
+//run3 convention for firmware revision code
+//  [12:09]; 0=TMB standard, 1=OTMB Standard, 2=CCLUT, 3=GEM+CCLUT, 4=TMBRun3
+//  [08:05];5 bits = Major Version (major features which breaks compatibility, requires changes to other board firmware) 
+//  [04:00];6 bits = Minor version  (minor features, internal fixes, bug fixes, etc).
+//===================================================================================
 //for Run3 format version definition
 const int tmb_firmware_version_TMBRun2_const    = 0;
 const int tmb_firmware_version_OTMBRun2_const   = 1;
 const int tmb_firmware_version_OTMBCCLUT_const  = 2;
 const int tmb_firmware_version_OTMBGEMCSC_const = 3;
+const int tmb_firmware_version_TMBRun3_const    = 4;
+
 
 // Full Header-mode words 8-to-EOB: Event Counters
 

@@ -5695,6 +5695,10 @@ void EmuPeripheralCrateConfig::ChamberTests(xgi::Input * in, xgi::Output * out )
   std::string ALCTBC0ScanWithCounter = toolbox::toString("/%s/ALCTBC0ScanWithCounter",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",ALCTBC0ScanWithCounter) << std::endl ;
   *out << cgicc::input().set("type","submit").set("value","Measure ALCT BC0 delay using counter") << std::endl ;
+  sprintf(buf,"%d",10); // default value
+  *out <<" step time (second) "<< std::endl;;
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","alctscan_step_time")<<std::endl;
+  sprintf(buf,"%d",tmb);
   sprintf(buf,"%d",tmb);
   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
   *out << cgicc::form() << std::endl ;
@@ -6357,9 +6361,15 @@ void EmuPeripheralCrateConfig::ALCTBC0ScanWithCounter(xgi::Input * in, xgi::Outp
   } else {
     std::cout << "ALCTBC0ScanWithCounter" << std::endl;
   }
+  cgicc::form_iterator name2 = cgi.getElement("alctscan_step_time");
+  //
+  long step_time    = 1;
+  //
+  if(name2 != cgi.getElements().end()) 
+      step_time = strtol(cgi["alctscan_step_time"]->getValue().c_str(),NULL,10);
   //
   MyTest[tmb][current_crate_].RedirectOutput(&ChamberTestsOutput[tmb][current_crate_]);
-  MyTest[tmb][current_crate_].ALCTBC0ScanWithCounter();
+  MyTest[tmb][current_crate_].ALCTBC0ScanWithCounter(step_time);
   MyTest[tmb][current_crate_].RedirectOutput(&std::cout);
   //
   this->ChamberTests(in,out);

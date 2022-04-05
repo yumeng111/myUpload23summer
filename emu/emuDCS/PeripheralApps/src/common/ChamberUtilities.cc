@@ -5484,7 +5484,7 @@ int ChamberUtilities::ALCTBC0Scan() {
 //------------------------------------------
 // ALCT->TMB BC0 delays , using internal counter
 //------------------------------------------
-int ChamberUtilities::ALCTBC0ScanWithCounter() {
+int ChamberUtilities::ALCTBC0ScanWithCounter(int step_time) {
   //
   // The goal of this scan is to find the alct_bx0_delay value which gives the desired
   // propagation time of the BC0 signal from TMB -> ALCT -> TMB.
@@ -5672,7 +5672,7 @@ int ChamberUtilities::ALCTBC0ScanWithCounter() {
     }
     //
     thisTMB->ResetCounters();
-    ::usleep(1000000); //unit here microsecond
+    ::usleep(1000000*step_time); //unit here microsecond
     thisTMB->GetCounters();
     matched2[delay_value] = thisTMB->GetLCTCounter();
   }

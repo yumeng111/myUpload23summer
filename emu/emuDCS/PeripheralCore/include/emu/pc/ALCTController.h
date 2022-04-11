@@ -684,7 +684,9 @@ class ALCTController : public EmuLogger
   void Set_PulseDirection(std::string afebs_or_strips); //afebs_or_strips = [afebs,strips]
   std::string Get_PulseDirection(); 
   //
-  // HMT thresholds
+  // HMT thresholds. 
+  // IMPORTANT NOTE: Here we are using the name convention same as in other boards, 
+  // but different from most other ALCT Setxxx(...)/GetWritexxx() methods.
   inline void SetHmtEnable(int e) { alct_hmt_enable_ = e?1:0; }
   inline int GetHmtEnable() { return alct_hmt_enable_; }
   inline void SetHmtThresh1(int th) { alct_hmt_thresh1_=th & 0x3FF; } 

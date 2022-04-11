@@ -7901,10 +7901,10 @@ void TMB::SetTMBRegisterDefaults() {
     // 0X33a,0x33c,0x33e for GEM hot vfat mask
     //---------------------------------------------------------------------
   for (int ivfat=0; ivfat<MAX_GEM_VFATS_PER_LAYER; ivfat++){
-     gemA_hot_channel_mask_[ivfat] = hot_channel_mask_default;
-     gemB_hot_channel_mask_[ivfat] = hot_channel_mask_default;
+     gemA_hot_channel_mask_[ivfat] = 0;
+     gemB_hot_channel_mask_[ivfat] = 0;
   }
-  //defaults are pulled from the main parameter fields
+  //defaults are 0 = Good VFAT (no hot channel)
   return;
 }
 //

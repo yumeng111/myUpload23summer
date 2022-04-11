@@ -4567,18 +4567,22 @@ void EmuPeripheralCrateConfig::SetRadioactivityTrigger(xgi::Input * in, xgi::Out
 	  TMB * thisTMB = tmbVector[tmb];
 	  ALCTController * thisALCT = thisTMB->alctController();
 	  //
-	  int initial_alct_nplanes_hit_pretrig = thisALCT->GetPretrigNumberOfLayers();
-	  int initial_alct_nplanes_hit_pattern = thisALCT->GetPretrigNumberOfPattern();
+	  int initial_alct_nplanes_hit_pretrig = thisALCT->GetWritePretrigNumberOfLayers();
+	  int initial_alct_nplanes_hit_pattern = thisALCT->GetWritePretrigNumberOfPattern();
 	  thisALCT->SetPretrigNumberOfLayers(1);
 	  thisALCT->SetPretrigNumberOfPattern(1);
 	  thisALCT->WriteConfigurationReg();
 	  //
 	  int initial_clct_nplanes_hit_pretrig = thisTMB->GetHsPretrigThresh();
+          int initial_active_feb_thresh_ = thisTMB->GetActiveFebFlagThresh();
 	  int initial_clct_nplanes_hit_pattern = thisTMB->GetMinHitsPattern();
+          int initial_run3_trig_dataformat_ = thisTMB->Getrun3_trig_dataformat_enable();
 	  thisTMB->SetHsPretrigThresh(1);
+          thisTMB->SetActiveFebFlagThresh(1);
 	  thisTMB->SetMinHitsPattern(1);
-          if(thisTMB->GetHardwareVersion()>1) thisTMB->SetActiveFebFlagThresh(1);  // DCFEBs need this
-	  thisTMB->WriteRegister(0x70);
+	  thisTMB->WriteRegister(seq_clct_adr);
+          thisTMB->Setrun3_trig_dataformat_enable(0);
+          thisTMB->WriteRegister(run3_format_ctrl_adr);
 	  //
 	  // set the number of BX's that a CFEB channel must be ON in order for TMB to be labeled as "bad"
 	  int initial_cfeb_badbits_nbx = thisTMB->GetCFEBBadBitsNbx();
@@ -4591,14 +4595,16 @@ void EmuPeripheralCrateConfig::SetRadioactivityTrigger(xgi::Input * in, xgi::Out
 	  //	  thisTMB->WriteRegister(0x86);
 	  //
 	  //
-/* Liu 2019-05-16, the following makes the hardware and software mismatch:
-	  // Reset the software back to the initial values.  Leave the hardware in radioactivity mode...
+/* Liu 2022-04-11, with the single-layer-trigger mode code fixed, now we turn on this part. */
+	  // Restore the software back to the initial values.  Leave the hardware in radioactivity mode...
 	  thisALCT->SetPretrigNumberOfLayers(initial_alct_nplanes_hit_pretrig);
 	  thisALCT->SetPretrigNumberOfPattern(initial_alct_nplanes_hit_pattern);
 	  //
 	  thisTMB->SetHsPretrigThresh(initial_clct_nplanes_hit_pretrig);
+          thisTMB->SetActiveFebFlagThresh(initial_active_feb_thresh_);
 	  thisTMB->SetMinHitsPattern(initial_clct_nplanes_hit_pattern);
-*/
+          thisTMB->Setrun3_trig_dataformat_enable(initial_run3_trig_dataformat_);
+
 	  //
 	  thisTMB->SetCFEBBadBitsNbx(initial_cfeb_badbits_nbx);
 	  //

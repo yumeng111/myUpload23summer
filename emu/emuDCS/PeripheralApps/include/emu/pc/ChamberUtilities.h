@@ -608,8 +608,11 @@ private:
   //
   int initial_clct_pretrig_thresh_;
   int initial_clct_pattern_thresh_;
+  int initial_active_feb_thresh_;
+  int initial_run3_trig_dataformat_;
   int initial_alct_pretrig_thresh_;
   int initial_alct_pattern_thresh_;
+
   // ODMB
   int l1acc_dav_delay_;
   int alct_dav_delay_;

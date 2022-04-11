@@ -7620,13 +7620,18 @@ void ChamberUtilities::PrintAllDmbValuesAndScopes() {
 void ChamberUtilities::SetupRadioactiveTriggerConditions() {
   //
   initial_clct_pretrig_thresh_ = thisTMB->GetHsPretrigThresh();
+  initial_active_feb_thresh_ = thisTMB->GetActiveFebFlagThresh();
   initial_clct_pattern_thresh_ = thisTMB->GetMinHitsPattern();
-  initial_alct_pretrig_thresh_ = alct->GetPretrigNumberOfLayers();
-  initial_alct_pattern_thresh_ = alct->GetPretrigNumberOfPattern();
+  initial_run3_trig_dataformat_ = thisTMB->Getrun3_trig_dataformat_enable();
+  initial_alct_pretrig_thresh_ = alct->GetWritePretrigNumberOfLayers();
+  initial_alct_pattern_thresh_ = alct->GetWritePretrigNumberOfPattern();
   //
   thisTMB->SetHsPretrigThresh(1);
+  thisTMB->SetActiveFebFlagThresh(1);
   thisTMB->SetMinHitsPattern(1);
   thisTMB->WriteRegister(seq_clct_adr);
+  thisTMB->Setrun3_trig_dataformat_enable(0);
+  thisTMB->WriteRegister(run3_format_ctrl_adr);
   //
   alct->SetPretrigNumberOfLayers(1);
   alct->SetPretrigNumberOfPattern(1);
@@ -7638,8 +7643,11 @@ void ChamberUtilities::SetupRadioactiveTriggerConditions() {
 void ChamberUtilities::ReturnToInitialTriggerConditions() {
 
   thisTMB->SetHsPretrigThresh(initial_clct_pretrig_thresh_);
+  thisTMB->SetActiveFebFlagThresh(initial_active_feb_thresh_);
   thisTMB->SetMinHitsPattern(initial_clct_pattern_thresh_);
   thisTMB->WriteRegister(seq_clct_adr);
+  thisTMB->Setrun3_trig_dataformat_enable(initial_run3_trig_dataformat_);
+  thisTMB->WriteRegister(run3_format_ctrl_adr);
   //
   alct->SetPretrigNumberOfLayers(initial_alct_pretrig_thresh_);
   alct->SetPretrigNumberOfPattern(initial_alct_pattern_thresh_);

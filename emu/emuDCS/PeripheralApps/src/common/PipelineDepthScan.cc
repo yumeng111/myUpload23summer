@@ -2,6 +2,7 @@
 
 #include "emu/pc/CCB.h"
 #include "emu/pc/TMB.h"
+#include "emu/pc/TMB_constants.h"
 #include "emu/pc/ALCTController.h"
 #include "emu/pc/FEDInterface.h"
 #include "emu/pc/LocalDAQInterface.h"
@@ -180,29 +181,36 @@ void emu::pc::PipelineDepthScan::setSingleLayerTrigger(){
     emu::pc::TMB *tmb = (*dmb)->getCrate()->GetChamber( *dmb )->GetTMB();
     emu::pc::ALCTController *alct = tmb->alctController();
 
-    int initial_alct_nplanes_hit_pretrig = alct->GetPretrigNumberOfLayers();
-    int initial_alct_nplanes_hit_pattern = alct->GetPretrigNumberOfPattern();
+    int initial_alct_nplanes_hit_pretrig = alct->GetWritePretrigNumberOfLayers();
+    int initial_alct_nplanes_hit_pattern = alct->GetWritePretrigNumberOfPattern();
     alct->SetPretrigNumberOfLayers(1);
     alct->SetPretrigNumberOfPattern(1);
     alct->WriteConfigurationReg();
 
     int initial_clct_nplanes_hit_pretrig = tmb->GetHsPretrigThresh();
+    int initial_active_feb_thresh_ = tmb->GetActiveFebFlagThresh();
     int initial_clct_nplanes_hit_pattern = tmb->GetMinHitsPattern();
+    int initial_run3_trig_dataformat_ = tmb->Getrun3_trig_dataformat_enable();
     tmb->SetHsPretrigThresh(1);
+    tmb->SetActiveFebFlagThresh(1);
     tmb->SetMinHitsPattern(1);
-    tmb->WriteRegister(0x70);
+    tmb->WriteRegister(seq_clct_adr);
+    tmb->Setrun3_trig_dataformat_enable(0);
+    tmb->WriteRegister(run3_format_ctrl_adr);
 
     // set the number of BX's that a CFEB channel must be ON in order for TMB to be labeled as "bad"
     int initial_cfeb_badbits_nbx = tmb->GetCFEBBadBitsNbx();
     tmb->SetCFEBBadBitsNbx(20);
     tmb->WriteRegister(0x124);
 
-    // Reset the software back to the initial values.  Leave the hardware in radioactivity mode...
+    // Restore the software back to the initial values.  Leave the hardware in radioactivity mode...
     alct->SetPretrigNumberOfLayers(initial_alct_nplanes_hit_pretrig);
     alct->SetPretrigNumberOfPattern(initial_alct_nplanes_hit_pattern);
 
     tmb->SetHsPretrigThresh(initial_clct_nplanes_hit_pretrig);
+    tmb->SetActiveFebFlagThresh(initial_active_feb_thresh_);
     tmb->SetMinHitsPattern(initial_clct_nplanes_hit_pattern);
+    tmb->Setrun3_trig_dataformat_enable(initial_run3_trig_dataformat_);
 
     tmb->SetCFEBBadBitsNbx(initial_cfeb_badbits_nbx);
   }

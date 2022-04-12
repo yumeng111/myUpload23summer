@@ -11027,6 +11027,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //---------------------------------------------------------------------
     // 0X198 = ADR_NEWALGO_CTRL:  Controls parameters of new trigger algorithm (Yuriy, 2016)
     //---------------------------------------------------------------------
+/*
     std::cout << "Inserting values for register ADR_NEWALGO_CTRL at 0X198"
     	      << "\n    use_dead_time_zone_         " << use_dead_time_zone_        
     	      << "\n    dead_time_zone_size_        " << dead_time_zone_size_       
@@ -11037,6 +11038,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     	      << "\n    clct_use_corrected_bx_      " << clct_use_corrected_bx_     
     	      << "\n    chamber_num_parity_         " << chamber_num_parity_     
     	      << std::endl;
+*/
     InsertValueIntoDataWord(use_dead_time_zone_        ,use_dead_time_zone_bithi        ,use_dead_time_zone_bitlo        ,&data_word);
     InsertValueIntoDataWord(dead_time_zone_size_       ,dead_time_zone_size_bithi       ,dead_time_zone_size_bitlo       ,&data_word);
     InsertValueIntoDataWord(use_dynamic_dead_time_zone_,use_dynamic_dead_time_zone_bithi,use_dynamic_dead_time_zone_bitlo,&data_word);
@@ -11052,10 +11054,12 @@ int TMB::FillTMBRegister(unsigned long int address) {
    //------------------------------------------------------------------
    //0X1AA = ADR_RUN3_FORMAT_CTRL:  Run3 format control  (Tao, 2020)
    //------------------------------------------------------------------
+/*
     std::cout << "Inserting values for register ADR_RUN3_FORMAT_CTRL at 0X1AA"
     	      << "\n    run3_trig_dataformat_enable_         " << run3_trig_dataformat_enable_        
     	      << "\n    run3_daq_dataformat_enable_         " << run3_daq_dataformat_enable_        
               << std::endl;
+*/
     InsertValueIntoDataWord(run3_trig_dataformat_enable_,     run3_trig_dataformat_enable_bithi,     run3_trig_dataformat_enable_bitlo,   &data_word);
     InsertValueIntoDataWord(run3_daq_dataformat_enable_,      run3_daq_dataformat_enable_bithi,      run3_daq_dataformat_enable_bitlo,    &data_word);
     InsertValueIntoDataWord(run3_alct_dataformat_enable_,     run3_alct_dataformat_enable_bithi,     run3_alct_dataformat_enable_bitlo,   &data_word);
@@ -11064,19 +11068,18 @@ int TMB::FillTMBRegister(unsigned long int address) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
+/*
     std::cout << "Inserting values for register ADR_HMT_CTRL at 0X1AC"
     	      << "\n    hmt_enable_         " << hmt_enable_        
     	      << "\n    hmt_me1a_enable_         " << hmt_me1a_enable_        
               << std::endl;
+*/
     InsertValueIntoDataWord(hmt_enable_,      hmt_enable_bithi,      hmt_enable_bitlo,      &data_word);
     InsertValueIntoDataWord(hmt_me1a_enable_, hmt_me1a_enable_bithi, hmt_me1a_enable_bitlo, &data_word);
   } else if ( address == hmt_thresh1_adr ) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_THRESH1:  HMT thresh1  (Tao, 2020)
    //------------------------------------------------------------------
-    std::cout << "Inserting values for register ADR_HMT_THRESH1 at 0X1AE"
-    	      << "\n    hmt_thresh1_         " << hmt_thresh1_        
-              << std::endl;
     InsertValueIntoDataWord(hmt_thresh1_,         hmt_thresh1_bithi,      hmt_thresh1_bitlo,      &data_word);
     InsertValueIntoDataWord(cfeb_allow_hmt_ro_,   cfeb_allow_hmt_ro_bithi,cfeb_allow_hmt_ro_bitlo,      &data_word);
     InsertValueIntoDataWord(hmt_aff_thresh_,      hmt_aff_thresh_bithi,      hmt_aff_thresh_bitlo,      &data_word);
@@ -11084,9 +11087,6 @@ int TMB::FillTMBRegister(unsigned long int address) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_THRESH2:  HMT thresh2  (Tao, 2020)
    //------------------------------------------------------------------
-    std::cout << "Inserting values for register ADR_HMT_THRESH2 at 0X1B0"
-    	      << "\n    hmt_thresh2_         " << hmt_thresh2_        
-              << std::endl;
     InsertValueIntoDataWord(hmt_thresh2_,            hmt_thresh2_bithi,      hmt_thresh2_bitlo,      &data_word);
     InsertValueIntoDataWord(hmt_delay_,              hmt_delay_bithi,      hmt_delay_bitlo,      &data_word);
     InsertValueIntoDataWord(hmt_alct_win_size_,      hmt_alct_win_size_bithi,      hmt_alct_win_size_bitlo,      &data_word);
@@ -11094,9 +11094,6 @@ int TMB::FillTMBRegister(unsigned long int address) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_THRESH3:  HMT thresh3  (Tao, 2020)
    //------------------------------------------------------------------
-    std::cout << "Inserting values for register ADR_HMT_THRESH3 at 0X1B2"
-    	      << "\n    hmt_thresh3_         " << hmt_thresh3_        
-              << std::endl;
     InsertValueIntoDataWord(hmt_thresh3_,        hmt_thresh3_bithi,        hmt_thresh3_bitlo,      &data_word);
     InsertValueIntoDataWord(hmt_allow_anode_,    hmt_allow_anode_bithi,    hmt_allow_anode_bitlo,      &data_word);
     InsertValueIntoDataWord(hmt_allow_cathode_,    hmt_allow_cathode_bithi,    hmt_allow_cathode_bitlo,      &data_word);

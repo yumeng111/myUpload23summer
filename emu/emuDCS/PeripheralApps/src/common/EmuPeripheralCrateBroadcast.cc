@@ -93,6 +93,7 @@ EmuPeripheralCrateBroadcast::EmuPeripheralCrateBroadcast(xdaq::ApplicationStub *
   xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadCFEBFPGAFirmware, "LoadCFEBFPGAFirmware");
   xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadOTMBEPROM, "LoadOTMBEPROM");
   xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadOTMBFPGA, "LoadOTMBFPGA");
+  xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadOTMBEPROMLoop, "LoadOTMBFPGALoop");
   xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadODMBEPROM, "LoadODMBEPROM");
   xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadODMBFPGA, "LoadODMBFPGA");
   xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadDCFEBEPROM, "LoadDCFEBEPROM");
@@ -468,6 +469,12 @@ void EmuPeripheralCrateBroadcast::LoadDMBCFEBFPGAFirmware(xgi::Input * in, xgi::
   *out << OTMBFirmwareFile_;
   *out << cgicc::form() << std::endl;
   //
+  std::string LoadOTMBEproml = toolbox::toString("/%s/LoadOTMBEPROMLoop",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",LoadOTMBEproml) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Load OTMB EPROM to individual slots") << std::endl ;
+  *out << OTMBFirmwareFile_;
+  *out << cgicc::form() << std::endl;
+  //
   *out << cgicc::fieldset() << std::endl;
   //
 }
@@ -585,6 +592,50 @@ void EmuPeripheralCrateBroadcast::LoadOTMBFPGA(xgi::Input * in, xgi::Output * ou
      broadcastOTMB->program_virtex6(OTMBFirmwareFile_.c_str());
      std::cout << getLocalDateTime() << " Finished programming all OTMB FPGAs." << std::endl;
   }
+  this->LoadDMBCFEBFPGAFirmware(in, out);
+}
+//
+void EmuPeripheralCrateBroadcast::LoadOTMBEPROMLoop(xgi::Input * in, xgi::Output * out )  {
+  //
+  // load the OTMB firmware to EPROM
+  //
+    std::cout << getLocalDateTime() << " Programming EPROM on all OTMBs" << std::endl;
+    std::cout << "Using mcs file: " << OTMBFirmwareFile_ << std::endl;
+    for(unsigned i=0; i<otherOTMBs.size(); i++)
+    {
+       if(otherOTMBs[i]->GetHardwareVersion()==2)
+       {
+          std::cout  << getLocalDateTime() <<  " Broadcast OTMB (Virtex 6) firmware to slot " << otherOTMBs[i]->slot() << std::endl;
+          //
+          bool broadcast=true;
+          otherOTMBs[i]->setup_jtag(ChainTmbMezz, broadcast);
+          std::string svffile1 = XMLDIR+"/virtex6lx240_header.svf";
+          std::string svffile2 = XMLDIR+"/virtex6_trailer.svf";
+          std::string corefile = XMLDIR+"/virtex6lx240_core.mcs";
+
+          std::cout << "Step #1, loading Xilinx Core..."  << std::endl;    
+          otherOTMBs[i]->program_virtex6(corefile.c_str());
+          std::cout << "Step #2, erasing EPROM..."  << std::endl;    
+          otherOTMBs[i]->svfLoad(0, svffile1.c_str(), 0, 0);
+          std::cout << "Step #3, programming EPROM with content from MCS file..."  << std::endl;
+          otherOTMBs[i]->otmb_program_eprom(OTMBFirmwareFile_.c_str());
+          std::cout << "Done!"  << std::endl;  
+          std::cout << "Step #4, finalizing..." << std::endl;
+          otherOTMBs[i]->svfLoad(0, svffile2.c_str(), 0, 0);
+
+          std::cout  << getLocalDateTime() <<  " Finished loading firmware to EPROM." << std::endl;
+
+          // enable VME access to TMB FPGA
+          // from function ClearTMBBootReg()
+          short unsigned int BootReg=0;
+          //    thisTMB->tmb_get_boot_reg(&BootReg);
+          BootReg &= 0xff7f;                    // Give JTAG chain to the FPGA to configure ALCT on hard reset
+          BootReg &= 0xf7ff;                    // Allow FPGA access to the VME register
+          otherOTMBs[i]->tmb_set_boot_reg(BootReg);
+
+       }
+    }
+    std::cout << getLocalDateTime() << " Finished programming all ODMB EPROMs." << std::endl;
   this->LoadDMBCFEBFPGAFirmware(in, out);
 }
 //

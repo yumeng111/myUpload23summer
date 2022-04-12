@@ -116,6 +116,7 @@ public:
   void LoadCFEBFPGAFirmware(xgi::Input * in, xgi::Output * out );
   void LoadOTMBEPROM(xgi::Input * in, xgi::Output * out );
   void LoadOTMBFPGA(xgi::Input * in, xgi::Output * out );
+  void LoadOTMBEPROMLoop(xgi::Input * in, xgi::Output * out );
   void LoadODMBEPROM(xgi::Input * in, xgi::Output * out );
   void LoadODMBFPGA(xgi::Input * in, xgi::Output * out );
   void LoadDCFEBEPROM(xgi::Input * in, xgi::Output * out );

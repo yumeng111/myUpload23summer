@@ -91,6 +91,10 @@ EXTRA_CFLAGS += -DCONFIG_IGB_DISABLE_PACKET_SPLIT
 ifeq (7.6,$(shell /bin/sed -n -e 's/[^0-9]*\([0-9]\+.[0-9]\+\).[0-9]\+[^0-9]*/\1/p' /etc/redhat-release))
   EXTRA_CFLAGS += -DHAVE_NETDEVICE_MIN_MAX_MTU
 endif
+# Extra flags needed for Redhat release 7.9
+ifeq (7.9,$(shell /bin/sed -n -e 's/[^0-9]*\([0-9]\+.[0-9]\+\).[0-9]\+[^0-9]*/\1/p' /etc/redhat-release))
+  EXTRA_CFLAGS += -DHAVE_NETDEVICE_MIN_MAX_MTU
+endif
 devkernelbuild = $(call kernelbuild,$(if $(filter -DNO_PTP_SUPPORT,${EXTRA_CFLAGS}),CONFIG_PTP_1588_CLOCK=n) ${2},${1})
 
 ###############

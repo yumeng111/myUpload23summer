@@ -5549,7 +5549,7 @@ static inline void __kc_dma_unmap_page_attrs(struct device *dev,
 }
 #endif
 
-#if RHEL_RELEASE_CODE != RHEL_RELEASE_VERSION(7,6)
+#if RHEL_RELEASE_CODE < RHEL_RELEASE_VERSION(7,6)
 static inline void __page_frag_cache_drain(struct page *page,
 					   unsigned int count)
 {

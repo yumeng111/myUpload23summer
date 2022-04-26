@@ -385,12 +385,10 @@ void EmuPeripheralCrateBroadcast::LoadDMBCFEBFPGAFirmware(xgi::Input * in, xgi::
   //
   //create RAT filename for firmware based on expected dates...
   char ratdate[8];
-  sprintf(ratdate,"%4x%1x%1x%1x%1x",
-	  broadcastRAT->GetExpectedRatFirmwareYear()&0xffff,
-	  (broadcastRAT->GetExpectedRatFirmwareMonth()>>4)&0xf,
-	  (broadcastRAT->GetExpectedRatFirmwareMonth()   )&0xf,
-	  (broadcastRAT->GetExpectedRatFirmwareDay()  >>4)&0xf,
-	  (broadcastRAT->GetExpectedRatFirmwareDay()     )&0xf);
+  sprintf(ratdate,"%4d%02d%02d",
+	  broadcastRAT->GetExpectedRatFirmwareYear(),
+	  broadcastRAT->GetExpectedRatFirmwareMonth(),
+	  broadcastRAT->GetExpectedRatFirmwareDay() );
   RATFirmwareFile_ = FirmwareDir_+"rat/"+ratdate+"/rat.svf";
   //
   std::string LoadRATFirmware = toolbox::toString("/%s/LoadRATFirmware",getApplicationDescriptor()->getURN().c_str());

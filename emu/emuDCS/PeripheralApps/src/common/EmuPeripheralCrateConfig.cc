@@ -80,8 +80,8 @@ const std::string ALCT_READBACK_FILENAME_ME32 = "alct384mirror/alct384mirror_ver
 const std::string ALCT_FIRMWARE_FILENAME_ME41 = "alct_LX150T_576mirror/alct_LX150T_576mirror";
 const std::string ALCT_READBACK_FILENAME_ME41 = "alct576mirror/alct576mirror_verify";
 //
-const std::string ALCT_FIRMWARE_FILENAME_ME42 = "alct_s6_384mirror/alct_s6_384mirror";
-const std::string ALCT_READBACK_FILENAME_ME42 = "alct_s6_384mirror/alct_s6_384mirror_verify";
+const std::string ALCT_FIRMWARE_FILENAME_ME42 = "alct_LX150_384mirror/alct_LX150_384mirror";
+const std::string ALCT_READBACK_FILENAME_ME42 = "alct_LX150_384mirror/alct_LX150_384mirror_verify";
 //
 const int CCB_LABEL         = 0;
 const int MPC_LABEL         = 1;

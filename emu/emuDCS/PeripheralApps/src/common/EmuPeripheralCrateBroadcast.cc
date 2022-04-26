@@ -93,7 +93,7 @@ EmuPeripheralCrateBroadcast::EmuPeripheralCrateBroadcast(xdaq::ApplicationStub *
   xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadCFEBFPGAFirmware, "LoadCFEBFPGAFirmware");
   xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadOTMBEPROM, "LoadOTMBEPROM");
   xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadOTMBFPGA, "LoadOTMBFPGA");
-  xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadOTMBEPROMLoop, "LoadOTMBFPGALoop");
+  xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadOTMBEPROMLoop, "LoadOTMBEPROMLoop");
   xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadODMBEPROM, "LoadODMBEPROM");
   xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadODMBFPGA, "LoadODMBFPGA");
   xgi::bind(this,&EmuPeripheralCrateBroadcast::LoadDCFEBEPROM, "LoadDCFEBEPROM");

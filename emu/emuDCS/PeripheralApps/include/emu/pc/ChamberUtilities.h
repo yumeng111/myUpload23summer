@@ -37,6 +37,10 @@ public:
     MyOutput_ = Output ;
     //
   }
+
+  inline void RedirectXMLOutput(std::ostream *Output) { 
+    XMLOutput_ = Output ;
+  }
   //
   ////////////////////////////////////////////////
   // determine peripheral crate timing parameters
@@ -510,6 +514,7 @@ public:
 private:
   //
   std::ostream * MyOutput_ ;
+  std::ostream * XMLOutput_ ;
   int debug_;
   //
   bool use_measured_values_;

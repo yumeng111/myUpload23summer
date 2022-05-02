@@ -672,7 +672,7 @@ private:
   void PipelineDepthScanWithDAQForSystem(xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception);  
   void CFEBTimingSimpleScanSystem_me11(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   void CFEBTimingSimpleScanSystem_non_me11(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
-
+  void CFEBTimingSimpleScanRing(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception);
   //
   // BC0 scan functions, Tao
   void ALCTBC0Scan(xgi::Input * in, xgi::Output * out ) throw (xgi::exception::Exception); 

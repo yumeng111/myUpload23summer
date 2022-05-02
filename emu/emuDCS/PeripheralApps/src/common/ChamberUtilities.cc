@@ -493,6 +493,7 @@ ChamberUtilities::ChamberUtilities(){
   pipeline_depth_b_ = -1;
   pipeline_depth_fine_b_ = -1;
 
+  XMLOutput_ = NULL;
 }
 //
 //
@@ -2103,6 +2104,20 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
       web_backup << std::setw(5) << cfeb << std::setw(2) << "|" << std::setw(5) << CFEBrxPhase_[cfeb] << std::setw(7) << CFEBrxPosneg_[cfeb] << std::endl;
     }
     
+    if ( XMLOutput_ != NULL ){
+      std::cout     << "<chamber label='" << thisTMB->GetLabel() << "'";
+      (*XMLOutput_) << "<chamber label='" << thisTMB->GetLabel() << "'";
+      for (int cfeb=0; cfeb<MaxCFEB; cfeb++) {
+	std::cout     << " cfeb" << cfeb << "delay='"  << CFEBrxPhase_[cfeb]  << "'"
+		      << " cfeb" << cfeb << "posneg='" << CFEBrxPosneg_[cfeb] << "'";
+	(*XMLOutput_) << " cfeb" << cfeb << "delay='"  << CFEBrxPhase_[cfeb]  << "'"
+		      << " cfeb" << cfeb << "posneg='" << CFEBrxPosneg_[cfeb] << "'";
+      }
+      std::cout     << "/>\n";
+      (*XMLOutput_) << "/>\n";
+      XMLOutput_ = NULL;
+    }
+
     (*MyOutput_) << std::endl;
     web_backup << std::endl;
   }
@@ -2221,6 +2236,20 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
       web_backup << std::setw(5) << cfeb << std::setw(2) << "|" << std::setw(5) << CFEBrxPhase_[cfeb] << std::setw(7) << CFEBrxPosneg_[cfeb] << std::endl;
     }
     
+    if ( XMLOutput_ != NULL ){
+      std::cout     << "<chamber label='" << thisTMB->GetLabel() << "'";
+      (*XMLOutput_) << "<chamber label='" << thisTMB->GetLabel() << "'";
+      for (int cfeb=0; cfeb<MaxCFEB; cfeb++) {
+	std::cout     << " cfeb" << cfeb << "delay='"  << CFEBrxPhase_[cfeb]  << "'"
+		      << " cfeb" << cfeb << "posneg='" << CFEBrxPosneg_[cfeb] << "'";
+	(*XMLOutput_) << " cfeb" << cfeb << "delay='"  << CFEBrxPhase_[cfeb]  << "'"
+		      << " cfeb" << cfeb << "posneg='" << CFEBrxPosneg_[cfeb] << "'";
+      }
+      std::cout     << "/>\n";
+      (*XMLOutput_) << "/>\n";
+      XMLOutput_ = NULL;
+    }
+
     (*MyOutput_) << std::endl;
     web_backup << std::endl;
   }
@@ -2284,6 +2313,20 @@ void ChamberUtilities::CFEBTiming_with_Posnegs_simple_routine(int time_delay, in
       
       (*MyOutput_) << "Best values for cfeb " << cfeb << " are rx delay = " << CFEBrxPhase_[cfeb] << " and posneg = " << CFEBrxPosneg_[cfeb] << std::endl;
       web_backup << "Best values for cfeb " << cfeb << " are rx delay = " << CFEBrxPhase_[cfeb] << " and posneg = " << CFEBrxPosneg_[cfeb] << std::endl;
+    }
+
+    if ( XMLOutput_ != NULL ){
+      std::cout     << "<chamber label='" << thisTMB->GetLabel() << "'";
+      (*XMLOutput_) << "<chamber label='" << thisTMB->GetLabel() << "'";
+      for (int cfeb=0; cfeb<MaxCFEB; cfeb++) {
+	std::cout     << " cfeb" << cfeb << "delay='"  << CFEBrxPhase_[cfeb]  << "'"
+		      << " cfeb" << cfeb << "posneg='" << CFEBrxPosneg_[cfeb] << "'";
+	(*XMLOutput_) << " cfeb" << cfeb << "delay='"  << CFEBrxPhase_[cfeb]  << "'"
+		      << " cfeb" << cfeb << "posneg='" << CFEBrxPosneg_[cfeb] << "'";
+      }
+      std::cout     << "/>\n";
+      (*XMLOutput_) << "/>\n";
+      XMLOutput_ = NULL;
     }
 
 // Liu 2019-07-23: this part only valid for TMB
@@ -3273,6 +3316,21 @@ void ChamberUtilities::CFEBTiming_with_Posnegs(CFEBTiming_scanType scanType) {
   //
   comparing_with_clct_ = false;
   //
+
+  if ( XMLOutput_ != NULL ){
+    std::cout     << "<chamber label='" << thisTMB->GetLabel() << "'";
+    (*XMLOutput_) << "<chamber label='" << thisTMB->GetLabel() << "'";
+    for (int cfeb=min_cfeb; cfeb<max_cfeb; cfeb++) {
+      std::cout     << " cfeb" << cfeb << "delay='"  << CFEBrxPhase_[cfeb]  << "'"
+		    << " cfeb" << cfeb << "posneg='" << CFEBrxPosneg_[cfeb] << "'";
+      (*XMLOutput_) << " cfeb" << cfeb << "delay='"  << CFEBrxPhase_[cfeb]  << "'"
+		    << " cfeb" << cfeb << "posneg='" << CFEBrxPosneg_[cfeb] << "'";
+    }
+    std::cout     << "/>\n";
+    (*XMLOutput_) << "/>\n";
+    XMLOutput_ = NULL;
+  }
+
   thisTMB->RedirectOutput(MyOutput_);
   thisDMB->RedirectOutput(MyOutput_);
   thisCCB_->RedirectOutput(MyOutput_);

@@ -80,8 +80,8 @@ const std::string ALCT_READBACK_FILENAME_ME32 = "alct384mirror/alct384mirror_ver
 const std::string ALCT_FIRMWARE_FILENAME_ME41 = "alct_LX150T_576mirror/alct_LX150T_576mirror";
 const std::string ALCT_READBACK_FILENAME_ME41 = "alct576mirror/alct576mirror_verify";
 //
-const std::string ALCT_FIRMWARE_FILENAME_ME42 = "alct_LX150_384mirror/alct_LX150_384mirror";
-const std::string ALCT_READBACK_FILENAME_ME42 = "alct_LX150_384mirror/alct_LX150_384mirror_verify";
+const std::string ALCT_FIRMWARE_FILENAME_ME42 = "alct_s6_384mirror/alct_s6_384mirror";
+const std::string ALCT_READBACK_FILENAME_ME42 = "alct_s6_384mirror/alct_s6_384mirror_verify";
 //
 const int CCB_LABEL         = 0;
 const int MPC_LABEL         = 1;
@@ -236,6 +236,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::OtmbFiberTest,"OtmbFiberTest");
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBTimingSimpleScanSystem_non_me11, "CFEBTimingSimpleScanSystem_non_me11");
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBTimingSimpleScanSystem_me11, "CFEBTimingSimpleScanSystem_me11");
+  xgi::bind(this,&EmuPeripheralCrateConfig::CFEBTimingSimpleScanRing, "CFEBTimingSimpleScanRing");
   xgi::bind(this,&EmuPeripheralCrateConfig::OTMBConfigBits, "OTMBConfigBits");
 #ifdef TCDS
   xgi::bind(this,&EmuPeripheralCrateConfig::ConfigCCBViaTCDS, "ConfigCCBViaTCDS");
@@ -4396,6 +4397,39 @@ void EmuPeripheralCrateConfig::ExpertToolsPage(xgi::Input * in, xgi::Output * ou
   //
   *out << cgicc::br();
   //
+  //  ///////////////////////
+  //
+  *out << cgicc::br();
+  //
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+  *out << cgicc::legend("DCFEB RX Scan on Ring").set("style","color:blue")
+       << std::endl;
+  //
+  *out << cgicc::table().set("border","0");
+  //
+  *out << cgicc::td();
+  std::string CFEBTimingSimpleScanRing = toolbox::toString("/%s/CFEBTimingSimpleScanRing",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",CFEBTimingSimpleScanRing) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Scan CFEB rx") << std::endl ;
+  *out << "on ring(s) ME&#xb1;";
+  *out << cgicc::select().set("name", "station") << std::endl;
+  for(int i=1; i<=4; ++i) *out << cgicc::option().set( "value", utils::stringFrom<int>(i) ) << i << cgicc::option() << std::endl;
+  *out << cgicc::option().set( "value", "0" ) << "all" << cgicc::option() << std::endl;
+  *out << cgicc::select() << std::endl;
+  *out << "/";
+  *out << cgicc::select().set("name", "ring") << std::endl;
+  for(int i=1; i<=3; ++i) *out << cgicc::option().set( "value", utils::stringFrom<int>(i) ) << i << cgicc::option() << std::endl;
+  *out << cgicc::option().set( "value", "0" ) << "all" << cgicc::option() << std::endl;
+  *out << cgicc::select() << std::endl;
+  *out << " (Results will be saved in /tmp/ME<span style='font-style: italic;'>SR</span>_CFEBrx_<span style='font-style: italic;'>YYYY-MM-DD_hh-mm-ss</span>.xml)";
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::table() << std::endl;
+  //
+  *out << cgicc::fieldset();
+  //
+  *out << cgicc::br();
 }
 
 void EmuPeripheralCrateConfig::UpdateInFlashKey(xgi::Input * in, xgi::Output * out )
@@ -6777,6 +6811,133 @@ void EmuPeripheralCrateConfig::CFEBTimingSimpleScanSystem_non_me11(xgi::Input * 
       }
     }
   }
+  //
+  SaveTestSummary();
+  //
+  this->ExpertToolsPage(in,out);
+  //
+}
+      //
+void EmuPeripheralCrateConfig::CFEBTimingSimpleScanRing(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) {
+  //
+  std::cout << "CFEBTiming Simple Scan on a Ring" << std::endl;
+  LOG4CPLUS_INFO(getApplicationLogger(), "CFEBTimingSimpleScanRing");
+  //
+  cgicc::Cgicc cgi(in);
+  cgicc::form_iterator name = cgi.getElement("station");
+  int iStation = -1;
+  if( name != cgi.getElements().end() ) iStation = cgi["station"]->getIntegerValue();
+  if ( iStation < 0 ){
+    LOG4CPLUS_ERROR(getApplicationLogger(), "Cannot scan unknown ring of index " << iStation );
+    this->ExpertToolsPage(in,out);
+    return;
+  }
+  name = cgi.getElement("ring");
+  int iRing = -1;
+  if( name != cgi.getElements().end() ) iRing = cgi["ring"]->getIntegerValue();
+  if ( iRing < 0 ){
+    LOG4CPLUS_ERROR(getApplicationLogger(), "Cannot scan unknown ring of index " << iRing );
+    this->ExpertToolsPage(in,out);
+    return;
+  }
+  // Check the legitimacy of the selected (single) ring
+  if ( iStation * iRing != 0 ){ // 0 would mean 'all'
+    if ( ! utils::Chamber('+',iStation,iRing,1).isValid() ){
+      LOG4CPLUS_ERROR(getApplicationLogger(), "Invalid ring selected: ME" << iStation << iRing );
+      this->ExpertToolsPage(in,out);
+      return;
+    }
+  }
+  //
+  if(!parsed) ParsingXML();
+  //
+  if(total_crates_<=0) return;
+  //
+  std::string dateTime = utils::getDateTime(true);
+  //
+  std::ofstream XML_file;
+  XML_file.open( ( "/tmp/ME"+
+		   (iStation==0?"X":utils::stringFrom<int>(iStation))+
+		   (iRing   ==0?"X":utils::stringFrom<int>(iRing   ))+
+		   +"_CFEBrx_"+dateTime+".xml" ).c_str(), 
+		 std::ios::out );
+  XML_file << "<scans>\n";
+  //
+  std::ofstream web_backup;
+  web_backup.open(("/tmp/webout_backup_rings_"+dateTime+".txt").c_str(), std::ios::out);
+  web_backup.close();
+  //
+  for(unsigned crate_number=0; crate_number< crateVector.size(); crate_number++) {
+    //
+    if(crateVector[crate_number]->IsAlive() ) {
+      //
+      SetCurrentCrate(crate_number);
+      //
+      
+      //
+      for (unsigned int tmb=0; tmb<(tmbVector.size()<9?tmbVector.size():9) ; tmb++) {
+	
+	// Get the canonical chamber name
+	utils::Chamber chamber( tmbVector[tmb]->getChamber()->GetLabel() );
+	if ( ! chamber.isValid() ){
+	  LOG4CPLUS_ERROR(getApplicationLogger(), "Cannot scan chamber of invalid name " << chamber.name() );
+	  this->ExpertToolsPage(in,out);
+	  continue;
+	}
+	// Check if this chamber is on the ring we are scanning
+	if ( iStation > 0 && iStation != chamber.station() ) continue;
+	if ( iRing    > 0 && iRing    != chamber.ring   () ) continue;
+	cout << "Scanning chamber " << chamber.name() << endl;
+	//
+	int time_delay = -1;
+	int cfeb_num = -1;
+	unsigned int layers = 0;
+	unsigned int pattern = 0xa;
+	int halfstrip = -1;
+	bool print_data = true;
+	unsigned cfeb_phase = 32;
+	//
+	
+	std::cout << "time_delay: " << time_delay << std::endl;
+	std::cout << "cfeb_num: " << cfeb_num << std::endl;
+	std::cout << "layers: " << layers << std::endl;
+	std::cout << "pattern: " << pattern << std::endl;
+	std::cout << "halfstrip: " << halfstrip << std::endl;
+	std::cout << "cfeb_phase: " << cfeb_phase << std::endl;
+	//
+	string webout_backup_file =
+	  "/tmp/webout_backup_ring_ME"+
+	  (iStation==0?"X":utils::stringFrom<int>(iStation))+
+	  (iRing   ==0?"X":utils::stringFrom<int>(iRing   ))+
+	  "_" +dateTime + ".txt";
+	web_backup.open(webout_backup_file.c_str(), std::ios::app);
+	//
+	std::cout << "crate = " << current_crate_ << ", TMB " << tmb << std::endl;
+	web_backup << "Chamber-Crate Phases "<< tmbVector[tmb]->GetLabel().c_str() << " output:" << std::endl << std::endl;
+	//
+	MyTest[tmb][current_crate_].RedirectXMLOutput(&XML_file);
+	MyTest[tmb][current_crate_].RedirectOutput(&web_backup);
+	if( tmbVector[tmb]->GetHardwareVersion() <= 1 ){
+	  MyTest[tmb][current_crate_].CFEBTiming();
+	}
+	else{
+	  MyTest[tmb][current_crate_].CFEBTiming_with_Posnegs_simple_routine(time_delay, cfeb_num, layers, pattern, halfstrip, print_data, cfeb_phase);
+	}
+	MyTest[tmb][current_crate_].RedirectOutput(&std::cout);
+	//
+	web_backup << std::endl << std::endl;
+	web_backup << "-----------------------------------------------------------------------------------------" << std::endl;
+	web_backup << std::endl << std::endl;
+	//
+	web_backup.close();
+	//
+      }
+    }
+  }
+  //
+  XML_file << "</scans>\n";
+  XML_file.close();
   //
   SaveTestSummary();
   //

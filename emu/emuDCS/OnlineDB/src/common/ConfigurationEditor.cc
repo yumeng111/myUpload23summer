@@ -495,7 +495,10 @@ void ConfigurationEditor::exportAsXML(xgi::Input * in, xgi::Output * out) throw 
       xmlHeader.addHeader("Content-Type", "text/xml");
       std::ostringstream attachment;
 
-      std::string emu_config_id = cgi("configID");
+      std::string emu_config_id = ( lastReadConfiguration_.length() == 0 || 
+				    lastReadConfiguration_.find_first_not_of( "0123456789" ) != std::string::npos ?
+				    "UNKNOWN" :
+				    lastReadConfiguration_ );
       attachment << "attachment; filename=pc_config_" << toolbox::escape(emu_config_id)
         << "_" << toolbox::TimeVal(time(NULL)).toString("%Y-%m-%d_%H-%M-%S_%Z",toolbox::TimeVal::gmt) << ".xml";
       xmlHeader.addHeader("Content-Disposition", attachment.str());

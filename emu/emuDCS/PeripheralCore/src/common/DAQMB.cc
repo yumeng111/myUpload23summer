@@ -567,6 +567,18 @@ const int DAQMB::chip_use[7][6] = {
 
 const int DAQMB::nchips[7] = {6,6,6,6,6,6,6};
 
+const DAQMB::ODMBDevice_t DAQMB::ODMBDevice[9] = {
+  { 1, "CFEB1", "l1acc_dav_delay", "L1A_LCT_DLY" },
+  { 2, "CFEB2", "l1acc_dav_delay", "L1A_LCT_DLY" },
+  { 3, "CFEB3", "l1acc_dav_delay", "L1A_LCT_DLY" },
+  { 4, "CFEB4", "l1acc_dav_delay", "L1A_LCT_DLY" },
+  { 5, "CFEB5", "l1acc_dav_delay", "L1A_LCT_DLY" },
+  { 6, "CFEB6", "l1acc_dav_delay", "L1A_LCT_DLY" },
+  { 7, "CFEB7", "l1acc_dav_delay", "L1A_LCT_DLY" },
+  { 8,   "TMB",   "tmb_dav_delay", "OTMBDAV_DLY" },
+  { 9,  "ALCT",  "alct_dav_delay", "ALCTDAV_DLY" }
+};
+
 DAQMB::DAQMB(Crate * theCrate, Chamber * theChamber, int newslot):
   VMEModule(theCrate, newslot),
   EmuLogger(),
@@ -10464,12 +10476,8 @@ int DAQMB::scan_delays(const unsigned device_select,
       if(device_select & (1 << (device-1))){
 	const unsigned best_delay(get_best_delay(device, lower_limit, upper_limit, run_time));
 	std::string name("");
-	if(device>=1 && device <=7){
-	  name="L1A_LCT_DLY (l1acc_dav_delay in XML)";
-	}else if(device==8){
-	  name="OTMBDAV_DLY (tmb_dav_delay in XML)";
-	}else if(device==9){
-	  name="ALCTDAV_DLY (alct_dav_delay in XML)";
+	if(device>=1 && device <=9){
+	  name=std::string(ODMBDevice[device].DAVDelayFW)+" ("+ODMBDevice[device].DAVDelayXML+" in XML)";
 	}else{
 	  name="???????????";
 	}

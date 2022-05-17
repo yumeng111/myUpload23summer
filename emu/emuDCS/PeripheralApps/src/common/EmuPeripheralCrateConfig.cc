@@ -237,6 +237,7 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBTimingSimpleScanSystem_non_me11, "CFEBTimingSimpleScanSystem_non_me11");
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBTimingSimpleScanSystem_me11, "CFEBTimingSimpleScanSystem_me11");
   xgi::bind(this,&EmuPeripheralCrateConfig::CFEBTimingSimpleScanRing, "CFEBTimingSimpleScanRing");
+  xgi::bind(this,&EmuPeripheralCrateConfig::ODMBDelayScanRing, "ODMBDelayScanRing");
   xgi::bind(this,&EmuPeripheralCrateConfig::OTMBConfigBits, "OTMBConfigBits");
 #ifdef TCDS
   xgi::bind(this,&EmuPeripheralCrateConfig::ConfigCCBViaTCDS, "ConfigCCBViaTCDS");
@@ -4407,6 +4408,7 @@ void EmuPeripheralCrateConfig::ExpertToolsPage(xgi::Input * in, xgi::Output * ou
   //
   *out << cgicc::table().set("border","0");
   //
+  *out << cgicc::tr();
   *out << cgicc::td();
   std::string CFEBTimingSimpleScanRing = toolbox::toString("/%s/CFEBTimingSimpleScanRing",getApplicationDescriptor()->getURN().c_str());
   *out << cgicc::form().set("method","GET").set("action",CFEBTimingSimpleScanRing) << std::endl ;
@@ -4421,9 +4423,61 @@ void EmuPeripheralCrateConfig::ExpertToolsPage(xgi::Input * in, xgi::Output * ou
   for(int i=1; i<=3; ++i) *out << cgicc::option().set( "value", utils::stringFrom<int>(i) ) << i << cgicc::option() << std::endl;
   *out << cgicc::option().set( "value", "0" ) << "all" << cgicc::option() << std::endl;
   *out << cgicc::select() << std::endl;
-  *out << " (Results will be saved in /tmp/ME<span style='font-style: italic;'>SR</span>_CFEBrx_<span style='font-style: italic;'>YYYY-MM-DD_hh-mm-ss</span>.xml)";
+  *out << " (Results will be saved in "
+       << toolbox::net::URL( getApplicationDescriptor()->getContextDescriptor()->getURL() ).getHost()
+       << ":/tmp/ME<span style='font-style: italic;'>SR</span>_CFEBrx_<span style='font-style: italic;'>YYYY-MM-DD_hh-mm-ss</span>.xml)";
   *out << cgicc::form() << std::endl ;
   *out << cgicc::td();
+  *out << cgicc::tr();
+  //
+  *out << cgicc::table() << std::endl;
+  //
+  *out << cgicc::fieldset();
+  //
+  *out << cgicc::br();
+  //
+  //  ///////////////////////
+  //
+  *out << cgicc::br();
+  //
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+  *out << cgicc::legend("ODMB Delay Scan on Ring").set("style","color:blue")
+       << std::endl;
+  //
+  *out << cgicc::table().set("border","0");
+  //
+  *out << cgicc::tr();
+  *out << cgicc::td();
+  std::string ODMBDelayScanRing = toolbox::toString("/%s/ODMBDelayScanRing",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",ODMBDelayScanRing) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Scan") << std::endl ;
+  *out << "on ring(s) ME&#xb1;";
+  *out << cgicc::select().set("name", "station") << std::endl;
+  for(int i=1; i<=4; ++i) *out << cgicc::option().set( "value", utils::stringFrom<int>(i) ) << i << cgicc::option() << std::endl;
+  *out << cgicc::option().set( "value", "0" ) << "all" << cgicc::option() << std::endl;
+  *out << cgicc::select() << std::endl;
+  *out << "/";
+  *out << cgicc::select().set("name", "ring") << std::endl;
+  for(int i=1; i<=3; ++i) *out << cgicc::option().set( "value", utils::stringFrom<int>(i) ) << i << cgicc::option() << std::endl;
+  *out << cgicc::option().set( "value", "0" ) << "all" << cgicc::option() << std::endl;
+  *out << cgicc::select() << std::endl;
+  *out << " device ";
+  *out << cgicc::select().set("name", "device") << std::endl;
+  for(int i=0; i<sizeof( DAQMB::ODMBDevice )/sizeof( DAQMB::ODMBDevice_t ); ++i){
+    *out << cgicc::option().set( "value", utils::stringFrom<int>(DAQMB::ODMBDevice[i].number) )
+    	 << DAQMB::ODMBDevice[i].name << " for " << DAQMB::ODMBDevice[i].DAVDelayXML
+    	 << cgicc::option() << std::endl;
+  }
+  *out << cgicc::select() << std::endl;
+  *out << " from " << cgicc::input().set("type","text").set("style", "width: 3em;").set("value","31").set("name","lower_limit");
+  *out << " to " << cgicc::input().set("type","text").set("style", "width: 3em;").set("value","42").set("name","upper_limit");
+  *out << " for " << cgicc::input().set("type","text").set("style", "width: 3em;").set("value","12").set("name","run_time") << " seconds.";
+  *out << " (<span style='color: blue;'>To be performed during a local run.</span> Results will be saved in "
+       << toolbox::net::URL( getApplicationDescriptor()->getContextDescriptor()->getURL() ).getHost()
+       << ":/tmp/ME<span style='font-style: italic;'>SR</span>_ODMB_<span style='font-style: italic;'>YYYY-MM-DD_hh-mm-ss</span>.xml)";
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::td();
+  *out << cgicc::tr();
   //
   *out << cgicc::table() << std::endl;
   //
@@ -6882,7 +6936,6 @@ void EmuPeripheralCrateConfig::CFEBTimingSimpleScanRing(xgi::Input * in, xgi::Ou
 	utils::Chamber chamber( tmbVector[tmb]->getChamber()->GetLabel() );
 	if ( ! chamber.isValid() ){
 	  LOG4CPLUS_ERROR(getApplicationLogger(), "Cannot scan chamber of invalid name " << chamber.name() );
-	  this->ExpertToolsPage(in,out);
 	  continue;
 	}
 	// Check if this chamber is on the ring we are scanning
@@ -6925,6 +6978,126 @@ void EmuPeripheralCrateConfig::CFEBTimingSimpleScanRing(xgi::Input * in, xgi::Ou
 	  MyTest[tmb][current_crate_].CFEBTiming_with_Posnegs_simple_routine(time_delay, cfeb_num, layers, pattern, halfstrip, print_data, cfeb_phase);
 	}
 	MyTest[tmb][current_crate_].RedirectOutput(&std::cout);
+	//
+	web_backup << std::endl << std::endl;
+	web_backup << "-----------------------------------------------------------------------------------------" << std::endl;
+	web_backup << std::endl << std::endl;
+	//
+	web_backup.close();
+	//
+      }
+    }
+  }
+  //
+  XML_file << "</scans>\n";
+  XML_file.close();
+  //
+  SaveTestSummary();
+  //
+  this->ExpertToolsPage(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::ODMBDelayScanRing(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) {
+  //
+  std::cout << "ODMB Delay Scan on a Ring" << std::endl;
+  LOG4CPLUS_INFO(getApplicationLogger(), "ODMBDelayScanRing");
+  //
+  cgicc::Cgicc cgi(in);
+  cgicc::form_iterator name = cgi.getElement("station");
+  int iStation = -1;
+  if( name != cgi.getElements().end() ) iStation = cgi["station"]->getIntegerValue();
+  if ( iStation < 0 ){
+    LOG4CPLUS_ERROR(getApplicationLogger(), "Cannot scan unknown ring of index " << iStation );
+    this->ExpertToolsPage(in,out);
+    return;
+  }
+  name = cgi.getElement("ring");
+  int iRing = -1;
+  if( name != cgi.getElements().end() ) iRing = cgi["ring"]->getIntegerValue();
+  if ( iRing < 0 ){
+    LOG4CPLUS_ERROR(getApplicationLogger(), "Cannot scan unknown ring of index " << iRing );
+    this->ExpertToolsPage(in,out);
+    return;
+  }
+  // Check the legitimacy of the selected (single) ring
+  if ( iStation * iRing != 0 ){ // 0 would mean 'all'
+    if ( ! utils::Chamber('+',iStation,iRing,1).isValid() ){
+      LOG4CPLUS_ERROR(getApplicationLogger(), "Invalid ring selected: ME" << iStation << iRing );
+      this->ExpertToolsPage(in,out);
+      return;
+    }
+  }
+  name = cgi.getElement("device");
+  int iDevice = -1;
+  if( name != cgi.getElements().end() ) iDevice = cgi["device"]->getIntegerValue();
+  if ( iDevice < 0 || iDevice > 9 ){
+    LOG4CPLUS_ERROR(getApplicationLogger(), "Cannot scan unknown device " << iDevice );
+    this->ExpertToolsPage(in,out);
+    return;
+  }
+  const unsigned lower_limit(strtoul(GetFormString("lower_limit",in).c_str(), NULL, 0));
+  const unsigned upper_limit(strtoul(GetFormString("upper_limit",in).c_str(), NULL, 0));
+  const double run_time(strtod(GetFormString("run_time",in).c_str(), NULL));
+  //
+  if(!parsed) ParsingXML();
+  //
+  if(total_crates_<=0) return;
+  //
+  std::string dateTime = utils::getDateTime(true);
+  //
+  std::ofstream XML_file;
+  XML_file.open( ( "/tmp/ME"+
+		   (iStation==0?"X":utils::stringFrom<int>(iStation))+
+		   (iRing   ==0?"X":utils::stringFrom<int>(iRing   ))+
+		   +"_ODMB_"+dateTime+".xml" ).c_str(), 
+		 std::ios::out );
+  XML_file << "<scans>\n";
+  //
+  std::ofstream web_backup;
+  web_backup.open(("/tmp/webout_backup_rings_"+dateTime+".txt").c_str(), std::ios::out);
+  web_backup.close();
+  //
+  for(unsigned crate_number=0; crate_number< crateVector.size(); crate_number++) {
+    //
+    if(crateVector[crate_number]->IsAlive() ) {
+      //
+      SetCurrentCrate(crate_number);
+      //
+      for (unsigned int dmb=0; dmb<(dmbVector.size()<9?dmbVector.size():9) ; dmb++) {
+	// Only scan for ODMB
+	if ( dmbVector[dmb]->DMBversion() != 2 ) continue;
+	// Get the canonical chamber name
+	utils::Chamber chamber( dmbVector[dmb]->GetLabel() );
+	if ( ! chamber.isValid() ){
+	  LOG4CPLUS_ERROR(getApplicationLogger(), "Cannot scan chamber of invalid name " << chamber.name() );
+	  continue;
+	}
+	// Check if this chamber is on the ring we are scanning
+	if ( iStation > 0 && iStation != chamber.station() ) continue;
+	if ( iRing    > 0 && iRing    != chamber.ring   () ) continue;
+	cout << "Scanning chamber " << chamber.name() << endl;
+	//
+	string webout_backup_file =
+	  "/tmp/webout_backup_ring_ME"+
+	  (iStation==0?"X":utils::stringFrom<int>(iStation))+
+	  (iRing   ==0?"X":utils::stringFrom<int>(iRing   ))+
+	  "_" +dateTime + ".txt";
+	web_backup.open(webout_backup_file.c_str(), std::ios::app);
+	//
+	std::cout << "crate = " << current_crate_ << ", DMB " << dmb << std::endl;
+	web_backup << "ODMB delay "<< chamber.name() << " output:" << std::endl << std::endl;
+	//
+	MyTest[dmb][current_crate_].RedirectXMLOutput(&XML_file);
+	MyTest[dmb][current_crate_].RedirectOutput(&web_backup);
+	MyTest[dmb][current_crate_].SetupRadioactiveTriggerConditions();
+	int bestValue = dmbVector[dmb]->scan_delays( DAQMB::ODMBDevice[iDevice].number, lower_limit, upper_limit, run_time );
+	MyTest[dmb][current_crate_].ReturnToInitialTriggerConditions();
+	MyTest[dmb][current_crate_].RedirectOutput(&std::cout);
+	//
+	XML_file << "  <chamber label='"                           << chamber.name() << "' "
+		 << DAQMB::ODMBDevice[iDevice].DAVDelayXML << "='" << bestValue      << "'/>\n";
 	//
 	web_backup << std::endl << std::endl;
 	web_backup << "-----------------------------------------------------------------------------------------" << std::endl;

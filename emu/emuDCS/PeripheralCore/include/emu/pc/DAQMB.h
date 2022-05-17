@@ -1027,6 +1027,14 @@ public:
   static const unsigned READ_TX_WORDCOUNT = 0x530c; ///< read number of 16-bit words in DDU tx FIFO
   static const unsigned RESET_TX          = 0x5320; ///< reset DDU tx FIFO
 
+  struct ODMBDevice_t{
+    unsigned int number;
+    const char*  name;
+    const char*  DAVDelayXML;
+    const char*  DAVDelayFW;
+  };
+  static const ODMBDevice_t ODMBDevice[9];
+
  private:
 
   int read_xcv_prom(int dev, char *fn);

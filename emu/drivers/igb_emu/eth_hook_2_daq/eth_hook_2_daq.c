@@ -80,7 +80,7 @@ see:
 //#define VMALLOC_VMADDR(x) ((unsigned long)(x))
 
 
-#define SCHAR_MAJOR_2 232
+#define SCHAR_MAJOR_2 172
 
 /* settable parameters */
 static char *schar_name = NULL;
@@ -603,8 +603,9 @@ int ethinit_module(void)
 	res = register_chrdev(SCHAR_MAJOR_2, schar_name, &schar_fops);
        
 	if (res) {
-	      printk(KERN_INFO "can't register device with kernel\n");
-		return res;
+	  printk(KERN_INFO "can't register device %s with kernel, error code %d (%d:EINVAL %d:EBUSY)\n", 
+		 schar_name, res, EINVAL, EBUSY);
+	  return res;
 	}
 	
 	/* register proc entry */

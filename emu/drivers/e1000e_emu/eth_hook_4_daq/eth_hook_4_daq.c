@@ -80,7 +80,7 @@ see:
 //#define VMALLOC_VMADDR(x) ((unsigned long)(x))
 
 
-#define SCHAR_MAJOR_4 234
+#define SCHAR_MAJOR_4 174
 
 /* settable parameters */
 static char *schar_name = NULL;

@@ -41,7 +41,7 @@
 #include "schar.h"
 #include "../include/interfaceNames.h"
 
-#define SCHAR_MAJOR_5 235
+#define SCHAR_MAJOR_5 175
 
 /* settable parameters */
 static char *schar_name = NULL;

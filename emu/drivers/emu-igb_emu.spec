@@ -2,9 +2,9 @@
 %define _topdir %{workingDir}/rpm
 %define kernel_version %(uname -r)
 
-Summary: CMS Emu local DAQ Gbit and peripheral crate VME drivers for kernel %{kernel_version} based on the igb module for the Intel dual port NIC model I350-F2
+Summary: CMS Emu local DAQ Gbit and peripheral crate VME drivers for kernel %{kernel_version} based on the igb module for the Intel dual port NIC model I350-F2 (pilotPC)
 Name: emu-igb_emu
-Version: 2.5.0
+Version: 2.6.0
 Release: 1.centos7
 License: none
 Group: none

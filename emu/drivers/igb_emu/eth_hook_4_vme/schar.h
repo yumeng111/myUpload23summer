@@ -1,4 +1,4 @@
-#define SCHAR_MAJOR		232
+#define SCHAR_MAJOR		172
 
 #define SCHAR_INC		1024
 #define SCHAR_TIMER_DELAY	5*HZ

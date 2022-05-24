@@ -41,7 +41,7 @@
 #include "schar.h"
 #include "../include/interfaceNames.h"
 
-#define SCHAR_MAJOR_4 234
+#define SCHAR_MAJOR_4 174
 
 /* settable parameters */
 static char *schar_name = NULL;
@@ -495,9 +495,9 @@ int ethinit_module(void)
 	res = register_chrdev(SCHAR_MAJOR_4, schar_name, &schar_fops);
         // printk(KERN_INFO "lsd: %d %d %s \n",res,SCHAR_MAJOR_4,schar_name);
 	if (res) {
-	  // printk(KERN_INFO "can't register device with kernel \n");
-	  // MSG("can't register device with kernel\n");
-		return res;
+	  printk(KERN_INFO "can't register device %s with kernel, error code %d (%d:EINVAL %d:EBUSY)\n", 
+		 schar_name, res, EINVAL, EBUSY);
+	  return res;
 	}
 	
 	/* register proc entry */

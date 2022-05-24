@@ -69,7 +69,7 @@ function load_igb_emu(){
     echo "Creating schar devices if they don't yet exist"
     for N in 2 3 4 5
       do
-      [[ -c /dev/schar${N} ]] || ( mknod /dev/schar${N} c 23${N} 0 && chmod 777 /dev/schar${N} )
+      [[ -c /dev/schar${N} ]] || ( mknod /dev/schar${N} c 17${N} 0 && chmod 777 /dev/schar${N} )
     done
 
     # Copy the driver and the requested hooks

@@ -1,7 +1,7 @@
 // $Id: EmuPeripheralCrateCommand.cc
 
 #include "emu/pc/EmuPeripheralCrateCommand.h"
-
+#include "emu/pc/TMB_constants.h"
 #include "emu/soap/ToolBox.h"
 
 #include <string>
@@ -74,6 +74,10 @@ EmuPeripheralCrateCommand::EmuPeripheralCrateCommand(xdaq::ApplicationStub * s):
   xoap::bind(this, &EmuPeripheralCrateCommand::onHalt,      "Halt",      XDAQ_NS_URI);
 // cfeb calibration
   xoap::bind(this, &EmuPeripheralCrateCommand::onConfigCalCFEB, "ConfigCalCFEB", XDAQ_NS_URI);
+  xoap::bind(this, &EmuPeripheralCrateCommand::onEnableCalCFEBGains, "EnableCalCFEBGains", XDAQ_NS_URI);
+  xoap::bind(this, &EmuPeripheralCrateCommand::onEnableCalCFEBCrossTalk, "EnableCalCFEBCrossTalk", XDAQ_NS_URI);
+  xoap::bind(this, &EmuPeripheralCrateCommand::onEnableCalCFEBSCAPed, "EnableCalCFEBSCAPed", XDAQ_NS_URI);
+  xoap::bind(this, &EmuPeripheralCrateCommand::onEnableCalCFEBComparator, "EnableCalCFEBComparator", XDAQ_NS_URI);
 // alct calib commands (Madorsky)
   xoap::bind(this, &EmuPeripheralCrateCommand::onConfigCalALCT, "ConfigCalALCT", XDAQ_NS_URI);
   xoap::bind(this, &EmuPeripheralCrateCommand::onEnableCalALCTConnectivity, "EnableCalALCTConnectivity", XDAQ_NS_URI);
@@ -749,6 +753,7 @@ xoap::MessageReference EmuPeripheralCrateCommand::onConfigCalCFEB (xoap::Message
   throw (xoap::exception::Exception) 
 {
   char dmbstatus[11];
+  calsetup = 0;
 
   if(!parsed) ParsingXML();
   int cfeb_clk_delay=31;
@@ -810,7 +815,7 @@ xoap::MessageReference EmuPeripheralCrateCommand::onConfigCalCFEB (xoap::Message
 	  dmbVector[dmb]->calctrl_global();
 
           //     ODMB-DCFEB specific configuration for calibration
-          if(dmbVector[dmb]->GetHardwareVersion()==2)
+          if(dmbVector[dmb]->DMBversion()==2)
           {
 	    dmbVector[dmb]->odmb_calib_mode(0); // 0: do not generate own L1A (TTC/TCDS will send it)
 	    dmbVector[dmb]->toggle_pedestal(); // Toggle ODMB to pedestal mode (to send L1A_MATCH to DCFEB for each L1A)
@@ -863,6 +868,182 @@ xoap::MessageReference EmuPeripheralCrateCommand::onConfigCalALCT (xoap::Message
 	std::cout << "ALCT calibration configuration reading result (0 == OK): " << cal_conf_res << std::endl;
 	return createReply(message);
 	//
+}
+
+xoap::MessageReference EmuPeripheralCrateCommand::onEnableCalCFEBGains (xoap::MessageReference message) 
+  throw (xoap::exception::Exception) 
+{
+    calsetup++;
+    std::cout << "Command: DMB setup for CFEB Gain, calsetup= " <<calsetup<< std::endl;
+
+    for(unsigned i=0; i< crateVector.size(); i++) 
+    {
+		
+	if ( crateVector[i]->IsAlive() ) 
+	{
+	    SetCurrentCrate(i);	
+	    for (unsigned dn = 0; dn < dmbVector.size(); dn++)
+	    {
+                // only select MEx1 chambers with DMB+DCFEB or DMB+xDCFEB
+                if(dmbVector[dn]->DMBversion()==1 && dmbVector[dn]->CFEBversion()>1)
+                {
+                   // recover CFEBs which could be messed up during the broadcast
+                   dmbVector[dn]->restoreCFEBIdle();
+
+                   //Start the setup process:
+                   int gainsetting =((calsetup-1)%20);
+                   int nstrip=(calsetup-1)/20;
+                   if (!gainsetting)
+                   { 
+                       ::usleep(1000); // 1ms extra pause
+                       dmbVector[dn]->buck_shift_ext_bc(nstrip);
+                   }
+                   float dac=0.1+0.25*gainsetting;
+                   // dac=0.1+0.25*19; // always max
+                   ::usleep(1000); // 1ms extra pause
+                   dmbVector[dn]->set_cal_dac(dac,dac);
+                   // std::cout <<" The strip was set to: "<< nstrip <<" DAC was set to: "<<dac <<std::endl;
+                }
+	    }
+        }
+    }
+    ::usleep(100);
+    return createReply(message);
+}
+
+xoap::MessageReference EmuPeripheralCrateCommand::onEnableCalCFEBCrossTalk (xoap::MessageReference message) 
+  throw (xoap::exception::Exception) 
+{
+    calsetup++;
+    std::cout << "Command: DMB setup for CFEB CrossTalk, calsetup= " <<calsetup<< std::endl;
+
+    for(unsigned i=0; i< crateVector.size(); i++) 
+    {
+		
+	if ( crateVector[i]->IsAlive() ) 
+	{
+	    SetCurrentCrate(i);	
+	    for (unsigned dn = 0; dn < dmbVector.size(); dn++)
+	    {
+                // only select MEx1 chambers with DMB+DCFEB or DMB+xDCFEB
+                if(dmbVector[dn]->DMBversion()==1 && dmbVector[dn]->CFEBversion()>1)
+                {
+                   // recover CFEBs which could be messed up during the broadcast
+                   dmbVector[dn]->restoreCFEBIdle();
+
+                   //Start the setup process:
+                   int timesetting =((calsetup-1)%10);
+                   int nstrip=(calsetup-1)/10;
+                   if (!timesetting)
+                   {
+                       ::usleep(1000); // 1ms extra pause
+                       dmbVector[dn]->buck_shift_ext_bc(nstrip);
+                   }
+                   ::usleep(1000); // 1ms extra pause
+                   dmbVector[dn]->set_cal_tim_pulse(timesetting+5);
+                   // std::cout <<" The strip was set to: "<<nstrip<<" Time was set to: "<<timesetting <<std::endl;                
+                }
+	    }
+        }
+    }
+    ::usleep(100);
+    return createReply(message);
+}
+
+xoap::MessageReference EmuPeripheralCrateCommand::onEnableCalCFEBSCAPed (xoap::MessageReference message) 
+  throw (xoap::exception::Exception) 
+{
+    calsetup++;
+    std::cout << "Command: DMB setup for CFEB SCAPed, calsetup= " <<calsetup<< std::endl;
+
+    for(unsigned i=0; i< crateVector.size(); i++) 
+    {
+		
+	if ( crateVector[i]->IsAlive() ) 
+	{
+	    SetCurrentCrate(i);	
+	    for (unsigned dn = 0; dn < dmbVector.size(); dn++)
+	    {
+                // only select MEx1 chambers with DMB+DCFEB or DMB+xDCFEB
+                if(dmbVector[dn]->DMBversion()==1 && dmbVector[dn]->CFEBversion()>1)
+                {
+                   // recover CFEBs which could be messed up during the broadcast
+                   dmbVector[dn]->restoreCFEBIdle();
+                   // Start the setup process: Set all channel to normal, DAC to 0, No_pulse:
+                   dmbVector[dn]->buck_shift_ext_bc(-1);
+                   float dac=0.0;
+                   dmbVector[dn]->set_cal_dac(dac,dac);
+                   std::cout <<" The strip was set to: -1, " <<" DAC was set to: "<<dac <<std::endl;
+                   ::usleep(100);
+                   dmbVector[dn]->toggle_pedestal();
+                   // std::cout<<" Toggle DMB Pedestal switch, to disable the pulsing."<<std::endl;
+                
+                }
+	    }
+        }
+    }
+    ::usleep(100);
+    return createReply(message);
+}
+
+xoap::MessageReference EmuPeripheralCrateCommand::onEnableCalCFEBComparator (xoap::MessageReference message) 
+  throw (xoap::exception::Exception) 
+{
+    calsetup++;
+    std::cout << "Command: DMB setup for CFEB Comparator, calsetup= " <<calsetup<< std::endl;
+
+    for(unsigned i=0; i< crateVector.size(); i++) 
+    {
+		
+	if ( crateVector[i]->IsAlive() ) 
+	{
+	    SetCurrentCrate(i);	
+	    for (unsigned dn = 0; dn < dmbVector.size(); dn++)
+	    {
+                // only select MEx1 chambers with DMB+DCFEB or DMB+xDCFEB
+                if(dmbVector[dn]->DMBversion()==1 && dmbVector[dn]->CFEBversion()>1)
+                {
+                   // recover CFEBs which could be messed up during the broadcast
+                   dmbVector[dn]->restoreCFEBIdle();
+
+                   if (calsetup==1 && tmbVector[dn]) 
+                   {
+                     tmbVector[dn]->SetTmbAllowClct(1);
+                     tmbVector[dn]->SetTmbAllowMatch(0);
+                     tmbVector[dn]->WriteRegister(emu::pc::tmb_trig_adr,tmbVector[dn]->FillTMBRegister(emu::pc::tmb_trig_adr));
+      
+                     tmbVector[dn]->SetAlctMatchWindowSize(7);
+                     tmbVector[dn]->WriteRegister(emu::pc::tmbtim_adr,tmbVector[dn]->FillTMBRegister(emu::pc::tmbtim_adr));
+      
+                     tmbVector[dn]->SetL1aDelay(154);
+                     tmbVector[dn]->SetL1aWindowSize(7);
+                     tmbVector[dn]->WriteRegister(emu::pc::seq_l1a_adr,tmbVector[dn]->FillTMBRegister(emu::pc::seq_l1a_adr));
+      
+                     tmbVector[dn]->EnableCLCTInputs(0x7f); //enable TMB's CLCT inputs
+                     dmbVector[dn] ->settrgsrc(0); //disable the DMB internal LCT & L1A
+                     ::sleep(1);
+                   }
+
+                   int thresholdsetting =((calsetup-1)%20);   //35 Comparator threshold setting for each channel
+                   int nstrip=(calsetup-1)/20;           //16 channels, total loop: 32*35=1120
+                   int highthreshold=nstrip/16;
+                   float dac=0.02+0.18*highthreshold;
+                   nstrip=nstrip%16;
+                   if (!thresholdsetting)
+                   { 
+                      dmbVector[dn]->buck_shift_comp_bc(nstrip);
+                      if (!nstrip) dmbVector[dn]->set_cal_dac(dac,dac);
+                   }
+                   float threshold=0.003*thresholdsetting+0.01+ (0.19+0.007*thresholdsetting)*highthreshold;
+                   dmbVector[dn]->set_comp_thresh_bc(threshold);
+                   // std::cout <<" The strip was set to: "<<nstrip<<" DMB DAC was set to: "<<dac <<std::endl;
+
+                }
+	    }
+        }
+    }
+    ::usleep(100);
+    return createReply(message);
 }
 
 xoap::MessageReference EmuPeripheralCrateCommand::onEnableCalALCTConnectivity (xoap::MessageReference message) 

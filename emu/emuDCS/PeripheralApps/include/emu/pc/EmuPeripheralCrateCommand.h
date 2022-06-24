@@ -310,6 +310,10 @@ private:
   xoap::MessageReference onDisable (xoap::MessageReference message) throw (xoap::exception::Exception);
   xoap::MessageReference onHalt (xoap::MessageReference message) throw (xoap::exception::Exception);
   xoap::MessageReference onConfigCalCFEB (xoap::MessageReference message) throw (xoap::exception::Exception);
+  xoap::MessageReference onEnableCalCFEBGains (xoap::MessageReference message) throw (xoap::exception::Exception);
+  xoap::MessageReference onEnableCalCFEBCrossTalk (xoap::MessageReference message) throw (xoap::exception::Exception);
+  xoap::MessageReference onEnableCalCFEBSCAPed (xoap::MessageReference message) throw (xoap::exception::Exception);
+  xoap::MessageReference onEnableCalCFEBComparator (xoap::MessageReference message) throw (xoap::exception::Exception);
   
   // alct calibration Madorsky
   xoap::MessageReference onConfigCalALCT (xoap::MessageReference message) throw (xoap::exception::Exception);

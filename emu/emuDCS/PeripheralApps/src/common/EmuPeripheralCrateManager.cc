@@ -165,6 +165,7 @@ xoap::MessageReference EmuPeripheralCrateManager::onEnableCalCFEBCrossTalk (xoap
   page1_state_ = 3;
 
   PCsendCommand("EnableCalCFEBCrossTalk","emu::pc::EmuPeripheralCrateBroadcast");
+  PCsendCommand("EnableCalCFEBCrossTalk","emu::pc::EmuPeripheralCrateCommand");
   //
   fireEvent("Enable");
   return createReply(message);
@@ -177,6 +178,7 @@ xoap::MessageReference EmuPeripheralCrateManager::onEnableCalCFEBSCAPed (xoap::M
   page1_state_ = 3;
 
   PCsendCommand("EnableCalCFEBSCAPed","emu::pc::EmuPeripheralCrateBroadcast");
+  PCsendCommand("EnableCalCFEBSCAPed","emu::pc::EmuPeripheralCrateCommand");
   //
   fireEvent("Enable");
   return createReply(message);
@@ -189,6 +191,7 @@ xoap::MessageReference EmuPeripheralCrateManager::onEnableCalCFEBGains (xoap::Me
   page1_state_ = 3;
 
   PCsendCommand("EnableCalCFEBGains","emu::pc::EmuPeripheralCrateBroadcast");
+  PCsendCommand("EnableCalCFEBGains","emu::pc::EmuPeripheralCrateCommand");
   //
   fireEvent("Enable");
   return createReply(message);
@@ -201,6 +204,7 @@ xoap::MessageReference EmuPeripheralCrateManager::onEnableCalCFEBComparator (xoa
   page1_state_ = 3;
 
   PCsendCommand("EnableCalCFEBComparator","emu::pc::EmuPeripheralCrateBroadcast");
+  PCsendCommand("EnableCalCFEBComparator","emu::pc::EmuPeripheralCrateCommand");
   //
   fireEvent("Enable");
   return createReply(message);

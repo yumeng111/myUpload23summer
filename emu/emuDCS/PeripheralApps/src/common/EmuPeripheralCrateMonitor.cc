@@ -1410,7 +1410,7 @@ void EmuPeripheralCrateMonitor::DCSChamber(xgi::Input * in, xgi::Output * out )
   std::string cham_name=Page.substr(0,Page.find("=", 0) );
   std::vector<DAQMB*> myVector;
   int mycrate=-1, mychamb=-1;
-  int DHversion=0, CHversion;
+  int DHversion=0, CHversion=0;
   for ( unsigned int i = 0; i < crateVector.size(); i++ )
   {
      myVector = crateVector[i]->daqmbs();
@@ -3037,7 +3037,7 @@ void EmuPeripheralCrateMonitor::EmuCounterNames(xgi::Input * in, xgi::Output * o
   xdata::TimeVal now_time = (xdata::TimeVal)currentTime.gettimeofday();
   *out << now_time.toString();
   *out << "\" version=\"3.0\">" << std::endl;
-  for(int tc=0; tc<REAL_TMB_COUNTERS; tc++)
+  for(int tc=0; tc<TOTAL_TMB_COUNTERS; tc++)
   {
       *out << "    <count name=\"";
       sprintf(tcname+2,"%02d",tc);
@@ -4732,258 +4732,50 @@ void EmuPeripheralCrateMonitor::InitCounterNames()
     TECounterName.clear();
     TVCounterName.clear();
     //
-
-    TCounterName.push_back( "ALCT: alct0 valid pattern flag received                 "); // 0 --
-    TCounterName.push_back( "ALCT: alct1 valid pattern flag received                 ");
-    TCounterName.push_back( "ALCT: alct data structure Error                         ");
-    TCounterName.push_back( "ALCT: trigger path ECC; 1 bit Error corrected           ");
-    TCounterName.push_back( "ALCT: trigger path ECC; 2 bit Error uncorrected         ");
-
-    TCounterName.push_back( "ALCT: trigger path ECC; > 2 bit Error uncorrected       "); // 5
-    TCounterName.push_back( "ALCT: trigger path ECC; > 2 bit Error blanked           ");
-    TCounterName.push_back( "ALCT: alct replied ECC; 1 bit Error corrected           ");
-    TCounterName.push_back( "ALCT: alct replied ECC; 2 bit Error uncorrected         ");
-    TCounterName.push_back( "ALCT: alct replied ECC; > 2 bit Error uncorrected       ");
-
-    TCounterName.push_back( "ALCT: raw hits readout                                  "); // 10
-    TCounterName.push_back( "ALCT: raw hits readout - CRC Error                      "); 
-    TCounterName.push_back( "RESERVED                                                ");
-    TCounterName.push_back( "CLCT: Pretrigger                                        "); // 13 --
-    TCounterName.push_back( "CLCT: Pretrigger on CFEB0                               ");
-
-    TCounterName.push_back( "CLCT: Pretrigger on CFEB1                               "); // 15
-    TCounterName.push_back( "CLCT: Pretrigger on CFEB2                               "); 
-    TCounterName.push_back( "CLCT: Pretrigger on CFEB3                               ");
-    TCounterName.push_back( "CLCT: Pretrigger on CFEB4                               ");
-
-    TCounterName.push_back( "CLCT: Pretrigger on CFEB5                               ");
-    TCounterName.push_back( "CLCT: Pretrigger on CFEB6                               "); // 20
-
-    TCounterName.push_back( "CLCT: Pretrigger on ME1A CFEB 4-6 only                  ");
-    TCounterName.push_back( "CLCT: Pretrigger on ME1B CFEBs 0-3 only                 "); // 22
-    TCounterName.push_back( "CLCT: Discarded, no wrbuf available, buffer stalled     "); 
-    TCounterName.push_back( "CLCT: Discarded, no ALCT in window                      ");
-    TCounterName.push_back( "CLCT: Discarded, CLCT0 invalid pattern after drift      ");
-    TCounterName.push_back( "CLCT: CLCT0 pass hit thresh, fail pid_thresh_postdrift  ");
-
-    TCounterName.push_back( "CLCT: CLCT1 pass hit thresh, fail pid_thresh_postdrift  "); // 27
-    TCounterName.push_back( "CLCT: BX pretrig waiting for triads to dissipate        "); 
-    TCounterName.push_back( "CLCT: clct0 sent to TMB matching section                ");
-    TCounterName.push_back( "CLCT: clct1 sent to TMB matching section                ");
-    TCounterName.push_back( "TMB:  TMB accepted alct*clct, alct-only, or clct-only   ");
-
-    TCounterName.push_back( "TMB:  TMB clct*alct matched trigger                     "); // 32 --
-    TCounterName.push_back( "TMB:  TMB alct-only trigger                             "); 
-    TCounterName.push_back( "TMB:  TMB clct-only trigger                             ");
-    TCounterName.push_back( "TMB:  TMB match reject event                            ");
-    TCounterName.push_back( "TMB:  TMB match reject event, queued for nontrig readout");
-
-    TCounterName.push_back( "TMB:  TMB matching discarded an ALCT pair               "); // 37
-    TCounterName.push_back( "TMB:  TMB matching discarded a CLCT pair                "); 
-    TCounterName.push_back( "TMB:  TMB matching discarded CLCT0 from ME1A            ");
-    TCounterName.push_back( "TMB:  TMB matching discarded CLCT1 from ME1A            ");
-    TCounterName.push_back( "TMB:  Matching found no ALCT                            ");
-
-    TCounterName.push_back( "TMB:  Matching found no CLCT                            "); // 42
-    TCounterName.push_back( "TMB:  Matching found one ALCT                           "); 
-    TCounterName.push_back( "TMB:  Matching found one CLCT                           ");
-    TCounterName.push_back( "TMB:  Matching found two ALCTs                          ");
-    TCounterName.push_back( "TMB:  Matching found two CLCTs                          ");
-
-    TCounterName.push_back( "TMB:  ALCT0 copied into ALCT1 to make 2nd LCT           "); // 47
-    TCounterName.push_back( "TMB:  CLCT0 copied into CLCT1 to make 2nd LCT           "); 
-    TCounterName.push_back( "TMB:  LCT1 has higher quality than LCT0 (ranking Error) ");
-    TCounterName.push_back( "TMB:  Transmitted LCT0 to MPC                           ");
-    TCounterName.push_back( "TMB:  Transmitted LCT1 to MPC                           ");
-
-    TCounterName.push_back( "TMB:  MPC accepted LCT0                                 "); // 52
-    TCounterName.push_back( "TMB:  MPC accepted LCT1                                 "); 
-    TCounterName.push_back( "TMB:  MPC rejected both LCT0 and LCT1                   "); // 54 --
-    TCounterName.push_back( "L1A:  L1A received                                      ");
-    TCounterName.push_back( "L1A:  L1A received, TMB in L1A window                   "); // 56 --
-
-    TCounterName.push_back( "L1A:  L1A received, no TMB in window                    "); // 57
-    TCounterName.push_back( "L1A:  TMB triggered, no L1A in window                   "); 
-    TCounterName.push_back( "L1A:  TMB readouts completed                            ");
-    TCounterName.push_back( "L1A:  TMB readouts lost by 1-event-per-L1A limit        ");
-    TCounterName.push_back( "STAT: CLCT Triads skipped                               ");
-
-    TCounterName.push_back( "STAT: Raw hits buffer had to be reset                   "); // 62
-    TCounterName.push_back( "STAT: TTC Resyncs received                              "); 
-    TCounterName.push_back( "STAT: Sync Error, BC0/BXN=offset mismatch               "); 
-    TCounterName.push_back( "STAT: Parity Error in CFEB or RPC raw hits RAM          ");
-    TCounterName.push_back( "HDR:  Pretrigger counter                                ");
-
-    TCounterName.push_back( "HDR:  CLCT counter                                      "); // 67
-    TCounterName.push_back( "HDR:  TMB trigger counter                               ");
-    TCounterName.push_back( "HDR:  ALCTs received counter                            ");
-    TCounterName.push_back( "HDR:  L1As received counter (12 bits)                   ");
-    TCounterName.push_back( "HDR:  Readout counter (12 bits)                         ");
-
-    TCounterName.push_back( "HDR:  Orbit counter                                     "); // 72
-    TCounterName.push_back( "ALCT:Struct Error, expect ALCT0[10:1]=0 when alct0vpf=0 "); 
-    TCounterName.push_back( "ALCT:Struct Error, expect ALCT1[10:1]=0 when alct1vpf=0 ");
-    TCounterName.push_back( "ALCT:Struct Error, expect ALCT0vpf=1 when alct1vpf=1    ");
-    TCounterName.push_back( "ALCT:Struct Error, expect ALCT0[10:1]>0 when alct0vpf=1 ");
-
-    TCounterName.push_back( "ALCT:Struct Error, expect ALCT1[10:1]=0 when alct1vpf=1 "); // 77
-    TCounterName.push_back( "ALCT:Struct Error, expect ALCT1!=alct0 when alct0vpf=1  ");
-    TCounterName.push_back( "CCB:  TTCrx lock lost                                   ");
-    TCounterName.push_back( "CCB:  qPLL lock lost                                    "); // 80
-    TCounterName.push_back( "TMB: CLCT pre-trigger and L1A coincidence counter       ");
-    TCounterName.push_back( "TMB: CLCT pre-trigger and ALCT coincidence counter      ");
-    TCounterName.push_back( "CLCT: CFEB0 active flag sent to DMB for readout         ");
-    TCounterName.push_back( "CLCT: CFEB1 active flag sent to DMB for readout         ");
-    TCounterName.push_back( "CLCT: CFEB2 active flag sent to DMB for readout         "); // 85
-    TCounterName.push_back( "CLCT: CFEB3 active flag sent to DMB for readout         ");
-    TCounterName.push_back( "CLCT: CFEB4 active flag sent to DMB for readout         ");
-    TCounterName.push_back( "CLCT: CFEB5 active flag sent to DMB for readout         ");
-    TCounterName.push_back( "CLCT: CFEB6 active flag sent to DMB for readout         ");
-    TCounterName.push_back( "CLCT: CFEB active flag sent to DMB was on ME1A CFEB4-6  "); // 90
-    TCounterName.push_back( "CLCT: CFEB active flag sent to DMB was on ME1B CFEB0-3  ");
-    TCounterName.push_back( "CLCT: CFEB active flag sent to DMB was on any CFEB      "); // 92 last of real TMB counters
-
-    TCounterName.push_back( "TMB:  CFEB Bad Bits Control                             ");     
-    TCounterName.push_back( "TMB:  CFEB Bad Bits Pattern 1                           "); // 94    
-    TCounterName.push_back( "TMB:  CFEB Bad Bits Pattern 2                           "); //    
-    TCounterName.push_back( "TMB:  CFEB Bad Bits Pattern 3                           "); //    
-    TCounterName.push_back( "TMB:  CFEB Bad Bits Pattern 4                           "); //    
-    TCounterName.push_back( "TMB:  CFEB Bad Bits Pattern 5                           "); //    
-    TCounterName.push_back( "TMB:  CFEB Bad Bits Pattern 6                           "); //   
-    TCounterName.push_back( "TMB:  CFEB Bad Bits Pattern 7                           "); // 100    
-    TCounterName.push_back( "TMB:  CFEB Bad Bits Pattern 8                           "); //   
-
-    TCounterName.push_back( "TMB:  Time since last Hard Reset                        "); // 102==
-
-    TOTAL_TMB_COUNTERS=TCounterName.size();
-
-    TCounterName2.push_back( "ALCT: alct0 valid pattern flag received                 "); // 0 --
-    TCounterName2.push_back( "ALCT: alct1 valid pattern flag received                 ");
-    TCounterName2.push_back( "ALCT: alct data structure Error                         ");
-    TCounterName2.push_back( "ALCT: trigger path ECC; 1 bit Error corrected           ");
-    TCounterName2.push_back( "ALCT: trigger path ECC; 2 bit Error uncorrected         ");
-
-    TCounterName2.push_back( "ALCT: trigger path ECC; > 2 bit Error uncorrected       "); // 5
-    TCounterName2.push_back( "ALCT: trigger path ECC; > 2 bit Error blanked           ");
-    TCounterName2.push_back( "ALCT: alct replied ECC; 1 bit Error corrected           ");
-    TCounterName2.push_back( "ALCT: alct replied ECC; 2 bit Error uncorrected         ");
-    TCounterName2.push_back( "ALCT: alct replied ECC; > 2 bit Error uncorrected       ");
-
-    TCounterName2.push_back( "ALCT: raw hits readout                                  "); // 10
-    TCounterName2.push_back( "ALCT: raw hits readout - CRC Error                      "); 
-    TCounterName2.push_back( "RESERVED                                                ");
-    TCounterName2.push_back( "CLCT: Pretrigger                                        "); // 13 --
-    TCounterName2.push_back( "CLCT: Pretrigger on CFEB0                               ");
-
-    TCounterName2.push_back( "CLCT: Pretrigger on CFEB1                               "); // 15
-    TCounterName2.push_back( "CLCT: Pretrigger on CFEB2                               "); 
-    TCounterName2.push_back( "CLCT: Pretrigger on CFEB3                               ");
-    TCounterName2.push_back( "CLCT: Pretrigger on CFEB4                               ");
-    TCounterName2.push_back( "CLCT: Pretrigger on CFEB5                               ");
-
-    TCounterName2.push_back( "CLCT: Pretrigger on CFEB6                               "); // 20
-    TCounterName2.push_back( "CLCT: Pretrigger on ME1A CFEB 4-6 only                  ");
-    TCounterName2.push_back( "CLCT: Pretrigger on ME1B CFEBs 0-3 only                 "); // 22
-    TCounterName2.push_back( "CLCT: Discarded, no wrbuf available, buffer stalled     "); 
-    TCounterName2.push_back( "CLCT: Discarded, no ALCT in window                      ");
-    TCounterName2.push_back( "CLCT: Discarded, CLCT0 invalid pattern after drift      ");
-    TCounterName2.push_back( "CLCT: CLCT0 pass hit thresh, fail pid_thresh_postdrift  ");
-
-    TCounterName2.push_back( "CLCT: CLCT1 pass hit thresh, fail pid_thresh_postdrift  "); // 27
-    TCounterName2.push_back( "CLCT: BX pretrig waiting for triads to dissipate        "); 
-    TCounterName2.push_back( "CLCT: clct0 sent to TMB matching section                ");
-    TCounterName2.push_back( "CLCT: clct1 sent to TMB matching section                ");
-    TCounterName2.push_back( "TMB:  TMB accepted alct*clct, alct-only, or clct-only   ");
-
-    TCounterName2.push_back( "TMB:  TMB clct*alct matched trigger                     "); // 32 --
-    TCounterName2.push_back( "TMB:  TMB alct-only trigger                             "); 
-    TCounterName2.push_back( "TMB:  TMB clct-only trigger                             ");
-    TCounterName2.push_back( "TMB:  TMB match reject event                            ");
-    TCounterName2.push_back( "TMB:  TMB match reject event, queued for nontrig readout");
-
-    TCounterName2.push_back( "TMB:  TMB matching discarded an ALCT pair               "); // 37
-    TCounterName2.push_back( "TMB:  TMB matching discarded a CLCT pair                "); 
-    TCounterName2.push_back( "TMB:  TMB matching discarded CLCT0 from ME1A            ");
-    TCounterName2.push_back( "TMB:  TMB matching discarded CLCT1 from ME1A            ");
-    TCounterName2.push_back( "TMB:  Matching found no ALCT                            ");
-
-    TCounterName2.push_back( "TMB:  Matching found no CLCT                            "); // 42
-    TCounterName2.push_back( "TMB:  Matching found one ALCT                           "); 
-    TCounterName2.push_back( "TMB:  Matching found one CLCT                           ");
-    TCounterName2.push_back( "TMB:  Matching found two ALCTs                          ");
-    TCounterName2.push_back( "TMB:  Matching found two CLCTs                          ");
-
-    TCounterName2.push_back( "TMB:  ALCT0 copied into ALCT1 to make 2nd LCT           "); // 47
-    TCounterName2.push_back( "TMB:  CLCT0 copied into CLCT1 to make 2nd LCT           "); 
-    TCounterName2.push_back( "TMB:  LCT1 has higher quality than LCT0 (ranking Error) ");
-    TCounterName2.push_back( "TMB:  Transmitted LCT0 to MPC                           ");
-    TCounterName2.push_back( "TMB:  Transmitted LCT1 to MPC                           ");
-
-    TCounterName2.push_back( "TMB:  MPC accepted LCT0                                 "); // 52
-    TCounterName2.push_back( "TMB:  MPC accepted LCT1                                 "); 
-    TCounterName2.push_back( "TMB:  MPC rejected both LCT0 and LCT1                   "); // 54 --
-    TCounterName2.push_back( "L1A:  L1A received                                      ");
-    TCounterName2.push_back( "L1A:  L1A received, TMB in L1A window                   "); // 56 --
-
-    TCounterName2.push_back( "L1A:  L1A received, no TMB in window                    "); // 57
-    TCounterName2.push_back( "L1A:  TMB triggered, no L1A in window                   "); 
-    TCounterName2.push_back( "L1A:  TMB readouts completed                            ");
-    TCounterName2.push_back( "L1A:  TMB readouts lost by 1-event-per-L1A limit        ");
-    TCounterName2.push_back( "STAT: CLCT Triads skipped                               ");
-
-    TCounterName2.push_back( "STAT: Raw hits buffer had to be reset                   "); // 62
-    TCounterName2.push_back( "STAT: TTC Resyncs received                              "); 
-    TCounterName2.push_back( "STAT: Sync Error, BC0/BXN=offset mismatch               "); 
-    TCounterName2.push_back( "STAT: Parity Error in CFEB or RPC raw hits RAM          ");
-    TCounterName2.push_back( "HDR:  Pretrigger counter                                ");
-
-    TCounterName2.push_back( "HDR:  CLCT counter                                      "); // 67
-    TCounterName2.push_back( "HDR:  TMB trigger counter                               ");
-    TCounterName2.push_back( "HDR:  ALCTs received counter                            ");
-    TCounterName2.push_back( "HDR:  L1As received counter (12 bits)                   ");
-    TCounterName2.push_back( "HDR:  Readout counter (12 bits)                         ");
-
-    TCounterName2.push_back( "HDR:  Orbit counter                                     "); // 72
-    TCounterName2.push_back( "ALCT:Struct Error, expect ALCT0[10:1]=0 when alct0vpf=0 "); 
-    TCounterName2.push_back( "ALCT:Struct Error, expect ALCT1[10:1]=0 when alct1vpf=0 ");
-    TCounterName2.push_back( "ALCT:Struct Error, expect ALCT0vpf=1 when alct1vpf=1    ");
-    TCounterName2.push_back( "ALCT:Struct Error, expect ALCT0[10:1]>0 when alct0vpf=1 ");
-
-    TCounterName2.push_back( "ALCT:Struct Error, expect ALCT1[10:1]=0 when alct1vpf=1 "); // 77
-    TCounterName2.push_back( "ALCT:Struct Error, expect ALCT1!=alct0 when alct0vpf=1  ");
-    TCounterName2.push_back( "CCB:  TTCrx lock lost                                   ");
-    TCounterName2.push_back( "CCB:  qPLL lock lost                                    "); // 80 
-    TCounterName2.push_back( "TMB: CLCT pre-trigger and L1A coincidence counter       ");
-    TCounterName2.push_back( "TMB: CLCT pre-trigger and ALCT coincidence counter      ");
-    TCounterName2.push_back( "CLCT: CFEB0 active flag sent to DMB for readout         ");
-    TCounterName2.push_back( "CLCT: CFEB1 active flag sent to DMB for readout         ");
-    TCounterName2.push_back( "CLCT: CFEB2 active flag sent to DMB for readout         "); // 85
-    TCounterName2.push_back( "CLCT: CFEB3 active flag sent to DMB for readout         ");
-    TCounterName2.push_back( "CLCT: CFEB4 active flag sent to DMB for readout         ");
-    TCounterName2.push_back( "CLCT: CFEB5 active flag sent to DMB for readout         ");
-    TCounterName2.push_back( "CLCT: CFEB6 active flag sent to DMB for readout         ");
-    TCounterName2.push_back( "CLCT: CFEB active flag sent to DMB was on ME1A CFEB4-6  "); // 90
-    TCounterName2.push_back( "CLCT: CFEB active flag sent to DMB was on ME1B CFEB0-3  ");
-    TCounterName2.push_back( "CLCT: CFEB active flag sent to DMB was on any CFEB      "); // 92 last of real TMB counters
-
-    TCounterName2.push_back( "TMB:  CFEB Bad Bits Control                             ");     
-    TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 1                           "); // 94    
-    TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 2                           "); //    
-    TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 3                           "); //    
-    TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 4                           "); //    
-    TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 5                           "); //    
-
-    TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 6                           "); // 99   
-    TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 7                           "); // 100    
-    TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 8                           "); //   
-    TCounterName2.push_back( "TMB:  CFEB Bad Bits Control extension                   "); //     
-    TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern extension 1                 "); //     
-    TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern extension 2                 "); //     
-    TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern extension 3                 "); // 105     
-
-    TCounterName2.push_back( "TMB:  Time since last Hard Reset                        "); // 106==
-
-    TOTAL_TMB_COUNTERS2=TCounterName2.size();
+    bool TMBDone=false, TMB2Done=false;
+    std::vector<TMB*> myTmbs;
+    for ( unsigned int i = 0; i < crateVector.size(); i++ )
+    {
+        if(TMBDone && TMB2Done) break;
+        myTmbs=crateVector[i]->tmbs();
+        for(unsigned j=0; j<myTmbs.size(); j++)
+        {
+           if(TMBDone && TMB2Done) break;
+           if(myTmbs[j]->GetHardwareVersion()<=1 && !TMBDone)
+           {
+               for(unsigned k=0; k<myTmbs[j]->GetMaxCounter(); k++)
+               {
+                   TCounterName.push_back(myTmbs[j]->CounterName(k));
+               }
+               TCounterName.push_back( "TMB:  Time since last Hard Reset                        ");
+               TOTAL_TMB_COUNTERS=TCounterName.size();
+               TMBDone=true;
+           } 
+           if(myTmbs[j]->GetHardwareVersion()==2 && !TMB2Done)
+           {
+               for(unsigned k=0; k<myTmbs[j]->GetMaxCounter(); k++)
+               {
+                   TCounterName2.push_back(myTmbs[j]->CounterName(k));
+               }
+               TCounterName2.push_back( "TMB:  CFEB Bad Bits Control                             ");     
+               TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 1                           ");     
+               TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 2                           ");    
+               TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 3                           ");    
+               TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 4                           ");    
+               TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 5                           ");    
+               TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 6                           ");    
+               TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 7                           ");     
+               TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern 8                           ");    
+               TCounterName2.push_back( "TMB:  CFEB Bad Bits Control extension                   ");      
+               TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern extension 1                 ");      
+               TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern extension 2                 ");      
+               TCounterName2.push_back( "TMB:  CFEB Bad Bits Pattern extension 3                 ");     
+               TCounterName2.push_back( "TMB:  Time since last Hard Reset                        ");
+               TOTAL_TMB_COUNTERS2=TCounterName2.size();
+               TMB2Done=true;
+           } 
+        }
+    }
 
     DCounterName.push_back( "L1A to LCT delay");  // 0
     DCounterName.push_back( "CFEB DAV delay  ");

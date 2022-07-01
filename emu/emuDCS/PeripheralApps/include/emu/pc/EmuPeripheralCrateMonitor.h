@@ -153,8 +153,8 @@ protected:
   static const int TOTAL_DCS_COUNTERS=64;
   static const int TOTAL_TMB_VOLTAGES=16;
   static const int TOTAL_DCFEB_MONS=222;  // (19+8+3)*7+9+3 (1 for DCFEB link status, 1 for DCFEB auto-kill registers, 1 is reserved)
-  static const int MAX_TMB_COUNTERS=120;;
-  static const int REAL_TMB_COUNTERS=93;
+  static const int MAX_TMB_COUNTERS=144;;
+  static const int REAL_TMB_COUNTERS=122;
   
 public:
   //

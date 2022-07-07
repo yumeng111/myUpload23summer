@@ -1163,7 +1163,7 @@ function Panel( name, refreshPeriod, dataURL ) {
 			       }
 			   }
 			   else if ( self.name == 'PCMonP' ){
-			       if ( self.trends.length == 0 ) self.trends[0] = new Trend(3); // for heartbeat
+			       if ( self.trends.length == 0 ) self.trends[0] = new Trend(10); // for heartbeat
 			       if      ( $(this).attr('name') == 'title' ){
 				   $('#PCMonP-a_value_Title').attr('href' ,$(this).attr('valueURL')).attr('title',$(this).attr('valueDescription')).text($(this).attr('value').replace(' ',' '));
 			       }
@@ -1174,9 +1174,9 @@ function Panel( name, refreshPeriod, dataURL ) {
 			       }
 			       else if ( $(this).attr('name') == 'Heartbeat' ){
 				   self.trends[0].add( time, Number($(this).attr('value')) );
-				   $('#PCMonP-td_value_Heart').attr('class',( self.trends[0].rate(3) == 0 ? 'WARN' : '' ));
+				   $('#PCMonP-td_value_Heart').attr('class',( self.trends[0].rate(10) == 0 ? 'WARN' : '' ));
 				   $('#PCMonP-a_name_Heart'  ).attr('href' ,$(this).attr('nameURL' )).attr('title',$(this).attr('nameDescription' )).text(String.fromCharCode(0x2665));
-			           $('#PCMonP-a_value_Heart' ).attr('href' ,$(this).attr('valueURL')).attr('title',$(this).attr('valueDescription')).text( formatNumber( self.trends[0].rate(3) )+' Hz');
+			           $('#PCMonP-a_value_Heart' ).attr('href' ,$(this).attr('valueURL')).attr('title',$(this).attr('valueDescription')).text( formatNumber( self.trends[0].rate(10) )+' Hz');
 				   // alert( self.trends[0].print() );
 			       }
 			       else if ( $(this).attr('name') == 'Auto-Killed DCFEBs' ){
@@ -1186,7 +1186,7 @@ function Panel( name, refreshPeriod, dataURL ) {
 			       }
 			   }
 			   else if ( self.name == 'PCMonM' ){
-			       if ( self.trends.length == 0 ) self.trends[0] = new Trend(3); // for heartbeat
+			       if ( self.trends.length == 0 ) self.trends[0] = new Trend(10); // for heartbeat
 			       if      ( $(this).attr('name') == 'title' ){
 				   $('#PCMonM-a_value_Title').attr('href' ,$(this).attr('valueURL')).attr('title',$(this).attr('valueDescription')).text($(this).attr('value').replace(' ',' '));
 			       }
@@ -1197,9 +1197,9 @@ function Panel( name, refreshPeriod, dataURL ) {
 			       }
 			       else if ( $(this).attr('name') == 'Heartbeat' ){
 				   self.trends[0].add( time, Number($(this).attr('value')) );
-				   $('#PCMonM-td_value_Heart').attr('class',( self.trends[0].rate(3) == 0 ? 'WARN' : '' ));
+				   $('#PCMonM-td_value_Heart').attr('class',( self.trends[0].rate(10) == 0 ? 'WARN' : '' ));
 				   $('#PCMonM-a_name_Heart'  ).attr('href' ,$(this).attr('nameURL' )).attr('title',$(this).attr('nameDescription' )).text(String.fromCharCode(0x2665));
-			           $('#PCMonM-a_value_Heart' ).attr('href' ,$(this).attr('valueURL')).attr('title',$(this).attr('valueDescription')).text( formatNumber( self.trends[0].rate(3) )+' Hz');
+			           $('#PCMonM-a_value_Heart' ).attr('href' ,$(this).attr('valueURL')).attr('title',$(this).attr('valueDescription')).text( formatNumber( self.trends[0].rate(10) )+' Hz');
 			       }
 			       else if ( $(this).attr('name') == 'Auto-Killed DCFEBs' ){
 				   $('#PCMonM-td_value_DCFEB').attr('class',( Number($(this).attr('value')) > 0 ? 'WARN' : '' ));

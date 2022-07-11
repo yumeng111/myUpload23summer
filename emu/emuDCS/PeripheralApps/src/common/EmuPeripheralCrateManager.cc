@@ -255,7 +255,7 @@ xoap::MessageReference EmuPeripheralCrateManager::onConfigure (xoap::MessageRefe
 
 //  PCsendCommand("MonitorStop","emu::pc::EmuPeripheralCrateMonitor");
   PCsendCommand("Configure","emu::pc::EmuPeripheralCrateCommand");
-  PCsendCommand("Configure","emu::pc::EmuPeripheralCrateBroadcast");
+  // PCsendCommand("Configure","emu::pc::EmuPeripheralCrateBroadcast");
   //
   fireEvent("Configure");
   //
@@ -270,7 +270,7 @@ xoap::MessageReference EmuPeripheralCrateManager::onEnable (xoap::MessageReferen
   page1_state_ = 2;
 
   PCsendCommand("Enable","emu::pc::EmuPeripheralCrateCommand");
-  PCsendCommand("Enable","emu::pc::EmuPeripheralCrateBroadcast");
+  // PCsendCommand("Enable","emu::pc::EmuPeripheralCrateBroadcast");
 //  PCsendCommand("MonitorStart","emu::pc::EmuPeripheralCrateMonitor");
   //
   fireEvent("Enable");
@@ -285,7 +285,7 @@ xoap::MessageReference EmuPeripheralCrateManager::onDisable (xoap::MessageRefere
   page1_state_ = 1;
 
   PCsendCommand("Disable","emu::pc::EmuPeripheralCrateCommand");
-  PCsendCommand("Disable","emu::pc::EmuPeripheralCrateBroadcast");
+  // PCsendCommand("Disable","emu::pc::EmuPeripheralCrateBroadcast");
 //  PCsendCommand("MonitorStop","emu::pc::EmuPeripheralCrateMonitor");
   //
   fireEvent("Disable");
@@ -300,7 +300,7 @@ xoap::MessageReference EmuPeripheralCrateManager::onHalt (xoap::MessageReference
   page1_state_ = 0;
 
   PCsendCommand("Halt","emu::pc::EmuPeripheralCrateCommand");
-  PCsendCommand("Halt","emu::pc::EmuPeripheralCrateBroadcast");
+  // PCsendCommand("Halt","emu::pc::EmuPeripheralCrateBroadcast");
 //  PCsendCommand("MonitorStop","emu::pc::EmuPeripheralCrateMonitor");
   //
   fireEvent("Halt");

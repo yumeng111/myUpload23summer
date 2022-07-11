@@ -1279,26 +1279,36 @@ xoap::MessageReference EmuPeripheralCrateBroadcast::onEnableCalCFEBGains (xoap::
   calsetup++;
   //
   //implement the cal0 setup process:
-  if ( broadcastDMB ){
-    std::cout << "DMB setup for CFEB Gain, calsetup= " <<calsetup<< std::endl;
-    //
-    if ( calsetup == 1 ){
-      std::cout << "Setting pre_block_end for all copper DMBs to (its value taken from broadcast.xml) " << broadcastDMB->GetPreBlockEnd() << std::endl;
-      broadcastDMB->fxpreblkend( broadcastDMB->GetPreBlockEnd() );
+  // 2022-07-01 Broadcasting to all copper DMBs also targets MEX/1, which have DCFEBs. 
+  // In fact, such a broadcast messes up MEX/1 (DCFEBs lose f/w, but xDCFEBs don't, for some reason), 
+  // so not even direct single-target commands will work afterwards.
+  // Let's broadcast to capper DMBs 4-9 in all crates by slot instead, so only the old copper DMB + copper CFEB 
+  // chambers (i.e. the outer rings) receive the commands.
+  for ( unsigned i=0; i<otherDMBs.size(); i++ ){
+    // Only for copper DMB + copper CFEB
+    if ( ( otherDMBs[i]->GetHardwareVersion()==0 || otherDMBs[i]->GetHardwareVersion()==1 ) &&
+	 9 <= otherDMBs[i]->slot() && otherDMBs[i]->slot() <= 21                              ){
+      std::cout << "Broadcast to slot " << otherDMBs[i]->slot() << std::endl;
+      std::cout << "DMB setup for CFEB Gain, calsetup= " <<calsetup<< std::endl;
+      //
+      if ( calsetup == 1 ){
+	std::cout << "Setting pre_block_end for all copper DMBs to (its value taken from broadcast.xml) " << otherDMBs[i]->GetPreBlockEnd() << std::endl;
+	otherDMBs[i]->fxpreblkend( otherDMBs[i]->GetPreBlockEnd() );
+	::usleep( nsleep );
+      }
+      //Start the setup process:
+      int gainsetting =((calsetup-1)%20);
+      int nstrip=(calsetup-1)/20;
+      if (!gainsetting){
+	otherDMBs[i]->buck_shift_ext_bc(nstrip);
+	::usleep( nsleep );
+      }
+      dac=0.1+0.25*gainsetting;
+      // dac=0.1+0.25*10; // always max/2
+      otherDMBs[i]->set_cal_dac(dac,dac);
       ::usleep( nsleep );
+      std::cout <<" The strip was set to: "<<nstrip<<" DAC was set to: "<<dac <<std::endl;
     }
-    //Start the setup process:
-    int gainsetting =((calsetup-1)%20);
-    int nstrip=(calsetup-1)/20;
-    if (!gainsetting){
-      broadcastDMB->buck_shift_ext_bc(nstrip);
-      ::usleep( nsleep );
-    }
-    dac=0.1+0.25*gainsetting;
-    // dac=0.1+0.25*10; // always max/2
-    broadcastDMB->set_cal_dac(dac,dac);
-    ::usleep( nsleep );
-    std::cout <<" The strip was set to: "<<nstrip<<" DAC was set to: "<<dac <<std::endl;
   }
   if ( broadcastODMB ){
     std::cout << "ODMB setup for DCFEB Gain, calsetup= " <<calsetup<< std::endl;
@@ -1349,19 +1359,43 @@ xoap::MessageReference EmuPeripheralCrateBroadcast::onEnableCalCFEBCrossTalk (xo
   calsetup++;
   //
   //implement the cal0 setup process:
-  if ( broadcastDMB ){
-    std::cout << "DMB setup for CFEB Time, calsetup= " <<calsetup<< std::endl;
-    //
-    //Start the setup process:
-    int timesetting =((calsetup-1)%10);
-    int nstrip=(calsetup-1)/10;
-    if (!timesetting) broadcastDMB->buck_shift_ext_bc(nstrip);
-    broadcastDMB->set_cal_tim_pulse(timesetting+5);
-    std::cout <<" The strip was set to: "<<nstrip<<" Time was set to: "<<timesetting <<std::endl;
+  // 2022-07-01 Broadcasting to all copper DMBs also targets MEX/1, which have DCFEBs. 
+  // In fact, such a broadcast messes up MEX/1 (DCFEBs lose f/w, but xDCFEBs don't, for some reason), 
+  // so not even direct single-target commands will work afterwards.
+  // Let's broadcast to capper DMBs 4-9 in all crates by slot instead, so only the old copper DMB + copper CFEB 
+  // chambers (i.e. the outer rings) receive the commands.
+  for ( unsigned i=0; i<otherDMBs.size(); i++ ){
+    // Only for copper DMB + copper CFEB
+    if ( ( otherDMBs[i]->GetHardwareVersion()==0 || otherDMBs[i]->GetHardwareVersion()==1 ) &&
+	 9 <= otherDMBs[i]->slot() && otherDMBs[i]->slot() <= 21                              ){
+      std::cout << "Broadcast to slot " << otherDMBs[i]->slot() << std::endl;
+      std::cout << "DMB setup for CFEB Time, calsetup= " <<calsetup<< std::endl;
+      //
+      //Start the setup process:
+      int timesetting =((calsetup-1)%10);
+      int nstrip=(calsetup-1)/10;
+      if (!timesetting) otherDMBs[i]->buck_shift_ext_bc(nstrip);
+      otherDMBs[i]->set_cal_tim_pulse(timesetting+5);
+      std::cout <<" The strip was set to: "<<nstrip<<" Time was set to: "<<timesetting <<std::endl;
+    }
   }
   if ( broadcastODMB ){
     std::cout << "ODMB setup for DCFEB Time, calsetup= " <<calsetup<< std::endl;
     //
+    if ( calsetup == 1 ){
+      // Set the pipeline depth to its value in broadcast.xml
+      std::vector<CFEB> cfebs( broadcastODMB->cfebs() );
+      for( size_t icfeb = 0; icfeb < cfebs.size(); ++icfeb ){
+	int depth = cfebs[icfeb].GetPipelineDepth();
+	std::cout << "Set DCFEB "                     << icfeb
+		  << " pipeline depth to "            << depth 
+		  << " (i.e. value in broadcast.xml)" << std::endl;
+	broadcastODMB->dcfeb_set_PipelineDepth( cfebs[icfeb],  depth );
+	::usleep(1000); // 1ms extra pause
+	broadcastODMB->Pipeline_Restart( cfebs[icfeb] );
+	::usleep(100000);
+      }
+    }
     //Start the setup process:
     int timesetting =((calsetup-1)%10);
     int nstrip=(calsetup-1)/10;
@@ -1395,17 +1429,27 @@ xoap::MessageReference EmuPeripheralCrateBroadcast::onEnableCalCFEBSCAPed (xoap:
   calsetup++;
   //
   //implement the CFEB_Pedestal setup process:
-  if ( broadcastDMB ){
-    std::cout << "DMB setup for CFEB Pedestal, calsetup= " <<calsetup<< std::endl;
-    //
-    // Start the setup process: Set all channel to normal, DAC to 0, No_pulse:
-    broadcastDMB->buck_shift_ext_bc(-1);
-    dac=0.0;
-    broadcastDMB->set_cal_dac(dac,dac);
-    std::cout <<" The strip was set to: -1, " <<" DAC was set to: "<<dac <<std::endl;
-    ::usleep(nsleep);
-    broadcastDMB->toggle_pedestal();
-    std::cout<<" Toggle DMB Pedestal switch, to disable the pulsing."<<std::endl;
+  // 2022-07-01 Broadcasting to all copper DMBs also targets MEX/1, which have DCFEBs. 
+  // In fact, such a broadcast messes up MEX/1 (DCFEBs lose f/w, but xDCFEBs don't, for some reason), 
+  // so not even direct single-target commands will work afterwards.
+  // Let's broadcast to capper DMBs 4-9 in all crates by slot instead, so only the old copper DMB + copper CFEB 
+  // chambers (i.e. the outer rings) receive the commands.
+  for ( unsigned i=0; i<otherDMBs.size(); i++ ){
+    // Only for copper DMB + copper CFEB
+    if ( ( otherDMBs[i]->GetHardwareVersion()==0 || otherDMBs[i]->GetHardwareVersion()==1 ) &&
+	 9 <= otherDMBs[i]->slot() && otherDMBs[i]->slot() <= 21                              ){
+      std::cout << "Broadcast to slot " << otherDMBs[i]->slot() << std::endl;
+      std::cout << "DMB setup for CFEB Pedestal, calsetup= " <<calsetup<< std::endl;
+      //
+      // Start the setup process: Set all channel to normal, DAC to 0, No_pulse:
+      otherDMBs[i]->buck_shift_ext_bc(-1);
+      dac=0.0;
+      otherDMBs[i]->set_cal_dac(dac,dac);
+      std::cout <<" The strip was set to: -1, " <<" DAC was set to: "<<dac <<std::endl;
+      ::usleep(nsleep);
+      otherDMBs[i]->toggle_pedestal();
+      std::cout<<" Toggle DMB Pedestal switch, to disable the pulsing."<<std::endl;
+    }
   }
   if ( broadcastODMB ){
     std::cout << "ODMB setup for DCFEB Pedestal, calsetup= " <<calsetup<< std::endl;

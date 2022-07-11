@@ -890,6 +890,11 @@ xoap::MessageReference EmuPeripheralCrateCommand::onEnableCalCFEBGains (xoap::Me
                    // recover CFEBs which could be messed up during the broadcast
                    dmbVector[dn]->restoreCFEBIdle();
 
+		   if ( calsetup==1 ){
+		     std::cout << "DAQMB::Set_ReadAnyL1a for " << dmbVector[dn]->GetLabel() << std::endl;
+		     dmbVector[dn]->Set_ReadAnyL1a();
+		   }
+
                    //Start the setup process:
                    int gainsetting =((calsetup-1)%20);
                    int nstrip=(calsetup-1)/20;
@@ -931,6 +936,11 @@ xoap::MessageReference EmuPeripheralCrateCommand::onEnableCalCFEBCrossTalk (xoap
                    // recover CFEBs which could be messed up during the broadcast
                    dmbVector[dn]->restoreCFEBIdle();
 
+		   if ( calsetup==1 ){
+		     std::cout << "DAQMB::Set_ReadAnyL1a for " << dmbVector[dn]->GetLabel() << std::endl;
+		     dmbVector[dn]->Set_ReadAnyL1a();
+		   }
+
                    //Start the setup process:
                    int timesetting =((calsetup-1)%10);
                    int nstrip=(calsetup-1)/10;
@@ -969,12 +979,18 @@ xoap::MessageReference EmuPeripheralCrateCommand::onEnableCalCFEBSCAPed (xoap::M
                 {
                    // recover CFEBs which could be messed up during the broadcast
                    dmbVector[dn]->restoreCFEBIdle();
+
+		   if ( calsetup==1 ){
+		     std::cout << "DAQMB::Set_ReadAnyL1a for " << dmbVector[dn]->GetLabel() << std::endl;
+		     dmbVector[dn]->Set_ReadAnyL1a();
+		   }
+
                    // Start the setup process: Set all channel to normal, DAC to 0, No_pulse:
                    dmbVector[dn]->buck_shift_ext_bc(-1);
                    float dac=0.0;
                    dmbVector[dn]->set_cal_dac(dac,dac);
                    std::cout <<" The strip was set to: -1, " <<" DAC was set to: "<<dac <<std::endl;
-                   ::usleep(100);
+                   ::usleep(1000); // Was 100, but it kept crashing...
                    dmbVector[dn]->toggle_pedestal();
                    // std::cout<<" Toggle DMB Pedestal switch, to disable the pulsing."<<std::endl;
                 

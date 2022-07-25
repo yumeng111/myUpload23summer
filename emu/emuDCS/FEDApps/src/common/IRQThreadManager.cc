@@ -321,6 +321,11 @@ bool emu::fed::IRQThreadManager::DDUWarnMon::setDDUerror(emu::fed::DDU *myDDU, l
 		uint16_t ruiNum = myDDU->getRUI();
 		LOG4CPLUS_ERROR(logger, endl << "DDU RUI #" << ruiNum <<
 			" stuck in warning. Setting DDU Error to request hard reset from GT." << endl);
+		std::ofstream *logHardResets = locdata->logHardResets;  
+		char datebuf[32];
+		time_t theTime = time(NULL);
+		strftime(datebuf, sizeof(datebuf), "%Y/%m/%d %H:%M:%S: ", localtime(&theTime));
+		(*logHardResets) << datebuf << "Requesting a hard reset for stuck WARNING in DDU " << ruiNum << endl;  
 		// Make and send the fact to the expert system
 		emu::base::TypedFact<emu::fed::DDUStuckInWarningFact> fact;
 		std::ostringstream component;
@@ -1102,12 +1107,19 @@ void *emu::fed::IRQThreadManager::IRQThread(void *data)
 						char datebuf[32];
 						time_t theTime = time(NULL);
 						strftime(datebuf, sizeof(datebuf), "%Y/%m/%d %H:%M:%S: ", localtime(&theTime));
-						(*logHardResets) << datebuf << "Requesting a hard reset" << endl;  
 						if (!myCrate->isTrackFinder()) {
-							if (hardError)
+						       if (hardError){
+							        (*logHardResets) << datebuf 
+										 << "Requesting a hard reset by enabling FMM" 
+										 << endl;  
 								myCrate->getBroadcastDDU()->enableFMM();
 								// Briefly release the FMMs.
-							else {
+						       }
+						       else {
+							        (*logHardResets) << datebuf 
+										 << "Requesting a hard reset by asserting ERROR instead of OOS in DDU " 
+										 << myDDU->getRUI()
+										 << endl;
 								setDDUerr(myDDU);	// Ensure DDU sets Error, not Out-of-sync
 								LOG4CPLUS_DEBUG(logger,
 									"Overriding DDU OOS with Error to ensure we receive a hard reset");

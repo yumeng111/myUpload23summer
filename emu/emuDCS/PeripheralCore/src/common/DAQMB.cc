@@ -1058,7 +1058,14 @@ bool DAQMB::checkDAQMBXMLValues() {
     }
     else
     {
-       // TODO: CheckDMB for DMBversion<=1 with CFEBversion()>1
+       //check the DMB setting with the current setup
+       confmatch &= compareValues("DAQMB CableDelays"    ,CableDelay_  ,cable_delay_   ,print_errors);
+       confmatch &= compareValues("DAQMB CrateID"        ,CrateID_     ,crate_id_      ,print_errors);
+       confmatch &= compareValues("DAQMB feb_clock_delay",CfebClkDelay_,cfeb_clk_delay_,print_errors);
+       confmatch &= compareValues("DAQMB xFineLatency"   ,XFineLatency_,xfinelatency_  ,print_errors);
+       confmatch &= compareValues("DAQMB kill_input"     ,KillInput_   ,killinput_     ,print_errors);
+       confmatch &= CheckVMEFirmwareVersion();
+       confmatch &= CheckControlFirmwareVersion();
     }
 
     std::cout << "DCFEB: checkXMLValues() for crate " << this->crate() << " slot " << this->slot() << std::endl;
@@ -1078,6 +1085,7 @@ bool DAQMB::checkDAQMBXMLValues() {
     {
        cfeb_index = (*cfebItr).number();
        if(cfeb_index<0 || cfeb_index>6) continue; // should not happen
+       if ( (GetPowerMask() >> cfeb_index) & 1 ) continue;  // skip those CFEBs masked out in the Power-Mask
        if(CFEBversion() <= 1) continue;
        cfebdone=(donebits>>cfeb_index)&1;
 
@@ -1127,6 +1135,7 @@ void DAQMB::CheckCFEBsConfiguration(bool print_errors) {
   //
   for(unsigned lfeb=0; lfeb<cfebs_.size();lfeb++){
     int icfeb=cfebs_[lfeb].number();
+    if ( (GetPowerMask() >> icfeb) & 1 ) continue;  // skip those CFEBs masked out in the Power-Mask
     int comp_mode_bits_old = febstat_[icfeb][2]&0x1f;
     int pre_block_end_old  = (((febstat_[icfeb][2]>>5)&0x07)+((febstat_[icfeb][3]&0x01)<<3));
     int xlatency_old       = ((febstat_[icfeb][3]>>1)&0x03);
@@ -1170,6 +1179,9 @@ void DAQMB::CheckCFEBsConfiguration(bool print_errors) {
   for(unsigned lfeb=0; lfeb<cfebs_.size();lfeb++)  compthresh[lfeb]=adcplus(2,cfebs_[lfeb].number());
   //
   for(unsigned lfeb=0; lfeb<cfebs_.size();lfeb++){
+
+    int icfeb=cfebs_[lfeb].number();
+    if ( (GetPowerMask() >> icfeb) & 1 ) continue;  // skip those CFEBs masked out in the Power-Mask
     //
     //as the monitor show that CFEB +5V is only 4.9V, the 3550 is used instead of 3590
     float read_threshold_in_mV = (3550. - compthresh[lfeb]);
@@ -1184,6 +1196,7 @@ void DAQMB::CheckCFEBsConfiguration(bool print_errors) {
   for(unsigned lfeb=0; lfeb<cfebs_.size();lfeb++)
   {
     int icfeb=cfebs_[lfeb].number();
+    if ( (GetPowerMask() >> icfeb) & 1 ) continue;  // skip those CFEBs masked out in the Power-Mask
     std::ostringstream tested_value;
     tested_value << "CFEB " << (icfeb+1) << " FirmwareTag";
     cfeb_config_status_[lfeb] &= compareValues(tested_value.str(), febfpgauser(cfebs_[lfeb]),GetExpectedCFEBFirmwareTag(icfeb), print_errors);
@@ -9006,7 +9019,7 @@ int DAQMB::DCSread2(char *data, int read_dcfeb)
          if(i==10 || i==15)
             data2[febnum*TOTAL_DCFEB+i]=int(fsysmon[i]);
          else
-            data2[febnum*TOTAL_DCFEB+i]=int(fsysmon[i]*100);
+            data2[febnum*TOTAL_DCFEB+i]=(fsysmon[i]<0)?0:int(fsysmon[i]*100);
       }
       fsysmon.clear();
     }

@@ -823,7 +823,7 @@ xoap::MessageReference EmuPeripheralCrateCommand::onConfigCalCFEB (xoap::Message
 
 	    dmbVector[dmb]->odmb_set_kill_mask(0x0180); // kill ALCT (0x0100) and TMB (0x0080)
 	    LOG4CPLUS_INFO( getApplicationLogger(), 
-			    "Crate " << dmbVector[dmb]->crate() << " slot " << dmbVector[dmb]->slot() << " ODMB now has"
+			    "\n Crate " << dmbVector[dmb]->crate() << " slot " << dmbVector[dmb]->slot() << " ODMB now has"
 			    << " kill mask set to 0x"    << std::hex << dmbVector[dmb]->odmb_read_kill_mask()
 			    << ", calib mode set to "    << std::dec << dmbVector[dmb]->odmb_read_calib_mode()
 			    << ", pedestal mode set to "             << dmbVector[dmb]->odmb_read_pedestal_mode()
@@ -893,7 +893,16 @@ xoap::MessageReference EmuPeripheralCrateCommand::onEnableCalCFEBGains (xoap::Me
 		   if ( calsetup==1 ){
 		     std::cout << "DAQMB::Set_ReadAnyL1a for " << dmbVector[dn]->GetLabel() << std::endl;
 		     dmbVector[dn]->Set_ReadAnyL1a();
-		   }
+                     // Set the pipeline depth to its value in broadcast.xml
+                     std::vector<CFEB> cfebs=dmbVector[dn]->cfebs();
+                     for( size_t icfeb = 0; icfeb < cfebs.size(); ++icfeb )
+                     {
+	               dmbVector[dn]->dcfeb_set_PipelineDepth( cfebs[icfeb],  65 );  // hard-coded as a special setting for calibration
+	               ::usleep(1000); // 1ms extra pause
+	               dmbVector[dn]->Pipeline_Restart( cfebs[icfeb] );
+	               ::usleep(100000);
+                     }		   
+                   }
 
                    //Start the setup process:
                    int gainsetting =((calsetup-1)%20);
@@ -939,6 +948,15 @@ xoap::MessageReference EmuPeripheralCrateCommand::onEnableCalCFEBCrossTalk (xoap
 		   if ( calsetup==1 ){
 		     std::cout << "DAQMB::Set_ReadAnyL1a for " << dmbVector[dn]->GetLabel() << std::endl;
 		     dmbVector[dn]->Set_ReadAnyL1a();
+                     // Set the pipeline depth to its value in broadcast.xml
+                     std::vector<CFEB> cfebs=dmbVector[dn]->cfebs();
+                     for( size_t icfeb = 0; icfeb < cfebs.size(); ++icfeb )
+                     {
+	               dmbVector[dn]->dcfeb_set_PipelineDepth( cfebs[icfeb],  65 );  // hard-coded as a special setting for calibration
+	               ::usleep(1000); // 1ms extra pause
+	               dmbVector[dn]->Pipeline_Restart( cfebs[icfeb] );
+	               ::usleep(100000);
+                     }		   
 		   }
 
                    //Start the setup process:
@@ -983,6 +1001,15 @@ xoap::MessageReference EmuPeripheralCrateCommand::onEnableCalCFEBSCAPed (xoap::M
 		   if ( calsetup==1 ){
 		     std::cout << "DAQMB::Set_ReadAnyL1a for " << dmbVector[dn]->GetLabel() << std::endl;
 		     dmbVector[dn]->Set_ReadAnyL1a();
+                     // Set the pipeline depth to its value in broadcast.xml
+                     std::vector<CFEB> cfebs=dmbVector[dn]->cfebs();
+                     for( size_t icfeb = 0; icfeb < cfebs.size(); ++icfeb )
+                     {
+	               dmbVector[dn]->dcfeb_set_PipelineDepth( cfebs[icfeb],  65 );  // hard-coded as a special setting for calibration
+	               ::usleep(1000); // 1ms extra pause
+	               dmbVector[dn]->Pipeline_Restart( cfebs[icfeb] );
+	               ::usleep(100000);
+                     }		   
 		   }
 
                    // Start the setup process: Set all channel to normal, DAC to 0, No_pulse:
@@ -1038,6 +1065,18 @@ xoap::MessageReference EmuPeripheralCrateCommand::onEnableCalCFEBComparator (xoa
                      tmbVector[dn]->EnableCLCTInputs(0x7f); //enable TMB's CLCT inputs
                      dmbVector[dn] ->settrgsrc(0); //disable the DMB internal LCT & L1A
                      ::sleep(1);
+
+		     std::cout << "DAQMB::Set_ReadAnyL1a for " << dmbVector[dn]->GetLabel() << std::endl;
+		     dmbVector[dn]->Set_ReadAnyL1a();
+                     // Set the pipeline depth to its value in broadcast.xml
+                     std::vector<CFEB> cfebs=dmbVector[dn]->cfebs();
+                     for( size_t icfeb = 0; icfeb < cfebs.size(); ++icfeb )
+                     {
+	               dmbVector[dn]->dcfeb_set_PipelineDepth( cfebs[icfeb],  65 );  // hard-coded as a special setting for calibration
+	               ::usleep(1000); // 1ms extra pause
+	               dmbVector[dn]->Pipeline_Restart( cfebs[icfeb] );
+	               ::usleep(100000);
+                     }		   
                    }
 
                    int thresholdsetting =((calsetup-1)%20);   //35 Comparator threshold setting for each channel

@@ -4618,6 +4618,7 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
   //
   if(hversion<=1)
   {
+  *out << "NOTE: the CFEB temperetures below are NOT read through the CFEBs, and NOT indicating the actual CFEB status. " << std::endl;
   *out << cgicc::table().set("border","1");;
   //
   *out << cgicc::td();

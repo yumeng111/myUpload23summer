@@ -1,1 +1,1 @@
-#define coreversion "15.03.00"
+#define coreversion "15.04.00"

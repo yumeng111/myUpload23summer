@@ -9,7 +9,7 @@
 namespace EmuFEDUtils {
 	const std::string project     = "emu";
 	const std::string package     = "EmuFEDUtils";
-	const std::string versions    = "15.03.00";
+	const std::string versions    = "15.04.00";
 	const std::string description = "Emu (CSC) FED Utility Libraries";
 
 	const std::string summary     = "Utility libraries used by the Front End Device (FED) crate XDAQ applications (FEDApps) for the CMS Emu (CSC) subdetector";

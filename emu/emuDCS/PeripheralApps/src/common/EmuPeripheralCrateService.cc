@@ -136,7 +136,7 @@ void EmuPeripheralCrateService::MainPage(xgi::Input * in, xgi::Output * out )
  
   unsigned int inited_crates=0;
   for(unsigned i=0; i<crateVector.size(); i++)
-     if(crate_state[i]==1) inited_crates++;
+     if(crate_state[i]>0) inited_crates++;
   if( inited_crates <= total_crates_) 
      *out << cgicc::b(" Initialized Crates: ") << inited_crates << std::endl ;
   *out << cgicc::td() << cgicc::td();

@@ -215,7 +215,11 @@ void EmuPCrateConfigTStore::outputStandardInterface(xgi::Output * out)
        << cgicc::tr() 
        << cgicc::td() << "Last read in" << cgicc::td() 
        << cgicc::td().set("style", "font-weight: bold;") << lastReadConfiguration_ << cgicc::td() 
-       << cgicc::td() << ( lastReadConfigurationTime_.size() ? "at " : "" ) << lastReadConfigurationTime_  << "; " << last_read_description_  << cgicc:: td() 
+       << cgicc::td() << ( lastReadConfigurationTime_.size() ? "at " : "" ) << lastReadConfigurationTime_  << "; " << last_read_description_ ;
+  if ( lastReadConfiguration_.size() > 0 && lastReadConfiguration_ != "n/a" ){
+    *out << "  (" << cgicc::a( "browse" ).set( "href", std::string("/")+getApplicationDescriptor()->getURN()+"/parameterBrowser" ).set( "title", "Browse parameters in a new window" ).set( "target", "_blank" ) << ")";
+  }
+  *out << cgicc::td() 
        << cgicc::tr()
        << cgicc::tr() 
        << cgicc::td() << "Last uploaded" << cgicc::td() 

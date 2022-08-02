@@ -56,6 +56,7 @@ ConfigurationEditor::ConfigurationEditor(xdaq::ApplicationStub * s) throw (xdaq:
   xgi::bind(this, &ConfigurationEditor::compareVersions, "compareVersions");
   xgi::bind(this, &ConfigurationEditor::selectVersion, "selectVersion"); //select one version to load
   xgi::bind(this, &ConfigurationEditor::exportAsXML, "exportAsXML");
+  xgi::bind(this, &ConfigurationEditor::parameterBrowser, "parameterBrowser");
   std::string HomeDir_ = getenv("HOME");
   xmlpath_ = HomeDir_ + "/config/" + configurationDirectory_ + "/"; //xml file chosen must be in this directory. If you choose something in another directory then it will look for it in here and fail.
   xmlfile_ = "";
@@ -517,6 +518,70 @@ void ConfigurationEditor::exportAsXML(xgi::Input * in, xgi::Output * out) throw 
   *out << cgicc::textarea().set("name", "config").set("cols", "60").set("rows", "15") << XML << cgicc::textarea();
   outputFooter(out);
   */
+}
+
+void ConfigurationEditor::parameterBrowser(xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception)
+{
+  std::string config_id ( "UNKNOWN" );
+  if ( lastReadConfiguration_.length() > 0 ) config_id  = lastReadConfiguration_;
+  DOMDocument* pDoc = NULL;
+  DOMElement* docElem = NULL;
+
+  try{
+    pDoc = dynamic_cast<DOMDocument*>( DOMOfCurrentTables() );
+    docElem = pDoc->getDocumentElement();
+  }
+  catch( DOMException &e ){
+    XCEPT_RAISE( xgi::exception::Exception, std::string("Failed to create DOM from XML:: ")+xoap::XMLCh2String(e.msg) );
+  }
+  catch( std::exception &e ){
+    XCEPT_RAISE( xgi::exception::Exception, std::string( "Failed to create DOM from XML:: " ) + e.what() );
+  }
+  catch( ... ){
+    XCEPT_RAISE( xgi::exception::Exception, "Failed to create DOM from XML:. Unknown exception." );
+  }
+ 
+  try{
+    // Add processing instruction:
+    pDoc->insertBefore( pDoc->createProcessingInstruction( xercesc::XMLString::transcode("xml-stylesheet"),
+							   xercesc::XMLString::transcode("type=\"text/xml\" href=\"/emu/emuDCS/OnlineDB/html/parameterBrowser_XSLT.xml\"") ),
+			docElem );
+  }
+  catch( DOMException &e ){
+    XCEPT_RAISE( xgi::exception::Exception, std::string("Failed to add processing instruction to XML:: ")+xoap::XMLCh2String(e.msg) );
+  }
+  catch( xcept::Exception &e ){
+    XCEPT_RETHROW( xgi::exception::Exception, "Failed to add processing instruction to XML:.", e );
+  }
+  catch( std::exception &e ){
+    XCEPT_RAISE( xgi::exception::Exception, std::string( "Failed to add processing instruction to XML:: " ) + e.what() );
+  }
+  catch( ... ){
+    XCEPT_RAISE( xgi::exception::Exception, "Failed to add processing instruction to XML:. Unknown exception." );
+  }
+
+  try{
+    // Add configuration id (key or file name) as an attribute:
+    DOMAttr* confAttr = pDoc->createAttribute( xercesc::XMLString::transcode( "conf" ) );
+    confAttr->setNodeValue( xercesc::XMLString::transcode( config_id.c_str() ) );
+    LOG4CPLUS_INFO( this->getApplicationLogger(), "name " << xoap::XMLCh2String( docElem->getNodeName() ) << " value " << docElem->getNodeValue() << " type " << docElem->getNodeType() );
+    LOG4CPLUS_INFO( this->getApplicationLogger(), "name " << xoap::XMLCh2String( docElem->getFirstChild()->getNodeName() ) << " value " << docElem->getFirstChild()->getNodeValue() << " type " << docElem->getFirstChild()->getNodeType() );
+    docElem->setAttributeNode( confAttr );
+  }
+  catch( DOMException &e ){
+    XCEPT_RAISE( xgi::exception::Exception, std::string("Failed in add config key as an attribute to XML:: ")+xoap::XMLCh2String(e.msg) );
+  }
+  catch( xcept::Exception &e ){
+    XCEPT_RETHROW( xgi::exception::Exception, "Failed in add config key as an attribute to XML:.", e );
+  }
+  catch( std::exception &e ){
+    XCEPT_RAISE( xgi::exception::Exception, std::string( "Failed in add config key as an attribute to XML:: " ) + e.what() );
+  }
+  catch( ... ){
+    XCEPT_RAISE( xgi::exception::Exception, "Failed in add config key as an attribute to XML:. Unknown exception." );
+  }
+
+  *out << tstoreclient::writeXML( pDoc );
 }
 
 

@@ -83,6 +83,7 @@ public:
 
   virtual void parseConfigFromXML(xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception);
   void exportAsXML(xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception);
+  void parameterBrowser(xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception);
   void uploadConfigToDB(xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception);
   virtual void readConfigFromDB(xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception);
   void synchronizeToFromDB(xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception);

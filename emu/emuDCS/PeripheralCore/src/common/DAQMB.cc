@@ -752,7 +752,7 @@ void DAQMB::configure(int c)
   (*MyOutput_) << "DAQMB: configure() for crate " << std::dec << this->crate() << " slot " << this->slot() << std::endl;
   //
 
- if(DMBversion()==1)
+ if(DMBversion()<=1)
  {
    //get the initial value first:
    killinput_=GetKillInput();
@@ -939,6 +939,15 @@ void DAQMB::configure(int c)
 //
 bool DAQMB::checkDAQMBXMLValues() { 
   //
+  if(DMBversion()<=1)
+  {
+     //get the initial values first (these variables are part of killflatclk_ ): 
+     killinput_=GetKillInput();
+     cfeb_clk_delay_=GetCfebClkDelay();
+     xfinelatency_=GetxFineLatency();
+     xlatency_=GetxLatency();
+  }
+
   if(CFEBversion()<=1)
   {
       std::cout << "DAQMB: checkXMLValues() for crate " << this->crate() << " slot " << this->slot() << std::endl;
@@ -986,6 +995,7 @@ bool DAQMB::checkDAQMBXMLValues() {
          cfebmatch &= compareValues("DAQMB CableDelays"    ,CableDelay_  ,cable_delay_   ,print_errors);
          cfebmatch &= compareValues("DAQMB CrateID"        ,CrateID_     ,crate_id_      ,print_errors);
          cfebmatch &= compareValues("DAQMB feb_clock_delay",CfebClkDelay_,cfeb_clk_delay_,print_errors);
+         cfebmatch &= compareValues("DAQMB xLatency"       ,XLatency_, xlatency_  ,print_errors);
          cfebmatch &= compareValues("DAQMB xFineLatency"   ,XFineLatency_,xfinelatency_  ,print_errors);
          cfebmatch &= compareValues("DAQMB kill_input"     ,KillInput_   ,killinput_     ,print_errors);
          cfebmatch &= CheckVMEFirmwareVersion();
@@ -1058,14 +1068,15 @@ bool DAQMB::checkDAQMBXMLValues() {
     }
     else
     {
-       calctrl_fifomrst();
+       //check the DMB setting with the current setup
        char dmbstatus[11];
        dmb_readstatus(dmbstatus);
-       //check the DMB setting with the current setup
+
        confmatch &= compareValues("DAQMB CableDelays"    ,CableDelay_  ,cable_delay_   ,print_errors);
        confmatch &= compareValues("DAQMB CrateID"        ,CrateID_     ,crate_id_      ,print_errors);
        confmatch &= compareValues("DAQMB feb_clock_delay",CfebClkDelay_,cfeb_clk_delay_,print_errors);
-//       confmatch &= compareValues("DAQMB xFineLatency"   ,XFineLatency_,xfinelatency_  ,print_errors);
+       confmatch &= compareValues("DAQMB xLatency"       ,XLatency_,xlatency_  ,print_errors);
+       confmatch &= compareValues("DAQMB xFineLatency"   ,XFineLatency_,xfinelatency_  ,print_errors);
        confmatch &= compareValues("DAQMB kill_input"     ,KillInput_   ,killinput_     ,print_errors);
        confmatch &= CheckVMEFirmwareVersion();
        confmatch &= CheckControlFirmwareVersion();

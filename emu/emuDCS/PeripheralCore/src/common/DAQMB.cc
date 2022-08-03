@@ -1058,11 +1058,14 @@ bool DAQMB::checkDAQMBXMLValues() {
     }
     else
     {
+       calctrl_fifomrst();
+       char dmbstatus[11];
+       dmb_readstatus(dmbstatus);
        //check the DMB setting with the current setup
        confmatch &= compareValues("DAQMB CableDelays"    ,CableDelay_  ,cable_delay_   ,print_errors);
        confmatch &= compareValues("DAQMB CrateID"        ,CrateID_     ,crate_id_      ,print_errors);
        confmatch &= compareValues("DAQMB feb_clock_delay",CfebClkDelay_,cfeb_clk_delay_,print_errors);
-       confmatch &= compareValues("DAQMB xFineLatency"   ,XFineLatency_,xfinelatency_  ,print_errors);
+//       confmatch &= compareValues("DAQMB xFineLatency"   ,XFineLatency_,xfinelatency_  ,print_errors);
        confmatch &= compareValues("DAQMB kill_input"     ,KillInput_   ,killinput_     ,print_errors);
        confmatch &= CheckVMEFirmwareVersion();
        confmatch &= CheckControlFirmwareVersion();

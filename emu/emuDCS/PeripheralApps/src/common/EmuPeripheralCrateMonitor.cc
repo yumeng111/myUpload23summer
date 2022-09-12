@@ -1078,7 +1078,7 @@ void EmuPeripheralCrateMonitor::DCSMain(xgi::Input * in, xgi::Output * out )
        int n_keys, selected_index;
        std::string CounterName, current_ch_name, endcap_name, dcs_chamber_name;
        std::string station_name[9]={"1/1","1/2","1/3","2/1","2/2","3/1","3/2","4/1", "4/2"};
-       int         station_size[9]={ 36,   36,   36,   18,   36,  18,    36,   18,    18  };
+       int         station_size[9]={ 36,   36,   36,   18,   36,  18,    36,   18,    36  };
        xdata::UnsignedShort xchamber;
 
   if(!parsed) ParsingXML();
@@ -1320,7 +1320,7 @@ void EmuPeripheralCrateMonitor::DCSMain(xgi::Input * in, xgi::Output * out )
   void EmuPeripheralCrateMonitor::DCSChamSel(xgi::Input * in, xgi::Output * out ) 
     throw (xgi::exception::Exception)
   {
-     int         station_size[9]={ 36,   36,   36,   18,   36,  18,    36,   18 , 18 };
+     int         station_size[9]={ 36,   36,   36,   18,   36,  18,    36,   18 , 36 };
 
      cgicc::Cgicc cgi(in);
 
@@ -1338,7 +1338,7 @@ void EmuPeripheralCrateMonitor::DCSMain(xgi::Input * in, xgi::Output * out )
     throw (xgi::exception::Exception)
   {
      std::string station_name[9]={"1/1","1/2","1/3","2/1","2/2","3/1","3/2","4/1","4/2"};
-     int         station_size[9]={ 36,   36,   36,   18,   36,  18,    36,   18,   18 };
+     int         station_size[9]={ 36,   36,   36,   18,   36,  18,    36,   18,   36 };
 
      cgicc::Cgicc cgi(in);
 
@@ -2940,7 +2940,7 @@ void EmuPeripheralCrateMonitor::DatabaseOutput(xgi::Input * in, xgi::Output * ou
      myDmbs = crateVector[i]->daqmbs();
      for(unsigned int j=0; j<myVector.size(); j++) 
      {
-//        if(myVector[j]->GetHardwareVersion()>=2) continue;
+        if(myVector[j]->GetHardwareVersion()>=2) continue;
         int imask = 0xfF & (myDmbs[j]->GetPowerMask());
         if (imask==0x3F || imask==0xff ) continue;
         
@@ -2979,7 +2979,7 @@ void EmuPeripheralCrateMonitor::DatabaseOutput2(xgi::Input * in, xgi::Output * o
   *out << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << std::endl;
   *out << "<emuCounters dateTime=\"";
   *out << last_read_time.toString();
-  *out << "\" version=\"2.0\">" << std::endl;
+  *out << "\" version=\"3.0\">" << std::endl;
 
 //  *out << "  <sample name=\"cumulative\" delta_t=\"1000\">" << std::endl;
 

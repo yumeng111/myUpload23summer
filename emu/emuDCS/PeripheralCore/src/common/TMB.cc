@@ -7175,6 +7175,11 @@ void TMB::DefineTMBConfigurationRegisters_(){
   TMBConfigurationRegister.push_back(gem_vfat_hcm2_adr); // 0x33e GEM VFAT hot channel mask 2
   }
 
+  if(label_.find("ME-1/1/12") != std::string::npos)
+  {  // 2022-09-02, Liu: ad hoc patch to slow down JTAG speed for ME-1/1/12 ALCT User PROM util its hardware being fixed
+     jtag_state_machine_throttle_ = 4;
+     TMBConfigurationRegister.push_back(jtag_sm_ctrl_adr); // 0xD4
+  }
   return;
 }
 //

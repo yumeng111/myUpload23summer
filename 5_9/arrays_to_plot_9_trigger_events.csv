@@ -1,0 +1,10 @@
+trig_clct0_valid,trig_clct0_pid,trig_clct0_nhit,trig_clct0_cc_code,trig_clct0_bend,trig_clct0_slope,trig_clct0_KeyHalfStrip,trig_clct0_KeyQuartStrip,trig_clct0_KeyEighthStrip,trig_clct1_valid,trig_clct1_pid,trig_clct1_nhit,trig_clct1_cc_code,trig_clct1_bend,trig_clct1_slope,trig_clct1_KeyHalfStrip,trig_clct1_KeyQuartStrip,trig_clct1_KeyEighthStrip
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+1,10,6,3003,0,0,66,133,267,0,0,0,0,0,0,0,0,0
+1,10,6,3003,0,0,91,183,367,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+1,10,6,2999,1,0,35,71,142,1,10,6,2917,1,2,43,87,175
+1,10,6,3003,0,0,122,245,491,0,0,0,0,0,0,0,0,0
+1,10,6,1979,0,1,48,97,195,0,0,0,0,0,0,0,0,0
+1,6,5,1720,0,8,106,212,424,1,10,4,1864,0,0,113,226,452

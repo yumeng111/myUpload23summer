@@ -1,0 +1,1003 @@
+s is the xmlFile_ name before the fromString: $BUILD_HOME/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+This is the xmlFile_ name after the fromString: /home/cscdev/EMULIB_V15_Master_mod_by_Yumeng/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+TMBStatus: No TMB
+the value for tmb is = 1
+The tmbVector[tmb] = 0x7fd76816c560
+TMB Counter # 29 = 10
+TMB Counter # 30 = 0
+hardReset
+CCB: hard reset
+This is the xmlFile_ name before the fromString: $BUILD_HOME/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+This is the xmlFile_ name after the fromString: /home/cscdev/EMULIB_V15_Master_mod_by_Yumeng/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+TMBStatus: No TMB
+the value for tmb is = 1
+The tmbVector[tmb] = 0x7fd76816c560
+TMB Counter # 29 = 0
+TMB Counter # 30 = 0
+PrepareForTriggering
+CCB mode set to VMEFPGA
+CCB: L1a Reset
+This is the xmlFile_ name before the fromString: $BUILD_HOME/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+This is the xmlFile_ name after the fromString: /home/cscdev/EMULIB_V15_Master_mod_by_Yumeng/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+TMBStatus: No TMB
+the value for tmb is = 1
+The tmbVector[tmb] = 0x7fd76816c560
+TMB Counter # 29 = 0
+TMB Counter # 30 = 0
+Do we use 11 bit cc? 0
+This is the xmlFile_ name before the fromString: $BUILD_HOME/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+This is the xmlFile_ name after the fromString: /home/cscdev/EMULIB_V15_Master_mod_by_Yumeng/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+TMBStatus: No TMB
+the value for tmb is = 1
+The tmbVector[tmb] = 0x7fd76816c560
+TMB Counter # 29 = 0
+TMB Counter # 30 = 0
+Do we use run 3 output style? 0
+This is the xmlFile_ name before the fromString: $BUILD_HOME/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+This is the xmlFile_ name after the fromString: /home/cscdev/EMULIB_V15_Master_mod_by_Yumeng/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+TMBStatus: No TMB
+the value for tmb is = 1
+The tmbVector[tmb] = 0x7fd76816c560
+TMB Counter # 29 = 0
+TMB Counter # 30 = 0
+CFEB0123_delay = 23
+CFEB456_delay = 21
+This is the xmlFile_ name before the fromString: $BUILD_HOME/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+This is the xmlFile_ name after the fromString: /home/cscdev/EMULIB_V15_Master_mod_by_Yumeng/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+TMBStatus: No TMB
+the value for tmb is = 1
+The tmbVector[tmb] = 0x7fd76816c560
+TMB Counter # 29 = 0
+TMB Counter # 30 = 0
+OTM Type Set to a
+This is the xmlFile_ name before the fromString: $BUILD_HOME/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+This is the xmlFile_ name after the fromString: /home/cscdev/EMULIB_V15_Master_mod_by_Yumeng/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+TMBStatus: No TMB
+the value for tmb is = 1
+The tmbVector[tmb] = 0x7fd76816c560
+TMB Counter # 29 = 0
+TMB Counter # 30 = 0
+File /home/cscdev/yumeng/injectCSCPatterns/data/digi8000_27.txt opened successfully
+This is the xmlFile_ name before the fromString: $BUILD_HOME/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+This is the xmlFile_ name after the fromString: /home/cscdev/EMULIB_V15_Master_mod_by_Yumeng/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+TMBStatus: No TMB
+the value for tmb is = 1
+The tmbVector[tmb] = 0x7fd76816c560
+TMB Counter # 29 = 0
+TMB Counter # 30 = 0
+Reading The Event #1
+NOT EOF of SimulatedFile 
+First word printed. should be event number 27 after initWord Event
+BX = 6; Layer = 3; halfstrip = 10
+BX = 7; Layer = 0; halfstrip = 10
+BX = 7; Layer = 1; halfstrip = 10
+BX = 7; Layer = 2; halfstrip = 10
+BX = 7; Layer = 4; halfstrip = 10
+Simulated Event ID: 27
+Finished reading event
+Reading the results
+CLCT #1: Valid = 1 7 Run-2 Pattern = 10  add clct0 pid to vector 10
+Run-3 Pattern = 4 Quality = 5 Comp Code 1023 Bend = 1 Slope = 0 CFEB = 0 Strip = 9 KeyHalfStrip = 9 KeyQuartStrip = 18 KeyEighthStrip = 37 CSC LCT #1: Valid = 1 BX = 8 Run-2 Pattern = 10 Run-3 Pattern = 4 Quality = 3 Bend = 1 Slope = 0 KeyHalfStrip = 9 KeyQuartStrip = 18 KeyEighthStrip = 37 KeyWireGroup = 70 Type (SIM) = 1 MPC Link = 0 
+Just Loaded the Event ID: 27
+Correct pattern tool  *************************************************************************************************
+using WritePat with CCLUT version, ccluts size 1
+tmb type from cclut[0].type 10 tmbtype a
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb0_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb1_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb2_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb3_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb4_tmba.pat
+Writing (.pat) file number: 0
+Hit : 0	bx: 6	hs: 10	layer: 3	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 1	bx: 7	hs: 10	layer: 0	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 2	bx: 7	hs: 10	layer: 1	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 3	bx: 7	hs: 10	layer: 2	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 4	bx: 7	hs: 10	layer: 4	OTMBType a
+  00000100
+  00000100
+  00000000
+00000000
+00000000
+00000000
+00000000
+00000100
+00000000
+00000000
+00000000   Bx: 6
+
+00000100
+00000100
+00000100
+00000000
+00000100
+00000100
+00000000
+00000000   Bx: 7
+
+00000100
+00000100
+00000100
+00000000
+00000000
+00000100
+00000000
+00000000   Bx: 8
+
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000   Bx: 9
+
+Writing (.pat) file number: 1
+Writing (.pat) file number: 2
+Writing (.pat) file number: 3
+Writing (.pat) file number: 4
+using WritePat with GEM Pattern version,in_pads size 0
+Current Layer 0 fiber 0 gemfiber 0
+Current Layer 0 fiber 1 gemfiber 1
+Current Layer 1 fiber 0 gemfiber 2
+Current Layer 1 fiber 1 gemfiber 3
+1************************* Is it Muted *****************
+ send on cmslab1, path /home/cscdev/Sasha/pats/tmp/ tmb type a num of cfeb 5
+Successfully Loaded to EmuBoard!
+DEBUG[eth_lib.cpp]  eth_write sending packet of 12 bytes:
+fd fd 00 00 00 00 00 00 00 00 00 00 
+write command d status = 0
+DEBUG[eth_lib.cpp]  eth_read read packet of 64 bytes:
+fd fd 00 d0 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 00 c8 25 c0 26 c0 27 c0 28 c0 29 c0 2a c0 2b c0 
+read command d status = 13
+fd fd 00 d0 00 c8 00 c8 00 c8 00 c8 00 
+0  0
+
+0  0
+Correct pattern tool  *************************************************************************************************
+using WritePat with CCLUT version, ccluts size 1
+tmb type from cclut[0].type 10 tmbtype a
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb0_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb1_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb2_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb3_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb4_tmba.pat
+Writing (.pat) file number: 0
+Hit : 0	bx: 6	hs: 10	layer: 3	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 1	bx: 7	hs: 10	layer: 0	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 2	bx: 7	hs: 10	layer: 1	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 3	bx: 7	hs: 10	layer: 2	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 4	bx: 7	hs: 10	layer: 4	OTMBType a
+  00000100
+  00000100
+  00000000
+00000000
+00000000
+00000000
+00000000
+00000100
+00000000
+00000000
+00000000   Bx: 6
+
+00000100
+00000100
+00000100
+00000000
+00000100
+00000100
+00000000
+00000000   Bx: 7
+
+00000100
+00000100
+00000100
+00000000
+00000000
+00000100
+00000000
+00000000   Bx: 8
+
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000   Bx: 9
+
+Writing (.pat) file number: 1
+Writing (.pat) file number: 2
+Writing (.pat) file number: 3
+Writing (.pat) file number: 4
+using WritePat with GEM Pattern version,in_pads size 0
+Current Layer 0 fiber 0 gemfiber 0
+Current Layer 0 fiber 1 gemfiber 1
+Current Layer 1 fiber 0 gemfiber 2
+Current Layer 1 fiber 1 gemfiber 3
+1************************* Is it Muted *****************
+ send on cmslab1, path /home/cscdev/Sasha/pats/tmp/ tmb type a num of cfeb 5
+Successfully Loaded to EmuBoard!
+DEBUG[eth_lib.cpp]  eth_write sending packet of 12 bytes:
+fd fd 00 00 00 00 00 00 00 00 00 00 
+write command d status = 0
+DEBUG[eth_lib.cpp]  eth_read read packet of 64 bytes:
+fd fd 00 d0 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 00 f8 25 f0 26 f0 27 f0 28 f0 29 f0 2a f0 2b f0 
+read command d status = 13
+fd fd 00 d0 00 f8 00 f8 00 f8 00 f8 00 
+0  0
+
+0  0
+Correct pattern tool  *************************************************************************************************
+using WritePat with CCLUT version, ccluts size 1
+tmb type from cclut[0].type 10 tmbtype a
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb0_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb1_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb2_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb3_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb4_tmba.pat
+Writing (.pat) file number: 0
+Hit : 0	bx: 6	hs: 10	layer: 3	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 1	bx: 7	hs: 10	layer: 0	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 2	bx: 7	hs: 10	layer: 1	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 3	bx: 7	hs: 10	layer: 2	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 4	bx: 7	hs: 10	layer: 4	OTMBType a
+  00000100
+  00000100
+  00000000
+00000000
+00000000
+00000000
+00000000
+00000100
+00000000
+00000000
+00000000   Bx: 6
+
+00000100
+00000100
+00000100
+00000000
+00000100
+00000100
+00000000
+00000000   Bx: 7
+
+00000100
+00000100
+00000100
+00000000
+00000000
+00000100
+00000000
+00000000   Bx: 8
+
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000   Bx: 9
+
+Writing (.pat) file number: 1
+Writing (.pat) file number: 2
+Writing (.pat) file number: 3
+Writing (.pat) file number: 4
+using WritePat with GEM Pattern version,in_pads size 0
+Current Layer 0 fiber 0 gemfiber 0
+Current Layer 0 fiber 1 gemfiber 1
+Current Layer 1 fiber 0 gemfiber 2
+Current Layer 1 fiber 1 gemfiber 3
+1************************* Is it Muted *****************
+ send on cmslab1, path /home/cscdev/Sasha/pats/tmp/ tmb type a num of cfeb 5
+Successfully Loaded to EmuBoard!
+DEBUG[eth_lib.cpp]  eth_write sending packet of 12 bytes:
+fd fd 00 00 00 00 00 00 00 00 00 00 
+write command d status = 0
+DEBUG[eth_lib.cpp]  eth_read read packet of 64 bytes:
+fd fd 00 d0 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 00 28 25 20 26 20 27 20 28 20 29 20 2a 20 2b 20 
+read command d status = 13
+fd fd 00 d0 00 28 00 28 00 28 00 28 00 
+0  0
+
+0  0
+Correct pattern tool  *************************************************************************************************
+using WritePat with CCLUT version, ccluts size 1
+tmb type from cclut[0].type 10 tmbtype a
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb0_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb1_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb2_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb3_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb4_tmba.pat
+Writing (.pat) file number: 0
+Hit : 0	bx: 6	hs: 10	layer: 3	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 1	bx: 7	hs: 10	layer: 0	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 2	bx: 7	hs: 10	layer: 1	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 3	bx: 7	hs: 10	layer: 2	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 4	bx: 7	hs: 10	layer: 4	OTMBType a
+  00000100
+  00000100
+  00000000
+00000000
+00000000
+00000000
+00000000
+00000100
+00000000
+00000000
+00000000   Bx: 6
+
+00000100
+00000100
+00000100
+00000000
+00000100
+00000100
+00000000
+00000000   Bx: 7
+
+00000100
+00000100
+00000100
+00000000
+00000000
+00000100
+00000000
+00000000   Bx: 8
+
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000   Bx: 9
+
+Writing (.pat) file number: 1
+Writing (.pat) file number: 2
+Writing (.pat) file number: 3
+Writing (.pat) file number: 4
+using WritePat with GEM Pattern version,in_pads size 0
+Current Layer 0 fiber 0 gemfiber 0
+Current Layer 0 fiber 1 gemfiber 1
+Current Layer 1 fiber 0 gemfiber 2
+Current Layer 1 fiber 1 gemfiber 3
+1************************* Is it Muted *****************
+ send on cmslab1, path /home/cscdev/Sasha/pats/tmp/ tmb type a num of cfeb 5
+Successfully Loaded to EmuBoard!
+DEBUG[eth_lib.cpp]  eth_write sending packet of 12 bytes:
+fd fd 00 00 00 00 00 00 00 00 00 00 
+write command d status = 0
+DEBUG[eth_lib.cpp]  eth_read read packet of 64 bytes:
+fd fd 00 d0 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 00 58 25 50 26 50 27 50 28 50 29 50 2a 50 2b 50 
+read command d status = 13
+fd fd 00 d0 00 58 00 58 00 58 00 58 00 
+0  0
+
+0  0
+Correct pattern tool  *************************************************************************************************
+using WritePat with CCLUT version, ccluts size 1
+tmb type from cclut[0].type 10 tmbtype a
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb0_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb1_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb2_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb3_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb4_tmba.pat
+Writing (.pat) file number: 0
+Hit : 0	bx: 6	hs: 10	layer: 3	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 1	bx: 7	hs: 10	layer: 0	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 2	bx: 7	hs: 10	layer: 1	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 3	bx: 7	hs: 10	layer: 2	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 4	bx: 7	hs: 10	layer: 4	OTMBType a
+  00000100
+  00000100
+  00000000
+00000000
+00000000
+00000000
+00000000
+00000100
+00000000
+00000000
+00000000   Bx: 6
+
+00000100
+00000100
+00000100
+00000000
+00000100
+00000100
+00000000
+00000000   Bx: 7
+
+00000100
+00000100
+00000100
+00000000
+00000000
+00000100
+00000000
+00000000   Bx: 8
+
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000   Bx: 9
+
+Writing (.pat) file number: 1
+Writing (.pat) file number: 2
+Writing (.pat) file number: 3
+Writing (.pat) file number: 4
+using WritePat with GEM Pattern version,in_pads size 0
+Current Layer 0 fiber 0 gemfiber 0
+Current Layer 0 fiber 1 gemfiber 1
+Current Layer 1 fiber 0 gemfiber 2
+Current Layer 1 fiber 1 gemfiber 3
+1************************* Is it Muted *****************
+ send on cmslab1, path /home/cscdev/Sasha/pats/tmp/ tmb type a num of cfeb 5
+Successfully Loaded to EmuBoard!
+DEBUG[eth_lib.cpp]  eth_write sending packet of 12 bytes:
+fd fd 00 00 00 00 00 00 00 00 00 00 
+write command d status = 0
+DEBUG[eth_lib.cpp]  eth_read read packet of 64 bytes:
+fd fd 00 d0 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 00 88 25 80 26 80 27 80 28 80 29 80 2a 80 2b 80 
+read command d status = 13
+fd fd 00 d0 00 88 00 88 00 88 00 88 00 
+0  0
+
+0  0
+Correct pattern tool  *************************************************************************************************
+using WritePat with CCLUT version, ccluts size 1
+tmb type from cclut[0].type 10 tmbtype a
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb0_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb1_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb2_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb3_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb4_tmba.pat
+Writing (.pat) file number: 0
+Hit : 0	bx: 6	hs: 10	layer: 3	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 1	bx: 7	hs: 10	layer: 0	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 2	bx: 7	hs: 10	layer: 1	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 3	bx: 7	hs: 10	layer: 2	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 4	bx: 7	hs: 10	layer: 4	OTMBType a
+  00000100
+  00000100
+  00000000
+00000000
+00000000
+00000000
+00000000
+00000100
+00000000
+00000000
+00000000   Bx: 6
+
+00000100
+00000100
+00000100
+00000000
+00000100
+00000100
+00000000
+00000000   Bx: 7
+
+00000100
+00000100
+00000100
+00000000
+00000000
+00000100
+00000000
+00000000   Bx: 8
+
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000   Bx: 9
+
+Writing (.pat) file number: 1
+Writing (.pat) file number: 2
+Writing (.pat) file number: 3
+Writing (.pat) file number: 4
+using WritePat with GEM Pattern version,in_pads size 0
+Current Layer 0 fiber 0 gemfiber 0
+Current Layer 0 fiber 1 gemfiber 1
+Current Layer 1 fiber 0 gemfiber 2
+Current Layer 1 fiber 1 gemfiber 3
+1************************* Is it Muted *****************
+ send on cmslab1, path /home/cscdev/Sasha/pats/tmp/ tmb type a num of cfeb 5
+Successfully Loaded to EmuBoard!
+DEBUG[eth_lib.cpp]  eth_write sending packet of 12 bytes:
+fd fd 00 00 00 00 00 00 00 00 00 00 
+write command d status = 0
+DEBUG[eth_lib.cpp]  eth_read read packet of 64 bytes:
+fd fd 00 d0 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 00 b8 25 b0 26 b0 27 b0 28 b0 29 b0 2a b0 2b b0 
+read command d status = 13
+fd fd 00 d0 00 b8 00 b8 00 b8 00 b8 00 
+0  0
+
+0  0
+Correct pattern tool  *************************************************************************************************
+using WritePat with CCLUT version, ccluts size 1
+tmb type from cclut[0].type 10 tmbtype a
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb0_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb1_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb2_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb3_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb4_tmba.pat
+Writing (.pat) file number: 0
+Hit : 0	bx: 6	hs: 10	layer: 3	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 1	bx: 7	hs: 10	layer: 0	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 2	bx: 7	hs: 10	layer: 1	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 3	bx: 7	hs: 10	layer: 2	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 4	bx: 7	hs: 10	layer: 4	OTMBType a
+  00000100
+  00000100
+  00000000
+00000000
+00000000
+00000000
+00000000
+00000100
+00000000
+00000000
+00000000   Bx: 6
+
+00000100
+00000100
+00000100
+00000000
+00000100
+00000100
+00000000
+00000000   Bx: 7
+
+00000100
+00000100
+00000100
+00000000
+00000000
+00000100
+00000000
+00000000   Bx: 8
+
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000   Bx: 9
+
+Writing (.pat) file number: 1
+Writing (.pat) file number: 2
+Writing (.pat) file number: 3
+Writing (.pat) file number: 4
+using WritePat with GEM Pattern version,in_pads size 0
+Current Layer 0 fiber 0 gemfiber 0
+Current Layer 0 fiber 1 gemfiber 1
+Current Layer 1 fiber 0 gemfiber 2
+Current Layer 1 fiber 1 gemfiber 3
+1************************* Is it Muted *****************
+ send on cmslab1, path /home/cscdev/Sasha/pats/tmp/ tmb type a num of cfeb 5
+Successfully Loaded to EmuBoard!
+DEBUG[eth_lib.cpp]  eth_write sending packet of 12 bytes:
+fd fd 00 00 00 00 00 00 00 00 00 00 
+write command d status = 0
+DEBUG[eth_lib.cpp]  eth_read read packet of 64 bytes:
+fd fd 00 d0 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 00 e8 25 e0 26 e0 27 e0 28 e0 29 e0 2a e0 2b e0 
+read command d status = 13
+fd fd 00 d0 00 e8 00 e8 00 e8 00 e8 00 
+0  0
+
+0  0
+Correct pattern tool  *************************************************************************************************
+using WritePat with CCLUT version, ccluts size 1
+tmb type from cclut[0].type 10 tmbtype a
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb0_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb1_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb2_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb3_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb4_tmba.pat
+Writing (.pat) file number: 0
+Hit : 0	bx: 6	hs: 10	layer: 3	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 1	bx: 7	hs: 10	layer: 0	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 2	bx: 7	hs: 10	layer: 1	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 3	bx: 7	hs: 10	layer: 2	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 4	bx: 7	hs: 10	layer: 4	OTMBType a
+  00000100
+  00000100
+  00000000
+00000000
+00000000
+00000000
+00000000
+00000100
+00000000
+00000000
+00000000   Bx: 6
+
+00000100
+00000100
+00000100
+00000000
+00000100
+00000100
+00000000
+00000000   Bx: 7
+
+00000100
+00000100
+00000100
+00000000
+00000000
+00000100
+00000000
+00000000   Bx: 8
+
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000   Bx: 9
+
+Writing (.pat) file number: 1
+Writing (.pat) file number: 2
+Writing (.pat) file number: 3
+Writing (.pat) file number: 4
+using WritePat with GEM Pattern version,in_pads size 0
+Current Layer 0 fiber 0 gemfiber 0
+Current Layer 0 fiber 1 gemfiber 1
+Current Layer 1 fiber 0 gemfiber 2
+Current Layer 1 fiber 1 gemfiber 3
+1************************* Is it Muted *****************
+ send on cmslab1, path /home/cscdev/Sasha/pats/tmp/ tmb type a num of cfeb 5
+Successfully Loaded to EmuBoard!
+DEBUG[eth_lib.cpp]  eth_write sending packet of 12 bytes:
+fd fd 00 00 00 00 00 00 00 00 00 00 
+write command d status = 0
+DEBUG[eth_lib.cpp]  eth_read read packet of 64 bytes:
+fd fd 00 d0 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 00 18 25 10 26 10 27 10 28 10 29 10 2a 10 2b 10 
+read command d status = 13
+fd fd 00 d0 00 18 00 18 00 18 00 18 00 
+0  0
+
+0  0
+Correct pattern tool  *************************************************************************************************
+using WritePat with CCLUT version, ccluts size 1
+tmb type from cclut[0].type 10 tmbtype a
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb0_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb1_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb2_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb3_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb4_tmba.pat
+Writing (.pat) file number: 0
+Hit : 0	bx: 6	hs: 10	layer: 3	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 1	bx: 7	hs: 10	layer: 0	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 2	bx: 7	hs: 10	layer: 1	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 3	bx: 7	hs: 10	layer: 2	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 4	bx: 7	hs: 10	layer: 4	OTMBType a
+  00000100
+  00000100
+  00000000
+00000000
+00000000
+00000000
+00000000
+00000100
+00000000
+00000000
+00000000   Bx: 6
+
+00000100
+00000100
+00000100
+00000000
+00000100
+00000100
+00000000
+00000000   Bx: 7
+
+00000100
+00000100
+00000100
+00000000
+00000000
+00000100
+00000000
+00000000   Bx: 8
+
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000   Bx: 9
+
+Writing (.pat) file number: 1
+Writing (.pat) file number: 2
+Writing (.pat) file number: 3
+Writing (.pat) file number: 4
+using WritePat with GEM Pattern version,in_pads size 0
+Current Layer 0 fiber 0 gemfiber 0
+Current Layer 0 fiber 1 gemfiber 1
+Current Layer 1 fiber 0 gemfiber 2
+Current Layer 1 fiber 1 gemfiber 3
+1************************* Is it Muted *****************
+ send on cmslab1, path /home/cscdev/Sasha/pats/tmp/ tmb type a num of cfeb 5
+Successfully Loaded to EmuBoard!
+DEBUG[eth_lib.cpp]  eth_write sending packet of 12 bytes:
+fd fd 00 00 00 00 00 00 00 00 00 00 
+write command d status = 0
+DEBUG[eth_lib.cpp]  eth_read read packet of 64 bytes:
+fd fd 00 d0 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 00 48 25 40 26 40 27 40 28 40 29 40 2a 40 2b 40 
+read command d status = 13
+fd fd 00 d0 00 48 00 48 00 48 00 48 00 
+0  0
+
+0  0
+Correct pattern tool  *************************************************************************************************
+using WritePat with CCLUT version, ccluts size 1
+tmb type from cclut[0].type 10 tmbtype a
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb0_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb1_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb2_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb3_tmba.pat
+Write Pat opening file /home/cscdev/Sasha/pats/tmp/default_cfeb4_tmba.pat
+Writing (.pat) file number: 0
+Hit : 0	bx: 6	hs: 10	layer: 3	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 1	bx: 7	hs: 10	layer: 0	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 2	bx: 7	hs: 10	layer: 1	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 3	bx: 7	hs: 10	layer: 2	OTMBType a
+  00000100
+  00000100
+  00000000
+Hit : 4	bx: 7	hs: 10	layer: 4	OTMBType a
+  00000100
+  00000100
+  00000000
+00000000
+00000000
+00000000
+00000000
+00000100
+00000000
+00000000
+00000000   Bx: 6
+
+00000100
+00000100
+00000100
+00000000
+00000100
+00000100
+00000000
+00000000   Bx: 7
+
+00000100
+00000100
+00000100
+00000000
+00000000
+00000100
+00000000
+00000000   Bx: 8
+
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000   Bx: 9
+
+Writing (.pat) file number: 1
+Writing (.pat) file number: 2
+Writing (.pat) file number: 3
+Writing (.pat) file number: 4
+using WritePat with GEM Pattern version,in_pads size 0
+Current Layer 0 fiber 0 gemfiber 0
+Current Layer 0 fiber 1 gemfiber 1
+Current Layer 1 fiber 0 gemfiber 2
+Current Layer 1 fiber 1 gemfiber 3
+1************************* Is it Muted *****************
+ send on cmslab1, path /home/cscdev/Sasha/pats/tmp/ tmb type a num of cfeb 5
+Successfully Loaded to EmuBoard!
+DEBUG[eth_lib.cpp]  eth_write sending packet of 12 bytes:
+fd fd 00 00 00 00 00 00 00 00 00 00 
+write command d status = 0
+DEBUG[eth_lib.cpp]  eth_read read packet of 64 bytes:
+fd fd 00 d0 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 00 78 25 70 26 70 27 70 28 70 29 70 2a 70 2b 70 
+read command d status = 13
+fd fd 00 d0 00 78 00 78 00 78 00 78 00 
+0  0
+
+0  0
+CLCT0 RESULTS: 
+RUN-2 PATTERN ID SIMULATION VS TRIGGER 10 vs 0
+QUALITY SIMULATION VS TRIGGER 5 vs 0
+CC CODE SIMULATION VS TRIGGER 1023 vs 0
+BEND SIMULATION VS TRIGGER 1 vs 0
+SLOPE SIMULATION VS TRIGGER 0 vs 0
+KEY HALFSTRIP SIMULATION VS TRIGGER 9 vs 0
+KEY QUARTER STRIP SIMULATION VS TRIGGER 18 vs 0
+KEY EIGHTH STRIP SIMULATION VS TRIGGER 37 vs 0
+The Last Read Event ID: 27
+
+NUMBER OF EVENTS IN FILE: 1
+NUMBER OF EVENTS WITH INCORRECT RESULTS: 1
+Would the user like to create a simulation results file? (Y/N)
+Y
+file opened successfully
+file opened, step1, vector size 1
+file opened, step1A
+file opened, step1B
+file opened, step2
+file opened, step3
+file opened, step4
+file closed successfully
+Would the user like to create three trigger results file? (Y/N)
+Y
+This is the xmlFile_ name before the fromString: $BUILD_HOME/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+This is the xmlFile_ name after the fromString: /home/cscdev/EMULIB_V15_Master_mod_by_Yumeng/xml/tamu_crate_config_2tmbs2019_GEM.xml
+
+TMBStatus: No TMB
+the value for tmb is = 1
+The tmbVector[tmb] = 0x7fd76816c560
+TMB Counter # 29 = 0
+TMB Counter # 30 = 0
+
+

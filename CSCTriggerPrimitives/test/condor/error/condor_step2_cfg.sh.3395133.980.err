@@ -1,0 +1,1840 @@
+%MSG-i ThreadStreamSetup:  (NoModuleName) 24-Apr-2024 14:07:44 CEST pre-events
+setting # threads 8
+setting # streams 2
+%MSG
+24-Apr-2024 14:08:01 CEST  Initiating request to open file file:/eos/cms/store/group/upgrade/GEMCSC_Trigger_PhaseII/mu_pt100_phase2fall22/el9/mu_pt100_phase2fall22/step1_GENSIM/240422_031636/0000/step1_980.root
+24-Apr-2024 14:08:03 CEST  Successfully opened file file:/eos/cms/store/group/upgrade/GEMCSC_Trigger_PhaseII/mu_pt100_phase2fall22/el9/mu_pt100_phase2fall22/step1_GENSIM/240422_031636/0000/step1_980.root
+Begin processing the 1st record. Run 1, Event 979001, LumiSection 9791 on stream 0 at 24-Apr-2024 14:09:00.332 CEST
+Begin processing the 2nd record. Run 1, Event 979002, LumiSection 9791 on stream 1 at 24-Apr-2024 14:09:00.333 CEST
+Begin processing the 3rd record. Run 1, Event 979004, LumiSection 9791 on stream 1 at 24-Apr-2024 14:10:50.294 CEST
+Begin processing the 4th record. Run 1, Event 979003, LumiSection 9791 on stream 0 at 24-Apr-2024 14:10:51.144 CEST
+Begin processing the 5th record. Run 1, Event 979005, LumiSection 9791 on stream 0 at 24-Apr-2024 14:10:57.518 CEST
+Begin processing the 6th record. Run 1, Event 979006, LumiSection 9791 on stream 1 at 24-Apr-2024 14:10:57.824 CEST
+Begin processing the 7th record. Run 1, Event 979008, LumiSection 9791 on stream 0 at 24-Apr-2024 14:11:06.093 CEST
+Begin processing the 8th record. Run 1, Event 979007, LumiSection 9791 on stream 1 at 24-Apr-2024 14:11:06.471 CEST
+Begin processing the 9th record. Run 1, Event 979010, LumiSection 9791 on stream 0 at 24-Apr-2024 14:11:14.051 CEST
+Begin processing the 10th record. Run 1, Event 979011, LumiSection 9791 on stream 1 at 24-Apr-2024 14:11:14.386 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:11:22 CEST Run: 1 Event: 979010
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+Begin processing the 11th record. Run 1, Event 979012, LumiSection 9791 on stream 1 at 24-Apr-2024 14:11:22.923 CEST
+Begin processing the 12th record. Run 1, Event 979009, LumiSection 9791 on stream 0 at 24-Apr-2024 14:11:23.245 CEST
+Begin processing the 13th record. Run 1, Event 979013, LumiSection 9791 on stream 1 at 24-Apr-2024 14:11:30.617 CEST
+Begin processing the 14th record. Run 1, Event 979015, LumiSection 9791 on stream 0 at 24-Apr-2024 14:11:31.338 CEST
+Begin processing the 15th record. Run 1, Event 979014, LumiSection 9791 on stream 1 at 24-Apr-2024 14:11:37.545 CEST
+Begin processing the 16th record. Run 1, Event 979016, LumiSection 9791 on stream 0 at 24-Apr-2024 14:11:37.829 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:11:43 CEST Run: 1 Event: 979014
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:11:43 CEST  Run: 1 Event: 979014
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:11:43 CEST Run: 1 Event: 979014
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 17th record. Run 1, Event 979017, LumiSection 9791 on stream 1 at 24-Apr-2024 14:11:44.389 CEST
+Begin processing the 18th record. Run 1, Event 979019, LumiSection 9791 on stream 0 at 24-Apr-2024 14:11:44.796 CEST
+Begin processing the 19th record. Run 1, Event 979020, LumiSection 9791 on stream 1 at 24-Apr-2024 14:11:52.084 CEST
+Begin processing the 20th record. Run 1, Event 979018, LumiSection 9791 on stream 0 at 24-Apr-2024 14:11:52.633 CEST
+Begin processing the 21st record. Run 1, Event 979021, LumiSection 9791 on stream 1 at 24-Apr-2024 14:12:00.468 CEST
+Begin processing the 22nd record. Run 1, Event 979022, LumiSection 9791 on stream 0 at 24-Apr-2024 14:12:00.712 CEST
+Begin processing the 23rd record. Run 1, Event 979023, LumiSection 9791 on stream 1 at 24-Apr-2024 14:12:08.576 CEST
+Begin processing the 24th record. Run 1, Event 979024, LumiSection 9791 on stream 0 at 24-Apr-2024 14:12:08.814 CEST
+Begin processing the 25th record. Run 1, Event 979025, LumiSection 9791 on stream 1 at 24-Apr-2024 14:12:16.764 CEST
+Begin processing the 26th record. Run 1, Event 979027, LumiSection 9791 on stream 0 at 24-Apr-2024 14:12:17.006 CEST
+Begin processing the 27th record. Run 1, Event 979028, LumiSection 9791 on stream 0 at 24-Apr-2024 14:12:23.355 CEST
+Begin processing the 28th record. Run 1, Event 979029, LumiSection 9791 on stream 1 at 24-Apr-2024 14:12:24.511 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:12:30 CEST  Run: 1 Event: 979028
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:12:30 CEST Run: 1 Event: 979028
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:12:30 CEST Run: 1 Event: 979028
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 29th record. Run 1, Event 979026, LumiSection 9791 on stream 0 at 24-Apr-2024 14:12:31.653 CEST
+Begin processing the 30th record. Run 1, Event 979030, LumiSection 9791 on stream 1 at 24-Apr-2024 14:12:31.909 CEST
+Begin processing the 31st record. Run 1, Event 979031, LumiSection 9791 on stream 1 at 24-Apr-2024 14:12:39.851 CEST
+Begin processing the 32nd record. Run 1, Event 979032, LumiSection 9791 on stream 0 at 24-Apr-2024 14:12:40.312 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:12:47 CEST  Run: 1 Event: 979032
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:12:47 CEST Run: 1 Event: 979032
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:12:47 CEST Run: 1 Event: 979032
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 33rd record. Run 1, Event 979034, LumiSection 9791 on stream 0 at 24-Apr-2024 14:12:48.280 CEST
+Begin processing the 34th record. Run 1, Event 979033, LumiSection 9791 on stream 1 at 24-Apr-2024 14:12:48.554 CEST
+Begin processing the 35th record. Run 1, Event 979036, LumiSection 9791 on stream 0 at 24-Apr-2024 14:12:56.597 CEST
+Begin processing the 36th record. Run 1, Event 979035, LumiSection 9791 on stream 1 at 24-Apr-2024 14:12:56.837 CEST
+Begin processing the 37th record. Run 1, Event 979038, LumiSection 9791 on stream 1 at 24-Apr-2024 14:13:03.532 CEST
+Begin processing the 38th record. Run 1, Event 979037, LumiSection 9791 on stream 0 at 24-Apr-2024 14:13:04.248 CEST
+Begin processing the 39th record. Run 1, Event 979039, LumiSection 9791 on stream 0 at 24-Apr-2024 14:13:11.456 CEST
+Begin processing the 40th record. Run 1, Event 979041, LumiSection 9791 on stream 1 at 24-Apr-2024 14:13:12.056 CEST
+Begin processing the 41st record. Run 1, Event 979040, LumiSection 9791 on stream 0 at 24-Apr-2024 14:13:17.300 CEST
+Begin processing the 42nd record. Run 1, Event 979043, LumiSection 9791 on stream 1 at 24-Apr-2024 14:13:18.473 CEST
+Begin processing the 43rd record. Run 1, Event 979042, LumiSection 9791 on stream 0 at 24-Apr-2024 14:13:25.378 CEST
+Begin processing the 44th record. Run 1, Event 979044, LumiSection 9791 on stream 1 at 24-Apr-2024 14:13:26.226 CEST
+Begin processing the 45th record. Run 1, Event 979046, LumiSection 9791 on stream 0 at 24-Apr-2024 14:13:33.428 CEST
+Begin processing the 46th record. Run 1, Event 979045, LumiSection 9791 on stream 1 at 24-Apr-2024 14:13:34.757 CEST
+Begin processing the 47th record. Run 1, Event 979048, LumiSection 9791 on stream 0 at 24-Apr-2024 14:13:41.040 CEST
+Begin processing the 48th record. Run 1, Event 979049, LumiSection 9791 on stream 1 at 24-Apr-2024 14:13:41.772 CEST
+Begin processing the 49th record. Run 1, Event 979050, LumiSection 9791 on stream 0 at 24-Apr-2024 14:13:47.371 CEST
+Begin processing the 50th record. Run 1, Event 979051, LumiSection 9791 on stream 1 at 24-Apr-2024 14:13:49.088 CEST
+Begin processing the 51st record. Run 1, Event 979052, LumiSection 9791 on stream 0 at 24-Apr-2024 14:13:53.407 CEST
+Begin processing the 52nd record. Run 1, Event 979053, LumiSection 9791 on stream 1 at 24-Apr-2024 14:13:56.957 CEST
+Begin processing the 53rd record. Run 1, Event 979054, LumiSection 9791 on stream 0 at 24-Apr-2024 14:13:59.820 CEST
+Begin processing the 54th record. Run 1, Event 979047, LumiSection 9791 on stream 1 at 24-Apr-2024 14:14:05.262 CEST
+Begin processing the 55th record. Run 1, Event 979056, LumiSection 9791 on stream 0 at 24-Apr-2024 14:14:06.482 CEST
+Begin processing the 56th record. Run 1, Event 979055, LumiSection 9791 on stream 1 at 24-Apr-2024 14:14:12.112 CEST
+Begin processing the 57th record. Run 1, Event 979058, LumiSection 9791 on stream 0 at 24-Apr-2024 14:14:13.353 CEST
+Begin processing the 58th record. Run 1, Event 979059, LumiSection 9791 on stream 1 at 24-Apr-2024 14:14:18.166 CEST
+Begin processing the 59th record. Run 1, Event 979057, LumiSection 9791 on stream 0 at 24-Apr-2024 14:14:18.843 CEST
+Begin processing the 60th record. Run 1, Event 979060, LumiSection 9791 on stream 1 at 24-Apr-2024 14:14:24.692 CEST
+Begin processing the 61st record. Run 1, Event 979061, LumiSection 9791 on stream 0 at 24-Apr-2024 14:14:25.663 CEST
+Begin processing the 62nd record. Run 1, Event 979062, LumiSection 9791 on stream 1 at 24-Apr-2024 14:14:31.189 CEST
+Begin processing the 63rd record. Run 1, Event 979063, LumiSection 9791 on stream 0 at 24-Apr-2024 14:14:33.166 CEST
+Begin processing the 64th record. Run 1, Event 979065, LumiSection 9791 on stream 1 at 24-Apr-2024 14:14:38.136 CEST
+Begin processing the 65th record. Run 1, Event 979064, LumiSection 9791 on stream 0 at 24-Apr-2024 14:14:40.771 CEST
+Begin processing the 66th record. Run 1, Event 979066, LumiSection 9791 on stream 1 at 24-Apr-2024 14:14:44.441 CEST
+Begin processing the 67th record. Run 1, Event 979067, LumiSection 9791 on stream 0 at 24-Apr-2024 14:14:47.728 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:14:49 CEST Run: 1 Event: 979066
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:14:49 CEST  Run: 1 Event: 979066
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:14:49 CEST Run: 1 Event: 979066
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 68th record. Run 1, Event 979068, LumiSection 9791 on stream 1 at 24-Apr-2024 14:14:50.641 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:14:54 CEST  Run: 1 Event: 979067
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:14:54 CEST Run: 1 Event: 979067
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:14:54 CEST Run: 1 Event: 979067
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 69th record. Run 1, Event 979070, LumiSection 9791 on stream 0 at 24-Apr-2024 14:14:55.449 CEST
+Begin processing the 70th record. Run 1, Event 979071, LumiSection 9791 on stream 1 at 24-Apr-2024 14:14:58.251 CEST
+Begin processing the 71st record. Run 1, Event 979069, LumiSection 9791 on stream 0 at 24-Apr-2024 14:15:02.685 CEST
+Begin processing the 72nd record. Run 1, Event 979072, LumiSection 9791 on stream 1 at 24-Apr-2024 14:15:05.008 CEST
+Begin processing the 73rd record. Run 1, Event 979074, LumiSection 9791 on stream 0 at 24-Apr-2024 14:15:09.842 CEST
+Begin processing the 74th record. Run 1, Event 979075, LumiSection 9791 on stream 1 at 24-Apr-2024 14:15:12.028 CEST
+Begin processing the 75th record. Run 1, Event 979076, LumiSection 9791 on stream 0 at 24-Apr-2024 14:15:17.599 CEST
+Begin processing the 76th record. Run 1, Event 979077, LumiSection 9791 on stream 1 at 24-Apr-2024 14:15:18.165 CEST
+Begin processing the 77th record. Run 1, Event 979078, LumiSection 9791 on stream 1 at 24-Apr-2024 14:15:24.315 CEST
+Begin processing the 78th record. Run 1, Event 979079, LumiSection 9791 on stream 0 at 24-Apr-2024 14:15:25.752 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:15:30 CEST Run: 1 Event: 979078
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:15:30 CEST  Run: 1 Event: 979078
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:15:30 CEST Run: 1 Event: 979078
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 79th record. Run 1, Event 979080, LumiSection 9791 on stream 1 at 24-Apr-2024 14:15:31.601 CEST
+Begin processing the 80th record. Run 1, Event 979081, LumiSection 9791 on stream 0 at 24-Apr-2024 14:15:33.921 CEST
+Begin processing the 81st record. Run 1, Event 979073, LumiSection 9791 on stream 1 at 24-Apr-2024 14:15:40.234 CEST
+Begin processing the 82nd record. Run 1, Event 979082, LumiSection 9791 on stream 0 at 24-Apr-2024 14:15:41.674 CEST
+Begin processing the 83rd record. Run 1, Event 979084, LumiSection 9791 on stream 1 at 24-Apr-2024 14:15:46.000 CEST
+Begin processing the 84th record. Run 1, Event 979085, LumiSection 9791 on stream 0 at 24-Apr-2024 14:15:49.431 CEST
+Begin processing the 85th record. Run 1, Event 979083, LumiSection 9791 on stream 1 at 24-Apr-2024 14:15:52.299 CEST
+Begin processing the 86th record. Run 1, Event 979086, LumiSection 9791 on stream 0 at 24-Apr-2024 14:15:55.666 CEST
+Begin processing the 87th record. Run 1, Event 979087, LumiSection 9791 on stream 1 at 24-Apr-2024 14:15:59.722 CEST
+Begin processing the 88th record. Run 1, Event 979088, LumiSection 9791 on stream 0 at 24-Apr-2024 14:16:02.117 CEST
+Begin processing the 89th record. Run 1, Event 979089, LumiSection 9791 on stream 1 at 24-Apr-2024 14:16:07.749 CEST
+Begin processing the 90th record. Run 1, Event 979091, LumiSection 9791 on stream 0 at 24-Apr-2024 14:16:08.298 CEST
+Begin processing the 91st record. Run 1, Event 979090, LumiSection 9791 on stream 0 at 24-Apr-2024 14:16:14.213 CEST
+Begin processing the 92nd record. Run 1, Event 979092, LumiSection 9791 on stream 1 at 24-Apr-2024 14:16:15.983 CEST
+Begin processing the 93rd record. Run 1, Event 979093, LumiSection 9791 on stream 0 at 24-Apr-2024 14:16:20.392 CEST
+Begin processing the 94th record. Run 1, Event 979095, LumiSection 9791 on stream 1 at 24-Apr-2024 14:16:22.792 CEST
+Begin processing the 95th record. Run 1, Event 979094, LumiSection 9791 on stream 0 at 24-Apr-2024 14:16:28.115 CEST
+Begin processing the 96th record. Run 1, Event 979097, LumiSection 9791 on stream 1 at 24-Apr-2024 14:16:28.589 CEST
+Begin processing the 97th record. Run 1, Event 979096, LumiSection 9791 on stream 0 at 24-Apr-2024 14:16:34.258 CEST
+Begin processing the 98th record. Run 1, Event 979098, LumiSection 9791 on stream 1 at 24-Apr-2024 14:16:34.514 CEST
+Begin processing the 99th record. Run 1, Event 979099, LumiSection 9791 on stream 0 at 24-Apr-2024 14:16:40.160 CEST
+Begin processing the 100th record. Run 1, Event 979100, LumiSection 9791 on stream 1 at 24-Apr-2024 14:16:41.810 CEST
+Begin processing the 101st record. Run 1, Event 979102, LumiSection 9792 on stream 0 at 24-Apr-2024 14:16:47.184 CEST
+Begin processing the 102nd record. Run 1, Event 979101, LumiSection 9792 on stream 1 at 24-Apr-2024 14:16:48.141 CEST
+Begin processing the 103rd record. Run 1, Event 979104, LumiSection 9792 on stream 0 at 24-Apr-2024 14:16:54.926 CEST
+Begin processing the 104th record. Run 1, Event 979103, LumiSection 9792 on stream 1 at 24-Apr-2024 14:16:55.606 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:17:02 CEST  Run: 1 Event: 979103
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:17:02 CEST Run: 1 Event: 979103
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:17:02 CEST Run: 1 Event: 979103
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 105th record. Run 1, Event 979106, LumiSection 9792 on stream 0 at 24-Apr-2024 14:17:02.543 CEST
+Begin processing the 106th record. Run 1, Event 979105, LumiSection 9792 on stream 1 at 24-Apr-2024 14:17:02.825 CEST
+Begin processing the 107th record. Run 1, Event 979107, LumiSection 9792 on stream 0 at 24-Apr-2024 14:17:08.733 CEST
+Begin processing the 108th record. Run 1, Event 979108, LumiSection 9792 on stream 1 at 24-Apr-2024 14:17:08.863 CEST
+Begin processing the 109th record. Run 1, Event 979110, LumiSection 9792 on stream 1 at 24-Apr-2024 14:17:15.275 CEST
+Begin processing the 110th record. Run 1, Event 979109, LumiSection 9792 on stream 0 at 24-Apr-2024 14:17:15.891 CEST
+Begin processing the 111th record. Run 1, Event 979111, LumiSection 9792 on stream 1 at 24-Apr-2024 14:17:21.140 CEST
+Begin processing the 112th record. Run 1, Event 979112, LumiSection 9792 on stream 0 at 24-Apr-2024 14:17:22.797 CEST
+Begin processing the 113th record. Run 1, Event 979113, LumiSection 9792 on stream 1 at 24-Apr-2024 14:17:28.956 CEST
+Begin processing the 114th record. Run 1, Event 979114, LumiSection 9792 on stream 0 at 24-Apr-2024 14:17:29.210 CEST
+Begin processing the 115th record. Run 1, Event 979116, LumiSection 9792 on stream 1 at 24-Apr-2024 14:17:35.036 CEST
+Begin processing the 116th record. Run 1, Event 979117, LumiSection 9792 on stream 0 at 24-Apr-2024 14:17:36.537 CEST
+Begin processing the 117th record. Run 1, Event 979115, LumiSection 9792 on stream 1 at 24-Apr-2024 14:17:41.531 CEST
+Begin processing the 118th record. Run 1, Event 979119, LumiSection 9792 on stream 0 at 24-Apr-2024 14:17:43.235 CEST
+Begin processing the 119th record. Run 1, Event 979120, LumiSection 9792 on stream 1 at 24-Apr-2024 14:17:48.079 CEST
+Begin processing the 120th record. Run 1, Event 979118, LumiSection 9792 on stream 0 at 24-Apr-2024 14:17:50.055 CEST
+Begin processing the 121st record. Run 1, Event 979121, LumiSection 9792 on stream 1 at 24-Apr-2024 14:17:54.305 CEST
+Begin processing the 122nd record. Run 1, Event 979122, LumiSection 9792 on stream 0 at 24-Apr-2024 14:17:57.073 CEST
+Begin processing the 123rd record. Run 1, Event 979123, LumiSection 9792 on stream 1 at 24-Apr-2024 14:18:00.485 CEST
+Begin processing the 124th record. Run 1, Event 979124, LumiSection 9792 on stream 0 at 24-Apr-2024 14:18:02.962 CEST
+Begin processing the 125th record. Run 1, Event 979126, LumiSection 9792 on stream 1 at 24-Apr-2024 14:18:07.244 CEST
+Begin processing the 126th record. Run 1, Event 979125, LumiSection 9792 on stream 0 at 24-Apr-2024 14:18:09.927 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:18:12 CEST Run: 1 Event: 979126
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:18:12 CEST Run: 1 Event: 979126
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:18:12 CEST  Run: 1 Event: 979126
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 127th record. Run 1, Event 979127, LumiSection 9792 on stream 1 at 24-Apr-2024 14:18:12.900 CEST
+Begin processing the 128th record. Run 1, Event 979128, LumiSection 9792 on stream 0 at 24-Apr-2024 14:18:16.344 CEST
+Begin processing the 129th record. Run 1, Event 979130, LumiSection 9792 on stream 1 at 24-Apr-2024 14:18:18.184 CEST
+Begin processing the 130th record. Run 1, Event 979131, LumiSection 9792 on stream 0 at 24-Apr-2024 14:18:22.453 CEST
+Begin processing the 131st record. Run 1, Event 979129, LumiSection 9792 on stream 1 at 24-Apr-2024 14:18:25.872 CEST
+Begin processing the 132nd record. Run 1, Event 979133, LumiSection 9792 on stream 0 at 24-Apr-2024 14:18:28.514 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:18:30 CEST Run: 1 Event: 979129
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:18:30 CEST  Run: 1 Event: 979129
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:18:30 CEST Run: 1 Event: 979129
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+Begin processing the 133rd record. Run 1, Event 979132, LumiSection 9792 on stream 1 at 24-Apr-2024 14:18:31.070 CEST
+Begin processing the 134th record. Run 1, Event 979134, LumiSection 9792 on stream 0 at 24-Apr-2024 14:18:34.981 CEST
+Begin processing the 135th record. Run 1, Event 979135, LumiSection 9792 on stream 1 at 24-Apr-2024 14:18:38.183 CEST
+Begin processing the 136th record. Run 1, Event 979136, LumiSection 9792 on stream 0 at 24-Apr-2024 14:18:42.239 CEST
+Begin processing the 137th record. Run 1, Event 979137, LumiSection 9792 on stream 1 at 24-Apr-2024 14:18:44.634 CEST
+Begin processing the 138th record. Run 1, Event 979139, LumiSection 9792 on stream 0 at 24-Apr-2024 14:18:48.906 CEST
+Begin processing the 139th record. Run 1, Event 979140, LumiSection 9792 on stream 1 at 24-Apr-2024 14:18:50.802 CEST
+Begin processing the 140th record. Run 1, Event 979141, LumiSection 9792 on stream 0 at 24-Apr-2024 14:18:56.007 CEST
+Begin processing the 141st record. Run 1, Event 979138, LumiSection 9792 on stream 1 at 24-Apr-2024 14:18:56.896 CEST
+Begin processing the 142nd record. Run 1, Event 979142, LumiSection 9792 on stream 1 at 24-Apr-2024 14:19:03.053 CEST
+Begin processing the 143rd record. Run 1, Event 979143, LumiSection 9792 on stream 0 at 24-Apr-2024 14:19:03.339 CEST
+Begin processing the 144th record. Run 1, Event 979144, LumiSection 9792 on stream 1 at 24-Apr-2024 14:19:08.862 CEST
+Begin processing the 145th record. Run 1, Event 979145, LumiSection 9792 on stream 0 at 24-Apr-2024 14:19:09.967 CEST
+Begin processing the 146th record. Run 1, Event 979147, LumiSection 9792 on stream 1 at 24-Apr-2024 14:19:15.010 CEST
+Begin processing the 147th record. Run 1, Event 979146, LumiSection 9792 on stream 0 at 24-Apr-2024 14:19:15.436 CEST
+Begin processing the 148th record. Run 1, Event 979149, LumiSection 9792 on stream 1 at 24-Apr-2024 14:19:21.623 CEST
+Begin processing the 149th record. Run 1, Event 979150, LumiSection 9792 on stream 0 at 24-Apr-2024 14:19:23.903 CEST
+Begin processing the 150th record. Run 1, Event 979151, LumiSection 9792 on stream 1 at 24-Apr-2024 14:19:26.950 CEST
+Begin processing the 151st record. Run 1, Event 979148, LumiSection 9792 on stream 0 at 24-Apr-2024 14:19:30.282 CEST
+Begin processing the 152nd record. Run 1, Event 979153, LumiSection 9792 on stream 1 at 24-Apr-2024 14:19:32.986 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:19:35 CEST  Run: 1 Event: 979148
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:19:35 CEST Run: 1 Event: 979148
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:19:35 CEST Run: 1 Event: 979148
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 153rd record. Run 1, Event 979152, LumiSection 9792 on stream 0 at 24-Apr-2024 14:19:35.798 CEST
+Begin processing the 154th record. Run 1, Event 979155, LumiSection 9792 on stream 1 at 24-Apr-2024 14:19:39.671 CEST
+Begin processing the 155th record. Run 1, Event 979154, LumiSection 9792 on stream 0 at 24-Apr-2024 14:19:41.590 CEST
+Begin processing the 156th record. Run 1, Event 979157, LumiSection 9792 on stream 1 at 24-Apr-2024 14:19:45.900 CEST
+Begin processing the 157th record. Run 1, Event 979158, LumiSection 9792 on stream 0 at 24-Apr-2024 14:19:48.185 CEST
+Begin processing the 158th record. Run 1, Event 979156, LumiSection 9792 on stream 1 at 24-Apr-2024 14:19:53.668 CEST
+Begin processing the 159th record. Run 1, Event 979159, LumiSection 9792 on stream 0 at 24-Apr-2024 14:19:55.411 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:20:00 CEST Run: 1 Event: 979156
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:20:00 CEST  Run: 1 Event: 979156
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:20:00 CEST Run: 1 Event: 979156
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 160th record. Run 1, Event 979160, LumiSection 9792 on stream 1 at 24-Apr-2024 14:20:01.070 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:20:01 CEST Run: 1 Event: 979159
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:20:01 CEST  Run: 1 Event: 979159
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:20:01 CEST Run: 1 Event: 979159
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 161st record. Run 1, Event 979162, LumiSection 9792 on stream 0 at 24-Apr-2024 14:20:02.787 CEST
+Begin processing the 162nd record. Run 1, Event 979161, LumiSection 9792 on stream 1 at 24-Apr-2024 14:20:08.054 CEST
+Begin processing the 163rd record. Run 1, Event 979163, LumiSection 9792 on stream 0 at 24-Apr-2024 14:20:09.923 CEST
+Begin processing the 164th record. Run 1, Event 979164, LumiSection 9792 on stream 1 at 24-Apr-2024 14:20:14.970 CEST
+Begin processing the 165th record. Run 1, Event 979165, LumiSection 9792 on stream 0 at 24-Apr-2024 14:20:17.706 CEST
+Begin processing the 166th record. Run 1, Event 979167, LumiSection 9792 on stream 1 at 24-Apr-2024 14:20:21.580 CEST
+Begin processing the 167th record. Run 1, Event 979166, LumiSection 9792 on stream 0 at 24-Apr-2024 14:20:25.269 CEST
+Begin processing the 168th record. Run 1, Event 979168, LumiSection 9792 on stream 1 at 24-Apr-2024 14:20:28.862 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:20:32 CEST Run: 1 Event: 979166
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:20:32 CEST  Run: 1 Event: 979166
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:20:32 CEST Run: 1 Event: 979166
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 169th record. Run 1, Event 979169, LumiSection 9792 on stream 0 at 24-Apr-2024 14:20:33.243 CEST
+Begin processing the 170th record. Run 1, Event 979171, LumiSection 9792 on stream 1 at 24-Apr-2024 14:20:34.924 CEST
+Begin processing the 171st record. Run 1, Event 979170, LumiSection 9792 on stream 0 at 24-Apr-2024 14:20:39.141 CEST
+Begin processing the 172nd record. Run 1, Event 979172, LumiSection 9792 on stream 1 at 24-Apr-2024 14:20:40.226 CEST
+Begin processing the 173rd record. Run 1, Event 979174, LumiSection 9792 on stream 0 at 24-Apr-2024 14:20:44.778 CEST
+Begin processing the 174th record. Run 1, Event 979175, LumiSection 9792 on stream 1 at 24-Apr-2024 14:20:46.162 CEST
+Begin processing the 175th record. Run 1, Event 979173, LumiSection 9792 on stream 0 at 24-Apr-2024 14:20:50.934 CEST
+Begin processing the 176th record. Run 1, Event 979176, LumiSection 9792 on stream 1 at 24-Apr-2024 14:20:53.345 CEST
+Begin processing the 177th record. Run 1, Event 979177, LumiSection 9792 on stream 0 at 24-Apr-2024 14:20:57.902 CEST
+Begin processing the 178th record. Run 1, Event 979178, LumiSection 9792 on stream 1 at 24-Apr-2024 14:20:59.931 CEST
+Begin processing the 179th record. Run 1, Event 979179, LumiSection 9792 on stream 0 at 24-Apr-2024 14:21:05.275 CEST
+Begin processing the 180th record. Run 1, Event 979180, LumiSection 9792 on stream 1 at 24-Apr-2024 14:21:07.330 CEST
+Begin processing the 181st record. Run 1, Event 979181, LumiSection 9792 on stream 0 at 24-Apr-2024 14:21:13.032 CEST
+Begin processing the 182nd record. Run 1, Event 979182, LumiSection 9792 on stream 1 at 24-Apr-2024 14:21:13.180 CEST
+Begin processing the 183rd record. Run 1, Event 979184, LumiSection 9792 on stream 1 at 24-Apr-2024 14:21:18.894 CEST
+Begin processing the 184th record. Run 1, Event 979185, LumiSection 9792 on stream 0 at 24-Apr-2024 14:21:20.091 CEST
+Begin processing the 185th record. Run 1, Event 979186, LumiSection 9792 on stream 1 at 24-Apr-2024 14:21:24.940 CEST
+Begin processing the 186th record. Run 1, Event 979187, LumiSection 9792 on stream 0 at 24-Apr-2024 14:21:25.735 CEST
+Begin processing the 187th record. Run 1, Event 979188, LumiSection 9792 on stream 0 at 24-Apr-2024 14:21:32.134 CEST
+Begin processing the 188th record. Run 1, Event 979183, LumiSection 9792 on stream 1 at 24-Apr-2024 14:21:32.370 CEST
+Begin processing the 189th record. Run 1, Event 979190, LumiSection 9792 on stream 1 at 24-Apr-2024 14:21:39.445 CEST
+Begin processing the 190th record. Run 1, Event 979191, LumiSection 9792 on stream 0 at 24-Apr-2024 14:21:39.928 CEST
+Begin processing the 191st record. Run 1, Event 979189, LumiSection 9792 on stream 0 at 24-Apr-2024 14:21:46.594 CEST
+Begin processing the 192nd record. Run 1, Event 979192, LumiSection 9792 on stream 1 at 24-Apr-2024 14:21:48.405 CEST
+Begin processing the 193rd record. Run 1, Event 979193, LumiSection 9792 on stream 0 at 24-Apr-2024 14:21:56.104 CEST
+Begin processing the 194th record. Run 1, Event 979194, LumiSection 9792 on stream 1 at 24-Apr-2024 14:21:56.438 CEST
+Begin processing the 195th record. Run 1, Event 979195, LumiSection 9792 on stream 1 at 24-Apr-2024 14:22:03.330 CEST
+Begin processing the 196th record. Run 1, Event 979196, LumiSection 9792 on stream 0 at 24-Apr-2024 14:22:04.025 CEST
+Begin processing the 197th record. Run 1, Event 979197, LumiSection 9792 on stream 1 at 24-Apr-2024 14:22:10.985 CEST
+Begin processing the 198th record. Run 1, Event 979198, LumiSection 9792 on stream 0 at 24-Apr-2024 14:22:11.712 CEST
+Begin processing the 199th record. Run 1, Event 979199, LumiSection 9792 on stream 1 at 24-Apr-2024 14:22:17.689 CEST
+Begin processing the 200th record. Run 1, Event 979200, LumiSection 9792 on stream 0 at 24-Apr-2024 14:22:18.045 CEST
+Begin processing the 201st record. Run 1, Event 979201, LumiSection 9793 on stream 1 at 24-Apr-2024 14:22:27.444 CEST
+Begin processing the 202nd record. Run 1, Event 979202, LumiSection 9793 on stream 0 at 24-Apr-2024 14:22:27.852 CEST
+Begin processing the 203rd record. Run 1, Event 979203, LumiSection 9793 on stream 1 at 24-Apr-2024 14:22:35.853 CEST
+Begin processing the 204th record. Run 1, Event 979204, LumiSection 9793 on stream 0 at 24-Apr-2024 14:22:36.830 CEST
+Begin processing the 205th record. Run 1, Event 979206, LumiSection 9793 on stream 1 at 24-Apr-2024 14:22:44.707 CEST
+Begin processing the 206th record. Run 1, Event 979205, LumiSection 9793 on stream 0 at 24-Apr-2024 14:22:46.383 CEST
+Begin processing the 207th record. Run 1, Event 979207, LumiSection 9793 on stream 1 at 24-Apr-2024 14:22:53.954 CEST
+Begin processing the 208th record. Run 1, Event 979208, LumiSection 9793 on stream 0 at 24-Apr-2024 14:22:55.079 CEST
+Begin processing the 209th record. Run 1, Event 979209, LumiSection 9793 on stream 1 at 24-Apr-2024 14:23:01.876 CEST
+Begin processing the 210th record. Run 1, Event 979210, LumiSection 9793 on stream 0 at 24-Apr-2024 14:23:02.955 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:23:08 CEST Run: 1 Event: 979209
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:23:08 CEST  Run: 1 Event: 979209
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:23:08 CEST Run: 1 Event: 979209
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 211th record. Run 1, Event 979211, LumiSection 9793 on stream 1 at 24-Apr-2024 14:23:09.722 CEST
+Begin processing the 212th record. Run 1, Event 979212, LumiSection 9793 on stream 0 at 24-Apr-2024 14:23:09.961 CEST
+Begin processing the 213th record. Run 1, Event 979213, LumiSection 9793 on stream 1 at 24-Apr-2024 14:23:16.080 CEST
+Begin processing the 214th record. Run 1, Event 979214, LumiSection 9793 on stream 0 at 24-Apr-2024 14:23:16.972 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:23:22 CEST  Run: 1 Event: 979213
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:23:22 CEST Run: 1 Event: 979213
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:23:22 CEST Run: 1 Event: 979213
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 215th record. Run 1, Event 979215, LumiSection 9793 on stream 1 at 24-Apr-2024 14:23:23.237 CEST
+Begin processing the 216th record. Run 1, Event 979216, LumiSection 9793 on stream 0 at 24-Apr-2024 14:23:24.268 CEST
+Begin processing the 217th record. Run 1, Event 979217, LumiSection 9793 on stream 1 at 24-Apr-2024 14:23:32.057 CEST
+Begin processing the 218th record. Run 1, Event 979218, LumiSection 9793 on stream 0 at 24-Apr-2024 14:23:32.879 CEST
+Begin processing the 219th record. Run 1, Event 979220, LumiSection 9793 on stream 0 at 24-Apr-2024 14:23:41.726 CEST
+Begin processing the 220th record. Run 1, Event 979221, LumiSection 9793 on stream 1 at 24-Apr-2024 14:23:41.968 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:23:50 CEST  Run: 1 Event: 979220
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:23:50 CEST Run: 1 Event: 979220
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:23:50 CEST Run: 1 Event: 979220
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+Begin processing the 221st record. Run 1, Event 979219, LumiSection 9793 on stream 0 at 24-Apr-2024 14:23:50.869 CEST
+Begin processing the 222nd record. Run 1, Event 979222, LumiSection 9793 on stream 1 at 24-Apr-2024 14:23:51.155 CEST
+Begin processing the 223rd record. Run 1, Event 979223, LumiSection 9793 on stream 0 at 24-Apr-2024 14:23:59.895 CEST
+Begin processing the 224th record. Run 1, Event 979224, LumiSection 9793 on stream 1 at 24-Apr-2024 14:24:00.802 CEST
+Begin processing the 225th record. Run 1, Event 979225, LumiSection 9793 on stream 0 at 24-Apr-2024 14:24:09.382 CEST
+Begin processing the 226th record. Run 1, Event 979227, LumiSection 9793 on stream 1 at 24-Apr-2024 14:24:10.698 CEST
+Begin processing the 227th record. Run 1, Event 979228, LumiSection 9793 on stream 0 at 24-Apr-2024 14:24:17.720 CEST
+Begin processing the 228th record. Run 1, Event 979229, LumiSection 9793 on stream 1 at 24-Apr-2024 14:24:19.399 CEST
+Begin processing the 229th record. Run 1, Event 979230, LumiSection 9793 on stream 0 at 24-Apr-2024 14:24:27.095 CEST
+Begin processing the 230th record. Run 1, Event 979231, LumiSection 9793 on stream 1 at 24-Apr-2024 14:24:30.674 CEST
+Begin processing the 231st record. Run 1, Event 979232, LumiSection 9793 on stream 0 at 24-Apr-2024 14:24:36.797 CEST
+Begin processing the 232nd record. Run 1, Event 979233, LumiSection 9793 on stream 1 at 24-Apr-2024 14:24:39.057 CEST
+Begin processing the 233rd record. Run 1, Event 979234, LumiSection 9793 on stream 0 at 24-Apr-2024 14:24:45.347 CEST
+Begin processing the 234th record. Run 1, Event 979235, LumiSection 9793 on stream 1 at 24-Apr-2024 14:24:47.190 CEST
+Begin processing the 235th record. Run 1, Event 979236, LumiSection 9793 on stream 0 at 24-Apr-2024 14:24:53.625 CEST
+Begin processing the 236th record. Run 1, Event 979226, LumiSection 9793 on stream 1 at 24-Apr-2024 14:24:55.554 CEST
+Begin processing the 237th record. Run 1, Event 979237, LumiSection 9793 on stream 0 at 24-Apr-2024 14:25:03.001 CEST
+Begin processing the 238th record. Run 1, Event 979239, LumiSection 9793 on stream 1 at 24-Apr-2024 14:25:04.463 CEST
+Begin processing the 239th record. Run 1, Event 979238, LumiSection 9793 on stream 0 at 24-Apr-2024 14:25:10.763 CEST
+Begin processing the 240th record. Run 1, Event 979240, LumiSection 9793 on stream 1 at 24-Apr-2024 14:25:12.452 CEST
+Begin processing the 241st record. Run 1, Event 979241, LumiSection 9793 on stream 0 at 24-Apr-2024 14:25:18.457 CEST
+Begin processing the 242nd record. Run 1, Event 979243, LumiSection 9793 on stream 1 at 24-Apr-2024 14:25:19.793 CEST
+Begin processing the 243rd record. Run 1, Event 979242, LumiSection 9793 on stream 0 at 24-Apr-2024 14:25:25.816 CEST
+Begin processing the 244th record. Run 1, Event 979245, LumiSection 9793 on stream 1 at 24-Apr-2024 14:25:27.499 CEST
+Begin processing the 245th record. Run 1, Event 979244, LumiSection 9793 on stream 0 at 24-Apr-2024 14:25:34.101 CEST
+Begin processing the 246th record. Run 1, Event 979246, LumiSection 9793 on stream 1 at 24-Apr-2024 14:25:35.542 CEST
+Begin processing the 247th record. Run 1, Event 979247, LumiSection 9793 on stream 0 at 24-Apr-2024 14:25:42.298 CEST
+Begin processing the 248th record. Run 1, Event 979248, LumiSection 9793 on stream 1 at 24-Apr-2024 14:25:44.726 CEST
+Begin processing the 249th record. Run 1, Event 979250, LumiSection 9793 on stream 0 at 24-Apr-2024 14:25:51.920 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:25:52 CEST Run: 1 Event: 979248
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:25:52 CEST  Run: 1 Event: 979248
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:25:52 CEST Run: 1 Event: 979248
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 250th record. Run 1, Event 979249, LumiSection 9793 on stream 1 at 24-Apr-2024 14:25:53.469 CEST
+Begin processing the 251st record. Run 1, Event 979251, LumiSection 9793 on stream 0 at 24-Apr-2024 14:25:59.821 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:26:00 CEST Run: 1 Event: 979249
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:26:00 CEST  Run: 1 Event: 979249
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:26:00 CEST Run: 1 Event: 979249
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 252nd record. Run 1, Event 979252, LumiSection 9793 on stream 1 at 24-Apr-2024 14:26:01.629 CEST
+Begin processing the 253rd record. Run 1, Event 979253, LumiSection 9793 on stream 0 at 24-Apr-2024 14:26:09.358 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:26:11 CEST Run: 1 Event: 979252
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:26:11 CEST  Run: 1 Event: 979252
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:26:11 CEST Run: 1 Event: 979252
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 254th record. Run 1, Event 979255, LumiSection 9793 on stream 1 at 24-Apr-2024 14:26:11.898 CEST
+Begin processing the 255th record. Run 1, Event 979256, LumiSection 9793 on stream 0 at 24-Apr-2024 14:26:18.959 CEST
+Begin processing the 256th record. Run 1, Event 979257, LumiSection 9793 on stream 1 at 24-Apr-2024 14:26:22.284 CEST
+Begin processing the 257th record. Run 1, Event 979258, LumiSection 9793 on stream 0 at 24-Apr-2024 14:26:27.266 CEST
+Begin processing the 258th record. Run 1, Event 979254, LumiSection 9793 on stream 1 at 24-Apr-2024 14:26:31.291 CEST
+Begin processing the 259th record. Run 1, Event 979259, LumiSection 9793 on stream 0 at 24-Apr-2024 14:26:35.886 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:26:39 CEST Run: 1 Event: 979254
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:26:39 CEST  Run: 1 Event: 979254
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:26:39 CEST Run: 1 Event: 979254
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 260th record. Run 1, Event 979260, LumiSection 9793 on stream 1 at 24-Apr-2024 14:26:40.450 CEST
+Begin processing the 261st record. Run 1, Event 979261, LumiSection 9793 on stream 0 at 24-Apr-2024 14:26:46.078 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:26:49 CEST Run: 1 Event: 979260
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:26:49 CEST  Run: 1 Event: 979260
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:26:49 CEST Run: 1 Event: 979260
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 262nd record. Run 1, Event 979263, LumiSection 9793 on stream 1 at 24-Apr-2024 14:26:50.655 CEST
+Begin processing the 263rd record. Run 1, Event 979262, LumiSection 9793 on stream 0 at 24-Apr-2024 14:26:56.679 CEST
+Begin processing the 264th record. Run 1, Event 979265, LumiSection 9793 on stream 1 at 24-Apr-2024 14:26:59.024 CEST
+Begin processing the 265th record. Run 1, Event 979264, LumiSection 9793 on stream 0 at 24-Apr-2024 14:27:04.259 CEST
+Begin processing the 266th record. Run 1, Event 979266, LumiSection 9793 on stream 1 at 24-Apr-2024 14:27:06.926 CEST
+Begin processing the 267th record. Run 1, Event 979267, LumiSection 9793 on stream 0 at 24-Apr-2024 14:27:13.183 CEST
+Begin processing the 268th record. Run 1, Event 979268, LumiSection 9793 on stream 1 at 24-Apr-2024 14:27:17.357 CEST
+Begin processing the 269th record. Run 1, Event 979269, LumiSection 9793 on stream 0 at 24-Apr-2024 14:27:21.504 CEST
+Begin processing the 270th record. Run 1, Event 979270, LumiSection 9793 on stream 1 at 24-Apr-2024 14:27:26.035 CEST
+Begin processing the 271st record. Run 1, Event 979271, LumiSection 9793 on stream 0 at 24-Apr-2024 14:27:30.139 CEST
+Begin processing the 272nd record. Run 1, Event 979272, LumiSection 9793 on stream 1 at 24-Apr-2024 14:27:35.235 CEST
+Begin processing the 273rd record. Run 1, Event 979273, LumiSection 9793 on stream 0 at 24-Apr-2024 14:27:39.212 CEST
+Begin processing the 274th record. Run 1, Event 979275, LumiSection 9793 on stream 1 at 24-Apr-2024 14:27:42.819 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:27:46 CEST Run: 1 Event: 979273
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:27:46 CEST  Run: 1 Event: 979273
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:27:46 CEST Run: 1 Event: 979273
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 275th record. Run 1, Event 979274, LumiSection 9793 on stream 0 at 24-Apr-2024 14:27:47.748 CEST
+Begin processing the 276th record. Run 1, Event 979276, LumiSection 9793 on stream 1 at 24-Apr-2024 14:27:51.133 CEST
+Begin processing the 277th record. Run 1, Event 979278, LumiSection 9793 on stream 0 at 24-Apr-2024 14:27:55.837 CEST
+Begin processing the 278th record. Run 1, Event 979277, LumiSection 9793 on stream 1 at 24-Apr-2024 14:28:00.517 CEST
+Begin processing the 279th record. Run 1, Event 979279, LumiSection 9793 on stream 0 at 24-Apr-2024 14:28:03.640 CEST
+Begin processing the 280th record. Run 1, Event 979281, LumiSection 9793 on stream 1 at 24-Apr-2024 14:28:08.840 CEST
+Begin processing the 281st record. Run 1, Event 979280, LumiSection 9793 on stream 0 at 24-Apr-2024 14:28:11.804 CEST
+Begin processing the 282nd record. Run 1, Event 979282, LumiSection 9793 on stream 1 at 24-Apr-2024 14:28:18.079 CEST
+Begin processing the 283rd record. Run 1, Event 979283, LumiSection 9793 on stream 0 at 24-Apr-2024 14:28:20.402 CEST
+Begin processing the 284th record. Run 1, Event 979284, LumiSection 9793 on stream 1 at 24-Apr-2024 14:28:27.487 CEST
+Begin processing the 285th record. Run 1, Event 979285, LumiSection 9793 on stream 0 at 24-Apr-2024 14:28:29.211 CEST
+Begin processing the 286th record. Run 1, Event 979286, LumiSection 9793 on stream 1 at 24-Apr-2024 14:28:35.580 CEST
+Begin processing the 287th record. Run 1, Event 979287, LumiSection 9793 on stream 0 at 24-Apr-2024 14:28:37.688 CEST
+Begin processing the 288th record. Run 1, Event 979289, LumiSection 9793 on stream 1 at 24-Apr-2024 14:28:42.664 CEST
+Begin processing the 289th record. Run 1, Event 979288, LumiSection 9793 on stream 0 at 24-Apr-2024 14:28:45.562 CEST
+Begin processing the 290th record. Run 1, Event 979291, LumiSection 9793 on stream 1 at 24-Apr-2024 14:28:49.856 CEST
+Begin processing the 291st record. Run 1, Event 979292, LumiSection 9793 on stream 0 at 24-Apr-2024 14:28:53.491 CEST
+Begin processing the 292nd record. Run 1, Event 979293, LumiSection 9793 on stream 1 at 24-Apr-2024 14:28:57.851 CEST
+Begin processing the 293rd record. Run 1, Event 979290, LumiSection 9793 on stream 0 at 24-Apr-2024 14:29:02.214 CEST
+Begin processing the 294th record. Run 1, Event 979295, LumiSection 9793 on stream 1 at 24-Apr-2024 14:29:07.107 CEST
+Begin processing the 295th record. Run 1, Event 979294, LumiSection 9793 on stream 0 at 24-Apr-2024 14:29:10.396 CEST
+Begin processing the 296th record. Run 1, Event 979297, LumiSection 9793 on stream 1 at 24-Apr-2024 14:29:14.901 CEST
+Begin processing the 297th record. Run 1, Event 979296, LumiSection 9793 on stream 0 at 24-Apr-2024 14:29:18.575 CEST
+Begin processing the 298th record. Run 1, Event 979298, LumiSection 9793 on stream 1 at 24-Apr-2024 14:29:23.013 CEST
+Begin processing the 299th record. Run 1, Event 979299, LumiSection 9793 on stream 0 at 24-Apr-2024 14:29:27.288 CEST
+Begin processing the 300th record. Run 1, Event 979300, LumiSection 9793 on stream 1 at 24-Apr-2024 14:29:32.665 CEST
+Begin processing the 301st record. Run 1, Event 979301, LumiSection 9794 on stream 0 at 24-Apr-2024 14:29:36.469 CEST
+Begin processing the 302nd record. Run 1, Event 979302, LumiSection 9794 on stream 1 at 24-Apr-2024 14:29:40.775 CEST
+Begin processing the 303rd record. Run 1, Event 979303, LumiSection 9794 on stream 0 at 24-Apr-2024 14:29:43.696 CEST
+Begin processing the 304th record. Run 1, Event 979305, LumiSection 9794 on stream 1 at 24-Apr-2024 14:29:48.178 CEST
+Begin processing the 305th record. Run 1, Event 979304, LumiSection 9794 on stream 0 at 24-Apr-2024 14:29:51.213 CEST
+Begin processing the 306th record. Run 1, Event 979306, LumiSection 9794 on stream 1 at 24-Apr-2024 14:29:56.364 CEST
+Begin processing the 307th record. Run 1, Event 979308, LumiSection 9794 on stream 0 at 24-Apr-2024 14:29:59.547 CEST
+Begin processing the 308th record. Run 1, Event 979307, LumiSection 9794 on stream 1 at 24-Apr-2024 14:30:04.396 CEST
+Begin processing the 309th record. Run 1, Event 979309, LumiSection 9794 on stream 0 at 24-Apr-2024 14:30:07.450 CEST
+Begin processing the 310th record. Run 1, Event 979310, LumiSection 9794 on stream 1 at 24-Apr-2024 14:30:11.829 CEST
+Begin processing the 311th record. Run 1, Event 979311, LumiSection 9794 on stream 0 at 24-Apr-2024 14:30:14.975 CEST
+Begin processing the 312th record. Run 1, Event 979312, LumiSection 9794 on stream 1 at 24-Apr-2024 14:30:19.708 CEST
+Begin processing the 313th record. Run 1, Event 979314, LumiSection 9794 on stream 0 at 24-Apr-2024 14:30:21.624 CEST
+Begin processing the 314th record. Run 1, Event 979313, LumiSection 9794 on stream 1 at 24-Apr-2024 14:30:28.207 CEST
+Begin processing the 315th record. Run 1, Event 979316, LumiSection 9794 on stream 0 at 24-Apr-2024 14:30:29.261 CEST
+Begin processing the 316th record. Run 1, Event 979317, LumiSection 9794 on stream 1 at 24-Apr-2024 14:30:36.831 CEST
+Begin processing the 317th record. Run 1, Event 979315, LumiSection 9794 on stream 0 at 24-Apr-2024 14:30:37.198 CEST
+Begin processing the 318th record. Run 1, Event 979318, LumiSection 9794 on stream 1 at 24-Apr-2024 14:30:44.597 CEST
+Begin processing the 319th record. Run 1, Event 979319, LumiSection 9794 on stream 0 at 24-Apr-2024 14:30:44.946 CEST
+Begin processing the 320th record. Run 1, Event 979320, LumiSection 9794 on stream 0 at 24-Apr-2024 14:30:55.823 CEST
+Begin processing the 321st record. Run 1, Event 979321, LumiSection 9794 on stream 1 at 24-Apr-2024 14:30:56.091 CEST
+Begin processing the 322nd record. Run 1, Event 979323, LumiSection 9794 on stream 0 at 24-Apr-2024 14:31:03.769 CEST
+Begin processing the 323rd record. Run 1, Event 979322, LumiSection 9794 on stream 1 at 24-Apr-2024 14:31:04.021 CEST
+Begin processing the 324th record. Run 1, Event 979324, LumiSection 9794 on stream 0 at 24-Apr-2024 14:31:10.200 CEST
+Begin processing the 325th record. Run 1, Event 979326, LumiSection 9794 on stream 1 at 24-Apr-2024 14:31:10.933 CEST
+Begin processing the 326th record. Run 1, Event 979325, LumiSection 9794 on stream 0 at 24-Apr-2024 14:31:15.973 CEST
+Begin processing the 327th record. Run 1, Event 979328, LumiSection 9794 on stream 1 at 24-Apr-2024 14:31:18.039 CEST
+Begin processing the 328th record. Run 1, Event 979329, LumiSection 9794 on stream 0 at 24-Apr-2024 14:31:23.985 CEST
+Begin processing the 329th record. Run 1, Event 979330, LumiSection 9794 on stream 1 at 24-Apr-2024 14:31:25.702 CEST
+Begin processing the 330th record. Run 1, Event 979331, LumiSection 9794 on stream 0 at 24-Apr-2024 14:31:31.732 CEST
+Begin processing the 331st record. Run 1, Event 979332, LumiSection 9794 on stream 1 at 24-Apr-2024 14:31:33.250 CEST
+Begin processing the 332nd record. Run 1, Event 979333, LumiSection 9794 on stream 0 at 24-Apr-2024 14:31:40.521 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:31:40 CEST  Run: 1 Event: 979332
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:31:40 CEST Run: 1 Event: 979332
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:31:40 CEST Run: 1 Event: 979332
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 333rd record. Run 1, Event 979334, LumiSection 9794 on stream 1 at 24-Apr-2024 14:31:41.474 CEST
+Begin processing the 334th record. Run 1, Event 979335, LumiSection 9794 on stream 0 at 24-Apr-2024 14:31:48.150 CEST
+Begin processing the 335th record. Run 1, Event 979336, LumiSection 9794 on stream 1 at 24-Apr-2024 14:31:48.541 CEST
+Begin processing the 336th record. Run 1, Event 979337, LumiSection 9794 on stream 0 at 24-Apr-2024 14:31:55.541 CEST
+Begin processing the 337th record. Run 1, Event 979338, LumiSection 9794 on stream 1 at 24-Apr-2024 14:31:56.370 CEST
+Begin processing the 338th record. Run 1, Event 979339, LumiSection 9794 on stream 0 at 24-Apr-2024 14:32:03.303 CEST
+Begin processing the 339th record. Run 1, Event 979340, LumiSection 9794 on stream 1 at 24-Apr-2024 14:32:04.149 CEST
+Begin processing the 340th record. Run 1, Event 979341, LumiSection 9794 on stream 0 at 24-Apr-2024 14:32:10.601 CEST
+Begin processing the 341st record. Run 1, Event 979342, LumiSection 9794 on stream 1 at 24-Apr-2024 14:32:12.417 CEST
+Begin processing the 342nd record. Run 1, Event 979343, LumiSection 9794 on stream 0 at 24-Apr-2024 14:32:18.127 CEST
+Begin processing the 343rd record. Run 1, Event 979344, LumiSection 9794 on stream 1 at 24-Apr-2024 14:32:20.012 CEST
+Begin processing the 344th record. Run 1, Event 979345, LumiSection 9794 on stream 0 at 24-Apr-2024 14:32:25.708 CEST
+Begin processing the 345th record. Run 1, Event 979346, LumiSection 9794 on stream 1 at 24-Apr-2024 14:32:26.756 CEST
+Begin processing the 346th record. Run 1, Event 979347, LumiSection 9794 on stream 0 at 24-Apr-2024 14:32:33.045 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:32:34 CEST Run: 1 Event: 979346
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:32:34 CEST  Run: 1 Event: 979346
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:32:34 CEST Run: 1 Event: 979346
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 347th record. Run 1, Event 979327, LumiSection 9794 on stream 1 at 24-Apr-2024 14:32:35.083 CEST
+Begin processing the 348th record. Run 1, Event 979349, LumiSection 9794 on stream 0 at 24-Apr-2024 14:32:40.087 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:32:41 CEST Run: 1 Event: 979327
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:32:41 CEST  Run: 1 Event: 979327
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:32:41 CEST Run: 1 Event: 979327
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 349th record. Run 1, Event 979350, LumiSection 9794 on stream 1 at 24-Apr-2024 14:32:42.059 CEST
+Begin processing the 350th record. Run 1, Event 979351, LumiSection 9794 on stream 0 at 24-Apr-2024 14:32:47.061 CEST
+Begin processing the 351st record. Run 1, Event 979352, LumiSection 9794 on stream 1 at 24-Apr-2024 14:32:50.286 CEST
+Begin processing the 352nd record. Run 1, Event 979348, LumiSection 9794 on stream 0 at 24-Apr-2024 14:32:54.925 CEST
+Begin processing the 353rd record. Run 1, Event 979353, LumiSection 9794 on stream 1 at 24-Apr-2024 14:32:57.042 CEST
+Begin processing the 354th record. Run 1, Event 979354, LumiSection 9794 on stream 0 at 24-Apr-2024 14:33:02.312 CEST
+Begin processing the 355th record. Run 1, Event 979355, LumiSection 9794 on stream 1 at 24-Apr-2024 14:33:04.440 CEST
+Begin processing the 356th record. Run 1, Event 979356, LumiSection 9794 on stream 0 at 24-Apr-2024 14:33:08.891 CEST
+Begin processing the 357th record. Run 1, Event 979358, LumiSection 9794 on stream 1 at 24-Apr-2024 14:33:11.454 CEST
+Begin processing the 358th record. Run 1, Event 979357, LumiSection 9794 on stream 0 at 24-Apr-2024 14:33:17.120 CEST
+Begin processing the 359th record. Run 1, Event 979359, LumiSection 9794 on stream 1 at 24-Apr-2024 14:33:19.262 CEST
+Begin processing the 360th record. Run 1, Event 979360, LumiSection 9794 on stream 0 at 24-Apr-2024 14:33:25.574 CEST
+Begin processing the 361st record. Run 1, Event 979361, LumiSection 9794 on stream 1 at 24-Apr-2024 14:33:27.269 CEST
+Begin processing the 362nd record. Run 1, Event 979362, LumiSection 9794 on stream 0 at 24-Apr-2024 14:33:33.719 CEST
+Begin processing the 363rd record. Run 1, Event 979363, LumiSection 9794 on stream 1 at 24-Apr-2024 14:33:35.300 CEST
+Begin processing the 364th record. Run 1, Event 979364, LumiSection 9794 on stream 0 at 24-Apr-2024 14:33:41.362 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:33:41 CEST Run: 1 Event: 979363
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:33:41 CEST  Run: 1 Event: 979363
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:33:41 CEST Run: 1 Event: 979363
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 365th record. Run 1, Event 979365, LumiSection 9794 on stream 1 at 24-Apr-2024 14:33:42.727 CEST
+Begin processing the 366th record. Run 1, Event 979367, LumiSection 9794 on stream 0 at 24-Apr-2024 14:33:47.671 CEST
+Begin processing the 367th record. Run 1, Event 979366, LumiSection 9794 on stream 1 at 24-Apr-2024 14:33:49.538 CEST
+Begin processing the 368th record. Run 1, Event 979368, LumiSection 9794 on stream 0 at 24-Apr-2024 14:33:55.753 CEST
+Begin processing the 369th record. Run 1, Event 979370, LumiSection 9794 on stream 1 at 24-Apr-2024 14:33:57.758 CEST
+Begin processing the 370th record. Run 1, Event 979371, LumiSection 9794 on stream 0 at 24-Apr-2024 14:34:05.117 CEST
+Begin processing the 371st record. Run 1, Event 979369, LumiSection 9794 on stream 1 at 24-Apr-2024 14:34:05.765 CEST
+Begin processing the 372nd record. Run 1, Event 979372, LumiSection 9794 on stream 0 at 24-Apr-2024 14:34:12.019 CEST
+Begin processing the 373rd record. Run 1, Event 979373, LumiSection 9794 on stream 1 at 24-Apr-2024 14:34:12.720 CEST
+Begin processing the 374th record. Run 1, Event 979375, LumiSection 9794 on stream 0 at 24-Apr-2024 14:34:19.837 CEST
+Begin processing the 375th record. Run 1, Event 979374, LumiSection 9794 on stream 1 at 24-Apr-2024 14:34:20.263 CEST
+Begin processing the 376th record. Run 1, Event 979376, LumiSection 9794 on stream 0 at 24-Apr-2024 14:34:27.895 CEST
+Begin processing the 377th record. Run 1, Event 979377, LumiSection 9794 on stream 1 at 24-Apr-2024 14:34:28.711 CEST
+Begin processing the 378th record. Run 1, Event 979378, LumiSection 9794 on stream 0 at 24-Apr-2024 14:34:35.490 CEST
+Begin processing the 379th record. Run 1, Event 979379, LumiSection 9794 on stream 1 at 24-Apr-2024 14:34:36.716 CEST
+Begin processing the 380th record. Run 1, Event 979380, LumiSection 9794 on stream 1 at 24-Apr-2024 14:34:42.135 CEST
+Begin processing the 381st record. Run 1, Event 979382, LumiSection 9794 on stream 0 at 24-Apr-2024 14:34:42.947 CEST
+Begin processing the 382nd record. Run 1, Event 979383, LumiSection 9794 on stream 1 at 24-Apr-2024 14:34:50.348 CEST
+Begin processing the 383rd record. Run 1, Event 979384, LumiSection 9794 on stream 0 at 24-Apr-2024 14:34:50.606 CEST
+Begin processing the 384th record. Run 1, Event 979385, LumiSection 9794 on stream 0 at 24-Apr-2024 14:34:57.518 CEST
+Begin processing the 385th record. Run 1, Event 979386, LumiSection 9794 on stream 1 at 24-Apr-2024 14:34:57.829 CEST
+Begin processing the 386th record. Run 1, Event 979381, LumiSection 9794 on stream 0 at 24-Apr-2024 14:35:04.157 CEST
+Begin processing the 387th record. Run 1, Event 979387, LumiSection 9794 on stream 1 at 24-Apr-2024 14:35:05.784 CEST
+Begin processing the 388th record. Run 1, Event 979388, LumiSection 9794 on stream 0 at 24-Apr-2024 14:35:10.601 CEST
+Begin processing the 389th record. Run 1, Event 979389, LumiSection 9794 on stream 1 at 24-Apr-2024 14:35:14.022 CEST
+Begin processing the 390th record. Run 1, Event 979390, LumiSection 9794 on stream 0 at 24-Apr-2024 14:35:18.079 CEST
+Begin processing the 391st record. Run 1, Event 979391, LumiSection 9794 on stream 1 at 24-Apr-2024 14:35:21.873 CEST
+Begin processing the 392nd record. Run 1, Event 979392, LumiSection 9794 on stream 0 at 24-Apr-2024 14:35:26.207 CEST
+Begin processing the 393rd record. Run 1, Event 979393, LumiSection 9794 on stream 1 at 24-Apr-2024 14:35:29.362 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:35:33 CEST  Run: 1 Event: 979392
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:35:33 CEST Run: 1 Event: 979392
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:35:33 CEST Run: 1 Event: 979392
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 394th record. Run 1, Event 979394, LumiSection 9794 on stream 0 at 24-Apr-2024 14:35:33.771 CEST
+Begin processing the 395th record. Run 1, Event 979395, LumiSection 9794 on stream 1 at 24-Apr-2024 14:35:37.431 CEST
+Begin processing the 396th record. Run 1, Event 979396, LumiSection 9794 on stream 0 at 24-Apr-2024 14:35:41.176 CEST
+Begin processing the 397th record. Run 1, Event 979397, LumiSection 9794 on stream 1 at 24-Apr-2024 14:35:44.799 CEST
+Begin processing the 398th record. Run 1, Event 979398, LumiSection 9794 on stream 0 at 24-Apr-2024 14:35:48.397 CEST
+Begin processing the 399th record. Run 1, Event 979400, LumiSection 9794 on stream 1 at 24-Apr-2024 14:35:52.776 CEST
+Begin processing the 400th record. Run 1, Event 979399, LumiSection 9794 on stream 0 at 24-Apr-2024 14:35:54.934 CEST
+Begin processing the 401st record. Run 1, Event 979402, LumiSection 9795 on stream 1 at 24-Apr-2024 14:36:00.564 CEST
+Begin processing the 402nd record. Run 1, Event 979401, LumiSection 9795 on stream 0 at 24-Apr-2024 14:36:03.130 CEST
+Begin processing the 403rd record. Run 1, Event 979403, LumiSection 9795 on stream 1 at 24-Apr-2024 14:36:08.716 CEST
+Begin processing the 404th record. Run 1, Event 979404, LumiSection 9795 on stream 0 at 24-Apr-2024 14:36:10.872 CEST
+Begin processing the 405th record. Run 1, Event 979406, LumiSection 9795 on stream 1 at 24-Apr-2024 14:36:15.517 CEST
+Begin processing the 406th record. Run 1, Event 979405, LumiSection 9795 on stream 0 at 24-Apr-2024 14:36:18.463 CEST
+Begin processing the 407th record. Run 1, Event 979407, LumiSection 9795 on stream 1 at 24-Apr-2024 14:36:22.979 CEST
+Begin processing the 408th record. Run 1, Event 979408, LumiSection 9795 on stream 0 at 24-Apr-2024 14:36:26.644 CEST
+Begin processing the 409th record. Run 1, Event 979409, LumiSection 9795 on stream 1 at 24-Apr-2024 14:36:31.094 CEST
+Begin processing the 410th record. Run 1, Event 979410, LumiSection 9795 on stream 0 at 24-Apr-2024 14:36:34.745 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:36:37 CEST Run: 1 Event: 979409
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:36:37 CEST  Run: 1 Event: 979409
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:36:37 CEST Run: 1 Event: 979409
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+Begin processing the 411th record. Run 1, Event 979411, LumiSection 9795 on stream 1 at 24-Apr-2024 14:36:38.345 CEST
+Begin processing the 412th record. Run 1, Event 979412, LumiSection 9795 on stream 0 at 24-Apr-2024 14:36:42.620 CEST
+Begin processing the 413th record. Run 1, Event 979413, LumiSection 9795 on stream 1 at 24-Apr-2024 14:36:47.937 CEST
+Begin processing the 414th record. Run 1, Event 979415, LumiSection 9795 on stream 0 at 24-Apr-2024 14:36:52.497 CEST
+Begin processing the 415th record. Run 1, Event 979414, LumiSection 9795 on stream 1 at 24-Apr-2024 14:36:57.426 CEST
+Begin processing the 416th record. Run 1, Event 979417, LumiSection 9795 on stream 0 at 24-Apr-2024 14:37:01.256 CEST
+Begin processing the 417th record. Run 1, Event 979416, LumiSection 9795 on stream 1 at 24-Apr-2024 14:37:07.294 CEST
+Begin processing the 418th record. Run 1, Event 979418, LumiSection 9795 on stream 0 at 24-Apr-2024 14:37:10.465 CEST
+Begin processing the 419th record. Run 1, Event 979420, LumiSection 9795 on stream 1 at 24-Apr-2024 14:37:15.876 CEST
+Begin processing the 420th record. Run 1, Event 979419, LumiSection 9795 on stream 0 at 24-Apr-2024 14:37:19.353 CEST
+Begin processing the 421st record. Run 1, Event 979421, LumiSection 9795 on stream 1 at 24-Apr-2024 14:37:23.574 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:37:26 CEST Run: 1 Event: 979419
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:37:26 CEST  Run: 1 Event: 979419
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:37:26 CEST Run: 1 Event: 979419
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 422nd record. Run 1, Event 979422, LumiSection 9795 on stream 0 at 24-Apr-2024 14:37:27.424 CEST
+Begin processing the 423rd record. Run 1, Event 979423, LumiSection 9795 on stream 1 at 24-Apr-2024 14:37:31.812 CEST
+Begin processing the 424th record. Run 1, Event 979424, LumiSection 9795 on stream 0 at 24-Apr-2024 14:37:35.137 CEST
+Begin processing the 425th record. Run 1, Event 979426, LumiSection 9795 on stream 1 at 24-Apr-2024 14:37:38.957 CEST
+Begin processing the 426th record. Run 1, Event 979425, LumiSection 9795 on stream 0 at 24-Apr-2024 14:37:41.766 CEST
+Begin processing the 427th record. Run 1, Event 979428, LumiSection 9795 on stream 1 at 24-Apr-2024 14:37:45.875 CEST
+Begin processing the 428th record. Run 1, Event 979427, LumiSection 9795 on stream 0 at 24-Apr-2024 14:37:49.729 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:37:52 CEST  Run: 1 Event: 979428
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:37:52 CEST Run: 1 Event: 979428
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:37:52 CEST Run: 1 Event: 979428
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 429th record. Run 1, Event 979429, LumiSection 9795 on stream 1 at 24-Apr-2024 14:37:53.649 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:37:56 CEST Run: 1 Event: 979427
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:37:56 CEST  Run: 1 Event: 979427
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:37:56 CEST Run: 1 Event: 979427
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 430th record. Run 1, Event 979430, LumiSection 9795 on stream 0 at 24-Apr-2024 14:37:57.302 CEST
+Begin processing the 431st record. Run 1, Event 979431, LumiSection 9795 on stream 1 at 24-Apr-2024 14:38:01.377 CEST
+Begin processing the 432nd record. Run 1, Event 979433, LumiSection 9795 on stream 0 at 24-Apr-2024 14:38:05.696 CEST
+Begin processing the 433rd record. Run 1, Event 979432, LumiSection 9795 on stream 1 at 24-Apr-2024 14:38:10.042 CEST
+Begin processing the 434th record. Run 1, Event 979434, LumiSection 9795 on stream 0 at 24-Apr-2024 14:38:15.553 CEST
+Begin processing the 435th record. Run 1, Event 979436, LumiSection 9795 on stream 1 at 24-Apr-2024 14:38:19.843 CEST
+Begin processing the 436th record. Run 1, Event 979437, LumiSection 9795 on stream 0 at 24-Apr-2024 14:38:24.966 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:38:27 CEST Run: 1 Event: 979436
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:38:27 CEST  Run: 1 Event: 979436
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:38:27 CEST Run: 1 Event: 979436
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+Begin processing the 437th record. Run 1, Event 979435, LumiSection 9795 on stream 1 at 24-Apr-2024 14:38:27.747 CEST
+Begin processing the 438th record. Run 1, Event 979438, LumiSection 9795 on stream 0 at 24-Apr-2024 14:38:32.746 CEST
+Begin processing the 439th record. Run 1, Event 979439, LumiSection 9795 on stream 1 at 24-Apr-2024 14:38:37.722 CEST
+Begin processing the 440th record. Run 1, Event 979441, LumiSection 9795 on stream 0 at 24-Apr-2024 14:38:41.776 CEST
+Begin processing the 441st record. Run 1, Event 979442, LumiSection 9795 on stream 1 at 24-Apr-2024 14:38:45.297 CEST
+Begin processing the 442nd record. Run 1, Event 979440, LumiSection 9795 on stream 0 at 24-Apr-2024 14:38:48.924 CEST
+Begin processing the 443rd record. Run 1, Event 979443, LumiSection 9795 on stream 1 at 24-Apr-2024 14:38:53.874 CEST
+Begin processing the 444th record. Run 1, Event 979445, LumiSection 9795 on stream 0 at 24-Apr-2024 14:38:57.220 CEST
+Begin processing the 445th record. Run 1, Event 979444, LumiSection 9795 on stream 1 at 24-Apr-2024 14:39:02.598 CEST
+Begin processing the 446th record. Run 1, Event 979447, LumiSection 9795 on stream 0 at 24-Apr-2024 14:39:07.315 CEST
+Begin processing the 447th record. Run 1, Event 979446, LumiSection 9795 on stream 1 at 24-Apr-2024 14:39:13.214 CEST
+Begin processing the 448th record. Run 1, Event 979448, LumiSection 9795 on stream 0 at 24-Apr-2024 14:39:15.720 CEST
+Begin processing the 449th record. Run 1, Event 979449, LumiSection 9795 on stream 1 at 24-Apr-2024 14:39:21.114 CEST
+Begin processing the 450th record. Run 1, Event 979450, LumiSection 9795 on stream 0 at 24-Apr-2024 14:39:24.307 CEST
+Begin processing the 451st record. Run 1, Event 979452, LumiSection 9795 on stream 1 at 24-Apr-2024 14:39:29.398 CEST
+Begin processing the 452nd record. Run 1, Event 979451, LumiSection 9795 on stream 0 at 24-Apr-2024 14:39:32.330 CEST
+Begin processing the 453rd record. Run 1, Event 979453, LumiSection 9795 on stream 1 at 24-Apr-2024 14:39:37.524 CEST
+Begin processing the 454th record. Run 1, Event 979454, LumiSection 9795 on stream 0 at 24-Apr-2024 14:39:39.858 CEST
+Begin processing the 455th record. Run 1, Event 979456, LumiSection 9795 on stream 1 at 24-Apr-2024 14:39:44.538 CEST
+Begin processing the 456th record. Run 1, Event 979457, LumiSection 9795 on stream 0 at 24-Apr-2024 14:39:47.127 CEST
+Begin processing the 457th record. Run 1, Event 979458, LumiSection 9795 on stream 1 at 24-Apr-2024 14:39:53.861 CEST
+Begin processing the 458th record. Run 1, Event 979459, LumiSection 9795 on stream 0 at 24-Apr-2024 14:39:55.409 CEST
+Begin processing the 459th record. Run 1, Event 979460, LumiSection 9795 on stream 1 at 24-Apr-2024 14:40:01.665 CEST
+Begin processing the 460th record. Run 1, Event 979461, LumiSection 9795 on stream 0 at 24-Apr-2024 14:40:03.127 CEST
+Begin processing the 461st record. Run 1, Event 979462, LumiSection 9795 on stream 1 at 24-Apr-2024 14:40:09.328 CEST
+Begin processing the 462nd record. Run 1, Event 979463, LumiSection 9795 on stream 0 at 24-Apr-2024 14:40:10.911 CEST
+Begin processing the 463rd record. Run 1, Event 979464, LumiSection 9795 on stream 1 at 24-Apr-2024 14:40:17.479 CEST
+Begin processing the 464th record. Run 1, Event 979465, LumiSection 9795 on stream 0 at 24-Apr-2024 14:40:18.766 CEST
+Begin processing the 465th record. Run 1, Event 979466, LumiSection 9795 on stream 1 at 24-Apr-2024 14:40:26.466 CEST
+Begin processing the 466th record. Run 1, Event 979467, LumiSection 9795 on stream 0 at 24-Apr-2024 14:40:27.671 CEST
+Begin processing the 467th record. Run 1, Event 979468, LumiSection 9795 on stream 1 at 24-Apr-2024 14:40:35.262 CEST
+Begin processing the 468th record. Run 1, Event 979469, LumiSection 9795 on stream 0 at 24-Apr-2024 14:40:36.267 CEST
+Begin processing the 469th record. Run 1, Event 979455, LumiSection 9795 on stream 1 at 24-Apr-2024 14:40:43.837 CEST
+Begin processing the 470th record. Run 1, Event 979471, LumiSection 9795 on stream 0 at 24-Apr-2024 14:40:44.384 CEST
+Begin processing the 471st record. Run 1, Event 979470, LumiSection 9795 on stream 0 at 24-Apr-2024 14:40:52.710 CEST
+Begin processing the 472nd record. Run 1, Event 979473, LumiSection 9795 on stream 1 at 24-Apr-2024 14:40:55.057 CEST
+Begin processing the 473rd record. Run 1, Event 979474, LumiSection 9795 on stream 0 at 24-Apr-2024 14:41:01.472 CEST
+Begin processing the 474th record. Run 1, Event 979475, LumiSection 9795 on stream 1 at 24-Apr-2024 14:41:03.884 CEST
+Begin processing the 475th record. Run 1, Event 979472, LumiSection 9795 on stream 0 at 24-Apr-2024 14:41:09.033 CEST
+Begin processing the 476th record. Run 1, Event 979476, LumiSection 9795 on stream 1 at 24-Apr-2024 14:41:11.553 CEST
+Begin processing the 477th record. Run 1, Event 979477, LumiSection 9795 on stream 0 at 24-Apr-2024 14:41:16.628 CEST
+Begin processing the 478th record. Run 1, Event 979478, LumiSection 9795 on stream 1 at 24-Apr-2024 14:41:19.214 CEST
+Begin processing the 479th record. Run 1, Event 979479, LumiSection 9795 on stream 0 at 24-Apr-2024 14:41:24.245 CEST
+Begin processing the 480th record. Run 1, Event 979480, LumiSection 9795 on stream 1 at 24-Apr-2024 14:41:26.539 CEST
+Begin processing the 481st record. Run 1, Event 979481, LumiSection 9795 on stream 0 at 24-Apr-2024 14:41:32.070 CEST
+Begin processing the 482nd record. Run 1, Event 979482, LumiSection 9795 on stream 1 at 24-Apr-2024 14:41:34.432 CEST
+Begin processing the 483rd record. Run 1, Event 979483, LumiSection 9795 on stream 0 at 24-Apr-2024 14:41:40.170 CEST
+Begin processing the 484th record. Run 1, Event 979485, LumiSection 9795 on stream 1 at 24-Apr-2024 14:41:43.342 CEST
+Begin processing the 485th record. Run 1, Event 979486, LumiSection 9795 on stream 0 at 24-Apr-2024 14:41:48.765 CEST
+Begin processing the 486th record. Run 1, Event 979487, LumiSection 9795 on stream 1 at 24-Apr-2024 14:41:51.439 CEST
+Begin processing the 487th record. Run 1, Event 979488, LumiSection 9795 on stream 0 at 24-Apr-2024 14:41:56.722 CEST
+Begin processing the 488th record. Run 1, Event 979489, LumiSection 9795 on stream 1 at 24-Apr-2024 14:41:58.904 CEST
+Begin processing the 489th record. Run 1, Event 979490, LumiSection 9795 on stream 0 at 24-Apr-2024 14:42:04.207 CEST
+Begin processing the 490th record. Run 1, Event 979491, LumiSection 9795 on stream 1 at 24-Apr-2024 14:42:06.735 CEST
+Begin processing the 491st record. Run 1, Event 979492, LumiSection 9795 on stream 0 at 24-Apr-2024 14:42:12.575 CEST
+Begin processing the 492nd record. Run 1, Event 979493, LumiSection 9795 on stream 1 at 24-Apr-2024 14:42:14.107 CEST
+Begin processing the 493rd record. Run 1, Event 979494, LumiSection 9795 on stream 0 at 24-Apr-2024 14:42:21.976 CEST
+Begin processing the 494th record. Run 1, Event 979495, LumiSection 9795 on stream 1 at 24-Apr-2024 14:42:22.450 CEST
+Begin processing the 495th record. Run 1, Event 979496, LumiSection 9795 on stream 1 at 24-Apr-2024 14:42:30.497 CEST
+Begin processing the 496th record. Run 1, Event 979484, LumiSection 9795 on stream 0 at 24-Apr-2024 14:42:31.597 CEST
+Begin processing the 497th record. Run 1, Event 979498, LumiSection 9795 on stream 1 at 24-Apr-2024 14:42:38.591 CEST
+Begin processing the 498th record. Run 1, Event 979497, LumiSection 9795 on stream 0 at 24-Apr-2024 14:42:40.752 CEST
+Begin processing the 499th record. Run 1, Event 979499, LumiSection 9795 on stream 1 at 24-Apr-2024 14:42:46.878 CEST
+Begin processing the 500th record. Run 1, Event 979500, LumiSection 9795 on stream 0 at 24-Apr-2024 14:42:48.662 CEST
+Begin processing the 501st record. Run 1, Event 979501, LumiSection 9796 on stream 1 at 24-Apr-2024 14:42:54.631 CEST
+Begin processing the 502nd record. Run 1, Event 979503, LumiSection 9796 on stream 0 at 24-Apr-2024 14:42:56.782 CEST
+Begin processing the 503rd record. Run 1, Event 979502, LumiSection 9796 on stream 1 at 24-Apr-2024 14:43:03.578 CEST
+Begin processing the 504th record. Run 1, Event 979505, LumiSection 9796 on stream 0 at 24-Apr-2024 14:43:05.395 CEST
+Begin processing the 505th record. Run 1, Event 979506, LumiSection 9796 on stream 1 at 24-Apr-2024 14:43:12.212 CEST
+Begin processing the 506th record. Run 1, Event 979504, LumiSection 9796 on stream 0 at 24-Apr-2024 14:43:13.126 CEST
+Begin processing the 507th record. Run 1, Event 979507, LumiSection 9796 on stream 1 at 24-Apr-2024 14:43:21.417 CEST
+Begin processing the 508th record. Run 1, Event 979509, LumiSection 9796 on stream 0 at 24-Apr-2024 14:43:22.180 CEST
+Begin processing the 509th record. Run 1, Event 979508, LumiSection 9796 on stream 1 at 24-Apr-2024 14:43:29.387 CEST
+Begin processing the 510th record. Run 1, Event 979510, LumiSection 9796 on stream 0 at 24-Apr-2024 14:43:31.782 CEST
+Begin processing the 511th record. Run 1, Event 979512, LumiSection 9796 on stream 1 at 24-Apr-2024 14:43:39.700 CEST
+Begin processing the 512th record. Run 1, Event 979513, LumiSection 9796 on stream 0 at 24-Apr-2024 14:43:42.456 CEST
+Begin processing the 513th record. Run 1, Event 979511, LumiSection 9796 on stream 1 at 24-Apr-2024 14:43:48.527 CEST
+Begin processing the 514th record. Run 1, Event 979514, LumiSection 9796 on stream 0 at 24-Apr-2024 14:43:50.584 CEST
+Begin processing the 515th record. Run 1, Event 979515, LumiSection 9796 on stream 1 at 24-Apr-2024 14:43:56.996 CEST
+Begin processing the 516th record. Run 1, Event 979516, LumiSection 9796 on stream 0 at 24-Apr-2024 14:43:57.999 CEST
+Begin processing the 517th record. Run 1, Event 979517, LumiSection 9796 on stream 1 at 24-Apr-2024 14:44:05.504 CEST
+Begin processing the 518th record. Run 1, Event 979518, LumiSection 9796 on stream 0 at 24-Apr-2024 14:44:05.819 CEST
+Begin processing the 519th record. Run 1, Event 979519, LumiSection 9796 on stream 1 at 24-Apr-2024 14:44:13.153 CEST
+Begin processing the 520th record. Run 1, Event 979520, LumiSection 9796 on stream 0 at 24-Apr-2024 14:44:13.906 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:44:20 CEST Run: 1 Event: 979519
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:44:20 CEST  Run: 1 Event: 979519
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:44:20 CEST Run: 1 Event: 979519
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 521st record. Run 1, Event 979522, LumiSection 9796 on stream 1 at 24-Apr-2024 14:44:21.159 CEST
+Begin processing the 522nd record. Run 1, Event 979523, LumiSection 9796 on stream 0 at 24-Apr-2024 14:44:23.822 CEST
+Begin processing the 523rd record. Run 1, Event 979521, LumiSection 9796 on stream 1 at 24-Apr-2024 14:44:30.281 CEST
+Begin processing the 524th record. Run 1, Event 979524, LumiSection 9796 on stream 0 at 24-Apr-2024 14:44:31.833 CEST
+Begin processing the 525th record. Run 1, Event 979525, LumiSection 9796 on stream 1 at 24-Apr-2024 14:44:39.338 CEST
+Begin processing the 526th record. Run 1, Event 979527, LumiSection 9796 on stream 0 at 24-Apr-2024 14:44:40.180 CEST
+Begin processing the 527th record. Run 1, Event 979526, LumiSection 9796 on stream 1 at 24-Apr-2024 14:44:48.112 CEST
+Begin processing the 528th record. Run 1, Event 979528, LumiSection 9796 on stream 0 at 24-Apr-2024 14:44:48.396 CEST
+Begin processing the 529th record. Run 1, Event 979530, LumiSection 9796 on stream 0 at 24-Apr-2024 14:44:56.800 CEST
+Begin processing the 530th record. Run 1, Event 979529, LumiSection 9796 on stream 1 at 24-Apr-2024 14:44:57.032 CEST
+Begin processing the 531st record. Run 1, Event 979532, LumiSection 9796 on stream 0 at 24-Apr-2024 14:45:05.555 CEST
+Begin processing the 532nd record. Run 1, Event 979531, LumiSection 9796 on stream 1 at 24-Apr-2024 14:45:05.898 CEST
+Begin processing the 533rd record. Run 1, Event 979534, LumiSection 9796 on stream 0 at 24-Apr-2024 14:45:14.471 CEST
+Begin processing the 534th record. Run 1, Event 979533, LumiSection 9796 on stream 1 at 24-Apr-2024 14:45:15.432 CEST
+Begin processing the 535th record. Run 1, Event 979536, LumiSection 9796 on stream 0 at 24-Apr-2024 14:45:24.290 CEST
+Begin processing the 536th record. Run 1, Event 979535, LumiSection 9796 on stream 1 at 24-Apr-2024 14:45:24.896 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:45:31 CEST Run: 1 Event: 979535
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:45:31 CEST  Run: 1 Event: 979535
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:45:31 CEST Run: 1 Event: 979535
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 537th record. Run 1, Event 979538, LumiSection 9796 on stream 0 at 24-Apr-2024 14:45:32.351 CEST
+Begin processing the 538th record. Run 1, Event 979537, LumiSection 9796 on stream 1 at 24-Apr-2024 14:45:32.712 CEST
+Begin processing the 539th record. Run 1, Event 979540, LumiSection 9796 on stream 1 at 24-Apr-2024 14:45:41.235 CEST
+Begin processing the 540th record. Run 1, Event 979541, LumiSection 9796 on stream 0 at 24-Apr-2024 14:45:41.638 CEST
+Begin processing the 541st record. Run 1, Event 979542, LumiSection 9796 on stream 1 at 24-Apr-2024 14:45:50.378 CEST
+Begin processing the 542nd record. Run 1, Event 979543, LumiSection 9796 on stream 0 at 24-Apr-2024 14:45:50.759 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:45:57 CEST Run: 1 Event: 979543
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:45:57 CEST Run: 1 Event: 979543
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:45:57 CEST  Run: 1 Event: 979543
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 543rd record. Run 1, Event 979539, LumiSection 9796 on stream 1 at 24-Apr-2024 14:45:58.155 CEST
+Begin processing the 544th record. Run 1, Event 979545, LumiSection 9796 on stream 0 at 24-Apr-2024 14:45:58.496 CEST
+Begin processing the 545th record. Run 1, Event 979546, LumiSection 9796 on stream 1 at 24-Apr-2024 14:46:04.981 CEST
+Begin processing the 546th record. Run 1, Event 979547, LumiSection 9796 on stream 0 at 24-Apr-2024 14:46:05.960 CEST
+Begin processing the 547th record. Run 1, Event 979548, LumiSection 9796 on stream 1 at 24-Apr-2024 14:46:14.126 CEST
+Begin processing the 548th record. Run 1, Event 979549, LumiSection 9796 on stream 0 at 24-Apr-2024 14:46:15.261 CEST
+Begin processing the 549th record. Run 1, Event 979550, LumiSection 9796 on stream 1 at 24-Apr-2024 14:46:23.685 CEST
+Begin processing the 550th record. Run 1, Event 979551, LumiSection 9796 on stream 0 at 24-Apr-2024 14:46:24.120 CEST
+Begin processing the 551st record. Run 1, Event 979544, LumiSection 9796 on stream 1 at 24-Apr-2024 14:46:32.088 CEST
+Begin processing the 552nd record. Run 1, Event 979552, LumiSection 9796 on stream 0 at 24-Apr-2024 14:46:32.446 CEST
+Begin processing the 553rd record. Run 1, Event 979554, LumiSection 9796 on stream 0 at 24-Apr-2024 14:46:41.959 CEST
+Begin processing the 554th record. Run 1, Event 979555, LumiSection 9796 on stream 1 at 24-Apr-2024 14:46:42.200 CEST
+Begin processing the 555th record. Run 1, Event 979553, LumiSection 9796 on stream 0 at 24-Apr-2024 14:46:51.390 CEST
+Begin processing the 556th record. Run 1, Event 979557, LumiSection 9796 on stream 1 at 24-Apr-2024 14:46:51.640 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:47:00 CEST Run: 1 Event: 979553
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+Begin processing the 557th record. Run 1, Event 979556, LumiSection 9796 on stream 1 at 24-Apr-2024 14:47:00.936 CEST
+Begin processing the 558th record. Run 1, Event 979559, LumiSection 9796 on stream 0 at 24-Apr-2024 14:47:01.217 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:47:08 CEST Run: 1 Event: 979556
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+Begin processing the 559th record. Run 1, Event 979558, LumiSection 9796 on stream 0 at 24-Apr-2024 14:47:08.799 CEST
+Begin processing the 560th record. Run 1, Event 979561, LumiSection 9796 on stream 1 at 24-Apr-2024 14:47:09.669 CEST
+Begin processing the 561st record. Run 1, Event 979560, LumiSection 9796 on stream 0 at 24-Apr-2024 14:47:17.312 CEST
+Begin processing the 562nd record. Run 1, Event 979563, LumiSection 9796 on stream 1 at 24-Apr-2024 14:47:18.906 CEST
+Begin processing the 563rd record. Run 1, Event 979564, LumiSection 9796 on stream 0 at 24-Apr-2024 14:47:26.389 CEST
+Begin processing the 564th record. Run 1, Event 979565, LumiSection 9796 on stream 1 at 24-Apr-2024 14:47:28.330 CEST
+Begin processing the 565th record. Run 1, Event 979566, LumiSection 9796 on stream 0 at 24-Apr-2024 14:47:36.419 CEST
+Begin processing the 566th record. Run 1, Event 979567, LumiSection 9796 on stream 1 at 24-Apr-2024 14:47:36.793 CEST
+Begin processing the 567th record. Run 1, Event 979568, LumiSection 9796 on stream 1 at 24-Apr-2024 14:47:45.125 CEST
+Begin processing the 568th record. Run 1, Event 979569, LumiSection 9796 on stream 0 at 24-Apr-2024 14:47:45.373 CEST
+Begin processing the 569th record. Run 1, Event 979570, LumiSection 9796 on stream 0 at 24-Apr-2024 14:47:53.868 CEST
+Begin processing the 570th record. Run 1, Event 979562, LumiSection 9796 on stream 1 at 24-Apr-2024 14:47:54.123 CEST
+Begin processing the 571st record. Run 1, Event 979571, LumiSection 9796 on stream 0 at 24-Apr-2024 14:48:02.130 CEST
+Begin processing the 572nd record. Run 1, Event 979572, LumiSection 9796 on stream 1 at 24-Apr-2024 14:48:04.810 CEST
+Begin processing the 573rd record. Run 1, Event 979573, LumiSection 9796 on stream 0 at 24-Apr-2024 14:48:11.299 CEST
+Begin processing the 574th record. Run 1, Event 979574, LumiSection 9796 on stream 1 at 24-Apr-2024 14:48:14.362 CEST
+Begin processing the 575th record. Run 1, Event 979575, LumiSection 9796 on stream 0 at 24-Apr-2024 14:48:20.169 CEST
+Begin processing the 576th record. Run 1, Event 979576, LumiSection 9796 on stream 1 at 24-Apr-2024 14:48:23.120 CEST
+Begin processing the 577th record. Run 1, Event 979577, LumiSection 9796 on stream 0 at 24-Apr-2024 14:48:29.258 CEST
+Begin processing the 578th record. Run 1, Event 979578, LumiSection 9796 on stream 1 at 24-Apr-2024 14:48:32.238 CEST
+Begin processing the 579th record. Run 1, Event 979579, LumiSection 9796 on stream 0 at 24-Apr-2024 14:48:39.284 CEST
+Begin processing the 580th record. Run 1, Event 979580, LumiSection 9796 on stream 1 at 24-Apr-2024 14:48:40.837 CEST
+Begin processing the 581st record. Run 1, Event 979581, LumiSection 9796 on stream 0 at 24-Apr-2024 14:48:47.743 CEST
+Begin processing the 582nd record. Run 1, Event 979582, LumiSection 9796 on stream 1 at 24-Apr-2024 14:48:48.812 CEST
+Begin processing the 583rd record. Run 1, Event 979583, LumiSection 9796 on stream 0 at 24-Apr-2024 14:48:55.499 CEST
+Begin processing the 584th record. Run 1, Event 979585, LumiSection 9796 on stream 1 at 24-Apr-2024 14:48:56.038 CEST
+Begin processing the 585th record. Run 1, Event 979584, LumiSection 9796 on stream 0 at 24-Apr-2024 14:49:03.563 CEST
+Begin processing the 586th record. Run 1, Event 979586, LumiSection 9796 on stream 1 at 24-Apr-2024 14:49:04.396 CEST
+Begin processing the 587th record. Run 1, Event 979587, LumiSection 9796 on stream 0 at 24-Apr-2024 14:49:12.187 CEST
+Begin processing the 588th record. Run 1, Event 979588, LumiSection 9796 on stream 1 at 24-Apr-2024 14:49:12.634 CEST
+Begin processing the 589th record. Run 1, Event 979589, LumiSection 9796 on stream 1 at 24-Apr-2024 14:49:22.949 CEST
+Begin processing the 590th record. Run 1, Event 979590, LumiSection 9796 on stream 0 at 24-Apr-2024 14:49:23.258 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:49:29 CEST  Run: 1 Event: 979589
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:49:29 CEST Run: 1 Event: 979589
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:49:29 CEST Run: 1 Event: 979589
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 591st record. Run 1, Event 979592, LumiSection 9796 on stream 1 at 24-Apr-2024 14:49:32.544 CEST
+Begin processing the 592nd record. Run 1, Event 979591, LumiSection 9796 on stream 0 at 24-Apr-2024 14:49:32.850 CEST
+Begin processing the 593rd record. Run 1, Event 979593, LumiSection 9796 on stream 1 at 24-Apr-2024 14:49:41.386 CEST
+Begin processing the 594th record. Run 1, Event 979594, LumiSection 9796 on stream 0 at 24-Apr-2024 14:49:41.649 CEST
+Begin processing the 595th record. Run 1, Event 979595, LumiSection 9796 on stream 1 at 24-Apr-2024 14:49:50.232 CEST
+Begin processing the 596th record. Run 1, Event 979597, LumiSection 9796 on stream 0 at 24-Apr-2024 14:49:50.486 CEST
+Begin processing the 597th record. Run 1, Event 979596, LumiSection 9796 on stream 1 at 24-Apr-2024 14:49:57.517 CEST
+Begin processing the 598th record. Run 1, Event 979598, LumiSection 9796 on stream 0 at 24-Apr-2024 14:49:58.317 CEST
+Begin processing the 599th record. Run 1, Event 979599, LumiSection 9796 on stream 1 at 24-Apr-2024 14:50:05.725 CEST
+Begin processing the 600th record. Run 1, Event 979600, LumiSection 9796 on stream 0 at 24-Apr-2024 14:50:06.245 CEST
+Begin processing the 601st record. Run 1, Event 979602, LumiSection 9797 on stream 0 at 24-Apr-2024 14:50:14.949 CEST
+Begin processing the 602nd record. Run 1, Event 979601, LumiSection 9797 on stream 1 at 24-Apr-2024 14:50:15.305 CEST
+Begin processing the 603rd record. Run 1, Event 979603, LumiSection 9797 on stream 0 at 24-Apr-2024 14:50:23.556 CEST
+Begin processing the 604th record. Run 1, Event 979604, LumiSection 9797 on stream 1 at 24-Apr-2024 14:50:23.832 CEST
+Begin processing the 605th record. Run 1, Event 979606, LumiSection 9797 on stream 0 at 24-Apr-2024 14:50:33.269 CEST
+Begin processing the 606th record. Run 1, Event 979605, LumiSection 9797 on stream 1 at 24-Apr-2024 14:50:33.590 CEST
+Begin processing the 607th record. Run 1, Event 979607, LumiSection 9797 on stream 0 at 24-Apr-2024 14:50:41.675 CEST
+Begin processing the 608th record. Run 1, Event 979608, LumiSection 9797 on stream 1 at 24-Apr-2024 14:50:42.069 CEST
+Begin processing the 609th record. Run 1, Event 979610, LumiSection 9797 on stream 1 at 24-Apr-2024 14:50:50.249 CEST
+Begin processing the 610th record. Run 1, Event 979609, LumiSection 9797 on stream 0 at 24-Apr-2024 14:50:51.113 CEST
+Begin processing the 611th record. Run 1, Event 979611, LumiSection 9797 on stream 1 at 24-Apr-2024 14:50:59.452 CEST
+Begin processing the 612th record. Run 1, Event 979613, LumiSection 9797 on stream 0 at 24-Apr-2024 14:51:00.230 CEST
+Begin processing the 613th record. Run 1, Event 979612, LumiSection 9797 on stream 1 at 24-Apr-2024 14:51:07.658 CEST
+Begin processing the 614th record. Run 1, Event 979614, LumiSection 9797 on stream 0 at 24-Apr-2024 14:51:08.243 CEST
+Begin processing the 615th record. Run 1, Event 979615, LumiSection 9797 on stream 1 at 24-Apr-2024 14:51:15.242 CEST
+Begin processing the 616th record. Run 1, Event 979616, LumiSection 9797 on stream 0 at 24-Apr-2024 14:51:16.234 CEST
+Begin processing the 617th record. Run 1, Event 979617, LumiSection 9797 on stream 1 at 24-Apr-2024 14:51:24.227 CEST
+Begin processing the 618th record. Run 1, Event 979618, LumiSection 9797 on stream 0 at 24-Apr-2024 14:51:24.655 CEST
+Begin processing the 619th record. Run 1, Event 979620, LumiSection 9797 on stream 1 at 24-Apr-2024 14:51:32.429 CEST
+Begin processing the 620th record. Run 1, Event 979621, LumiSection 9797 on stream 0 at 24-Apr-2024 14:51:32.819 CEST
+Begin processing the 621st record. Run 1, Event 979622, LumiSection 9797 on stream 1 at 24-Apr-2024 14:51:40.166 CEST
+Begin processing the 622nd record. Run 1, Event 979623, LumiSection 9797 on stream 0 at 24-Apr-2024 14:51:40.970 CEST
+Begin processing the 623rd record. Run 1, Event 979624, LumiSection 9797 on stream 1 at 24-Apr-2024 14:51:48.260 CEST
+Begin processing the 624th record. Run 1, Event 979625, LumiSection 9797 on stream 0 at 24-Apr-2024 14:51:50.286 CEST
+Begin processing the 625th record. Run 1, Event 979626, LumiSection 9797 on stream 1 at 24-Apr-2024 14:51:57.363 CEST
+Begin processing the 626th record. Run 1, Event 979619, LumiSection 9797 on stream 0 at 24-Apr-2024 14:51:59.534 CEST
+Begin processing the 627th record. Run 1, Event 979628, LumiSection 9797 on stream 1 at 24-Apr-2024 14:52:06.376 CEST
+Begin processing the 628th record. Run 1, Event 979627, LumiSection 9797 on stream 0 at 24-Apr-2024 14:52:08.446 CEST
+Begin processing the 629th record. Run 1, Event 979630, LumiSection 9797 on stream 1 at 24-Apr-2024 14:52:14.742 CEST
+Begin processing the 630th record. Run 1, Event 979629, LumiSection 9797 on stream 0 at 24-Apr-2024 14:52:16.918 CEST
+Begin processing the 631st record. Run 1, Event 979632, LumiSection 9797 on stream 1 at 24-Apr-2024 14:52:23.444 CEST
+Begin processing the 632nd record. Run 1, Event 979631, LumiSection 9797 on stream 0 at 24-Apr-2024 14:52:26.413 CEST
+Begin processing the 633rd record. Run 1, Event 979633, LumiSection 9797 on stream 1 at 24-Apr-2024 14:52:32.483 CEST
+Begin processing the 634th record. Run 1, Event 979635, LumiSection 9797 on stream 0 at 24-Apr-2024 14:52:34.009 CEST
+Begin processing the 635th record. Run 1, Event 979634, LumiSection 9797 on stream 1 at 24-Apr-2024 14:52:39.971 CEST
+Begin processing the 636th record. Run 1, Event 979636, LumiSection 9797 on stream 0 at 24-Apr-2024 14:52:42.146 CEST
+Begin processing the 637th record. Run 1, Event 979638, LumiSection 9797 on stream 1 at 24-Apr-2024 14:52:48.707 CEST
+Begin processing the 638th record. Run 1, Event 979639, LumiSection 9797 on stream 0 at 24-Apr-2024 14:52:50.659 CEST
+Begin processing the 639th record. Run 1, Event 979637, LumiSection 9797 on stream 1 at 24-Apr-2024 14:52:56.667 CEST
+Begin processing the 640th record. Run 1, Event 979640, LumiSection 9797 on stream 0 at 24-Apr-2024 14:52:58.390 CEST
+Begin processing the 641st record. Run 1, Event 979641, LumiSection 9797 on stream 1 at 24-Apr-2024 14:53:04.906 CEST
+Begin processing the 642nd record. Run 1, Event 979643, LumiSection 9797 on stream 0 at 24-Apr-2024 14:53:06.529 CEST
+Begin processing the 643rd record. Run 1, Event 979642, LumiSection 9797 on stream 1 at 24-Apr-2024 14:53:13.284 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:53:13 CEST Run: 1 Event: 979643
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:53:13 CEST  Run: 1 Event: 979643
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:53:13 CEST Run: 1 Event: 979643
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 644th record. Run 1, Event 979644, LumiSection 9797 on stream 0 at 24-Apr-2024 14:53:14.753 CEST
+Begin processing the 645th record. Run 1, Event 979646, LumiSection 9797 on stream 1 at 24-Apr-2024 14:53:21.971 CEST
+Begin processing the 646th record. Run 1, Event 979647, LumiSection 9797 on stream 0 at 24-Apr-2024 14:53:22.977 CEST
+Begin processing the 647th record. Run 1, Event 979645, LumiSection 9797 on stream 1 at 24-Apr-2024 14:53:30.394 CEST
+Begin processing the 648th record. Run 1, Event 979648, LumiSection 9797 on stream 0 at 24-Apr-2024 14:53:31.626 CEST
+Begin processing the 649th record. Run 1, Event 979649, LumiSection 9797 on stream 1 at 24-Apr-2024 14:53:36.681 CEST
+Begin processing the 650th record. Run 1, Event 979651, LumiSection 9797 on stream 0 at 24-Apr-2024 14:53:38.624 CEST
+Begin processing the 651st record. Run 1, Event 979650, LumiSection 9797 on stream 1 at 24-Apr-2024 14:53:44.402 CEST
+Begin processing the 652nd record. Run 1, Event 979652, LumiSection 9797 on stream 0 at 24-Apr-2024 14:53:45.214 CEST
+Begin processing the 653rd record. Run 1, Event 979653, LumiSection 9797 on stream 1 at 24-Apr-2024 14:53:52.259 CEST
+Begin processing the 654th record. Run 1, Event 979654, LumiSection 9797 on stream 0 at 24-Apr-2024 14:53:53.501 CEST
+Begin processing the 655th record. Run 1, Event 979656, LumiSection 9797 on stream 1 at 24-Apr-2024 14:54:02.166 CEST
+Begin processing the 656th record. Run 1, Event 979655, LumiSection 9797 on stream 0 at 24-Apr-2024 14:54:02.538 CEST
+Begin processing the 657th record. Run 1, Event 979658, LumiSection 9797 on stream 1 at 24-Apr-2024 14:54:10.512 CEST
+Begin processing the 658th record. Run 1, Event 979659, LumiSection 9797 on stream 0 at 24-Apr-2024 14:54:10.904 CEST
+Begin processing the 659th record. Run 1, Event 979657, LumiSection 9797 on stream 1 at 24-Apr-2024 14:54:18.300 CEST
+Begin processing the 660th record. Run 1, Event 979661, LumiSection 9797 on stream 0 at 24-Apr-2024 14:54:19.136 CEST
+Begin processing the 661st record. Run 1, Event 979660, LumiSection 9797 on stream 1 at 24-Apr-2024 14:54:26.025 CEST
+Begin processing the 662nd record. Run 1, Event 979662, LumiSection 9797 on stream 0 at 24-Apr-2024 14:54:27.833 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:54:33 CEST Run: 1 Event: 979660
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:54:33 CEST  Run: 1 Event: 979660
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:54:33 CEST Run: 1 Event: 979660
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 663rd record. Run 1, Event 979663, LumiSection 9797 on stream 1 at 24-Apr-2024 14:54:34.405 CEST
+Begin processing the 664th record. Run 1, Event 979664, LumiSection 9797 on stream 0 at 24-Apr-2024 14:54:36.431 CEST
+Begin processing the 665th record. Run 1, Event 979665, LumiSection 9797 on stream 1 at 24-Apr-2024 14:54:42.334 CEST
+Begin processing the 666th record. Run 1, Event 979666, LumiSection 9797 on stream 0 at 24-Apr-2024 14:54:43.881 CEST
+Begin processing the 667th record. Run 1, Event 979667, LumiSection 9797 on stream 1 at 24-Apr-2024 14:54:50.695 CEST
+Begin processing the 668th record. Run 1, Event 979669, LumiSection 9797 on stream 0 at 24-Apr-2024 14:54:51.776 CEST
+Begin processing the 669th record. Run 1, Event 979668, LumiSection 9797 on stream 1 at 24-Apr-2024 14:54:57.188 CEST
+Begin processing the 670th record. Run 1, Event 979670, LumiSection 9797 on stream 0 at 24-Apr-2024 14:54:58.217 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:55:02 CEST Run: 1 Event: 979668
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:55:02 CEST  Run: 1 Event: 979668
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:55:02 CEST Run: 1 Event: 979668
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 671st record. Run 1, Event 979671, LumiSection 9797 on stream 1 at 24-Apr-2024 14:55:03.774 CEST
+Begin processing the 672nd record. Run 1, Event 979672, LumiSection 9797 on stream 0 at 24-Apr-2024 14:55:05.179 CEST
+Begin processing the 673rd record. Run 1, Event 979673, LumiSection 9797 on stream 1 at 24-Apr-2024 14:55:10.708 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:55:11 CEST  Run: 1 Event: 979672
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:55:11 CEST Run: 1 Event: 979672
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:55:11 CEST Run: 1 Event: 979672
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 674th record. Run 1, Event 979674, LumiSection 9797 on stream 0 at 24-Apr-2024 14:55:13.222 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:55:16 CEST  Run: 1 Event: 979673
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:55:16 CEST Run: 1 Event: 979673
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:55:16 CEST Run: 1 Event: 979673
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 675th record. Run 1, Event 979676, LumiSection 9797 on stream 1 at 24-Apr-2024 14:55:17.694 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:55:20 CEST Run: 1 Event: 979674
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:55:20 CEST  Run: 1 Event: 979674
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:55:20 CEST Run: 1 Event: 979674
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 676th record. Run 1, Event 979675, LumiSection 9797 on stream 0 at 24-Apr-2024 14:55:20.609 CEST
+Begin processing the 677th record. Run 1, Event 979677, LumiSection 9797 on stream 1 at 24-Apr-2024 14:55:24.632 CEST
+Begin processing the 678th record. Run 1, Event 979679, LumiSection 9797 on stream 0 at 24-Apr-2024 14:55:26.896 CEST
+Begin processing the 679th record. Run 1, Event 979680, LumiSection 9797 on stream 1 at 24-Apr-2024 14:55:32.204 CEST
+Begin processing the 680th record. Run 1, Event 979681, LumiSection 9797 on stream 0 at 24-Apr-2024 14:55:33.527 CEST
+Begin processing the 681st record. Run 1, Event 979678, LumiSection 9797 on stream 1 at 24-Apr-2024 14:55:39.731 CEST
+Begin processing the 682nd record. Run 1, Event 979682, LumiSection 9797 on stream 0 at 24-Apr-2024 14:55:39.970 CEST
+Begin processing the 683rd record. Run 1, Event 979683, LumiSection 9797 on stream 1 at 24-Apr-2024 14:55:45.715 CEST
+Begin processing the 684th record. Run 1, Event 979685, LumiSection 9797 on stream 0 at 24-Apr-2024 14:55:46.235 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:55:52 CEST  Run: 1 Event: 979683
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:55:52 CEST Run: 1 Event: 979683
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:55:52 CEST Run: 1 Event: 979683
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 685th record. Run 1, Event 979684, LumiSection 9797 on stream 1 at 24-Apr-2024 14:55:53.469 CEST
+Begin processing the 686th record. Run 1, Event 979686, LumiSection 9797 on stream 0 at 24-Apr-2024 14:55:54.482 CEST
+Begin processing the 687th record. Run 1, Event 979688, LumiSection 9797 on stream 1 at 24-Apr-2024 14:56:01.490 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:56:01 CEST Run: 1 Event: 979686
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:56:01 CEST  Run: 1 Event: 979686
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:56:01 CEST Run: 1 Event: 979686
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 688th record. Run 1, Event 979689, LumiSection 9797 on stream 0 at 24-Apr-2024 14:56:02.566 CEST
+Begin processing the 689th record. Run 1, Event 979690, LumiSection 9797 on stream 1 at 24-Apr-2024 14:56:08.895 CEST
+Begin processing the 690th record. Run 1, Event 979691, LumiSection 9797 on stream 0 at 24-Apr-2024 14:56:09.811 CEST
+Begin processing the 691st record. Run 1, Event 979687, LumiSection 9797 on stream 1 at 24-Apr-2024 14:56:16.417 CEST
+Begin processing the 692nd record. Run 1, Event 979692, LumiSection 9797 on stream 0 at 24-Apr-2024 14:56:17.080 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:56:23 CEST Run: 1 Event: 979692
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+Begin processing the 693rd record. Run 1, Event 979694, LumiSection 9797 on stream 1 at 24-Apr-2024 14:56:25.009 CEST
+Begin processing the 694th record. Run 1, Event 979695, LumiSection 9797 on stream 0 at 24-Apr-2024 14:56:25.367 CEST
+Begin processing the 695th record. Run 1, Event 979693, LumiSection 9797 on stream 0 at 24-Apr-2024 14:56:32.951 CEST
+Begin processing the 696th record. Run 1, Event 979697, LumiSection 9797 on stream 1 at 24-Apr-2024 14:56:33.234 CEST
+Begin processing the 697th record. Run 1, Event 979696, LumiSection 9797 on stream 0 at 24-Apr-2024 14:56:39.192 CEST
+Begin processing the 698th record. Run 1, Event 979698, LumiSection 9797 on stream 1 at 24-Apr-2024 14:56:40.845 CEST
+Begin processing the 699th record. Run 1, Event 979700, LumiSection 9797 on stream 0 at 24-Apr-2024 14:56:45.446 CEST
+Begin processing the 700th record. Run 1, Event 979699, LumiSection 9797 on stream 1 at 24-Apr-2024 14:56:49.416 CEST
+Begin processing the 701st record. Run 1, Event 979701, LumiSection 9798 on stream 0 at 24-Apr-2024 14:56:52.561 CEST
+Begin processing the 702nd record. Run 1, Event 979703, LumiSection 9798 on stream 1 at 24-Apr-2024 14:56:57.507 CEST
+Begin processing the 703rd record. Run 1, Event 979704, LumiSection 9798 on stream 0 at 24-Apr-2024 14:57:00.700 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:57:04 CEST Run: 1 Event: 979703
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:57:04 CEST Run: 1 Event: 979703
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:57:04 CEST  Run: 1 Event: 979703
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 704th record. Run 1, Event 979702, LumiSection 9798 on stream 1 at 24-Apr-2024 14:57:04.875 CEST
+Begin processing the 705th record. Run 1, Event 979705, LumiSection 9798 on stream 0 at 24-Apr-2024 14:57:08.602 CEST
+Begin processing the 706th record. Run 1, Event 979707, LumiSection 9798 on stream 1 at 24-Apr-2024 14:57:11.818 CEST
+Begin processing the 707th record. Run 1, Event 979706, LumiSection 9798 on stream 0 at 24-Apr-2024 14:57:16.340 CEST
+Begin processing the 708th record. Run 1, Event 979708, LumiSection 9798 on stream 1 at 24-Apr-2024 14:57:18.480 CEST
+Begin processing the 709th record. Run 1, Event 979709, LumiSection 9798 on stream 0 at 24-Apr-2024 14:57:23.350 CEST
+Begin processing the 710th record. Run 1, Event 979710, LumiSection 9798 on stream 1 at 24-Apr-2024 14:57:25.958 CEST
+Begin processing the 711th record. Run 1, Event 979712, LumiSection 9798 on stream 0 at 24-Apr-2024 14:57:30.519 CEST
+Begin processing the 712th record. Run 1, Event 979711, LumiSection 9798 on stream 1 at 24-Apr-2024 14:57:34.104 CEST
+Begin processing the 713th record. Run 1, Event 979713, LumiSection 9798 on stream 0 at 24-Apr-2024 14:57:37.943 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:57:40 CEST  Run: 1 Event: 979711
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:57:40 CEST Run: 1 Event: 979711
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:57:40 CEST Run: 1 Event: 979711
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 714th record. Run 1, Event 979714, LumiSection 9798 on stream 1 at 24-Apr-2024 14:57:40.655 CEST
+Begin processing the 715th record. Run 1, Event 979715, LumiSection 9798 on stream 0 at 24-Apr-2024 14:57:44.279 CEST
+Begin processing the 716th record. Run 1, Event 979716, LumiSection 9798 on stream 1 at 24-Apr-2024 14:57:47.646 CEST
+Begin processing the 717th record. Run 1, Event 979717, LumiSection 9798 on stream 0 at 24-Apr-2024 14:57:52.083 CEST
+Begin processing the 718th record. Run 1, Event 979718, LumiSection 9798 on stream 1 at 24-Apr-2024 14:57:54.511 CEST
+Begin processing the 719th record. Run 1, Event 979720, LumiSection 9798 on stream 0 at 24-Apr-2024 14:58:00.613 CEST
+Begin processing the 720th record. Run 1, Event 979721, LumiSection 9798 on stream 1 at 24-Apr-2024 14:58:03.219 CEST
+Begin processing the 721st record. Run 1, Event 979719, LumiSection 9798 on stream 0 at 24-Apr-2024 14:58:09.738 CEST
+Begin processing the 722nd record. Run 1, Event 979722, LumiSection 9798 on stream 1 at 24-Apr-2024 14:58:11.408 CEST
+Begin processing the 723rd record. Run 1, Event 979723, LumiSection 9798 on stream 0 at 24-Apr-2024 14:58:17.314 CEST
+Begin processing the 724th record. Run 1, Event 979724, LumiSection 9798 on stream 1 at 24-Apr-2024 14:58:23.701 CEST
+Begin processing the 725th record. Run 1, Event 979725, LumiSection 9798 on stream 0 at 24-Apr-2024 14:58:27.713 CEST
+Begin processing the 726th record. Run 1, Event 979726, LumiSection 9798 on stream 1 at 24-Apr-2024 14:58:33.284 CEST
+Begin processing the 727th record. Run 1, Event 979727, LumiSection 9798 on stream 0 at 24-Apr-2024 14:58:35.485 CEST
+Begin processing the 728th record. Run 1, Event 979728, LumiSection 9798 on stream 1 at 24-Apr-2024 14:58:41.311 CEST
+Begin processing the 729th record. Run 1, Event 979730, LumiSection 9798 on stream 0 at 24-Apr-2024 14:58:44.532 CEST
+Begin processing the 730th record. Run 1, Event 979729, LumiSection 9798 on stream 1 at 24-Apr-2024 14:58:48.845 CEST
+Begin processing the 731st record. Run 1, Event 979732, LumiSection 9798 on stream 0 at 24-Apr-2024 14:58:52.932 CEST
+Begin processing the 732nd record. Run 1, Event 979731, LumiSection 9798 on stream 1 at 24-Apr-2024 14:58:56.880 CEST
+Begin processing the 733rd record. Run 1, Event 979733, LumiSection 9798 on stream 0 at 24-Apr-2024 14:59:00.650 CEST
+Begin processing the 734th record. Run 1, Event 979735, LumiSection 9798 on stream 1 at 24-Apr-2024 14:59:04.535 CEST
+Begin processing the 735th record. Run 1, Event 979734, LumiSection 9798 on stream 0 at 24-Apr-2024 14:59:06.616 CEST
+Begin processing the 736th record. Run 1, Event 979736, LumiSection 9798 on stream 1 at 24-Apr-2024 14:59:10.385 CEST
+Begin processing the 737th record. Run 1, Event 979737, LumiSection 9798 on stream 0 at 24-Apr-2024 14:59:13.788 CEST
+Begin processing the 738th record. Run 1, Event 979738, LumiSection 9798 on stream 1 at 24-Apr-2024 14:59:16.778 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 14:59:20 CEST Run: 1 Event: 979737
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 14:59:20 CEST  Run: 1 Event: 979737
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 14:59:20 CEST Run: 1 Event: 979737
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 739th record. Run 1, Event 979739, LumiSection 9798 on stream 0 at 24-Apr-2024 14:59:21.056 CEST
+Begin processing the 740th record. Run 1, Event 979740, LumiSection 9798 on stream 1 at 24-Apr-2024 14:59:24.734 CEST
+Begin processing the 741st record. Run 1, Event 979741, LumiSection 9798 on stream 0 at 24-Apr-2024 14:59:28.130 CEST
+Begin processing the 742nd record. Run 1, Event 979743, LumiSection 9798 on stream 1 at 24-Apr-2024 14:59:31.980 CEST
+Begin processing the 743rd record. Run 1, Event 979744, LumiSection 9798 on stream 0 at 24-Apr-2024 14:59:35.773 CEST
+Begin processing the 744th record. Run 1, Event 979745, LumiSection 9798 on stream 1 at 24-Apr-2024 14:59:39.972 CEST
+Begin processing the 745th record. Run 1, Event 979742, LumiSection 9798 on stream 0 at 24-Apr-2024 14:59:43.553 CEST
+Begin processing the 746th record. Run 1, Event 979747, LumiSection 9798 on stream 1 at 24-Apr-2024 14:59:47.441 CEST
+Begin processing the 747th record. Run 1, Event 979748, LumiSection 9798 on stream 0 at 24-Apr-2024 14:59:51.085 CEST
+Begin processing the 748th record. Run 1, Event 979749, LumiSection 9798 on stream 1 at 24-Apr-2024 14:59:54.389 CEST
+Begin processing the 749th record. Run 1, Event 979750, LumiSection 9798 on stream 0 at 24-Apr-2024 14:59:58.699 CEST
+Begin processing the 750th record. Run 1, Event 979751, LumiSection 9798 on stream 1 at 24-Apr-2024 15:00:01.159 CEST
+Begin processing the 751st record. Run 1, Event 979752, LumiSection 9798 on stream 0 at 24-Apr-2024 15:00:06.172 CEST
+Begin processing the 752nd record. Run 1, Event 979753, LumiSection 9798 on stream 1 at 24-Apr-2024 15:00:08.688 CEST
+Begin processing the 753rd record. Run 1, Event 979754, LumiSection 9798 on stream 0 at 24-Apr-2024 15:00:15.258 CEST
+Begin processing the 754th record. Run 1, Event 979755, LumiSection 9798 on stream 1 at 24-Apr-2024 15:00:16.501 CEST
+Begin processing the 755th record. Run 1, Event 979756, LumiSection 9798 on stream 0 at 24-Apr-2024 15:00:22.440 CEST
+Begin processing the 756th record. Run 1, Event 979746, LumiSection 9798 on stream 1 at 24-Apr-2024 15:00:24.204 CEST
+Begin processing the 757th record. Run 1, Event 979758, LumiSection 9798 on stream 0 at 24-Apr-2024 15:00:30.757 CEST
+Begin processing the 758th record. Run 1, Event 979757, LumiSection 9798 on stream 1 at 24-Apr-2024 15:00:33.133 CEST
+Begin processing the 759th record. Run 1, Event 979759, LumiSection 9798 on stream 0 at 24-Apr-2024 15:00:38.744 CEST
+Begin processing the 760th record. Run 1, Event 979760, LumiSection 9798 on stream 1 at 24-Apr-2024 15:00:41.213 CEST
+Begin processing the 761st record. Run 1, Event 979761, LumiSection 9798 on stream 0 at 24-Apr-2024 15:00:46.314 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:00:48 CEST Run: 1 Event: 979760
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:00:48 CEST  Run: 1 Event: 979760
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:00:48 CEST Run: 1 Event: 979760
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 762nd record. Run 1, Event 979763, LumiSection 9798 on stream 1 at 24-Apr-2024 15:00:49.953 CEST
+Begin processing the 763rd record. Run 1, Event 979764, LumiSection 9798 on stream 0 at 24-Apr-2024 15:00:53.385 CEST
+Begin processing the 764th record. Run 1, Event 979762, LumiSection 9798 on stream 1 at 24-Apr-2024 15:00:56.073 CEST
+Begin processing the 765th record. Run 1, Event 979765, LumiSection 9798 on stream 0 at 24-Apr-2024 15:01:00.835 CEST
+Begin processing the 766th record. Run 1, Event 979767, LumiSection 9798 on stream 1 at 24-Apr-2024 15:01:03.765 CEST
+Begin processing the 767th record. Run 1, Event 979766, LumiSection 9798 on stream 0 at 24-Apr-2024 15:01:07.394 CEST
+Begin processing the 768th record. Run 1, Event 979768, LumiSection 9798 on stream 1 at 24-Apr-2024 15:01:11.597 CEST
+Begin processing the 769th record. Run 1, Event 979769, LumiSection 9798 on stream 0 at 24-Apr-2024 15:01:16.578 CEST
+Begin processing the 770th record. Run 1, Event 979770, LumiSection 9798 on stream 1 at 24-Apr-2024 15:01:19.096 CEST
+Begin processing the 771st record. Run 1, Event 979772, LumiSection 9798 on stream 0 at 24-Apr-2024 15:01:24.833 CEST
+Begin processing the 772nd record. Run 1, Event 979771, LumiSection 9798 on stream 1 at 24-Apr-2024 15:01:27.212 CEST
+Begin processing the 773rd record. Run 1, Event 979773, LumiSection 9798 on stream 0 at 24-Apr-2024 15:01:32.580 CEST
+Begin processing the 774th record. Run 1, Event 979774, LumiSection 9798 on stream 1 at 24-Apr-2024 15:01:35.198 CEST
+Begin processing the 775th record. Run 1, Event 979775, LumiSection 9798 on stream 0 at 24-Apr-2024 15:01:38.719 CEST
+Begin processing the 776th record. Run 1, Event 979776, LumiSection 9798 on stream 1 at 24-Apr-2024 15:01:42.346 CEST
+Begin processing the 777th record. Run 1, Event 979777, LumiSection 9798 on stream 0 at 24-Apr-2024 15:01:44.601 CEST
+Begin processing the 778th record. Run 1, Event 979778, LumiSection 9798 on stream 1 at 24-Apr-2024 15:01:49.173 CEST
+Begin processing the 779th record. Run 1, Event 979779, LumiSection 9798 on stream 0 at 24-Apr-2024 15:01:52.058 CEST
+Begin processing the 780th record. Run 1, Event 979780, LumiSection 9798 on stream 1 at 24-Apr-2024 15:01:57.317 CEST
+Begin processing the 781st record. Run 1, Event 979782, LumiSection 9798 on stream 0 at 24-Apr-2024 15:02:00.879 CEST
+Begin processing the 782nd record. Run 1, Event 979781, LumiSection 9798 on stream 1 at 24-Apr-2024 15:02:05.001 CEST
+Begin processing the 783rd record. Run 1, Event 979784, LumiSection 9798 on stream 0 at 24-Apr-2024 15:02:08.976 CEST
+Begin processing the 784th record. Run 1, Event 979783, LumiSection 9798 on stream 1 at 24-Apr-2024 15:02:12.890 CEST
+Begin processing the 785th record. Run 1, Event 979785, LumiSection 9798 on stream 0 at 24-Apr-2024 15:02:15.871 CEST
+Begin processing the 786th record. Run 1, Event 979786, LumiSection 9798 on stream 1 at 24-Apr-2024 15:02:18.998 CEST
+Begin processing the 787th record. Run 1, Event 979788, LumiSection 9798 on stream 0 at 24-Apr-2024 15:02:23.211 CEST
+Begin processing the 788th record. Run 1, Event 979787, LumiSection 9798 on stream 1 at 24-Apr-2024 15:02:26.417 CEST
+Begin processing the 789th record. Run 1, Event 979789, LumiSection 9798 on stream 0 at 24-Apr-2024 15:02:30.723 CEST
+Begin processing the 790th record. Run 1, Event 979790, LumiSection 9798 on stream 1 at 24-Apr-2024 15:02:34.499 CEST
+Begin processing the 791st record. Run 1, Event 979791, LumiSection 9798 on stream 0 at 24-Apr-2024 15:02:38.550 CEST
+Begin processing the 792nd record. Run 1, Event 979792, LumiSection 9798 on stream 1 at 24-Apr-2024 15:02:42.090 CEST
+Begin processing the 793rd record. Run 1, Event 979793, LumiSection 9798 on stream 0 at 24-Apr-2024 15:02:46.091 CEST
+Begin processing the 794th record. Run 1, Event 979794, LumiSection 9798 on stream 1 at 24-Apr-2024 15:02:49.922 CEST
+Begin processing the 795th record. Run 1, Event 979796, LumiSection 9798 on stream 0 at 24-Apr-2024 15:02:55.122 CEST
+Begin processing the 796th record. Run 1, Event 979795, LumiSection 9798 on stream 1 at 24-Apr-2024 15:02:57.178 CEST
+Begin processing the 797th record. Run 1, Event 979798, LumiSection 9798 on stream 0 at 24-Apr-2024 15:03:03.039 CEST
+Begin processing the 798th record. Run 1, Event 979797, LumiSection 9798 on stream 1 at 24-Apr-2024 15:03:04.538 CEST
+Begin processing the 799th record. Run 1, Event 979799, LumiSection 9798 on stream 0 at 24-Apr-2024 15:03:10.942 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:03:11 CEST Run: 1 Event: 979797
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+Begin processing the 800th record. Run 1, Event 979800, LumiSection 9798 on stream 1 at 24-Apr-2024 15:03:12.295 CEST
+Begin processing the 801st record. Run 1, Event 979801, LumiSection 9799 on stream 0 at 24-Apr-2024 15:03:19.015 CEST
+Begin processing the 802nd record. Run 1, Event 979803, LumiSection 9799 on stream 1 at 24-Apr-2024 15:03:19.544 CEST
+Begin processing the 803rd record. Run 1, Event 979802, LumiSection 9799 on stream 0 at 24-Apr-2024 15:03:26.571 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:03:26 CEST Run: 1 Event: 979803
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:03:26 CEST  Run: 1 Event: 979803
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:03:26 CEST Run: 1 Event: 979803
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 804th record. Run 1, Event 979804, LumiSection 9799 on stream 1 at 24-Apr-2024 15:03:27.630 CEST
+Begin processing the 805th record. Run 1, Event 979805, LumiSection 9799 on stream 0 at 24-Apr-2024 15:03:33.960 CEST
+Begin processing the 806th record. Run 1, Event 979806, LumiSection 9799 on stream 1 at 24-Apr-2024 15:03:35.754 CEST
+Begin processing the 807th record. Run 1, Event 979807, LumiSection 9799 on stream 0 at 24-Apr-2024 15:03:42.463 CEST
+Begin processing the 808th record. Run 1, Event 979808, LumiSection 9799 on stream 1 at 24-Apr-2024 15:03:43.214 CEST
+Begin processing the 809th record. Run 1, Event 979809, LumiSection 9799 on stream 1 at 24-Apr-2024 15:03:49.684 CEST
+Begin processing the 810th record. Run 1, Event 979811, LumiSection 9799 on stream 0 at 24-Apr-2024 15:03:50.351 CEST
+Begin processing the 811th record. Run 1, Event 979812, LumiSection 9799 on stream 1 at 24-Apr-2024 15:03:58.764 CEST
+Begin processing the 812th record. Run 1, Event 979810, LumiSection 9799 on stream 0 at 24-Apr-2024 15:03:59.884 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:04:05 CEST Run: 1 Event: 979812
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:04:05 CEST  Run: 1 Event: 979812
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:04:05 CEST Run: 1 Event: 979812
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 813th record. Run 1, Event 979813, LumiSection 9799 on stream 1 at 24-Apr-2024 15:04:06.579 CEST
+Begin processing the 814th record. Run 1, Event 979815, LumiSection 9799 on stream 0 at 24-Apr-2024 15:04:07.951 CEST
+Begin processing the 815th record. Run 1, Event 979814, LumiSection 9799 on stream 0 at 24-Apr-2024 15:04:13.855 CEST
+Begin processing the 816th record. Run 1, Event 979816, LumiSection 9799 on stream 1 at 24-Apr-2024 15:04:14.170 CEST
+Begin processing the 817th record. Run 1, Event 979817, LumiSection 9799 on stream 0 at 24-Apr-2024 15:04:21.525 CEST
+Begin processing the 818th record. Run 1, Event 979818, LumiSection 9799 on stream 1 at 24-Apr-2024 15:04:21.910 CEST
+Begin processing the 819th record. Run 1, Event 979820, LumiSection 9799 on stream 1 at 24-Apr-2024 15:04:29.325 CEST
+Begin processing the 820th record. Run 1, Event 979819, LumiSection 9799 on stream 0 at 24-Apr-2024 15:04:29.569 CEST
+Begin processing the 821st record. Run 1, Event 979822, LumiSection 9799 on stream 1 at 24-Apr-2024 15:04:36.643 CEST
+Begin processing the 822nd record. Run 1, Event 979823, LumiSection 9799 on stream 0 at 24-Apr-2024 15:04:37.758 CEST
+Begin processing the 823rd record. Run 1, Event 979824, LumiSection 9799 on stream 1 at 24-Apr-2024 15:04:44.021 CEST
+Begin processing the 824th record. Run 1, Event 979825, LumiSection 9799 on stream 0 at 24-Apr-2024 15:04:45.261 CEST
+Begin processing the 825th record. Run 1, Event 979826, LumiSection 9799 on stream 1 at 24-Apr-2024 15:04:51.922 CEST
+Begin processing the 826th record. Run 1, Event 979827, LumiSection 9799 on stream 0 at 24-Apr-2024 15:04:53.421 CEST
+Begin processing the 827th record. Run 1, Event 979828, LumiSection 9799 on stream 1 at 24-Apr-2024 15:04:58.852 CEST
+Begin processing the 828th record. Run 1, Event 979821, LumiSection 9799 on stream 0 at 24-Apr-2024 15:05:00.196 CEST
+Begin processing the 829th record. Run 1, Event 979829, LumiSection 9799 on stream 1 at 24-Apr-2024 15:05:06.221 CEST
+Begin processing the 830th record. Run 1, Event 979830, LumiSection 9799 on stream 0 at 24-Apr-2024 15:05:08.192 CEST
+Begin processing the 831st record. Run 1, Event 979831, LumiSection 9799 on stream 1 at 24-Apr-2024 15:05:14.108 CEST
+Begin processing the 832nd record. Run 1, Event 979832, LumiSection 9799 on stream 0 at 24-Apr-2024 15:05:16.659 CEST
+Begin processing the 833rd record. Run 1, Event 979833, LumiSection 9799 on stream 1 at 24-Apr-2024 15:05:23.573 CEST
+Begin processing the 834th record. Run 1, Event 979834, LumiSection 9799 on stream 0 at 24-Apr-2024 15:05:24.585 CEST
+Begin processing the 835th record. Run 1, Event 979835, LumiSection 9799 on stream 1 at 24-Apr-2024 15:05:31.568 CEST
+Begin processing the 836th record. Run 1, Event 979836, LumiSection 9799 on stream 0 at 24-Apr-2024 15:05:32.424 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:05:37 CEST  Run: 1 Event: 979835
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:05:37 CEST Run: 1 Event: 979835
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:05:37 CEST Run: 1 Event: 979835
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 837th record. Run 1, Event 979837, LumiSection 9799 on stream 1 at 24-Apr-2024 15:05:38.758 CEST
+Begin processing the 838th record. Run 1, Event 979838, LumiSection 9799 on stream 0 at 24-Apr-2024 15:05:40.118 CEST
+Begin processing the 839th record. Run 1, Event 979839, LumiSection 9799 on stream 1 at 24-Apr-2024 15:05:46.225 CEST
+Begin processing the 840th record. Run 1, Event 979840, LumiSection 9799 on stream 0 at 24-Apr-2024 15:05:47.479 CEST
+Begin processing the 841st record. Run 1, Event 979841, LumiSection 9799 on stream 1 at 24-Apr-2024 15:05:54.696 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:05:55 CEST Run: 1 Event: 979840
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:05:55 CEST  Run: 1 Event: 979840
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:05:55 CEST Run: 1 Event: 979840
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 842nd record. Run 1, Event 979843, LumiSection 9799 on stream 0 at 24-Apr-2024 15:05:56.672 CEST
+Begin processing the 843rd record. Run 1, Event 979842, LumiSection 9799 on stream 1 at 24-Apr-2024 15:06:03.438 CEST
+Begin processing the 844th record. Run 1, Event 979845, LumiSection 9799 on stream 0 at 24-Apr-2024 15:06:05.097 CEST
+Begin processing the 845th record. Run 1, Event 979844, LumiSection 9799 on stream 1 at 24-Apr-2024 15:06:11.568 CEST
+Begin processing the 846th record. Run 1, Event 979847, LumiSection 9799 on stream 0 at 24-Apr-2024 15:06:13.542 CEST
+Begin processing the 847th record. Run 1, Event 979846, LumiSection 9799 on stream 1 at 24-Apr-2024 15:06:19.090 CEST
+Begin processing the 848th record. Run 1, Event 979848, LumiSection 9799 on stream 0 at 24-Apr-2024 15:06:21.283 CEST
+Begin processing the 849th record. Run 1, Event 979850, LumiSection 9799 on stream 1 at 24-Apr-2024 15:06:27.059 CEST
+Begin processing the 850th record. Run 1, Event 979851, LumiSection 9799 on stream 0 at 24-Apr-2024 15:06:28.645 CEST
+Begin processing the 851st record. Run 1, Event 979852, LumiSection 9799 on stream 1 at 24-Apr-2024 15:06:34.968 CEST
+Begin processing the 852nd record. Run 1, Event 979853, LumiSection 9799 on stream 0 at 24-Apr-2024 15:06:37.138 CEST
+Begin processing the 853rd record. Run 1, Event 979849, LumiSection 9799 on stream 1 at 24-Apr-2024 15:06:42.860 CEST
+Begin processing the 854th record. Run 1, Event 979854, LumiSection 9799 on stream 0 at 24-Apr-2024 15:06:45.224 CEST
+Begin processing the 855th record. Run 1, Event 979855, LumiSection 9799 on stream 1 at 24-Apr-2024 15:06:49.226 CEST
+Begin processing the 856th record. Run 1, Event 979857, LumiSection 9799 on stream 0 at 24-Apr-2024 15:06:51.736 CEST
+Begin processing the 857th record. Run 1, Event 979856, LumiSection 9799 on stream 1 at 24-Apr-2024 15:06:57.260 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:06:58 CEST  Run: 1 Event: 979857
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:06:58 CEST Run: 1 Event: 979857
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:06:58 CEST Run: 1 Event: 979857
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 858th record. Run 1, Event 979858, LumiSection 9799 on stream 0 at 24-Apr-2024 15:06:59.338 CEST
+Begin processing the 859th record. Run 1, Event 979860, LumiSection 9799 on stream 1 at 24-Apr-2024 15:07:04.272 CEST
+Begin processing the 860th record. Run 1, Event 979861, LumiSection 9799 on stream 0 at 24-Apr-2024 15:07:07.188 CEST
+Begin processing the 861st record. Run 1, Event 979859, LumiSection 9799 on stream 1 at 24-Apr-2024 15:07:12.701 CEST
+Begin processing the 862nd record. Run 1, Event 979862, LumiSection 9799 on stream 0 at 24-Apr-2024 15:07:14.197 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:07:20 CEST  Run: 1 Event: 979859
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:07:20 CEST Run: 1 Event: 979859
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:07:20 CEST Run: 1 Event: 979859
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 863rd record. Run 1, Event 979863, LumiSection 9799 on stream 0 at 24-Apr-2024 15:07:22.094 CEST
+Begin processing the 864th record. Run 1, Event 979864, LumiSection 9799 on stream 1 at 24-Apr-2024 15:07:22.981 CEST
+Begin processing the 865th record. Run 1, Event 979866, LumiSection 9799 on stream 0 at 24-Apr-2024 15:07:30.837 CEST
+Begin processing the 866th record. Run 1, Event 979865, LumiSection 9799 on stream 1 at 24-Apr-2024 15:07:31.149 CEST
+Begin processing the 867th record. Run 1, Event 979867, LumiSection 9799 on stream 1 at 24-Apr-2024 15:07:39.497 CEST
+Begin processing the 868th record. Run 1, Event 979869, LumiSection 9799 on stream 0 at 24-Apr-2024 15:07:39.667 CEST
+Begin processing the 869th record. Run 1, Event 979868, LumiSection 9799 on stream 1 at 24-Apr-2024 15:07:47.211 CEST
+Begin processing the 870th record. Run 1, Event 979870, LumiSection 9799 on stream 0 at 24-Apr-2024 15:07:47.452 CEST
+Begin processing the 871st record. Run 1, Event 979872, LumiSection 9799 on stream 1 at 24-Apr-2024 15:07:54.714 CEST
+Begin processing the 872nd record. Run 1, Event 979873, LumiSection 9799 on stream 0 at 24-Apr-2024 15:07:54.964 CEST
+Begin processing the 873rd record. Run 1, Event 979874, LumiSection 9799 on stream 1 at 24-Apr-2024 15:08:02.103 CEST
+Begin processing the 874th record. Run 1, Event 979875, LumiSection 9799 on stream 0 at 24-Apr-2024 15:08:02.761 CEST
+Begin processing the 875th record. Run 1, Event 979871, LumiSection 9799 on stream 1 at 24-Apr-2024 15:08:10.114 CEST
+Begin processing the 876th record. Run 1, Event 979876, LumiSection 9799 on stream 0 at 24-Apr-2024 15:08:12.267 CEST
+Begin processing the 877th record. Run 1, Event 979878, LumiSection 9799 on stream 1 at 24-Apr-2024 15:08:18.873 CEST
+Begin processing the 878th record. Run 1, Event 979877, LumiSection 9799 on stream 0 at 24-Apr-2024 15:08:20.475 CEST
+Begin processing the 879th record. Run 1, Event 979879, LumiSection 9799 on stream 1 at 24-Apr-2024 15:08:26.325 CEST
+Begin processing the 880th record. Run 1, Event 979881, LumiSection 9799 on stream 0 at 24-Apr-2024 15:08:28.537 CEST
+Begin processing the 881st record. Run 1, Event 979880, LumiSection 9799 on stream 1 at 24-Apr-2024 15:08:34.247 CEST
+Begin processing the 882nd record. Run 1, Event 979882, LumiSection 9799 on stream 0 at 24-Apr-2024 15:08:37.824 CEST
+Begin processing the 883rd record. Run 1, Event 979884, LumiSection 9799 on stream 1 at 24-Apr-2024 15:08:42.333 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:08:44 CEST Run: 1 Event: 979882
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+Begin processing the 884th record. Run 1, Event 979885, LumiSection 9799 on stream 0 at 24-Apr-2024 15:08:47.095 CEST
+Begin processing the 885th record. Run 1, Event 979886, LumiSection 9799 on stream 1 at 24-Apr-2024 15:08:49.763 CEST
+Begin processing the 886th record. Run 1, Event 979887, LumiSection 9799 on stream 0 at 24-Apr-2024 15:08:55.556 CEST
+Begin processing the 887th record. Run 1, Event 979888, LumiSection 9799 on stream 1 at 24-Apr-2024 15:08:56.298 CEST
+Begin processing the 888th record. Run 1, Event 979889, LumiSection 9799 on stream 0 at 24-Apr-2024 15:09:03.486 CEST
+Begin processing the 889th record. Run 1, Event 979890, LumiSection 9799 on stream 1 at 24-Apr-2024 15:09:03.871 CEST
+Begin processing the 890th record. Run 1, Event 979883, LumiSection 9799 on stream 0 at 24-Apr-2024 15:09:12.095 CEST
+Begin processing the 891st record. Run 1, Event 979891, LumiSection 9799 on stream 1 at 24-Apr-2024 15:09:12.766 CEST
+Begin processing the 892nd record. Run 1, Event 979893, LumiSection 9799 on stream 0 at 24-Apr-2024 15:09:19.881 CEST
+Begin processing the 893rd record. Run 1, Event 979892, LumiSection 9799 on stream 1 at 24-Apr-2024 15:09:20.592 CEST
+Begin processing the 894th record. Run 1, Event 979895, LumiSection 9799 on stream 1 at 24-Apr-2024 15:09:27.872 CEST
+Begin processing the 895th record. Run 1, Event 979894, LumiSection 9799 on stream 0 at 24-Apr-2024 15:09:29.096 CEST
+Begin processing the 896th record. Run 1, Event 979896, LumiSection 9799 on stream 1 at 24-Apr-2024 15:09:37.154 CEST
+Begin processing the 897th record. Run 1, Event 979897, LumiSection 9799 on stream 0 at 24-Apr-2024 15:09:37.757 CEST
+Begin processing the 898th record. Run 1, Event 979899, LumiSection 9799 on stream 1 at 24-Apr-2024 15:09:44.420 CEST
+Begin processing the 899th record. Run 1, Event 979898, LumiSection 9799 on stream 0 at 24-Apr-2024 15:09:45.473 CEST
+Begin processing the 900th record. Run 1, Event 979900, LumiSection 9799 on stream 1 at 24-Apr-2024 15:09:52.095 CEST
+Begin processing the 901st record. Run 1, Event 979901, LumiSection 9800 on stream 0 at 24-Apr-2024 15:09:55.216 CEST
+Begin processing the 902nd record. Run 1, Event 979903, LumiSection 9800 on stream 1 at 24-Apr-2024 15:10:00.417 CEST
+Begin processing the 903rd record. Run 1, Event 979904, LumiSection 9800 on stream 0 at 24-Apr-2024 15:10:03.038 CEST
+Begin processing the 904th record. Run 1, Event 979902, LumiSection 9800 on stream 1 at 24-Apr-2024 15:10:08.338 CEST
+Begin processing the 905th record. Run 1, Event 979905, LumiSection 9800 on stream 0 at 24-Apr-2024 15:10:10.434 CEST
+Begin processing the 906th record. Run 1, Event 979906, LumiSection 9800 on stream 1 at 24-Apr-2024 15:10:15.376 CEST
+Begin processing the 907th record. Run 1, Event 979907, LumiSection 9800 on stream 0 at 24-Apr-2024 15:10:18.749 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:10:22 CEST  Run: 1 Event: 979906
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:10:22 CEST Run: 1 Event: 979906
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:10:22 CEST Run: 1 Event: 979906
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 908th record. Run 1, Event 979909, LumiSection 9800 on stream 1 at 24-Apr-2024 15:10:23.471 CEST
+Begin processing the 909th record. Run 1, Event 979908, LumiSection 9800 on stream 0 at 24-Apr-2024 15:10:27.344 CEST
+Begin processing the 910th record. Run 1, Event 979911, LumiSection 9800 on stream 1 at 24-Apr-2024 15:10:31.143 CEST
+Begin processing the 911th record. Run 1, Event 979910, LumiSection 9800 on stream 0 at 24-Apr-2024 15:10:35.688 CEST
+Begin processing the 912th record. Run 1, Event 979913, LumiSection 9800 on stream 1 at 24-Apr-2024 15:10:37.488 CEST
+Begin processing the 913th record. Run 1, Event 979912, LumiSection 9800 on stream 0 at 24-Apr-2024 15:10:42.676 CEST
+Begin processing the 914th record. Run 1, Event 979915, LumiSection 9800 on stream 1 at 24-Apr-2024 15:10:44.698 CEST
+Begin processing the 915th record. Run 1, Event 979914, LumiSection 9800 on stream 0 at 24-Apr-2024 15:10:50.699 CEST
+Begin processing the 916th record. Run 1, Event 979916, LumiSection 9800 on stream 1 at 24-Apr-2024 15:10:53.525 CEST
+Begin processing the 917th record. Run 1, Event 979917, LumiSection 9800 on stream 0 at 24-Apr-2024 15:10:58.699 CEST
+Begin processing the 918th record. Run 1, Event 979918, LumiSection 9800 on stream 1 at 24-Apr-2024 15:11:01.712 CEST
+Begin processing the 919th record. Run 1, Event 979920, LumiSection 9800 on stream 0 at 24-Apr-2024 15:11:06.659 CEST
+Begin processing the 920th record. Run 1, Event 979919, LumiSection 9800 on stream 1 at 24-Apr-2024 15:11:09.293 CEST
+Begin processing the 921st record. Run 1, Event 979921, LumiSection 9800 on stream 0 at 24-Apr-2024 15:11:14.212 CEST
+Begin processing the 922nd record. Run 1, Event 979922, LumiSection 9800 on stream 1 at 24-Apr-2024 15:11:16.490 CEST
+Begin processing the 923rd record. Run 1, Event 979923, LumiSection 9800 on stream 0 at 24-Apr-2024 15:11:20.674 CEST
+Begin processing the 924th record. Run 1, Event 979925, LumiSection 9800 on stream 1 at 24-Apr-2024 15:11:23.429 CEST
+Begin processing the 925th record. Run 1, Event 979924, LumiSection 9800 on stream 0 at 24-Apr-2024 15:11:30.009 CEST
+Begin processing the 926th record. Run 1, Event 979926, LumiSection 9800 on stream 1 at 24-Apr-2024 15:11:30.829 CEST
+Begin processing the 927th record. Run 1, Event 979928, LumiSection 9800 on stream 0 at 24-Apr-2024 15:11:37.972 CEST
+Begin processing the 928th record. Run 1, Event 979929, LumiSection 9800 on stream 1 at 24-Apr-2024 15:11:38.959 CEST
+Begin processing the 929th record. Run 1, Event 979930, LumiSection 9800 on stream 0 at 24-Apr-2024 15:11:45.369 CEST
+Begin processing the 930th record. Run 1, Event 979931, LumiSection 9800 on stream 1 at 24-Apr-2024 15:11:47.201 CEST
+Begin processing the 931st record. Run 1, Event 979932, LumiSection 9800 on stream 0 at 24-Apr-2024 15:11:52.330 CEST
+Begin processing the 932nd record. Run 1, Event 979933, LumiSection 9800 on stream 1 at 24-Apr-2024 15:11:54.638 CEST
+Begin processing the 933rd record. Run 1, Event 979934, LumiSection 9800 on stream 0 at 24-Apr-2024 15:12:03.820 CEST
+Begin processing the 934th record. Run 1, Event 979935, LumiSection 9800 on stream 1 at 24-Apr-2024 15:12:04.057 CEST
+Begin processing the 935th record. Run 1, Event 979936, LumiSection 9800 on stream 0 at 24-Apr-2024 15:12:13.800 CEST
+Begin processing the 936th record. Run 1, Event 979937, LumiSection 9800 on stream 1 at 24-Apr-2024 15:12:15.032 CEST
+Begin processing the 937th record. Run 1, Event 979938, LumiSection 9800 on stream 0 at 24-Apr-2024 15:12:22.161 CEST
+Begin processing the 938th record. Run 1, Event 979939, LumiSection 9800 on stream 1 at 24-Apr-2024 15:12:24.242 CEST
+Begin processing the 939th record. Run 1, Event 979927, LumiSection 9800 on stream 0 at 24-Apr-2024 15:12:30.270 CEST
+Begin processing the 940th record. Run 1, Event 979940, LumiSection 9800 on stream 1 at 24-Apr-2024 15:12:32.990 CEST
+Begin processing the 941st record. Run 1, Event 979941, LumiSection 9800 on stream 0 at 24-Apr-2024 15:12:38.125 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:12:40 CEST Run: 1 Event: 979940
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:12:40 CEST  Run: 1 Event: 979940
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:12:40 CEST Run: 1 Event: 979940
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 942nd record. Run 1, Event 979942, LumiSection 9800 on stream 1 at 24-Apr-2024 15:12:40.642 CEST
+Begin processing the 943rd record. Run 1, Event 979944, LumiSection 9800 on stream 0 at 24-Apr-2024 15:12:46.160 CEST
+Begin processing the 944th record. Run 1, Event 979945, LumiSection 9800 on stream 1 at 24-Apr-2024 15:12:48.575 CEST
+Begin processing the 945th record. Run 1, Event 979946, LumiSection 9800 on stream 0 at 24-Apr-2024 15:12:54.089 CEST
+Begin processing the 946th record. Run 1, Event 979947, LumiSection 9800 on stream 1 at 24-Apr-2024 15:12:56.970 CEST
+Begin processing the 947th record. Run 1, Event 979948, LumiSection 9800 on stream 0 at 24-Apr-2024 15:13:02.806 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:13:03 CEST Run: 1 Event: 979947
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+Begin processing the 948th record. Run 1, Event 979949, LumiSection 9800 on stream 1 at 24-Apr-2024 15:13:04.627 CEST
+Begin processing the 949th record. Run 1, Event 979950, LumiSection 9800 on stream 0 at 24-Apr-2024 15:13:11.490 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:13:11 CEST Run: 1 Event: 979949
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:13:11 CEST  Run: 1 Event: 979949
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:13:11 CEST Run: 1 Event: 979949
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 950th record. Run 1, Event 979951, LumiSection 9800 on stream 1 at 24-Apr-2024 15:13:12.523 CEST
+Begin processing the 951st record. Run 1, Event 979952, LumiSection 9800 on stream 0 at 24-Apr-2024 15:13:19.283 CEST
+Begin processing the 952nd record. Run 1, Event 979953, LumiSection 9800 on stream 1 at 24-Apr-2024 15:13:20.074 CEST
+Begin processing the 953rd record. Run 1, Event 979954, LumiSection 9800 on stream 0 at 24-Apr-2024 15:13:27.606 CEST
+Begin processing the 954th record. Run 1, Event 979943, LumiSection 9800 on stream 1 at 24-Apr-2024 15:13:28.996 CEST
+Begin processing the 955th record. Run 1, Event 979956, LumiSection 9800 on stream 0 at 24-Apr-2024 15:13:34.773 CEST
+Begin processing the 956th record. Run 1, Event 979955, LumiSection 9800 on stream 1 at 24-Apr-2024 15:13:37.291 CEST
+Begin processing the 957th record. Run 1, Event 979957, LumiSection 9800 on stream 0 at 24-Apr-2024 15:13:42.266 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:13:44 CEST Run: 1 Event: 979955
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:13:44 CEST  Run: 1 Event: 979955
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:13:44 CEST Run: 1 Event: 979955
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 958th record. Run 1, Event 979958, LumiSection 9800 on stream 1 at 24-Apr-2024 15:13:45.479 CEST
+Begin processing the 959th record. Run 1, Event 979959, LumiSection 9800 on stream 0 at 24-Apr-2024 15:13:50.654 CEST
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:13:52 CEST  Run: 1 Event: 979958
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:13:52 CEST Run: 1 Event: 979958
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:13:52 CEST Run: 1 Event: 979958
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 960th record. Run 1, Event 979960, LumiSection 9800 on stream 1 at 24-Apr-2024 15:13:53.686 CEST
+Begin processing the 961st record. Run 1, Event 979962, LumiSection 9800 on stream 0 at 24-Apr-2024 15:13:58.388 CEST
+Begin processing the 962nd record. Run 1, Event 979961, LumiSection 9800 on stream 1 at 24-Apr-2024 15:14:01.774 CEST
+Begin processing the 963rd record. Run 1, Event 979963, LumiSection 9800 on stream 0 at 24-Apr-2024 15:14:06.577 CEST
+Begin processing the 964th record. Run 1, Event 979964, LumiSection 9800 on stream 1 at 24-Apr-2024 15:14:09.708 CEST
+Begin processing the 965th record. Run 1, Event 979965, LumiSection 9800 on stream 0 at 24-Apr-2024 15:14:14.298 CEST
+Begin processing the 966th record. Run 1, Event 979966, LumiSection 9800 on stream 1 at 24-Apr-2024 15:14:18.812 CEST
+Begin processing the 967th record. Run 1, Event 979967, LumiSection 9800 on stream 0 at 24-Apr-2024 15:14:21.619 CEST
+Begin processing the 968th record. Run 1, Event 979969, LumiSection 9800 on stream 1 at 24-Apr-2024 15:14:28.783 CEST
+Begin processing the 969th record. Run 1, Event 979968, LumiSection 9800 on stream 0 at 24-Apr-2024 15:14:31.556 CEST
+Begin processing the 970th record. Run 1, Event 979971, LumiSection 9800 on stream 1 at 24-Apr-2024 15:14:36.663 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:14:38 CEST Run: 1 Event: 979968
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+Begin processing the 971st record. Run 1, Event 979970, LumiSection 9800 on stream 0 at 24-Apr-2024 15:14:40.178 CEST
+Begin processing the 972nd record. Run 1, Event 979973, LumiSection 9800 on stream 1 at 24-Apr-2024 15:14:44.375 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:14:47 CEST Run: 1 Event: 979970
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:14:47 CEST  Run: 1 Event: 979970
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:14:47 CEST Run: 1 Event: 979970
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 973rd record. Run 1, Event 979974, LumiSection 9800 on stream 0 at 24-Apr-2024 15:14:47.994 CEST
+Begin processing the 974th record. Run 1, Event 979972, LumiSection 9800 on stream 1 at 24-Apr-2024 15:14:51.758 CEST
+Begin processing the 975th record. Run 1, Event 979975, LumiSection 9800 on stream 0 at 24-Apr-2024 15:14:55.126 CEST
+Begin processing the 976th record. Run 1, Event 979976, LumiSection 9800 on stream 1 at 24-Apr-2024 15:14:58.926 CEST
+Begin processing the 977th record. Run 1, Event 979977, LumiSection 9800 on stream 0 at 24-Apr-2024 15:15:02.945 CEST
+Begin processing the 978th record. Run 1, Event 979979, LumiSection 9800 on stream 1 at 24-Apr-2024 15:15:07.306 CEST
+Begin processing the 979th record. Run 1, Event 979978, LumiSection 9800 on stream 0 at 24-Apr-2024 15:15:10.856 CEST
+Begin processing the 980th record. Run 1, Event 979981, LumiSection 9800 on stream 1 at 24-Apr-2024 15:15:15.086 CEST
+Begin processing the 981st record. Run 1, Event 979980, LumiSection 9800 on stream 0 at 24-Apr-2024 15:15:19.527 CEST
+Begin processing the 982nd record. Run 1, Event 979983, LumiSection 9800 on stream 1 at 24-Apr-2024 15:15:23.643 CEST
+Begin processing the 983rd record. Run 1, Event 979982, LumiSection 9800 on stream 0 at 24-Apr-2024 15:15:27.920 CEST
+Begin processing the 984th record. Run 1, Event 979984, LumiSection 9800 on stream 1 at 24-Apr-2024 15:15:31.321 CEST
+Begin processing the 985th record. Run 1, Event 979985, LumiSection 9800 on stream 0 at 24-Apr-2024 15:15:35.992 CEST
+Begin processing the 986th record. Run 1, Event 979987, LumiSection 9800 on stream 1 at 24-Apr-2024 15:15:38.546 CEST
+%MSG-e TkHTMissProducer:  L1TkHTMissProducer:l1tTrackerHTMiss  24-Apr-2024 15:15:42 CEST Run: 1 Event: 979985
+
+Warning: TkJetCollection not found in the event. Exit
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsEmulation 24-Apr-2024 15:15:42 CEST  Run: 1 Event: 979985
+L1TrkPtrs Not Assigned!
+
+%MSG
+%MSG-w L1TrackJetEmulationProducer:   L1TrackJetEmulationProducer:l1tTrackJetsExtendedEmulation  24-Apr-2024 15:15:42 CEST Run: 1 Event: 979985
+L1TrkPtrs Not Assigned!
+
+%MSG
+Begin processing the 987th record. Run 1, Event 979986, LumiSection 9800 on stream 0 at 24-Apr-2024 15:15:43.573 CEST
+Begin processing the 988th record. Run 1, Event 979988, LumiSection 9800 on stream 1 at 24-Apr-2024 15:15:46.711 CEST
+Begin processing the 989th record. Run 1, Event 979990, LumiSection 9800 on stream 0 at 24-Apr-2024 15:15:51.438 CEST
+Begin processing the 990th record. Run 1, Event 979989, LumiSection 9800 on stream 1 at 24-Apr-2024 15:15:55.601 CEST
+Begin processing the 991st record. Run 1, Event 979991, LumiSection 9800 on stream 0 at 24-Apr-2024 15:16:00.850 CEST
+Begin processing the 992nd record. Run 1, Event 979992, LumiSection 9800 on stream 1 at 24-Apr-2024 15:16:04.269 CEST
+Begin processing the 993rd record. Run 1, Event 979993, LumiSection 9800 on stream 0 at 24-Apr-2024 15:16:09.417 CEST
+Begin processing the 994th record. Run 1, Event 979995, LumiSection 9800 on stream 1 at 24-Apr-2024 15:16:12.828 CEST
+Begin processing the 995th record. Run 1, Event 979994, LumiSection 9800 on stream 0 at 24-Apr-2024 15:16:17.485 CEST
+Begin processing the 996th record. Run 1, Event 979996, LumiSection 9800 on stream 1 at 24-Apr-2024 15:16:21.199 CEST
+Begin processing the 997th record. Run 1, Event 979997, LumiSection 9800 on stream 0 at 24-Apr-2024 15:16:26.031 CEST
+Begin processing the 998th record. Run 1, Event 979998, LumiSection 9800 on stream 1 at 24-Apr-2024 15:16:29.223 CEST
+Begin processing the 999th record. Run 1, Event 979999, LumiSection 9800 on stream 0 at 24-Apr-2024 15:16:33.723 CEST
+Begin processing the 1000th record. Run 1, Event 980000, LumiSection 9800 on stream 1 at 24-Apr-2024 15:16:37.616 CEST
+24-Apr-2024 15:16:45 CEST  Closed file file:/eos/cms/store/group/upgrade/GEMCSC_Trigger_PhaseII/mu_pt100_phase2fall22/el9/mu_pt100_phase2fall22/step1_GENSIM/240422_031636/0000/step1_980.root

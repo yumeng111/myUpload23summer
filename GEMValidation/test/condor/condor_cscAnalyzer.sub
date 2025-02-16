@@ -1,0 +1,18 @@
+executable              = condor_cscAnalyzer9.sh
+arguments               = $(inputFile) $(ProcId)
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+#transfer_output_files = /eos/user/y/yumeng/CMSSW_14_2_0_pre1/GEMCode/condor/out_pr_pu200/$(ProcId).root
+#transfer_output_files   = log.txt, dt_local_shifts.csv
+output    = logs/job_$(ClusterId)_$(ProcId).out
+error     = logs/job_$(ClusterId)_$(ProcId).err
+log       = logs/job_$(ClusterId).log
+#requirements            = (OpSysAndVer =?= "CentOS9")
+#requirements            = (OpSysAndVer =?= "CentOS7")
+universe                = vanilla
++MaxRuntime             = 288000
+notification =  Error
+notify_user = yumengguo@tamu.edu
+#x509userproxy = /tmp/x509up_u$(id -u)
+x509userproxy = /afs/cern.ch/user/y/yumeng/x509/x509up_u136938
+queue inputFile from pr_xrdFilelist9.txt

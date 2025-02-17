@@ -41,11 +41,15 @@ args = parser.parse_args()
 #sim_file_path = "./result/072723_22_8000_5496_4773" + args.sim_filename
 #trig_file_path = "./result/072723_22_8000_5496_4773" + args.trig_filename
 
-sim_file_path = "./result/21_e2hs8000_010624" + args.sim_filename
-trig_file_path = "./result/21_e2hs8000_010624" + args.trig_filename
+#sim_file_path = "./result/21_e2hs8000_010624" + args.sim_filename
+#trig_file_path = "./result/21_e2hs8000_010624" + args.trig_filename
 
 #sim_file_path = "./result/21_e4puls8000_111123" + args.sim_filename
 #trig_file_path = "./result/21_e4puls8000_111123" + args.trig_filename
+
+sim_file_path = "./result/taoZero/" + args.sim_filename
+trig_file_path = "./result/taoZero/" + args.trig_filename
+
 
 Simulation = pandas.read_csv(sim_file_path)
 Trigger = pandas.read_csv(trig_file_path)
@@ -148,7 +152,8 @@ plotting_values = {
 	"CC_code" : {"binning" : 64, "label" : "CC Code", "variable_name" : "CC_Code", "nice_variable_name" : "CC Code", "x_range":[0,4096]},
 	"Bend" : {"binning" : 2, "label" : "Bend", "variable_name" : "Bend", "nice_variable_name" : "Bend", "x_range":[0,2]},
 	"Slope" : {"binning" : 16, "label" : "Slope", "variable_name" : "Slope", "nice_variable_name" : "Slope", "x_range":[0,16]},
-	"KeyHalfStrip" : {"binning" : 56, "label" : "Key Halfstrip", "variable_name" : "KeyHalfstrip", "nice_variable_name" : "Key Halfstrip", "x_range" : [0,160]},
+	#"KeyHalfStrip" : {"binning" : 56, "label" : "Key Halfstrip", "variable_name" : "KeyHalfstrip", "nice_variable_name" : "Key Halfstrip", "x_range" : [0,160]},
+	"KeyHalfStrip" : {"binning" : 56, "label" : "Key Halfstrip", "variable_name" : "KeyHalfstrip", "nice_variable_name" : "Key Halfstrip", "x_range" : [0,224]},
 	"KeyQuartStrip" : {"binning" : 56, "label" : "Key Quarter Strip", "variable_name" : "KeyQuartStrip", "nice_variable_name" : "Key Quartstrip", "x_range" : [0,320]},
 	"KeyEighthStrip" : {"binning" : 56, "label" : "Key Eighth Strip", "variable_name" : "KeyEighthStrip", "nice_variable_name" : "Key Eighth Strip", "x_range": [0,640]},
 }
@@ -220,7 +225,8 @@ def make_ratio_plots(sim_clct0, sim_clct1, trig_clct0, trig_clct1, binning, even
 
 	#Plot 1 Aesthetics
 	ax1.set_ylabel("Events")
-	ax1.set_ylim([0,y_range])
+	#ax1.set_ylim([0,y_range])
+	ax1.set_ylim([1,y_range])
 	ax1.legend(loc = "upper left")
 
 	#Plot 2 Aesthetics

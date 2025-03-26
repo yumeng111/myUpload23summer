@@ -223,6 +223,7 @@ bool Chamber::GetDimLV2(int hint, LV_2_DimBroker *dim_lv )
    int *info, this_st;
    float *data;
    //   float V33, V50, V60, C33, C50, C60, V18, V55, V56, C18, C55, C56;
+   float cc=1.03;  // correction for LVDB5
 
    info = &(states[0]);
    data = &(values[0]);
@@ -248,10 +249,10 @@ bool Chamber::GetDimLV2(int hint, LV_2_DimBroker *dim_lv )
       }
       else if(type_==3 && i<5)
       {
-         dim_lv->dcfeb.v30[i] = data[19+3*i]*1.03;  // correction for LVDB5
-         dim_lv->dcfeb.v40[i] = data[20+3*i]*1.03;  // correction for LVDB5
-         dim_lv->dcfeb.v55[i] = data[21+3*i]*1.03;  // correction for LVDB5
-         dim_lv->dcfeb.c30[i] = data[ 0+3*i]*2;     // correction for LVDB5
+         dim_lv->dcfeb.v30[i] = (data[19+3*i]<0)?data[19+3*i]:data[19+3*i]*cc;  // correction for LVDB5
+         dim_lv->dcfeb.v40[i] = (data[20+3*i]<0)?data[20+3*i]:data[20+3*i]*cc;  // correction for LVDB5
+         dim_lv->dcfeb.v55[i] = (data[21+3*i]<0)?data[21+3*i]:data[21+3*i]*cc;  // correction for LVDB5
+         dim_lv->dcfeb.c30[i] = (data[ 0+3*i]<0)?data[ 0+3*i]:data[ 0+3*i]*2;   // correction for LVDB5
          dim_lv->dcfeb.c40[i] = data[ 1+3*i];
          dim_lv->dcfeb.c55[i] = data[ 2+3*i];
       }
@@ -267,12 +268,12 @@ bool Chamber::GetDimLV2(int hint, LV_2_DimBroker *dim_lv )
       }
    }
       int alct_v0=46, alct_c0=21;
-      float cc=1.0;
+      cc=1.0;
       if(type_==3)  { alct_v0=34; alct_c0=15; cc=1.03;}
-      dim_lv->alct.v18 = data[alct_v0+1]*cc; // correction for LVDB5
-      dim_lv->alct.v33 = data[alct_v0+0]*cc;
-      dim_lv->alct.v55 = data[alct_v0+2]*cc;
-      dim_lv->alct.v56 = data[alct_v0+3]*cc;
+      dim_lv->alct.v18 = (data[alct_v0+1]<0)?data[alct_v0+1]:data[alct_v0+1]*cc; // correction for LVDB5
+      dim_lv->alct.v33 = (data[alct_v0+0]<0)?data[alct_v0+0]:data[alct_v0+0]*cc; // correction for LVDB5
+      dim_lv->alct.v55 = (data[alct_v0+2]<0)?data[alct_v0+2]:data[alct_v0+2]*cc; // correction for LVDB5
+      dim_lv->alct.v56 = (data[alct_v0+3]<0)?data[alct_v0+3]:data[alct_v0+3]*cc; // correction for LVDB5
       dim_lv->alct.c18 = data[alct_c0+1];
       dim_lv->alct.c33 = data[alct_c0+0];
       dim_lv->alct.c55 = data[alct_c0+2];
@@ -322,8 +323,8 @@ bool Chamber::GetDimLV2(int hint, LV_2_DimBroker *dim_lv )
       if(data[80+30*i+15]>0) dim_lv->seu.other1[i] = int(data[80+30*i+29]) & 0xFF;        // #15 in DCFEB block
    }
 
-   dim_lv->A7v = data[alct_v0+4]*cc;  // correction for LVDB5
-   dim_lv->D7v = data[alct_v0+5]*cc;  // correction for LVDB5
+   dim_lv->A7v = (data[alct_v0+4]<0)?data[alct_v0+4]:data[alct_v0+4]*cc;  // correction for LVDB5
+   dim_lv->D7v = (data[alct_v0+5]<0)?data[alct_v0+5]:data[alct_v0+5]*cc;  // correction for LVDB5
 //   dim_lv->CCB_bits = info[3];   // disabled on Nov 4, 2016
    dim_lv->FPGA_bits = 0;
    if(data[78]>0 || data[299]>0) dim_lv->FPGA_bits = int(data[78]) + (int(data[299])<<16);

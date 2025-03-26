@@ -535,6 +535,7 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
     if (fillInt("clct_use_corrected_bx"     ,value)) { tmb_->Set_clct_use_corrected_bx     (value); }
     if (fillInt("seq_trigger_nodeadtime"    ,value)) { tmb_->Set_seq_trigger_nodeadtime    (value); }
     if (fillInt("chamber_num_parity"        ,value)) { tmb_->Set_chamber_num_parity        (value); }
+    if (fillInt("pretrig_clct_match_zone"   ,value)) { tmb_->Set_pretrig_clct_match_zone   (value); }
     //0x1AA = ADR_RUN3_FORMAT_CTRL: control run3 format
     if (fillInt("run3_trig_dataformat_enable"                ,value)) { tmb_->Setrun3_trig_dataformat_enable                 (value);}
     if (fillInt("run3_daq_dataformat_enable"                 ,value)) { tmb_->Setrun3_daq_dataformat_enable                  (value);}
@@ -561,6 +562,13 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
     if (fillInt("hmt_allow_match_ro"        ,value)) { tmb_->SetHmtAllowMatchRo            (value);}
     if (fillInt("hmt_outtime_check"         ,value)) { tmb_->SetHmtOuttimeCheck            (value);}
     
+    //0X1B8 = ADR_ALGO2022_CTRL:  Controls parameters of 2022 winter upgrade trigger algorithm  (Tao, 2022)
+    if (fillInt("clctaff_enable"            ,value)) { tmb_->Set_clctaff_enable        (value); }
+    if (fillInt("clctaff_alct_match"        ,value)) { tmb_->Set_clctaff_alct_match    (value); }
+    if (fillInt("pretrig_clct_match_enable" ,value)) { tmb_->Set_pretrig_clct_match_enable        (value); }
+    if (fillInt("trig_match_bxonly_enable"  ,value)) { tmb_->Set_trig_match_bxonly_enable        (value); }
+    if (fillInt("local_shower_zone"         ,value)) { tmb_->Set_local_shower_zone        (value); }
+    if (fillInt("local_shower_thresh"       ,value)) { tmb_->Set_local_shower_thresh      (value); }
     
     //if (fillInt("tmb_allow_hmt"             ,value)) { tmb_->SetTmbAllowHmt              (value);}
     //if (fillInt("tmb_allow_hmt_ro"          ,value)) { tmb_->SetTmbAllowHmtRo           (value);}
@@ -781,6 +789,17 @@ void XMLParser::TMBParser(xercesc::DOMNode * pNode, Crate * theCrate, Chamber * 
        long long int hot_vfat_mask = 0;
        if (fillLongLongIntX ("gemA_vfat_hcm"  , hot_vfat_mask)) { tmb_->SetGemVfatHotChannelMask       (hot_vfat_mask, true );} //GEMA
        if (fillLongLongIntX ("gemB_vfat_hcm"  , hot_vfat_mask)) { tmb_->SetGemVfatHotChannelMask       (hot_vfat_mask, false);} //GEMB
+       //---------------------------------------------------------------------
+       // 0X380, 0x382, 0x384, 0x386 for GEM alignment
+       //---------------------------------------------------------------------
+        if (fillInt ("gem_xshift_eta0"  , value))         { tmb_->SetGemAlignmentXShift(value, 0);}
+        if (fillInt ("gem_xshift_eta1"  , value))         { tmb_->SetGemAlignmentXShift(value, 1);}
+        if (fillInt ("gem_xshift_eta2"  , value))         { tmb_->SetGemAlignmentXShift(value, 2);}
+        if (fillInt ("gem_xshift_eta3"  , value))         { tmb_->SetGemAlignmentXShift(value, 3);}
+        if (fillInt ("gem_xshift_eta4"  , value))         { tmb_->SetGemAlignmentXShift(value, 4);}
+        if (fillInt ("gem_xshift_eta5"  , value))         { tmb_->SetGemAlignmentXShift(value, 5);}
+        if (fillInt ("gem_xshift_eta6"  , value))         { tmb_->SetGemAlignmentXShift(value, 6);}
+        if (fillInt ("gem_xshift_eta7"  , value))         { tmb_->SetGemAlignmentXShift(value, 7);}
     }
     //
     xercesc::DOMNode * daughterNode = pNode->getFirstChild();

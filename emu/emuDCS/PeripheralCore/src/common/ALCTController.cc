@@ -5199,12 +5199,14 @@ unsigned ALCTController::spartan6_readreg(int reg)
      return rtv2;
 }
 
-     void ALCTController::fastcontrol_read(int op, int cnt, char *rcv)
+     void ALCTController::alctcontrol_read(int f_or_s, int op, int cnt, char *rcv)
      {  
+        // f_or_s: 1=fast_control, 0=slow_control
+        if(f_or_s<0 || f_or_s>1) return;
         char rcvbuf[1024];
         unsigned short comd;
-        int jchain=6;
-        int isize=5;
+        int jchain=f_or_s?6:4;
+        int isize=f_or_s?5:6;
 
         comd=op;
         tmb_->new_scan(0, (char *)&comd, isize, NULL, 0, jchain);
@@ -5213,12 +5215,14 @@ unsigned ALCTController::spartan6_readreg(int reg)
            tmb_->new_scan(1, rcvbuf, cnt, rcv, READ_YES, jchain);
      }
 
-     void ALCTController::fastcontrol_write(int op, int cnt, char *data)
+     void ALCTController::alctcontrol_write(int f_or_s, int op, int cnt, char *data)
      {  
+        // f_or_s: 1=fast_control, 0=slow_control
+        if(f_or_s<0 || f_or_s>1) return;
         char rcvbuf[1024];
         unsigned short comd;
-        int jchain=6;
-        int isize=5;
+        int jchain=f_or_s?6:4;
+        int isize=f_or_s?5:6;
 
         comd=op;
         tmb_->new_scan(0, (char *)&comd, isize, NULL, 0, jchain);

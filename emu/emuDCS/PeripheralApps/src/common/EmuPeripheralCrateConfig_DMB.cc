@@ -2358,14 +2358,7 @@ void EmuPeripheralCrateConfig::CFEBReadFirmware(xgi::Input * in, xgi::Output * o
      if(thisDMB->CFEBversion()<=1)   
         OutputStringDMBStatus[dmb] << getLocalDateTime() << " CFEB #" << (cfebs[icfeb].number()+1) << " firmware read back finished. Saved to " << mcsfile << std::endl;
   }
-  if(thisDMB->CFEBversion()<=1)   
-  {
-     this->DMBUtils(in,out);
-  }
-  else
-  { 
      this->CFEBUtils(in,out);                    
-  }
 }
   
 void EmuPeripheralCrateConfig::DCFEBProgramFpgaAll(xgi::Input * in, xgi::Output * out )
@@ -3357,6 +3350,14 @@ if(D_hversion<=1)
 }
 else if(D_hversion>=2)
 {
+     std::string odmb_fwf;
+     if(D_hversion==2) odmb_fwf=FirmwareDir_+"odmb/me11_odmb";
+     else if(D_hversion==3) odmb_fwf=FirmwareDir_+"odmb/mex1_odmb5";
+     else if(D_hversion==4) odmb_fwf=FirmwareDir_+"odmb/me11_odmb7";
+     std::string odmb_bitfile=odmb_fwf+".bit";
+     if(D_hversion==3 || D_hversion==4) odmb_fwf = odmb_fwf + "_0";  // ODMB5&ODMB7 has two EPROMs so two mcs files: *_0.mcs, *_1.mcs
+     odmb_fwf = odmb_fwf + ".mcs";
+    
      *out << cgicc::legend("ODMB Firmware").set("style","color:blue") ;
      //
      std::string DMBReadFirmware = toolbox::toString("/%s/DMBReadFirmware",getApplicationDescriptor()->getURN().c_str());
@@ -3364,6 +3365,7 @@ else if(D_hversion>=2)
      *out << cgicc::input().set("type","submit").set("value","Read back ODMB Firmware") << std::endl ;
      sprintf(buf,"%d",dmb);
      *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::input().set("type","hidden").set("value",odmb_fwf.c_str()).set("name","firmware");
      *out << cgicc::form() << std::endl ;
      //
      *out << cgicc::br();
@@ -3373,7 +3375,8 @@ else if(D_hversion>=2)
      *out << cgicc::input().set("type","submit").set("value","ODMB Program EPROM") << std::endl ;
      sprintf(buf,"%d",dmb);
      *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
-     *out << FirmwareDir_+"odmb/me11_odmb.mcs";
+     *out << cgicc::input().set("type","hidden").set("value",odmb_fwf.c_str()).set("name","firmware");
+     *out << odmb_fwf;
      *out << cgicc::form() << std::endl ;
      *out << cgicc::br();
      //
@@ -3382,7 +3385,8 @@ else if(D_hversion>=2)
      *out << cgicc::input().set("type","submit").set("value","ODMB Program EPROM by Polling BPI") << std::endl ;
      sprintf(buf,"%d",dmb);
      *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
-     *out << FirmwareDir_+"odmb/me11_odmb.mcs";
+     *out << cgicc::input().set("type","hidden").set("value",odmb_fwf.c_str()).set("name","firmware");
+     *out << odmb_fwf;
      *out << cgicc::form() << std::endl ;
      //
      *out << cgicc::br() <<cgicc::hr() << std::endl;
@@ -3392,7 +3396,18 @@ else if(D_hversion>=2)
      *out << cgicc::input().set("type","submit").set("value","ODMB Program FPGA") << std::endl ;
      sprintf(buf,"%d",dmb);
      *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
-     *out << FirmwareDir_+"odmb/me11_odmb.mcs";
+     *out << cgicc::input().set("type","hidden").set("value",odmb_fwf.c_str()).set("name","firmware");
+     *out << odmb_fwf;
+     *out << cgicc::form() << std::endl ;
+     *out << cgicc::br();
+     //
+     std::string DMBLoadFPGABit = toolbox::toString("/%s/DMBLoadFPGA",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",DMBLoadFPGA) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","ODMB Program FPGA Use BIT file") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::input().set("type","hidden").set("value",odmb_bitfile.c_str()).set("name","firmware");
+     *out << odmb_bitfile;
      *out << cgicc::form() << std::endl ;
      //
      *out << cgicc::br() <<cgicc::hr() << std::endl;
@@ -3483,6 +3498,7 @@ void EmuPeripheralCrateConfig::DMBLoadFirmware(xgi::Input * in, xgi::Output * ou
   //
   cgicc::Cgicc cgi(in);
   //
+  std::string mcsfile=cgi["firmware"]->getValue();
   cgicc::form_iterator name = cgi.getElement("dmb");
   //
   int dmb=0;
@@ -3522,8 +3538,6 @@ void EmuPeripheralCrateConfig::DMBLoadFirmware(xgi::Input * in, xgi::Output * ou
     }
     else if(hversion==2)
     {
-       std::string mcsfile= FirmwareDir_+ "odmb/me11_odmb.mcs";
-                
        std::cout << getLocalDateTime() << " ODMB program EPROM in slot " << thisDMB->slot() << std::endl;
        std::cout << "Use mcs file: " << mcsfile << std::endl;
 
@@ -3544,6 +3558,7 @@ void EmuPeripheralCrateConfig::ODMBLoadFirmwarePoll(xgi::Input * in, xgi::Output
   //
   cgicc::Cgicc cgi(in);
   //
+  std::string mcsfile=cgi["firmware"]->getValue();
   cgicc::form_iterator name = cgi.getElement("dmb");
   //
   int dmb=0;
@@ -3561,8 +3576,6 @@ void EmuPeripheralCrateConfig::ODMBLoadFirmwarePoll(xgi::Input * in, xgi::Output
     int hversion=thisDMB->DMBversion();
     if(hversion==2)
     {
-       std::string mcsfile= FirmwareDir_+ "odmb/me11_odmb.mcs";
-                
        std::cout << getLocalDateTime() << " ODMB program EPROM by Polling BPI status in slot " << thisDMB->slot() << std::endl;
        std::cout << "Use mcs file: " << mcsfile << std::endl;
 
@@ -3583,6 +3596,7 @@ void EmuPeripheralCrateConfig::DMBLoadFPGA(xgi::Input * in, xgi::Output * out )
   //
   cgicc::Cgicc cgi(in);
   //
+  std::string mcsfile=cgi["firmware"]->getValue();
   cgicc::form_iterator name = cgi.getElement("dmb");
   //
   int dmb=0;
@@ -3594,25 +3608,21 @@ void EmuPeripheralCrateConfig::DMBLoadFPGA(xgi::Input * in, xgi::Output * out )
   //
   DAQMB * thisDMB = dmbVector[dmb];
   //
-  if (thisDMB) 
+  if (thisDMB && !mcsfile.empty()) 
   {
-   
     int hversion=thisDMB->DMBversion();
     if(hversion<=1)
     {
        thisCCB->hardReset();
     }
-    else if(hversion==2)
+    else if(hversion>=2)
     {
-       std::string mcsfile= FirmwareDir_+ "odmb/me11_odmb.mcs";
-                
        std::cout << getLocalDateTime() << " ODMB program FPGA in slot " << thisDMB->slot() << std::endl;
-       std::cout << "Use mcs file: " << mcsfile << std::endl;
+       std::cout << "Use firmware file: " << mcsfile << std::endl;
 
        thisDMB->odmb_program_fpga(mcsfile.c_str());
      
        std::cout << getLocalDateTime() << " ODMB program FPGA finished." << std::endl;
-
     }
   }
   //
@@ -3833,10 +3843,7 @@ void EmuPeripheralCrateConfig::CFEBVerifyFirmware(xgi::Input * in, xgi::Output *
           OutputStringDMBStatus[dmb] << getLocalDateTime()  << " ERROR: CFEB #" << (cfebs[icfeb].number()+1) << " firmware verify failed with code: " << rt << std::endl;
      }     
   }
-  if(thisDMB->CFEBversion()<=1)   
-     this->DMBUtils(in,out);
-  else
-     this->CFEBUtils(in,out);                    
+  this->CFEBUtils(in,out);                    
 }
 //
 void EmuPeripheralCrateConfig::CCBHardResetFromDMBPage(xgi::Input * in, xgi::Output * out ) 
@@ -3891,7 +3898,7 @@ void EmuPeripheralCrateConfig::CFEBLoadFirmware(xgi::Input * in, xgi::Output * o
     }
     if(goodcfeb) thisDMB->SVFLoad(CFEB_PROM,CFEBFirmware_.toString().c_str(),0,1);  // debug=NO, verify=YES
   }
-  this->DMBUtils(in,out);
+  this->CFEBUtils(in,out);
   //
 }
 //
@@ -4342,6 +4349,8 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
     *out  << std::endl;
      int idcode=thisDMB->mbfpgaid();
      sprintf(buf,"ODMB fpga ID Code     : %08X ",idcode);
+   if(hversion==2)
+   {
      if ( (idcode&0xFFFFFFF)==(0x8424A093&0xFFFFFFF) ) 
      {
         *out << cgicc::span().set("style","color:green");
@@ -4353,7 +4362,23 @@ void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out )
         *out << buf;
         *out << "--->> BAD <<--- should be 8424A093";
         *out << cgicc::span();
-    }
+     }
+   }
+   else if(hversion==3 || hversion==4)
+   {
+     if ( (idcode&0xFFFFFFF)==(0x13823093&0xFFFFFFF) ) 
+     {
+        *out << cgicc::span().set("style","color:green");
+        *out << buf << " ...OK...";
+        *out << cgicc::span();
+     } else 
+     {
+        *out << cgicc::span().set("style","color:red");
+        *out << buf;
+        *out << "--->> BAD <<--- should be 13823093";
+        *out << cgicc::span();
+     }
+   }
      *out << cgicc::br();
      sprintf(buf,"ODMB fpga User Code   : %08X ", (int)thisDMB->mbfpgauser());
      *out << buf << std::endl;
@@ -5598,11 +5623,11 @@ void EmuPeripheralCrateConfig::ReadDMBVirtex2Reg(xgi::Input * in, xgi::Output * 
      OutputStringDMBStatus[dmb].str("");
           
      OutputStringDMBStatus[dmb] << "Read DMB Control FPGA Virtex2 registers (in Hex):" << std::endl;
-     OutputStringDMBStatus[dmb] << "IDCODE =" << std::hex << thisDMB->virtex2_readreg(0xe) << std::endl;
-     OutputStringDMBStatus[dmb] << "STATUS =" << std::hex << thisDMB->virtex2_readreg(7) << std::endl;
-     OutputStringDMBStatus[dmb] << "COR =" << std::hex << thisDMB->virtex2_readreg(9) << std::endl;
-     OutputStringDMBStatus[dmb] << "CTL =" << std::hex << thisDMB->virtex2_readreg(5) << std::endl;
-     OutputStringDMBStatus[dmb] << "MASK =" << std::hex << thisDMB->virtex2_readreg(6) << std::endl;
+     OutputStringDMBStatus[dmb] << "IDCODE =" << std::hex << thisDMB->dmb_fpga_readreg(0xe) << std::endl;
+     OutputStringDMBStatus[dmb] << "STATUS =" << std::hex << thisDMB->dmb_fpga_readreg(7) << std::endl;
+     OutputStringDMBStatus[dmb] << "COR =" << std::hex << thisDMB->dmb_fpga_readreg(9) << std::endl;
+     OutputStringDMBStatus[dmb] << "CTL =" << std::hex << thisDMB->dmb_fpga_readreg(5) << std::endl;
+     OutputStringDMBStatus[dmb] << "MASK =" << std::hex << thisDMB->dmb_fpga_readreg(6) << std::endl;
 
      std::cout <<  OutputStringDMBStatus[dmb].str() << std::endl;      
 

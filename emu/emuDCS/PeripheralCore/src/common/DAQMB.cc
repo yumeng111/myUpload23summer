@@ -2563,7 +2563,7 @@ unsigned int  DAQMB::mbfpgauser()
       comd[0]=VTX2_BYPASS;
       daqmb_do(6,comd,0,NULL,NULL,NOW, CTRL_FPGA);
   }
-  else if(DMBversion()==2)
+  else if(DMBversion()>=2)
   {
      odmb_fpga_call(VTX6_USERCODE, 0, (char *)&ibrd);
      if ((ibrd & 0xFFFF) == 0xDBDB) ibrd >>= 16;   // use the high 16-bits if the low 16-bits are 0xDBDB.
@@ -2583,7 +2583,7 @@ unsigned int  DAQMB::mbfpgaid()
       comd[0]=VTX2_BYPASS;
       daqmb_do(6,comd,0,NULL,NULL,NOW, CTRL_FPGA);
   }
-  else if(DMBversion()==2)
+  else if(DMBversion()>=2)
   {
      odmb_fpga_call(VTX6_IDCODE, 0, (char *)&ibrd);
   } 
@@ -8532,23 +8532,27 @@ void DAQMB::dcfeb_program_virtex6(CFEB & cfeb, const char *mcsfile, int broadcas
     free(bufin);
 }
 
-unsigned DAQMB::virtex2_readreg(int reg)
+unsigned DAQMB::dmb_fpga_readreg(int reg)
 {
+   int devi=0;  // discrete logic
+   if(DMBversion()<=1) devi=CTRL_FPGA;
+   int inst_size=6;
+   if(DMBversion()==2) inst_size=10;
    unsigned short comd;
    unsigned data[7]={0x66AA9955, 4, 0, 4, 4, 4};
    unsigned *rt, rtv;
-   comd=VTX2_CFG_IN;
+   comd=VTX6_CFG_IN;
    unsigned ins=((reg&0x1F)<<13)+(1<<27)+(1<<29)+1;
    data[2]=shuffle32(ins);
-   daqmb_do(6, &comd, 6*32, data, rcvbuf, LATER, CTRL_FPGA);
-   comd=VTX2_CFG_OUT;
+   daqmb_do(inst_size, &comd, 6*32, data, rcvbuf, LATER, devi);
+   comd=VTX6_CFG_OUT;
    data[0]=0;
-   daqmb_do(6, &comd, 32, data, rcvbuf, NOW|READ_YES, CTRL_FPGA);     
+   daqmb_do(inst_size, &comd, 32, data, rcvbuf, NOW|READ_YES, devi);     
    rt = (unsigned *)rcvbuf;
    rtv=shuffle32(*rt);
    // printf("return: %08X\n", rtv);
-   comd=VTX2_BYPASS;
-   daqmb_do(6, &comd, 0, data, rcvbuf, NOW, CTRL_FPGA);
+   comd=VTX6_BYPASS;
+   daqmb_do(inst_size, &comd, 0, data, rcvbuf, NOW, devi);
    udelay(100);
    return rtv;
 }
@@ -8757,10 +8761,12 @@ void DAQMB::dlog_do(int ncmd, void *cmd,int nbuf, void *inbuf,char *outbuf,int i
 void DAQMB::odmb_fpga_call(int inst, unsigned data, char *outbuf)
 {
   char temp[4];
-  dlog_do(10, &inst, 32, &data, outbuf, NOW|READ_YES);
+  int inst_size=10;
+  if(DMBversion()==3 || DMBversion()==4) inst_size=6;
+  dlog_do(inst_size, &inst, 32, &data, outbuf, NOW|READ_YES);
   udelay(100);
   int comd=VTX6_BYPASS;
-  dlog_do(10, &comd, 0, &data, temp, NOW);
+  dlog_do(inst_size, &comd, 0, &data, temp, NOW);
   udelay(20);
 }
 
@@ -8968,7 +8974,7 @@ std::vector<float> DAQMB::odmb_fpga_adc()
   float readf;
 
   readout.clear();
-  if(DMBversion()==2)
+  if(DMBversion()>=2)
   {
      for(int i=0; i<9; i++)
      {
@@ -9701,44 +9707,153 @@ void DAQMB::odmb_program_eprom(const char *mcsfile)
 
 void DAQMB::odmb_program_fpga(const char *mcsfile)
 {
-   const int FIRMWARE_SIZE=5464972; // in bytes
-   char *bufin, c;
-   bufin=(char *)malloc(16*1024*1024);
+   int inst_size=10;
+   if(DMBversion()==3 || DMBversion()==4) inst_size=6;
+   int FIRMWARE_SIZE=5464972; // in bytes
+   char *bufin, c, n;
+   bufin=(char *)malloc(32*1024*1024);
    if(bufin==NULL)  return;
    FILE *fin=fopen(mcsfile,"r");
    if(fin==NULL ) 
    { 
       free(bufin);  
-      std::cout << "ERROR: Unable to open MCS file :" << mcsfile << std::endl;
+      std::cout << "ERROR: Unable to open firmware file :" << mcsfile << std::endl;
       return; 
    }
-   int mcssize=read_mcs(bufin, fin);
-   fclose(fin);
-   std::cout << "Read MCS size: " << mcssize << " bytes" << std::endl;
-   if(mcssize<FIRMWARE_SIZE)
-   {
-       std::cout << "ERROR: Wrong MCS file. Quit..." << std::endl;
-       free(bufin);
-       return;
-   }
-   int tag=0;
-   memcpy(&tag, bufin+0x600000, 4);
-   if( (tag & 0xFFFFFFFF)==0x1234DBDB) 
-   {
-       std::cout << "Firmware tag (1234DBDB) verified!" << std::endl;
+   if(strncasecmp(mcsfile+strlen(mcsfile)-4, ".bit", 4)==0)
+   {   // BIT file handling
+       int bitsize=read_bitfile(bufin, fin);  
+       fclose(fin);
+       if(bitsize<1000 || (DMBversion()==2 && bitsize<FIRMWARE_SIZE))
+       {
+           std::cout << "ERROR: Wrong BIT file. Quit..." << std::endl;
+           free(bufin);
+           return;
+       }
+       if(DMBversion()==3 || DMBversion()==4) FIRMWARE_SIZE=bitsize;
    }
    else
-   {
-       std::cout << "ERROR: Firmware tag (1234DBDB) not found in MCS file. Quit..." << std::endl; 
-       free(bufin);
-       return;
-   }
+   {   // MCS file(s) handling
+	   int mcssize=read_mcs(bufin, fin);
+	   fclose(fin);
+	   std::cout << "Read MCS size: " << mcssize << " bytes" << std::endl;
+	   if(DMBversion()==2)
+	   {
+		  if(mcssize<FIRMWARE_SIZE)
+		  {
+			  std::cout << "ERROR: Wrong MCS file. Quit..." << std::endl;
+			  free(bufin);
+			  return;
+		  }
+		  int tag=0;
+		  memcpy(&tag, bufin+0x600000, 4);
+		  if( (tag & 0xFFFFFFFF)==0x1234DBDB) 
+		  {
+			  std::cout << "Firmware tag (1234DBDB) verified!" << std::endl;
+		  }
+		  else
+		  {
+			  std::cout << "ERROR: Firmware tag (1234DBDB) not found in MCS file. Quit..." << std::endl; 
+			  free(bufin);
+			  return;
+		  }
 
-// byte swap
-   for(int i=0; i<FIRMWARE_SIZE/2; i++)
-   {  c=bufin[i*2];
-      bufin[i*2]=bufin[i*2+1];
-      bufin[i*2+1]=c;
+		  // byte swap
+		  for(int i=0; i<FIRMWARE_SIZE/2; i++)
+		  {  c=bufin[i*2];
+			 bufin[i*2]=bufin[i*2+1];
+			 bufin[i*2+1]=c;
+		  } 
+
+	   }
+	   else if(DMBversion()==3 || DMBversion()==4)
+	   {
+		  char *bufin2=bufin+8192*1024;  // at 8MB point
+		  char *bufmid=bufin+16384*1024;  // at 16MB point (middle point)
+		  int mcssize2=0;
+		  bool newname=false;
+		  char mcsname[200];
+		  strcpy(mcsname, mcsfile);
+		  char *tail=strstr(mcsname, "_0.mcs");
+		  if(tail)
+		  {  
+			  strcpy(tail, "_1.mcs");
+			  newname=true;
+		  }
+		  else
+		  {
+			  tail=strstr(mcsname, "_primary.mcs");
+			  if(tail)
+			  {  
+				  strcpy(tail, "_secondary.mcs");
+				  newname=true;
+			  }
+		  }
+		  if(newname)
+		  {
+			  FILE *fin=fopen(mcsname,"r");
+			  if(fin!=NULL )
+			  {
+				 mcssize2=read_mcs(bufin2, fin);
+				 fclose(fin);
+				 std::cout << "Read 2nd MCS size: " << mcssize2 << " bytes" << std::endl;
+			  }
+			  else
+			  {
+				 std::cout << "ERROR: Unable to open the 2nd MCS file :" << mcsname << std::endl;
+				 return;
+			  }
+		  }
+		  else std::cout << "ERROR: invalid MCS file name :" << mcsfile << std::endl;      
+		  if(mcssize2==mcssize)   // have two same-size MCS files
+		  {
+			  int *intbuf1=(int *)bufin;
+			  int *intbuf2=(int *)bufin2;
+			  int pos1=0, pos2=0;
+			  for (int i=0; i<mcssize/4; i++)
+			  {   if(intbuf1[i]==0x12000000) 
+				  {  pos1=i+1;
+					 break;
+				  }
+			  }
+			  for (int i=0; i<mcssize2/4; i++)
+			  {   if(intbuf2[i]!=0xFFFFFFFF) 
+				  {  pos2=i;
+					 break;
+				  }
+			  }
+			  if(pos1==0 || pos2==0 || pos1!=pos2)
+			  { 
+				  std::cout << "ERROR: two MCS files are not compitable with Dual-Quad SPI format. Stop!" << std::endl;
+				  return;
+			  }
+			  pos2=pos1*4; // index in bytes
+			  for(int i=0; i<pos2; i++) bufmid[i]=bufin[i];
+			  int indexm=pos2;
+			  for(int i=pos2; i<mcssize2; i++)
+			  {
+				  char b1=bufin[i];
+				  char b2=bufin2[i];
+				  bufmid[indexm++]=((b1>>4)&0xF)|(b2&0xF0);
+				  bufmid[indexm++]=(b1&0xF)|((b2<<4)&0xF0);
+			  }
+			  FIRMWARE_SIZE=indexm;
+			  std::cout << "Combined firmware size: " << FIRMWARE_SIZE << std::endl;
+			  for(int i=0; i<FIRMWARE_SIZE; i++) 
+			  {
+				  // bit swap
+				  c=bufmid[i];  
+				  n=0;
+				  for(int j=0;j<8;j++)
+				  {
+					n <<= 1;
+					n |= (c & 1);
+					c >>= 1;
+				  } 
+				  bufin[i]=n&0XFF;
+			  }
+		  }
+	   }
    }
      int blocks=FIRMWARE_SIZE/4;  // firmware size must be in units of 32-bit words
      int p1pct=blocks/100;
@@ -9751,23 +9866,23 @@ void DAQMB::odmb_program_fpga(const char *mcsfile)
 // It is different from Xilinx's Jtag procedure which uses CFG_IN.
 //
      comd=VTX6_IDCODE;
-     dlog_do(10, &comd, 32, &tin, (char *)&tout, READ_YES|NOW);
+     dlog_do(inst_size, &comd, 32, &tin, (char *)&tout, READ_YES|NOW);
      udelay(50);
      std::cout << "FPGA IDCODE=" << std::hex << tout << std::dec << std::endl;
 
      comd=VTX6_JPROG;
-     dlog_do(10, &comd, 0, &tmp, rcvbuf, NOW);
+     dlog_do(inst_size, &comd, 0, &tmp, rcvbuf, NOW);
 
      comd=VTX6_ISC_NOOP; 
-     dlog_do(10, &comd, 0, &tmp, rcvbuf, NOW);
+     dlog_do(inst_size, &comd, 0, &tmp, rcvbuf, NOW);
      udelay(200000);
      comd=VTX6_ISC_ENABLE; 
      tmp=0;
-     dlog_do(10, &comd, 5, &tmp, rcvbuf, NOW);
+     dlog_do(inst_size, &comd, 5, &tmp, rcvbuf, NOW);
 //    dlog_do(0, &comd, -200, &tmp, rcvbuf, NOW);
      udelay(100);
      comd=VTX6_ISC_PROGRAM; 
-     dlog_do(10, &comd, 0, &tmp, rcvbuf, NOW);
+     dlog_do(inst_size, &comd, 0, &tmp, rcvbuf, NOW);
      udelay(10000);
     for(int i=0; i<blocks; i++)
     {
@@ -9783,22 +9898,24 @@ void DAQMB::odmb_program_fpga(const char *mcsfile)
     std::cout << "Sending 100%..." << std::endl;
 
     comd=VTX6_ISC_DISABLE; 
-    dlog_do(10, &comd, 0, &tmp, rcvbuf, NOW);
+    dlog_do(inst_size, &comd, 0, &tmp, rcvbuf, NOW);
 //    dlog_do(0, &comd, -100, &tmp, rcvbuf, NOW);
     udelay(100);
     comd=VTX6_BYPASS;
-    dlog_do(10, &comd, 0, &tmp, rcvbuf, NOW);
+    dlog_do(inst_size, &comd, 0, &tmp, rcvbuf, NOW);
 
     comd=VTX6_JSTART;
-    dlog_do(10, &comd, 0, &tmp, rcvbuf, NOW);
+    dlog_do(inst_size, &comd, 0, &tmp, rcvbuf, NOW);
     std::cout <<" Start sending clocks... " << std::endl;
     dlog_do(0, &comd, -4000, &tmp, rcvbuf, NOW);
     //restore idle;
     dlog_do(-1, &comd, 0, &tmp, rcvbuf, NOW);    
     comd=VTX6_BYPASS;
-    dlog_do(10, &comd, 0, &tmp, rcvbuf, NOW);
+    dlog_do(inst_size, &comd, 0, &tmp, rcvbuf, NOW);
     udelay(10);
     std::cout << "FPGA configuration done!" << std::endl;             
+//    std::cout << "FPGA ID: " << std::hex << dmb_fpga_readreg(0xc) << std::dec << std::endl;
+//    std::cout << "FPGA STATUS: " << std::hex << dmb_fpga_readreg(0x7) << std::dec << std::endl;
     free(bufin);
 }
 

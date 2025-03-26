@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding="UTF-8" standalone="no"?>
+<!--<?xml-stylesheet type="text/xml" href="../EmuDAQConfig.xsl"?> -->
+<xc:Partition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xc="http://xdaq.web.cern.ch/xdaq/xsd/2004/XMLConfiguration-30">
+
+
+<!-- STEP -->
+  <!--xc:Context url="http://vmepc-e1x07-21-01.cms904:10000"-->
+    <xc:Context url="http://10.119.64.4:20016">
+
+    <xc:Module>${XDAQ_ROOT}/lib/libxalan-c.so</xc:Module>
+    <xc:Module>${XDAQ_ROOT}/lib/libtstoreclient.so</xc:Module>
+
+    <!--
+    <xc:Application id="100" instance="0" class="emu::step::Manager" network="local">
+      <properties xsi:type="soapenc:Struct" xmlns="urn:xdaq-application:emu::step::Manager">
+	<configurationXSLFileName xsi:type="xsd:string">${BUILD_HOME}/emu/step/xml/configuration.xsl</configurationXSLFileName>
+	<testParametersFileName xsi:type="xsd:string">${HOME}/config/step/testParameters.xml</testParametersFileName>
+	<specialVMESettingsFileName xsi:type="xsd:string">${HOME}/config/step/TestSpecificVME.xml</specialVMESettingsFileName>
+        <analysisScriptName xsi:type="xsd:string">${BUILD_HOME}/emu/step/script/runAnalysis.sh</analysisScriptName>
+        <analysisExeName xsi:type="xsd:string">${BUILD_HOME}/${XDAQ_PLATFORM}/bin/runEmuCalibAnalysis.exe</analysisExeName>
+			</properties>
+    </xc:Application>
+    -->
+
+    <xc:Application id="101" instance="0" class="emu::step::Tester" network="local">
+      <properties xsi:type="soapenc:Struct" xmlns="urn:xdaq-application:emu::step::Tester">
+	<group xsi:type="xsd:string">CTS in TAMU</group>
+	<vmeSettingsFileName xsi:type="xsd:string">${BUILD_HOME}/xml/tamu_crate_config_2tmbs2018_SLHCon.xml</vmeSettingsFileName>
+	<!-- <vmeSettingsFileName xsi:type="xsd:string">${HOME}/config/step/VME_STEP_DCFEB.xml</vmeSettingsFileName> -->
+	<fakeTests xsi:type="xsd:boolean">false</fakeTests>
+      </properties>
+    </xc:Application>
+
+
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libemusoap.so</xc:Module>
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libemubase.so</xc:Module>
+    <!-- <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libtstoreclient.so</xc:Module> -->
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libEmuOnlineDB.so</xc:Module>
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libEmuPeripheralCore.so</xc:Module>
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libEmuPeripheralApps.so</xc:Module>
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libemustep.so</xc:Module>
+
+  </xc:Context>
+
+
+</xc:Partition>

@@ -1,0 +1,223 @@
+In Makefile.fallbacks: guessing/checking values
+XDAQ_ROOT="/opt/xdaq"
+XDAQ_OS already set to "linux"
+XDAQ_PLATFORM already set to "x86_64_cc7"
+Guessed undefined XDAQ_PLATFORM to "x86_64_cc7"
+Calling make all in directory /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/base/.loop using install
+Calling make all in directory /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/supervisor/.loop using install
+Calling make all in directory /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/soap/.loop using install
+In Makefile.fallbacks: guessing/checking values
+Calling make all in directory /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralCore/.loop using install
+In Makefile.fallbacks: guessing/checking values
+Calling make all in directory /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralApps/.loop using install
+XDAQ_ROOT="/opt/xdaq"
+In Makefile.fallbacks: guessing/checking values
+Calling make all in directory /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralXtop/.loop using install
+XDAQ_ROOT="/opt/xdaq"
+In Makefile.fallbacks: guessing/checking values
+XDAQ_OS already set to "linux"
+Calling make all in directory /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/OnlineDB/.loop using install
+XDAQ_ROOT="/opt/xdaq"
+In Makefile.fallbacks: guessing/checking values
+Calling make all in directory /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDCore/.loop using install
+XDAQ_OS already set to "linux"
+XDAQ_ROOT="/opt/xdaq"
+XDAQ_PLATFORM already set to "x86_64_cc7"
+In Makefile.fallbacks: guessing/checking values
+XDAQ_OS already set to "linux"
+XDAQ_ROOT="/opt/xdaq"
+In Makefile.fallbacks: guessing/checking values
+XDAQ_PLATFORM already set to "x86_64_cc7"
+XDAQ_ROOT="/opt/xdaq"
+XDAQ_OS already set to "linux"
+Guessed undefined XDAQ_PLATFORM to "x86_64_cc7"
+In Makefile.fallbacks: guessing/checking values
+XDAQ_OS already set to "linux"
+XDAQ_PLATFORM already set to "x86_64_cc7"
+XDAQ_ROOT="/opt/xdaq"
+Guessed undefined XDAQ_PLATFORM to "x86_64_cc7"
+XDAQ_OS already set to "linux"
+XDAQ_ROOT="/opt/xdaq"
+XDAQ_PLATFORM already set to "x86_64_cc7"
+XDAQ_PLATFORM already set to "x86_64_cc7"
+XDAQ_OS already set to "linux"
+Guessed undefined XDAQ_PLATFORM to "x86_64_cc7"
+XDAQ_PLATFORM already set to "x86_64_cc7"
+XDAQ_OS already set to "linux"
+Guessed undefined XDAQ_PLATFORM to "x86_64_cc7"
+XDAQ_PLATFORM already set to "x86_64_cc7"
+Guessed undefined XDAQ_PLATFORM to "x86_64_cc7"
+Guessed undefined XDAQ_PLATFORM to "x86_64_cc7"
+XDAQ_PLATFORM already set to "x86_64_cc7"
+Guessed undefined XDAQ_PLATFORM to "x86_64_cc7"
+Guessed undefined XDAQ_PLATFORM to "x86_64_cc7"
+awk: cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralXtop/include/emu/emuDCS/PeripheralXtop/version.h' for reading (No such file or directory)
+awk: cmd. line:awk: 1: cmd. line:fatal: 1: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralCore/include/emu/emuDCS/PeripheralCore/version.h' for reading (No such file or directory)fatal: 
+cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDCore/include/emu/emuDCS/FEDCore/version.h' for reading (No such file or directory)
+awk: cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/OnlineDB/include/emu/emuDCS/OnlineDB/version.h' for reading (No such file or directory)
+awk: cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralXtop/include/emu/emuDCS/PeripheralXtop/version.h' for reading (No such file or directory)
+awk: cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralApps/include/emu/emuDCS/PeripheralApps/version.h' for reading (No such file or directory)
+make[1]: Entering directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/soap'
+awk: make[1]: Entering directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralXtop'
+cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDCore/include/emu/emuDCS/FEDCore/version.h' for reading (No such file or directory)
+awk: cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralCore/include/emu/emuDCS/PeripheralCore/version.h' for reading (No such file or directory)
+Build done.
+Build done.
+install -d /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/bin /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs
+cd include; find ./ \( -name "*.[hi]" -o -name "*.hpp" -o -name "*.hh" -o -name "*.hxx" \) -type f -exec install -p -D {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include/{} \;
+echo Installing dynamic library.
+cp -pd -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralXtop/lib/linux/x86_64_cc7/libEmuPeripheralXtop.so* /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib/
+install -d /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/bin /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs
+cd include; find ./ \( -name "*.[hi]" -o -name "*.hpp" -o -name "*.hh" -o -name "*.hxx" \) -type f -exec install -p -D {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include/{} \;
+echo Installing dynamic library.
+cp -pd -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/soap/lib/linux/x86_64_cc7/libemusoap.so* /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib/
+make[1]: Entering directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDCore'
+make[1]: Entering directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/base'
+awk: cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/OnlineDB/include/emu/emuDCS/OnlineDB/version.h' for reading (No such file or directory)
+Build done.
+make[1]: Entering directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralCore'
+install -d /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/bin /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs
+cd include; find ./ \( -name "*.[hi]" -o -name "*.hpp" -o -name "*.hh" -o -name "*.hxx" \) -type f -exec install -p -D {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include/{} \;
+echo Installing dynamic library.
+cp -pd -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDCore/lib/linux/x86_64_cc7/libEmuFEDCore.so* /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib/
+Build done.
+install -d /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/bin /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs
+cd include; find ./ \( -name "*.[hi]" -o -name "*.hpp" -o -name "*.hh" -o -name "*.hxx" \) -type f -exec install -p -D {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include/{} \;
+echo Installing dynamic library.
+cp -pd -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralCore/lib/linux/x86_64_cc7/libEmuPeripheralCore.so* /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib/
+make[1]: Entering directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/supervisor'
+make[1]: Entering directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/OnlineDB'
+Build done.
+Build done.
+install -d /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/bin /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs
+cd include; find ./ \( -name "*.[hi]" -o -name "*.hpp" -o -name "*.hh" -o -name "*.hxx" \) -type f -exec install -p -D {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include/{} \;
+echo Installing html files.
+mkdir -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/supervisor/html
+cd /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/supervisor/html; find ./ -name "*" -type f -exec install -D -m 655 {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/supervisor/html/{} \;
+echo  Installing xml files.
+mkdir -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/supervisor/xml
+cd /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/supervisor/xml; find ./ -name "*" -type f -exec install -D -m 655 {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/supervisor/xml/{} \;
+echo Installing dynamic library.
+cp -pd -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/supervisor/lib/linux/x86_64_cc7/libemusupervisor.so* /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib/
+install -d /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/bin /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs
+cd include; find ./ \( -name "*.[hi]" -o -name "*.hpp" -o -name "*.hh" -o -name "*.hxx" \) -type f -exec install -p -D {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include/{} \;
+echo Installing image files.
+mkdir -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/base/images
+cd /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/base/images; find ./ -name "*" -type f -exec install -D -m 655 {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/base/images/{} \;
+echo Installing html files.
+mkdir -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/base/html
+cd /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/base/html; find ./ -name "*" -type f -exec install -D -m 655 {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/base/html/{} \;
+echo  Installing xml files.
+mkdir -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/base/xml
+cd /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/base/xml; find ./ -name "*" -type f -exec install -D -m 655 {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/base/xml/{} \;
+echo Installing dynamic library.
+cp -pd -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/base/lib/linux/x86_64_cc7/libemubase.so* /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib/
+Build done.
+install -d /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/bin /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs
+cd include; find ./ \( -name "*.[hi]" -o -name "*.hpp" -o -name "*.hh" -o -name "*.hxx" \) -type f -exec install -p -D {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include/{} \;
+echo Installing html files.
+mkdir -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/emuDCS/OnlineDB/html
+cd /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/OnlineDB/html; find ./ -name "*" -type f -exec install -D -m 655 {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/emuDCS/OnlineDB/html/{} \;
+echo Installing scripts files.
+mkdir -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/scripts/emu/emuDCS/OnlineDB/scripts
+cd /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/OnlineDB/scripts; find ./ -name "*" -type f -exec install -D -m 655 {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/scripts/emu/emuDCS/OnlineDB/scripts/{} \;
+echo  Installing xml files.
+mkdir -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/emuDCS/OnlineDB/xml
+cd /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/OnlineDB/xml; find ./ -name "*" -type f -exec install -D -m 655 {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/emuDCS/OnlineDB/xml/{} \;
+echo Installing dynamic library.
+cp -pd -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/OnlineDB/lib/linux/x86_64_cc7/libEmuOnlineDB.so* /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib/
+awk: cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralApps/include/emu/emuDCS/PeripheralApps/version.h' for reading (No such file or directory)
+make[1]: Entering directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralApps'
+Build done.
+install -d /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/bin /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs
+cd include; find ./ \( -name "*.[hi]" -o -name "*.hpp" -o -name "*.hh" -o -name "*.hxx" \) -type f -exec install -p -D {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include/{} \;
+echo  Installing xml files.
+mkdir -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/emuDCS/PeripheralApps/xml
+cd /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralApps/xml; find ./ -name "*" -type f -exec install -D -m 655 {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/emuDCS/PeripheralApps/xml/{} \;
+echo Installing dynamic library.
+cp -pd -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralApps/lib/linux/x86_64_cc7/libEmuPeripheralApps.so* /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib/
+Installing dynamic library.
+make[1]: Leaving directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralXtop'
+Installing dynamic library.
+Calling make all in directory /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDUtils/.loop using install
+In Makefile.fallbacks: guessing/checking values
+make[1]: Leaving directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/soap'
+XDAQ_ROOT="/opt/xdaq"
+Calling make all in directory /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDApps/.loop using install
+XDAQ_OS already set to "linux"
+XDAQ_PLATFORM already set to "x86_64_cc7"
+In Makefile.fallbacks: guessing/checking values
+Guessed undefined XDAQ_PLATFORM to "x86_64_cc7"
+XDAQ_ROOT="/opt/xdaq"
+XDAQ_OS already set to "linux"
+XDAQ_PLATFORM already set to "x86_64_cc7"
+Guessed undefined XDAQ_PLATFORM to "x86_64_cc7"
+Installing dynamic library.
+Installing html files.
+awk: cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDUtils/include/emu/emuDCS/FEDUtils/version.h' for reading (No such file or directory)
+make[1]: Leaving directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDCore'
+Calling make all in directory /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/CSCGEMTestStand/.loop using install
+In Makefile.fallbacks: guessing/checking values
+awk: cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDApps/include/emu/emuDCS/FEDApps/version.h' for reading (No such file or directory)
+Installing xml files.
+XDAQ_ROOT="/opt/xdaq"
+XDAQ_OS already set to "linux"
+XDAQ_PLATFORM already set to "x86_64_cc7"
+Guessed undefined XDAQ_PLATFORM to "x86_64_cc7"
+Installing dynamic library.
+make[1]: Leaving directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/supervisor'
+awk: cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDUtils/include/emu/emuDCS/FEDUtils/version.h' for reading (No such file or directory)
+make[1]: Entering directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDUtils'
+awk: cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDApps/include/emu/emuDCS/FEDApps/version.h' for reading (No such file or directory)
+awk: cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/CSCGEMTestStand/include/emu/emuDCS/CSCGEMTestStand/version.h' for reading (No such file or directory)
+Build done.
+install -d /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/bin /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs
+cd include; find ./ \( -name "*.[hi]" -o -name "*.hpp" -o -name "*.hh" -o -name "*.hxx" \) -type f -exec install -p -D {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include/{} \;
+echo  Installing xml files.
+mkdir -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/emuDCS/FEDUtils/xml
+cd /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDUtils/xml; find ./ -name "*" -type f -exec install -D -m 655 {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/emuDCS/FEDUtils/xml/{} \;
+echo Installing dynamic library.
+cp -pd -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDUtils/lib/linux/x86_64_cc7/libEmuFEDUtils.so* /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib/
+make[1]: Entering directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDApps'
+Build done.
+install -d /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/bin /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs
+cd include; find ./ \( -name "*.[hi]" -o -name "*.hpp" -o -name "*.hh" -o -name "*.hxx" \) -type f -exec install -p -D {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include/{} \;
+echo Installing image files.
+mkdir -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/emuDCS/FEDApps/images
+cd /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDApps/images; find ./ -name "*" -type f -exec install -D -m 655 {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/emuDCS/FEDApps/images/{} \;
+echo Installing html files.
+mkdir -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/emuDCS/FEDApps/html
+cd /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDApps/html; find ./ -name "*" -type f -exec install -D -m 655 {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs/emu/emuDCS/FEDApps/html/{} \;
+echo Installing dynamic library.
+cp -pd -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDApps/lib/linux/x86_64_cc7/libEmuFEDApps.so* /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib/
+Installing html files.
+awk: cmd. line:1: fatal: cannot open file `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/CSCGEMTestStand/include/emu/emuDCS/CSCGEMTestStand/version.h' for reading (No such file or directory)
+Installing scripts files.
+Installing xml files.
+Installing image files.
+Installing dynamic library.
+Installing xml files.
+Installing html files.
+make[1]: Leaving directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralCore'
+Installing dynamic library.
+make[1]: Leaving directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/OnlineDB'
+make[1]: Entering directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/CSCGEMTestStand'
+Build done.
+install -d /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/bin /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/htdocs
+cd include; find ./ \( -name "*.[hi]" -o -name "*.hpp" -o -name "*.hh" -o -name "*.hxx" \) -type f -exec install -p -D {} /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/include/{} \;
+echo Installing dynamic library.
+cp -pd -p /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/CSCGEMTestStand/lib/linux/x86_64_cc7/libEmuCSCGEMTestStand.so* /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/x86_64_cc7/lib/
+Installing xml files.
+Installing dynamic library.
+Installing image files.
+make[1]: Leaving directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/base'
+Installing xml files.
+Installing dynamic library.
+make[1]: Leaving directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDUtils'
+Installing dynamic library.
+make[1]: Leaving directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/CSCGEMTestStand'
+Installing dynamic library.
+Installing html files.
+make[1]: Leaving directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/PeripheralApps'
+Installing dynamic library.
+make[1]: Leaving directory `/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/emuDCS/FEDApps'

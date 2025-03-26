@@ -1,0 +1,55 @@
+<?xml version='1.0'?>
+<xc:Partition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	      xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+	      xmlns:xc="http://xdaq.web.cern.ch/xdaq/xsd/2004/XMLConfiguration-30">
+
+    <!--<xc:Context url="http://localhost:20014">-->
+    <xc:Context url="http://10.119.64.4:20016">
+    
+        <xc:Application class="emu::pc::EmuPeripheralCrateConfig" id="70" instance="0" network="local">
+            <properties xmlns="urn:xdaq-application:EmuPeripheralCrateConfig" xsi:type="soapenc:Struct">
+                <Standalone xsi:type="xsd:string">true</Standalone>
+                <XMLorDB xsi:type="xsd:string">xml</XMLorDB>
+                <EmuConfigurationID xsi:type="xsd:string">1000001</EmuConfigurationID>
+                <!--xmlFileName xsi:type="xsd:string">${BUILD_HOME}/xml/tamu_crate_config_2tmbs2021_MEX1_newDF_CCLUT_test.xml</xmlFileName-->
+                <!--xmlFileName xsi:type="xsd:string">${BUILD_HOME}/xml/tamu_crate_config_2tmbs2021_MEX1_newDF_CCLUT_forbat904.xml</xmlFileName-->
+                <xmlFileName xsi:type="xsd:string">${BUILD_HOME}/xml/tamu_crate_config_1tmbs2021_MEX1_newDF_CCLUT.xml</xmlFileName>
+                <!--xmlFileName xsi:type="xsd:string">${BUILD_HOME}/xml/tamu_crate_config_2tmbs2021_MEX1_Cfebrxscan.xml</xmlFileName-->
+                <!--xmlFileName xsi:type="xsd:string">${BUILD_HOME}/xml/tamu_crate_config_2tmbs2021_MEX1_run2legacy.xml</xmlFileName-->
+            </properties>
+        </xc:Application>
+
+			  <xc:Application class="emu::pc::CSCGEMTestApplication" id="91" instance="0" network="local">
+						<properties xmlns="urn:xdaq-application:CSCGEMTestApplication" xsi:type="soapenc:Struct">
+								<Standalone xsi:type="xsd:string">true</Standalone>
+						</properties>
+				</xc:Application>
+
+       <!-- comment out TAMU test
+        <xc:Application class="emu::pc::TAMUTestApplication" id="80" instance="0" network="local">
+            <properties xmlns="urn:xdaq-application:TAMUTestApplication" xsi:type="soapenc:Struct">
+                <XMLFileName xsi:type="xsd:string">$PWD/../xml/tamu_crate_config2018.xml</XMLFileName>
+                <TStoreFileName xsi:type="xsd:string">$PWD/../xml/tstore.view</TStoreFileName>
+                <TMBSlot  xsi:type="xsd:integer">4</TMBSlot>
+            </properties>
+        </xc:Application>
+        -->
+
+        <xc:Module>${XDAQ_ROOT}/lib/libxdaq2rc.so</xc:Module>
+        <xc:Module>${XDAQ_ROOT}/lib/libtstoreclient.so</xc:Module>
+        <xc:Module>${XDAQ_ROOT}/lib/libxalanMsg.so</xc:Module>
+        <xc:Module>${XDAQ_ROOT}/lib/libxalan-c.so</xc:Module>
+        <xc:Module>${BUILD_HOME}/emu/base/lib/linux/$XDAQ_PLATFORM/libemubase.so</xc:Module>
+        <xc:Module>${BUILD_HOME}/emu/soap/lib/linux/$XDAQ_PLATFORM/libemusoap.so</xc:Module>
+        <xc:Module>${BUILD_HOME}/emu/emuDCS/PeripheralCore/lib/linux/$XDAQ_PLATFORM/libEmuPeripheralCore.so</xc:Module>
+        <xc:Module>${BUILD_HOME}/emu/emuDCS/OnlineDB/lib/linux/$XDAQ_PLATFORM/libEmuOnlineDB.so</xc:Module>
+        <xc:Module>${BUILD_HOME}/emu/emuDCS/PeripheralApps/lib/linux/$XDAQ_PLATFORM/libEmuPeripheralApps.so</xc:Module>
+        <!-- <xc:Module>$xdaqPWD/emu/emuDCS/TAMUTestStand/lib/linux/$XDAQ_PLATFORM/libEmuTAMUTestStand.so</xc:Module> -->
+				<!--xc:Module>${BUILD_HOME}/emu/emuDCS/CSCGEMTestStand/lib/linux/$XDAQ_PLATFORM/libEmuCSCGEMTestStand.so</xc:Module-->
+        <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libEmuCSCGEMTestStand.so</xc:Module> 
+
+    </xc:Context>
+
+</xc:Partition>
+
+<!-- vim: set sw=2 ts=2: -->

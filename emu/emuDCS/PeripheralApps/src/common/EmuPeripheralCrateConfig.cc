@@ -505,6 +505,9 @@ EmuPeripheralCrateConfig::EmuPeripheralCrateConfig(xdaq::ApplicationStub * s): E
   xgi::bind(this,&EmuPeripheralCrateConfig::DisableALCTTestPulse, "DisableALCTTestPulse");
   xgi::bind(this,&EmuPeripheralCrateConfig::ReadALCTHMT, "ReadALCTHMT");
   xgi::bind(this,&EmuPeripheralCrateConfig::WriteALCTHMT, "WriteALCTHMT");
+  xgi::bind(this,&EmuPeripheralCrateConfig::ALCTReadSlowFirmware, "ALCTReadSlowFirmware");
+  xgi::bind(this,&EmuPeripheralCrateConfig::ALCTFastControlRead, "ALCTFastControlRead");
+  xgi::bind(this,&EmuPeripheralCrateConfig::ALCTSlowControlRead, "ALCTSlowControlRead");
 
   //
   //----------------------------
@@ -12741,6 +12744,80 @@ void EmuPeripheralCrateConfig::LoadALCTSlowFirmware(xgi::Input * in, xgi::Output
 
   this->ALCTUtils(in,out);
 }
+
+void EmuPeripheralCrateConfig::ALCTReadSlowFirmware(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name2 = cgi.getElement("tmb");
+  int tmb;
+  if(name2 != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "Select TMB " << tmb << std::endl;
+  } else {
+    std::cout << "No TMB" << std::endl ;
+    tmb=-1;
+  }
+  //
+  TMB * thisTMB=NULL;
+  if(tmb>=0 && (unsigned)tmb<tmbVector.size())  thisTMB = tmbVector[tmb];
+  if(thisTMB)
+  {
+    std::string chambername = thisTMB->GetLabel();
+    std::string mcsfile="/tmp/"+chambername+"_alct_slow_control.mcs";
+    thisCCB->setCCBMode(CCB::VMEFPGA);
+
+    std::cout  << getLocalDateTime() << " Read ALCT Slow Control firmware, save to " << mcsfile << std::endl;
+
+    //disable ALCT clock
+    std::cout << "Disable TMB ALCT Clock" << std::endl;
+    thisTMB->disableALCTClock();
+    ::sleep(1);
+
+    //hard reset ALCT
+    thisTMB->tmb_hard_reset_alct_fpga();
+
+    ALCTController * thisALCT = thisTMB->alctController();
+    thisALCT->ReadSlowControlId();
+    int prom_id = thisALCT->GetSlowControlPROMID();
+    bool prom_valid = 0;
+
+    std::string svffile;
+    // look for a recognized PROM ID
+    // the most-significant 4 bits of the PROMID may be a die revision code, which can vary per-chip
+    // so we mask off those bits and just check the lower 7 hex digits
+    if      ((prom_id&0xfffffff)==0x5034093 || prom_id==0x05024093) {
+        prom_valid=1;
+        std::cout  << "Found ALCT Slow Control PROM Type XC18V01" << std::endl;
+    }
+    else if ((prom_id&0xfffffff)==0x5036093 || prom_id==0x05026093) {
+        prom_valid=1;
+        std::cout  << "Found ALCT Slow Control PROM Type XC18V04" << std::endl;
+    }
+    else
+        std::cout  << "ALCT Slow Control PROM IDCode=0x" << std::hex << prom_id << std::dec <<" Not Recognized" << std::endl;
+
+    if (prom_valid) {
+        thisTMB->setup_jtag(ChainAlctSlowMezz);
+        svffile=XMLDIR+"/alct_slow_control.vrf";
+        thisTMB->read_prom(svffile.c_str(),  mcsfile.c_str());
+    }
+
+    //reenable TMB clocks
+    std::cout << "Enable All TMB Clocks" << std::endl;
+    ::sleep(1);
+    thisTMB->enableAllClocks();
+
+    // hard reset to reload the alct
+    thisCCB->hardReset();
+
+    // Put CCB back into DLOG mode to listen to TTC commands...
+    thisCCB->setCCBMode(CCB::DLOG);
+  }
+
+  this->ALCTUtils(in,out);
+}
 //
 void EmuPeripheralCrateConfig::LoadVirtex6TMBFirmware(xgi::Input * in, xgi::Output * out )
   throw (xgi::exception::Exception) {
@@ -15147,7 +15224,16 @@ void EmuPeripheralCrateConfig::ALCTUtils(xgi::Input * in, xgi::Output * out )
     *out << cgicc::form() << std::endl ;
 
   *out << cgicc::br() << std::endl;
-
+  if(extra_tools_)
+  {
+    std::string ALCTReadSlowFirmware = toolbox::toString("/%s/ALCTReadSlowFirmware",getApplicationDescriptor()->getURN().c_str());
+    *out << cgicc::form().set("method","GET").set("action",ALCTReadSlowFirmware) ;
+    *out << cgicc::input().set("type","submit").set("value","Read back ALCT Slow Control firmware") ;
+    sprintf(buf,"%d",tmb);
+    *out << cgicc::input().set("type","hidden").set("value",buf).set("name","tmb");
+    *out << cgicc::form() ;
+    *out << cgicc::br() << std::endl;
+  }
   *out << cgicc::fieldset() << cgicc::br() << std::endl;
 
   // ALCT HMT functions
@@ -15383,6 +15469,70 @@ void EmuPeripheralCrateConfig::WriteALCTHMT(xgi::Input * in, xgi::Output * out )
        int tmp=ALCTHMTWriteValue1_ + (ALCTHMTWriteValue2_<<10) + (ALCTHMTWriteValue3_<<20);
        thisALCT->write_HMT(tmp);
        std::cout << "Write ALCT HMT register with (hex): " << std::hex << tmp << std::dec << std::endl;      
+    }
+  }
+  //
+  this->ALCTUtils(in,out);
+}
+
+void EmuPeripheralCrateConfig::ALCTFastControlRead(xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception) 
+{
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name2 = cgi.getElement("tmb");
+  int tmb;
+  if(name2 != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "Select TMB " << tmb << std::endl;
+  } else {
+    std::cout << "No TMB" << std::endl ;
+    tmb=-1;
+  }
+  //
+  TMB * thisTMB=NULL;
+  if(tmb>=0 && (unsigned)tmb<tmbVector.size())  thisTMB = tmbVector[tmb];
+  if(thisTMB)
+  {
+    ALCTController * thisALCT = thisTMB->alctController();
+    if(thisALCT)
+    {
+       unsigned char cfreg[100];
+       thisALCT->fastcontrol_read(6, 69, (char *)cfreg); // Configuration Reg, length=69
+       printf("ALCT Fast Control Configuration Register read back (hex): ");
+       for(int i=0; i<10; i++) printf("%02X ", 0xFF&cfreg[i]);
+       printf("\n");
+    }
+  }
+  //
+  this->ALCTUtils(in,out);
+}
+
+void EmuPeripheralCrateConfig::ALCTSlowControlRead(xgi::Input * in, xgi::Output * out) throw (xgi::exception::Exception) 
+{
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name2 = cgi.getElement("tmb");
+  int tmb;
+  if(name2 != cgi.getElements().end()) {
+    tmb = cgi["tmb"]->getIntegerValue();
+    std::cout << "Select TMB " << tmb << std::endl;
+  } else {
+    std::cout << "No TMB" << std::endl ;
+    tmb=-1;
+  }
+  //
+  TMB * thisTMB=NULL;
+  if(tmb>=0 && (unsigned)tmb<tmbVector.size())  thisTMB = tmbVector[tmb];
+  if(thisTMB)
+  {
+    ALCTController * thisALCT = thisTMB->alctController();
+    if(thisALCT)
+    {
+       unsigned char cfreg[100];
+       thisALCT->slowcontrol_read(0, 40, (char *)cfreg); // ID Reg, length=40
+       printf("ALCT Slow Control ID Register read back (hex): ");
+       for(int i=0; i<10; i++) printf("%02X ", 0xFF&cfreg[i]);
+       printf("\n");
     }
   }
   //

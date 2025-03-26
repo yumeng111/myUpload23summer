@@ -22,7 +22,8 @@ Packages=\
 	emu/emuDCS/OnlineDB \
 	emu/emuDCS/FEDCore \
 	emu/emuDCS/FEDUtils \
-	emu/emuDCS/FEDApps 
+	emu/emuDCS/FEDApps \
+        emu/emuDCS/CSCGEMTestStand
 endif
 
 ### specific package target builds

@@ -1430,9 +1430,9 @@ int VMEModule::read_mcs(char *binbuf, FILE *finp, unsigned limit)
 
    if(limit>0 && limit < MCS_LIMIT) MCS_LIMIT=limit;
    rewind(finp);
-   fgets(buf, 1020, finp);
    while(!finish && !feof(finp))
    {
+       fgets(buf, 1020, finp);
        lines++;
        if(buf[0]!=':' || buf[7]!='0') continue;
        switch (buf[8])
@@ -1505,7 +1505,7 @@ int VMEModule::read_mcs(char *binbuf, FILE *finp, unsigned limit)
 
                break;
        }
-       fgets(buf, 1020, finp);
+       // fgets(buf, 1020, finp);
    }
    if(finish==0)
    {   
@@ -2193,6 +2193,106 @@ char* VMEModule::cut_headtail(char *datain,  int osize, int head, int tail)
 {
    return cut_headtail(datain, datain, osize, head, tail);
 }
+
+int VMEModule::getlength(FILE *finp, int s)
+{
+   if(s<=0 || s>4) return 0;
+   unsigned char buf[10];
+   int l;
+   fread(buf, 1, s, finp);
+   if(s==2)
+     l=buf[1] + 256*buf[0];
+   else if(s==4)
+     l=buf[3] + 256*(buf[2]+256*(buf[1]+256*buf[0]));
+   else 
+     l=buf[0];
+   return l;
+}
+
+int VMEModule::read_bitfile(char *binbuf, FILE *finp, unsigned limit)
+{
+   unsigned BIT_LIMIT=16*1024*1024;  // default and maximum size, equal to a 128Mb EPROM.
+   int size1, size2=0;
+   unsigned char bbuf[2000];
+
+   if(limit>0 && limit < BIT_LIMIT) BIT_LIMIT=limit;
+
+   std::cout << "Read Xilinx BIT file......" << std::endl;
+   rewind(finp);
+/* header */
+   size1=getlength(finp,2);
+   if(size1<1000) fread(bbuf, 1, size1, finp);
+   
+/* number of device */
+   fread(bbuf, 1, 2, finp);    
+   if(bbuf[0]!=0 || bbuf[1]!=1) std::cout << "Warning: Number of Device not 1!" << std::endl;
+   int finish=0;   
+   while(!finish && !feof(finp))
+   {
+       fread(bbuf, 1, 1, finp);
+       switch (bbuf[0])
+       {
+           case 0x61:
+               size1=getlength(finp,2);
+               if(size1<1000)
+               {
+                  fread(bbuf, 1, size1, finp);
+                  printf("Source: %s\n", bbuf);
+               }
+               break;
+           case 0x62:
+               size1=getlength(finp,2);
+               if(size1<1000)
+               {
+                  fread(bbuf, 1, size1, finp);
+                  printf("Device: %s\n", bbuf);
+               }
+               break;
+           case 0x63:
+               size1=getlength(finp,2);
+               if(size1<100)
+               {
+                  fread(bbuf, 1, size1, finp);
+                  printf("Date: %s\n", bbuf);
+               }
+               break;
+           case 0x64:
+               size1=getlength(finp,2);
+               if(size1<100)
+               {
+                  fread(bbuf, 1, size1, finp);
+                  printf("Time: %s\n", bbuf);
+               }
+               break;
+           case 0x65:
+               size2=getlength(finp, 4);
+               printf("Binary size: %d\n", size2);
+               if(size2>BIT_LIMIT) size2=BIT_LIMIT;
+               fread(binbuf,1, size2, finp);
+	       for(int i=0; i<size2; i++) 
+	       {
+                   // bit swap
+		   char c=binbuf[i];  
+		   char n=0;
+		   for(int j=0;j<8;j++)
+		   {
+			n <<= 1;
+			n |= (c & 1);
+			c >>= 1;
+		   }
+		   binbuf[i]=n&0XFF;
+	       }
+
+               finish=1;
+               break;
+           default:
+               finish=1;
+               break;
+       }
+   }
+   return size2;
+}
+
   } // namespace emu::pc
 } // namespace emu
 	

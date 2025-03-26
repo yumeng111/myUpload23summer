@@ -6263,6 +6263,14 @@ void TMB::ReadGEMHotChannelMask(){
    ReadRegister(gem_vfat_hcm1_adr);
    ReadRegister(gem_vfat_hcm2_adr);
 }
+
+//
+void TMB::ReadGEMAlignment(){
+   ReadRegister(gem_alignment0_adr);
+   ReadRegister(gem_alignment1_adr);
+   ReadRegister(gem_alignment2_adr);
+   ReadRegister(gem_alignment3_adr);
+}
 //
 void TMB::ReadDcfebGtxRxRegisters(){
   static const unsigned long int raddrs[TMB_MAX_DCFEB_FIBERS] = {
@@ -7064,13 +7072,13 @@ void TMB::DefineTMBConfigurationRegisters_(){
   TMBConfigurationRegister.push_back(run3_format_ctrl_adr); //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 data format
   if (hardware_version_>=2){
     TMBConfigurationRegister.push_back(algo2016_ctrl_adr); //0X198 = ADR_NEWALGO_CTRL:  Controls parameters of new trigger algorithm  (Yuriy, 2016)
+    TMBConfigurationRegister.push_back(algo2022_ctrl_adr); //0X1B8  = ADR_LCT_INJECTION
     TMBConfigurationRegister.push_back(hmt_ctrl_adr); //0X1AC = ADR_HMT_CTRL:  Controls parameters of HMT
     TMBConfigurationRegister.push_back(hmt_thresh1_adr); //0X1AE = ADR_HMT_THRESH1:  HMT thresh1
     TMBConfigurationRegister.push_back(hmt_thresh2_adr); //0X1B0 = ADR_HMT_THRESH2:  HMT thresh2
     TMBConfigurationRegister.push_back(hmt_thresh3_adr); //0X1B2 = ADR_HMT_THRESH3:  HMT thresh3
     //TMBConfigurationRegister.push_back(hmt_nhits_sig_adr); //0X1B4 = ADR_HMT_NHITS_SIG
     //TMBConfigurationRegister.push_back(hmt_nhits_bkg_adr); //0X1B6 = ADR_HMT_NHITS_BKG
-    //TMBConfigurationRegister.push_back(lct_injection_adr); //0X1B8  = ADR_LCT_INJECTION
   
   }
   TMBConfigurationRegister.push_back(tmb_trig_adr);   //0x86 TMB trigger configuration/MPC accept, delays
@@ -7173,6 +7181,10 @@ void TMB::DefineTMBConfigurationRegisters_(){
   TMBConfigurationRegister.push_back(gem_vfat_hcm0_adr); // 0x33a GEM VFAT hot channel mask 0
   TMBConfigurationRegister.push_back(gem_vfat_hcm1_adr); // 0x33c GEM VFAT hot channel mask 1
   TMBConfigurationRegister.push_back(gem_vfat_hcm2_adr); // 0x33e GEM VFAT hot channel mask 2
+  TMBConfigurationRegister.push_back(gem_alignment0_adr); // 0x380 GEM  Alignment 0
+  TMBConfigurationRegister.push_back(gem_alignment1_adr); // 0x382 GEM  Alignment 1
+  TMBConfigurationRegister.push_back(gem_alignment2_adr); // 0x384 GEM  Alignment 2
+  TMBConfigurationRegister.push_back(gem_alignment3_adr); // 0x386 GEM  Alignment 3
   }
 
   if(label_.find("ME-1/1/12") != std::string::npos)
@@ -7733,6 +7745,7 @@ void TMB::SetTMBRegisterDefaults() {
   drop_used_clcts_            = drop_used_clcts_default           ;
   cross_bx_algorithm_         = cross_bx_algorithm_default        ;
   clct_use_corrected_bx_      = clct_use_corrected_bx_default     ;
+  pretrig_clct_match_zone_    = pretrig_clct_match_zone_default;
   // 2021-10-15, Liu:temporarily add chamber number parity bit to bit[12] so that new OTMB firmware can use it
   char *namestr=(char *)(label_.c_str());
   chamber_num_parity_         = 1&namestr[strlen(namestr)-1]; // lowest bit of the last byte
@@ -7771,13 +7784,17 @@ void TMB::SetTMBRegisterDefaults() {
   hmt_allow_match_ro_        = hmt_allow_match_ro_default;
   hmt_outtime_check_        = hmt_outtime_check_default;
 
-  ////-----------------------------------------------------------------------------
-  ////ADR_LCT_INJECTION = 0x1B8
-  ////-----------------------------------------------------------------------------
-  //lct_inj_hs_             = lct_inj_hs_default;
-  //lct_inj_wg_             = lct_inj_wg_default;
-  //lct_inj_enable_         = lct_inj_enable_default;
-  ////
+  //---------------------------------------------------------------------
+  // 0X1B8 = ADR_ALGO2022_CTRL:  Controls parameters of 2022 winter upgrade trigger algorithm (Tao, 2022)
+  //---------------------------------------------------------------------
+  
+  clctaff_enable_            = clctaff_enable_default;
+  clctaff_alct_match_        = clctaff_alct_match_default;
+  pretrig_clct_match_enable_ = pretrig_clct_match_enable_default;
+  trig_match_bxonly_enable_  = trig_match_bxonly_enable_default;
+  local_shower_zone_         = local_shower_zone_default;
+  local_shower_thresh_       = local_shower_thresh_default;
+
   //-----------------------------------------------------------------------------
   // 0X300 - 0X306 = ADR_GEM_GTX_RX[0-3]: GTX link control and monitoring for GEM
   //-----------------------------------------------------------------------------
@@ -7905,11 +7922,18 @@ void TMB::SetTMBRegisterDefaults() {
     //---------------------------------------------------------------------
     // 0X33a,0x33c,0x33e for GEM hot vfat mask
     //---------------------------------------------------------------------
+  //defaults are 0 = Good VFAT (no hot channel)
   for (int ivfat=0; ivfat<MAX_GEM_VFATS_PER_LAYER; ivfat++){
      gemA_hot_channel_mask_[ivfat] = 0;
      gemB_hot_channel_mask_[ivfat] = 0;
   }
-  //defaults are 0 = Good VFAT (no hot channel)
+    //---------------------------------------------------------------------
+    // 0X380, 0x382, 0x384, 0x386 for GEM alignemnt
+    //---------------------------------------------------------------------
+  for (int ieta = 0;  ieta < MAX_ETAPARTIONS_PER_LAYER; ieta++){
+     gem_xshift_value_eta_[ieta] = gem_xshift_value_eta0_default;
+     gem_xshift_sign_eta_[ieta] = gem_xshift_sign_eta0_default;
+  }
   return;
 }
 //
@@ -8560,6 +8584,18 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_clct_use_corrected_bx_      = ExtractValueFromData(data,clct_use_corrected_bx_bitlo     ,clct_use_corrected_bx_bithi     );
     read_seq_trigger_nodeadtime_     = ExtractValueFromData(data,seq_trigger_nodeadtime_bitlo    ,seq_trigger_nodeadtime_bithi    );
     read_chamber_num_parity_         = ExtractValueFromData(data,chamber_num_parity_bitlo        ,chamber_num_parity_bithi        );
+    read_pretrig_clct_match_zone_    = ExtractValueFromData(data,pretrig_clct_match_zone_bitlo   ,pretrig_clct_match_zone_bithi   );
+    //
+  } else if ( address == algo2022_ctrl_adr ) {
+    //---------------------------------------------------------------------
+    // 0X1B8 = ADR_ALGO2022_CTRL:  Controls parameters of 2022 winter upgrade trigger algorithm (Tao, 2022)
+    //---------------------------------------------------------------------
+    read_clctaff_enable_            = ExtractValueFromData(data,clctaff_enable_bitlo              ,clctaff_enable_bithi           );
+    read_clctaff_alct_match_        = ExtractValueFromData(data,clctaff_alct_match_bitlo          ,clctaff_alct_match_bithi       );
+    read_pretrig_clct_match_enable_ = ExtractValueFromData(data,pretrig_clct_match_enable_bitlo   ,pretrig_clct_match_enable_bithi);
+    read_trig_match_bxonly_enable_  = ExtractValueFromData(data,trig_match_bxonly_enable_bitlo    ,trig_match_bxonly_enable_bithi );
+    read_local_shower_zone_         = ExtractValueFromData(data,local_shower_zone_bitlo           ,local_shower_zone_bithi        );
+    read_local_shower_thresh_       = ExtractValueFromData(data,local_shower_thresh_bitlo         ,local_shower_thresh_bithi      );
     //
   } else if ( address == clct0_cc_adr ) {
     //---------------------------------------------------------------------
@@ -9288,7 +9324,16 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
            read_gemB_hot_channel_mask_[vfat]  =  ExtractValueFromData (data , bit_in_register, bit_in_register); 
         }
     }
-  } //end of fill extra VME register
+  } else if ( address == gem_alignment0_adr || address == gem_alignment1_adr || address == gem_alignment2_adr || address == gem_alignment3_adr ) {
+    //---------------------------------------------------------------------
+    // 0X380, 0x382, 0x384, 0x386 for GEM alignemnt
+    int ieta = address-gem_alignment0_adr;
+    read_gem_xshift_value_eta_[ieta]   = ExtractValueFromData (data , gem_xshift_value_eta0_bitlo        , gem_xshift_value_eta0_bithi);
+    read_gem_xshift_sign_eta_[ieta]    = ExtractValueFromData (data ,  gem_xshift_sign_eta0_bitlo        ,  gem_xshift_sign_eta0_bithi);
+    read_gem_xshift_value_eta_[ieta+1] = ExtractValueFromData (data , gem_xshift_value_eta1_bitlo        , gem_xshift_value_eta1_bithi);
+    read_gem_xshift_sign_eta_[ieta+1]  = ExtractValueFromData (data ,  gem_xshift_sign_eta1_bitlo        ,  gem_xshift_sign_eta1_bithi);
+  } 
+  //end of fill extra VME register
   //
   // combinations of bits which say which trgmode_ we are using....
   //
@@ -9348,7 +9393,8 @@ void TMB::PrintTMBConfiguration() {
 				       VMEregister != hcm501_adr && VMEregister != hcm523_adr && VMEregister != hcm545_adr &&
 				       VMEregister != hcm601_adr && VMEregister != hcm623_adr && VMEregister != hcm645_adr)) )
 	  || hardware_version_ < 2) &&
-        (!GetGemEnabled() || (GetGemEnabled() && VMEregister != gem_vfat_hcm0_adr  && VMEregister != gem_vfat_hcm1_adr && VMEregister != gem_vfat_hcm2_adr        ))
+        (!GetGemEnabled() || (GetGemEnabled() && VMEregister != gem_vfat_hcm0_adr  && VMEregister != gem_vfat_hcm1_adr && VMEregister != gem_vfat_hcm2_adr        
+         && !(VMEregister >= gem_alignment0_adr && VMEregister <= gem_alignment3_adr) ))
         )
       PrintTMBRegister(VMEregister);
   }
@@ -9444,7 +9490,21 @@ void TMB::PrintGEMHotChannelMask() {
 	(*MyOutput_) << ((gemB_hot_channel_mask[count] >> 4) & 0xf) << " "
 		<< (gemB_hot_channel_mask[count] & 0xf) <<" ";
   (*MyOutput_) << std::endl;
-  (*MyOutput_) << "-------------------------------------------" << std::endl;
+
+  (*MyOutput_) << "-------------------------------------------------------" << std::endl;
+
+  //add alignment printout here
+  ReadGEMAlignment();
+  //current convention: roll0=ieta7,  roll7=ieta0
+  //gem_xshift_sign_eta = 1 means +, converted CSC coordinate + alignment correction
+  (*MyOutput_) << "GEM Alignment (Roll0=GEM bottom=high eta end) in decimal, unit=1/8 CSC strip:\n";
+  (*MyOutput_) << "Plus sign (+) --> converted CSC coordinate + alignment correction\n" <<  std::dec;
+  for (int ieta = 0;  ieta < MAX_ETAPARTIONS_PER_LAYER; ieta++)
+	(*MyOutput_) <<"Roll"<< MAX_ETAPARTIONS_PER_LAYER-ieta-1<<"="
+                << (read_gem_xshift_sign_eta_[ieta] == 1 ? "+":"-") 
+                << read_gem_xshift_value_eta_[ieta] << (ieta == MAX_ETAPARTIONS_PER_LAYER-1 ? "" : ", ");
+  (*MyOutput_) << std::endl;
+  (*MyOutput_) << "-------------------------------------------------------" << std::endl;
 
 
 }
@@ -9852,7 +9912,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->TMB algo2016 register:" << std::endl;
     (*MyOutput_) << "    Toggle dead time zone                                         = " << std::dec << read_use_dead_time_zone_         << std::endl;
-    (*MyOutput_) << "    Dead time zone size from 0 to 31 (in hs)                      = " << std::dec << read_dead_time_zone_size_        << std::endl;
+    (*MyOutput_) << "    Dead time zone size from 0 to 31 (in hs,5bits)                = " << std::dec << read_dead_time_zone_size_        << std::endl;
     (*MyOutput_) << "    Toggle dead time zone size dependence on pattern ID           = " << std::dec << read_use_dynamic_dead_time_zone_ << std::endl;
     (*MyOutput_) << "    Toggle ALCT-centric matching                                  = " << std::dec << read_clct_to_alct_               << std::endl;
     (*MyOutput_) << "    Toggle dropping CLCTs from matching in ALCT-centric algorithm = " << std::dec << read_drop_used_clcts_            << std::endl;
@@ -9860,6 +9920,18 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << "    Toggle use of medians for CLCT timing                         = " << std::dec << read_clct_use_corrected_bx_      << std::endl;
     (*MyOutput_) << "    Allow to two triggers in a row (Run3 trigger rule)            = " << std::dec << read_seq_trigger_nodeadtime_     << std::endl;
     (*MyOutput_) << "    chamber number parity, 1 for odd and 0 for even               = " << std::dec << read_chamber_num_parity_         << std::endl;
+    (*MyOutput_) << "    Define the zone for pretriggger and CLCT position match(0-7hs)= " << std::dec << read_pretrig_clct_match_zone_    << std::endl;
+  } else if ( address == algo2022_ctrl_adr ) {
+    //---------------------------------------------------------------------
+    // 0X1B8 = ADR_ALGO2022_CTRL:  Controls parameters of 2022 winter upgrade trigger algorithm (Tao, 2022)
+    //---------------------------------------------------------------------
+    (*MyOutput_) << " ->TMB algo2022 winter upgrade register:" << std::endl;
+    (*MyOutput_) << "    Enable the AFF at CLCT level or not. 1=enable                 = " << std::dec << read_clctaff_enable_             << std::endl;
+    (*MyOutput_) << "    Require ALCT+AFF match for low Q AFF or not, 1=requried       = " << std::dec << read_clctaff_alct_match_         << std::endl;
+    (*MyOutput_) << "    Require pretrigger and CLCT position match or not. 1=requried = " << std::dec << read_pretrig_clct_match_enable_  << std::endl;
+    (*MyOutput_) << "    Enable BX only sorting for ALCT-CLCT match. 0=legacy,1=New    = " << std::dec << read_trig_match_bxonly_enable_   << std::endl;
+    (*MyOutput_) << "    Define the zone to count hits for local shower, 6bits         = " << std::dec << read_local_shower_zone_   << std::endl;
+    (*MyOutput_) << "    Threshold of No. of hits to flag local shower ,6bits          = " << std::dec << read_local_shower_thresh_   << std::endl;
   } else if ( address == run3_format_ctrl_adr ) {
   //------------------------------------------------------------------
   //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 format control  (Tao, 2020)
@@ -11054,7 +11126,19 @@ int TMB::FillTMBRegister(unsigned long int address) {
     InsertValueIntoDataWord(seq_trigger_nodeadtime_    ,seq_trigger_nodeadtime_bithi    ,seq_trigger_nodeadtime_bitlo    ,&data_word);
     // add chamber parity: 1 for odd chamber and 0 for even chamber
     InsertValueIntoDataWord(chamber_num_parity_        ,chamber_num_parity_bithi        ,chamber_num_parity_bitlo        ,&data_word);
-   //
+    InsertValueIntoDataWord(pretrig_clct_match_zone_   ,pretrig_clct_match_zone_bithi   ,pretrig_clct_match_zone_bitlo   ,&data_word);
+    //
+  } else if ( address == algo2022_ctrl_adr ) {
+    //---------------------------------------------------------------------
+    // 0X1B8 = ADR_ALGO2022_CTRL:  Controls parameters of 2022 winter upgrade trigger algorithm (Tao, 2022)
+    //---------------------------------------------------------------------
+    InsertValueIntoDataWord(clctaff_enable_            ,clctaff_enable_bithi              ,clctaff_enable_bitlo           ,&data_word);
+    InsertValueIntoDataWord(clctaff_alct_match_        ,clctaff_alct_match_bithi          ,clctaff_alct_match_bitlo       ,&data_word);
+    InsertValueIntoDataWord(pretrig_clct_match_enable_ ,pretrig_clct_match_enable_bithi   ,pretrig_clct_match_enable_bitlo,&data_word);
+    InsertValueIntoDataWord(trig_match_bxonly_enable_  ,trig_match_bxonly_enable_bithi    ,trig_match_bxonly_enable_bitlo ,&data_word);
+    InsertValueIntoDataWord(local_shower_zone_         ,local_shower_zone_bithi           ,local_shower_zone_bitlo        ,&data_word);
+    InsertValueIntoDataWord(local_shower_thresh_       ,local_shower_thresh_bithi         ,local_shower_thresh_bitlo      ,&data_word);
+    //
   } else if ( address == run3_format_ctrl_adr ) {
    //------------------------------------------------------------------
    //0X1AA = ADR_RUN3_FORMAT_CTRL:  Run3 format control  (Tao, 2020)
@@ -11554,6 +11638,14 @@ int TMB::FillTMBRegister(unsigned long int address) {
            InsertValueIntoDataWord(gemB_hot_channel_mask_[vfat],bit_in_register,bit_in_register,&data_word);
         }
     }
+  } else if ( address == gem_alignment0_adr || address == gem_alignment1_adr || address == gem_alignment2_adr || address == gem_alignment3_adr ) {
+    //---------------------------------------------------------------------
+    // 0X380, 0x382, 0x384, 0x386 for GEM alignemnt
+    int ieta = address-gem_alignment0_adr;
+    InsertValueIntoDataWord(gem_xshift_value_eta_[ieta],   gem_xshift_value_eta0_bithi        , gem_xshift_value_eta0_bitlo, &data_word);
+    InsertValueIntoDataWord( gem_xshift_sign_eta_[ieta],    gem_xshift_sign_eta0_bithi        ,  gem_xshift_sign_eta0_bitlo, &data_word);
+    InsertValueIntoDataWord(gem_xshift_value_eta_[ieta+1], gem_xshift_value_eta1_bithi        , gem_xshift_value_eta1_bitlo, &data_word);
+    InsertValueIntoDataWord( gem_xshift_sign_eta_[ieta+1],  gem_xshift_sign_eta1_bithi        ,  gem_xshift_sign_eta1_bitlo, &data_word);
   } else {
     //
     (*MyOutput_) << "TMB: ERROR in FillTMBRegister, VME address = " << address << " not supported to be filled" << std::endl;

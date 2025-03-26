@@ -1,0 +1,38 @@
+02 Aug 2022 19:27:35.487 [140275894380736] INFO  10.119.64.4.p:20016 <> - xdaq version: 05.03.01, compiled on Apr 25 2018 at 15:57:09, 64bit
+02 Aug 2022 19:27:35.488 [140275894380736] INFO  10.119.64.4.p:20016 <> - Loaded profile: /home/cscdev/EMULIB_V15_Master/xml/default.profile_cc7_noXMAS
+02 Aug 2022 19:27:35.489 [140275894380736] ERROR 10.119.64.4.p:20016 <> - Failed to load module: Caught exception: xdaq::exception::Exception 'Cannot load module //opt/xdaq/lib/libi2outils.so' raised at loadModule(/usr/local/src/xdaq/baseline14/trunk/daq/xdaq/src/common/ApplicationContextImpl.cc:1570);
+	originated by xdaq::exception::LoadFailed '//opt/xdaq/lib/libi2outils.so: cannot open shared object file: No such file or directory' raised at load(/usr/local/src/xdaq/baseline14/trunk/daq/xdaq/src/common/SharedObjectRegistry.cc:196)
+02 Aug 2022 19:27:35.489 [140275894380736] INFO  10.119.64.4.p:20016 <> - b2innub version: 02.05.01, compiled on Feb  1 2018 at 11:10:08
+02 Aug 2022 19:27:35.490 [140275894380736] INFO  10.119.64.4.p:20016 <> - executive version: 04.00.06, compiled on Dec 16 2016 at 17:01:39
+02 Aug 2022 19:27:35.490 [140275894380736] INFO  10.119.64.4.p:20016 <> - pthttp version: 04.05.07, compiled on Aug 23 2018 at 10:18:48
+02 Aug 2022 19:27:35.491 [140275894380736] INFO  10.119.64.4.p:20016 <> - ptfifo version: 04.03.01, compiled on Mar 29 2017 at 14:04:58
+02 Aug 2022 19:27:35.491 [140275894380736] INFO  10.119.64.4.p:20016 <> - xrelay version: 04.01.00, compiled on Dec 16 2016 at 17:01:51
+02 Aug 2022 19:27:35.492 [140275894380736] INFO  10.119.64.4.p:20016 <> - hyperdaq version: 05.02.01, compiled on Oct 30 2018 at 14:22:42
+02 Aug 2022 19:27:35.492 [140275894380736] INFO  10.119.64.4.p:20016 <> - sentinelutils version: 02.02.00, compiled on Dec 16 2016 at 17:04:27
+02 Aug 2022 19:27:35.500 [140275894380736] WARN  10.119.64.4.p:20016 <> - Could not perform version checking on module file://opt/xdaq/lib/libxalan-c.so, version declaration missing.
+02 Aug 2022 19:27:35.501 [140275894380736] WARN  10.119.64.4.p:20016 <> - Could not perform version checking on module file://opt/xdaq/lib/libxalanMsg.so, version declaration missing.
+02 Aug 2022 19:27:35.501 [140275894380736] ERROR 10.119.64.4.p:20016 <> - Failed to load module: Caught exception: xdaq::exception::Exception 'Cannot load module //home/cscdev/EMULIB_V15_Master/x86_64_cc7/lib/libemusoap.so' raised at loadModule(/usr/local/src/xdaq/baseline14/trunk/daq/xdaq/src/common/ApplicationContextImpl.cc:1570);
+	originated by xdaq::exception::LoadFailed '//home/cscdev/EMULIB_V15_Master/x86_64_cc7/lib/libemusoap.so: undefined symbol: _ZTIN11xercesc_3_213XMLEntityDeclE' raised at load(/usr/local/src/xdaq/baseline14/trunk/daq/xdaq/src/common/SharedObjectRegistry.cc:196)
+02 Aug 2022 19:27:35.501 [140275894380736] DEBUG 10.119.64.4.p:20016 <> - Create application descriptor for class: executive::Application id: 0
+02 Aug 2022 19:27:35.510 [140275894380736] INFO  10.119.64.4.p:20016.executive::Application.lid(0) <> - Log URL not set (was already console)
+02 Aug 2022 19:27:35.510 [140275894380736] INFO  10.119.64.4.p:20016.executive::Application.lid(0) <> - Changed Log level to INFO
+02 Aug 2022 19:27:35.513 [140275894380736] INFO  10.119.64.4.p:20016.pt::http::PeerTransportHTTP.lid(1) <> - Adding header Access-Control-Allow-Origin:*
+02 Aug 2022 19:27:35.513 [140275894380736] INFO  10.119.64.4.p:20016.pt::http::PeerTransportHTTP.lid(1) <> - Adding header Access-Control-Allow-Methods:POST, GET, OPTIONS
+02 Aug 2022 19:27:35.513 [140275894380736] INFO  10.119.64.4.p:20016.pt::http::PeerTransportHTTP.lid(1) <> - Adding header Access-Control-Allow-Headers:x-requested-with
+02 Aug 2022 19:27:35.513 [140275894380736] INFO  10.119.64.4.p:20016.pt::http::PeerTransportHTTP.lid(1) <> - Adding expire rule image/png:PT4300H
+02 Aug 2022 19:27:35.513 [140275894380736] INFO  10.119.64.4.p:20016.pt::http::PeerTransportHTTP.lid(1) <> - Adding expire rule image/jpg:PT4300H
+02 Aug 2022 19:27:35.513 [140275894380736] INFO  10.119.64.4.p:20016.pt::http::PeerTransportHTTP.lid(1) <> - Adding expire rule image/gif:PT4300H
+02 Aug 2022 19:27:35.513 [140275894380736] INFO  10.119.64.4.p:20016.pt::http::PeerTransportHTTP.lid(1) <> - Adding expire rule application/x-shockwave-flash:PT120H
+02 Aug 2022 19:27:35.513 [140275894380736] INFO  10.119.64.4.p:20016.pt::http::PeerTransportHTTP.lid(1) <> - Adding expire rule application/font-woff:PT8600H
+02 Aug 2022 19:27:35.513 [140275894380736] INFO  10.119.64.4.p:20016.pt::http::PeerTransportHTTP.lid(1) <> - Adding expire rule text/css:PT4300H
+02 Aug 2022 19:27:35.514 [140275894380736] INFO  10.119.64.4.p:20016.pt::http::PeerTransportHTTP.lid(1) <> - No security policies on this server
+02 Aug 2022 19:27:35.516 [140275894380736] INFO  10.119.64.4.p:20016 <> - xdaq2rc version: 01.11.00, compiled on Dec 16 2016 at 17:09:20
+02 Aug 2022 19:27:35.516 [140275894380736] INFO  10.119.64.4.p:20016 <> - tstoreclient version: 01.17.01, compiled on Dec 16 2016 at 17:02:46
+02 Aug 2022 19:27:35.516 [140275894380736] WARN  10.119.64.4.p:20016 <> - Could not perform version checking on module file://opt/xdaq/lib/libxalanMsg.so, version declaration missing.
+02 Aug 2022 19:27:35.516 [140275894380736] WARN  10.119.64.4.p:20016 <> - Could not perform version checking on module file://opt/xdaq/lib/libxalan-c.so, version declaration missing.
+02 Aug 2022 19:27:35.517 [140275894380736] ERROR 10.119.64.4.p:20016.executive::Application.lid(0) <> - Caught exception: xdaq::exception::ConfigurationError 'Cannot load module from ${BUILD_HOME}/emu/base/lib/linux/$XDAQ_PLATFORM/libemubase.so' raised at downloadModules(/usr/local/src/xdaq/baseline14/daq/executive/src/common/Application.cc:1308);
+	originated by xdaq::exception::Exception 'Cannot load module //home/cscdev/EMULIB_V15_Master/emu/base/lib/linux/x86_64_cc7/libemubase.so' raised at loadModule(/usr/local/src/xdaq/baseline14/trunk/daq/xdaq/src/common/ApplicationContextImpl.cc:1570);
+	originated by xdaq::exception::LoadFailed '//home/cscdev/EMULIB_V15_Master/emu/base/lib/linux/x86_64_cc7/libemubase.so: undefined symbol: _ZTIN11xercesc_3_213XMLEntityDeclE' raised at load(/usr/local/src/xdaq/baseline14/trunk/daq/xdaq/src/common/SharedObjectRegistry.cc:196)
+02 Aug 2022 19:27:35.517 [140275894380736] ERROR 10.119.64.4.p:20016.executive::Application.lid(0) <> - Failed to configure executive
+02 Aug 2022 19:27:35.517 [140275894380736] INFO  10.119.64.4.p:20016 <> - Ready.
+Terminating...

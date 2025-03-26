@@ -1,0 +1,97 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type="text/xml" href="../EmuDAQConfig.xsl"?>
+<xc:Partition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xc="http://xdaq.web.cern.ch/xdaq/xsd/2004/XMLConfiguration-30">
+
+<!--Local DAQ-->
+  <xc:Context url="http://vmepc-e1x07-23-01.cms904:20200">
+    <xc:Application instance="0" class="emu::ldaq::manager::Application" network="local" id="12"/>
+  </xc:Context>
+
+<!-- STEP -->
+  <xc:Context url="http://vmepc-e1x07-21-01.cms904:10000">
+
+    <xc:Module>${XDAQ_ROOT}/lib/libxalan-c.so</xc:Module>
+    <xc:Module>${XDAQ_ROOT}/lib/libtstoreclient.so</xc:Module>
+
+    <xc:Application id="100" instance="0" class="emu::step::Manager" network="local">
+      <properties xsi:type="soapenc:Struct" xmlns="urn:xdaq-application:emu::step::Manager">
+	<configurationXSLFileName xsi:type="xsd:string">${BUILD_HOME}/emu/step/xml/configuration.xsl</configurationXSLFileName>
+	<!-- <testParametersFileName xsi:type="xsd:string">${BUILD_HOME}/emu/step/xml/B904/testParameters.xml</testParametersFileName> -->
+	<!-- <specialVMESettingsFileName xsi:type="xsd:string">${BUILD_HOME}/emu/step/xml/B904/TestSpecificVME.xml</specialVMESettingsFileName> -->
+	<testParametersFileName xsi:type="xsd:string">${HOME}/config/step/testParameters.xml</testParametersFileName>
+	<specialVMESettingsFileName xsi:type="xsd:string">${HOME}/config/step/TestSpecificVME.xml</specialVMESettingsFileName>
+        <analysisScriptName xsi:type="xsd:string">${BUILD_HOME}/emu/step/script/runAnalysis.sh</analysisScriptName>
+        <analysisExeName xsi:type="xsd:string">${BUILD_HOME}/${XDAQ_PLATFORM}/bin/runEmuCalibAnalysis.exe</analysisExeName>
+			</properties>
+    </xc:Application>
+
+    <xc:Application id="101" instance="0" class="emu::step::Tester" network="local">
+      <properties xsi:type="soapenc:Struct" xmlns="urn:xdaq-application:emu::step::Tester">
+	<group xsi:type="xsd:string">CTS in B904</group>
+	<vmeSettingsFileName xsi:type="xsd:string">${HOME}/config/step/VME_STEP.xml</vmeSettingsFileName>
+	<!-- <vmeSettingsFileName xsi:type="xsd:string">${HOME}/config/step/VME_STEP_DCFEB.xml</vmeSettingsFileName> -->
+	<fakeTests xsi:type="xsd:boolean">false</fakeTests>
+      </properties>
+    </xc:Application>
+
+
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libemusoap.so</xc:Module>
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libemubase.so</xc:Module>
+    <!-- <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libtstoreclient.so</xc:Module> -->
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libEmuOnlineDB.so</xc:Module>
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libEmuPeripheralCore.so</xc:Module>
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libEmuPeripheralApps.so</xc:Module>
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libemustep.so</xc:Module>
+
+  </xc:Context>
+
+  <xc:Context url="http://vmepc-e1x07-22-01.cms904:20100">
+			<xc:Application class="emu::fed::Communicator" id="61" instance="0" network="local">
+			<properties xmlns="urn:xdaq-application:Communicator" xsi:type="soapenc:Struct">
+				<xmlFileName xsi:type="xsd:string">/nfshome0/cscdev/config/step/FED_STEP.xml</xmlFileName>
+				<dbUsername xsi:type="xsd:string">cms_csc_daq_conf</dbUsername>
+				<dbPassword xsi:type="xsd:string">config_emu_pass</dbPassword>
+				<configMode xsi:type="xsd:string">XML</configMode>
+				<fmmErrorThreshold xsi:type="xsd:unsignedInt">1</fmmErrorThreshold>
+			</properties>
+		</xc:Application>
+		
+		<xc:Application class="emu::fed::EmuFCrateHyperDAQ" id="71" instance="0" network="local">
+			<properties xmlns="urn:xdaq-application:EmuFCrateHyperDAQ" xsi:type="soapenc:Struct">
+				<xmlFileName xsi:type="xsd:string">/nfshome0/cscdev/config/step/FED_STEP.xml</xmlFileName>
+				<!-- <xmlFileName xsi:type="xsd:string">/nfshome0/cscdev/config/step/testFED.xml</xmlFileName> -->
+				<!-- <xmlFileName xsi:type="xsd:string">/nfshome0/cscdev/config/fed/config_c0.xml</xmlFileName> -->
+			</properties>
+		</xc:Application>
+		
+		<!-- <xc:Application class="emu::fed::Monitor" id="81" instance="0" network="local"> -->
+		<!-- 	<properties xmlns="urn:xdaq-application:Monitor" xsi:type="soapenc:Struct"> -->
+		<!-- 		<xmlFileName xsi:type="xsd:string">/nfshome0/cscdev/config/step/FED_STEP.xml</xmlFileName> -->
+		<!-- 		<dbUsername xsi:type="xsd:string">cms_csc_daq_conf</dbUsername> -->
+		<!-- 		<dbPassword xsi:type="xsd:string">config_emu_pass</dbPassword> -->
+		<!-- 		<configMode xsi:type="xsd:string">XML</configMode> -->
+		<!-- 	</properties> -->
+		<!-- </xc:Application> -->
+
+		<!-- <xc:Application class="emu::fed::Commander" id="91" instance="0" network="local"> -->
+		<!-- 	<properties xmlns="urn:xdaq-application:Commander" xsi:type="soapenc:Struct"> -->
+		<!-- 		<xmlFileName xsi:type="xsd:string">/nfshome0/cscdev/config/step/FED_STEP.xml</xmlFileName> -->
+		<!-- 		<dbUsername xsi:type="xsd:string">cms_csc_daq_conf</dbUsername> -->
+		<!-- 		<dbPassword xsi:type="xsd:string">config_emu_pass</dbPassword> -->
+		<!-- 		<configMode xsi:type="xsd:string">XML</configMode> -->
+		<!-- 	</properties> -->
+		<!-- </xc:Application> -->
+		<xc:Module>${XDAQ_ROOT}/lib/libxdaq2rc.so</xc:Module>
+		<xc:Module>${XDAQ_ROOT}/lib/libsentinelutils.so</xc:Module>        
+		<xc:Module>${XDAQ_ROOT}/lib/libtstoreclient.so</xc:Module>        
+		<xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libemubase.so</xc:Module>
+		<xc:Module>${XDAQ_ROOT}/lib/libCAENVME.so</xc:Module>        
+		<!-- <xc:Module>/usr/lib64/libboost_thread.so</xc:Module> -->       
+		<xc:Module>/usr/lib64/libboost_filesystem.so</xc:Module>        
+		<xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libEmuOnlineDB.so</xc:Module>
+		<xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libEmuFEDCore.so</xc:Module>        
+		<xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libEmuFEDUtils.so</xc:Module>        
+		<xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libEmuFEDApps.so</xc:Module>        
+	</xc:Context>
+
+</xc:Partition>

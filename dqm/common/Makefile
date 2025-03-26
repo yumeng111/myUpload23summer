@@ -1,0 +1,77 @@
+##
+#
+# This is the emu/emuDQM/EmuDisplayServer Package Makefile
+#
+##
+include ../config/xdaq.mk
+include ../config/site.mk
+
+# ROOT Config
+ROOTCFLAGS    = $(shell root-config --cflags)
+ROOTLIBS      = $(shell root-config --libs)
+ROOTGLIBS     = $(shell root-config --glibs)
+
+
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
+
+# CCFlags= -g -Wall -O3 -march=prescott -mtune=prescott
+CCFlags += -O3
+Standalone=no
+
+#
+# Packages to be built
+#
+Project=emu
+Package=emu/dqm/common
+
+Sources=\
+	EmuDQM_Utils.cc \
+	ConsumerCanvas.cc \
+	EmuDQM_AppParameters.cc \
+	EmuMonitoringObject.cc \
+	EmuMonitoringCanvas.cc \
+	CSCReadoutMappingFromFile.cc \
+	CSCDqmFact.cc
+
+
+Executables =
+ExternalObjects = $(BUILD_HOME)/emu/dqm/cmssw/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)/libCSCDQMCommon.a
+
+IncludeDirs = $(XdaqIncludeDirs) \
+	$(BUILD_HOME)/emu/base/include \
+	$(BUILD_HOME)/emu/dqm/cmssw/include/emu/dqm/cmssw/ \
+	$(ROOTDIR)/include \
+	$(CMSSW) \
+	$(BUILD_HOME)/emu/dqm/cmssw/src/common/ 
+
+
+LibraryDirs = $(XdaqLibraryDirs) 
+
+
+
+UserCFlags = $(ROOTCFLAGS)
+UserCCFlags = $(ROOTCFLAGS) -std=c++11
+UserDynamicLinkFlags = $(ROOTLIBS)
+UserStaticLinkFlags = 
+UserExecutableLinkFlags =
+
+# These libraries can be platform specific and
+# potentially need conditional processing
+#
+Libraries = $(XdaqLibraries)  
+
+#
+# Compile the source files and create a shared library
+#
+ifeq ($(Standalone),no)
+        DynamicLibrary = emudqmcommon
+        StaticLibrary = emudqmcommon
+else
+        DynamicLibrary = emudqmcommon
+        StaticLibrary = emudqmcommon_sa
+endif
+
+
+MakeFilename=Makefile
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules

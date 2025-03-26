@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This XSLT transforms a PCrate configuration .xml file into a .html file containing -->
+<!-- a table of TMB, ALCT, DMB, and CFEB parameters. -->
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:output method="html" indent="yes"/>
+
+  <xsl:template match="/">
+    <html>
+      <head>
+	<title>PC conf <xsl:value-of select="/EmuSystem/@conf"/></title>
+	<style type="text/css">
+	  table,th,td {border-style: solid; border-collapse: collapse; border-width: 1pt;}
+	  th.param {text-align: left;}
+	  td {text-align: right;}
+	  td.distinct_values {text-align: left;}
+	  //span {padding-left: 1em;}
+	  span.highlighted { color: #5555ff; font-weight: bold; }
+	  td.highlighted { background-color: #ebfbff !important; }
+	  tr.shaded_row td,th { background-color: #dddddd; }
+	  td.shaded_col { background-color: #eeeeee; }
+	</style>
+        <script type="text/javascript">
+
+ 	  // DistinctValue object
+	  function DistinctValue( value, occurrences ){
+	    this.value       = value;
+	    this.occurrences = occurrences;
+	    this.increment   = function(){ this.occurrences++; };
+	  }
+
+	  function equalValue( e ){
+	    //console.log( e.value+" "+this.value );
+	    return ( e.value == this.value );
+	  }
+	  
+	  function collectDistinctValues(){
+	    //console.log( "In collectDistinctValues" );
+  	    var dv=document.getElementsByClassName("distinct_values");
+	    //console.log( "DistinctValues field "+dv+" "+dv.length );
+  	    for ( var i=0; i &lt; dv.length; i++ ){
+  	      var values=dv[i].parentNode.getElementsByClassName("value");
+  	      var distinctValues = new Array();
+  	      for ( var j=0; j &lt; values.length; j++ ){
+	        var value=( values[j].innerHTML.length==0 ? String.fromCharCode(0x2205) : values[j].innerHTML ) // an empty set symbol if empty
+	        var index = distinctValues.findIndex( equalValue, new DistinctValue( value, 0 ) );
+  	        if   ( index &lt; 0 ) distinctValues.push( new DistinctValue( value, 1 ) );
+  	        else                  distinctValues[index].increment();
+  	      }
+	      //console.log( "DistinctValues array "+distinctValues+" "+distinctValues.length );
+	      if ( distinctValues.length > 0 ){
+	        if ( isNaN( distinctValues[0].value ) ) distinctValues.sort();
+	        else                                    distinctValues.sort(function(a,b){return a.value-b.value;});
+	      }
+    	      for ( var j=0; j &lt; distinctValues.length; j++ ){
+   	        // dv[i].innerHTML+=distinctValues[j]+" ";
+		var spanElem    = document.createElement("span");
+		var classAttr   = document.createAttribute("class");
+		var onclickAttr = document.createAttribute("onclick");
+		var titleAttr   = document.createAttribute("title");
+		var textNode    = document.createTextNode( distinctValues[j].value );
+		var spaceNode   = document.createTextNode( " " );
+		classAttr.value   = "distinct_value";
+		onclickAttr.value = "highlightValues(this)";
+		titleAttr.value   = distinctValues[j].occurrences+" occurrences of value "+distinctValues[j].value+". Click to highlight them.";
+		spanElem.appendChild( textNode );
+		spanElem.setAttributeNode( classAttr );
+		spanElem.setAttributeNode( onclickAttr );
+		spanElem.setAttributeNode( titleAttr );
+		dv[i].appendChild( spaceNode );
+		dv[i].appendChild( spanElem );
+	      }
+	      if ( i%2 ){
+	        dv[i].parentNode.classList.add( "shaded_row" );
+              }
+	      else{
+	        var fieldsInRow = dv[i].parentNode.children;
+	        var previousRing = "ME+S/R";
+		var shadeColumn = false;
+	        for ( var j=0; j &lt; fieldsInRow.length; j++ ){
+		  var thisRing = fieldsInRow[j].title.substring(1,6);
+		  if ( thisRing != previousRing ){
+		    shadeColumn = ! shadeColumn;
+		    previousRing = thisRing;
+		  }
+		  if ( shadeColumn ) fieldsInRow[j].classList.add( "shaded_col" );
+		}
+	      }
+  	    }
+  	  }
+
+	  function highlightValues(elem){
+	    // console.log( "clicked elem "+elem );  
+            var distinctValues = document.getElementsByClassName("distinct_value");
+  	    for ( var i=0; i &lt; distinctValues.length; i++ ){
+	      distinctValues[i].classList.remove("highlighted");
+	    }
+	    var fields = document.getElementsByClassName("value");
+  	    for ( var i=0; i &lt; fields.length; i++ ){
+	      fields[i].classList.remove("highlighted");
+	    }
+	    elem.classList.add("highlighted");
+	    // console.log( "clicked class "+elem.className );  
+	    var fieldsInRow = elem.parentNode.parentNode.getElementsByClassName("value");
+  	    for ( var i=0; i &lt; fieldsInRow.length; i++ ){
+	      if ( fieldsInRow[i].innerHTML == elem.innerHTML
+	           || ( fieldsInRow[i].innerHTML.length == 0 &amp;&amp;
+	                elem.innerHTML == String.fromCharCode(0x2205)  ) ){
+	            fieldsInRow[i].classList.add("highlighted");
+		    // console.log( "fieldsInRow["+i+"].className "+fieldsInRow[i].className );
+	      }
+	    }
+	    
+	  }
+	</script>
+      </head>
+      <body onload="collectDistinctValues()">
+	<h3>Peripheral crate configuration <xsl:value-of select="/EmuSystem/@conf"/></h3>
+	<table>
+	  <tr>
+	    <th colspan="3"/>
+	    <xsl:call-template name="RingNames"/>
+	  </tr>
+	  <tr>
+	    <th>module</th>
+	    <th>parameter</th>
+	    <th>distinct values</th>
+	    <xsl:call-template name="ChamberNumbers"/>
+	  </tr>
+	  <xsl:call-template name="Parameters">
+	    <xsl:with-param name="MODULE">TMB</xsl:with-param>
+	  </xsl:call-template>
+	  <xsl:call-template name="Parameters">
+	    <xsl:with-param name="MODULE">ALCT</xsl:with-param>
+	  </xsl:call-template>
+	  <xsl:call-template name="Parameters">
+	    <xsl:with-param name="MODULE">DAQMB</xsl:with-param>
+	  </xsl:call-template>
+	  <xsl:call-template name="Parameters">
+	    <xsl:with-param name="MODULE">CFEB</xsl:with-param>
+	  </xsl:call-template>
+	</table>
+      </body>
+    </html>
+  </xsl:template>
+
+  <xsl:template name="RingNames">
+    <xsl:for-each select="//CSC/@label">
+      <xsl:sort select="substring(.,1,6)"/>
+      <xsl:variable name="RING"><xsl:value-of select="substring(.,1,6)"/></xsl:variable>
+      <xsl:if test="not(preceding::CSC/@label[substring(.,1,6)=$RING])">
+      	<xsl:message>
+      	  <xsl:value-of select="$RING"/><xsl:text>  </xsl:text>
+      	  <xsl:value-of select="count(//CSC/@label[substring(.,1,6)=$RING])"/><xsl:text>  </xsl:text>
+      	</xsl:message>
+	<th colspan="{count(//CSC/@label[substring(.,1,6)=$RING])}">
+      	  <xsl:value-of select="$RING"/>
+	</th>
+      </xsl:if>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template name="ChamberNumbers">
+    <xsl:for-each select="//CSC/@label">
+      <xsl:sort select="substring(.,1,6)"/>
+      <xsl:sort select="substring(.,8)" data-type="number"/>
+      <th>
+	<xsl:value-of select="substring(.,8)"/>
+      </th>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template name="Parameters">
+    <xsl:param name="MODULE"/>
+    <xsl:message>
+      <xsl:value-of select="$MODULE"/><xsl:text> parameters: </xsl:text><xsl:value-of select="count(/EmuSystem/PeripheralCrate[position()=1]/CSC[position()=1]//*[name()=$MODULE]/@*)"/>
+    </xsl:message>
+    <xsl:for-each select="/EmuSystem/PeripheralCrate[position()=1]/CSC[position()=1]//*[name()=$MODULE]/@*">
+      <xsl:sort select="name()"/>
+      <xsl:sort select="../@cfeb_number"/>
+      <xsl:message>
+      	<xsl:value-of select="$MODULE"/>/<xsl:value-of select="name()"/><xsl:text>  </xsl:text><xsl:value-of select="."/>
+      </xsl:message>
+      <xsl:variable name="PARAMETER"><xsl:value-of select="name()"/></xsl:variable>
+      <xsl:variable name="CFEB_NUMBER"><xsl:value-of select="../@cfeb_number"/></xsl:variable>
+      <tr>
+	<th class="param"><xsl:value-of select="$MODULE"/><xsl:value-of select="$CFEB_NUMBER"/></th><th class="param"><xsl:value-of select="$PARAMETER"/></th>
+	<td class="distinct_values" title="Click on a distinct value to highlight its occurrences.">
+	  <!-- This is very slow. Use the javascript function instead. -->
+	  <!-- <xsl:for-each select="//CSC"> -->
+	  <!--   <xsl:variable name="VALUE" select="*[name()=$MODULE]//@*[name()=$PARAMETER]"/> -->
+	  <!--   <xsl:if test="not( preceding::*[name()=$MODULE]/@*[name()=$PARAMETER and .=$VALUE] )"> -->
+	  <!--     <xsl:value-of select="$VALUE"/><xsl:text> </xsl:text> -->
+	  <!--   </xsl:if> -->
+	  <!-- </xsl:for-each> -->
+	</td>
+	<xsl:for-each select="//CSC">
+	  <xsl:sort select="substring(@label,1,6)"/>
+	  <xsl:sort select="substring(@label,8)" data-type="number"/>
+	  <td class="value">
+	    <xsl:attribute name="title"><xsl:value-of select="@label"/><xsl:text> </xsl:text><xsl:value-of select="$MODULE"/><xsl:value-of select="$CFEB_NUMBER"/><xsl:text> </xsl:text><xsl:value-of select="$PARAMETER"/></xsl:attribute>
+	    <xsl:choose>
+	      <xsl:when test=".//*[name()=$MODULE]/@cfeb_number">
+		<xsl:value-of select=".//*[name()=$MODULE and @cfeb_number=$CFEB_NUMBER]/@*[name()=$PARAMETER]"/>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<xsl:value-of select=".//*[name()=$MODULE]/@*[name()=$PARAMETER]"/>
+	      </xsl:otherwise>
+	    </xsl:choose>
+	  </td>
+	</xsl:for-each>
+      </tr>
+    </xsl:for-each>
+  </xsl:template>
+
+</xsl:stylesheet>

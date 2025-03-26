@@ -1,0 +1,84 @@
+##
+#
+# This is the TriDAS/daq/xoap Package Makefile
+#
+##
+include ../config/compdef.mk
+include ../config/xdaq.mk
+include ../config/site.mk
+
+#UserExecutableLinkFlags = $(ROOTGLIBS)
+
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
+
+#CCFlags= -g  -Wall
+CCFlags += -DLOCAL_UNPACK 
+
+# check emu/dqm/config/site.mk for NEW_UNPACKER2013 variable and comment it you need old unpacker code prior to CMSSW_6_X_X
+ifdef NEW_UNPACKER2013
+CCFlags+= -DUNPACKER2013
+endif
+
+
+#
+# Packages to be built
+#
+Project=emu
+Package=emu/dqm/cscmonitor
+
+Sources=\
+	EmuMonitor_SOAP.cc \
+	EmuMonitor_WebInterface.cc \
+	EmuMonitor.cc \
+	version.cc
+
+
+Executables = 
+
+TestLibraries =  
+TestExecutables = 
+
+ExternalObjects = \
+	$(BUILD_HOME)/emu/dqm/common/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)/libemudqmcommon.a 
+
+IncludeDirs = $(XdaqIncludeDirs) \
+	$(BUILD_HOME)/emu/ldaq/server/include \
+        $(BUILD_HOME)/emu/ldaq/reader/include \
+	$(BUILD_HOME)/emu/dqm/cmssw/include/emu/dqm/cmssw \
+	$(BUILD_HOME)/emu/dqm/cmssw/src/common \
+	$(BUILD_HOME)/emu/dqm/common/include \
+	$(BUILD_HOME)/emu/dqm/cscanalyzer/include \
+	$(CMSSW) \
+	../.. \
+	$(BOOST)
+
+
+LibraryDirs = $(XdaqLibraryDirs) \
+	$(BUILD_HOME)/emu/dqm/cscanalyzer/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)/ \
+	$(BUILD_HOME)/emu/ldaq/reader/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)/ 
+
+
+UserSourcePath = 
+
+UserCFlags = $(ROOTCFLAGS)
+UserCCFlags = $(ROOTCFLAGS) -std=c++11
+UserDynamicLinkFlags = $(ROOTLIBS) 
+UserStaticLinkFlags =
+UserExecutableLinkFlags += $(ROOTGLIBS)
+
+# These libraries can be platform specific and
+# potentially need conditional processing
+#
+Libraries = $(XdaqLibraries) emuldaqreader emudqmcscanalyzer 
+
+#
+# Compile the source files and create a shared library
+#
+DynamicLibrary = emudqmcscmonitor 
+StaticLibrary = 
+
+
+MakeFilename=Makefile
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+

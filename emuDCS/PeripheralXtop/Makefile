@@ -1,0 +1,57 @@
+##
+#
+# This is the TriDAS/emu/emuDCS/PeripheralCore Package Makefile
+#
+##
+
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
+include $(BUILD_HOME)/emu/rpm_version
+
+#
+# Packages to be built
+#
+Project=emu
+Package=emu/emuDCS/PeripheralXtop
+PackageName=PeripheralXtop
+Description="XDAQ to PVSS communication libraries for Peripheral Crates"
+
+Sources=\
+        XtopVersion.cc \
+        Chamber.cc \
+        DDU.cc \
+        LOAD.cc \
+        EmuDim.cc
+
+IncludeDirs = \
+        $(XDAQ_ROOT)/include \
+        $(BUILD_HOME)/emu/base/include \
+        $(BUILD_HOME)/emu/soap/include
+
+LibraryDirs = 
+
+TestLibraryDirs =
+
+UserCFlags  = 
+UserCCFlags = -std=c++11
+UserDynamicLinkFlags =
+UserStaticLinkFlags =
+UserExecutableLinkFlags =
+
+# These libraries can be platform specific and
+# potentially need conditional processing
+#
+Libraries =
+TestLibraries =
+
+#
+# Compile the source files and create a shared library
+#
+DynamicLibrary= EmuPeripheralXtop
+StaticLibrary= 
+
+Executables=
+TestExecutables= 
+
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules

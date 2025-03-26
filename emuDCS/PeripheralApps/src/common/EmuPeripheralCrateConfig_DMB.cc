@@ -1,0 +1,5639 @@
+#include "emu/pc/EmuPeripheralCrateConfig.h"
+
+#include <string>
+#include <vector>
+#include <stdexcept>
+#include <iostream>
+#include <unistd.h> // for sleep()
+#include <sstream>
+#include <cstdlib>
+#include <iomanip>
+#include <time.h>
+
+namespace emu {
+  namespace pc {
+
+//////////////////////////////////////////////////////////////
+// DMB tests
+//////////////////////////////////////////////////////////////
+void EmuPeripheralCrateConfig::DMBTests(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  if(!parsed)
+  {  this->Default(in,out);
+     return;
+  }
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB tests: DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "DMB tests: No dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  if(dmb<0 || dmb>=dmbVector.size())
+  {  this->Default(in,out);
+     return;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  char Name[100];
+  sprintf(Name,"%s DMB tests, crate=%s, slot=%d",(thisDMB->GetLabel()).c_str(), ThisCrateID_.c_str(),thisDMB->slot());
+  //
+  MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: DMBTests: " << thisDMB->GetLabel() << ", DMB slot=" << thisDMB->slot() << std::endl;
+  //
+  char buf[200] ;
+  //
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl ;
+  //
+  *out << cgicc::legend("DMB Tests").set("style","color:blue") ;
+  //
+  std::string DMBTestAll = toolbox::toString("/%s/DMBTestAll",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBTestAll) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","DMB Test All ") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  //
+  //
+  *out << cgicc::table().set("border","0");
+  //
+  ////////////////////////////////////////////
+  *out << cgicc::td();
+  std::string DMBTest3 = toolbox::toString("/%s/DMBTest3",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBTest3) << std::endl ;
+  if( thisDMB->GetTestStatus(3) == -1 ) {
+    //
+    *out << cgicc::input().set("type","submit").set("value","DMB Test3 (Check DMB Fifos)").set("style","color:blue" ) << std::endl ;
+    //
+  } else if( thisDMB->GetTestStatus(3) == 0 ) {
+    //
+    *out << cgicc::input().set("type","submit").set("value","DMB Test3 (Check DMB Fifos)").set("style","color:green") << std::endl ;
+    //
+  } else {
+    //
+    *out << cgicc::input().set("type","submit").set("value","DMB Test3 (Check DMB Fifos)").set("style","color:red"  ) << std::endl ;
+    //
+  }
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::td();
+  //
+  //
+  *out << cgicc::td();
+  std::string DMBTest4 = toolbox::toString("/%s/DMBTest4",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBTest4) << std::endl ;
+  if( thisDMB->GetTestStatus(4) == -1 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test4 (Check voltages)").set("style","color:blue" ) << std::endl ;
+  } 
+  if( thisDMB->GetTestStatus(4) > 0 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test4 (Check voltages)").set("style","color:red"  ) << std::endl ;
+  }
+  if( thisDMB->GetTestStatus(4) ==0 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test4 (Check voltages)").set("style","color:green") << std::endl ;
+  }
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::td();
+  //
+  //
+  *out << cgicc::td();
+  std::string DMBTest5 = toolbox::toString("/%s/DMBTest5",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBTest5) << std::endl ;
+  if( thisDMB->GetTestStatus(5) == -1 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test5 (Check Power Register)").set("style","color:blue" ) << std::endl ;
+  }
+  if( thisDMB->GetTestStatus(5) > 0 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test5 (Check Power Register)").set("style","color:red"  ) << std::endl ;
+  }
+  if( thisDMB->GetTestStatus(5) ==0 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test5 (Check Power Register)").set("style","color:green") << std::endl ;
+  }
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::td();
+  //
+  //
+  *out << cgicc::td();
+  std::string DMBTest6 = toolbox::toString("/%s/DMBTest6",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBTest6) << std::endl ;
+  if( thisDMB->GetTestStatus(6) == -1 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test6 (Check FPGA IDs)").set("style","color:blue" ) << std::endl ;
+  }
+  if( thisDMB->GetTestStatus(6) > 0 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test6 (Check FPGA IDs)").set("style","color:red"  ) << std::endl ;
+  }
+  if( thisDMB->GetTestStatus(6) ==0 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test6 (Check FPGA IDs)").set("style","color:green") << std::endl ;
+  }
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::td();
+  //
+  /////////////////////////////////////////////////
+  *out << cgicc::tr();
+  //
+  *out << cgicc::td();
+  std::string DMBTest8 = toolbox::toString("/%s/DMBTest8",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBTest8) << std::endl ;
+  if( thisDMB->GetTestStatus(8) == -1 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test8 (Check Comparator DAC/ADC)").set("style","color:blue" ) << std::endl ;
+  }
+  if( thisDMB->GetTestStatus(8) > 0 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test8 (Check Comparator DAC/ADC)").set("style","color:red"  ) << std::endl ;
+  }
+  if( thisDMB->GetTestStatus(8) ==0 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test8 (Check Comparator DAC/ADC)").set("style","color:green") << std::endl ;
+  }
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::td();
+  //
+  //
+  *out << cgicc::td();
+  std::string DMBTest9 = toolbox::toString("/%s/DMBTest9",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBTest9) << std::endl ;
+  if( thisDMB->GetTestStatus(9) == -1 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test9 (Check CDAC)").set("style","color:blue" ) << std::endl ;
+  }
+  if( thisDMB->GetTestStatus(9) > 0 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test9 (Check CDAC)").set("style","color:red"  ) << std::endl ;
+  }
+  if( thisDMB->GetTestStatus(9) ==0 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test9 (Check CDAC)").set("style","color:green") << std::endl ;
+  }
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::td();
+  //
+  //
+  *out << cgicc::td();
+  std::string DMBTest10 = toolbox::toString("/%s/DMBTest10",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBTest10) << std::endl ;
+  if( thisDMB->GetTestStatus(10) == -1 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test10 (Check SFM)").set("style","color:blue" ) << std::endl ;
+  }
+  if( thisDMB->GetTestStatus(10) > 0 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test10 (Check SFM)").set("style","color:red"  ) << std::endl ;
+  }
+  if( thisDMB->GetTestStatus(10) ==0 ) {
+    *out << cgicc::input().set("type","submit").set("value","DMB Test10 (Check SFM)").set("style","color:green") << std::endl ;
+  }
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::tr();   //change line
+  //
+  *out << cgicc::td();
+  std::string RTRGlow = toolbox::toString("/%s/RTRGlow",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",RTRGlow) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Toggle Random Trigger Low").set("style","color:green") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::td();
+  //
+  //
+  *out << cgicc::td();
+  std::string RTRGhigh = toolbox::toString("/%s/RTRGhigh",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",RTRGhigh) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Toggle Random Trigger High").set("style","color:green") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  *out << cgicc::td();
+  //
+
+  //
+  /*
+   *out << cgicc::td();
+   std::string DMBTest11 = toolbox::toString("/%s/DMBTest11",getApplicationDescriptor()->getURN().c_str());
+   *out << cgicc::form().set("method","GET").set("action",DMBTest11) << std::endl ;
+   if( thisDMB->GetTestStatus(11) == -1 ) {
+   *out << cgicc::input().set("type","submit").set("value","DMB Test11 (Check buckflash)").set("style","color:blue" ) << std::endl ;
+   }
+   if( thisDMB->GetTestStatus(11) > 0 ) {
+   *out << cgicc::input().set("type","submit").set("value","DMB Test11 (Check buckflash)").set("style","color:red"  ) << std::endl ;
+   }
+   if( thisDMB->GetTestStatus(11) ==0 ) {
+   *out << cgicc::input().set("type","submit").set("value","DMB Test11 (Check buckflash)").set("style","color:green") << std::endl ;
+   }
+   sprintf(buf,"%d",dmb);
+   *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+   *out << cgicc::form() << std::endl ;
+   *out << cgicc::td();
+   */
+  //
+  *out << cgicc::table();
+  //
+  *out << cgicc::fieldset() << std::endl;
+  //
+  *out << cgicc::form().set("method","GET") << std::endl ;
+  *out << cgicc::textarea().set("name","CrateTestDMBOutput").set("WRAP","OFF").set("rows","20").set("cols","60");
+  *out << OutputDMBTests[dmb][current_crate_].str() << std::endl ;
+  *out << cgicc::textarea();
+  *out << cgicc::form();
+  //
+  std::string method = toolbox::toString("/%s/LogDMBTestsOutput",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",method) << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::input().set("type","submit").set("value","Log output").set("name","LogDMBTestsOutput") << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Clear").set("name","ClearDMBTestsOutput") << std::endl ;
+  *out << cgicc::form() << std::endl ;
+  //
+  //  std::cout << "Done" << std::endl;
+}
+
+//
+void EmuPeripheralCrateConfig::DMBTestAll(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+    //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  OutputDMBTests[dmb][current_crate_] << "DMB TestAll" << std::endl ;
+  //
+  thisDMB->RedirectOutput(&OutputDMBTests[dmb][current_crate_]);
+  thisDMB->test3();
+  thisDMB->test4();
+  thisDMB->test5();
+  thisDMB->test6();
+  thisDMB->test8();
+  thisDMB->test9();
+  thisDMB->test10();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBTests(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::DMBTest3(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "Test3 DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  OutputDMBTests[dmb][current_crate_] << "DMB Test3" << std::endl ;
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  thisDMB->RedirectOutput(&OutputDMBTests[dmb][current_crate_]);
+  thisDMB->test3();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBTests(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::DMBTest4(xgi::Input * in, xgi::Output * out ) 
+    throw (xgi::exception::Exception){
+    //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "Test4 DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  OutputDMBTests[dmb][current_crate_] << "DMB Test4" << std::endl ;
+  //
+  thisDMB->RedirectOutput(&OutputDMBTests[dmb][current_crate_]);
+  thisDMB->test4();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBTests(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::DMBTest5(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "Test5 DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  OutputDMBTests[dmb][current_crate_] << "DMB Test5" << std::endl ;
+  //
+  thisDMB->RedirectOutput(&OutputDMBTests[dmb][current_crate_]);
+  thisDMB->test5();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBTests(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::DMBTest6(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "Test6 DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  OutputDMBTests[dmb][current_crate_] << "DMB Test6" << std::endl ;
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  thisDMB->RedirectOutput(&OutputDMBTests[dmb][current_crate_]);
+  thisDMB->test6();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBTests(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::DMBTest8(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "Test8 DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  OutputDMBTests[dmb][current_crate_] << "DMB Test8" << std::endl ;
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  thisDMB->RedirectOutput(&OutputDMBTests[dmb][current_crate_]);
+  thisDMB->test8();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBTests(in,out);
+}
+//
+void EmuPeripheralCrateConfig::DMBTest9(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+    //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "Test9 DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  OutputDMBTests[dmb][current_crate_] << "DMB Test9" << std::endl ;
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  thisDMB->RedirectOutput(&OutputDMBTests[dmb][current_crate_]);
+  thisDMB->test9();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBTests(in,out);
+}
+//
+void EmuPeripheralCrateConfig::DMBTest10(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "Test10 DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  OutputDMBTests[dmb][current_crate_] << "DMB Test10" << std::endl ;
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  thisDMB->RedirectOutput(&OutputDMBTests[dmb][current_crate_]);
+  thisDMB->test10();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBTests(in,out);
+}
+//
+//
+void EmuPeripheralCrateConfig::RTRGlow(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "Toggle Randowm Trigger Low, DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  OutputDMBTests[dmb][current_crate_] << "Toggle Random Trigger Low" << std::endl ;
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  thisDMB->RedirectOutput(&OutputDMBTests[dmb][current_crate_]);
+
+  // load random trigger rate (10 KHz per CFEBs and L1A) --> 
+  thisDMB->set_rndmtrg_rate(0x9249);
+  thisDMB->toggle_rndmtrg_start();
+
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBTests(in,out);
+}
+//
+//
+void EmuPeripheralCrateConfig::RTRGhigh(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "Toggle Randowm Trigger High, DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  OutputDMBTests[dmb][current_crate_] << "Toggle Random Trigger High" << std::endl ;
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  thisDMB->RedirectOutput(&OutputDMBTests[dmb][current_crate_]);
+
+  // load random trigger rate (10 KHz per CFEBs and L1A) --> 
+  thisDMB->set_rndmtrg_rate(0x2db6d);
+  thisDMB->toggle_rndmtrg_start();
+
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBTests(in,out);
+}
+//
+void EmuPeripheralCrateConfig::DMBTest11(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "Test11 DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  OutputDMBTests[dmb][current_crate_] << "DMB Test11" << std::endl ;
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  thisDMB->RedirectOutput(&std::cout);
+  thisDMB->test11();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBTests(in,out);
+}
+
+  //
+  void EmuPeripheralCrateConfig::LogDMBTestsOutput(xgi::Input * in, xgi::Output * out ) 
+    throw (xgi::exception::Exception)
+  {
+    //
+    std::cout << "LogDMBTestsOutput" << std::endl;
+    //
+    cgicc::Cgicc cgi(in);
+    //
+    //
+    cgicc::form_iterator name = cgi.getElement("dmb");
+    //
+    //
+    int dmb=0;
+    if(name != cgi.getElements().end()) {
+      dmb = cgi["dmb"]->getIntegerValue();
+      std::cout << "DMB " << dmb << std::endl;
+      DMB_ = dmb;
+    } else {
+      std::cout << "Not dmb" << std::endl ;
+      dmb = DMB_;
+    }
+    //
+    cgicc::form_iterator name2 = cgi.getElement("ClearDMBTestsOutput");
+    //
+    if(name2 != cgi.getElements().end()) {
+      std::cout << "Clear..." << std::endl;
+      std::cout << cgi["ClearDMBTestsOutput"]->getValue() << std::endl ;
+      OutputDMBTests[dmb][current_crate_].str("");
+      OutputDMBTests[dmb][current_crate_] << "DMB-CFEB Tests " 
+					  << dmbVector[dmb]->GetLabel().c_str() 
+					  << " output:" << std::endl;
+
+      //
+    this->DMBTests(in,out);
+    return;
+    }
+    //
+    DAQMB * thisDMB = dmbVector[dmb];
+    //
+    char buf[100];
+    sprintf(buf,"/tmp/DMBTestsLogFile_%d.log",thisDMB->slot());
+    //
+    std::ofstream DMBTestsLogFile;
+    DMBTestsLogFile.open(buf);
+    DMBTestsLogFile << OutputDMBTests[dmb][current_crate_].str() ;
+    DMBTestsLogFile.close();
+    //
+    OutputDMBTests[dmb][current_crate_].str("");
+    //
+    this->DMBTests(in,out);
+    //
+  }
+
+//
+///////////////////////////////////////////////////////////
+// DMB utilities
+///////////////////////////////////////////////////////////
+void EmuPeripheralCrateConfig::CFEBStatus(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  if(!parsed)
+  {  this->Default(in,out);
+     return;
+  }
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  Chamber * thisChamber = chamberVector[dmb];
+  //
+  char Name[100];
+  sprintf(Name,"%s CFEB status, crate=%s, DMBslot=%d",
+	  (thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),thisDMB->slot());
+  std::cout << getLocalDateTime() << " CFEB status " << thisChamber->GetLabel() << std::endl;
+  //
+  MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: CFEBStatus: " << thisDMB->GetLabel() << ", DMB slot=" << thisDMB->slot() << std::endl;
+  //
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+  *out << std::endl;
+  //
+  *out << cgicc::legend("CFEB ID Readback").set("style","color:blue") << std::endl ;
+  //
+  char buf[200];
+  int hversion, cfeb_index, ndcfebs=0;
+  //
+  std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+  //
+  typedef std::vector<CFEB>::iterator CFEBItr;
+  //
+  int donebits=thisDMB->read_cfeb_done();
+  if(thisDMB->DMBversion()<=1) donebits=0x1F; // for DMBs, no DONE bits read back, set them to 1 to pass check 
+  int cfebdone=0;
+
+  hversion=thisDMB->CFEBversion();    //
+  for(CFEBItr cfebItr = cfebs.begin(); cfebItr != cfebs.end(); ++cfebItr) 
+  {
+    cfeb_index = (*cfebItr).number() + 1;
+    //
+    if(hversion <=1 )
+    {
+       sprintf(buf,"CFEB %d : ",cfeb_index);
+       *out << buf;
+       //
+       //*out << cgicc::br();
+       //
+       sprintf(buf,"CFEB prom chip id : %08x;  CFEB fpga user id : %08x ",
+	    thisDMB->febpromid(*cfebItr),
+	    thisDMB->febfpgauser(*cfebItr));
+       //
+       if ( thisDMB->CheckCFEBFirmwareVersion(*cfebItr) ) 
+       {
+           *out << cgicc::span().set("style","color:green");
+           *out << buf;
+           *out << cgicc::span();
+       } else 
+       {
+           *out << cgicc::span().set("style","color:red");
+           *out << buf;
+           *out << " (Should be " << std::hex << thisDMB->GetExpectedCFEBFirmwareTag(cfeb_index-1) << ") " << std::dec;
+           *out << cgicc::span();
+       }
+    } 
+    else if(hversion>=2)
+    {
+       cfebdone=(donebits>>(cfeb_index-1))&1;
+       ndcfebs++;
+       sprintf(buf,"CFEB %d : ",cfeb_index);
+       *out << buf;
+       //
+       //*out << cgicc::br();
+       //
+       if(thisDMB->DMBversion()<=1)
+          sprintf(buf,"FPGA id : %08x;  Firmware Tag: %08x ",
+            thisDMB->febfpgaid(*cfebItr), thisDMB->febfpgauser(*cfebItr));
+       else
+          sprintf(buf,"FPGA DONE: %d;  FPGA id : %08x;  Firmware Tag: %08x ",
+            cfebdone, thisDMB->febfpgaid(*cfebItr), thisDMB->febfpgauser(*cfebItr));
+       //
+       if ( cfebdone && thisDMB->CheckCFEBFirmwareVersion(*cfebItr) ) 
+       {
+           *out << cgicc::span().set("style","color:green");
+           *out << buf;
+           *out << cgicc::span();
+       } else 
+       {
+           *out << cgicc::span().set("style","color:red");
+           *out << buf;
+           *out << " (Should be " << std::hex << thisDMB->GetExpectedCFEBFirmwareTag(cfeb_index-1) << ") " << std::dec;
+           *out << cgicc::span();
+       }
+       if(hversion==3)
+       {
+           sprintf(buf,"Chip IDs----PROM0: %08x; PROM1: %08x; PROM2: %08x; SWITCH: %08x",
+	      thisDMB->xdcfeb_eprom_idcode(*cfebItr, 0), 
+	      thisDMB->xdcfeb_eprom_idcode(*cfebItr, 1), 
+	      thisDMB->xdcfeb_eprom_idcode(*cfebItr, 2),
+	      thisDMB->xdcfeb_ds4550_idcode(*cfebItr));
+           *out << cgicc::br() << "&emsp; &emsp; &emsp;&emsp;" <<  buf << std::endl; 
+       }
+    }
+    //
+    *out << cgicc::br();
+    //
+  }
+  //
+  *out << cgicc::fieldset();
+  //
+  // section for DCFEB only
+  if(ndcfebs>0)
+  {
+     unsigned short dcfeb_par[7][6];
+     std::string color[7][6];
+     std::vector<std::string> parname;
+     parname.clear();
+     parname.push_back("comp mode");
+     parname.push_back("comp timing");
+     parname.push_back("comp clock phase");
+     parname.push_back("sample clock phase");
+     parname.push_back("pipeline depth");
+     parname.push_back("number of samples");
+
+     *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+     *out << std::endl;
+     //
+     *out << cgicc::legend("DCFEB Configuration Parameters").set("style","color:blue") << std::endl ;
+     *out << cgicc::table().set("border","1");
+     *out <<cgicc::td() << "Channel" << cgicc::td();
+     for(CFEBItr cfebItr = cfebs.begin(); cfebItr != cfebs.end(); ++cfebItr)
+     {
+       unsigned i = cfebItr->number();
+       char wrd[2];
+       *out << cgicc::td() << "CFEB " << (i + 1) << cgicc::td();
+       thisDMB->write_cfeb_selector(cfebItr->SelectorBit());
+
+       thisDMB->autoload_select_readback_wrd(*cfebItr,2);
+       thisDMB->autoload_readback_wrd(*cfebItr,wrd);
+       dcfeb_par[i][0] = wrd[0] & 0x3;
+       dcfeb_par[i][1] = (wrd[0] & 0x1c) >> 2;
+
+       thisDMB->autoload_select_readback_wrd(*cfebItr,10);
+       thisDMB->autoload_readback_wrd(*cfebItr,wrd);
+       dcfeb_par[i][2] = wrd[0];
+
+       thisDMB->autoload_select_readback_wrd(*cfebItr,11);
+       thisDMB->autoload_readback_wrd(*cfebItr,wrd);
+       dcfeb_par[i][3] = wrd[0];
+
+       thisDMB->autoload_select_readback_wrd(*cfebItr,6);
+       thisDMB->autoload_readback_wrd(*cfebItr,wrd);
+       dcfeb_par[i][4] = wrd[0];
+
+       thisDMB->autoload_select_readback_wrd(*cfebItr,8);
+       thisDMB->autoload_readback_wrd(*cfebItr,wrd);
+       dcfeb_par[i][5] = wrd[0];
+
+       color[i][0] = (dcfeb_par[i][0] == thisDMB->GetCompModeCfeb(i)) ? "green" : "red";
+       color[i][1] = (dcfeb_par[i][1] == thisDMB->GetCompTimingCfeb(i)) ? "green" : "red";
+       color[i][2] = (dcfeb_par[i][2] == thisDMB->GetCompClockPhaseCfeb(i)) ? "green" : "red";
+       color[i][3] = (dcfeb_par[i][3] == thisDMB->GetADCSampleClockPhaseCfeb(i)) ? "green" : "red";
+       color[i][4] = (dcfeb_par[i][4] == cfebItr->GetPipelineDepth()) ? "green" : "red";
+       color[i][5] = (dcfeb_par[i][5] == thisDMB->GetNSamplesCfeb(i)) ? "green" : "red";
+     }
+     *out << cgicc::tr() << cgicc::tr() << std::endl;
+     for (unsigned par=0; par<6; par++)
+     {
+       *out << cgicc::td() << parname[par] << cgicc::td();
+       for(CFEBItr cfebItr = cfebs.begin(); cfebItr != cfebs.end(); ++cfebItr)
+       {
+         unsigned i = cfebItr->number();
+         *out << cgicc::td() << cgicc::span().set("style","color:"+color[i][par]);
+         *out << ((int) dcfeb_par[i][par]);
+         *out << cgicc::span() << cgicc::td();
+       }
+       *out << cgicc::tr() << cgicc::tr() << std::endl;
+     }
+     *out << cgicc::table() << cgicc::fieldset() << std::endl;
+     //
+     double monitor_dcfebs[200];
+     for(unsigned c=0; c<200; c++) monitor_dcfebs[c] = -1.0;
+     int monitor_dcfebs_alert[200];
+     for(unsigned c=0; c<200; c++) monitor_dcfebs_alert[c] = -1;
+     
+     std::vector<std::string> chname;
+     chname.clear();
+     chname.push_back("Temp(FPGA) (C)");
+     chname.push_back("Vcc_in (V)");
+     chname.push_back("Vcc_aux (V)");
+     chname.push_back("DV4P_3_CUR (A)");
+     chname.push_back("DV3P_2_CUR (A)");
+     chname.push_back("DV3P_25_CUR (A)");
+     chname.push_back("V3P_DCOMP (V)");
+     chname.push_back("AV54P_3_CUR (A)");
+     chname.push_back("AV54P_5_CUR (A)");
+     chname.push_back("V3PIO (V)");
+     chname.push_back("Flag (Hex)");
+     chname.push_back("V25IO (V)");
+     chname.push_back("V5PACOMP (V)");
+     chname.push_back("V5PAMP (V)");
+     chname.push_back("V18PDAC (V)");
+     chname.push_back("Ctrl Reg 1 (Hex)");
+     chname.push_back("V33PAADC (V)");
+     chname.push_back("V5PPA (V)");
+     chname.push_back("V5PSUB (V)");
+     chname.push_back("Temp(PCB 1) (C)");
+     chname.push_back("Temp(PCB 2) (C)");
+     chname.push_back("Comparator DAC(V)");
+     chname.push_back("QPLL lock lost count");
+     chname.push_back("SEU Status (HEX)");
+     chname.push_back("SEU 1-bit error");
+     chname.push_back("SEU multi error");
+
+     *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+     *out << std::endl;
+     //
+     *out << cgicc::legend("DCFEB Virtex-6 Monitoring").set("style","color:blue") << std::endl ;
+     for(CFEBItr cfebItr = cfebs.begin(); cfebItr != cfebs.end(); ++cfebItr) 
+     {
+        cfeb_index = (*cfebItr).number();
+        if(hversion>1)
+        {
+           std::vector<float> mon=thisDMB->dcfeb_fpga_monitor(*cfebItr);
+           std::vector<float> dadc=thisDMB->dcfeb_adc(*cfebItr);
+           unsigned qpllLostCount = thisDMB->dcfeb_qpll_lost_count(*cfebItr);
+           for (unsigned c=0; c<mon.size() && c<19; c++) monitor_dcfebs[cfeb_index*26+c]=mon[c];
+           monitor_dcfebs[cfeb_index*26+19]=dadc[3];
+           monitor_dcfebs[cfeb_index*26+20]=dadc[4];
+           monitor_dcfebs[cfeb_index*26+21]=dadc[0];
+           monitor_dcfebs[cfeb_index*26+22]=qpllLostCount;
+           monitor_dcfebs_alert[cfeb_index*26+22] = (qpllLostCount > 0) ? 1 : 0;
+           monitor_dcfebs[cfeb_index*26+23]=0x3FF & (thisDMB->SEM_read_status(*cfebItr));
+           unsigned errcnt=thisDMB->SEM_read_errcnt(*cfebItr);
+           monitor_dcfebs[cfeb_index*26+24]=0xFF & errcnt;
+           monitor_dcfebs[cfeb_index*26+25]= errcnt>>8;
+        }
+     }
+     *out << cgicc::table().set("border","1");
+     //
+     int maxcfebs=(thisDMB->DMBversion()>1)?7:5;
+     *out <<cgicc::td() << "Channel" << std::setprecision(4)<< cgicc::td();
+     for(int ch=0; ch<27; ch++)
+     {
+       if(ch) *out << cgicc::td() << chname[ch-1] << cgicc::td();
+       for(int feb=0; feb<maxcfebs; feb++)
+       {
+          if(ch==0) *out << cgicc::td() << "CFEB " << feb+1 << cgicc::td();
+          else
+          {   *out << cgicc::td();
+              std::string color = "";
+              if( monitor_dcfebs_alert[feb*26+ch-1] >= 0) color = monitor_dcfebs_alert[feb*26+ch-1] ? "red" : "green";
+              if (!color.empty()) *out << cgicc::span().set("style", "color:" + color);
+              if(ch==11 || ch==16 || ch==24) {  // these three channels are hex values
+                 *out << std::hex << int(monitor_dcfebs[feb*26+ch-1]) << std::dec; }
+              else {
+                 if( monitor_dcfebs[feb*26+ch-1]>=0.) *out << monitor_dcfebs[feb*26+ch-1]; }
+              if (!color.empty()) *out << cgicc::span();
+              *out << cgicc::td();
+          }
+       }
+     *out << cgicc::tr() << cgicc::tr() << std::endl;
+     }
+     *out << cgicc::table() << std::setprecision(5) << std::endl;
+     
+     //
+     *out << cgicc::fieldset();
+
+  }
+}
+
+void EmuPeripheralCrateConfig::CFEBUtils(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  if(!parsed)
+  {  this->Default(in,out);
+     return;
+  }
+  //
+  std::vector <std::string> FuncName; 
+  char Name[100];
+  FuncName.push_back("0. NO OP");
+  FuncName.push_back("1. Sys Reset");
+  FuncName.push_back("2. JTAG Shift Reg (32)"); 
+  FuncName.push_back("3. Update Status Reg (32)"); 
+  FuncName.push_back("4. Comparator DAC (15)"); 
+  FuncName.push_back("5. L1a Delay (2)"); 
+  FuncName.push_back("6. Read FIFO1"); 
+  FuncName.push_back("7. Set F5 F8 F9"); 
+  FuncName.push_back("8. Pre Blockend (4)"); 
+  FuncName.push_back("9. Comparator mode timing (5)"); 
+  FuncName.push_back("10. Buckeye mask (6)"); 
+  FuncName.push_back("11. Shift Buckeye (6*48)");
+  FuncName.push_back("12. ADC mask (12)");
+  FuncName.push_back("13. Initial ADC");
+  FuncName.push_back("14. ADC config memory (26)");
+  FuncName.push_back("15. restart pipeline");
+  FuncName.push_back("16. pipeline depth (9)");
+  FuncName.push_back("17. TTC source (2)");
+  FuncName.push_back("18. Set Calibration to Ext");
+  FuncName.push_back("19. Set Calibration to Int");   
+  FuncName.push_back("20. Samples to read (7)");
+  FuncName.push_back("21. write BPI FIFO (16)");
+  FuncName.push_back("22. read BPI FIFO (16)");
+  FuncName.push_back("23. read BPI status (16)");
+  FuncName.push_back("24. read BPI timer (32)");
+  FuncName.push_back("25. Reset BPI");
+  FuncName.push_back("26. Disable BPI");
+  FuncName.push_back("27. Enable BPI");
+  FuncName.push_back("28. Clock phase (5)");
+  FuncName.push_back("29. TMB transmit mode (3)");
+  FuncName.push_back("30. TMB Half Strip");  
+  FuncName.push_back("31. TMB Layer Mask");  
+  FuncName.push_back("32. DAQ low");  
+  FuncName.push_back("33. DAQ High");  
+  FuncName.push_back("34. Calib DAC (16)");  
+  FuncName.push_back("35. ADC Control (25)");  
+  FuncName.push_back("36. ADC Read (16)");  
+  FuncName.push_back("37. Read SEM status (10)");  
+  FuncName.push_back("38. Reset conf ECC error counter");
+  FuncName.push_back("39. Read conf ECC error count (16)");  
+  FuncName.push_back("40. Clear USE_ANY_L1A");  
+  FuncName.push_back("41. Set USE_ANY_L1A");  
+  FuncName.push_back("42. Clear L1A_HEAD flag");  
+  FuncName.push_back("43. Set L1A_HEAD flag");  
+  FuncName.push_back("44. ADC Sampling Clock Phase (3)");  
+  FuncName.push_back("45. DAQ PRBS Test Mode (3)");  
+  FuncName.push_back("46. DAQ PRBS Inject Error");  
+  FuncName.push_back("47. SEM Take Control");  
+  FuncName.push_back("48. SEM Double Error Detected Flag Reset");  
+  FuncName.push_back("49. SEM Command (8)");  
+  FuncName.push_back("50. SEM SEU Address Linear (24)");  
+  FuncName.push_back("51. SEM_SEU Address Physical (24)");  
+  FuncName.push_back("52. Register Selection Word (8)");  
+  FuncName.push_back("53. Readback Selected Register (16)");  
+  FuncName.push_back("54. QPLL Reset");  
+  FuncName.push_back("55. QPLL Lock Lost Counter (8)");
+  FuncName.push_back("56. Startup Status (16)");
+  FuncName.push_back("57. Read L1A Counter (24)");  
+  FuncName.push_back("58. Read L1A_MATCH Counter (12)");  
+  FuncName.push_back("59. Read INJPLS Counter (12)");  
+  FuncName.push_back("60. Read EXTPLS Counter (12)");  
+  FuncName.push_back("61. Read BC0 Counter (12)");  
+  FuncName.push_back("62. Comparator Clock Phase Reset");  
+  FuncName.push_back("63. Toggle DAQ TX_Disable");  // 63  
+  FuncName.push_back("64. Toggle Trig TX_Disable"); // 64 
+
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  Chamber * thisChamber = chamberVector[dmb];
+  //
+  sprintf(Name,"%s CFEB Utilities, crate=%s, DMBslot=%d",
+	  (thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),thisDMB->slot());
+  
+  std::cout << getLocalDateTime() << " CFEB utilities " << thisChamber->GetLabel() << std::endl;  //
+  MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: CFEBUtils: " << thisDMB->GetLabel() << ", DMB slot=" << thisDMB->slot() << std::endl;
+
+  std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+  //
+  std::string dmbstring = toolbox::toString("%d",dmb);
+  char buf[200],sbuf[50];
+
+  // this part for CFEBs only
+  if(thisDMB->CFEBversion()<=1)
+  {
+     *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+     *out << cgicc::legend("CFEB Firmware").set("style","color:blue") << std::endl ;
+     
+     std::string CFEBLoadFirmware = toolbox::toString("/%s/CFEBLoadFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",CFEBLoadFirmware) << std::endl ;
+
+       *out << "Choose CFEB: " << std::endl;
+       *out << cgicc::select().set("name", "cfeb") << std::endl;
+       for (unsigned i = 0; i < cfebs.size(); ++i) 
+       {
+          sprintf(sbuf,"%d",i);
+           if (i == 0) 
+              *out << cgicc::option().set("value", sbuf).set("selected", "");
+           else  
+              *out << cgicc::option().set("value", sbuf);
+           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+       }
+       // -1 will be used for broadcast
+       *out << cgicc::option().set("value", "-1") << "All CFEBs" << cgicc::option() << std::endl;
+       *out << cgicc::select() << std::endl;
+
+     *out << cgicc::input().set("type","submit").set("value","CFEB Load Firmware") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << CFEBFirmware_.toString();
+     *out << cgicc::form() << std::endl ;
+     //
+     *out << cgicc::br();
+     //
+     std::string CFEBVerifyFirmwareID = toolbox::toString("/%s/CFEBVerifyFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",CFEBVerifyFirmwareID) << std::endl ;
+
+       *out << "Choose CFEB: " << std::endl;
+       *out << cgicc::select().set("name", "cfeb") << std::endl;
+       for (unsigned i = 0; i < cfebs.size(); ++i) 
+       {
+          sprintf(sbuf,"%d",i);
+           if (i == 0) 
+              *out << cgicc::option().set("value", sbuf).set("selected", "");
+           else  
+              *out << cgicc::option().set("value", sbuf);
+           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+       }
+       *out << cgicc::select() << std::endl;
+
+     *out << cgicc::input().set("type","submit").set("value","CFEB Verify Firmware") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << CFEBVerify_.toString();
+     *out << cgicc::form() << std::endl ;
+     //
+     *out << cgicc::br();
+
+     std::string CFEBReadFw = toolbox::toString("/%s/CFEBReadFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",CFEBReadFw) << std::endl ;
+
+       *out << "Choose CFEB: " << std::endl;
+       *out << cgicc::select().set("name", "cfeb") << std::endl;
+       for (unsigned i = 0; i < cfebs.size(); ++i) 
+       {
+          sprintf(sbuf,"%d",i);
+           if (i == 0) 
+              *out << cgicc::option().set("value", sbuf).set("selected", "");
+           else  
+              *out << cgicc::option().set("value", sbuf);
+           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+       }
+       *out << cgicc::select() << std::endl;
+
+     *out << cgicc::input().set("type","submit").set("value","CFEB Read Firmware") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::input().set("type","hidden").set("value","0").set("name","mode");
+     *out << cgicc::form() << std::endl ;
+     //
+     *out << cgicc::br();
+     //
+/* comment out. This is unfinished and unsafe to use.
+     *out << cgicc::td();
+     std::string RdVfyCFEBVirtexDMB = toolbox::toString("/%s/RdVfyCFEBVirtexDMB",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",RdVfyCFEBVirtexDMB) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","Check CFEB FPGAs") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::form() << std::endl ;;
+     *out << cgicc::td();
+     *out << cgicc::br() << std::endl;
+     //
+*/
+     *out << cgicc::fieldset()<< cgicc::br() << std::endl;
+     //
+     // Output area
+     //
+     *out << cgicc::form().set("method","GET") << std::endl ;
+     *out << cgicc::pre();
+     *out << cgicc::textarea().set("name","CrateTestDMBOutput").set("rows","30").set("cols","132").set("WRAP","OFF");
+     *out << OutputStringDMBStatus[dmb].str() << std::endl ;
+     *out << cgicc::textarea();
+     *out << cgicc::pre();
+     *out << cgicc::form() << std::endl ;
+     //
+     return;
+  }  // end of CFEBs
+ 
+  std::string dcfeb_firmware_name= (thisDMB->CFEBversion()==2)? (FirmwareDir_+"cfeb/me11_dcfeb.mcs"):(FirmwareDir_+"cfeb/me11_xdcfeb_0.mcs") ; 
+  if(thisDMB->CFEBversion()==2)
+  {
+     *out << cgicc::span().set("style","color:black") << cgicc::h3("Attention: If a DCFEB's FPGA not configured, all functions not working except [Program DCFEB FPGA]. ") << cgicc::span();
+  }
+// DCFEB configuration
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+  *out << cgicc::legend("DCFEB Configuration").set("style","color:blue") << std::endl ;
+
+        std::string ConfigDCFEBs = toolbox::toString("/%s/ConfigDCFEBs",getApplicationDescriptor()->getURN().c_str());
+        *out << cgicc::form().set("method","GET").set("action",ConfigDCFEBs) << std::endl ;
+        *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+        *out << cgicc::input().set("type","submit").set("value","Configure All DCFEBs") << std::endl ;
+        *out << cgicc::form();
+        *out << cgicc::br()<< cgicc::hr() << std::endl ; 
+
+  // print DCFEB parameter blocks
+  std::string PrintDCFEBparam =
+      toolbox::toString("/%s/DCFEBParaPrint",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", PrintDCFEBparam) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+
+  }
+
+  *out << cgicc::select() << std::endl;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Print DCFEB parameters (all blocks)") << std::endl;
+  *out << cgicc::form() << cgicc::br() << cgicc::hr() << std::endl;
+
+  // erase DCFEB parameter blocks
+  std::string EraseDCFEBparam =
+      toolbox::toString("/%s/DCFEBParaErase",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", EraseDCFEBparam) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << std::endl;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Erase DCFEB parameters (all blocks)") << std::endl;
+  *out << cgicc::form() << cgicc::br() << std::endl;
+  *out << cgicc::fieldset()<< cgicc::br() << std::endl;
+
+// Firmware
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+  *out << cgicc::legend("DCFEB Firmware").set("style","color:blue") << std::endl ;
+  //
+  std::string CFEBreadfirm =
+      toolbox::toString("/%s/CFEBReadFirmware",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", CFEBreadfirm) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << std::endl;
+
+  if(extra_tools_ && thisDMB->CFEBversion()==3) 
+  { 
+     *out << "Choose Mode: " << std::endl;
+     *out << cgicc::select().set("name", "mode") << std::endl;
+  
+        *out << cgicc::option().set("value", "0").set("selected", "") << "EPROM images, full size" << cgicc::option() << std::endl;
+        *out << cgicc::option().set("value", "1") << "Firmware, single file" << cgicc::option() << std::endl;
+        *out << cgicc::option().set("value", "2") << "EPROM images, firmware part" << cgicc::option() << std::endl;
+        *out << cgicc::option().set("value", "3") << "Firmware, two files" << cgicc::option() << std::endl;
+
+     *out << cgicc::select() << std::endl;
+  }
+  else
+  {
+     *out << cgicc::input().set("type","hidden").set("name","mode").set("value","0") << std::endl;
+  }
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Read back DCFEB firmware") << std::endl;
+  *out << cgicc::form() << cgicc::br() << std::endl;
+
+     //
+     std::string DCFEBVerifyFirmware = toolbox::toString("/%s/CFEBVerifyFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",DCFEBVerifyFirmware) << std::endl ;
+
+       *out << "Choose CFEB: " << std::endl;
+       *out << cgicc::select().set("name", "cfeb") << std::endl;
+       for (unsigned i = 0; i < cfebs.size(); ++i) 
+       {
+          sprintf(sbuf,"%d",i);
+           if (i == 0) 
+              *out << cgicc::option().set("value", sbuf).set("selected", "");
+           else  
+              *out << cgicc::option().set("value", sbuf);
+           *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+       }
+       *out << cgicc::select() << std::endl;
+
+     *out << cgicc::input().set("type","submit").set("value","Verify DCFEB firmware") << std::endl ;
+     *out << cgicc::input().set("type","hidden").set("value",dmbstring).set("name","dmb");
+     *out <<  dcfeb_firmware_name ;
+     *out << cgicc::form()  << cgicc::br() << std::endl ;
+     //
+  
+  //
+  std::string CFEBwritefirm =
+      toolbox::toString("/%s/DCFEBProgramEprom",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", CFEBwritefirm) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << std::endl;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Program DCFEB EPROM") << std::endl;
+  *out << dcfeb_firmware_name << std::endl;
+  *out << cgicc::form() << cgicc::br() << cgicc::hr() << std::endl;
+  
+  std::string CFEBwritefirmall =
+      toolbox::toString("/%s/DCFEBProgramEpromAll",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", CFEBwritefirmall) << std::endl;
+  
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Broadcast Program EPROM - All DCFEBs") << std::endl;
+  *out  << dcfeb_firmware_name << cgicc::form()<< cgicc::br() << cgicc::hr() << std::endl;
+  *out << cgicc::fieldset()<< cgicc::br() << std::endl;
+
+// FPGA
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+  *out << cgicc::legend("DCFEB FPGA").set("style","color:blue") << std::endl ;
+  
+  std::string CFEBprogfpga =
+      toolbox::toString("/%s/DCFEBProgramFpga",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", CFEBprogfpga) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << std::endl;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Program DCFEB FPGA") << std::endl;
+  *out << dcfeb_firmware_name << cgicc::form() << cgicc::br() << cgicc::hr() << std::endl;
+    //
+  std::string CFEBprogfpgaall =
+      toolbox::toString("/%s/DCFEBProgramFpgaAll",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", CFEBprogfpgaall) << std::endl;
+  
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Broadcast Program FPGA - All DCFEBs") << std::endl;
+  *out << dcfeb_firmware_name << cgicc::form() << cgicc::br() << cgicc::hr() << std::endl;
+  //
+  if(extra_tools_)
+  {
+  // FPGA shutdown
+  std::string dcfebshutdown =
+      toolbox::toString("/%s/DCFEBShutdown",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", dcfebshutdown) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << std::endl;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Shutdown DCFEB FPGA") << std::endl;
+  *out << cgicc::form() << cgicc::br() << std::endl;
+
+  // xDCFEB Digital Switch
+  std::string readswitch =
+      toolbox::toString("/%s/xDCFEBReadSwitch",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", readswitch) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << std::endl;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Read xDCFEB DS4550)") << std::endl;
+  *out << cgicc::form() << cgicc::br() << std::endl;
+
+  // (x)DCFEB VTTX
+  std::string readvttx =
+      toolbox::toString("/%s/xDCFEBReadVTTX",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", readvttx) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << std::endl;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Read VTTX registers)") << std::endl;
+  *out << cgicc::form() << cgicc::br() << std::endl;
+  }
+  *out << cgicc::fieldset()<< cgicc::br() << std::endl;
+  //
+
+if(thisDMB->CFEBversion()==2)
+{
+// DCFEB EPROM tests and alternative firmware downloading methods
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+  *out << cgicc::legend("DCFEB EPROM Tests and Alternative Firmware Downloading Methods").set("style","color:blue") << std::endl ;
+
+  // Single DCFEB PROM test
+  std::string CFEBpromtest =
+      toolbox::toString("/%s/DCFEBPromTest",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", CFEBpromtest) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << std::endl;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Test DCFEB PROM (slow read full blocks)") << std::endl;
+  *out << cgicc::form() << cgicc::br() << std::endl;
+  
+  // Single DCFEB fast PROM test (reading parts of each block)
+  std::string CFEBpromtestfast =
+      toolbox::toString("/%s/DCFEBPromTestFast",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", CFEBpromtestfast) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << std::endl;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Test DCFEB PROM (fast partial block read)") << std::endl;
+  *out << cgicc::form() << cgicc::br() << std::endl;
+
+  // All DCFEBs fast PROM test
+  std::string AllDCFEBsPromTestFast = toolbox::toString("/%s/AllDCFEBsPromTestFast",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",AllDCFEBsPromTestFast) << std::endl ;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type","submit").set("value","All DCFEBs EPROM test (fast version)") << std::endl ;
+  *out << cgicc::form() << cgicc::br() << cgicc::hr() << std::endl ; 
+
+  //
+  std::string CFEBwritefirmXilinx =
+      toolbox::toString("/%s/DCFEBProgramEpromXilinx",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", CFEBwritefirmXilinx) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << std::endl;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Program DCFEB EPROM using Xilinx core (slow)") << std::endl;
+  *out << cgicc::form() << dcfeb_firmware_name << std::endl;
+  *out << cgicc::br() << cgicc::hr() << std::endl;
+  //
+  std::string CFEBwritefirmsvf =
+      toolbox::toString("/%s/DCFEBProgramEpromSVF",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", CFEBwritefirmsvf) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << std::endl;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Program (D)CFEB EPROM with SVF file (very slow)") << std::endl;
+  *out << cgicc::form() << dcfeb_firmware_name << std::endl;
+  *out << cgicc::br() << cgicc::hr() << std::endl;
+  //
+  std::string DCFEBEPROMoffset =
+      toolbox::toString("/%s/DCFEBProgramEpromOffset",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("action", DCFEBEPROMoffset) << std::endl;
+
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+  *out << cgicc::select() << std::endl;
+
+  *out << "EPROM block offset (dec) " << std::endl;
+  sprintf(sbuf, "%d", CFEBDataIn_);
+  *out << cgicc::input().set("type","text").set("value",sbuf).set("name","CFEBDataIn") << std::endl ;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Program EPROM with offset") << cgicc::br() << std::endl;
+    
+  *out << cgicc::form() << dcfeb_firmware_name << cgicc::br() << std::endl;
+
+  *out << cgicc::fieldset()<< cgicc::br() << std::endl;
+}  // end of DCFEB (version 2) special tools
+
+  // DCFEB JTAG functions
+  CFEBDataIn_ = 0;
+  //
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+  *out << cgicc::legend("DCFEB JTAG Functions").set("style","color:blue") << std::endl ;
+  //
+
+  std::string CFEBFunct =
+      toolbox::toString("/%s/CFEBFunction",getApplicationDescriptor()->getURN().c_str());
+
+  // Begin select signal
+  // Config listbox
+
+  *out << cgicc::form().set("action", CFEBFunct) << std::endl;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;
+  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+  // CFEB #7 will be used for broadcast
+  *out << cgicc::option().set("value", "7") << "All CFEBs" << cgicc::option() << std::endl;
+
+  *out << cgicc::select() << std::endl;
+
+  int n_keys = FuncName.size();
+  int selected_index = 0;
+  
+  *out << "  Choose CFEB function: " << std::endl;
+  *out << cgicc::select().set("name", "runtype") << std::endl;
+  
+  selected_index = 0;
+  for (int i = 0; i < n_keys; ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == selected_index) {
+      *out << cgicc::option()
+	.set("value", sbuf)
+	.set("selected", "");
+    } else {
+      *out << cgicc::option()
+	.set("value", sbuf);
+    }
+    *out << FuncName[i] << cgicc::option() << std::endl;
+  }
+
+  *out << cgicc::select() << cgicc::br() << std::endl;
+
+  *out << "CFEB Data in (hex) " << std::endl;
+  sprintf(sbuf, "%016lX", CFEBDataIn_);
+  *out << cgicc::input().set("type","text").set("value",sbuf).set("name","CFEBDataIn") << std::endl ;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type", "submit")
+    .set("name", "command")
+    .set("value", "Start CFEB Function") << cgicc::br() << std::endl;
+   *out << "    ======>> CFEB Data Out (hex): " << std::hex << CFEBDataOut_ << std::endl;
+    
+  *out << cgicc::form() << cgicc::br() << std::endl;
+
+  std::string RestoreCfebJtagIdle = toolbox::toString("/%s/RestoreCfebJtagIdle",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",RestoreCfebJtagIdle) << std::endl ;
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+  *out << cgicc::input().set("type","submit").set("value","Restore CFEB JTAG Idle state") << std::endl ;
+  *out << cgicc::form() << std::endl ; 
+
+  //End select signal
+    //
+  *out << cgicc::fieldset()<< cgicc::br() << std::endl;
+
+  
+  // --=== Virtex6 register read ===--
+  //
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl;
+  *out << cgicc::legend("Virtex 6 Registers").set("style","color:blue") << std::endl ;
+
+  std::string ReadDcfebVirtex6Reg = toolbox::toString("/%s/ReadDcfebVirtex6Reg",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",ReadDcfebVirtex6Reg) << std::endl ;
+  
+  *out << "Choose CFEB: " << std::endl;
+  *out << cgicc::select().set("name", "cfeb") << std::endl;  
+  for (unsigned i = 0; i < cfebs.size(); ++i) {
+    sprintf(sbuf,"%d",i);
+    if (i == 0) {
+      *out << cgicc::option().set("value", sbuf).set("selected", "");
+    } else {
+      *out << cgicc::option().set("value", sbuf);
+    }
+    *out << "CFEB " << cfebs[i].number()+1 << cgicc::option() << std::endl;
+  }
+  *out << cgicc::select() << std::endl;
+  
+  // make a map of register index -> name
+  std::map<int, std::string> regNames;
+  regNames[VTX6_REG_CRC] = "CRC";
+  regNames[VTX6_REG_FAR] = "FAR";
+  //  regNames[VTX6_REG_FDRI] = "FDRI";
+  regNames[VTX6_REG_FDRO] = "FDRO";
+  regNames[VTX6_REG_CMD] = "CMD";
+  regNames[VTX6_REG_CTL0] = "CTL0";
+  regNames[VTX6_REG_MASK] = "MASK";
+  regNames[VTX6_REG_STAT] = "STATUS";
+  //  regNames[VTX6_REG_LOUT] = "LOUT";
+  regNames[VTX6_REG_COR0] = "COR0";
+  //  regNames[VTX6_REG_MFWR] = "MFWR";
+  //  regNames[VTX6_REG_CBC] = "CBC";
+  regNames[VTX6_REG_IDCODE] = "IDCODE";
+  regNames[VTX6_REG_AXSS] = "AXSS";
+  regNames[VTX6_REG_COR1] = "COR1";
+  //  regNames[VTX6_REG_CSOB] = "CSOB";
+  regNames[VTX6_REG_WBSTAR] = "WBSTAR";
+  regNames[VTX6_REG_TIMER] = "TIMER";
+  regNames[VTX6_REG_BOOTSTS] = "BOOTSTS";
+  regNames[VTX6_REG_CTL1] = "CTL1";
+  regNames[VTX6_REG_DWC] = "DWC";
+  
+  // print the drop down list
+  *out << cgicc::select().set("name", "reg") << std::endl;
+  std::map<int, std::string>::iterator it;
+  for (it = regNames.begin(); it != regNames.end(); ++it) {
+    sprintf(sbuf, "%d", it->first);
+    *out << cgicc::option().set("value", sbuf) << it->second << cgicc::option() << std::endl;
+  }
+  *out << cgicc::select() << std::endl;
+
+  *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl;
+  *out << cgicc::input().set("type","submit").set("value","Read Virtex6 Register") << std::endl;
+  
+  *out << cgicc::br() << std::endl;
+  *out << "Result (hex): " << std::hex << DcfebVirtex6RegisterRead_ << std::dec << std::endl;
+  
+  *out << cgicc::form() << std::endl;  
+  *out << cgicc::fieldset()<< cgicc::br() << std::endl;
+  // ================================================
+  // --=== Reset DCFEB Optical Transceivers ===--
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl ;
+  //
+  *out << cgicc::legend("Reset DCFEB Optical Transceivers").set("style","color:blue") ;
+  //
+  *out << cgicc::table().set("border","1");
+  //
+  *out << cgicc::td() << cgicc::td();
+  int tot_p_chans=7;
+  for(int icc=1; icc<=tot_p_chans; icc++)
+  {
+           *out << cgicc::td().set("align","center") << "CFEB " << icc  << cgicc::td();
+  }
+  *out << cgicc::tr();
+  *out << cgicc::td() << "ODMB link" << cgicc::td();
+  for(int icc=0; icc<tot_p_chans; icc++)
+  {
+     *out << cgicc::td();
+        std::string DCFEBLinkReset = toolbox::toString("/%s/DCFEBLinkReset",getApplicationDescriptor()->getURN().c_str());
+        *out << cgicc::form().set("method","GET").set("action",DCFEBLinkReset) << std::endl ;
+        *out << cgicc::input().set("type","submit").set("value","Reset") << std::endl ;
+        *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+        *out << cgicc::input().set("type","hidden").set("value","1").set("name","link");
+        sprintf(sbuf, "%d", icc ); 
+        *out << cgicc::input().set("type","hidden").set("value",sbuf).set("name","cfeb");
+        *out << cgicc::form() << std::endl ;
+     *out << cgicc::td();
+  }
+
+  *out << cgicc::tr();
+  *out << cgicc::td() << "OTMB link" << cgicc::td();
+  for(int icc=0; icc<tot_p_chans; icc++)
+  {
+     *out << cgicc::td();
+        std::string DCFEBLinkReset = toolbox::toString("/%s/DCFEBLinkReset",getApplicationDescriptor()->getURN().c_str());
+        *out << cgicc::form().set("method","GET").set("action",DCFEBLinkReset) << std::endl ;
+        *out << cgicc::input().set("type","submit").set("value","Reset") << std::endl ;
+        *out << cgicc::input().set("type","hidden").set("name","dmb").set("value",dmbstring) << std::endl ;          
+        *out << cgicc::input().set("type","hidden").set("value","2").set("name","link");
+        sprintf(sbuf, "%d", icc ); 
+        *out << cgicc::input().set("type","hidden").set("value",sbuf).set("name","cfeb");
+        *out << cgicc::form() << std::endl ;
+     *out << cgicc::td();
+  }
+ // *out << cgicc::tr();
+  *out << cgicc::table();
+  //
+  *out << cgicc::fieldset() << cgicc::br();
+  //
+  // Output area
+  //
+  *out << cgicc::form().set("method","GET") << std::endl ;
+  *out << cgicc::pre();
+  *out << cgicc::textarea().set("name","CrateTestDMBOutput").set("rows","30").set("cols","132").set("WRAP","OFF");
+  *out << OutputStringDMBStatus[dmb].str() << std::endl ;
+  *out << cgicc::textarea();
+//  OutputStringDMBStatus[dmb].str("");
+  *out << cgicc::pre();
+  *out << cgicc::form() << std::endl ;
+  //
+
+}
+
+void EmuPeripheralCrateConfig::CFEBFunction(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  std::vector <int> FuncSize;
+  FuncSize.push_back(0);
+  FuncSize.push_back(0);
+  FuncSize.push_back(32);
+  FuncSize.push_back(32);
+  FuncSize.push_back(15);
+  FuncSize.push_back(2);
+  FuncSize.push_back(192);
+  FuncSize.push_back(32);
+  FuncSize.push_back(4);
+  FuncSize.push_back(5);
+  FuncSize.push_back(6);
+  FuncSize.push_back(288);
+  FuncSize.push_back(12);
+  FuncSize.push_back(0);
+  FuncSize.push_back(26);
+  FuncSize.push_back(0);
+  FuncSize.push_back(9);
+  FuncSize.push_back(2);
+  FuncSize.push_back(0);
+  FuncSize.push_back(0);
+  FuncSize.push_back(7);
+  FuncSize.push_back(16);
+  FuncSize.push_back(16);
+  FuncSize.push_back(16);
+  FuncSize.push_back(32);
+  FuncSize.push_back(0);
+  FuncSize.push_back(0);
+  FuncSize.push_back(0);
+  FuncSize.push_back(5);
+  FuncSize.push_back(3);
+  FuncSize.push_back(30);
+  FuncSize.push_back(6);
+  FuncSize.push_back(0);
+  FuncSize.push_back(0);
+  FuncSize.push_back(16);
+  FuncSize.push_back(25);
+  FuncSize.push_back(16);
+  FuncSize.push_back(10);
+  FuncSize.push_back(0);
+  FuncSize.push_back(16);
+  FuncSize.push_back(0);
+  FuncSize.push_back(0);
+  FuncSize.push_back(0);
+  FuncSize.push_back(0);
+  FuncSize.push_back(3);
+  FuncSize.push_back(3);
+  FuncSize.push_back(0);
+  FuncSize.push_back(0);
+  FuncSize.push_back(0);
+  FuncSize.push_back(8);
+  FuncSize.push_back(24);
+  FuncSize.push_back(24);
+  FuncSize.push_back(8);
+  FuncSize.push_back(16);
+  FuncSize.push_back(0);
+  FuncSize.push_back(8);
+  FuncSize.push_back(16);
+  FuncSize.push_back(24);
+  FuncSize.push_back(12);
+  FuncSize.push_back(12);
+  FuncSize.push_back(12);
+  FuncSize.push_back(12);
+  FuncSize.push_back(0);
+  FuncSize.push_back(0);
+  FuncSize.push_back(0);
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+
+     std::string in_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(in_value.c_str());
+     in_value = cgi.getElement("runtype")->getValue(); 
+     int sig=atoi(in_value.c_str());
+     cgicc::form_iterator value2 = cgi.getElement("CFEBDataIn");  
+     if(value2 != cgi.getElements().end()) 
+        CFEBDataIn_ = strtol(cgi["CFEBDataIn"]->getValue().c_str(),NULL,16);
+
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     bool broadcast = (icfeb == 7);
+     if(icfeb<0 || icfeb>cfebs.size()) {
+         std::cout << "Invalid CFEB number... returning." << std::endl;
+         return;
+     }
+
+     if (!broadcast) {
+        std::cout << "call CFEB " << cfebs[icfeb].number()+1 << " with JTAG function: " << sig << std::endl;
+     } else {
+        std::cout << "call all CFEBs with JTAG function: " << sig << std::endl;
+     }
+     
+     std::cout << "CFEB Data In: " << std::hex << CFEBDataIn_ << std::dec << std::endl;
+     if(sig>0 && sig<=0x3F) std::cout << "data size is: " << FuncSize[sig] << std::endl;
+     
+     char inbuf[200], outbuf[200];
+     for(int i=0;i<200;i++) { inbuf[i]=0; outbuf[i]=0;}
+     memcpy(inbuf, &CFEBDataIn_, 8);
+     if (!broadcast) {
+        thisDMB->dcfeb_hub(cfebs[icfeb], sig, FuncSize[sig], inbuf, outbuf, 3);
+     } else {
+        thisDMB->write_cfeb_selector(0x7F);
+        thisDMB->dcfeb_core(sig, FuncSize[sig], inbuf, outbuf, 3);
+     }
+     memcpy(&CFEBDataOut_, outbuf, 8);
+
+     std::cout << "CFEB Data Out: " << std::hex << CFEBDataOut_ << std::dec << std::endl;
+
+     this->CFEBUtils(in,out);                               
+     
+}
+
+//
+void EmuPeripheralCrateConfig::DCFEBLinkReset(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    // std::cout << "DCFEBLinkReset:  DMB " << dmb << std::endl;
+  }
+  //
+  name = cgi.getElement("cfeb");
+  //
+  int icfeb=-1;
+  if(name != cgi.getElements().end()) {
+    icfeb = cgi["cfeb"]->getIntegerValue();
+    // std::cout << "DCFEBLinkReset: CFEB " << icfeb << std::endl;
+  }
+  name = cgi.getElement("link");
+  //
+  int ilink=-1;
+  if(name != cgi.getElements().end()) {
+    ilink = cgi["link"]->getIntegerValue();
+    // std::cout << "DCFEBLinkReset: link " << ilink << std::endl;
+  }
+  DAQMB * thisDMB = dmbVector[dmb];
+  std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+  //
+  std::cout << "DCFEBLinkReset: " << thisCrate->GetChamberName(dmb+1) << " on CFEB #" << icfeb+1 << " link #" << ilink <<std::endl;  
+  //
+  if (thisDMB && icfeb>=0)
+  {
+     if(ilink==1) thisDMB->dcfeb_toggle_daq_txdisable(cfebs[icfeb]);
+     else if(ilink==2) thisDMB->dcfeb_toggle_trig_txdisable(cfebs[icfeb]); 
+  }
+  //
+  this->CFEBUtils(in,out);
+  //
+}
+//
+
+void EmuPeripheralCrateConfig::ReadDcfebVirtex6Reg(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+
+     unsigned icfeb=atoi(cgi.getElement("cfeb")->getValue().c_str());
+     int reg = atoi(cgi.getElement("reg")->getValue().c_str());
+     
+     std::vector<CFEB> cfebs = thisDMB->cfebs();
+     std::cout << "Reading Virtex 6 register " << reg << " on DCFEB " << cfebs[icfeb].number()+1 << " (DMB" << dmb << ")" << std::endl;
+     
+     if(icfeb < 0 || icfeb >= cfebs.size()) 
+     {
+         std::cout << "Invalid CFEB number... returning." << std::endl;
+     }
+     else     
+     {
+         DcfebVirtex6RegisterRead_ = thisDMB->dcfeb_readreg_virtex6(cfebs[icfeb], reg);
+         std::cout << "Result: " << std::hex << DcfebVirtex6RegisterRead_ << std::dec << std::endl;
+     }
+     this->CFEBUtils(in,out);                                    
+}
+
+void EmuPeripheralCrateConfig::AllDCFEBsPromTestFast(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+  
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  int hversion = thisDMB->CFEBversion();
+
+  std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+  typedef std::vector<CFEB>::iterator CFEBItr;
+  for(CFEBItr cfebItr = cfebs.begin(); cfebItr != cfebs.end(); ++cfebItr) {
+     int cfeb_index = (*cfebItr).number() + 1;
+     char cfeb_index_str[1];
+     sprintf(cfeb_index_str, "%d", cfeb_index);
+
+     if(hversion != 2) {
+        std::cout << "DMB " << dmb << " CFEB" + cfeb_index << " hardware version is not 2 (it's not a DCFEB).. Skipping.." << std::endl;
+        continue;
+     }
+
+     std::string chambername= thisDMB->GetLabel();
+     unsigned t = chambername.find('/');
+     unsigned s = chambername.size();
+     while(t<=s )
+     { 
+        chambername.replace(t,1,"_");
+        t = chambername.find('/');        
+     } 
+     std::string logfile = "/tmp/DCFEB_prom_test_fast_" + chambername + "_DCFEB" + cfeb_index_str + ".log";
+     std::string dumpfile = "/tmp/DCFEB_prom_test_fast_" + chambername + "_DCFEB" + cfeb_index_str + "_bad_blocks.dump";
+
+     std::cout << getLocalDateTime() << " DCFEB fast EEPROM test on DMB " << dmb << " CFEB " << cfeb_index << std::endl;
+
+     int ret = thisDMB->dcfeb_prom_test2(*cfebItr, logfile.c_str(), dumpfile.c_str(), true);
+     if (ret < 0) continue;
+    
+     // do a CCB hard reset and check if the DCFEB is still alive
+     std::cout << "Hard reset..." << std::endl;
+     thisCCB->hardReset();
+     int donebits = thisDMB->read_cfeb_done();
+     int isConfigured = (donebits >> (cfeb_index - 1)) & 1;
+     if (!isConfigured)
+     {
+        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+        std::cout << "!!!!!!!!!!!!!!!!!! ERROR !!!!!!!!!!!!!!!!!!" << std::endl;
+        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl << std::endl;
+        std::cout << "DMB " << dmb << " CFEB" + cfeb_index << " FPGA is not configured after the test!" << std::endl;
+        std::cout << "Terminating the test" << std::endl;
+        this->CFEBUtils(in,out);
+        return;
+     } else {
+        std::cout << "DMB " << dmb << " CFEB" + cfeb_index << " FPGA is still fine after the test" << std::endl;
+     }
+ 
+   }
+
+   std::cout << getLocalDateTime() << " DCFEB fast EEPROM test finished." << std::endl;
+   this->CFEBUtils(in,out);           
+                    
+}
+
+void EmuPeripheralCrateConfig::DCFEBPromTestFast(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  int hversion = thisDMB->CFEBversion();
+
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+     if (hversion != 2) {
+        std::cout << "DMB " << dmb << " CFEB" + cfebs[icfeb].number()+1 << " hardware version is not 2 (it's not a DCFEB).. Skipping.." << std::endl;
+        this->CFEBUtils(in,out);
+        return;
+     }
+     std::string chambername= thisDMB->GetLabel();
+     unsigned t = chambername.find('/');
+     unsigned s = chambername.size();
+     while(t<=s )
+     { 
+        chambername.replace(t,1,"_");
+        t = chambername.find('/');        
+     } 
+     char cfeb_index_str[1];
+     sprintf(cfeb_index_str, "%d", cfebs[icfeb].number() + 1);
+
+     std::string logfile="/tmp/DCFEB_prom_test_fast_"+chambername+"_DCFEB"+cfeb_index_str+".log";
+     std::string dumpfile="/tmp/DCFEB_prom_test_fast_"+chambername+"_DCFEB"+cfeb_index_str+"_bad_blocks.dump";
+                
+
+     std::cout << getLocalDateTime() << " DCFEB fast EEPROM test on DMB " << dmb << " CFEB " << cfebs[icfeb].number()+1 << std::endl;
+
+     int ret = thisDMB->dcfeb_prom_test2(cfebs[icfeb], logfile.c_str(), dumpfile.c_str(), true);
+     if (ret < 0) {
+       this->CFEBUtils(in,out);
+       return; 
+     }
+     
+     // do a CCB hard reset and check if the DCFEB is still alive
+     std::cout << "Hard reset..." << std::endl;
+     thisCCB->hardReset();
+
+     if(thisDMB->DMBversion()>1)
+     {    
+        int donebits = thisDMB->read_cfeb_done();
+        int isConfigured = (donebits >> cfebs[icfeb].number()) & 1;
+        if (!isConfigured)
+        {
+           std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+           std::cout << "!!!!!!!!!!!!!!!!!! ERROR !!!!!!!!!!!!!!!!!!" << std::endl;
+           std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl << std::endl;
+           std::cout << "DMB " << dmb << " CFEB" << cfebs[icfeb].number()+1 << " FPGA is not configured after the test!" << std::endl;
+        } else {
+           std::cout << "DMB " << dmb << " CFEB" << cfebs[icfeb].number()+1 << " FPGA is still fine after the test" << std::endl;
+        }
+     } 
+     std::cout << getLocalDateTime() << " DCFEB fast EEPROM test finished." << std::endl;
+     this->CFEBUtils(in,out);           
+                    
+}
+
+void EmuPeripheralCrateConfig::DCFEBPromTest(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  int hversion = thisDMB->CFEBversion();
+
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+     if (hversion != 2) {
+        std::cout << "DMB " << dmb << " CFEB" + cfebs[icfeb].number()+1 << " hardware version is not 2 (it's not a DCFEB).. Skipping.." << std::endl;
+        this->CFEBUtils(in,out);
+        return;
+     }
+     std::string chambername= thisDMB->GetLabel();
+     unsigned t = chambername.find('/');
+     unsigned s = chambername.size();
+     while(t<=s )
+     { 
+        chambername.replace(t,1,"_");
+        t = chambername.find('/');        
+     } 
+     char cfeb_index_str[1];
+     sprintf(cfeb_index_str, "%d", cfebs[icfeb].number() + 1);
+
+     std::string logfile="/tmp/DCFEB_prom_test_"+chambername+"_DCFEB"+cfeb_index_str+".log";
+     std::string dumpfile="/tmp/DCFEB_prom_test_"+chambername+"_DCFEB"+cfeb_index_str+"_bad_blocks.dump";
+                
+
+     std::cout << getLocalDateTime() << " DCFEB EEPROM test on DMB " << dmb << " CFEB " << cfebs[icfeb].number()+1 << std::endl;
+
+     int ret = thisDMB->dcfeb_prom_test2(cfebs[icfeb], logfile.c_str(), dumpfile.c_str(), false);
+     if (ret < 0) {
+       this->CFEBUtils(in,out);
+       return; 
+     }
+     
+     // do a CCB hard reset and check if the DCFEB is still alive
+     std::cout << "Hard reset..." << std::endl;
+     thisCCB->hardReset();
+
+     if(thisDMB->DMBversion()>1)
+     {    
+        int donebits = thisDMB->read_cfeb_done();
+        int isConfigured = (donebits >> cfebs[icfeb].number()) & 1;
+        if (!isConfigured)
+        {
+           std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+           std::cout << "!!!!!!!!!!!!!!!!!! ERROR !!!!!!!!!!!!!!!!!!" << std::endl;
+           std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl << std::endl;
+           std::cout << "DMB " << dmb << " CFEB" << cfebs[icfeb].number()+1 << " FPGA is not configured after the test!" << std::endl;
+        } else {
+           std::cout << "DMB " << dmb << " CFEB" << cfebs[icfeb].number()+1 << " FPGA is still fine after the test" << std::endl;
+        }
+     } 
+
+     std::cout << getLocalDateTime() << " DCFEB EEPROM test finished." << std::endl;
+     this->CFEBUtils(in,out);           
+                    
+}
+
+void EmuPeripheralCrateConfig::DCFEBParaPrint(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  if(thisDMB)
+  {
+     int hversion = thisDMB->CFEBversion();
+
+     OutputStringDMBStatus[dmb].str("");
+     
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+     if (hversion <= 1) {
+        std::cout << "DMB " << dmb << " CFEB" + cfebs[icfeb].number()+1 << " hardware version is not 2 (it's not a DCFEB).. Skipping.." << std::endl;
+        this->CFEBUtils(in,out);
+        return;
+     }
+
+     OutputStringDMBStatus[dmb]  << getLocalDateTime() << " DCFEB parameters in EEPROM on DMB " << dmb << " CFEB " << cfebs[icfeb].number()+1 << std::endl;
+
+     thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+     thisDMB->dcfeb_print_parameters(cfebs[icfeb]);
+     thisDMB->RedirectOutput(&std::cout);
+  }                  
+  this->CFEBUtils(in,out);           
+}
+
+void EmuPeripheralCrateConfig::DCFEBParaErase(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  int hversion = thisDMB->CFEBversion();
+
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+     if (hversion <= 1) {
+        std::cout << "DMB " << dmb << " CFEB" + cfebs[icfeb].number()+1 << " hardware version is not 2 (it's not a DCFEB).. Skipping.." << std::endl;
+        this->CFEBUtils(in,out);
+        return;
+     }
+
+     std::cout << getLocalDateTime() << " Erase all parameter blocks in EEPROM on DMB " << dmb << " CFEB " << cfebs[icfeb].number()+1 << std::endl;
+
+     thisDMB->dcfeb_erase_param(cfebs[icfeb]);
+    
+     std::cout << getLocalDateTime() << " Done" << std::endl;
+     this->CFEBUtils(in,out);                               
+}
+ 
+void EmuPeripheralCrateConfig::CFEBReadFirmware(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+
+  if(thisDMB)
+  {
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::cout << "CFEB #" << icfeb+1 << std::endl;
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+
+     std::string mcs_mode = cgi.getElement("mode")->getValue(); 
+     int imode=atoi(mcs_mode.c_str());
+        
+     std::string chambername= thisDMB->GetLabel();
+     unsigned t = chambername.find('/');
+     unsigned s = chambername.size();
+     while(t<=s )
+     { 
+        chambername.replace(t,1,"_");
+        t = chambername.find('/');        
+     } 
+     std::string mcsfile;
+
+     std::cout << getLocalDateTime() << " CFEB firmware read back from DMB " << dmb << " CFEB #" << (cfebs[icfeb].number()+1) << std::endl;
+
+     if(thisDMB->CFEBversion()<=1)   
+     {
+        mcsfile="/tmp/CFEB_"+chambername+"_C"+cfeb_value+".mcs";
+        thisDMB->cfeb_read_firmware(cfebs[icfeb], mcsfile.c_str());
+     }
+     else if(thisDMB->CFEBversion()==2)   
+     {
+        mcsfile="/tmp/DCFEB_"+chambername+"_C"+cfeb_value+".mcs";
+        thisDMB->dcfeb_read_firmware(cfebs[icfeb], mcsfile.c_str());
+     }
+     else
+     {
+        mcsfile="/tmp/xDCFEB_"+chambername+"_C"+cfeb_value+"_0.mcs";            
+        thisDMB->xdcfeb_read_firmware(cfebs[icfeb], mcsfile.c_str(), imode);
+     }
+     std::cout << getLocalDateTime() << " CFEB #" << (cfebs[icfeb].number()+1) << " firmware read back finished. Saved to " << mcsfile << std::endl;
+     if(thisDMB->CFEBversion()<=1)   
+        OutputStringDMBStatus[dmb] << getLocalDateTime() << " CFEB #" << (cfebs[icfeb].number()+1) << " firmware read back finished. Saved to " << mcsfile << std::endl;
+  }
+     this->CFEBUtils(in,out);                    
+}
+  
+void EmuPeripheralCrateConfig::DCFEBProgramFpgaAll(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+    cgicc::Cgicc cgi(in);
+    
+    cgicc::form_iterator name = cgi.getElement("dmb");
+    int dmb=0;
+    if(name != cgi.getElements().end()) {
+        dmb = cgi["dmb"]->getIntegerValue();
+        std::cout << "DMB " << dmb << std::endl;
+        DMB_ = dmb;
+    } else {
+        std::cout << "Not dmb" << std::endl ;
+        dmb = DMB_;
+    }
+     
+    DAQMB * thisDMB = dmbVector[dmb];
+    std::vector<CFEB> cfebs = thisDMB->cfebs();
+/*
+    for(std::vector<CFEB>::iterator cfeb = cfebs.begin(); cfeb != cfebs.end(); cfeb++) {
+        std::cout << getLocalDateTime() << " Programming DCFEB FPGA on DMB " << dmb << " DCFEB " << cfeb->number()+1 << std::endl;
+        thisDMB->dcfeb_program_virtex6(*cfeb, mcsfile.c_str());
+        sleep(1);
+    }
+*/
+     std::string mcsfile;
+     if(thisDMB->CFEBversion()==2)   
+     {
+        mcsfile= FirmwareDir_+ "cfeb/me11_dcfeb.mcs";
+     }
+     else if(thisDMB->CFEBversion()==3)   
+     {
+        mcsfile= FirmwareDir_+ "cfeb/me11_xdcfeb_0.mcs";
+     }
+    std::cout << getLocalDateTime() << " Programming FPGA on all DCFEBs via broadcast on DMB " << dmb << std::endl;
+    std::cout << "Using mcs file: " << mcsfile << std::endl;
+
+    thisDMB->dcfeb_program_virtex6(cfebs[0], mcsfile.c_str(), 1); // broadcast
+    std::cout << getLocalDateTime() << " Finished programming all DCFEB FPGAs." << std::endl;
+    this->CFEBUtils(in,out);
+}
+
+void EmuPeripheralCrateConfig::DCFEBProgramFpga(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+
+     std::string mcsfile;
+     if(thisDMB->CFEBversion()==2)   
+     {
+        mcsfile= FirmwareDir_+ "cfeb/me11_dcfeb.mcs";
+     }
+     else if(thisDMB->CFEBversion()==3)   
+     {
+        mcsfile= FirmwareDir_+ "cfeb/me11_xdcfeb_0.mcs";
+     }
+                
+     std::cout << getLocalDateTime() << " DCFEB program FPGA on DMB " << dmb << " CFEB " << cfebs[icfeb].number()+1 << std::endl;
+     std::cout << "Use mcs file: " << mcsfile << std::endl;
+
+     thisDMB->dcfeb_program_virtex6(cfebs[icfeb], mcsfile.c_str());
+     
+     std::cout << getLocalDateTime() << " DCFEB program FPGA finished." << std::endl;
+     this->CFEBUtils(in,out);                    
+}
+  
+void EmuPeripheralCrateConfig::DCFEBProgramEprom(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+    if(!write_dcfeb_prom_allowed_)
+    {
+       std::cout << "Write to DCFEB's PROM disabled!" << std::endl;
+       this->CFEBUtils(in,out);
+       return;
+    }
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+
+                
+     std::cout << getLocalDateTime() << " DCFEB program EPROM on DMB " << dmb << " CFEB " << cfebs[icfeb].number()+1 << std::endl;
+
+     if(thisDMB->CFEBversion()==2)   
+     {
+        std::string mcsfile= FirmwareDir_+ "cfeb/me11_dcfeb.mcs";
+        std::cout << "Use mcs file: " << mcsfile << std::endl;
+        thisDMB->dcfeb_program_eprom(cfebs[icfeb], mcsfile.c_str(), 0);
+     }
+     else if(thisDMB->CFEBversion()==3)
+     {
+        std::string mcsfile= FirmwareDir_+ "cfeb/me11_xdcfeb_0.mcs";
+        std::cout << "Use mcs file: " << mcsfile << std::endl;
+        thisDMB->xdcfeb_load_firmware(cfebs[icfeb], mcsfile.c_str(), 0);
+     }     
+     
+     std::cout << getLocalDateTime() << " DCFEB program EPROM finished." << std::endl;
+     this->CFEBUtils(in,out);                    
+}
+  
+void EmuPeripheralCrateConfig::DCFEBProgramEpromOffset(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+    if(!write_dcfeb_prom_allowed_)
+    {
+       std::cout << "Write to DCFEB's PROM disabled!" << std::endl;
+       this->CFEBUtils(in,out);
+       return;
+    }
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+     cgicc::form_iterator value2 = cgi.getElement("CFEBDataIn");
+     if(value2 != cgi.getElements().end())
+        CFEBDataIn_ = atoi(cgi["CFEBDataIn"]->getValue().c_str());
+     if(CFEBDataIn_<0 || CFEBDataIn_>78) CFEBDataIn_ = 0;
+
+     std::string mcsfile= FirmwareDir_+ "cfeb/me11_dcfeb.mcs";
+                
+     std::cout << getLocalDateTime() << " DCFEB program EPROM on DMB " << dmb << " CFEB " << cfebs[icfeb].number()+1 << " with block offset: " << CFEBDataIn_ << std::endl;
+     std::cout << "Use mcs file: " << mcsfile << std::endl;
+
+     thisDMB->dcfeb_program_eprom(cfebs[icfeb], mcsfile.c_str(), CFEBDataIn_);
+     
+     std::cout << getLocalDateTime() << " DCFEB program EPROM finished." << std::endl;
+     this->CFEBUtils(in,out);                    
+}
+  
+void EmuPeripheralCrateConfig::DCFEBProgramEpromSVF(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+    if(!write_dcfeb_prom_allowed_)
+    {
+       std::cout << "Write to DCFEB's PROM disabled!" << std::endl;
+       this->CFEBUtils(in,out);
+       return;
+    }
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  int hversion=thisDMB->CFEBversion();
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+
+  if(hversion<=1)
+  {
+     std::string svffile= FirmwareDir_+ "cfeb/cfeb_pro.svf";
+                
+     std::cout << getLocalDateTime() << " CFEB program EPROM on DMB " << dmb << " CFEB " << cfebs[icfeb].number()+1 << std::endl;
+     std::cout << "Use SVF file: " << svffile << std::endl;
+
+     thisDMB->write_cfeb_selector(cfebs[icfeb].SelectorBit());
+     thisDMB->SVFLoad(CFEB_PROM, svffile.c_str(), 0 ,0);
+     
+     std::cout << getLocalDateTime() << " CFEB program EPROM finished." << std::endl;
+  }
+  else
+  { 
+     std::string svffile= FirmwareDir_+ "cfeb/me11_dcfeb.svf";
+                
+     std::cout << getLocalDateTime() << " DCFEB program EPROM on DMB " << dmb << " CFEB " << cfebs[icfeb].number()+1 << std::endl;
+     std::cout << "Use SVF file: " << svffile << std::endl;
+
+     thisDMB->write_cfeb_selector(cfebs[icfeb].SelectorBit());
+     thisDMB->SVFLoad(D_CFEB, svffile.c_str(), 0 ,0);
+     
+     std::cout << getLocalDateTime() << " DCFEB program EPROM finished." << std::endl;
+  }
+     this->CFEBUtils(in,out);                    
+}
+  
+void EmuPeripheralCrateConfig::DCFEBProgramEpromXilinx(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+    if(!write_dcfeb_prom_allowed_)
+    {
+       std::cout << "Write to DCFEB's PROM disabled!" << std::endl;
+       this->CFEBUtils(in,out);
+       return;
+    }
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+//
+    std::string svffile1 = XMLDIR+"/virtex6lx130_header.svf";
+    std::string svffile2 = XMLDIR+"/virtex6_trailer.svf";
+    std::string corefile = XMLDIR+"/virtex6lx130_core.mcs";
+    std::string mcsfile = FirmwareDir_+"cfeb/me11_dcfeb.mcs";
+    std::cout << getLocalDateTime() << " Loading firmware to DCFEB's EPROM for DCFEB #" << cfebs[icfeb].number()+1 << std::endl;
+    std::cout << "Using mcs file: " << mcsfile << std::endl;
+    std::cout << "Step #1, loading Xilinx Core..."  << std::endl;    
+    thisDMB->dcfeb_program_virtex6(cfebs[icfeb], corefile.c_str(), -1);  // -1: don't check firmware tag
+    std::cout << "Step #2, erasing EPROM..."  << std::endl;    
+    ::sleep(2);
+    thisDMB->write_cfeb_selector(cfebs[icfeb].SelectorBit());
+    thisDMB->SVFLoad(D_CFEB, svffile1.c_str(), 0, 1);
+    std::cout << "Step #3, programming EPROM with content from MCS file..."  << std::endl;
+    thisDMB->dcfeb_program_eprom_Xilinx(cfebs[icfeb], mcsfile.c_str());
+    std::cout << "Done!"  << std::endl;  
+    std::cout << "Step #4, finalizing..." << std::endl;
+    thisDMB->write_cfeb_selector(cfebs[icfeb].SelectorBit());
+    thisDMB->SVFLoad(D_CFEB, svffile2.c_str(), 0, 1);
+    std::cout << getLocalDateTime() << " Finished loading firmware to EPROM." << std::endl;
+  //
+  this->CFEBUtils(in,out);
+  //
+  return;
+}
+
+  
+void EmuPeripheralCrateConfig::DCFEBProgramEpromAll(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+    if(!write_dcfeb_prom_allowed_)
+    {
+       std::cout << "Write to DCFEB's PROM disabled!" << std::endl;
+       this->CFEBUtils(in,out);
+       return;
+    }
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+/*
+     for(uint icfeb=0; icfeb<cfebs.size(); ++icfeb){
+       std::cout << getLocalDateTime() << " DCFEB program EPROM on DMB " << dmb << " CFEB " << cfebs[icfeb].number()+1 << std::endl;
+       std::cout << "Use mcs file: " << mcsfile << std::endl;
+       
+       thisDMB->dcfeb_program_eprom(cfebs[icfeb], mcsfile.c_str(), 0);
+       
+       std::cout << getLocalDateTime() << " DCFEB program EPROM finished." << std::endl;
+     }
+*/
+       std::cout << getLocalDateTime() << " Program all DCFEB EPROMs via broadcast on DMB " << dmb << std::endl;
+       
+     if(thisDMB->CFEBversion()==2)   
+     {
+        std::string mcsfile= FirmwareDir_+ "cfeb/me11_dcfeb.mcs";
+        std::cout << "Use mcs file: " << mcsfile << std::endl;
+        thisDMB->dcfeb_program_eprom(cfebs[0], mcsfile.c_str(), 0, 1);  // broadcast
+     }
+     else if(thisDMB->CFEBversion()==3)
+     {
+        std::string mcsfile= FirmwareDir_+ "cfeb/me11_xdcfeb_0.mcs";
+        std::cout << "Use mcs file: " << mcsfile << std::endl;
+        thisDMB->xdcfeb_load_firmware(cfebs[0], mcsfile.c_str(), 1);  // broadcast
+     }     
+       std::cout << getLocalDateTime() << " DCFEB program EPROM finished." << std::endl;
+     
+     this->CFEBUtils(in,out);                    
+}
+  
+void EmuPeripheralCrateConfig::LVMBStatus(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    DMB_ = dmb;
+  } else {
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  Chamber * thisChamber = chamberVector[dmb];
+  //
+  char Name[100];
+  sprintf(Name,"%s LVMB status, crate=%s, DMBslot=%d",
+	  (thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),thisDMB->slot());
+  //
+  MyHeader(in,out,Name);
+  std::cout << getLocalDateTime() << " Button: LVMBStatus: " << thisDMB->GetLabel() << ", DMB slot=" << thisDMB->slot() << std::endl;  
+  //
+  char buf[2000], sbuf[100];
+  int hversion=thisDMB->DMBversion();
+  int cversion=thisDMB->CFEBversion();
+  int nadcs, indx, cfebs, vstart, feed;
+  unsigned short *ubuf=(unsigned short *)buf;
+  double val, fvalue[100];
+  //
+  int n=thisDMB->DCSreadAll(buf);
+  if(n<=0) 
+  {
+     *out << "ERROR: Failed to read LVMB!!!" << cgicc::br() << std::endl;
+     return;
+  }
+  *out << cgicc::fieldset().set("style","font-size: 12pt; font-family: arial;");
+  *out << std::endl;
+  //
+  *out << cgicc::legend("LVMB Readback").set("style","color:blue") << std::endl ;
+  //
+  nadcs=5;
+  cfebs=5;
+  vstart=19;
+  feed=38;
+  if (hversion==2 || hversion==4)
+  { 
+     nadcs=7;
+     cfebs=7;
+     vstart=25;
+     feed=50;
+  }
+  for(int i=0; i<8*nadcs; i++)
+  {   
+      if(ubuf[i]==0xBAAD || ubuf[i]==0xFFFF) fvalue[i]=0.0;
+      else fvalue[i]=(ubuf[i]&0xFFF)*10.0/4096.0;
+      if(nadcs==5 && cversion>1)  /* for chambers with 5 (x)DCFEEBs */ 
+      {
+         if(i>=vstart) fvalue[i] = fvalue[i]*1.03;  /* correction for all voltages */
+         else if(i<15 && (i%3)==0) fvalue[i] = fvalue[i]*2;  /* DCFEB 3V currents multiply by 2 */    
+      }
+  }
+  *out << cgicc::br() << cgicc::b("ADC Channels") << std::endl;
+  *out << cgicc::table().set("border","1").set("cellpadding","4") << std::endl;
+  //
+  *out << std::setprecision(3);
+  for(int ch=0; ch<9; ch++)
+  {
+     *out << cgicc::tr() << cgicc::td();
+     if(ch) *out << ch-1 << cgicc::td();
+     else *out << "Channel" << cgicc::td();
+     for(int adc=0; adc<nadcs; adc++)
+     {
+        if(ch==0) *out << cgicc::td() << " ADC " << adc+1 << cgicc::td();
+        else
+        {
+           indx=adc*8+ch-1;
+              sprintf(sbuf, "% 6.2f ", fvalue[indx]);
+              *out << cgicc::td() << sbuf;
+              if ((hversion<=1 && indx<19) || (hversion==2 && indx<25)) *out << "A";
+              else *out << "V";
+           *out << cgicc::td();
+        }
+     }
+     *out << cgicc::tr() << std::endl;
+  }
+  *out << cgicc::table() << std::endl;
+
+  // CFEBs
+  int chn2pos[8];
+  for (int i=0; i<8; i++) chn2pos[i]=thisDMB->LVDB_map(i);
+  //
+  *out << cgicc::br() << cgicc::b("CFEB Low Voltages and Currents") << std::endl;
+
+  *out << cgicc::table().set("border","1").set("cellpadding","4");
+  //
+  *out <<cgicc::tr() << cgicc::td() << cgicc::td();
+  *out <<cgicc::td() << ((cversion<=1)?"3.3 V":"3.0 V") << cgicc::td();
+  *out <<cgicc::td() << "I (A)" << cgicc::td();
+  *out <<cgicc::td() << ((cversion<=1)?"5.0 V":"4.0 V") << cgicc::td();
+  *out <<cgicc::td() << "I (A)" << cgicc::td();
+  *out <<cgicc::td() << ((cversion<=1)?"6.0 V":"5.5 V") << cgicc::td();
+  *out <<cgicc::td() << "I (A)" << cgicc::td();
+  *out << cgicc::tr() << std::endl;
+
+  for(int feb=0; feb<cfebs; feb++)
+  {
+     int lfeb=chn2pos[feb];
+     *out << cgicc::tr();
+     *out <<cgicc::td() << "CFEB " << feb+1 << cgicc::td();
+     for(int cnt=0; cnt<3; cnt++)
+     {
+        val=fvalue[vstart+3*lfeb+cnt];
+        sprintf(sbuf, " %6.2f ", val);
+        *out << cgicc::td();
+        *out << sbuf;  
+        *out << cgicc::td();
+        val=fvalue[3*lfeb+cnt];
+        sprintf(sbuf, " %6.2f ", val);
+        *out <<cgicc::td();
+        *out << sbuf;  
+        *out << cgicc::td();
+     }
+     *out << cgicc::tr() << std::endl;
+  }
+  *out << cgicc::table() << cgicc::br() << std::endl;
+
+  // ALCT
+  *out << cgicc::b("ALCT Low Voltages and Currents") << std::endl;
+  *out << cgicc::table().set("border","1").set("cellpadding","4") << std::endl;
+  //
+  *out << cgicc::tr();
+  *out <<cgicc::td() << cgicc::td();
+  *out <<cgicc::td() << "3.3 V" << cgicc::td();
+  *out <<cgicc::td() << "I (A)" << cgicc::td();
+  *out <<cgicc::td() << "1.8 V" << cgicc::td();
+  *out <<cgicc::td() << "I (A)" << cgicc::td();
+  *out <<cgicc::td() << "5.5 V B" << cgicc::td();
+  *out <<cgicc::td() << "I (A)" << cgicc::td();
+  *out <<cgicc::td() << "5.5 V A" << cgicc::td();
+  *out <<cgicc::td() << "I (A)" << cgicc::td();
+  *out << cgicc::tr() << std::endl;
+
+     *out << cgicc::tr();
+     *out <<cgicc::td() << "ALCT" << cgicc::td();
+     for(int cnt=0; cnt<4; cnt++)
+     {
+        val=fvalue[vstart+3*cfebs+cnt];
+        sprintf(sbuf, " %6.2f ", val);
+        *out <<cgicc::td();
+        *out << sbuf;  
+        *out << cgicc::td();
+        val=fvalue[3*cfebs+cnt];
+        sprintf(sbuf, " %6.2f ", val);
+        *out <<cgicc::td();
+        *out << sbuf;  
+        *out << cgicc::td();
+     }
+     *out << cgicc::tr() << std::endl;
+
+  *out << cgicc::table() << cgicc::br()<< std::endl;
+
+  *out << cgicc::b("Feed Voltages") << cgicc::br() << std::endl;
+  *out << cgicc::table().set("border","1").set("cellpadding","4") << std::endl;
+  //
+  *out << cgicc::tr() << cgicc::td() << " Analog Feed " << cgicc::td();
+  sprintf(sbuf, " %6.2f V", fvalue[feed]);
+  *out  << cgicc::td()<< sbuf<< cgicc::td() << cgicc::tr() << std::endl;
+  *out << cgicc::tr() << cgicc::td() << " Digital Feed " << cgicc::td();
+  sprintf(sbuf, " %6.2f V", fvalue[feed+1]);
+  *out  << cgicc::td()<< sbuf<< cgicc::td() << cgicc::tr() << std::endl;
+  *out << cgicc::table() << cgicc::br()<< std::endl;
+
+  if(hversion==2 || hversion==4)
+  {
+     double tp = sqrt(2.1962*1000000 + 1000000*(1.8639-fvalue[55])/3.88)-1481.96;
+     *out << cgicc::br() << cgicc::b("LVDB7 Temperature sensor") << std::endl;
+     sprintf(sbuf, "%8.2f", tp);
+     *out << cgicc::br() << sbuf << " (C)" << cgicc::br()<< std::endl; 
+  }
+  *out << cgicc::fieldset();
+}
+
+void EmuPeripheralCrateConfig::DMBUtils(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  if(!parsed)
+  {  this->Default(in,out);
+     return;
+  }
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMBUtils:  DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "DMBUtils:  No dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  if(dmb<0 || dmb>=dmbVector.size())
+  {  this->Default(in,out);
+     return;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  Chamber * thisChamber = chamberVector[dmb];
+  std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+  //
+  int D_hversion=thisDMB->DMBversion();
+  int C_hversion=thisDMB->CFEBversion();
+  int tot_p_chans; // total power channels on LVDB
+  int allmask;
+  char Name[100];
+  if(D_hversion<=1)
+  {  
+     sprintf(Name,"%s DMB utilities, crate=%s, slot=%d",(thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),thisDMB->slot());
+     tot_p_chans=6;
+     allmask=0x3F;
+  }
+  else
+  {
+     sprintf(Name,"%s ODMB utilities, crate=%s, slot=%d",(thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),thisDMB->slot());
+     tot_p_chans=8;
+     allmask=0xFF;
+  }
+  std::cout << getLocalDateTime() << " Button: DMBUtils: " << thisDMB->GetLabel() << ", DMB slot=" << thisDMB->slot() << std::endl;
+  //
+  MyHeader(in,out,Name);
+  if(thisDMB->DMBversion()==2)
+  {
+     *out << cgicc::span().set("style","color:black") << cgicc::h3("Attention: If the ODMB's FPGA not configured, all functions not working except [ODMB Program FPGA]. ") << cgicc::span();
+  }
+  //
+  if( thisDMB->cfebs().size() > 0 ) {
+    std::string CFEBUtils =
+      toolbox::toString("/%s/CFEBUtils?dmb=%d",getApplicationDescriptor()->getURN().c_str(),dmb);
+    *out << cgicc::a("CFEB Utilities").set("href",CFEBUtils) << cgicc::br()  << cgicc::br() << std::endl;
+  }
+  //
+  //
+  char buf[200], nbuf[100], sbuf[200];
+  unsigned short *voltbuf;
+  voltbuf = (unsigned short *)buf;
+  //
+  int chn2pos[8];
+  for (int i=0; i<8; i++) chn2pos[i]=thisDMB->LVDB_map(i);
+  //
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl ;
+  //
+  *out << cgicc::legend("Power Control").set("style","color:blue") ;
+  //
+  *out << cgicc::table().set("border","1");
+  //
+  int power_state[9]={0,0,0,0,0,0,0,0,0};
+  int powermask = allmask & thisDMB->GetPowerMask();
+  unsigned int power_register = thisDMB->lowv_rdpwrreg();
+  // std::cout << "power register is " << std::hex << power_register << std::dec << std::endl;
+  if (power_register==0xBAAD)
+  {
+        std::cout << "Cannot read DMB" << std::endl;
+        power_register=0;  // can't read DMB (mostly DMB VME firmware problem), assume 0
+  }
+  int power_read = power_register&allmask;
+  for(int icc=1; icc<=tot_p_chans; icc++)
+  {   power_state[icc]= power_register & 1;
+      power_register = power_register>>1;
+  }
+  if(power_read==0 && D_hversion<=1)
+  {  // if read back is 0 then
+     // try read Low voltages and currents to determine if a CFEB/ALCT is on or off
+     power_read = thisDMB->DCSreadAll(buf);
+     if (power_read<20)
+     {
+        std::cout << "Cannot read DMB DCS info" << std::endl;
+     }
+     else
+     {
+        for(int icc=0; icc<40; icc++)
+        {  // remove the bad readings 0xBAAD etc
+           if(voltbuf[icc] >= 0xFFF) voltbuf[icc]=0;
+        }
+        for(int icc=1; icc<=6; icc++)
+        {
+           power_read = voltbuf[16+icc*3]+voltbuf[17+icc*3]+voltbuf[18+icc*3];
+           power_state[icc]= (power_read>1200) ? 1 : 0;  // roughly 3 volts 
+        }
+        power_read=power_state[6];
+        for(int icc=5; icc>0; icc--)
+        {
+           power_read = power_read<<1;
+           power_read += power_state[icc];
+        }
+     }
+  }
+  if(powermask)  for(int icc=1; icc<=tot_p_chans; icc++)
+  {   if(powermask & 1)  power_state[icc]= -1;
+      powermask = powermask>>1;
+  }
+  *out << cgicc::td() << cgicc::td();
+  for(int icc=1; icc<=tot_p_chans; icc++)
+  {
+     int licc=chn2pos[icc-1];
+     *out << cgicc::td().set("align", "center");
+     if(power_state[licc+1]>0)
+        *out << cgicc::span().set("style","color:green");
+     else if(power_state[licc+1]==0)
+        *out << cgicc::span().set("style","color:red");
+     else
+        *out << cgicc::span().set("style","color:black");
+     if(icc>0 && icc<tot_p_chans)
+     {
+           *out << "CFEB " << icc;
+     }
+     else if(icc==tot_p_chans)
+     {
+           *out << "ALCT";
+     }
+     *out << cgicc::span() << cgicc::td();
+  }
+  *out << cgicc::tr();
+  *out << cgicc::td();
+  //
+//debug
+std::cout << "Power Read: " << std::hex << power_read << std::dec <<std::endl;
+
+  std::string DMBTurnOn = toolbox::toString("/%s/DMBTurnOn",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBTurnOn) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Turn All On") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::td();
+  for(int icc=0; icc<tot_p_chans; icc++)
+  {
+     int licc=chn2pos[icc];
+     *out << cgicc::td().set("align", "center");
+     if(power_state[licc+1]>0)
+     {
+        *out << "On";
+     }
+     else if(power_state[licc+1]<0)
+     {
+        *out << "Masked";
+     }
+     else
+     {
+        std::string CFEBTurnOn = toolbox::toString("/%s/CFEBTurnOn",getApplicationDescriptor()->getURN().c_str());
+        *out << cgicc::form().set("method","GET").set("action",CFEBTurnOn) << std::endl ;
+        *out << cgicc::input().set("type","submit").set("value","Turn On") << std::endl ;
+        sprintf(buf,"%d",dmb);
+        *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+        sprintf(nbuf, "%d", power_read|(1<<licc) ); 
+        *out << cgicc::input().set("type","hidden").set("value",nbuf).set("name","cfeb");
+        *out << cgicc::form() << std::endl ;
+     }
+     *out << cgicc::td();
+  }
+
+  *out << cgicc::tr();
+  *out << cgicc::td();
+  //
+  std::string DMBTurnOff = toolbox::toString("/%s/DMBTurnOff",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBTurnOff) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Turn All Off") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::td();
+  for(int icc=0; icc<tot_p_chans; icc++)
+  {
+     int licc=chn2pos[icc];
+     *out << cgicc::td();
+     if(power_state[licc+1]>0)
+     {
+        std::string CFEBTurnOn = toolbox::toString("/%s/CFEBTurnOn",getApplicationDescriptor()->getURN().c_str());
+        *out << cgicc::form().set("method","GET").set("action",CFEBTurnOn) << std::endl ;
+        *out << cgicc::input().set("type","submit").set("value","Turn Off") << std::endl ;
+        sprintf(buf,"%d",dmb);
+        *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+        sprintf(nbuf, "%d", power_read & (~(1<<licc)) );
+        *out << cgicc::input().set("type","hidden").set("value",nbuf).set("name","cfeb");
+        *out << cgicc::form() << std::endl ;
+     }
+     else if(power_state[licc+1]<0)
+     {
+        *out << "Masked";
+     }
+     else
+     {
+        *out << "Off";
+     }
+     *out << cgicc::td();
+  }
+ // *out << cgicc::tr();
+  *out << cgicc::table();
+  //
+  *out << cgicc::fieldset() << cgicc::br();
+  //
+  //
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl ;
+  //
+  *out << cgicc::legend("DMB Utils").set("style","color:blue") ;
+  //
+  //
+  std::string ReadDMBRegister = 
+    toolbox::toString("/%s/ReadDMBRegister",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",ReadDMBRegister) << std::endl ;
+  *out << "Read Register (hex) " << std::endl;
+  sprintf(buf, "%04X", DMBRegisterRead_);  
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","DMBRegister") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::input().set("type","submit").set("value","Read DMB") << std::endl ;
+  *out << " Register value (hex): " << std::hex << DMBRegisterValue_ << std::endl;
+  *out << cgicc::form() << std::endl ;
+  //
+  std::string WriteDMBRegister = 
+    toolbox::toString("/%s/WriteDMBRegister",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",WriteDMBRegister) << std::endl ;
+  *out << "Write Register (hex) " << std::endl;
+  sprintf(buf, "%04X", DMBRegisterWrite_);
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","DMBRegister") << std::endl ;
+  *out << "Register value (hex) " << std::endl;
+  sprintf(buf, "%04X", DMBWriteValue_);
+  *out << cgicc::input().set("type","text").set("value",buf).set("name","DMBValue") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::input().set("type","submit").set("value","Write DMB") << std::endl ;
+  *out << cgicc::form() << cgicc::br() << std::endl ;
+  std::string DMBPrintCounters = toolbox::toString("/%s/DMBPrintCounters",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBPrintCounters) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","DMB Print Counters") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::br();
+  //
+if(D_hversion<=1)
+{
+  std::string DMBReadConfiguration = toolbox::toString("/%s/DMBReadConfiguration",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBReadConfiguration) << std::endl ;
+  if(C_hversion<=1)
+     *out << cgicc::input().set("type","submit").set("value","Read DMB+CFEB Status and Settings") << std::endl ;
+  else
+     *out << cgicc::input().set("type","submit").set("value","Read DMB Status and Settings") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::br();
+}
+  //
+  std::string DMBCheckConfiguration = toolbox::toString("/%s/DMBCheckConfiguration",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBCheckConfiguration) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Check DMB+CFEB Configuration") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::br();
+  //
+  std::string DMBConfigure = toolbox::toString("/%s/DMBConfigure",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBConfigure) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Configure DMB+CFEBs") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << cgicc::br() << std::endl ;
+  //
+if(D_hversion<=1)
+{
+ 
+}
+if(D_hversion>=2)
+{
+  // new tests for DCFEB communication
+  std::string DCFEBTests = toolbox::toString("/%s/DCFEBTests",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DCFEBTests) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","DCFEB copper/fiber mapping test") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << cgicc::br() <<std::endl ;
+
+  if(extra_tools_)
+  {
+     std::string ODMBPara = toolbox::toString("/%s/ODMBParaPrint",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",ODMBPara) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","Print ODMB parameters stored in EPROM") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::form() << std::endl ;
+  }
+}
+  //
+  *out << cgicc::fieldset() << cgicc::br();
+  //  
+if(D_hversion>=2)
+{
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl ;
+
+  *out << cgicc::legend("ODMB Timing Scans (N.B.: must be taking cosmics to use!)").set("style","color:blue") ;
+  std::string pipeline_depth_scan = toolbox::toString("/%s/PipelineDepthScan",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",pipeline_depth_scan) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Pipeline Depth Scan").set("style", "width: 256px") << std::endl ;
+  *out << " Scan lower bound: " << cgicc::input().set("type","text").set("style", "width: 64px").set("value","63").set("name","lower_limit");
+  *out << " Scan upper bound: " << cgicc::input().set("type","text").set("style", "width: 64px").set("value","71").set("name","upper_limit");
+  *out << " Run time: " << cgicc::input().set("type","text").set("style", "width: 64px").set("value","60").set("name","run_time") << " seconds.";
+  *out << " A: " << cgicc::input().set("type","checkbox").set("checked","checked").set("name","check_a");
+  *out << " B: " << cgicc::input().set("type","checkbox").set("checked","checked").set("name","check_b");
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::br();
+  //  
+
+  std::string l1a_lct_scan = toolbox::toString("/%s/L1ALCTScan",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",l1a_lct_scan) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","L1A_LCT_DLY Scan").set("style", "width: 256px") << std::endl ;
+  *out << " Scan lower bound: " << cgicc::input().set("type","text").set("style", "width: 64px").set("value","34").set("name","lower_limit");
+  *out << " Scan upper bound: " << cgicc::input().set("type","text").set("style", "width: 64px").set("value","40").set("name","upper_limit");
+  *out << " Run time: " << cgicc::input().set("type","text").set("style", "width: 64px").set("value","15").set("name","run_time") << " seconds.";
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+
+  //
+  std::string otmbdav_scan = toolbox::toString("/%s/OTMBDAVScan",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",otmbdav_scan) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","OTMBDAV_DLY Scan").set("style", "width: 256px") << std::endl ;
+  *out << " Scan lower bound: " << cgicc::input().set("type","text").set("style", "width: 64px").set("value","0").set("name","lower_limit");
+  *out << " Scan upper bound: " << cgicc::input().set("type","text").set("style", "width: 64px").set("value","6").set("name","upper_limit");
+  *out << " Run time: " << cgicc::input().set("type","text").set("style", "width: 64px").set("value","15").set("name","run_time") << " seconds.";
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+
+  //
+  std::string ALCTDAV_scan = toolbox::toString("/%s/ALCTDAVScan",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",ALCTDAV_scan) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","ALCTDAV_DLY Scan").set("style", "width: 256px") << std::endl ;
+  *out << " Scan lower bound: " << cgicc::input().set("type","text").set("style", "width: 64px").set("value","28").set("name","lower_limit");
+  *out << " Scan upper bound: " << cgicc::input().set("type","text").set("style", "width: 64px").set("value","34").set("name","upper_limit");
+  *out << " Run time: " << cgicc::input().set("type","text").set("style", "width: 64px").set("value","15").set("name","run_time") << " seconds.";
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::fieldset() << cgicc::br();
+ }
+
+  // DCFEB Pipeline Depth Scan
+  //
+ if ( C_hversion > 1 ){
+   std::string PipelineDepthScanWithDAQ = "/" + getApplicationDescriptor()->getURN() + "/PipelineDepthScanWithDAQ";
+   *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl
+	<< cgicc::legend("DCFEB Pipeline depth scan with local DAQ").set("style","color:blue")
+	<< cgicc::form().set("method","GET").set("action",PipelineDepthScanWithDAQ) << std::endl
+	<< cgicc::input().set("type","submit").set("value","Pipeline depth scan with local DAQ").set("title","Scan pipeline depth using the local DAQ, and find its best value with the unpacker.")
+	<< "from "          << cgicc::input().set("type","text").set("size","3").set("value","55").set("name","from"      )
+	<< " to "           << cgicc::input().set("type","text").set("size","3").set("value","75").set("name","to"        )
+	<< " in steps of "  << cgicc::input().set("type","text").set("size","3").set("value", "1").set("name","increment" )
+	<< " for "          << cgicc::input().set("type","text").set("size","3").set("value","30").set("name","duration"  ) << " seconds"
+	<< " "              << cgicc::input().set("type","checkbox").set("name","singleLayer" ) << " in single-layer trigger mode"
+	<< std::endl
+	<< pipelineDepthScanWithDAQResults_ << std::endl
+	<< cgicc::form() << std::endl
+	<< cgicc::fieldset() << cgicc::br();
+}
+  //  
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;") << std::endl ;
+  //
+if(D_hversion<=1)
+{
+  *out << cgicc::legend("DMB Firmware").set("style","color:blue") ;
+  //
+  std::string DMBLoadFirmware = toolbox::toString("/%s/DMBLoadFirmware",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBLoadFirmware) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","DMB CONTROL Load Firmware") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  if(C_hversion>1)
+     *out << MEX1DMBFirmware_.toString();
+  else
+     *out << DMBFirmware_.toString();
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::br();
+
+     std::string DMBReadFirmware = toolbox::toString("/%s/DMBReadFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",DMBReadFirmware) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","Read back DMB Control Firmware") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::form() << std::endl ;
+     //
+     *out << cgicc::br();
+  //
+  std::string DMBVmeLoadFirmware = toolbox::toString("/%s/DMBVmeLoadFirmware",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBVmeLoadFirmware) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","DMB VME Load Firmware") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  if(C_hversion>1)
+     *out << MEX1DMBVmeFirmware_.toString();
+  else
+     *out << DMBVmeFirmware_.toString();
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::br();
+  //
+  std::string DMBVmeLoadFirmwareEmergency = toolbox::toString("/%s/DMBVmeLoadFirmwareEmergency",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",DMBVmeLoadFirmwareEmergency) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","DMB VME Load Firmware (Emergency)") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::br();
+  //
+  std::string ReadDMBVirtex2 = toolbox::toString("/%s/ReadDMBVirtex2Reg",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",ReadDMBVirtex2) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","Read DMB Control FPGA registers") << std::endl ;
+  sprintf(buf,"%d",dmb);
+  *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::br();
+  //
+
+}
+else if(D_hversion>=2)
+{
+     std::string odmb_fwf;
+     if(D_hversion==2) odmb_fwf=FirmwareDir_+"odmb/me11_odmb";
+     else if(D_hversion==3) odmb_fwf=FirmwareDir_+"odmb/mex1_odmb5";
+     else if(D_hversion==4) odmb_fwf=FirmwareDir_+"odmb/me11_odmb7";
+     std::string odmb_bitfile=odmb_fwf+".bit";
+     if(D_hversion==3 || D_hversion==4) odmb_fwf = odmb_fwf + "_0";  // ODMB5&ODMB7 has two EPROMs so two mcs files: *_0.mcs, *_1.mcs
+     odmb_fwf = odmb_fwf + ".mcs";
+    
+     *out << cgicc::legend("ODMB Firmware").set("style","color:blue") ;
+     //
+     std::string DMBReadFirmware = toolbox::toString("/%s/DMBReadFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",DMBReadFirmware) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","Read back ODMB Firmware") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::input().set("type","hidden").set("value",odmb_fwf.c_str()).set("name","firmware");
+     *out << cgicc::form() << std::endl ;
+     //
+     *out << cgicc::br();
+     //
+     std::string DMBLoadFirmware = toolbox::toString("/%s/DMBLoadFirmware",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",DMBLoadFirmware) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","ODMB Program EPROM") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::input().set("type","hidden").set("value",odmb_fwf.c_str()).set("name","firmware");
+     *out << odmb_fwf;
+     *out << cgicc::form() << std::endl ;
+     *out << cgicc::br();
+     //
+     std::string ODMBLoadFirmwarePoll = toolbox::toString("/%s/ODMBLoadFirmwarePoll",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",ODMBLoadFirmwarePoll) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","ODMB Program EPROM by Polling BPI") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::input().set("type","hidden").set("value",odmb_fwf.c_str()).set("name","firmware");
+     *out << odmb_fwf;
+     *out << cgicc::form() << std::endl ;
+     //
+     *out << cgicc::br() <<cgicc::hr() << std::endl;
+     *out << "Use this one ONLY if power-cycle failed to recover the FPGA:" << cgicc::br()<< std::endl;
+     std::string DMBLoadFPGA = toolbox::toString("/%s/DMBLoadFPGA",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",DMBLoadFPGA) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","ODMB Program FPGA") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::input().set("type","hidden").set("value",odmb_fwf.c_str()).set("name","firmware");
+     *out << odmb_fwf;
+     *out << cgicc::form() << std::endl ;
+     *out << cgicc::br();
+     //
+     std::string DMBLoadFPGABit = toolbox::toString("/%s/DMBLoadFPGA",getApplicationDescriptor()->getURN().c_str());
+     *out << cgicc::form().set("method","GET").set("action",DMBLoadFPGA) << std::endl ;
+     *out << cgicc::input().set("type","submit").set("value","ODMB Program FPGA Use BIT file") << std::endl ;
+     sprintf(buf,"%d",dmb);
+     *out << cgicc::input().set("type","hidden").set("value",buf).set("name","dmb");
+     *out << cgicc::input().set("type","hidden").set("value",odmb_bitfile.c_str()).set("name","firmware");
+     *out << odmb_bitfile;
+     *out << cgicc::form() << std::endl ;
+     //
+     *out << cgicc::br() <<cgicc::hr() << std::endl;
+}
+	//
+  std::string CCBHardResetFromDMBPage = toolbox::toString("/%s/CCBHardResetFromDMBPage",getApplicationDescriptor()->getURN().c_str());
+  *out << cgicc::form().set("method","GET").set("action",CCBHardResetFromDMBPage) << std::endl ;
+  *out << cgicc::input().set("type","submit").set("value","CCB Hard Reset") << std::endl ;
+  *out << cgicc::form() << std::endl ;
+  //
+  *out << cgicc::fieldset();
+  //
+  // Output area
+  //
+  *out << cgicc::form().set("method","GET") << std::endl ;
+  *out << cgicc::pre();
+  *out << cgicc::textarea().set("name","CrateTestDMBOutput").set("rows","30").set("cols","132").set("WRAP","OFF");
+  *out << OutputStringDMBStatus[dmb].str() << std::endl ;
+  *out << cgicc::textarea();
+//  OutputStringDMBStatus[dmb].str("");
+  *out << cgicc::pre();
+  *out << cgicc::form() << std::endl ;
+  //
+}
+//
+void EmuPeripheralCrateConfig::CFEBTurnOn(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    // std::cout << "CFEBTurnOn:  DMB " << dmb << std::endl;
+  }
+  //
+  name = cgi.getElement("cfeb");
+  //
+  int mask=-1;
+  if(name != cgi.getElements().end()) {
+    mask = cgi["cfeb"]->getIntegerValue();
+    // std::cout << "CFEBTurnOn: mask " << mask << std::endl;
+  }
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  std::cout << "CFEBTurnOn mask " <<std::hex << mask << std::dec <<std::endl;  
+  //
+  if (thisDMB && mask>=0)
+  {
+    mask = mask & 0xFF;
+    thisDMB->lowv_onoff(mask);
+    ::sleep(1);
+  }
+  //
+  this->DMBUtils(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::DMBTurnOff(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMBTurnOff:  DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  if (thisDMB) {
+    thisDMB->lowv_onoff(0x0);
+    ::sleep(1);
+  }
+  //
+  this->DMBUtils(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::DMBLoadFirmware(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  std::string mcsfile=cgi["firmware"]->getValue();
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMBLoadFirmware:  DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  if (thisDMB) 
+  {
+   
+    int hversion=thisDMB->DMBversion();
+    int cversion=thisDMB->CFEBversion();
+    if(hversion<=1)
+    {
+    
+       std::cout << "DMBLoadFirmware in slot " << thisDMB->slot() << std::endl;
+       if (thisDMB->slot()==25) std::cout <<" Broadcast Loading the control FPGA insode one crate"<<std::endl;
+       //
+       ::sleep(1);
+       unsigned short int dword[2];
+       dword[0]=0;
+       //
+       char *outp=(char *)dword;
+       std::string fwname;
+       if(cversion>1)
+          fwname=MEX1DMBFirmware_.toString();
+       else
+          fwname=DMBFirmware_.toString();
+//       thisDMB->epromload(MPROM,fwname.c_str(),1,outp);  // load mprom
+       thisDMB->SVFLoad(CTRL_PROM, fwname.c_str(),0,1);
+       //
+       ::sleep(1);
+    }
+    else if(hversion==2)
+    {
+       std::cout << getLocalDateTime() << " ODMB program EPROM in slot " << thisDMB->slot() << std::endl;
+       std::cout << "Use mcs file: " << mcsfile << std::endl;
+
+       thisDMB->odmb_program_eprom(mcsfile.c_str());
+     
+       std::cout << getLocalDateTime() << " ODMB program EPROM finished." << std::endl;
+
+    }
+  }
+  //
+  this->DMBUtils(in,out);
+  //
+}
+//
+//
+void EmuPeripheralCrateConfig::ODMBLoadFirmwarePoll(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  std::string mcsfile=cgi["firmware"]->getValue();
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "ODMBLoadFirmwarePoll:  DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  if (thisDMB) 
+  {
+   
+    int hversion=thisDMB->DMBversion();
+    if(hversion==2)
+    {
+       std::cout << getLocalDateTime() << " ODMB program EPROM by Polling BPI status in slot " << thisDMB->slot() << std::endl;
+       std::cout << "Use mcs file: " << mcsfile << std::endl;
+
+       bool success=thisDMB->odmb_program_eprom_poll(mcsfile.c_str());
+       if(success)     
+          std::cout << getLocalDateTime() << " ODMB program EPROM finished successfully." << std::endl;
+       else
+           std::cout << getLocalDateTime() << " ODMB program EPROM failed." << std::endl;
+    }
+  }
+  //
+  this->DMBUtils(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::DMBLoadFPGA(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  std::string mcsfile=cgi["firmware"]->getValue();
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMBLoadFPGA:  DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  if (thisDMB && !mcsfile.empty()) 
+  {
+    int hversion=thisDMB->DMBversion();
+    if(hversion<=1)
+    {
+       thisCCB->hardReset();
+    }
+    else if(hversion>=2)
+    {
+       std::cout << getLocalDateTime() << " ODMB program FPGA in slot " << thisDMB->slot() << std::endl;
+       std::cout << "Use firmware file: " << mcsfile << std::endl;
+
+       thisDMB->odmb_program_fpga(mcsfile.c_str());
+     
+       std::cout << getLocalDateTime() << " ODMB program FPGA finished." << std::endl;
+    }
+  }
+  //
+  this->DMBUtils(in,out);
+  //
+}
+
+void EmuPeripheralCrateConfig::DMBReadFirmware(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+
+  if(thisDMB)
+  {
+     int hversion=thisDMB->DMBversion();
+     if(hversion<=1)
+     {
+        std::string chambername= thisDMB->GetLabel();
+        unsigned t = chambername.find('/');
+        unsigned s = chambername.size();
+        while(t<=s )
+        { 
+           chambername.replace(t,1,"_");
+           t = chambername.find('/');        
+        } 
+        std::string mcsfile="/tmp/DMB_CTL_"+chambername+".mcs";
+                
+        std::cout << getLocalDateTime() << " DMB Control firmware read back from slot " << thisDMB->slot() << std::endl;
+
+        thisDMB->read_firmware_control(mcsfile.c_str());
+     
+        std::cout << getLocalDateTime() << " DMB Control firmware read back finished and saved as " << mcsfile << std::endl;
+     }
+     else if(hversion==2)
+     {
+        std::string chambername= thisDMB->GetLabel();
+        unsigned t = chambername.find('/');
+        unsigned s = chambername.size();
+        while(t<=s )
+        { 
+           chambername.replace(t,1,"_");
+           t = chambername.find('/');        
+        } 
+        std::string mcsfile="/tmp/ODMB_"+chambername+".mcs";
+                
+        std::cout << getLocalDateTime() << " ODMB firmware read back from slot " << thisDMB->slot() << std::endl;
+
+        thisDMB->odmb_readfirmware_mcs(mcsfile.c_str());
+     
+        std::cout << getLocalDateTime() << " ODMB firmware read back finished and saved as " << mcsfile << std::endl;
+     }
+  }                    
+  this->DMBUtils(in, out);
+}
+//
+void EmuPeripheralCrateConfig::DMBVmeLoadFirmware(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMBVmeLoadFirmware:  DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  if (thisDMB) 
+  {
+      //
+      std::cout << "DMBVmeLoadFirmware in slot " << thisDMB->slot() << std::endl;
+      //
+      int cversion=thisDMB->CFEBversion();
+      std::string fwname;
+      if(cversion>1)
+         fwname=MEX1DMBVmeFirmware_.toString();
+      else
+         fwname=DMBVmeFirmware_.toString();      
+/*
+      unsigned short int dword[2];
+      dword[0]=thisDMB->mbpromuser(0);
+      dword[1]=0xdb00;
+      // dword[0] = 0x01bd;
+      // dword[1] = 0xff00;  to manually change the DMB ID.
+      char * outp=(char *)dword;   // recast dword
+      thisDMB->epromload(VPROM,fwname.c_str(),1,outp);  // load mprom
+*/
+      thisDMB->SVFLoad(VME_PROM, fwname.c_str(), 0, 1);
+  }
+    //
+  ::sleep(1);
+  //
+  this->DMBUtils(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::DMBVmeLoadFirmwareEmergency(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  if (thisDMB) 
+  {
+    //
+      std::cout << "DMB Vme Load Firmware Emergency in slot " << thisDMB->slot() << std::endl;
+    //
+      int cversion=thisDMB->CFEBversion();
+      std::string fwname;
+      if(cversion>1)
+         fwname=MEX1DMBVmeFirmware_.toString();
+      else
+         fwname=DMBVmeFirmware_.toString();      
+      unsigned short int dword[2];
+
+      dword[0]=0;
+      dword[1]=0xDB00;
+      char * outp=(char *)dword;  
+      thisDMB->epromload(RESET,fwname.c_str(),1,outp);  // load mprom
+  }
+  ::sleep(1);
+  this->DMBUtils(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::CFEBVerifyFirmware(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+
+  if(thisDMB)
+  {
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::cout << "CFEB #" << icfeb+1 << std::endl;
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+
+     OutputStringDMBStatus[dmb].str("");
+     std::string mcsfile;
+
+     std::cout << getLocalDateTime() << " CFEB firmware verify from DMB " << dmb << " CFEB #" << (cfebs[icfeb].number()+1);
+     int rt;
+     std::string dcfeb_firmware_name= (thisDMB->CFEBversion()==2)? (FirmwareDir_+"cfeb/me11_dcfeb.mcs"):(FirmwareDir_+"cfeb/me11_xdcfeb_0.mcs") ; 
+
+     if(thisDMB->CFEBversion()<=1)   
+     {
+          mcsfile=CFEBVerify_.toString();
+          std::cout << ", use file " << mcsfile << std::endl;
+          rt=thisDMB->cfeb_verify_firmware(cfebs[icfeb], mcsfile.c_str());
+     }
+     else if(thisDMB->CFEBversion()==2)   
+     {
+          mcsfile=dcfeb_firmware_name;
+          std::cout << ", use file " << mcsfile << std::endl;
+          rt=thisDMB->dcfeb_verify_firmware(cfebs[icfeb], mcsfile.c_str());
+     }
+     else
+     {
+          mcsfile=dcfeb_firmware_name;
+          std::cout << ", use file " << mcsfile << std::endl;
+          rt=thisDMB->xdcfeb_verify_firmware(cfebs[icfeb], mcsfile.c_str());
+     }
+     if(rt==0)
+     {
+          std::cout << getLocalDateTime()  << " CFEB #" << (cfebs[icfeb].number()+1) << " firmware verify finished. No error." << std::endl;
+          OutputStringDMBStatus[dmb] << getLocalDateTime()  << " CFEB #" << (cfebs[icfeb].number()+1) << " firmware verify finished. No error." << std::endl;
+     }
+     else if(rt>0)
+     {
+          std::cout << getLocalDateTime()  << " ERROR: CFEB #" << (cfebs[icfeb].number()+1) << " firmware verify finished with " << rt << " error(s)." << std::endl;
+          OutputStringDMBStatus[dmb] << getLocalDateTime()  << " ERROR: CFEB #" << (cfebs[icfeb].number()+1) << " firmware verify finished with " << rt << " error(s)." << std::endl;
+     }
+     else 
+     {
+          std::cout << getLocalDateTime()  << " ERROR: CFEB #" << (cfebs[icfeb].number()+1) << " firmware verify failed with code: " << rt << std::endl;
+          OutputStringDMBStatus[dmb] << getLocalDateTime()  << " ERROR: CFEB #" << (cfebs[icfeb].number()+1) << " firmware verify failed with code: " << rt << std::endl;
+     }     
+  }
+  this->CFEBUtils(in,out);                    
+}
+//
+void EmuPeripheralCrateConfig::CCBHardResetFromDMBPage(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  thisCCB->hardReset();
+  //
+  this->DMBUtils(in,out);
+  //
+}
+
+// This uses the new JTAG routine to load CFEB firmware
+void EmuPeripheralCrateConfig::CFEBLoadFirmware(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  int icfeb = 0;
+  //
+  cgicc::form_iterator name2 = cgi.getElement("cfeb");
+  if(name2 != cgi.getElements().end()) {
+    icfeb = cgi["cfeb"]->getIntegerValue();
+  }
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  if (thisDMB) 
+  {
+    std::cout << "CFEBLoadFirmware - DMB " << dmb << std::endl;
+    //
+    std::vector<CFEB> thisCFEBs = thisDMB->cfebs();
+    bool goodcfeb=false;
+    if(icfeb==-1)
+    {
+        std::cout << "Loading CFEB firmware to all CFEBs" << std::endl;
+        thisDMB->write_cfeb_selector(0x1F);
+        goodcfeb=true;
+    }
+    else if( icfeb>=0 && icfeb<thisCFEBs.size()) 
+    {
+        std::cout << "Loading CFEB firmware to CFEB #"<< (thisCFEBs[icfeb].number()+1) << std::endl;
+        thisDMB->write_cfeb_selector(thisCFEBs[icfeb].SelectorBit());
+        goodcfeb=true;
+    }
+    if(goodcfeb) thisDMB->SVFLoad(CFEB_PROM,CFEBFirmware_.toString().c_str(),0,1);  // debug=NO, verify=YES
+  }
+  this->CFEBUtils(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::DMBTurnOn(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMBTurnOn DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  int D_hversion=thisDMB->DMBversion();
+  int AllOn = (D_hversion==2 || D_hversion==4)?0xFF:0x3F;
+  if (thisDMB) {
+    thisDMB->lowv_onoff(AllOn);
+    ::sleep(1);
+  }
+  //
+  this->DMBUtils(in,out);
+  //
+}
+//
+void EmuPeripheralCrateConfig::DMBReadConfiguration(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMBReadConfiguration  DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  OutputStringDMBStatus[dmb].str("");
+  //
+  thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+  char buf[16];
+  thisDMB->dmb_readstatus(buf,true);
+  if(thisDMB->CFEBversion()<=1) thisDMB->cfebs_readstatus(true);
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBUtils(in,out);
+  //
+}
+
+void EmuPeripheralCrateConfig::DMBCheckConfiguration(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMBCheckConfiguration  DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  OutputStringDMBStatus[dmb].str("");
+  //
+  thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+  thisDMB->checkDAQMBXMLValues();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBUtils(in,out);
+  //
+}
+
+void EmuPeripheralCrateConfig::DMBConfigure(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << getLocalDateTime() << " DMBConfigure  DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  // this is copied from Crate->configure(), part of WRITE FLASH action
+  thisDMB->restoreCFEBIdle();
+  thisDMB->restoreMotherboardIdle();
+  thisDMB->configure();
+  //
+  this->DMBUtils(in,out);
+  //
+}
+
+// New test button
+void EmuPeripheralCrateConfig::DCFEBTests(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) { 
+  
+  cgicc::Cgicc cgi(in);      
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << getLocalDateTime() << " DCFEBTests  DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  OutputStringDMBStatus[dmb].str("");
+  // write to output box
+  thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+  thisDMB->odmb_dcfeb_tests();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBUtils(in,out);
+  //
+}
+
+// Pipeline Depth Scan button
+// Adam Dishaw, 2014-06-11
+void EmuPeripheralCrateConfig::PipelineDepthScan(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) { 
+  
+  cgicc::Cgicc cgi(in);      
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << getLocalDateTime() << " Pipeline Depth Scan  DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  // write to output box
+  thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+  const unsigned lower_limit(strtoul(GetFormString("lower_limit",in).c_str(), NULL, 0));
+  const unsigned upper_limit(strtoul(GetFormString("upper_limit",in).c_str(), NULL, 0));
+  const double run_time(strtod(GetFormString("run_time",in).c_str(), NULL));
+  const bool do_a(cgi.queryCheckbox("check_a"));
+  const bool do_b(cgi.queryCheckbox("check_b"));
+  int pipeline_depth_fine;
+  MyTest[dmb][current_crate_].SetupRadioactiveTriggerConditions();
+  thisDMB->scan_dcfeb_pipeline_depth(lower_limit, upper_limit, run_time, pipeline_depth_fine, do_a, do_b);
+  MyTest[dmb][current_crate_].ReturnToInitialTriggerConditions();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBUtils(in,out);
+  //
+}
+
+// Timing Scan button
+void EmuPeripheralCrateConfig::L1ALCTScan(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) { 
+  
+  cgicc::Cgicc cgi(in);      
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << getLocalDateTime() << " L1A_LCT_DLY Scan " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  // write to output box
+  thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+  const unsigned lower_limit(strtoul(GetFormString("lower_limit",in).c_str(), NULL, 0));
+  const unsigned upper_limit(strtoul(GetFormString("upper_limit",in).c_str(), NULL, 0));
+  const double run_time(strtod(GetFormString("run_time",in).c_str(), NULL));
+  MyTest[dmb][current_crate_].SetupRadioactiveTriggerConditions();
+  thisDMB->scan_delays(0x1, lower_limit, upper_limit, run_time);
+  MyTest[dmb][current_crate_].ReturnToInitialTriggerConditions();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBUtils(in,out);
+  //
+}
+
+void EmuPeripheralCrateConfig::OTMBDAVScan(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) { 
+  
+  cgicc::Cgicc cgi(in);      
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << getLocalDateTime() << " OTMBDAV_DLY Scan " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  // write to output box
+  thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+  const unsigned lower_limit(strtoul(GetFormString("lower_limit",in).c_str(), NULL, 0));
+  const unsigned upper_limit(strtoul(GetFormString("upper_limit",in).c_str(), NULL, 0));
+  const double run_time(strtod(GetFormString("run_time",in).c_str(), NULL));
+  MyTest[dmb][current_crate_].SetupRadioactiveTriggerConditions();
+  thisDMB->scan_delays(0x80, lower_limit, upper_limit, run_time);
+  MyTest[dmb][current_crate_].ReturnToInitialTriggerConditions();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBUtils(in,out);
+  //
+}
+
+void EmuPeripheralCrateConfig::ALCTDAVScan(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception) { 
+  
+  cgicc::Cgicc cgi(in);      
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  //
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << getLocalDateTime() << " ALCTDAV_DLY Scan " << dmb << std::endl;
+    DMB_ = dmb;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  // write to output box
+  thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+  const unsigned lower_limit(strtoul(GetFormString("lower_limit",in).c_str(), NULL, 0));
+  const unsigned upper_limit(strtoul(GetFormString("upper_limit",in).c_str(), NULL, 0));
+  const double run_time(strtod(GetFormString("run_time",in).c_str(), NULL));
+  MyTest[dmb][current_crate_].SetupRadioactiveTriggerConditions();
+  thisDMB->scan_delays(0x100, lower_limit, upper_limit, run_time);
+  MyTest[dmb][current_crate_].ReturnToInitialTriggerConditions();
+  thisDMB->RedirectOutput(&std::cout);
+  //
+  this->DMBUtils(in,out);
+  //
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+// DMB status
+///////////////////////////////////////////////////////////////////////////////////
+void EmuPeripheralCrateConfig::DMBStatus(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  if(!parsed)
+  {  this->Default(in,out);
+     return;
+  }
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  if(dmb<0 || dmb>=dmbVector.size())
+  {  this->Default(in,out);
+     return;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  //
+  bool isME13 = false;
+  TMB * thisTMB   = tmbVector[dmb];
+  ALCTController * thisALCT=0;
+  if (thisTMB) 
+    thisALCT = thisTMB->alctController();
+  if (thisALCT) 
+    if ( (thisALCT->GetChamberType()).find("ME13") != std::string::npos )
+      isME13 = true;
+  //
+  Chamber * thisChamber = chamberVector[dmb];
+  std::string chamber=thisChamber->GetLabel();
+  int hversion=thisDMB->DMBversion();
+  int cversion=thisDMB->CFEBversion();
+  char buf[2000], sbuf[100];
+  int nadcs, cfebs, vstart, feed;
+  unsigned short *ubuf=(unsigned short *)buf;
+  double val, fvalue[100];
+  nadcs=5;
+  cfebs=5;
+  vstart=19;
+  feed=38;
+  if (hversion==2 || hversion==4)
+  { 
+     nadcs=7;
+     cfebs=7;
+     vstart=25;
+     feed=50;
+  }
+  //
+  char Name[100];
+  sprintf(Name,"%s DMB status, crate=%s, slot=%d",(thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),thisDMB->slot());	
+  MyHeader(in,out,Name);
+  //
+  std::cout << getLocalDateTime() << " Button: DMBStatus: " << thisDMB->GetLabel() << ", DMB slot=" << thisDMB->slot() << std::endl;
+  //
+  //*out << cgicc::h1(Name);
+  //*out << cgicc::br();
+  //
+  if( thisDMB->cfebs().size() > 0 ) {
+    std::string CFEBStatus =
+      toolbox::toString("/%s/CFEBStatus?dmb=%d",getApplicationDescriptor()->getURN().c_str(),dmb);
+    *out << cgicc::a("CFEB Status").set("href",CFEBStatus) << std::endl;
+  }
+  std::string LVMBStatus =
+      toolbox::toString("/%s/LVMBStatus?dmb=%d",getApplicationDescriptor()->getURN().c_str(),dmb);
+  *out << cgicc::a("LVMB Status").set("href",LVMBStatus) << std::endl;
+  if(cversion==2 || cversion==3 )
+  {
+     std::string DCFEBCount =
+         toolbox::toString("/%s/DCFEBCounters?dmb=%d",getApplicationDescriptor()->getURN().c_str(),dmb);
+     *out << cgicc::a("DCFEB Counters").set("href",DCFEBCount) << std::endl;
+
+  }
+  if(hversion==2 || hversion==3 || hversion==4)
+  {
+     std::string ODMBCount =
+         toolbox::toString("/%s/ODMBCounters?dmb=%d",getApplicationDescriptor()->getURN().c_str(),dmb);
+     *out << cgicc::a("ODMB Counters").set("href",ODMBCount) << std::endl;
+
+  }
+  *out << cgicc::br() << std::endl;
+  //
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+  *out << std::endl;
+  //
+  *out << cgicc::legend("DMB IDs").set("style","color:blue") << std::endl ;
+  //
+  *out << cgicc::pre();
+  if(hversion<=1)
+  {
+  //
+      std::string crate=thisCrate->GetLabel();
+      int slot=thisDMB->slot();
+      std::cout<<" Crate: "<<crate<<" slot "<<slot<<std::endl;
+
+    thisDMB->vmefpgaid();
+    sprintf(buf,"DMB VME Firmware : Tag %d Revision %x, Day %d Month %d Year %d",
+	  (int)thisDMB->GetFirmwareVersion(),(int)thisDMB->GetFirmwareRevision(),
+	  (int)thisDMB->GetFirmwareDay(),(int)thisDMB->GetFirmwareMonth(),(int)thisDMB->GetFirmwareYear());
+    //
+    if ( thisDMB->CheckVMEFirmwareVersion() ) {
+      *out << cgicc::span().set("style","color:green");
+      *out << buf;
+      *out << "...OK...";
+      *out << cgicc::span();
+    } else {
+      *out << cgicc::span().set("style","color:red");
+      *out << buf;
+      *out << "--->> BAD <<--- should be "
+	 << std::dec << thisDMB->GetExpectedVMEFirmwareTag();
+      *out << cgicc::span();
+    }
+    *out << cgicc::br();
+    //
+    sprintf(buf,"DMB VME prom User Code       : %08x ",(int)thisDMB->mbpromuser(0));
+    *out << buf ;
+    *out << cgicc::br();
+    //
+    sprintf(buf,"DMB Control prom User Code   : %08x ",(int)thisDMB->mbpromuser(1));
+    *out << buf  ;
+    *out << cgicc::br();
+    //
+    sprintf(buf,"DMB VME prom ID              : %08x ",(int)thisDMB->mbpromid(0));
+    *out << buf  ;
+    *out << cgicc::br();
+    //
+    sprintf(buf,"DMB Control prom ID          : %08x ",(int) thisDMB->mbpromid(1));
+    *out << buf  ;
+    *out << cgicc::br();
+    //
+    sprintf(buf,"DMB Control fpga ID          : %08x ",(int)thisDMB->mbfpgaid());
+    *out << buf  ;
+    *out << cgicc::br();
+    //
+    sprintf(buf,"DMB Control Firmware Tag     : %x ", (int) thisDMB->mbfpgauser());
+  
+    if ( thisDMB->CheckControlFirmwareVersion() ) {
+      *out << cgicc::span().set("style","color:green");
+      *out << buf;
+      *out << "...OK...";
+      *out << cgicc::span();
+    } else {
+      *out << cgicc::span().set("style","color:red");
+      *out << buf;
+      *out << "--->> BAD <<--- should be "
+	 << std::hex << thisDMB->GetExpectedControlFirmwareTag() << std::dec;
+      *out << cgicc::span();
+    }
+  }
+  else if(hversion>=2)
+  {
+     int fwv=thisDMB->odmb_firmware_version();
+     int fw_xml=thisDMB->GetExpectedControlFirmwareTag();
+     sprintf(buf,"ODMB Firmware Version : V%02X_%02X (tag %02X%02X)",(fwv>>8)&0xFF, fwv&0xFF,(fwv>>8)&0xFF, fwv&0xFF);
+     if ( (fwv&0xFFFF)==(fw_xml&0xFFFF) ) 
+     {
+        *out << cgicc::span().set("style","color:green");
+        *out << buf << " ...OK...";
+        *out << cgicc::span();
+     } else 
+     {
+        *out << cgicc::span().set("style","color:red");
+        *out << buf;
+        *out << "--->> BAD <<--- should be ";
+        sprintf(buf,"V%02X_%02X (tag %02X%02X)",(fw_xml>>8)&0xFF, fw_xml&0xFF,(fw_xml>>8)&0xFF, fw_xml&0xFF);
+        *out << buf << cgicc::span();
+    }
+     *out << cgicc::br();
+     int qpll_state=thisDMB->read_qpll_state();
+     sprintf(buf,"ODMB QPLL lock state  : %04X ",qpll_state);
+     if ( qpll_state ) 
+     {
+        *out << cgicc::span().set("style","color:green");
+        *out << buf << " ...OK...";
+        *out << cgicc::span();
+     } else 
+     {
+        *out << cgicc::span().set("style","color:red");
+        *out << buf;
+        *out << "--->> BAD <<--- should be 1";
+        *out << cgicc::span();
+    }
+    *out  << std::endl;
+     int idcode=thisDMB->mbfpgaid();
+     sprintf(buf,"ODMB fpga ID Code     : %08X ",idcode);
+   if(hversion==2)
+   {
+     if ( (idcode&0xFFFFFFF)==(0x8424A093&0xFFFFFFF) ) 
+     {
+        *out << cgicc::span().set("style","color:green");
+        *out << buf << " ...OK...";
+        *out << cgicc::span();
+     } else 
+     {
+        *out << cgicc::span().set("style","color:red");
+        *out << buf;
+        *out << "--->> BAD <<--- should be 8424A093";
+        *out << cgicc::span();
+     }
+   }
+   else if(hversion==3 || hversion==4)
+   {
+     if ( (idcode&0xFFFFFFF)==(0x13823093&0xFFFFFFF) ) 
+     {
+        *out << cgicc::span().set("style","color:green");
+        *out << buf << " ...OK...";
+        *out << cgicc::span();
+     } else 
+     {
+        *out << cgicc::span().set("style","color:red");
+        *out << buf;
+        *out << "--->> BAD <<--- should be 13823093";
+        *out << cgicc::span();
+     }
+   }
+     *out << cgicc::br();
+     sprintf(buf,"ODMB fpga User Code   : %08X ", (int)thisDMB->mbfpgauser());
+     *out << buf << std::endl;
+     int unique_id=thisDMB->read_odmb_id();     
+     sprintf(buf,"ODMB unique ID        : %04X ", unique_id);
+     *out << buf << std::endl;
+     // ODMB Control
+     // DCFEB Control
+  }
+  //
+  *out << cgicc::pre();
+  //
+  //thisDMB->lowv_dump();
+  //thisDMB->daqmb_adc_dump();
+  //thisDMB->daqmb_promfpga_dump();
+  //
+  *out << cgicc::fieldset();
+  *out << std::endl ;
+ 
+  if(hversion>=2)
+  {
+     *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+     *out << std::endl ;
+     *out << cgicc::legend("ODMB Settings").set("style","color:blue") 
+          << std::endl ;
+     *out << cgicc::table().set("border","1").set("cellpadding","4");
+     *out << cgicc::tr();
+     *out << cgicc::td() << "LCT_L1A delay: " << thisDMB->odmb_read_LCT_L1A_delay() << cgicc::td();      
+     *out << cgicc::td() << "TMB delay: " << thisDMB->odmb_read_TMB_delay() << cgicc::td();      
+     *out << cgicc::td() << "ALCT delay: " << thisDMB->odmb_read_ALCT_delay() << cgicc::td();      
+     *out << cgicc::td() << "CAL_LCT delay: " << thisDMB->odmb_read_Cal_delay() << cgicc::td();      
+     *out << cgicc::td() << "Kill mask (Hex): " << std::hex << thisDMB->odmb_read_kill_mask() << std::dec << cgicc::td();      
+     *out << cgicc::tr() << std::endl;
+     *out << cgicc::tr();
+     *out << cgicc::td() << "Inj delay: " << thisDMB->odmb_read_Inj_delay() << cgicc::td();      
+     *out << cgicc::td() << "Ext delay: " << thisDMB->odmb_read_Ext_delay() << cgicc::td();      
+     *out << cgicc::td() << "Push delay: " << thisDMB->odmb_read_Push_delay() << cgicc::td();      
+     *out << cgicc::td() << "Crate ID: " << thisDMB->odmb_read_CrateID() << cgicc::td();      
+     *out << cgicc::tr() << std::endl;
+     *out << cgicc::table();
+     *out << cgicc::fieldset() << cgicc::br() << std::endl;
+
+     // ODMB auto killed DCFEBs
+     *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+     *out << std::endl ;
+     *out << cgicc::legend("Auto Killed DCFEBs").set("style","color:blue") 
+          << std::endl ;
+     *out << cgicc::table().set("border","1").set("cellpadding","4");
+       //
+       *out << cgicc::tr();
+       for(int icol=0; icol<8; icol++)
+       {       
+          *out << cgicc::td();
+          if(icol>0) *out << "DCFEB " << icol;
+          *out << cgicc::td() << std::endl;
+       }
+       *out << cgicc::tr() << std::endl;
+       //
+       int killed=thisDMB->odmb_read_autokill_any();
+       int killbit;
+       *out << cgicc::tr();
+       for(int icol=0; icol<8; icol++)
+       {       
+          killbit = (killed&(1<<(icol-1)))?1:0;
+          *out << cgicc::td();
+          if(icol==0) *out << "Auto Killed: Any";
+          else *out << killbit;
+          *out << cgicc::td() << std::endl;
+       }
+       *out << cgicc::tr() << std::endl;
+       //
+       killed=thisDMB->odmb_read_autokill_optic();
+       *out << cgicc::tr();
+       for(int icol=0; icol<8; icol++)
+       {       
+          killbit = (killed&(1<<(icol-1)))?1:0;
+          *out << cgicc::td();
+          if(icol==0) *out << "Auto Killed: Fiber";
+          else *out << killbit;
+          *out << cgicc::td() << std::endl;
+       }
+       *out << cgicc::tr() << std::endl;
+       //
+     *out << cgicc::table();
+     *out << cgicc::fieldset() << cgicc::br() << std::endl;
+  
+     std::vector<float> adcs=thisDMB->odmb_fpga_adc();
+     *out << std::setprecision(3);
+     *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+     *out << std::endl ;
+     *out << cgicc::legend("ODMB Temperatures and Voltages").set("style","color:blue") 
+          << std::endl ;
+     *out << cgicc::table().set("border","1").set("cellpadding","4");
+     *out << cgicc::tr();
+     *out << cgicc::td() << " FPGA  temperature = " << adcs[0] << "C " << cgicc::td();      
+     *out << cgicc::td() << " PCB temperature 1 = " << adcs[6] << "C " << cgicc::td();      
+     *out << cgicc::td() << " PPIB current = " << adcs[3]/1000. << "A " << cgicc::td();      
+     *out << cgicc::tr() << cgicc::table() << cgicc::br() << std::endl;
+
+     *out << cgicc::table().set("border","1").set("cellpadding","4");
+     *out << cgicc::tr();
+     *out << cgicc::td() << " FPGA 3.3V = " << adcs[1] << "V " << cgicc::td();      
+     *out << cgicc::td() << " FPGA 2.5V = " << adcs[5] << "V " << cgicc::td();      
+     *out << cgicc::td() << " FPGA 1.0V = " << adcs[7] << "V " << cgicc::td();      
+     *out << cgicc::tr() << std::endl;
+     *out << cgicc::tr();
+     *out << cgicc::td() << " LVMB 5.0V = " << adcs[8] << "V " << cgicc::td();      
+     *out << cgicc::td() << " PPIB 5.0V = " << adcs[2] << "V " << cgicc::td();      
+     *out << cgicc::td() << " PPIB 3.3V = " << adcs[4] << "V " << cgicc::td();      
+     *out << cgicc::tr() << std::endl;
+     *out << cgicc::table();
+     *out << cgicc::fieldset() << cgicc::br() << std::endl;
+  }
+
+  //
+  *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+  *out << std::endl ;
+  //
+  *out << cgicc::legend("Chamber Voltages, Temperatures, & Currents").set("style","color:blue") 
+       << std::endl ;
+  //
+  int n=thisDMB->DCSreadAll(buf);
+  if(n<=0) 
+  {
+     *out << "ERROR: Failed to read LVMB!!!" << cgicc::br() << std::endl;
+  }
+  for(int i=0; i<8*nadcs; i++)
+  {   
+      if(ubuf[i]==0xBAAD || ubuf[i]==0xFFFF) fvalue[i]=0.0;
+      else fvalue[i]=(ubuf[i]&0xFFF)*10.0/4096.0;
+      if(nadcs==5 && cversion>1)  /* for chambers with 5 (x)DCFEEBs */ 
+      {
+         if(i>=vstart) fvalue[i] = fvalue[i]*1.03;  /* correction for all voltages */
+         else if(i<15 && (i%3)==0) fvalue[i] = fvalue[i]*2;  /* DCFEB 3V currents multiply by 2 */    
+      }
+  }
+  int chn2pos[8];
+  for (int i=0; i<8; i++) chn2pos[i]=thisDMB->LVDB_map(i);
+  //
+  float normv[3]={0.,0.,0.};
+  if (cversion<=1) 
+     { normv[0]=3.3; normv[1]=5.0; normv[2]=6.0; }
+  else if (cversion>=2) 
+     { normv[0]=3.0; normv[1]=4.0; normv[2]=5.5; }
+
+  *out << cgicc::table().set("border","1").set("cellpadding","4");
+  //
+  for(int feb=0; feb<cfebs; feb++)
+  {
+     int lfeb=chn2pos[feb];
+     *out << cgicc::tr();
+     for(int cnt=0; cnt<3; cnt++)
+     {
+        val=fvalue[vstart+3*lfeb+cnt];
+        sprintf(sbuf, "CFEB%d %3.1fV = %6.2f ",feb+1, normv[cnt], val);
+        *out << cgicc::td();
+        if ( val < normv[cnt]*(0.94) ||  val > normv[cnt]*(1.05) )	 
+           *out << cgicc::span().set("style","color:red");
+        else
+           *out << cgicc::span().set("style","color:green");
+        *out << sbuf;  
+        *out << cgicc::span();
+        *out << cgicc::td();
+     }
+     *out << cgicc::tr() << std::endl;
+  }
+  *out << cgicc::table() << cgicc::br() << std::endl;
+
+  //
+  float value;
+  //
+  *out << cgicc::table().set("border","1");
+  //
+  *out << cgicc::td();
+  value=fvalue[vstart+3*cfebs+0];
+  sprintf(buf,"ALCT  3.3V = %3.2f ",value);
+  if ( value < 3.3*0.94 ||
+       value > 3.3*1.06 ) {
+    *out << cgicc::span().set("style","color:red");
+  } else {
+    *out << cgicc::span().set("style","color:green");  
+  }
+  *out << buf ;
+  *out << cgicc::span();
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  value=fvalue[vstart+3*cfebs+1];
+  sprintf(buf,"ALCT  1.8V = %3.2f ",value);
+  if ( value < 1.8*0.94 ||
+       value > 1.8*1.06 ) {
+    *out << cgicc::span().set("style","color:red");
+  } else {
+    *out << cgicc::span().set("style","color:green");  
+  }
+  *out << buf ;
+  *out << cgicc::span();
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  value=fvalue[vstart+3*cfebs+2];
+  sprintf(buf,"ALCT  5.5V(B) = %3.2f ",value);
+  if ( value < 5.5*0.94 ||
+       value > 5.5*1.06 ) {
+    *out << cgicc::span().set("style","color:red");
+  } else {
+    *out << cgicc::span().set("style","color:green");  
+  }
+  *out << buf ;
+  *out << cgicc::span();
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  value=fvalue[vstart+3*cfebs+3];
+  sprintf(buf,"ALCT  5.5V(A) = %3.2f ",value);
+  if ( value < 5.5*0.94 ||
+       value > 5.5*1.06 ) {
+    *out << cgicc::span().set("style","color:red");
+  } else {
+    *out << cgicc::span().set("style","color:green");  
+  }
+  *out << buf ;
+  *out << cgicc::span();
+  *out << cgicc::td();
+  //
+  *out << cgicc::table();
+  //
+  *out << cgicc::br();
+  //
+  *out << cgicc::table().set("border","1");
+  //
+  *out << cgicc::td();
+  value=fvalue[feed];
+  sprintf(buf,"Analog  7 V = %3.2f ",value);
+  if ( value < 5.0 ||
+       value > 7.0*1.5 ) {
+    *out << cgicc::span().set("style","color:red");
+  } else {
+    *out << cgicc::span().set("style","color:green");  
+  }
+  *out << buf ;
+  *out << cgicc::span();
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  value=fvalue[feed+1];
+  sprintf(buf,"Digital  7 V = %3.2f ",value);
+  float ndigif= ((hversion<=1)?7.0:6.0);
+  if ( value < ndigif*0.7 ||
+       value > ndigif*1.5 ) {
+    *out << cgicc::span().set("style","color:red");
+  } else {
+    *out << cgicc::span().set("style","color:green");  
+  }
+  *out << buf ;
+  *out << cgicc::span();
+  *out << cgicc::td();
+  //
+  *out << cgicc::table();
+  //
+  *out << cgicc::br();
+  //
+  if(hversion<=1)
+  {
+  *out << "NOTE: the CFEB temperetures below are NOT read through the CFEBs, and NOT indicating the actual CFEB status. " << std::endl;
+  *out << cgicc::table().set("border","1");;
+  //
+  *out << cgicc::td();
+  sprintf(buf,"DMB temperature = %3.1f C",(value=thisDMB->readthermx(0)));
+  if ( value > 10 && value < 45 ) {
+    *out << cgicc::span().set("style","color:green");
+  } else {
+    *out << cgicc::span().set("style","color:red");
+  }
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  sprintf(buf,"CFEB1 temperature = %3.1f C",(value=thisDMB->readthermx(1)));
+  if ( value > 10 && value < 45 ) {
+    *out << cgicc::span().set("style","color:green");
+  } else {
+    *out << cgicc::span().set("style","color:red");
+  }
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  sprintf(buf,"CFEB2 temperature = %3.1f C",(value=thisDMB->readthermx(2)));
+  if ( value > 10 && value < 45 ) {
+    *out << cgicc::span().set("style","color:green");
+  } else {
+    *out << cgicc::span().set("style","color:red");
+  }
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::tr();
+  //
+  *out << cgicc::td();
+  sprintf(buf,"CFEB3 temperature = %3.1f C",(value=thisDMB->readthermx(3)));
+  if ( value > 10 && value < 45 ) {
+    *out << cgicc::span().set("style","color:green");
+  } else {
+    *out << cgicc::span().set("style","color:red");
+  }
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  sprintf(buf,"CFEB4 temperature = %3.1f C",(value=thisDMB->readthermx(4)));
+  if ( value > 10 && value < 45 ) {
+    *out << cgicc::span().set("style","color:green");
+  } else {
+    *out << cgicc::span().set("style","color:red");
+  }
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  sprintf(buf,"CFEB5 temperature = %3.1f C",(value=thisDMB->readthermx(5)));
+  if (isME13) { 
+    *out << cgicc::span().set("style","color:black");
+  } else if ( value > 10 && value < 45 ) {
+    *out << cgicc::span().set("style","color:green");
+  } else {
+    *out << cgicc::span().set("style","color:red");
+  }
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::tr();
+  //
+  *out << cgicc::table();
+  //
+  *out << cgicc::br();
+  //
+  *out << cgicc::table().set("border","1");;
+  //
+  *out << cgicc::td();
+  float readout = thisDMB->adcplus(2,0) ;
+  sprintf(buf,"DMB DAC1 = %3.1f ",readout);
+  //
+  if ( readout > 3400 && readout < 3600 ) {
+    *out << cgicc::span().set("style","color:black");
+  } else {
+    *out << cgicc::span().set("style","color:black");
+  }
+  //
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  readout = thisDMB->adcplus(2,1) ;
+  sprintf(buf,"DMB DAC2 = %3.1f ",readout);
+  if ( readout > 3400 && readout < 3600 ) {
+    *out << cgicc::span().set("style","color:black");
+  } else {
+    *out << cgicc::span().set("style","color:black");
+  }
+  //
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  readout = thisDMB->adcplus(2,2) ;
+  sprintf(buf,"DMB DAC3 = %3.1f ",readout);
+  if ( readout > 3400 && readout < 3600 ) {
+    *out << cgicc::span().set("style","color:black");
+  } else {
+    *out << cgicc::span().set("style","color:black");
+  }
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  readout = thisDMB->adcplus(2,3) ;
+  sprintf(buf,"DMB DAC4 = %3.1f ",readout);
+  if ( readout > 3400 && readout < 3600 ) {
+    *out << cgicc::span().set("style","color:black");
+  } else {
+    *out << cgicc::span().set("style","color:black");
+  }
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  readout = thisDMB->adcplus(2,4) ;
+  sprintf(buf,"DMB DAC5 = %3.1f ",readout);
+  if ( readout > 3400 && readout < 3600 ) {
+    *out << cgicc::span().set("style","color:black");
+  } else {
+    *out << cgicc::span().set("style","color:black");
+  }
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::table();
+  //
+  *out << cgicc::table().set("border","1");;
+  //
+  *out << cgicc::td();
+  readout = thisDMB->adcplus(1,6) ;
+  sprintf(buf,"1.8V Chip1 = %3.1f ",readout);
+  if ( readout > 1700 && readout < 1900 ) {
+    *out << cgicc::span().set("style","color:green");
+  } else {
+    *out << cgicc::span().set("style","color:red");
+  }
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  readout = thisDMB->adcplus(2,6) ;
+  sprintf(buf,"1.8V Chip2 = %3.1f ",readout);
+  if ( readout > 1700 && readout < 1900 ) {
+    *out << cgicc::span().set("style","color:green");
+  } else {
+    *out << cgicc::span().set("style","color:red");
+  }
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  readout = thisDMB->adcplus(3,6) ;
+  sprintf(buf,"1.8V Chip3 = %3.1f ",readout);
+  if ( readout > 1700 && readout < 1900 ) {
+    *out << cgicc::span().set("style","color:green");
+  } else {
+    *out << cgicc::span().set("style","color:red");
+  }
+  *out << buf ;
+  *out << cgicc::span() ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::table();
+  //
+  *out << cgicc::br();
+  }
+  //
+  // DMB currents:
+  *out << cgicc::table().set("border","1").set("cellpadding","4");
+  //
+  for(int feb=0; feb<cfebs; feb++)
+  {
+     int lfeb=chn2pos[feb];
+     *out << cgicc::tr();
+     for(int cnt=0; cnt<3; cnt++)
+     {
+        val=fvalue[3*lfeb+cnt];
+        sprintf(sbuf, "CFEB%d  %3.1fV, I = %6.2f ",feb+1, normv[cnt], val);
+        *out << cgicc::td();
+        if(cnt==1 && cversion<=1 && !(isME13 && (feb==4)))
+        {
+           if ( val< 0.8 ||  val > 1.2 )	 
+              *out << cgicc::span().set("style","color:red");
+           else
+              *out << cgicc::span().set("style","color:green");
+        }
+        else 
+        {
+           *out << cgicc::span().set("style","color:black");
+        }
+        *out << sbuf;  
+        *out << cgicc::span();
+        *out << cgicc::td();
+     }
+     *out << cgicc::tr() << std::endl;
+  }
+  *out << cgicc::table() << cgicc::br() << std::endl;
+
+  // ALCT currents
+  //
+  *out << cgicc::br();
+  //
+  *out << cgicc::table().set("border","1");
+  //
+  *out << cgicc::td();
+  value=fvalue[3*cfebs+0];
+  sprintf(buf,"ALCT  3.3 V, I = %3.2f ",value);
+  *out << buf ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  value=fvalue[3*cfebs+1];
+  sprintf(buf,"ALCT  1.8 V, I = %3.2f ",value);
+  *out << buf ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  value=fvalue[3*cfebs+2];
+  sprintf(buf,"ALCT  5.5V(B), I = %3.2f ",value);
+  *out << buf ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::td();
+  value=fvalue[3*cfebs+3];
+  sprintf(buf,"ALCT  5.5(A) V, I = %3.2f ",value);
+  *out << buf ;
+  *out << cgicc::td();
+  //
+  *out << cgicc::table();
+  //
+  *out << cgicc::fieldset();
+  *out << std::endl;
+}
+//
+  //
+void EmuPeripheralCrateConfig::DMBPrintCounters(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+    //
+    cgicc::Cgicc cgi(in);
+    //
+    cgicc::form_iterator name = cgi.getElement("dmb");
+    //
+    int dmb=0;
+    if(name != cgi.getElements().end()) {
+      dmb = cgi["dmb"]->getIntegerValue();
+      std::cout << "DMB " << dmb << std::endl;
+      DMB_ = dmb;
+    }
+    //
+    DAQMB * thisDMB = dmbVector[dmb];
+    //
+    thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+    thisDMB->PrintCounters(1);
+    thisDMB->RedirectOutput(&std::cout);
+    //
+    this->DMBUtils(in,out);
+  }
+  //
+////////////////////////////////////////////////////////////////////////////////////
+// Responses to SOAP messages
+////////////////////////////////////////////////////////////////////////////////////
+xoap::MessageReference EmuPeripheralCrateConfig::ReadAllVmePromUserid (xoap::MessageReference message) 
+  throw (xoap::exception::Exception) {
+  //
+  //implement the DMB VME PROM USER_CODE Readback
+  //
+  std::cout << "DMB VME PROM USER_CODE Readback " << std::endl;
+
+  for(unsigned cv=0; cv<crateVector.size(); cv++) {
+    if(!(crateVector[cv]->IsAlive())) continue;
+    SetCurrentCrate(cv);
+    std::cout << "For Crate " << ThisCrateID_ << " : " << std::endl;
+
+  for (unsigned idmb=0;idmb<dmbVector.size();idmb++) {
+    //
+    if ((dmbVector[idmb]->slot())<22) {
+      DAQMB * thisDMB=dmbVector[idmb];
+      unsigned long int boardnumber=thisDMB->mbpromuser(0);
+      DMBBoardNumber[cv][idmb]=boardnumber;
+      std::cout <<" The DMB Number: "<<idmb<<" is in Slot Number: "<<dmbVector[idmb]->slot()<<std::endl;
+      std::cout <<" This DMB Board Number: "<<DMBBoardNumber[cv][idmb]<<std::endl<<std::endl;
+    }
+    //
+  }
+
+  }
+  SetCurrentCrate(this_crate_no_);
+
+  return createReply(message);
+}
+//
+xoap::MessageReference EmuPeripheralCrateConfig::LoadAllVmePromUserid (xoap::MessageReference message) 
+  throw (xoap::exception::Exception) {
+  //
+  //implement the DMB VME PROM USER_CODE programming
+  //
+  std::cout << "DMB VME PROM USER_CODE Programming " << std::endl;
+
+  for(unsigned cv=0; cv<crateVector.size(); cv++) {
+  if(!(crateVector[cv]->IsAlive())) continue;
+    SetCurrentCrate(cv);
+    std::cout << "For Crate " << ThisCrateID_ << " : " << std::endl;
+
+  usleep(200);
+  for (unsigned idmb=0;idmb<dmbVector.size();idmb++) {
+    //
+    if ((dmbVector[idmb]->slot())<22) {
+      DAQMB * thisDMB=dmbVector[idmb];
+      unsigned long int boardnumber=DMBBoardNumber[cv][idmb];
+      char prombrdname[4];
+      //	if (idmb==0) boardnumber = 0xdb00000c;
+      //	if (idmb==1) boardnumber = 0xdb00021b;
+      //Read database for the board number:
+      std::string crate=thisCrate->GetLabel();
+      int slot=thisDMB->slot();
+      int dmbID=0;
+
+      prombrdname[0]=boardnumber&0xff;
+      prombrdname[1]=(boardnumber>>8)&0x03;
+      prombrdname[2]=0x00;
+      prombrdname[3]=0xdb;
+
+      if (((boardnumber&0xfff)==0)||
+	  ((boardnumber&0xfff)==0xfff)||
+	  ((boardnumber&0xfff)==0xaad)) {
+	prombrdname[0]=dmbID&0xff;
+	prombrdname[1]=(dmbID>>8)&0x0f;
+	std::cout<<" DMB board number reprogram from Database ..."<<std::endl;
+      }
+      //temperarily overwrite all board number using database
+      //	prombrdname[0]=dmbID&0xff;
+      //	prombrdname[1]=(dmbID>>8)&0x0f;
+
+        std::cout<<" Loading the board number ..."<<(prombrdname[0]&0xff)+((prombrdname[1]<<8)&0xf00)<<" was set to: "<<(boardnumber&0xffff)<<std::endl;
+
+      thisDMB->epromload_broadcast(VPROM,DMBVmeFirmware_.toString().c_str(),1,prombrdname,2);
+      usleep(200);
+      std::cout <<" The DMB Number: "<<idmb<<" is in Slot Number: "<<dmbVector[idmb]->slot()<<std::endl;
+      //  std::cout <<" This DMB is programmed to board number: "<<boardnumber<<std::endl<<std::endl;
+    }
+    //
+  }
+
+  }
+  SetCurrentCrate(this_crate_no_);
+
+  return createReply(message);
+}
+//
+xoap::MessageReference EmuPeripheralCrateConfig::ReadAllCfebPromUserid (xoap::MessageReference message) 
+  throw (xoap::exception::Exception) {
+  //
+  //implement the CFEB PROM USER_CODE Readback
+  //
+  std::cout << "CFEB PROM USER_CODE Readback " << std::endl;
+
+  for(unsigned cv=0; cv<crateVector.size(); cv++) {
+  if(!(crateVector[cv]->IsAlive())) continue;
+    SetCurrentCrate(cv);
+    std::cout << "For Crate " << ThisCrateID_ << " : " << std::endl;
+
+  usleep(200);
+  for (unsigned idmb=0;idmb<dmbVector.size();idmb++) {
+    //
+    if ((dmbVector[idmb]->slot())<22) {
+      DAQMB * thisDMB=dmbVector[idmb];
+      std::cout <<" The DMB Number: "<<idmb<<" is in Slot Number: "<<dmbVector[idmb]->slot()<<std::endl;
+      //loop over the cfebs
+      //define CFEBs
+      std::vector <CFEB> thisCFEBs=thisDMB->cfebs();
+      //
+      for (unsigned i=0;i<thisCFEBs.size();i++) {
+	CFEBBoardNumber[cv][idmb][i]=thisDMB->febpromuser(thisCFEBs[i]);
+	std::cout <<" This CFEB Board Number: "<<CFEBBoardNumber[cv][idmb][i]<<std::endl;
+      }
+      //
+      std::cout <<std::endl;
+    }
+    //
+  }
+
+  }
+  SetCurrentCrate(this_crate_no_);
+
+  return createReply(message);
+}
+//
+xoap::MessageReference EmuPeripheralCrateConfig::LoadAllCfebPromUserid (xoap::MessageReference message) 
+  throw (xoap::exception::Exception) {
+  //
+  //implement the CFEB PROM USER_CODE programming
+  //
+  std::cout << "CFEB PROM USER_CODE Programming " << std::endl;
+
+  for(unsigned cv=0; cv<crateVector.size(); cv++) {
+    if(!(crateVector[cv]->IsAlive())) continue;
+    SetCurrentCrate(cv);
+    std::cout << "For Crate " << ThisCrateID_ << " : " << std::endl;
+
+  for (unsigned idmb=0;idmb<dmbVector.size();idmb++) {
+    //
+    if ((dmbVector[idmb]->slot())<22) {
+      DAQMB * thisDMB=dmbVector[idmb];
+      Chamber * thisChamber=chamberVector[idmb];
+      std::cout <<" The DMB Number: "<<idmb<<" is in Slot Number: "<<dmbVector[idmb]->slot()<<std::endl;
+      //loop over the cfebs
+      //define CFEBs
+      std::vector <CFEB> thisCFEBs=thisDMB->cfebs();
+      //
+      for (unsigned i=0;i<thisCFEBs.size();i++) {
+	char promid[4];
+	unsigned long int boardid=CFEBBoardNumber[cv][idmb][i];
+	/*
+	  unsigned long int fpgaid=thisDMB->febfpgaid(thisCFEBs[i]);
+	  std::cout <<" i= "<<i<<std::endl;
+	  if (i==0) boardid=0xcfeb08e5;
+	  if (i==1) boardid=0xcfeb08e1;
+	  if (i==2) boardid=0xcfeb08e4;
+	  if (i==3) boardid=0xcfeb0903;
+	  if (i==4) boardid=0xcfeb063a;
+	  std::cout <<" This CFEB Board Number should be set to: "<<boardid<<std::endl;
+	*/
+	std::string chamber=thisChamber->GetLabel();
+	int cfebID=0;
+	//the id readback from CFEB
+	promid[0]=boardid&0xff;
+	promid[1]=(boardid>>8)&0xff;
+	promid[2]=(boardid>>16)&0xff;
+	promid[3]=(boardid>>24)&0xff;
+	//
+	//the ID readback from database
+	if (((boardid&0x00000fff)==0) ||
+	    ((boardid&0x00000fff)==0xfff) ||
+            ((boardid&0x00000fff)==0xaad)) {
+	   promid[0]=cfebID&0xff;
+	   std::cout<<" CFEB board number reprogram from Database ..."<<std::endl;
+	}
+	promid[1]=(cfebID>>8)&0x0f;
+	promid[2]=0xeb;
+	promid[3]=0xcf;
+	int newcfebid;
+	newcfebid=(promid[0]&0xff)+((promid[1]<<8)&0xff00);
+        //
+	thisDMB->epromload_broadcast(thisCFEBs[i].promDevice(),CFEBFirmware_.toString().c_str(),1,promid,2);
+	usleep(200);
+	        std::cout <<" This CFEB Board Number is set to: "<<newcfebid;
+          std::cout <<"     was set to: "<<(boardid&0xffff)<<std::endl;
+	std::cout <<" This CFEB Board Number is set to: CFEB"<<std::hex<<((promid[1])&0xff)<<((promid[0])&0xff)<<" was set to: "<<std::hex<<boardid<<std::endl;
+      }
+      std::cout <<std::endl;
+    }
+    //
+  }
+
+  }
+  SetCurrentCrate(this_crate_no_);
+
+  return createReply(message);
+}
+
+void EmuPeripheralCrateConfig::ConfigDCFEBs(xgi::Input * in, xgi::Output * out ) 
+    throw (xgi::exception::Exception)
+{
+    if(!write_dcfeb_prom_allowed_)
+    {
+       std::cout << "Write to DCFEB's PROM disabled!" << std::endl;
+       this->CFEBUtils(in,out);
+       return;
+    }
+  std::cout << "Button: ConfigDCFEBs" << std::endl;
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+
+     for(std::vector<CFEB>::iterator cfeb = cfebs.begin(); cfeb != cfebs.end(); cfeb++)
+     {
+          thisDMB->dcfeb_configure(*cfeb);
+     }
+     this->CFEBUtils(in,out);
+}
+
+void EmuPeripheralCrateConfig::RestoreCfebJtagIdle(xgi::Input * in, xgi::Output * out ) 
+    throw (xgi::exception::Exception)
+{
+  std::cout << "Button: Restore CFEB JTAG Idle" << std::endl;
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  thisDMB->restoreCFEBIdle();
+
+  this->CFEBUtils(in,out);
+}
+
+
+  //
+  void EmuPeripheralCrateConfig::ReadDMBRegister(xgi::Input * in, xgi::Output * out ) 
+    throw (xgi::exception::Exception)
+  {
+    //
+    cgicc::Cgicc cgi(in);
+    //
+    cgicc::form_iterator name = cgi.getElement("dmb");
+    int dmb=0;
+    if(name != cgi.getElements().end()) {
+      dmb = cgi["dmb"]->getIntegerValue();
+      std::cout << "DMB " << dmb << std::endl;
+      DMB_ = dmb;
+    } else {
+      std::cout << "Not dmb" << std::endl ;
+      dmb = DMB_;
+    }
+    //
+    DAQMB * thisDMB = dmbVector[dmb];
+
+    if(thisDMB)
+    {
+      cgicc::form_iterator name2 = cgi.getElement("DMBRegister");
+      int DMBregister = -1;
+      if(name2 != cgi.getElements().end()) {
+        DMBregister = strtol(cgi["DMBRegister"]->getValue().c_str(),NULL,16);
+      }
+      if(DMBregister != -1)  
+      {  DMBRegisterRead_ = DMBregister;
+         std::cout << "DMB read Register: " << std::hex << DMBregister << std::dec << std::endl;
+         DMBRegisterValue_ = thisDMB->ReadRegister(DMBregister);
+      }    
+    } 
+    else
+    {
+      std::cout << "No DMB found!" << std::endl;
+    }
+    //
+    this->DMBUtils(in,out);
+    //
+  }
+  //
+  void EmuPeripheralCrateConfig::WriteDMBRegister(xgi::Input * in, xgi::Output * out ) 
+    throw (xgi::exception::Exception)
+  {
+    //
+    cgicc::Cgicc cgi(in);
+    //
+    cgicc::form_iterator name = cgi.getElement("dmb");
+    int dmb=0;
+    if(name != cgi.getElements().end()) {
+      dmb = cgi["dmb"]->getIntegerValue();
+      std::cout << "DMB " << dmb << std::endl;
+      DMB_ = dmb;
+    } else {
+      std::cout << "Not dmb" << std::endl ;
+      dmb = DMB_;
+    }
+    //
+    DAQMB * thisDMB = dmbVector[dmb];
+
+    if(thisDMB)
+    {
+      cgicc::form_iterator name2 = cgi.getElement("DMBRegister");
+      cgicc::form_iterator value2 = cgi.getElement("DMBValue");
+      int DMBregister = -1;
+      int DMBvalue = -1;
+      if(name2 != cgi.getElements().end()) {
+        DMBregister = strtol(cgi["DMBRegister"]->getValue().c_str(),NULL,16);
+      }
+      if(value2 != cgi.getElements().end()) {
+        DMBvalue = strtol(cgi["DMBValue"]->getValue().c_str(),NULL,16);
+      }
+      if( DMBregister != -1 && DMBvalue != -1)  
+      {  DMBRegisterWrite_ = DMBregister;
+         DMBWriteValue_ = DMBvalue;
+         std::cout << "DMB write Register: " << std::hex << DMBregister
+                   << ", Value: " << DMBvalue << std::dec << std::endl;
+         thisDMB->WriteRegister(DMBregister, DMBvalue);
+      }
+    } 
+    else
+    {
+      std::cout << "No DMB found!" << std::endl;
+    }
+    //
+    this->DMBUtils(in,out);
+    //
+  }
+  
+void EmuPeripheralCrateConfig::DCFEBCounters(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  Chamber * thisChamber = chamberVector[dmb];
+  typedef std::vector<CFEB>::iterator CFEBItr;
+  //
+  char Name[100];
+  sprintf(Name,"%s DCFEB Counters, crate=%s, slot=%d",
+	  (thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),thisDMB->slot());
+  //
+  MyHeader(in,out,Name);
+  //
+  if(thisDMB)
+  {
+     int hversion=thisDMB->DMBversion();
+     int cversion=thisDMB->CFEBversion();
+     if (cversion<2) return;
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     std::vector<std::string> parname;
+     parname.clear();
+     parname.push_back("Counter");
+     parname.push_back("L1A");
+     parname.push_back("L1A Match");
+     parname.push_back("INJ Pulse");
+     parname.push_back("EXT Pulse");
+     parname.push_back("BC0");
+
+     *out << cgicc::fieldset().set("style","font-size: 11pt; font-family: arial;");
+     *out << std::endl;
+     //
+     *out << cgicc::legend("DCFEB Counters").set("style","color:blue") << std::endl ;
+     *out << cgicc::table().set("border","1");
+     for (int par=0; par<parname.size(); par++)
+     {
+       *out << cgicc::td();
+       *out << parname[par];
+       *out << cgicc::td();
+
+       for(CFEBItr cfebItr = cfebs.begin(); cfebItr != cfebs.end(); ++cfebItr)
+       {
+         *out << cgicc::td();
+         int i = 1 + cfebItr->number();
+         if(par==0)
+            *out << "CFEB " << i;
+         else
+            *out << thisDMB->dcfeb_read_counter(*cfebItr, par);
+         *out << cgicc::td();
+       }
+       *out << cgicc::tr() << cgicc::tr() << std::endl;
+     }
+     *out << cgicc::table() << cgicc::fieldset() << std::endl;
+  }
+}
+    
+void EmuPeripheralCrateConfig::ODMBCounters(xgi::Input * in, xgi::Output * out ) 
+  throw (xgi::exception::Exception) {
+  //
+  cgicc::Cgicc cgi(in);
+  //
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  Chamber * thisChamber = chamberVector[dmb];
+  //
+  char Name[100];
+  sprintf(Name,"%s ODMB Counters, crate=%s, slot=%d",
+	  (thisChamber->GetLabel()).c_str(), ThisCrateID_.c_str(),thisDMB->slot());
+  //
+  MyHeader(in,out,Name);
+  //
+  *out << cgicc::legend("ODMB Counters").set("style","color:blue") << std::endl ;
+  //
+  int hversion=thisDMB->DMBversion();
+  int indx, cfebs;
+  //
+  if (hversion<2) return;
+  thisDMB->GetCounters();
+
+  cfebs=9;
+  *out << cgicc::table().set("border","1").set("cellpadding","4") << std::endl;
+  //
+  for(int ch=0; ch<8; ch++)
+  {
+     *out << cgicc::td();
+     if(ch) *out << thisDMB->CounterName(ch-1) << cgicc::td();
+     else *out << "Counters" << cgicc::td();
+
+     for(int adc=0; adc<cfebs; adc++)
+     {
+        if(ch==0)
+        {
+            if(adc<7)
+              *out << cgicc::td() << " DCFEB " << adc+1 << cgicc::td();
+            else if(adc==7)
+              *out << cgicc::td() << " OTMB " << cgicc::td();
+            else if(adc==8)
+              *out << cgicc::td() << " ALCT " << cgicc::td();
+        }
+        else
+        {
+            if(ch>=6 && adc>6)
+            {
+              *out << cgicc::td() << cgicc::td();
+            }
+            else
+            {
+              indx=(ch-1)*cfebs+adc;
+              *out << cgicc::td() << thisDMB->GetCounter(indx);
+              *out << cgicc::td();
+            }
+        }
+     }
+     *out << cgicc::tr() << cgicc::tr() << std::endl;
+  }
+  *out << cgicc::table() << cgicc::br() << std::endl;
+
+  *out << cgicc::table().set("border","1").set("cellpadding","4") << std::endl;
+   *out << cgicc::td() << "L1A Counter 16-bit" << cgicc::td() << std::endl;
+   *out << cgicc::td() << thisDMB->GetCounter(61) << cgicc::td() << cgicc::tr() << cgicc::tr() << std::endl;
+   *out << cgicc::td() << "L1A (No Resync) 16-bit" << cgicc::td() << std::endl;
+   *out << cgicc::td() << thisDMB->GetCounter(62) << cgicc::td() << cgicc::tr() << cgicc::tr() << std::endl;
+   *out << cgicc::td() << "Packets to DDU " << cgicc::td() << std::endl;
+   *out << cgicc::td() << thisDMB->GetCounter(63) << cgicc::td() << cgicc::tr() << cgicc::tr() << std::endl;
+   *out << cgicc::td() << "DDU TX PLL lock lost " << cgicc::td() << std::endl;
+   *out << cgicc::td() << thisDMB->GetCounter(52) << cgicc::td() << cgicc::tr() << cgicc::tr() << std::endl;
+   *out << cgicc::td() << "QPLL lock lost " << cgicc::td() << std::endl;
+   *out << cgicc::td() << thisDMB->GetCounter(64) << cgicc::td() << cgicc::tr() << cgicc::tr() << std::endl;
+  *out << cgicc::table() << cgicc::br() << std::endl; 
+}
+  
+void EmuPeripheralCrateConfig::DCFEBShutdown(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+//
+    if(extra_tools_)
+    {
+        thisDMB->write_cfeb_selector(cfebs[icfeb].SelectorBit());
+        thisDMB->dcfeb_fpga_shutdown();
+        std::cout << "Shutdown DCFEB " << cfebs[icfeb].number() << " FPGA." << std::endl;
+    }
+  //
+  this->CFEBUtils(in,out);
+  //
+  return;
+}
+
+void EmuPeripheralCrateConfig::xDCFEBReadSwitch(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  if(thisDMB)
+  {
+     OutputStringDMBStatus[dmb].str("");
+          
+     int hversion = thisDMB->CFEBversion();
+
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+     if (hversion != 3) {
+        std::cout << "DMB " << dmb << " CFEB#" << cfebs[icfeb].number()+1 << " hardware version is not 3 (it's not a xDCFEB).. Skipping.." << std::endl;
+        OutputStringDMBStatus[dmb] << "DMB " << dmb << " CFEB#" << cfebs[icfeb].number()+1 << " hardware version is not 3 (it's not a xDCFEB).. Skipping.." << std::endl;
+        this->CFEBUtils(in,out);
+        return;
+     }
+
+     std::cout << getLocalDateTime() << " xDCFEB DS4550 on DMB " << dmb << " CFEB#" << cfebs[icfeb].number()+1 << std::endl;
+     OutputStringDMBStatus[dmb] << getLocalDateTime() << " xDCFEB DS4550 on DMB " << dmb << " CFEB#" << cfebs[icfeb].number()+1 << std::endl;
+
+     char dbuf[16];
+     thisDMB->ds4550_read(cfebs[icfeb],dbuf, 0xF0, 16);
+
+     std::cout << std::hex; 
+     for(int i=0; i<16; i++)
+     {
+         std::cout << std::hex << 0xf0+i << " = " << (int(dbuf[i])&0xFF) << std::endl;
+         OutputStringDMBStatus[dmb] << std::hex << 0xf0+i << " = " << (int(dbuf[i])&0xff) << std::endl;
+     }
+     std::cout << std::dec; 
+     OutputStringDMBStatus[dmb] << std::dec; 
+     // read xDCFEB Serial Number at f5-f7
+     unsigned xdcfeb_sn=0;  
+     memcpy(&xdcfeb_sn, dbuf+5, 3);
+     std::cout << "Serial Number: " << xdcfeb_sn << std::endl;
+     OutputStringDMBStatus[dmb] << "Serial Number: " << xdcfeb_sn << std::endl;
+  }
+  this->CFEBUtils(in,out);           
+}
+
+void EmuPeripheralCrateConfig::xDCFEBReadVTTX(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  if(thisDMB)
+  {
+     OutputStringDMBStatus[dmb].str("");
+          
+     int hversion = thisDMB->CFEBversion();
+
+     std::string cfeb_value = cgi.getElement("cfeb")->getValue(); 
+     unsigned icfeb=atoi(cfeb_value.c_str());
+     std::vector<CFEB> cfebs = thisDMB->cfebs() ;
+     if(icfeb<0 || icfeb>cfebs.size()) icfeb=0;
+     if (hversion <= 1) {
+        std::cout << "DMB " << dmb << " CFEB#" + cfebs[icfeb].number()+1 << " is not a DCFEB or xDCFEB. Skipping.." << std::endl;
+        OutputStringDMBStatus[dmb] << "DMB " << dmb << " CFEB#" + cfebs[icfeb].number()+1 << " is not a DCFEB or xDCFEB. Skipping.." << std::endl;
+        this->CFEBUtils(in,out);
+        return;
+     }
+
+     std::cout << getLocalDateTime() << " VTTX registers on DMB " << dmb << " CFEB#" << cfebs[icfeb].number()+1 << std::endl;
+     OutputStringDMBStatus[dmb] << getLocalDateTime() << " VTTX registers on DMB " << dmb << " CFEB#" << cfebs[icfeb].number()+1 << std::endl;
+
+     thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+     thisDMB->xdcfeb_print_vttx(cfebs[icfeb]);
+     thisDMB->RedirectOutput(&std::cout);
+  }
+  this->CFEBUtils(in,out);           
+}
+
+void EmuPeripheralCrateConfig::ODMBParaPrint(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  if(thisDMB)
+  {
+     OutputStringDMBStatus[dmb].str("");
+          
+     int hversion = thisDMB->DMBversion();
+
+     if (hversion == 2) 
+     {
+       thisDMB->RedirectOutput(&OutputStringDMBStatus[dmb]);
+       thisDMB->odmb_print_parameters();
+       thisDMB->RedirectOutput(&std::cout);
+     }
+  }
+  this->DMBUtils(in,out);           
+}
+
+void EmuPeripheralCrateConfig::ReadDMBVirtex2Reg(xgi::Input * in, xgi::Output * out )
+  throw (xgi::exception::Exception)
+{
+
+  cgicc::Cgicc cgi(in);
+
+  cgicc::form_iterator name = cgi.getElement("dmb");
+  int dmb=0;
+  if(name != cgi.getElements().end()) {
+    dmb = cgi["dmb"]->getIntegerValue();
+    std::cout << "DMB " << dmb << std::endl;
+    DMB_ = dmb;
+  } else {
+    std::cout << "Not dmb" << std::endl ;
+    dmb = DMB_;
+  }
+  //
+  DAQMB * thisDMB = dmbVector[dmb];
+  if(thisDMB)
+  {
+     OutputStringDMBStatus[dmb].str("");
+          
+     OutputStringDMBStatus[dmb] << "Read DMB Control FPGA Virtex2 registers (in Hex):" << std::endl;
+     OutputStringDMBStatus[dmb] << "IDCODE =" << std::hex << thisDMB->dmb_fpga_readreg(0xe) << std::endl;
+     OutputStringDMBStatus[dmb] << "STATUS =" << std::hex << thisDMB->dmb_fpga_readreg(7) << std::endl;
+     OutputStringDMBStatus[dmb] << "COR =" << std::hex << thisDMB->dmb_fpga_readreg(9) << std::endl;
+     OutputStringDMBStatus[dmb] << "CTL =" << std::hex << thisDMB->dmb_fpga_readreg(5) << std::endl;
+     OutputStringDMBStatus[dmb] << "MASK =" << std::hex << thisDMB->dmb_fpga_readreg(6) << std::endl;
+
+     std::cout <<  OutputStringDMBStatus[dmb].str() << std::endl;      
+
+  }
+  this->DMBUtils(in,out);           
+}
+
+ }  // namespace emu::pc
+}  // namespace emu

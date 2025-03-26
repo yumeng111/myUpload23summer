@@ -1,0 +1,232 @@
+body
+{
+    background-color: #546da0;
+    font-family: Arial;
+    color: #c6e8ff;
+}
+
+div.Title{
+    font-size: 200%;
+}
+
+div.updateTime{
+    width: 40%;
+    text-align: right;
+}
+
+
+hr {
+    border-width: 1px;
+    color: #2b4265;
+}
+
+input.button
+{
+    color: white;
+    background-color: #2b4265;
+    border-color: #2b4265;
+    font-family: Arial;
+    font-weight: bold;
+}
+input.configure{ color: #e3d589; }
+input.start{ color: #98e389; }
+input.stop{ color: #89b7e3; }
+/* input.checkbox{ background-color: #e3d589; } */
+input.unsupervised {
+    background-color: #e3d589;
+    border-color: #e3d589;
+    color: #2b4265;
+}
+input.recycle{
+    font-size: small;
+    padding: 1px;
+}
+/* input#countIn { padding: 1px; font-size: small; background-color: #2b4265;            color: #89b7e3; border-color: #2b4265; } */
+/* input#countOut{ padding: 1px; font-size: small;            color: #2b4265; background-color: #89b7e3; border-color: #89b7e3; } */
+input#countIn { padding: 1px; font-size: small; color: #2b4265; background-color: #c6e8ff; border-color: #c6e8ff; }
+input#countOut{ padding: 1px; font-size: small; color: #2b4265; background-color: #cccccc; border-color: #cccccc; }
+
+
+select#runTypeSelector,input#maxevents{
+    color: white;
+    background-color: #2b4265;
+    border-color: #2b4265;
+    font-family: Arial;
+    border-style: outset;
+    font-size: x-small;
+}
+input#maxevents{
+    text-align: right;
+}
+
+#countTablesLayout{
+    display: -webkit-flex;
+    display: flex;
+    width: 100%;
+    height: 80%;
+    flex-direction:row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+
+#controlLayout{
+    display: -webkit-flex;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction:row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: stretch;
+}
+div#pageHeader{
+    display: -webkit-flex;
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;   
+    align-items: center;
+}
+#FSMLayout,#governorLayout{
+    display: -webkit-flex;
+    display: flex;
+    width: 20%;
+    /* height: 100%; */
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    padding: 5px 0px 5px 0px;
+}
+div.mode{
+    display: -webkit-flex;
+    display: flex;
+    width: 100%;
+    height: 50%;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    font-size: 150%;
+}
+div.main{
+    display: -webkit-flex;
+    display: flex;
+    width: 100%;
+    height: 50%;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    text-align: center;
+}
+
+div.state{
+    display: -webkit-flex;
+    display: flex;
+    width: 100%;
+    height: 50%;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    font-size: 150%;
+    color: #2b4265;
+}
+
+div.Halted    { background-color: #89b7e3; }
+div.Configured{ background-color: #e3d589; }
+div.Enabled   { background-color: #98e389; }
+div.Failed    { background-color: #FF826b; }
+div.UNKNOWN   { background-color: #dddddd; }
+
+div#timestamps{
+    display: -webkit-flex;
+    display: flex;
+    width: 25%;
+    /* height: 100%; */
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+div.timestamp{
+    display: -webkit-flex;
+    display: flex;
+    width: 100%;
+    height: 50%;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+div#runParsLayout{
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    /* height: 40px; */ /* to make items wrap */
+    width: 25%;
+    justify-content: space-around;
+    align-items: stretch;
+}
+div.runParLayout{
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    /* width: 40%; */ /* if wrapped */
+    justify-content: space-between;
+}
+
+div.name{ color: #111144; }
+
+div.reasonForfailure {
+    color: black;
+    background-color: #FF826b;
+    padding: 1em;
+}
+
+div#selectDDUInputs{
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#dataFileNames{
+    display: -webkit-flex;
+    display: flex;
+    flex-direction:column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+}
+
+table.counts tr { background-color: #c6e8ff; color: #111144; border-style: solid; border-collapse: separate; border-width: 1pt; } 
+table.counts th.Halted    { background-color: #89b7e3; }
+table.counts th.Configured{ background-color: #e3d589; }
+table.counts th.Enabled   { background-color: #98e389; }
+table.counts th.Failed    { background-color: #FF826b; }
+table.counts th.UNKNOWN   { background-color: #dddddd; }
+table.counts td.count     { text-align: right; width: 10ch; color: #2b4265; }
+table.counts td.statistics{ text-align: right; width: 9ch; color: #2b4265; }
+table.counts td.STEPCount, table.counts td.masked, table.counts td.notFinished { text-align: right; color: #2b4265; }
+table.counts td.masked      { background-color: #cccccc; }
+table.counts td.notFinished { font-weight: bold;         }
+/* table.nonSTEP { width: 48%; } */
+
+table.params th
+{
+    color: white;
+    background-color: #AAAAFF;
+}
+table.params th a
+{
+    color: white;
+}
+
+a.with_popup .popup {
+    display: none;
+}
+
+a.with_popup:hover .popup{
+    display: inline;
+}

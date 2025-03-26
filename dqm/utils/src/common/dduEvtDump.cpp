@@ -1,0 +1,691 @@
+//	PROGRAM: 	EvtDump	v 1
+//	Authors:	V. Barashko, A. Korytov, July 13, 2004
+//=============================================================================================
+// 	This program dumps a requested DDU event: 4x16 bits per line in hex format
+//	It also sets tags for found Headers, Trailers, or Signature Words
+//==============================================================================================
+
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <map>
+#include <string>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <vector>
+#include <stdint.h>
+#include <strings.h>
+#include <limits>
+#include <sstream>
+
+/// Put CSV (character-separated values) into an STL container (deque, list, set, multiset or vector).
+///
+/// @param s string of character-separated values
+/// @param delimiter delimiter character, comma by default
+///
+/// @return STL container initialized from CSV
+///
+template <typename Container>
+Container csvTo( const std::string& csv, const char delimiter = ',' )
+{
+  Container values;
+  typename Container::value_type value;
+  size_t start = 0;
+  size_t found = csv.find( delimiter );
+  while ( found != std::string::npos )
+  {
+    value = typename Container::value_type();
+    std::istringstream iss( csv.substr( start, found - start ) );
+    iss >> value;
+    values.insert( values.end(), value );
+    start = found + 1;
+    found = csv.find( delimiter, start );
+  }
+  value = typename Container::value_type();
+  std::istringstream last( csv.substr(start) );
+  last >> value;
+  values.insert( values.end(), value );
+  return values;
+}
+
+/**
+ * quick vector dump
+ */
+template< typename T >
+std::ostream& operator<<(std::ostream& os, const std::vector< T >& t)
+{
+  os << "[";
+  typename std::vector< T >::const_iterator it;
+  for (it = t.begin(); it != t.end(); ++it)
+    os << *it << (it + 1 != t.end() ? "," : "");
+  os << "]";
+  return os;
+}
+
+using namespace std;
+
+
+// == Prints four 16-bits words in Hex
+void printb(unsigned short* buf)
+{
+  for (int i=0; i<4; i++)
+    cout << " " << setw(4)<< setfill('0') << hex << buf[i];
+  cout << dec;
+};
+
+int calcDDUcrc(vector<unsigned short> &vec)
+{
+  int CRC=0;
+  for (uint16_t j=0, w=0; j<vec.size(); j++ )
+    {
+      w = vec[j] & 0xffff;
+      for (uint32_t i=15, t=0, ncrc=0; i<16; i--)
+        {
+          t = ((w >> i) & 1) ^ ((CRC >> 15) & 1);
+          ncrc = (CRC << 1) & 0xfffc;
+          ncrc |= (t ^ (CRC & 1)) << 1;
+          ncrc |= t;
+          CRC = ncrc;
+        }
+    }
+
+  return CRC;
+
+};
+
+int calcALCTcrc(vector<unsigned short> &vec)
+{
+  int CRC=0;
+  for (uint16_t j=0, w=0; j<vec.size(); j++ )
+    {
+      w = vec[j] & 0xffff;
+      for (uint32_t i=15, t=0, ncrc=0; i<16; i--)
+        {
+          t = ((w >> i) & 1) ^ ((CRC >> 21) & 1);
+          ncrc = (CRC << 1) & 0x3ffffc;
+          ncrc |= (t ^ (CRC & 1)) << 1;
+          ncrc |= t;
+          CRC = ncrc;
+        }
+    }
+
+  return CRC;
+}
+
+int calcTMBcrc(vector<unsigned short> &vec)
+{
+  int CRC=0;
+  for (uint16_t j=0, w=0; j<vec.size(); j++ )
+    {
+	// cout << " " << setw(4)<< setfill('0') << hex << vec[j];    
+	// if (j%4==3) cout << endl;
+      w = vec[j] & 0xffff;
+      for (uint32_t i=15, t=0, ncrc=0; i<16; i--)
+        {
+          t = ((w >> i) & 1) ^ ((CRC >> 21) & 1);
+          ncrc = (CRC << 1) & 0x3ffffc;
+          ncrc |= (t ^ (CRC & 1)) << 1;
+          ncrc |= t;
+          CRC = ncrc;
+        }
+    }
+
+  return CRC;
+
+}
+
+int calcCFEBcrc(vector<unsigned short> &vec)
+{
+  int CFEB_CRC=0;
+  for (uint16_t pos=vec.size()-96; pos<vec.size(); ++pos)
+    CFEB_CRC=(vec[pos]&0x1fff)^((vec[pos]&0x1fff)<<1)^(((CFEB_CRC&0x7ffc)>>2)|((0x0003&CFEB_CRC)<<13))^((CFEB_CRC&0x7ffc)>>1);
+  return CFEB_CRC;
+
+}
+
+// == Main =======================================================================================
+
+int main(int argc, char **argv)
+{
+  bool fDDUHeader=false, fDDUTrailer=false, SampleTag=false;
+  bool fDMB=false;
+  bool fALCT=false;
+  bool fTMB=false;
+  bool fDDU=false;
+  bool fFormat2013 = false;
+  unsigned DDU_Firmware_Revision = 0;
+
+  string EventsToPrint;
+  vector<long> EventRange; // EventRange[0]: first event; EventRange[1]: last event; EventRange[0]: step
+  long first, last, step;
+
+  long cntDDUHeaders=0, cntDDUTrailers=0, cntDMBHeaders=0;
+  long DDU_L1A=0, DMB_L1A=0, ALCT_L1A=0, TMB_L1A=0;
+  long SampleCount=0, BSampleCount=0;
+
+  // == Define 16bit words buffer size of 4
+  unsigned short buf_2[4], buf_1[4], buf0[4], buf1[4], buf2[4];
+
+  vector<unsigned short> dmbData;
+  vector<unsigned short> alctData;
+  vector<unsigned short> tmbData;
+  vector<unsigned short> cfebData;
+  vector<unsigned short> dduData;
+
+  // == Set buffer to 0's
+  bzero(buf_2, sizeof(buf_2));
+  bzero(buf_1, sizeof(buf_1));
+  bzero(buf0, sizeof(buf0));
+  bzero(buf1, sizeof(buf1));
+  bzero(buf2, sizeof(buf2));
+
+  string datafile="";
+
+  // == Process command line options
+  switch (argc)
+    {
+    case 2:
+      datafile = argv[1];
+      break;
+    }
+
+  // == Open input data file
+  // ifstream input(datafile.c_str());
+
+  int input = ::open(datafile.c_str(), O_RDONLY | O_LARGEFILE);
+
+  if (input<0)
+    {
+      perror(datafile.c_str());
+      return -1;
+    }
+  cerr << datafile << " Opened" << endl;
+
+  cout << "Specify event(s) to print as first[,last[,increment]] (last<0 for all from first on): ";
+  cin >> EventsToPrint; // requires at least one non-whitespace character
+  // getline( cin, EventsToPrint ); // to allow empty string input
+  EventRange = csvTo< vector<long> >( EventsToPrint );
+  // cout << EventRange << endl;
+  if ( EventRange.size() == 0 ){
+    cout << "No events specified. Exiting." << endl;
+    exit(1);
+  }
+  if ( EventRange.size() == 1 ){
+    EventRange.push_back( EventRange[0] ); // last = first
+  }
+  if ( EventRange.size() >= 2 ){
+    if ( EventRange[1] < 0 ) EventRange[1] = numeric_limits<long>::max(); // all events
+    if ( EventRange[0] > EventRange[1] ){
+      cout << "Last event cannot be less than first. Exiting." << endl;
+      exit(2);
+    }
+  }
+  if ( EventRange.size() == 2 ){
+    EventRange.push_back( 1 ); // default increment    
+  }
+  if ( EventRange.size() == 3 ){
+    if ( EventRange[2] < 1 ){
+      cout << "Increment must be positive. Exiting." << endl;
+      exit(3);
+    }
+  }
+  if ( EventRange.size() > 3 ){
+    cout << "Too many parameters given for range of events to print. Exiting." << endl;
+    exit(4);
+  }
+  if ( EventRange[0] <= 0 || EventRange[1] == 0 ){
+    cout << "The first event number must be positive, the last event nonzero (negative for infinity). Exiting." << endl;
+    exit(5);
+  }
+  first = EventRange[0];
+  last  = EventRange[1];
+  step  = EventRange[2];
+  cout << "Printing events from " << first << " to " << last << " in steps of " << step << endl;
+
+//------------------------------------------------------------------------------------------------
+
+  // == Read from datafile 4 16-bit words into buf till end-of-file is found
+  // while( !input.eof() )
+  while (::read(input,(char *)buf2, sizeof(buf2)))
+    {
+
+      for (int i=0; i<4; i++)
+        {
+          buf_2[i]=buf_1[i];
+          buf_1[i]=buf0[i];
+          buf0[i]=buf1[i];
+          buf1[i]=buf2[i];
+        }
+
+      // == Read 8 bytes into buffer
+      // input.read((char *)buf2, sizeof(buf2));
+
+
+      // == Check for Format Control Words
+
+      // == DDU Header found
+      if ( /*(buf0[0]==0x8000) &&*/
+        (buf0[1]==0x8000) &&
+        (buf0[2]==0x0001) &&
+        (buf0[3]==0x8000) )
+        {
+          cntDDUHeaders++; // Increment DDU Header counter
+          cntDMBHeaders=0;  // Reset DMB Header counter
+
+          if (cntDDUHeaders%1000==0)
+            {
+              cout << "DDU Header Occurrence " << cntDDUHeaders << endl;
+            }
+
+	  if ( first         <= cntDDUHeaders            && 
+	       cntDDUHeaders <= last                     && 
+	       ( cntDDUHeaders - first ) % step == 0        )
+            {
+	      DDU_Firmware_Revision    = (buf_1[0] >> 4) & 0xF;
+              if (DDU_Firmware_Revision > 6)
+              {
+                fFormat2013 = true;
+	      }
+              DDU_L1A = ((buf_1[2]&0xFFFF) + ((buf_1[3]&0x00FF) << 16));
+	      int DDU_ID = (buf_1[0]>>8) + ((buf_1[1]&0xF)<<8);
+	      if (!fFormat2013) DDU_ID &= 0xFF;
+              cout << endl << "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" << endl << endl;
+              cout << "DDU  Header Occurrence " << cntDDUHeaders << endl;
+              cout << endl << "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" << endl << endl;
+
+              cout << "<- Data Format version: " << (fFormat2013 ? "Post-LS1": "Pre-LS1") << " ->" << endl << endl;
+
+              cout << "<DDU ID"<< DDU_ID << " |      L1A: " << DDU_L1A << ", FWVersion: " << DDU_Firmware_Revision << 
+                   "    ( " <<  (buf1[0]&0x000F) << " DMBs in event )" << endl;
+	      printb(buf_1); cout << endl;
+	
+	      fDDU=true;
+              dduData.clear();
+	      for (int i=0; i<4; i++) dduData.push_back(buf_1[i]);
+
+            }
+
+          if ( cntDDUHeaders > last )    // Passed the requested Event, Exit the program
+            {
+              // input.close();
+              ::close(input);
+              cerr << datafile << " Closed" << endl;
+              return 0;
+            }
+        }
+
+
+      // == Print the whole event
+      if ( first         <= cntDDUHeaders            && 
+	   cntDDUHeaders <= last                     && 
+	   ( cntDDUHeaders - first ) % step == 0        )
+        {
+
+          // == DMB Header found
+
+          if (  ((buf0[0]&0xF000)==0x9000) &&
+                ((buf0[1]&0xF000)==0x9000) &&
+                ((buf0[2]&0xF000)==0x9000) &&
+                ((buf0[3]&0xF000)==0x9000) &&
+                ((buf1[0]&0xF000)==0xA000) &&
+                ((buf1[1]&0xF000)==0xA000) &&
+                ((buf1[2]&0xF000)==0xA000) &&
+                ((buf1[3]&0xF000)==0xA000) )
+            {
+              SampleCount=0;
+              BSampleCount=0;
+              cntDMBHeaders++;
+              int crate=(buf1[1]>>4)&0xFF;
+              int slot=buf1[1]&0xF;
+	      if (fFormat2013) 
+	      {
+		DMB_L1A =  ((buf0[0]&0x0FFF) + ((buf0[1]&0x0FFF) << 12));
+		cout << " " << endl << dec << "<DMB"<<cntDMBHeaders<< " crate:" << crate << " slot:" << slot << "|     L1A= " << DMB_L1A <<
+                   "   ( " << ((buf0[2]&0x0800)>>11) << " ALCT, "
+                   << ((buf0[2]&0x0400)>>10) << " TMB, " <<
+		   ((buf1[0]&0x0040)>>6) <<
+		   ((buf1[0]&0x0020)>>5) <<
+		   ((buf1[0]&0x0010)>>4) <<
+                   ((buf1[0]&0x0008)>>3) <<
+                   ((buf1[0]&0x0004)>>2) <<
+                   ((buf1[0]&0x0002)>>1) <<
+		   ((buf1[0]&0x0001)>>0) << " CFEBs in event )" << endl << hex;
+              }
+	      else 
+	      {
+              DMB_L1A =  ((buf0[0]&0x0FFF) + ((buf0[1]&0x0FFF) << 12));
+              cout << " " << endl << dec << "<DMB"<<cntDMBHeaders<< " crate:" << crate << " slot:" << slot << "|     L1A= " << DMB_L1A <<
+                   "   ( " << ((buf0[2]&0x0400)>>10) << " ALCT, "
+                   << ((buf0[2]&0x0800)>>11) << " TMB, "
+                   << ((buf1[0]&0x0010)>>4) <<
+                   ((buf1[0]&0x0008)>>3) <<
+                   ((buf1[0]&0x0004)>>2) <<
+                   ((buf1[0]&0x0002)>>1) <<
+		   ((buf1[0]&0x0001)>>0) << " CFEBs in event )" << endl << hex;
+              }
+	      fDMB=true;
+	      dmbData.clear();
+            }
+
+          /*
+          //KK start
+                  if(  ((buf_1[0]&0xF000)!=0x9000) &&
+          		     ((buf_1[1]&0xF000)!=0x9000) &&
+          		     ((buf_1[2]&0xF000)!=0x9000) &&
+          		     ((buf_1[3]&0xF000)!=0x9000) &&
+                       ((buf0[0]&0xF000)==0xA000) &&
+          		     ((buf0[1]&0xF000)==0xA000) &&
+          		     ((buf0[2]&0xF000)==0xA000) &&
+                       ((buf0[3]&0xF000)==0xA000) )   {
+          //KK end
+          		       SampleCount=0;
+          		       BSampleCount=0;
+          		       cntDMBHeaders++;
+          			   DMB_L1A =  ((buf0[0]&0x0FFF) + ((buf0[1]&0x0FFF) << 12));
+          		       cout << " " << endl << "<DMB"<<cntDMBHeaders<<"|     L1A= " << DMB_L1A <<
+          		               "   ( " << ((buf0[0]&0x0400)>>10) << " ALCT, "
+          			               << ((buf0[0]&0x0800)>>11) << " TMB, "
+          				       << ((buf0[0]&0x0010)>>4) <<
+          				          ((buf0[0]&0x0008)>>3) <<
+          					  ((buf0[0]&0x0004)>>2) <<
+          					  ((buf0[0]&0x0002)>>1) <<
+          					  ((buf0[0]&0x0001)>>0) << " CFEBs in event )" << endl;
+          		}
+          */
+
+          // == ALCT Header found right after DMB Header
+          //   (check for all currently reserved/fixed bits in ALCT first 4 words)
+          if ( ( ((buf0[0]&0xFFFF)==0xDB0A) &&
+                 ((buf0[1]&0xF000)==0xD000) &&
+                 ((buf0[2]&0xF000)==0xD000) &&
+                 ((buf0[3]&0xF000)==0xD000) )
+               &&
+               ( ((buf_1[0]&0xF000)==0xA000) &&
+                 ((buf_1[1]&0xF000)==0xA000) &&
+                 ((buf_1[2]&0xF000)==0xA000) &&
+                 ((buf_1[3]&0xF000)==0xA000) )  )
+            {
+              ALCT_L1A = (buf0[2]&0x0FFF);
+              cout << " " << endl << "<ALCT2007|     L1A= " << ALCT_L1A <<  endl;
+              fALCT=true;
+              alctData.clear();
+            }
+
+          // == ALCT Header found right after DMB Header
+          //   (check for all currently reserved/fixed bits in ALCT first 4 words)
+          if ( ( ((buf0[0]&0xF800)==0x6000) &&
+                 ((buf0[1]&0xFF80)==0x0080) &&
+                 ((buf0[2]&0xF000)==0x0000) &&
+                 ((buf0[3]&0xc000)==0x0000) )
+               &&
+               ( ((buf_1[0]&0xF000)==0xA000) &&
+                 ((buf_1[1]&0xF000)==0xA000) &&
+                 ((buf_1[2]&0xF000)==0xA000) &&
+                 ((buf_1[3]&0xF000)==0xA000) )  )
+            {
+              ALCT_L1A = (buf0[0]&0x000F);
+              cout << " " << endl << "<ALCT2006|     L1A= " << ALCT_L1A <<  endl;
+              fALCT=true;
+              alctData.clear();
+            }
+
+
+
+          // == TMB Header found right after DMB Header or right after ALCT Trailer
+          if ( ( ((buf0[0]&0xFFFF) ==0xDB0C) &&
+                 ((buf_1[0]&0xF000)==0xA000) &&
+                 ((buf_1[1]&0xF000)==0xA000) &&
+                 ((buf_1[2]&0xF000)==0xA000) &&
+                 ((buf_1[3]&0xF000)==0xA000) )
+               ||
+               ( ((buf0[0]&0xFFFF) ==0xDB0C) &&
+                 ((buf_1[0]&0xFFFF)==0xDE0D) &&
+                 ((buf_1[1]&0xF800)==0xD000) &&
+                 ((buf_1[2]&0xF800)==0xD000) &&
+                 ((buf_1[3]&0xF000)==0xD000) )
+               ||
+               ( ((buf0[0]&0xFFFF) ==0xDB0C) &&
+                 ((buf_1[0]&0xF800)==0xD000) &&
+                 ((buf_1[1]&0xF800)==0xD000) &&
+                 ((buf_1[2]&0xFFFF)==0xDE0D) &&
+                 ((buf_1[3]&0xF000)==0xD000) )
+               ||
+               (  ((buf0[0]&0xFFFF) ==0xDB0C) &&
+                  ((buf0[1]&0xF000) ==0xD000) &&
+                  ((buf0[2]&0xF000) ==0xD000) &&
+                  ((buf0[3]&0xF000) ==0xD000)) )
+            {
+              TMB_L1A = (buf0[2]&0x000F);
+              cout << dec << " " << endl << "<TMB2007|      L1A= " << TMB_L1A <<  endl;
+              fTMB=true;
+              tmbData.clear();
+            }
+
+          // == TMB Header found right after DMB Header or right after ALCT Trailer
+          if ( ( ((buf0[0]&0xFFFF) ==0x6B0C) &&
+                 ((buf_1[0]&0xF000)==0xA000) &&
+                 ((buf_1[1]&0xF000)==0xA000) &&
+                 ((buf_1[2]&0xF000)==0xA000) &&
+                 ((buf_1[3]&0xF000)==0xA000) )
+               ||
+               ( ((buf0[0]&0xFFFF) ==0x6B0C) &&
+                 ((buf_1[0]&0xF800)==0xD000) &&
+                 ((buf_1[1]&0xF800)==0xD000) &&
+                 ((buf_1[2]&0xFFFF)==0xDE0D) &&
+                 ((buf_1[3]&0xF000)==0xD000) )   )
+            {
+              TMB_L1A = (buf0[2]&0x000F);
+              cout << " " << endl << "<TMB2006|      L1A= " << TMB_L1A <<  endl;
+              fTMB=true;
+              tmbData.clear();
+            }
+
+
+          // for (int i=0; i<4; i++) cfebData.push_back(buf0[i]);
+
+          // == CFEB Sample Trailer found
+          if ( ((buf0[1]&0xF000)==0x7000) &&
+               ((buf0[2]&0xF000)==0x7000) &&
+               ((buf0[1] != 0x7FFF) || (buf0[2] != 0x7FFF)) &&
+               ((buf0[3] == 0x7FFF) ||
+                ((buf0[3]&buf0[0]) == 0x0 && (buf0[3] + buf0[0] == 0x7FFF ))) )
+            {
+              SampleCount++;
+              SampleTag=true;
+            }
+
+
+
+
+          // == CFEB B-word found
+          if ( ((buf0[0]&0xF000)==0xB000) &&
+               ((buf0[1]&0xF000)==0xB000) &&
+               ((buf0[2]&0xF000)==0xB000) &&
+               ((buf0[3]&0xF000)==0xB000) )
+            {
+              SampleCount++;
+              SampleTag=true;
+            }
+
+
+
+          // print buf0 (and maybe buf_1) in hex
+          if ( (buf0[0]==0x8000) &&
+               (buf0[1]==0x8000) &&
+               (buf0[2]==0x0001) &&
+               (buf0[3]==0x8000) )
+            {
+              printb(buf_1);
+              cout << endl;
+            }
+          printb(buf0);
+
+          if ( SampleTag )
+            {
+              int calc_crc = calcCFEBcrc(cfebData);
+	      int CFEB_L1A = (buf0[2]>> 6) & 0x3F;
+              cout << "  |CFEB sample "<<SampleCount<<"> L1A: " << CFEB_L1A << " CRC: 0x" << hex << buf0[0] <<", calc CRC: 0x" << hex << calc_crc;
+              if (calc_crc != buf0[0]) cout << " !CRC Missmatch!";
+              cout << endl;
+              SampleTag=false;
+              cfebData.clear();
+            }
+
+          for (int i=0; i<4; i++) cfebData.push_back(buf0[i]);
+
+
+
+          // == ALCT Trailer found
+          if ( ((buf0[0]&0xFFFF)==0xDE0D) &&
+               ((buf0[1]&0xF800)==0xD000) &&
+               ((buf0[2]&0xF800)==0xD000) &&
+               ((buf0[3]&0xF000)==0xD000) )
+            {
+              // for (int i=0; i<4; i++) alctData.push_back(buf0[i]);
+              int crcALCT = buf0[1] & 0x7FF;
+              crcALCT |= (buf0[2] & 0x7FF) << 11;
+              cout << "  |ALCT2007> CRC: 0x" << hex << crcALCT << " wordcnt: " << dec << (buf0[3] & 0x7FF) << endl;
+              cout << " ALCT size: " << alctData.size()+4 << " words,  calc CRC: 0x" << hex  << calcALCTcrc(alctData);
+              fALCT=false;
+              cfebData.clear();
+
+
+            }
+
+
+          // == ALCT Trailer found
+          if ( ((buf0[0]&0xF800)==0xD000) &&
+               ((buf0[1]&0xF800)==0xD000) &&
+               ((buf0[2]&0xFFFF)==0xDE0D) &&
+               ((buf0[3]&0xF000)==0xD000) )
+            {
+              int crcALCT = buf0[0] & 0x7FF;
+              crcALCT |= (buf0[1] & 0x7FF) << 11;
+              cout << "  |ALCT2006> CRC: 0x" << hex << crcALCT << " wordcnt: " << dec << (buf0[3] & 0x7FF) << endl;
+              cout << " ALCT size: " << alctData.size()+4 << " words,  calc CRC: 0x" << hex  << calcALCTcrc(alctData) << endl;
+              fALCT=false;
+              cfebData.clear();
+            }
+
+
+          if (fALCT)
+            {
+              for (int i=0; i<4; i++) alctData.push_back(buf0[i]);
+            }
+
+
+          // == TMB Trailer found
+          if ( ((buf0[0]&0xFFFF)==0xDE0F) &&
+               ((buf0[1]&0xF000)==0xD000) &&
+               ((buf0[2]&0xF000)==0xD000) &&
+               ((buf0[3]&0xF000)==0xD000) )
+            {
+              // for (int i=0; i<4; i++) tmbData.push_back(buf0[i]);
+              int crcTMB = buf0[1] & 0x7FF;
+              crcTMB |= (buf0[2] & 0x7FF) << 11;
+              cout << "  |TMB2007> CRC: 0x" << hex << crcTMB << " wordcnt: " << dec << (buf0[3] & 0x7FF) << endl;
+              cout << " TMB size " << tmbData.size()+4 << " words,  calc CRC: 0x" << hex  << calcTMBcrc(tmbData) << endl;
+              fTMB=false;
+              cfebData.clear();
+            }
+
+          // == TMB Trailer found
+          if ( ((buf0[0]&0xF000)==0xD000) &&
+               ((buf0[1]&0xF000)==0xD000) &&
+               ((buf0[2]&0xFFFF)==0xDE0F) &&
+               ((buf0[3]&0xF000)==0xD000) )
+            {
+              // for (int i=0; i<4; i++) tmbData.push_back(buf0[i]);
+              int crcTMB = buf0[1] & 0x7FF;
+              crcTMB |= (buf0[2] & 0x7FF) << 11;
+              cout << "  |TMB2006> CRC: 0x" << hex << crcTMB << " wordcnt: " << dec << (buf0[3] & 0x7FF) << endl;
+              cout << " TMB size " << tmbData.size()+4 << " words,  calc CRC: 0x" << hex  << calcTMBcrc(tmbData) << endl;
+              fTMB=false;
+              cfebData.clear();
+            }
+
+
+          if (fTMB)
+            {
+              for (int i=0; i<4; i++) tmbData.push_back(buf0[i]);
+            }
+
+
+          // == DMB F- and E-Trailers found
+          if ( ((buf_1[0]&0xF000)==0xF000) &&
+               ((buf_1[1]&0xF000)==0xF000) &&
+               ((buf_1[2]&0xF000)==0xF000) &&
+               ((buf_1[3]&0xF000)==0xF000) &&
+               ((buf0[0]&0xF000)==0xE000) &&
+               ((buf0[1]&0xF000)==0xE000) &&
+               ((buf0[2]&0xF000)==0xE000) &&
+               ((buf0[3]&0xF000)==0xE000) )
+            {
+              int crcDMB = buf0[2] & 0x7FF;
+              crcDMB |= (buf0[3] & 0x7FF) << 11;
+
+              cout << "  |DMB"<<cntDMBHeaders<<"> CRC: 0x" << hex << crcDMB << endl; //", calc CRC: 0x" << hex  << calcTMBcrc(dmbData) << endl;
+	      fDMB=false;
+              SampleCount=0;
+              BSampleCount=0;
+              cfebData.clear();
+            }
+
+	  if (fDMB)
+            {
+              for (int i=0; i<4; i++) dmbData.push_back(buf0[i]);
+            }
+
+          cout << endl;
+
+
+        } // End of dumping the bulk of the requested event
+
+
+      if ( (buf_1[0]==0x8000) &&
+           (buf_1[1]==0x8000) &&
+           (buf_1[2]==0xFFFF) &&
+           (buf_1[3]==0x8000) )
+        {
+          cntDDUTrailers++; // Increment DDUTrailer counter
+
+	  if ( first         <= cntDDUHeaders            && 
+	       cntDDUHeaders <= last                     && 
+	       ( cntDDUHeaders - first ) % step == 0        )
+            {
+              // printb(buf1); cout << endl;
+              int wordcnt = buf2[2]+((buf2[3]&0xFF) << 16);
+              int crcDDU = buf2[1];
+              printb(buf2);
+	      for (int i=0; i<4; i++) dduData.push_back(buf0[i]);
+              cout << "  |DDU> CRC: 0x" << hex << crcDDU << " wordcnt: " << dec << wordcnt  << endl;
+	      fDDU=false;
+              cout << " DDU size " << (dduData.size()+4)/4 << " words," << endl;//  "  calc CRC: 0x" << hex  << calcDDUcrc(dduData) << endl;
+              cfebData.clear();
+              cout << endl << "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" << endl << endl;
+
+              cout << "DDU Trailer Occurrence " << cntDDUTrailers << endl << endl;
+
+              cout << "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" << endl << endl;
+            }
+        }
+	if (fDDU) {
+	   for (int i=0; i<4; i++) dduData.push_back(buf0[i]);
+	}
+
+
+
+    }
+
+
+  // == Close input data file
+//	input.close();
+  ::close(input);
+  cerr << datafile << " Closed" << endl;
+
+
+// == Exit from program
+  return 0;
+}

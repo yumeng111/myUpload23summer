@@ -1,0 +1,18 @@
+#include "config/PackageInfo.h"
+#include "emu/db/OnlineDBVersion.h"
+
+namespace EmuOnlineDB {
+	const std::string project = "emu";
+        const std::string package  =  "EmuOnlineDB";
+        const std::string versions =  onlinedbversion;
+        const std::string summary = "emu/emuDCS/OnlineDB";
+        const std::string description = "Emu Online Database Library";
+        const std::string authors = "Stan Durkin";
+        const std::string link = "http://cern.ch/cscdoc";
+        config::PackageInfo getPackageInfo();
+        void checkPackageDependencies();
+}
+
+GETPACKAGEINFO(EmuOnlineDB);
+
+void EmuOnlineDB::checkPackageDependencies() {}

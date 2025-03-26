@@ -1,0 +1,118 @@
+<!-- build file for compiling and deploying a RCMS Function Manager-->
+
+<!-- Author: Michele Gulmini,Alexander Oh -->
+
+<project name="functionmanager" default="release" basedir=".">
+
+	<!-- environment --> 
+	<property environment="env" />
+	
+	<!-- eclipse -->
+	<!-- <property file="../framework/installation/configuration/RCMS.properties" />  -->
+	
+	<!-- non-eclipse -->
+<!--	<property file="../../../framework/installation/configuration/RCMS.properties" />-->
+	<property file="../../RunControl/framework/installation/configuration/RCMS.properties" />
+
+	<!-- Function Manager name -->
+	<!--<property name="fm.name" value="ajaxFM-simple" />-->
+	<property name="fm.name" value="CSCL1FM" />
+	<property name="fm.classes" value="${basedir}/classes" />
+	<property name="fm.src" value="${basedir}/src" />
+	<property name="fm.jar" value="${fm.name}.jar" />
+	
+	<!-- rcms framework properties -->
+	<property name="rcms.webapp" value="${rcms.framework}/rcms" />
+	<property name="rcms.classes" value="${rcms.webapp}/WEB-INF/classes" />
+	<property name="rcms.libs" value="${rcms.webapp}/WEB-INF/lib" />
+
+	<!-- jakarta tomcat properties -->
+	<property name="jakarta.common" value="${jakarta.home}/lib" />
+	<property name="jakarta.fmdeploy" value="${jakarta.home}/webapps/ROOT/functionmanagers" />
+	<property name="jakarta.rcmslib" value="${jakarta.home}/webapps/rcms/WEB-INF/lib" />
+			
+	
+	<!-- classpath for the RCMS services libraries -->
+		<path id="rcms.classpath">
+			<fileset dir="${rcms.libs}">
+				<include name="*.jar" />
+			</fileset>
+			
+			<!-- classpath for jakarta libs -->
+			<fileset dir="${jakarta.common}">
+				<include name="*.jar" />
+			</fileset>
+
+			<pathelement location="${rcms.classes}" />
+		</path>
+	
+	
+	<!-- Compiles the Function Manager -->
+	<target name="compile">
+		<echo message="Compiling ${fm.name} FunctionManager" />
+				<mkdir dir="${fm.classes}" />
+				<javac
+					debug="on" 
+					debuglevel="lines,vars,source"
+					srcdir="${fm.src}"
+					destdir="${fm.classes}"
+                                        includeantruntime="true"
+					failonerror="true">
+					<classpath refid="rcms.classpath" />
+                                        <compilerarg value="-Xlint:unchecked"/>
+				</javac>
+	</target>
+		
+	<!-- Builds the jar file for this Function Manager -->
+	<target name="jar" depends="compile">
+		
+		<!-- common code and interfaces properties-->
+		<property name="common.dir" value="${basedir}/../common" />
+		<property name="common.src" value="${common.dir}/src" />
+		<property name="common.classes" value="${common.dir}/classes" />
+
+		<!-- specific fm code properties -->
+		<property name="fm.classes" value="${basedir}/classes" />
+		<property name="fm.gui" value="${basedir}/gui" />
+
+		<property name="fm.src" value="${basedir}/src" />
+		<property name="fm.lib" value="${basedir}/lib" />
+		<property name="fm.jar" value="${fm.name}.jar" />
+
+
+        <echo message="Creating ${fm.jar}" />
+	    <echo message="using gui ${fm.gui}" />
+		<mkdir dir="${fm.lib}" />
+		<jar file="${fm.lib}/${fm.jar}">
+			<fileset dir="${fm.classes}" />
+			<fileset dir="${fm.gui}" />
+		</jar>
+
+	</target>
+
+	<!-- Cleans compilation and deployment results -->
+	<target name="clean">
+        		<property name="fm.lib" value="${basedir}/lib" />
+			<echo message="Cleaning ${fm.name} FunctionManager" />
+			<delete dir="${fm.classes}" />
+			<delete dir="${fm.lib}" />
+	</target>
+
+	<!-- Deploys this Function Manager -->
+	<target name="deploy">
+			<echo message="Deploying ${fm.name} FunctionManager" />
+			<mkdir dir="${jakarta.fmdeploy}" />
+		
+			<echo message="Copying to ${jakarta.fmdeploy}"/>
+		    <copy file="${fm.lib}/${fm.jar}" todir="${jakarta.fmdeploy}" overwrite="true" />         			
+	</target>
+		
+	<!-- Releases a Function Manager (compile, jar, and deploy) -->
+	<target name="release" depends="clean,compile,jar,deploy">
+	</target>
+	
+</project>
+
+
+
+

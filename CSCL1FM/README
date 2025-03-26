@@ -1,0 +1,45 @@
+Use the ANT build.xml file to get a working custom GUI.
+
+Relevant for using AJAX in your GUI:
+
+rcms.fm.ajaxFM.MyFunctionManager:
+	contains the logic for GUI commands
+	also starts and stops the ChangedParameterSender
+
+rcms.fm.ajaxFM.MyParameterSet:
+	a custom ParameterSet class that provides methods for taking snapshots and comparing parameter sets
+	this allows to only send changed parameters and accumulate parameter updates
+	
+rcms.fm.ajaxFM.notificationsToGUI.parameters.ChangedParameterSender:
+	this class runs in its own thread and periodically sends changed parameters to the GUI using the notification system
+	
+rcms.fm.ajaxFM.updatesFromGUI.MySetParameterHandler:
+	this handler processes parameter set events and processes GUI commands
+	 it also needs to inform the ChangedParameterSender about changes to GUI-relevant parameters
+	 
+js/
+
+	ajaxRequest.js:
+		the AJAXRequest library
+		
+	ajaxRequestFunctions.js:
+		simple functions to update FM parameters using the AJAXRequest library
+		
+	GUI.js:
+		a small JS class that provides functions to update FM parameters using jQuery
+		
+	jquery-*.min.js:
+		the jQuery library
+		
+	notifications.js:
+		processes incoming notifications and is responsible for updating the document to reflect parameter changes
+		
+jsp/controlPanel.jsp:
+	the main JSP that outputs HTML and JS that is capable of sending parameter updates and commands using AJAX
+	and receives and processes parameter updates from the notification system
+	
+general notes:
+	"return false;" is used after most JS functions on form elements. For buttons and button inputs,
+		this prevents some browsers from sending the form the used element belongs to.
+	For AJAX-only inputs, it is recommended that you always add "return false;" after the function call,
+		just to make sure the page is not reloaded when they are being used.

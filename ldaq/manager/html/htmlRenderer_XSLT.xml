@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<xsl:transform
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    version="1.0">
+
+  <!-- <xsl:include href="application_XSLT.xml"/> -->
+  <!-- <xsl:include href="manager_XSLT.xml"/> -->
+ 
+  <xsl:output method="html" indent="yes"/>
+
+  <xsl:template match="/env:Envelope">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+      <head>
+        <xsl:if test="env:stateName='Enabled'">
+          <meta http-equiv="refresh" content="6" />
+        </xsl:if>
+        <title>lDAQ <xsl:value-of select="env:stateName"/></title>
+        <link rel="stylesheet" type="text/css" href="/emu/ldaq/manager/html/emuldaqmanager.css"/>
+	<script type="text/javascript" src="/emu/ldaq/manager/html/emuldaqmanager.js"/>
+      </head>
+      <body onload="countSeconds()">
+
+	<div id="pageHeader">
+	  <img align="middle" src="/emu/ldaq/manager/images/EmuDAQManager64x64.gif" alt="emu::daq::manager::Application" width="48" height="48" border=""/>
+	  <div class="Title">Emu Local DAQ Manager</div>
+	  <div class="updateTime">Updated at <xsl:value-of select="/env:Envelope/applications/@updateTime"/><br/><span id="ageOfPage"></span>&#xa0;ago</div>
+	</div>
+
+	<hr/>
+	
+	<form name="FSM" method="get" action="/urn:xdaq-application:lid=12/Default">
+
+	  <div id="controlLayout">
+	    	    
+	    <div id="FSMLayout" class="{/env:Envelope/env:stateName}">
+	      <div class="state">
+		<xsl:value-of select="/env:Envelope/env:stateName"/>
+	      </div>
+	      <div class="main">
+		<xsl:if test="/env:Envelope/env:supervisedMode = 'false'">
+		  <xsl:if test="/env:Envelope/env:stateName = 'Halted' and /env:Envelope/applications/@combinedState != 'Failed'">
+		    <input class="button configure" type="submit" name="command" value="configure"/>
+		  </xsl:if>
+		  <xsl:if test="/env:Envelope/env:stateName = 'Configured' and /env:Envelope/applications/@combinedState != 'Failed'">
+		    <input class="button start" type="submit" name="command" value="start"/>
+		  </xsl:if>
+		  <xsl:if test="/env:Envelope/env:stateName != 'Failed'">
+		    <input class="button stop" type="submit" name="command" value="stop"/>
+		  </xsl:if>
+		</xsl:if>
+	      </div>
+	    </div>
+
+	    <div id="runParsLayout">
+	    
+	      <div class="runParLayout">
+		<div class="name">
+		  Run&#xa0;type
+		</div>
+		<div class="value">
+		  <xsl:choose>
+		    <xsl:when test="/env:Envelope/env:stateName = 'Halted' and /env:Envelope/env:supervisedMode = 'false'">
+                      <select id="runTypeSelector" name="runtype" size="1" title="Select run type.">
+			<xsl:apply-templates select="/env:Envelope/env:runTypes/env:item"/>
+                      </select>
+		    </xsl:when>
+		    <xsl:otherwise>
+		      <xsl:value-of select="/env:Envelope/env:runType"/>		  
+		    </xsl:otherwise>
+		  </xsl:choose>
+		</div>
+	      </div>
+	      
+	      <div class="runParLayout">
+		<div class="name">
+		  Max&#xa0;events
+		</div>
+		<div class="value">
+		  <xsl:choose>
+		    <xsl:when test="/env:Envelope/env:stateName = 'Halted' and /env:Envelope/env:supervisedMode = 'false'">
+		      <input id="maxevents" type="text" name="maxevents" value="{/env:Envelope/env:maxNumberOfEvents}" size="9" title="Readout will stop after this many events, or will continue indefinitely if negative."/>
+		    </xsl:when>
+		    <xsl:otherwise>
+		      <xsl:value-of select="/env:Envelope/env:maxNumberOfEvents"/>		  
+		    </xsl:otherwise>
+		  </xsl:choose>
+		</div>
+	      </div>
+	    
+	      <div class="runParLayout">
+		<div class="name">
+		  Build&#xa0;events
+		</div>
+		<div class="value">
+		  <input class="checkbox" type="checkbox" name="buildevents" title="If checked, events will be built. Can only be used in local runs, but not recommended normally.">
+		    <xsl:if test="/env:Envelope/env:buildEvents = 'true'">
+	    	      <xsl:attribute name="checked">checked</xsl:attribute>
+		    </xsl:if>
+		    <xsl:if test="/env:Envelope/env:stateName != 'Halted' or /env:Envelope/env:supervisedMode = 'true'">
+	    	      <xsl:attribute name="disabled">disabled</xsl:attribute>
+		    </xsl:if>
+		  </input>
+		</div>
+	      </div>
+	      
+	      <div class="runParLayout">
+		<div class="name">
+		  Write&#xa0;bad&#xa0;events&#xa0;only
+		</div>
+		<div class="value">
+		  <input class="checkbox" type="checkbox" name="writeBadEventsOnly" title="If checked, only events with error bits asserted by DDU will be written to file. To be used in global runs.">
+		    <xsl:if test="/env:Envelope/env:writeBadEventsOnly = 'true'">
+	    	      <xsl:attribute name="checked">checked</xsl:attribute>
+		    </xsl:if>
+		    <xsl:if test="/env:Envelope/env:stateName != 'Halted' or /env:Envelope/env:supervisedMode = 'true'">
+	    	      <xsl:attribute name="disabled">disabled</xsl:attribute>
+		    </xsl:if>
+		  </input>
+		</div>	      
+	      </div>
+	      
+	    </div>
+	    
+	    <div id="timestamps">
+	      <div class="timestamp"><div class="name">Run&#xa0;number&#xa0;</div> <div class="value"><xsl:value-of select="/env:Envelope/env:runNumber"/></div></div>
+	      <!-- <div class="timestamp"><div class="name">Start&#xa0;</div>            <div class="value"><xsl:value-of select="/env:Envelope/env:runStartTime"/></div></div> -->
+	      <!-- <div class="timestamp"><div class="name">Stop&#xa0;</div>             <div class="value"><xsl:value-of select="/env:Envelope/env:runStopTime"/></div></div> -->
+	      <div class="timestamp">
+		<div class="name">Start&#xa0;</div>
+		<div class="value">
+		  <xsl:call-template name="reformatTime">
+		    <xsl:with-param name="T"><xsl:value-of select="/env:Envelope/env:runStartTime"/></xsl:with-param>
+		  </xsl:call-template>
+		</div>
+	      </div>
+	      <div class="timestamp">
+		<div class="name">Stop&#xa0;</div>
+		<div class="value">
+		  <xsl:call-template name="reformatTime">
+		    <xsl:with-param name="T"><xsl:value-of select="/env:Envelope/env:runStopTime"/></xsl:with-param>
+		  </xsl:call-template>
+		</div>
+	      </div>
+	      <div class="timestamp">
+		<div class="name">Run&#xa0;finished?&#xa0;</div>
+		<xsl:choose>
+		  <xsl:when test="contains( /env:Envelope/env:runType, 'STEP' )">
+		      <div class="value"><xsl:value-of select="/env:Envelope/env:STEPFinished"/></div>
+		  </xsl:when>
+		  <xsl:otherwise>
+		    <div class="value">
+		      <xsl:value-of select="( 0 >= number(/env:Envelope/env:maxNumberOfEvents) and /env:Envelope/env:stateName = 'Halted' ) or ( number(/env:Envelope/env:maxNumberOfEvents) > 0 and count( /env:Envelope/applications/application[@class='emu::ldaq::rui::Application' and /env:Envelope/env:maxNumberOfEvents > @eventCount] ) = 0 )"/>
+		    </div>
+		  </xsl:otherwise>
+		</xsl:choose>
+	      </div>
+	    </div>
+
+	    <div id="governorLayout">
+	      <div class="mode">
+		<xsl:attribute name="title">
+		  <xsl:choose>
+		    <xsl:when test="/env:Envelope/env:supervisedMode = 'true'">Local DAQ is now in supervised mode, only listening to commands from Supervisor. This way Supervisor can synchronize the local run to the global.</xsl:when>		
+		    <xsl:otherwise>Local DAQ is now in unsupervised mode, ignoring commands from Supervisor. Supervisor therefore cannot synchronize the local run to the global.</xsl:otherwise>
+		  </xsl:choose>
+		</xsl:attribute>
+		<xsl:choose>
+		  <xsl:when test="/env:Envelope/env:supervisedMode = 'true'">Supervised</xsl:when>		
+		  <xsl:otherwise>Unsupervised</xsl:otherwise>
+		</xsl:choose>
+	      </div>
+	      <div class="main">
+		<xsl:choose>
+		  <xsl:when test="/env:Envelope/env:supervisedMode = 'true'">
+		    <input class="button supervised" type="submit" name="governor"
+			   value="take control"
+			   title="Take control to enable commands from this web page and ignore commands from Supervisor. WARNING: Runs won't be started and stopped automatically in synch with the global runs!"/>
+		  </xsl:when>
+		  <xsl:otherwise>
+		    <input class="button unsupervised" type="submit" name="governor"
+			   value="release control"
+			   title="Release control to disable commands from this web page and only listen to commands from Supervisor. Runs will then be started and stopped automatically in synch with the global runs."/>
+		  </xsl:otherwise>
+		</xsl:choose>
+	      </div>
+	    </div>
+	  
+	  </div>
+	  
+	</form>
+
+	<hr/>
+
+	<xsl:if test="/env:Envelope/env:reasonForFailure/node()">
+	  <div class="reasonForfailure">
+	    <xsl:value-of select="/env:Envelope/env:reasonForFailure"/>	    
+	  </div>
+	  <hr/>
+	</xsl:if>
+
+	<form name="countTable" method="get" action="/urn:xdaq-application:lid=12/Default">
+	  <xsl:choose>
+	    <xsl:when test="contains( /env:Envelope/env:runType, 'STEP' )">
+	      <xsl:apply-templates select="applications" mode="STEP"/>
+	    </xsl:when>		
+	    <xsl:otherwise>
+	      <xsl:apply-templates select="applications"/>
+	    </xsl:otherwise>
+	  </xsl:choose>
+	</form>
+
+	<xsl:if test="contains( /env:Envelope/env:runType, 'STEP' ) and /env:Envelope/env:dataFileNames/env:item">
+	  <div id="dataFileNames">
+	    <xsl:apply-templates select="/env:Envelope/env:dataFileNames/env:item"/>
+	  </div>
+	</xsl:if>
+
+      </body>
+    </html>
+  </xsl:template>
+
+  <xsl:template name="reformatTime">
+    <xsl:param name="T"/>
+    <xsl:value-of select="concat( '20',substring($T,1,2),'-',substring($T,3,2),'-',substring($T,5,2),' ',substring($T,8,2),':',substring($T,10,2),':',substring($T,12,2),' ',substring($T,15) )"/>
+  </xsl:template>
+  
+  <xsl:template match="/env:Envelope/env:runTypes/env:item">
+    <option value="{.}"><xsl:value-of select="."/></option>
+  </xsl:template>
+
+  <xsl:template match="applications">
+    <div id="countTablesLayout">
+      <table class="counts nonSTEP">
+	<xsl:if test="count( application[@class = 'emu::ldaq::rui::Application' and number(@instance)&lt;=18] ) &gt; 0">
+	  <tr>
+	    <th>host</th>
+	    <th>RUI</th>
+	    <th>count</th>
+	    <th>rate [s⁻¹]</th>
+	    <th>vol [B/s]</th>
+	    <th>size [B]</th>
+	    <th>sampled</th>
+	    <xsl:if test="count( application[ @class = 'evb::RU' ] ) &gt; 0 ">
+	      <th>RU</th>
+	      <th>BU</th>
+	    </xsl:if>
+	  </tr>
+	</xsl:if>
+	<!-- <xsl:apply-templates select="application[@class = 'emu::ldaq::rui::Application' and position()&lt;=number(last()*0.5)]"> -->
+	<xsl:apply-templates select="application[@class = 'emu::ldaq::rui::Application' and number(@instance)&lt;=18]">
+  	  <xsl:sort select = "@instance" data-type="number"/>
+	  <xsl:with-param name="SIDE">P</xsl:with-param>
+	</xsl:apply-templates>
+      </table>
+      <table class="counts nonSTEP">
+	<xsl:if test="count( application[@class = 'emu::ldaq::rui::Application' and number(@instance)>18] ) &gt; 0">
+	  <tr>
+	    <th>host</th>
+	    <th>RUI</th>
+	    <th>count</th>
+	    <th>rate [s⁻¹]</th>
+	    <th>vol [B/s]</th>
+	    <th>size [B]</th>
+	    <th>sampled</th>
+	    <xsl:if test="count( application[ @class = 'evb::RU' ] ) &gt; 0 ">
+	      <th>RU</th>
+	      <th>BU</th>
+	    </xsl:if>
+	  </tr>
+	</xsl:if>
+	<!-- <xsl:apply-templates select="application[@class = 'emu::ldaq::rui::Application' and position()&gt;number(last()*0.5)]"> -->
+	<xsl:apply-templates select="application[@class = 'emu::ldaq::rui::Application' and number(@instance)>18]">
+  	  <xsl:sort select = "@instance" data-type="number"/>
+	  <xsl:with-param name="SIDE">M</xsl:with-param>
+	</xsl:apply-templates>
+      </table>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="application[@class = 'emu::ldaq::rui::Application']">
+    <xsl:param name="SIDE"/>
+    <xsl:variable name="HOST"><xsl:value-of select="@host"/></xsl:variable>
+    <xsl:variable name="INSTANCE"><xsl:value-of select="@instance"/></xsl:variable>
+    <xsl:variable name="PRECEDING_RUIS_ON_HOST">
+      <xsl:if test="$SIDE='P'">
+    	<xsl:value-of select="count( ../application[@class='emu::ldaq::rui::Application' and @host=$HOST and number($INSTANCE) > number(@instance)] )"/>
+      </xsl:if>
+      <xsl:if test="$SIDE='M'">
+    	<xsl:value-of select="count( ../application[@class='emu::ldaq::rui::Application' and @host=$HOST and number($INSTANCE) > number(@instance) and number(@instance)>=19] )"/>
+      </xsl:if>
+    </xsl:variable>
+    <xsl:variable name="FOLLOWING_RUIS_ON_HOST">
+      <xsl:if test="$SIDE='P'">
+      	<xsl:value-of select="count( ../application[@class='emu::ldaq::rui::Application' and @host=$HOST and number(@instance) > number($INSTANCE) and number(@instance)&lt;=18] )"/>
+      </xsl:if>
+      <xsl:if test="$SIDE='M'">
+      	<xsl:value-of select="count( ../application[@class='emu::ldaq::rui::Application' and @host=$HOST and number(@instance) > number($INSTANCE) ] )"/>
+      </xsl:if>
+    </xsl:variable>
+    <tr>
+      <!-- host -->
+      <xsl:if test="$PRECEDING_RUIS_ON_HOST = 0">
+	<td>
+	  <xsl:attribute name="rowspan"><xsl:value-of select="number($FOLLOWING_RUIS_ON_HOST) + 1"/></xsl:attribute>
+	  <a href="http://{@host}:9999/urn:xdaq-application:lid=10" title="The host machine.Click to visit the JobControl running on it." target="_blank"><xsl:value-of select="substring-before(@host,'.')"/></a>
+	</td>
+      </xsl:if>
+      <!-- rui -->
+      <th class="{@canonicalState}">
+	<input class="button recycle" type="submit" value="&#x2672;" name="{format-number(@instance,'00')}" onclick="onRecycle( '{format-number(@instance,'00')}' )" title="Recycle {@class}.{format-number(@instance,'00')}. This may take a couple of minutes."/>
+	<a href="http://{@host}:{@port}/{@appURN}/" title="{@class}.{format-number(@instance,'00')} is in {@state} state. Click to visit it." target="_blank">RUI.<xsl:value-of select="format-number(@instance,'00')"/></a>
+      </th>
+      <td class="count">
+	<a href="{/env:Envelope/env:hardwareMapping}#RUI.{@instance}" title="The number of events read out. Click to see which chambers are read out by the DDU that this RUI reads out." target="_blank"><xsl:value-of select="@eventCount"/></a>
+      </td>
+      <td class="statistics" title="Event rate [s⁻¹].">
+	<xsl:value-of select="format-number(substring-before(@eventRate,'e'),'0.000')"/>e<xsl:value-of select="substring-after(@eventRate,'e')"/>
+      </td>
+      <td class="statistics" title="Data rate [Bs⁻¹].">
+	<xsl:value-of select="format-number(substring-before(@dataRate,'e'),'0.000')"/>e<xsl:value-of select="substring-after(@dataRate,'e')"/>
+      </td>
+      <td class="statistics" title="Event size [B].">
+	<xsl:value-of select="format-number(substring-before(@sizeMean,'e'),'0.00')"/>e<xsl:value-of select="substring-after(@sizeMean,'e')"/>±<xsl:value-of select="format-number(substring-before(@sizeStD,'e'),'0.00')"/>e<xsl:value-of select="substring-after(@sizeStD,'e')"/>
+      </td>
+      <td class="statistics" title="Sampled fraction.">
+	<xsl:value-of select="format-number(substring-before(@sampledFraction,'e'),'0.000')"/>e<xsl:value-of select="substring-after(@sampledFraction,'e')"/>
+      </td>
+      <!-- ru partner of rui (sharing common instance number) -->
+      <xsl:for-each select="../application[ ( @class = 'evb::RU' or @class = 'evb::EVM' ) and @instance = $INSTANCE]">
+	<th class="{@canonicalState}">
+	  <a href="http://{@host}:{@port}/{@appURN}/" title="{@class}.{format-number(@instance,'00')} is in {@state} state. Click to visit it." target="_blank"><xsl:value-of select="substring-after(@class,'evb::')"/>.<xsl:value-of select="format-number(@instance,'00')"/></a>
+	</th>
+      </xsl:for-each>
+      <!-- bu on this host -->
+      <xsl:if test="$PRECEDING_RUIS_ON_HOST = 0">
+	<xsl:for-each select="../application[ @class = 'evb::BU' and @host = $HOST ]">
+	  <th class="{@canonicalState}">
+	    <xsl:attribute name="rowspan"><xsl:value-of select="number($FOLLOWING_RUIS_ON_HOST) + 1"/></xsl:attribute>
+	    <a href="http://{@host}:{@port}/{@appURN}/" title="{@class}.{format-number(@instance,'00')} is in {@state} state. Click to visit it." target="_blank"><xsl:value-of select="substring-after(@class,'evb::')"/>.<xsl:value-of select="format-number(@instance,'00')"/></a>
+	  </th>
+	  <td class="count">
+	    <xsl:attribute name="rowspan"><xsl:value-of select="number($FOLLOWING_RUIS_ON_HOST) + 1"/></xsl:attribute>
+	    <xsl:value-of select="@eventCount"/>
+	  </td>
+	</xsl:for-each>
+      </xsl:if>
+    </tr>    
+  </xsl:template>
+
+
+  <!-- ======= Counts table in STEP mode ======= -->
+  
+  <xsl:template match="applications" mode="STEP">
+    <div id="countTablesLayout">
+      <table class="counts">
+	<tr>
+	  <th colspan="2"></th>
+	  <th>DDU</th>
+	  <th colspan="15">
+	    <div id="selectDDUInputs">
+	      <input type="submit" id="countIn" name="mask" title="Count selected DDU inputs in. (That is, consider them when deciding whether the run is completed.)" value="count in"/> 
+	      <div>DDU inputs</div>
+	      <input type="submit" id="countOut" name="mask" title="Count selected DDU inputs out. (That is, ignore them when deciding whether the run is completed.)" value="count out"/> 
+	    </div>
+	  </th>
+	</tr>
+	<tr>
+	  <th>host</th><th>RUI</th><th>accepted / read</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th>
+	</tr>
+	<xsl:apply-templates select="application[@class = 'emu::ldaq::rui::Application']"  mode="STEP">
+  	  <xsl:sort select = "@host"/>
+  	  <xsl:sort select = "@instance" data-type="number"/>
+	</xsl:apply-templates>
+      </table>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="application[@class = 'emu::ldaq::rui::Application']"  mode="STEP">
+    <tr>
+      <!-- host -->
+      <xsl:variable name="HOST"><xsl:value-of select="@host"/></xsl:variable>
+      <xsl:if test="not( @host = preceding-sibling::application[@class = 'emu::ldaq::rui::Application']/@host )">
+	<td>
+	  <xsl:attribute name="rowspan"><xsl:value-of select="count(../application[@host = $HOST])"/></xsl:attribute>
+	  <a href="http://{@host}:9999/urn:xdaq-application:lid=10" title="The host machine.Click to visit the JobControl running on it." target="_blank"><xsl:value-of select="@host"/></a>
+	</td>
+      </xsl:if>
+      <!-- rui -->
+      <th class="{@canonicalState}">
+	<input class="button recycle" type="submit" value="&#x2672;" name="{format-number(@instance,'00')}" onclick="onRecycle( '{format-number(@instance,'00')}' )" title="Recycle {@class}.{format-number(@instance,'00')}. This may take a couple of minutes."/>
+	<a href="http://{@host}:{@port}/{@appURN}/" title="{@class}.{format-number(@instance,'00')} is in {@state} state. Click to visit it." target="_blank">RUI.<xsl:value-of select="format-number(@instance,'00')"/></a>
+      </th>
+      <td class="STEPCount">
+	<xsl:value-of select="STEP/@totalCount"/> / <xsl:value-of select="STEP/@eventsRead"/>
+      </td>
+      <xsl:apply-templates select="STEP/input">
+  	<xsl:sort data-type="number" select = "@channel"/>
+      </xsl:apply-templates>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="input">
+    <td>
+      <xsl:attribute name="class">
+	<xsl:choose>
+	  <xsl:when test="@masked = 'true'">masked</xsl:when>
+	  <xsl:when test="@live = 'true' and /env:Envelope/env:maxNumberOfEvents > @count">notFinished</xsl:when>
+	  <xsl:otherwise>STEPCount</xsl:otherwise>
+	</xsl:choose>
+      </xsl:attribute>
+      <a href="http://{ancestor::application/@host}:{ancestor::application/@port}{/env:Envelope/env:hardwareMapping}#RUI.{ancestor::application/@instance}.{@channel}" title="Number of accepted events with data from input {@channel}. (Click to view the corresponding chamber.)" target="_blank">
+	<xsl:choose>
+	  <xsl:when test="@live = 'true'"><xsl:value-of select="@count"/></xsl:when>		
+	  <xsl:otherwise>&#8212;</xsl:otherwise>
+	</xsl:choose>
+      </a>
+      /
+      <xsl:choose>
+	<xsl:when test="@live = 'true'"><xsl:value-of select="@readCount"/></xsl:when>		
+	<xsl:otherwise>&#8212;</xsl:otherwise>
+      </xsl:choose>
+      <input type="checkbox" name="EmuRUI.{../../@instance}.{@channel}" title="Check to select DDU input {@channel}, then click 'count in' to consider it or 'count out' to ignore it."/>
+    </td>
+  </xsl:template>
+  
+
+  <xsl:template match="/env:Envelope/env:dataFileNames/env:item">
+    Data&#xa0;files<br/>
+    <xsl:value-of select="."/><br/>
+  </xsl:template>
+
+</xsl:transform>

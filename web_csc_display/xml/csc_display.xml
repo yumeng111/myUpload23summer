@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+<xc:Partition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding"
+  xmlns:xc="http://xdaq.web.cern.ch/xdaq/xsd/2004/XMLConfiguration-30">
+
+  <!-- Declare a context that contain application -->
+  <xc:Context url="http://emume42.cern.ch:9093">
+  
+    <!-- Declare a HelloWorld Application -->
+    <xc:Application class="csc_display::SimpleWeb" id="254" instance="0" network="local"/>
+    
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libemucalibanalysis.so</xc:Module>
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libemudaqreader.so</xc:Module>
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libemudqmcommon.so</xc:Module>
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libCSCRawToDigi.so</xc:Module>
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libCSCDigi.so</xc:Module>
+    <xc:Module>${BUILD_HOME}/${XDAQ_PLATFORM}/lib/libcsc_display.so</xc:Module>
+	
+  </xc:Context>
+</xc:Partition>
+

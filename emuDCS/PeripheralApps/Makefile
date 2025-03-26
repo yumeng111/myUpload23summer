@@ -1,0 +1,96 @@
+##
+#
+# This is the TriDAS/emu/emuDCS/PeripheralApps Package Makefile
+#
+##
+
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfAutoconf.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfDefs.$(XDAQ_OS)
+include $(BUILD_HOME)/emu/rpm_version
+
+# Packages to be built
+#
+Project=emu
+Package=emu/emuDCS/PeripheralApps
+PackageName=PeripheralApps
+Description="XDAQ Application libraries for Peripheral Crates"
+
+Sources=\
+        AppsVersion.cc \
+        CalibDAQ.cc \
+        ChamberUtilities.cc \
+	CrateUtilities.cc \
+        XMLParser.cc \
+        EmuPCrateConfigTStore.cc \
+        EmuPeripheralCrateBase.cc \
+	EmuPeripheralCrateBroadcast.cc \
+        EmuPeripheralCrateConfig.cc \
+        EmuPeripheralCrateConfig_VCC.cc \
+        EmuPeripheralCrateConfig_CCBMPC.cc \
+        EmuPeripheralCrateConfig_DMB.cc \
+        EmuPeripheralCrateConfig_DDU.cc \
+        EmuPeripheralCrateCommand.cc \
+        EmuPeripheralCrateMonitor.cc \
+        EmuPeripheralCrateTimer.cc \
+        EmuPeripheralCrateManager.cc \
+        EmuPeripheralCrateService.cc \
+        EmuCompareMcsFiles.cc \
+        EmuEndcapConfigWrapper.cc \
+	TCDSInterface.cc \
+	LocalDAQInterface.cc \
+	FEDInterface.cc \
+	PipelineDepthScan.cc
+
+IncludeDirs = \
+        $(XDAQ_ROOT)/include \
+        $(BUILD_HOME)/emu/emuDCS/PeripheralCore/include \
+	$(BUILD_HOME)/emu/emuDCS/OnlineDB/include \
+        $(BUILD_HOME)/emu/soap/include \
+        $(BUILD_HOME)/emu/base/include
+
+
+TestLibraryDirs = \
+	$(XDAQ_ROOT)/lib \
+        $(BUILD_HOME)/emu/emuDCS/PeripheralCore/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM) \
+        $(BUILD_HOME)/emu/emuDCS/PeripheralApps/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM) \
+        $(BUILD_HOME)/emu/base/lib/$(XDAQ_OS)/$(XDAQ_PLATFORM)
+
+UserCFlags  = 
+UserCCFlags = -std=c++11
+UserDynamicLinkFlags =
+UserStaticLinkFlags =
+UserExecutableLinkFlags =
+
+# These libraries can be platform specific and
+# potentially need conditional processing
+#
+Libraries = xerces-c xdaq xdata log4cplus toolbox xoap cgicc xcept xgi peer
+TestLibraries = xerces-c xdaq xdata log4cplus toolbox xoap cgicc xcept xgi peer \
+                mimetic logxmlappender logudpappender asyncresolv config \
+                CSCSupervisor EmuPeripheralCore EmuPeripheralApps uuid
+                
+#
+# Compile the source files and create a shared library
+#
+DynamicLibrary= EmuPeripheralApps
+StaticLibrary= 
+
+Executables=
+TestExecutables= \
+	slicetestconfig.cpp \
+	EmuConfig.cpp \
+	CrateTiming.cpp \
+	parsemain.cpp \
+	mpc2sp.cpp \
+	ParserTester.cpp \
+	loadALCT.cpp \
+	loadTMB.cpp \
+        resetcc.cpp \
+        scancrate.cpp \
+	loadMPC.cpp \
+	loadCCB.cpp\
+	loadDMB.cpp \
+	testtmbmain.cpp
+
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/Makefile.rules
+include $(XDAQ_ROOT)/$(BUILD_SUPPORT)/mfRPM.rules

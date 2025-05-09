@@ -62,9 +62,9 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(nEvents) )
 
 process.TFileService = cms.Service("TFileService",
     #change
-    #fileName = cms.string("out_pr_pu200_1409.root")
-    #fileName = cms.string("/eos/user/y/yumeng/CMSSW_14_0_9/GEMCode/out_pr_pu200_1409paramValue.root")
-    fileName = cms.string("/eos/user/y/yumeng/CMSSW_14_0_9/GEMCode/out_pr_pu200_1409pretrig5.root")
+    #fileName = cms.string("out_pr_pu200_1420pre1.root")
+    #fileName = cms.string("/eos/user/y/yumeng/CMSSW_14_2_0_pre1/GEMCode/out_pr_pu200_1420pre1pretrig224.root")
+    fileName = cms.string("/eos/user/y/yumeng/CMSSW_14_2_0_pre1/GEMCode/test.root")
 )
 
 ## global tag for upgrade studies
@@ -84,13 +84,13 @@ process.simCscTriggerPrimitiveDigisRun3CCLUTILT.commonParam.runCCLUT_TMB = cms.b
 process.simCscTriggerPrimitiveDigisRun3CCLUTILT.commonParam.runME11ILT = True
 process.simCscTriggerPrimitiveDigisRun3CCLUTILT.commonParam.run3 = True
 process.simCscTriggerPrimitiveDigisRun3CCLUTILT.commonParam.runPhase2 = True
-process.simCscTriggerPrimitiveDigisRun3CCLUTILT.commonParam.clctStateMachineZone = cms.uint32(4)
-process.simCscTriggerPrimitiveDigisRun3CCLUTILT.clctPhase2.clctStateMachineZone = cms.uint32(4)
-#change
-# process.simCscTriggerPrimitiveDigisRun3CCLUTILT.commonParam.clctPretriggerTriggerZone = cms.uint32(224)
-# process.simCscTriggerPrimitiveDigisRun3CCLUTILT.clctPhase2.clctPretriggerTriggerZone = cms.uint32(224)
-process.simCscTriggerPrimitiveDigisRun3CCLUTILT.commonParam.clctPretriggerTriggerZone = cms.uint32(5)
-process.simCscTriggerPrimitiveDigisRun3CCLUTILT.clctPhase2.clctPretriggerTriggerZone = cms.uint32(5)
+process.simCscTriggerPrimitiveDigisRun3CCLUTILT.commonParam.clctStateMachineZone = cms.uint32(5)
+process.simCscTriggerPrimitiveDigisRun3CCLUTILT.clctPhase2.clctStateMachineZone = cms.uint32(5)
+#change:
+# process.simCscTriggerPrimitiveDigisRun3CCLUTILT.commonParam.clctPretriggerTriggerZone = cms.uint32(5)
+# process.simCscTriggerPrimitiveDigisRun3CCLUTILT.clctPhase2.clctPretriggerTriggerZone = cms.uint32(5)
+process.simCscTriggerPrimitiveDigisRun3CCLUTILT.commonParam.clctPretriggerTriggerZone = cms.uint32(224)
+process.simCscTriggerPrimitiveDigisRun3CCLUTILT.clctPhase2.clctPretriggerTriggerZone = cms.uint32(224)
 process.simCscTriggerPrimitiveDigisRun3CCLUTILT.clctPhase2.verbosity = cms.int32(10)
 process.simCscTriggerPrimitiveDigisRun3CCLUTILT.clctPhase2GEM.verbosity = cms.int32(10)
 process.simCscTriggerPrimitiveDigisRun3CCLUTILT.tmbPhase2.verbosity = cms.int32(10)
@@ -112,13 +112,13 @@ process.simEmtfDigisRun3CCLUTILT.CSCInput = cms.InputTag(
 ## Run-3 patterns with CCLUT, with ILT, and clctPhase2.clctNplanesHitPattern =3
 process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers = process.simCscTriggerPrimitiveDigisRun3CCLUTILT.clone()
 process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.clctPhase2.clctNplanesHitPattern = cms.uint32(3)
-process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.commonParam.clctStateMachineZone = cms.uint32(4)
-process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.clctPhase2.clctStateMachineZone = cms.uint32(4)
+process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.commonParam.clctStateMachineZone = cms.uint32(5)
+process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.clctPhase2.clctStateMachineZone = cms.uint32(5)
 #change
-# process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.commonParam.clctPretriggerTriggerZone = cms.uint32(224)
-# process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.clctPhase2.clctPretriggerTriggerZone = cms.uint32(224)
-process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.commonParam.clctPretriggerTriggerZone = cms.uint32(5)
-process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.clctPhase2.clctPretriggerTriggerZone = cms.uint32(5)
+# process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.commonParam.clctPretriggerTriggerZone = cms.uint32(5)
+# process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.clctPhase2.clctPretriggerTriggerZone = cms.uint32(5)
+process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.commonParam.clctPretriggerTriggerZone = cms.uint32(224)
+process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.clctPhase2.clctPretriggerTriggerZone = cms.uint32(224)
 print("Run-3 patterns with CCLUT,CLCT phase2 clct 3 layers ", process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.clctPhase2)
 print("commonParam ", process.simCscTriggerPrimitiveDigisRun3CCLUTILTclct3layers.commonParam)
 process.simEmtfDigisRun3CCLUTILTclct3layers = process.simEmtfDigis.clone()

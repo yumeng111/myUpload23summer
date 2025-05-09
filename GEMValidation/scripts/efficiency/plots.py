@@ -46,3 +46,7 @@ def makeEfficiencyPlots(plotter, text):
 def makeEfficiencyComparisonPlots(plotterlist, text):
     CSCStubComparisonAll(plotterlist, text)
     L1MuComparisonEtaAll(plotterlist, text)
+
+def yumengMakePlots(plotter, text):
+    CSCLCTEffCompare_predictUS(plotter)
+    

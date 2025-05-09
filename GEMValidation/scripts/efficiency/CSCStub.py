@@ -945,3 +945,92 @@ def CSCStubComparisonAll(plotterlist, text):
         CSCStubComparisonPt(plotterlist, st, ok_csc_sh(st), ok_csc_clct(st), "CLCT", text)
         CSCStubComparisonPt(plotterlist, st, ok_csc_sh(st), ok_csc_alct(st), "ALCT", text)
         CSCStubComparisonPt(plotterlist, st, ok_csc_sh(st), lctcut,   "LCT", text)
+
+#yumeng
+def CSCLCTEffCompare_predictUS(plotter):
+    xTitle = "Generated muon |#eta|"
+    title = "%s;%s;%s"%(topTitle, xTitle, yTitle)
+    toPlot = "TMath::Abs(eta)"
+
+    for st in range(0, len(cscStations)):
+        h_bins = "(25,%f,%f)" % (cscStations[st].eta_min, cscStations[st].eta_max)
+        nBins = int(h_bins[1:-1].split(',')[0])
+        minBin = float(h_bins[1:-1].split(',')[1])
+        maxBin = float(h_bins[1:-1].split(',')[2])
+
+        c = newCanvas()
+        base = TH1F("base", title, nBins, minBin, maxBin)
+        base.SetMinimum(0.0)
+        base.SetMaximum(1.1)
+        base.GetXaxis().SetLabelSize(0.05)
+        base.GetYaxis().SetLabelSize(0.05)
+        base.GetXaxis().SetTitleSize(0.05)
+        base.GetYaxis().SetTitleSize(0.05)
+        base.Draw("")
+        CMS_lumi.CMS_lumi(c, iPeriod, iPos)
+
+        # 1) Old LCT Efficiency (BX 5~11)
+        h1 = draw_geff(
+            plotter.tree, 
+            title, 
+            h_bins, 
+            toPlot, 
+            ok_csc_sh(st), 
+            ok_csc_lct(st), 
+            "same", 
+            kBlue
+        )
+
+         # 2) Old LCT Efficiency at BX=8
+        bx_condition_8 = AND(
+            ok_csc_lct(st),
+            TCut(f"(bx_lct_odd[{st}] == 8 || bx_lct_even[{st}] == 8)")
+        )
+        h2 = draw_geff(
+            plotter.tree, 
+            title, 
+            h_bins, 
+            toPlot, 
+            ok_csc_sh(st), 
+            bx_condition_8, 
+            "same", 
+            kGreen
+        )
+
+        # 3) Usable Seg Efficiency (BX 7 or 8)
+        bx_condition_7or8 = AND(
+            ok_csc_lct(st),
+            TCut(f"(bx_lct_odd[{st}] == 7 || bx_lct_odd[{st}] == 8 || bx_lct_even[{st}] == 7 || bx_lct_even[{st}] == 8)")
+        )
+        h3 = draw_geff(
+            plotter.tree, 
+            title, 
+            h_bins, 
+            toPlot, 
+            ok_csc_sh(st), 
+            bx_condition_7or8, 
+            "same", 
+            kRed
+        )
+
+       
+
+        # Legend
+        #leg = TLegend(0.45, 0.2, 0.75, 0.5, "", "brNDC")
+        leg = TLegend(0.20, 0.2, 0.50, 0.5, "", "brNDC");
+        leg.SetBorderSize(0)
+        leg.SetFillStyle(0)
+        leg.SetTextSize(0.05)
+        leg.AddEntry(h1, "Old LCT Efficiency (BX 5~11)", "pl")
+        leg.AddEntry(h2, "LCT Efficiency at BX=8", "pl")
+        leg.AddEntry(h3, "Usable Seg Efficiency (LCTs from BX 7 or 8)", "pl")
+        leg.Draw("same")
+
+        csc = drawCSCLabel(cscStations[st].label, 0.85, 0.85, 0.05)
+
+        c.Print("%sEff_CSCLCT_predictUS_%s%s" % (plotter.targetDir + subdirectory, cscStations[st].labelc, plotter.ext))
+
+        # Cleanup
+        del c, base, h1, h2, h3, leg, csc
+
+

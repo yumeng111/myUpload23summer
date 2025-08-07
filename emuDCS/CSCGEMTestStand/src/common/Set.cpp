@@ -550,7 +550,7 @@ Set::Set(void){
 	N_trials = 0;
 	//struct Hit hit;
 	//Tmb_type = hit.COMPILE_TYPE - 0xa + 'a';
-	//Ncfebs = Tmb_type == 'a' ? CSCConstants::NUM_DCFEBS_NONME11  : CSCConstants::NUM_DCFEBS_ME11; 
+	//Ncfebs = Tmb_type == 'a' ? CSCConstants::NUM_DCFEBS_NONME11  : CSCConstants::NUM_DCFEBS_ME11;
 	Tmb_type = 'c';//default
         Ncfebs = CSCConstants::NUM_DCFEBS_ME11;
         Ngemfibers = CSCConstants::NUM_FIBERS_GE11;
@@ -567,18 +567,18 @@ Set::Set(std::string& path)
 	N_trials = 0;
 	//struct Hit hit;
 	//Tmb_type = hit.COMPILE_TYPE - 0xa + 'a';
-	//Ncfebs = Tmb_type == 'a' ? CSCConstants::NUM_DCFEBS_NONME11  : CSCConstants::NUM_DCFEBS_ME11; 
+	//Ncfebs = Tmb_type == 'a' ? CSCConstants::NUM_DCFEBS_NONME11  : CSCConstants::NUM_DCFEBS_ME11;
 	Tmb_type = 'c';//default
         Ncfebs = CSCConstants::NUM_DCFEBS_ME11;
         Ngemfibers = CSCConstants::NUM_FIBERS_GE11;
 	Prefix = ReadTxt(path, CSCCLCTs, GEMClusters);
         sort(CSCCLCTs.begin(), CSCCLCTs.end(), compareCLCT);
 }
-void Set::SetOTMBCompileType (char a) 
+void Set::SetOTMBCompileType (char a)
 {
     //tmb_type char
     Tmb_type = a;
-    Ncfebs = Tmb_type == 'a' ? CSCConstants::NUM_DCFEBS_NONME11  : CSCConstants::NUM_DCFEBS_ME11; 
+    Ncfebs = Tmb_type == 'a' ? CSCConstants::NUM_DCFEBS_NONME11  : CSCConstants::NUM_DCFEBS_ME11;
     Ngemfibers = Tmb_type == 'a' ? 0 : CSCConstants::NUM_FIBERS_GE11;//for now use 0 fiber for GE21
 
 }
@@ -667,7 +667,7 @@ bool Set::LoadEmuBoard(std::string opt_path, int Mute)
 {
 	std::cout << Mute << "************************* Is it Muted *****************" << std::endl;
 	if(opt_path.empty()) opt_path = default_dir;
-	std::cout << " send on cmslab1, path "<< opt_path << " tmb type "<< Tmb_type <<" num of cfeb "<< Ncfebs << std::endl;
+	std::cout << " send on cmslab1, path "<< opt_path << " tmb type "<< Tmb_type <<" num of cfeb "<< Ncfebs <<", num of gemfibers "<< Ngemfibers << std::endl;
 	char block[RAMPAGE_SIZE];
 	std::vector<FILE*> pat_files;
 	pat_files.clear();
@@ -729,6 +729,8 @@ bool Set::LoadEmuBoard(std::string opt_path, int Mute)
 		char* pkt;
 		e = read_command(&pkt, Mute);
 		if (Mute == 0) {std::cout << "read command 7 status = " << e << std::endl;}
+
+
 		if(false){
 		char tmp[2];
 		tmp[0] = patFile_to_pageID[i] & 0x00ff;
@@ -770,7 +772,8 @@ void Set::DeleteCurrentSet()
 	for (int i=0; i < Ngemfibers; i++)
         {
                 std::stringstream ss;
-                ss << default_dir << Prefix << "_GEM"<<i<< "_tmb" << Tmb_type << ".pat";
+                //ss << default_dir << Prefix << "_GEM"<<i<< "_tmb" << Tmb_type << ".pat";
+								ss << default_dir << Prefix << "_GEM" << i << ".pat";
                 //pat_files.push_back( fopen(ss.str().c_str(), "r") );
                 if(std::remove(ss.str().c_str())) std::cout << "Deleting File: " << ss.str() << std::endl;
         }

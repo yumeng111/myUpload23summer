@@ -597,9 +597,9 @@ namespace emu {
   ecc_trigger_path_more_than_two_errors_counter_index_ = ECC_TRIGGER_PATH_MORE_THAN_TWO_ERRORS_COUNTER_INDEX;
   alct_raw_hits_readout_counter_index_                 = ALCT_RAW_HITS_READOUT_COUNTER_INDEX                ;
   clct_pretrigger_counter_index_                       = CLCT_PRETRIGGER_COUNTER_INDEX                      ;
-  lct_sent_to_mpc_counter_index_                       = LCT_SENT_TO_MPC_COUNTER_INDEX                      ; 
+  lct_sent_to_mpc_counter_index_                       = LCT_SENT_TO_MPC_COUNTER_INDEX                      ;
   lct_accepted_by_mpc_counter_index_                   = LCT_ACCEPTED_BY_MPC_COUNTER_INDEX                  ;
-  l1a_in_tmb_window_counter_index_                     = L1A_IN_TMB_WINDOW_COUNTER_INDEX                    ; 
+  l1a_in_tmb_window_counter_index_                     = L1A_IN_TMB_WINDOW_COUNTER_INDEX                    ;
   //
   //
   tmb_configuration_status_  = -1;
@@ -607,13 +607,13 @@ namespace emu {
   jtag_state_machine_status_ = -1;
   ddd_state_machine_status_  = -1;
   raw_hits_header_status_    = -1;
-} 
+}
 
 const int TMB::MAX_GEM_FIBERS_ME11;
 
 TMB::~TMB() {
-  (*MyOutput_) << "destructing ALCTController" << std::endl; 
-  delete alctController_; 
+  (*MyOutput_) << "destructing ALCTController" << std::endl;
+  delete alctController_;
   delete rat_;
   (*MyOutput_) << "destructing TMB" << std::endl;
 }
@@ -632,7 +632,7 @@ int TMB::MPC0Accept(){
   //
   tmb_vme(VME_READ,tmb_trig_adr,sndbuf,rcvbuf,NOW);
   //
-  return (rcvbuf[0]&0x2)>>1; 
+  return (rcvbuf[0]&0x2)>>1;
   //
 }
 //
@@ -640,7 +640,7 @@ int TMB::MPC1Accept(){
   //
   tmb_vme(VME_READ,tmb_trig_adr,sndbuf,rcvbuf,NOW);
   //
-  return (rcvbuf[0]&0x4)>>2; 
+  return (rcvbuf[0]&0x4)>>2;
   //
 }
 //
@@ -648,10 +648,10 @@ void TMB::DumpRegister(int reg){
   //
   int value = ReadRegister(reg);
   //
-  (*MyOutput_) << " TMB.reg=" 
-	       << std::hex << reg << " " 
-	       << (rcvbuf[0]&0xff) << " " 
-	       << (rcvbuf[1]&0xff) << " " 
+  (*MyOutput_) << " TMB.reg="
+	       << std::hex << reg << " "
+	       << (rcvbuf[0]&0xff) << " "
+	       << (rcvbuf[1]&0xff) << " "
 	       << (value&0xffff) << std::endl ;
   //
 }
@@ -683,7 +683,7 @@ void TMB::ReadTmbIdCodes() {
   //           [6] = TMB User PROM 1 IDCode
   //
   int device;
-  for (device=0; device<7; device++) 
+  for (device=0; device<7; device++)
     tmb_idcode_[device] = 0;
   //
   device = 0;
@@ -714,7 +714,7 @@ void TMB::ReadTmbIdCodes() {
   new_scan(1, (char *)&temp, 32, (char *)&data, 1);
   tmb_idcode_[device]=data;
   device += 5;
-  tmb_set_boot_reg(0);  
+  tmb_set_boot_reg(0);
  }
   //
   short unsigned int BootReg;
@@ -736,7 +736,7 @@ void TMB::ReadTmbIdCodes() {
   return;
 }
 //
-int TMB::ConvertToHexAscii(int value_to_convert) { 
+int TMB::ConvertToHexAscii(int value_to_convert) {
   //
   // convert the argument to its "hex-ascii" value:  i.e.  2007 -> 0x2007
   //
@@ -832,23 +832,23 @@ int TMB::FirmwareRevCode(){
   tmb_vme(VME_READ,vme_idreg3_adr,sndbuf,rcvbuf,NOW);
   //
   int data = (((rcvbuf[0]&0xff)<<8) | (rcvbuf[1]&0xff)) ;
-  //std::cout <<"Firwmare revcode from 0x"<< std::hex << data << std::endl; 
+  //std::cout <<"Firwmare revcode from 0x"<< std::hex << data << std::endl;
   bool run2_legacy_revcode = run2_revcode_enable_ && !run3_daq_dataformat_enable_;
   bool new_convention_run3 =  (data & 0x6fff) > 0; //rev code new convention since run3
 //===================================================================================
 //run3 convention for firmware revision code
 //  [12:09]; 0=TMB standard, 1=OTMB Standard, 2=CCLUT, 3=GEM+CCLUT, 4=TMBRun3
-//  [08:05];5 bits = Major Version (major features which breaks compatibility, requires changes to other board firmware) 
+//  [08:05];5 bits = Major Version (major features which breaks compatibility, requires changes to other board firmware)
 //  [04:00];6 bits = Minor version  (minor features, internal fixes, bug fixes, etc).
 //===================================================================================
   //if (read_cclut_enable_ && !run2_legacy_revcode){
   if (new_convention_run3){
-    read_tmb_firmware_revcode_ = data & 0x1fff;//13 bits 
+    read_tmb_firmware_revcode_ = data & 0x1fff;//13 bits
     read_tmb_firmware_format_version_       = (read_tmb_firmware_revcode_ >> 9) & 0xf;
     read_tmb_firmware_major_version_        = (read_tmb_firmware_revcode_ >> 5) & 0xf;
     read_tmb_firmware_minor_version_        = (read_tmb_firmware_revcode_     ) & 0x1f;
   }
-  else 
+  else
 	  read_tmb_firmware_revcode_ = (data>>12) & 0x000f ;
   //
   return data;
@@ -973,7 +973,7 @@ void TMB::configure(int c) {
   //
   // c = 2 = do not write configuration to userPROM
   //
-  if (c == 2) { 
+  if (c == 2) {
     SetTMBFillVmeWriteVecs(false);     //do not write configuration to user PROM
   } else {
     SetTMBFillVmeWriteVecs(true);     //write configuration to user PROM
@@ -997,8 +997,8 @@ void TMB::configure(int c) {
     //
   }
   //
-  // When configuring with VME, the 3d3444 state machine needs to be 
-  // started and stopped appropriately in order for the delay values 
+  // When configuring with VME, the 3d3444 state machine needs to be
+  // started and stopped appropriately in order for the delay values
   // to be set correctly:
   if ( !GetTMBFillVmeWriteVecs() ) {
     WriteRegister(vme_dddsm_adr,0x20);
@@ -1007,23 +1007,23 @@ void TMB::configure(int c) {
   }
   //
   // The flag to fill the VME register vector is set => program the user PROM:
-  if ( GetTMBFillVmeWriteVecs() )      
+  if ( GetTMBFillVmeWriteVecs() )
     CheckAndProgramProm(ChipLocationTmbUserPromTMB);
   //
   SetTMBFillVmeWriteVecs(false);    //give VME back to the user (default)
   //
   if (this->slot()<22)           //broadcast read will not work, so only check configuration if it is a normal VME slot
-    CheckTMBConfiguration();  
+    CheckTMBConfiguration();
   //
 }
 //
-void TMB::SetTrgmode_() {  
+void TMB::SetTrgmode_() {
   //
   // To be deprecated.  Replaced by explicitly setting each pretrigger/trigger bit
   //
-  // set the combinations of bits for 
+  // set the combinations of bits for
   // register 0x68 = ADR_SEQ_TRIG_EN  and
-  // register 0x86 = ADR_TMB_TRIG    
+  // register 0x86 = ADR_TMB_TRIG
   // according to the setting of trgmode_
   //
   // clear the settings on the pattern trigger enable (0x68):
@@ -1039,31 +1039,31 @@ void TMB::SetTrgmode_() {
   // clear the settings on 0x86:
   tmb_allow_clct_    = 0;
   tmb_allow_alct_    = 0;
-  tmb_allow_match_   = 1;  //always set the TMB to allow matched 
+  tmb_allow_match_   = 1;  //always set the TMB to allow matched
   //
-  if ( trgmode_ == CLCT_trigger ) { 
+  if ( trgmode_ == CLCT_trigger ) {
     //
     clct_pat_trig_en_ = 1;
     tmb_allow_clct_ = 1;
     //
-  } else if ( trgmode_ == ALCT_trigger ) { 
+  } else if ( trgmode_ == ALCT_trigger ) {
     //
     alct_pat_trig_en_ = 1;
     tmb_allow_alct_ = 1;
     //
-  } else if ( trgmode_ == Scintillator_trigger ) { 
+  } else if ( trgmode_ == Scintillator_trigger ) {
     //
     clct_ext_trig_en_ = 1;
     //
-  } else if ( trgmode_ == DMB_trigger ) { 
+  } else if ( trgmode_ == DMB_trigger ) {
     //
     dmb_ext_trig_en_ = 1;
     //
-  } else if ( trgmode_ == ALCT_CLCT_coincidence_trigger ) { 
+  } else if ( trgmode_ == ALCT_CLCT_coincidence_trigger ) {
     //
     match_pat_trig_en_ = 1;
     //
-  } 
+  }
   //
   return;
 }
@@ -1089,7 +1089,7 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
     //
     ramAdd = (evtId<<8);
     //
-    unsigned short vpf      = 1;         
+    unsigned short vpf      = 1;
     unsigned short sync_err = 0;
     unsigned short qual1    = 0;
     unsigned short qual2;
@@ -1102,47 +1102,47 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
       //
       qual1 = 0;
       while (qual1 < 1)                // ensure that one random muon has quality > 0
-	qual1= rand()%16;              
-      unsigned short clct   = rand()%16; 
+	qual1= rand()%16;
+      unsigned short clct   = rand()%16;
       unsigned short wire   = rand()%128;
       unsigned short bxn0   = rand()%2;
       unsigned short lr     = rand()%2;
       unsigned short halfSt = rand()%256;
-     //Run3 data format 
+     //Run3 data format
       unsigned short strip_qb = rand()%2;
       unsigned short strip_eb = rand()%2;
       unsigned short bend     = rand()%16;
       //
-      frame1 =  run3_trig_dataformat_enable_ ? 
+      frame1 =  run3_trig_dataformat_enable_ ?
         (
-	((vpf   &  0x1) << 15) + 
+	((vpf   &  0x1) << 15) +
         ((strip_qb & 0x1) << 14) +
-	((qual1 &  0x7) << 11) + 
-	((bend  &  0xf) <<  7) + 
+	((qual1 &  0x7) << 11) +
+	((bend  &  0xf) <<  7) +
 	((wire  & 0x7f) <<  0)) :
-        ( 
-	((vpf   &  0x1) << 15) + 
-	((qual1 &  0xf) << 11) + 
-	((clct  &  0xf) <<  7) + 
+        (
+	((vpf   &  0x1) << 15) +
+	((qual1 &  0xf) << 11) +
+	((clct  &  0xf) <<  7) +
 	((wire  & 0x7f) <<  0)
         );
       //
-      frame2 = run3_trig_dataformat_enable_ ? 
+      frame2 = run3_trig_dataformat_enable_ ?
         (
         ((bend     & 0xf)  << 12) +
 	((BC0      &  0x1) << 11) +
 	((bxn0     &  0x1) << 10) +
 	((strip_eb &  0x1) <<  9) +
-	((lr       &  0x1) <<  8) + 
+	((lr       &  0x1) <<  8) +
 	((halfSt   & 0xff) <<  0)) :
         (
 	((csc_id   &  0xf) << 12) +
 	((BC0      &  0x1) << 11) +
 	((bxn0     &  0x1) << 10) +
 	((sync_err &  0x1) <<  9) +
-	((lr       &  0x1) <<  8) + 
+	((lr       &  0x1) <<  8) +
 	((halfSt   & 0xff) <<  0)
-         );    
+         );
       //
     } else {
       // insert the csc_id specific for this TMB (otherwise the user has to specify...)
@@ -1193,33 +1193,33 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
       //
       qual2 = qual1;
       //while (qual2 >= qual1)           // ensure that quality for LCT1 is always less than quality for LCT0
-      //   qual2 = rand()%16;            
-      unsigned short clct   = rand()%16; 
+      //   qual2 = rand()%16;
+      unsigned short clct   = rand()%16;
       unsigned short wire   = rand()%128;
       unsigned short bxn0   = rand()%2;
       unsigned short lr     = rand()%2;
       unsigned short halfSt = rand()%256;
-      //run3 data format 
+      //run3 data format
       unsigned short strip_qb = rand()%2;
       unsigned short strip_eb = rand()%2;
       unsigned short bend     = rand()%16;
-      unsigned short hmt_bit23 = rand()%4; 
-      unsigned short hmt_bit0 = rand()%2; 
-      unsigned short hmt_bit1 = rand()%2; 
+      unsigned short hmt_bit23 = rand()%4;
+      unsigned short hmt_bit0 = rand()%2;
+      unsigned short hmt_bit1 = rand()%2;
       //
       frame1 = run3_trig_dataformat_enable_ ?
         (
-	((vpf      & 0x1)  << 15) + 
+	((vpf      & 0x1)  << 15) +
         ((strip_qb & 0x1)  << 14) +
-	((qual2    & 0x7)  << 11) + 
+	((qual2    & 0x7)  << 11) +
         ((hmt_bit1 & 0x1)  << 10) +
         ((hmt_bit23 & 0x3) <<  8) +
         ((run3_pid & 0x10) <<  3) +
         ((wire     & 0x7f) <<  0) )   :
         (
-	((vpf      &  0x1) << 15) + 
-	((qual2    &  0xf) << 11) + 
-	((clct     &  0xf) <<  7) + 
+	((vpf      &  0x1) << 15) +
+	((qual2    &  0xf) << 11) +
+	((clct     &  0xf) <<  7) +
 	((wire     & 0x7f) <<  0) ) ;
       //
       frame2 =  run3_trig_dataformat_enable_ ?
@@ -1228,7 +1228,7 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
 	((BC0      &  0x1) << 11) +
 	((hmt_bit0 &  0x1) << 10) +
 	((strip_eb &  0x1) <<  9) +
-	((lr       &  0x1) <<  8) + 
+	((lr       &  0x1) <<  8) +
 	((halfSt   & 0xff) <<  0)
         ):
         (
@@ -1236,8 +1236,8 @@ void TMB::InjectMPCData(const int nEvents, const unsigned long lct0, const unsig
 	((BC0      &  0x1) << 11) +
 	((bxn0     &  0x1) << 10) +
 	((sync_err &  0x1) <<  9) +
-	((lr       &  0x1) <<  8) + 
-	((halfSt   & 0xff) <<  0));    
+	((lr       &  0x1) <<  8) +
+	((halfSt   & 0xff) <<  0));
       //
 
     } else {
@@ -1376,16 +1376,16 @@ void TMB::DataSendMPC(){
   (*MyOutput_) << "TMB: data sent to MPC..." << std::endl;
   //
   int mpc0frame0 = ReadRegister(mpc0_frame0_adr);
-  (*MyOutput_) << "LCT0 FRAME0 " << std::hex << mpc0frame0 << std::endl ; 
+  (*MyOutput_) << "LCT0 FRAME0 " << std::hex << mpc0frame0 << std::endl ;
   //
   int mpc0frame1 = ReadRegister(mpc0_frame1_adr);
-  (*MyOutput_) << "LCT0 FRAME1 " << std::hex << mpc0frame1 << std::endl ; 
+  (*MyOutput_) << "LCT0 FRAME1 " << std::hex << mpc0frame1 << std::endl ;
   //
   int mpc1frame0 = ReadRegister(mpc1_frame0_adr);
-  (*MyOutput_) << "LCT1 FRAME0 " << std::hex << mpc1frame0 << std::endl ; 
+  (*MyOutput_) << "LCT1 FRAME0 " << std::hex << mpc1frame0 << std::endl ;
   //
   int mpc1frame1 = ReadRegister(mpc1_frame1_adr);
-  (*MyOutput_) << "LCT1 FRAME1 " << std::hex << mpc1frame1 << std::dec << std::endl ; 
+  (*MyOutput_) << "LCT1 FRAME1 " << std::hex << mpc1frame1 << std::dec << std::endl ;
   //
   return;
 }
@@ -1467,7 +1467,7 @@ void TMB::PrintCLCT() {
   (*MyOutput_) << "CLCT0.Key HStrip = "   << std::dec << read_CLCT0_keyHalfStrip_ << std::endl;
   (*MyOutput_) << "CLCT0.BXN        = 0x" << std::hex << read_CLCT_BXN_           << std::endl;
   (*MyOutput_) << "CLCT0.sync err   = 0x" << std::hex << read_CLCT_sync_err_      << std::endl;
-  // CCLUT part 
+  // CCLUT part
   if (read_cclut_enable_ > 0){
    (*MyOutput_) << "CLCT0.CC         = 0x" << std::hex << read_clct0_comparatorcode_       << std::endl;
    //(*MyOutput_) << "CLCT0.CC_qlt     = 0x" << std::hex << read_clct0_cc_quality_   << std::endl;
@@ -1489,7 +1489,7 @@ void TMB::PrintCLCT() {
   (*MyOutput_) << "CLCT1.Key HStrip = "   << std::dec << read_CLCT1_keyHalfStrip_ << std::endl;
   (*MyOutput_) << "CLCT1.BXN        = 0x" << std::hex << read_CLCT_BXN_           << std::endl;
   (*MyOutput_) << "CLCT1.sync err   = 0x" << std::hex << read_CLCT_sync_err_      << std::dec << std::endl;
-  // CCLUT part 
+  // CCLUT part
   if (read_cclut_enable_ > 0){
    (*MyOutput_) << "CLCT1.CC         = 0x" << std::hex << read_clct1_comparatorcode_  << std::endl;
    //(*MyOutput_) << "CLCT1.CC_qlt     = 0x" << std::hex << read_clct1_cc_quality_   << std::endl;
@@ -1565,14 +1565,14 @@ void TMB::DecodeGEMHits(){
 
       //v2 gem trigger format {cnt, roll, padnumber}
       //cnt0-7, roll 0-7, padnumber 0-191
-      
+
       gemA_cluster_vpf_[icl]         = (gemA_cluster_[icl] & 0xff) <= 191;// vpf = padnumber(0-191)
       gemA_cluster_pad_[icl]         = (gemA_cluster_[icl] & 0x3f); //0-63, 6bits
       gemA_cluster_pad2_[icl]        = (gemA_cluster_[icl] & 0xff); //0-191, 8bits, pad number within one roll
       gemA_cluster_roll_[icl]        = ((gemA_cluster_[icl] >> 8) & 0x7);//0-7
       gemA_cluster_vfat_[icl]        = 7-gemA_cluster_roll_[icl] + ((gemA_cluster_[icl] & 0xd0) >> 3);//0-23
       gemA_cluster_size_[icl]        = gemA_cluster_vpf_[icl]==1 ? ((gemA_cluster_[icl]>>11) & 0x7) + 1 : 0;//starting from 1 for display, 1-8
-    
+
       gemB_cluster_vpf_[icl]         = (gemB_cluster_[icl] & 0xff) <= 191;// vpf = padnumber(0-191)
       gemB_cluster_pad_[icl]         = (gemB_cluster_[icl] & 0x3f); //0-63
       gemB_cluster_pad2_[icl]        = (gemB_cluster_[icl] & 0xff); //0-191, 8bits, pad number within one roll
@@ -1586,8 +1586,8 @@ void TMB::DecodeGEMHits(){
       gem_copad_roll_[icl]        = ((gem_copad_[icl] >> 8) & 0x7);
       gem_copad_vfat_[icl]        = 7-gem_copad_roll_[icl] + ((gem_copad_[icl] & 0xd0) >> 3);
       gem_copad_size_[icl]        =  gem_copad_vpf_[icl]==1 ? ((gem_copad_[icl]>>11) & 0x7) + 1 : 0;
-  }                                 
-                                    
+  }
+
   //
   return;
 }
@@ -1613,7 +1613,7 @@ void TMB::PrintGEMHits() {
   //
   return;
  }
-      
+
 
 //
 void TMB::DecodeMPCFrames(){
@@ -1647,7 +1647,7 @@ void TMB::PrintMPCFrames() {
   (*MyOutput_) << "MPC1 frame0 data                 = 0x" << std::hex << mpc1_frame0_data_ << std::endl;
   (*MyOutput_) << "     frame1 data                 = 0x" << std::hex << mpc1_frame1_data_ << std::endl;
   (*MyOutput_) << "----------------------"                                                                    << std::endl;
-  if (run3_trig_dataformat_enable_){ 
+  if (run3_trig_dataformat_enable_){
   (*MyOutput_) << "Run3 trigger data format"                                                                  << std::endl;
   (*MyOutput_) << "----------------------"                                                                    << std::endl;
   (*MyOutput_) << "MPC0 frame0.alct_first_key        =   "             << read_mpc0_run3frame0_alct_first_key_    << std::endl;
@@ -1780,7 +1780,7 @@ void TMB::PrintMPCFramesFromFIFO() {
   (*MyOutput_) << "MPC1 from FIFO frame0 data                  = 0x" << std::hex << mpc1_frame0_fifo_data_ << std::endl;
   (*MyOutput_) << "               frame1 data                  = 0x" << std::hex << mpc1_frame1_fifo_data_ << std::endl;
   (*MyOutput_) << "----------------------"                                                                                   << std::endl;
-  if (run3_trig_dataformat_enable_){ 
+  if (run3_trig_dataformat_enable_){
   (*MyOutput_) << "Run3 trigger data format: FIFO"                                                            << std::endl;
   (*MyOutput_) << "----------------------"                                                                    << std::endl;
   (*MyOutput_) << "MPC0 from FIFO frame0.alct_first_key        =   "             << read_mpc0_run3frame0_fifo_alct_first_key_    << std::endl;
@@ -2474,7 +2474,7 @@ void TMB::PrintCounters(int counter){
   if (counter<0)                  (*MyOutput_) << "---              Counters                             --" << std::endl;
   if (counter<0)                  (*MyOutput_) << "--------------------------------------------------------" << std::endl;
   if (counter<0) {
-    for (int i=0; i < GetMaxCounter(); i++) 
+    for (int i=0; i < GetMaxCounter(); i++)
       (*MyOutput_) << std::dec << std::setw(4) << i << CounterName(i)  << FinalCounter[i] <<std::endl ;
   }
   else { // print only a single counter
@@ -2504,7 +2504,7 @@ void TMB::PrintGemCounters(int counter){
 //
 std::string TMB::CounterName(int counter){
   //
-  // Note to TMB software developer:  When modifying the counters, do not forget to modify the 
+  // Note to TMB software developer:  When modifying the counters, do not forget to modify the
   // index tags in TMB_constants.h...
   //
   std::string name = "Not defined";
@@ -2788,7 +2788,7 @@ std::string TMB::GEMCounterName(int counter){
     else if (counter==117) name = "GEM: Special test: delay alct, dlyalct_gemB_match       ";
     else if (counter==118) name = "GEM: Special test: delay gemA, alct_dlygemA_match       ";
     else if (counter==119) name = "GEM: Special test: delay gemB, alct_dlygemB_match       ";
-    
+
   //
   return name;
 }
@@ -2845,18 +2845,18 @@ int * TMB::NewCounters(){
       read_later(cnt_rdata_adr);
       vme_delay(20);
     }
-  }   
+  }
 
   // CFEB BadBits registers: 0x122->0x142, total 17 words => 9 counters (32-bit)
-  for(unsigned short add=0x122; add<=0x142; add+=2) 
+  for(unsigned short add=0x122; add<=0x142; add+=2)
   {  read_later(add);
      vme_delay(20);
   }
   read_later(vme_dsn_adr); // adding one extra word to align the data at 32-bit
   //for 7DCFEB firmware
-  if( GetHardwareVersion() == 2){  
+  if( GetHardwareVersion() == 2){
     read_later(vme_dsn_adr); // adding one extra word to align the data at 32-bit; add another (7+1 words) 4 extra counters
-    for(unsigned short add=0x15c; add<=0x168; add+=2) 
+    for(unsigned short add=0x15c; add<=0x168; add+=2)
     {   read_later(add);
         vme_delay(20);
     }
@@ -3131,7 +3131,7 @@ void TMB::scope(int scp_arm,int scp_readout, int scp_channel) {
      SendOutput("Scope never triggered");
      //
      goto END;
-     
+
      //Read back embedded scope data
   TRIGGERED:
       printf("Scope triggered\n");
@@ -3143,7 +3143,7 @@ void TMB::scope(int scp_arm,int scp_readout, int scp_channel) {
 	    sndbuf[0] = (wr_data & 0xff00)>>8 ;
 	    sndbuf[1] = wr_data & 0x00ff ;
 	    tmb_vme(VME_WRITE,adr,sndbuf,rcvbuf,NOW);
-	    
+
 	    adr = scp_rdata_adr ;
 	    tmb_vme(VME_READ,adr,sndbuf,rcvbuf,NOW);              //read scope data at this address
 	    rd_data = ((rcvbuf[0]&0xff) << 8) | (rcvbuf[1]&0xff) ;
@@ -3152,7 +3152,7 @@ void TMB::scope(int scp_arm,int scp_readout, int scp_channel) {
 	  }
 	}
 	goto DISPLAY;
-	
+
 	//for(itbin=0;itbin<256;itbin++) {               //loop over ram addresses
 	//for(iram=0;iram<4;iram++) {
 	//  printf(" 2 %3d %1d %4x %4x \n", itbin,iram,scope_ram[itbin][iram] ) ;
@@ -3196,7 +3196,7 @@ void TMB::scope(int scp_arm,int scp_readout, int scp_channel) {
     //
     for(itbin=0;itbin<256;itbin++) {                      //256 time bins per channel
       //
-      ibit = ((scope_ram[itbin][iram]) >> (ich%16) ) & 1; //logic levels vs tbin for this chan	      
+      ibit = ((scope_ram[itbin][iram]) >> (ich%16) ) & 1; //logic levels vs tbin for this chan
       if(ibit == 0) scope_ch[itbin] = "_";       //display symbol for logic 0
       if(ibit == 1) scope_ch[itbin] = "-";       //display symbol for logic 1
       (*MyOutput_) << scope_ch[itbin];
@@ -3231,7 +3231,7 @@ void TMB::scope(int scp_arm,int scp_readout, int scp_channel) {
       //
       if (ich == 65) bxn[itbin]=ibit ;
       if (ich >= 66 && ich <= 76) bxn[itbin]=bxn[itbin] | (ibit<<(ich-65)) ;
-      // 
+      //
       if (ich == 80) dmb[itbin] = ibit ;
       if (ich >= 81 && ich <= 95) dmb[itbin]=dmb[itbin] | (ibit<<(ich-80)) ;
       //
@@ -3381,7 +3381,7 @@ void TMB::scope(int scp_arm,int scp_readout, int scp_channel) {
         (*MyOutput_) << ((rpc1_bxn[itbin]) & 0xf ) ;
       }
     }
-    //      
+    //
     if (ich == 104 ) {
       (*MyOutput_) << std::endl;
       (*MyOutput_) << scope_tag[ich] ;
@@ -3432,7 +3432,7 @@ void TMB::scope(int scp_arm,int scp_readout, int scp_channel) {
     //
     (*MyOutput_) << std::endl;
     //
-  }    
+  }
   // JMT close the file so it actually gets all flushed
   //if (pfile) fclose(pfile);
   //
@@ -3451,10 +3451,10 @@ std::bitset<22> TMB::calCRC22(const std::vector< std::bitset<16> >& datain){
 }
 
 
-std::bitset<22> TMB::nextCRC22_D16(const std::bitset<16>& D, 
+std::bitset<22> TMB::nextCRC22_D16(const std::bitset<16>& D,
 				       const std::bitset<22>& C){
   std::bitset<22> NewCRC;
-  
+
   NewCRC[ 0] = D[ 0] ^ C[ 6];
   NewCRC[ 1] = D[ 1] ^ D[ 0] ^ C[ 6] ^ C[ 7];
   NewCRC[ 2] = D[ 2] ^ D[ 1] ^ C[ 7] ^ C[ 8];
@@ -3483,306 +3483,306 @@ std::bitset<22> TMB::nextCRC22_D16(const std::bitset<16>& D,
 //
 int TMB::TestArray(){
   (*MyOutput_) << "In TestArray" << std::endl;
-  int data[] = {      
-    0x6b0c 
-    ,0x13e7 
-    ,0x1291 
-    ,0x135f 
-    ,0x5ba 
-    ,0x13 
-    ,0x3ec 
-    ,0x12e9 
-    ,0x402d 
-    ,0x157 
-    ,0x515 
-    ,0x29d1 
-    ,0x5125 
-    ,0x1660 
-    ,0x3aa5 
-    ,0x1700 
-    ,0x243f 
-    ,0x5d 
-    ,0x21 
-    ,0xbb9 
-    ,0x0 
-    ,0x53 
-    ,0xcff 
-    ,0x23 
-    ,0x24 
-    ,0x38ca 
-    ,0x6e0b 
-    ,0x0 
-    ,0x0 
-    ,0x0 
-    ,0x0 
-    ,0x0 
-    ,0x0 
-    ,0x100 
-    ,0x100 
-    ,0x100 
-    ,0x100 
-    ,0x100 
-    ,0x100 
-    ,0x200 
-    ,0x200 
-    ,0x200 
-    ,0x200 
-    ,0x200 
-    ,0x200 
-    ,0x300 
-    ,0x300 
-    ,0x300 
-    ,0x300 
-    ,0x300 
-    ,0x300 
-    ,0x400 
-    ,0x400 
-    ,0x400 
-    ,0x400 
-    ,0x400 
-    ,0x400 
-    ,0x500 
-    ,0x500 
-    ,0x500 
-    ,0x500 
-    ,0x500 
-    ,0x500 
-    ,0x600 
-    ,0x600 
-    ,0x600 
-    ,0x600 
-    ,0x600 
-    ,0x600 
-    ,0x1000 
-    ,0x1000 
-    ,0x1000 
-    ,0x1000 
-    ,0x1000 
-    ,0x1000 
-    ,0x1100 
-    ,0x1100 
-    ,0x1100 
-    ,0x1100 
-    ,0x1100 
-    ,0x1100 
-    ,0x1200 
-    ,0x1200 
-    ,0x1200 
-    ,0x1200 
-    ,0x1200 
-    ,0x1200 
-    ,0x1300 
-    ,0x1300 
-    ,0x1300 
-    ,0x1300 
-    ,0x1300 
-    ,0x1300 
-    ,0x1400 
-    ,0x1400 
-    ,0x1400 
-    ,0x1400 
-    ,0x1400 
-    ,0x1400 
-    ,0x1500 
-    ,0x1500 
-    ,0x1500 
-    ,0x1500 
-    ,0x1500 
-    ,0x1500 
-    ,0x1600 
-    ,0x1600 
-    ,0x1600 
-    ,0x1600 
-    ,0x1600 
-    ,0x1600 
-    ,0x2000 
-    ,0x2000 
-    ,0x2000 
-    ,0x2000 
-    ,0x2000 
-    ,0x2000 
-    ,0x2100 
-    ,0x2180 
-    ,0x2100 
-    ,0x2100 
-    ,0x2100 
-    ,0x2100 
-    ,0x2280 
-    ,0x2280 
-    ,0x2280 
-    ,0x2200 
-    ,0x2200 
-    ,0x2200 
-    ,0x2300 
-    ,0x2300 
-    ,0x2380 
-    ,0x2300 
-    ,0x2300 
-    ,0x2300 
-    ,0x2400 
-    ,0x2400 
-    ,0x2400 
-    ,0x2400 
-    ,0x2400 
-    ,0x2400 
-    ,0x2500 
-    ,0x2500 
-    ,0x2500 
-    ,0x2500 
-    ,0x2500 
-    ,0x2500 
-    ,0x2600 
-    ,0x2600 
-    ,0x2600 
-    ,0x2600 
-    ,0x2600 
-    ,0x2600 
-    ,0x3000 
-    ,0x3000 
-    ,0x3000 
-    ,0x3000 
-    ,0x3000 
-    ,0x3000 
-    ,0x3100 
-    ,0x3100 
-    ,0x3100 
-    ,0x3101 
-    ,0x3100 
-    ,0x3100 
-    ,0x3200 
-    ,0x3200 
-    ,0x3200 
-    ,0x3200 
-    ,0x3200 
-    ,0x3200 
-    ,0x3300 
-    ,0x3300 
-    ,0x3300 
-    ,0x3301 
-    ,0x3300 
-    ,0x3302 
-    ,0x3400 
-    ,0x3400 
-    ,0x3400 
-    ,0x3400 
-    ,0x3401 
-    ,0x3400 
-    ,0x3500 
-    ,0x3500 
-    ,0x3500 
-    ,0x3500 
-    ,0x3500 
-    ,0x3500 
-    ,0x3600 
-    ,0x3600 
-    ,0x3600 
-    ,0x3600 
-    ,0x3601 
-    ,0x3600 
-    ,0x4000 
-    ,0x4000 
-    ,0x4000 
-    ,0x4000 
-    ,0x4000 
-    ,0x4000 
-    ,0x4100 
-    ,0x4100 
-    ,0x4100 
-    ,0x4100 
-    ,0x4100 
-    ,0x4100 
-    ,0x4200 
-    ,0x4200 
-    ,0x4200 
-    ,0x4200 
-    ,0x4200 
-    ,0x4200 
-    ,0x4300 
-    ,0x4300 
-    ,0x4300 
-    ,0x4300 
-    ,0x4300 
-    ,0x4300 
-    ,0x4400 
-    ,0x4400 
-    ,0x4400 
-    ,0x4400 
-    ,0x4400 
-    ,0x4400 
-    ,0x4500 
-    ,0x4500 
-    ,0x4500 
-    ,0x4500 
-    ,0x4500 
-    ,0x4500 
-    ,0x4600 
-    ,0x4600 
-    ,0x4600 
-    ,0x4600 
-    ,0x4600 
-    ,0x4600 
-    ,0x6b04 
-    ,0xff 
-    ,0xf7 
-    ,0x1ff 
-    ,0xf7 
-    ,0x2ff 
-    ,0xf7 
-    ,0x3ff 
-    ,0xf7 
-    ,0x4ff 
-    ,0xf7 
-    ,0x5ff 
-    ,0xf7 
-    ,0x6ff 
-    ,0xf7 
-    ,0x10ff 
-    ,0x17ff 
-    ,0x11ff 
-    ,0x17ff 
-    ,0x12ff 
-    ,0x17ff 
-    ,0x13ff 
-    ,0x17ff 
-    ,0x14ff 
-    ,0x17ff 
-    ,0x15ff 
-    ,0x17ff 
-    ,0x16ff 
-    ,0x17ff 
-    ,0x20ff 
-    ,0x20f7 
-    ,0x21ff 
-    ,0x20f7 
-    ,0x22ff 
-    ,0x20f7 
-    ,0x23ff 
-    ,0x20f7 
-    ,0x24ff 
-    ,0x20f7 
-    ,0x25ff 
-    ,0x20f7 
-    ,0x26ff 
-    ,0x20f7 
-    ,0x30ff 
-    ,0x37ff 
-    ,0x31ff 
-    ,0x37ff 
-    ,0x32ff 
-    ,0x37ff 
-    ,0x33ff 
-    ,0x37ff 
-    ,0x34ff 
-    ,0x37ff 
-    ,0x35ff 
-    ,0x37ff 
-    ,0x36ff 
-    ,0x37ff 
-    ,0x6e04 
-    ,0x6e0c 
-    ,0xdf1a 
-    ,0xdb92 
-    ,0xde0f 
+  int data[] = {
+    0x6b0c
+    ,0x13e7
+    ,0x1291
+    ,0x135f
+    ,0x5ba
+    ,0x13
+    ,0x3ec
+    ,0x12e9
+    ,0x402d
+    ,0x157
+    ,0x515
+    ,0x29d1
+    ,0x5125
+    ,0x1660
+    ,0x3aa5
+    ,0x1700
+    ,0x243f
+    ,0x5d
+    ,0x21
+    ,0xbb9
+    ,0x0
+    ,0x53
+    ,0xcff
+    ,0x23
+    ,0x24
+    ,0x38ca
+    ,0x6e0b
+    ,0x0
+    ,0x0
+    ,0x0
+    ,0x0
+    ,0x0
+    ,0x0
+    ,0x100
+    ,0x100
+    ,0x100
+    ,0x100
+    ,0x100
+    ,0x100
+    ,0x200
+    ,0x200
+    ,0x200
+    ,0x200
+    ,0x200
+    ,0x200
+    ,0x300
+    ,0x300
+    ,0x300
+    ,0x300
+    ,0x300
+    ,0x300
+    ,0x400
+    ,0x400
+    ,0x400
+    ,0x400
+    ,0x400
+    ,0x400
+    ,0x500
+    ,0x500
+    ,0x500
+    ,0x500
+    ,0x500
+    ,0x500
+    ,0x600
+    ,0x600
+    ,0x600
+    ,0x600
+    ,0x600
+    ,0x600
+    ,0x1000
+    ,0x1000
+    ,0x1000
+    ,0x1000
+    ,0x1000
+    ,0x1000
+    ,0x1100
+    ,0x1100
+    ,0x1100
+    ,0x1100
+    ,0x1100
+    ,0x1100
+    ,0x1200
+    ,0x1200
+    ,0x1200
+    ,0x1200
+    ,0x1200
+    ,0x1200
+    ,0x1300
+    ,0x1300
+    ,0x1300
+    ,0x1300
+    ,0x1300
+    ,0x1300
+    ,0x1400
+    ,0x1400
+    ,0x1400
+    ,0x1400
+    ,0x1400
+    ,0x1400
+    ,0x1500
+    ,0x1500
+    ,0x1500
+    ,0x1500
+    ,0x1500
+    ,0x1500
+    ,0x1600
+    ,0x1600
+    ,0x1600
+    ,0x1600
+    ,0x1600
+    ,0x1600
+    ,0x2000
+    ,0x2000
+    ,0x2000
+    ,0x2000
+    ,0x2000
+    ,0x2000
+    ,0x2100
+    ,0x2180
+    ,0x2100
+    ,0x2100
+    ,0x2100
+    ,0x2100
+    ,0x2280
+    ,0x2280
+    ,0x2280
+    ,0x2200
+    ,0x2200
+    ,0x2200
+    ,0x2300
+    ,0x2300
+    ,0x2380
+    ,0x2300
+    ,0x2300
+    ,0x2300
+    ,0x2400
+    ,0x2400
+    ,0x2400
+    ,0x2400
+    ,0x2400
+    ,0x2400
+    ,0x2500
+    ,0x2500
+    ,0x2500
+    ,0x2500
+    ,0x2500
+    ,0x2500
+    ,0x2600
+    ,0x2600
+    ,0x2600
+    ,0x2600
+    ,0x2600
+    ,0x2600
+    ,0x3000
+    ,0x3000
+    ,0x3000
+    ,0x3000
+    ,0x3000
+    ,0x3000
+    ,0x3100
+    ,0x3100
+    ,0x3100
+    ,0x3101
+    ,0x3100
+    ,0x3100
+    ,0x3200
+    ,0x3200
+    ,0x3200
+    ,0x3200
+    ,0x3200
+    ,0x3200
+    ,0x3300
+    ,0x3300
+    ,0x3300
+    ,0x3301
+    ,0x3300
+    ,0x3302
+    ,0x3400
+    ,0x3400
+    ,0x3400
+    ,0x3400
+    ,0x3401
+    ,0x3400
+    ,0x3500
+    ,0x3500
+    ,0x3500
+    ,0x3500
+    ,0x3500
+    ,0x3500
+    ,0x3600
+    ,0x3600
+    ,0x3600
+    ,0x3600
+    ,0x3601
+    ,0x3600
+    ,0x4000
+    ,0x4000
+    ,0x4000
+    ,0x4000
+    ,0x4000
+    ,0x4000
+    ,0x4100
+    ,0x4100
+    ,0x4100
+    ,0x4100
+    ,0x4100
+    ,0x4100
+    ,0x4200
+    ,0x4200
+    ,0x4200
+    ,0x4200
+    ,0x4200
+    ,0x4200
+    ,0x4300
+    ,0x4300
+    ,0x4300
+    ,0x4300
+    ,0x4300
+    ,0x4300
+    ,0x4400
+    ,0x4400
+    ,0x4400
+    ,0x4400
+    ,0x4400
+    ,0x4400
+    ,0x4500
+    ,0x4500
+    ,0x4500
+    ,0x4500
+    ,0x4500
+    ,0x4500
+    ,0x4600
+    ,0x4600
+    ,0x4600
+    ,0x4600
+    ,0x4600
+    ,0x4600
+    ,0x6b04
+    ,0xff
+    ,0xf7
+    ,0x1ff
+    ,0xf7
+    ,0x2ff
+    ,0xf7
+    ,0x3ff
+    ,0xf7
+    ,0x4ff
+    ,0xf7
+    ,0x5ff
+    ,0xf7
+    ,0x6ff
+    ,0xf7
+    ,0x10ff
+    ,0x17ff
+    ,0x11ff
+    ,0x17ff
+    ,0x12ff
+    ,0x17ff
+    ,0x13ff
+    ,0x17ff
+    ,0x14ff
+    ,0x17ff
+    ,0x15ff
+    ,0x17ff
+    ,0x16ff
+    ,0x17ff
+    ,0x20ff
+    ,0x20f7
+    ,0x21ff
+    ,0x20f7
+    ,0x22ff
+    ,0x20f7
+    ,0x23ff
+    ,0x20f7
+    ,0x24ff
+    ,0x20f7
+    ,0x25ff
+    ,0x20f7
+    ,0x26ff
+    ,0x20f7
+    ,0x30ff
+    ,0x37ff
+    ,0x31ff
+    ,0x37ff
+    ,0x32ff
+    ,0x37ff
+    ,0x33ff
+    ,0x37ff
+    ,0x34ff
+    ,0x37ff
+    ,0x35ff
+    ,0x37ff
+    ,0x36ff
+    ,0x37ff
+    ,0x6e04
+    ,0x6e0c
+    ,0xdf1a
+    ,0xdb92
+    ,0xde0f
     ,-1
   };
   std::vector < std::bitset<16> > alct_data;
@@ -3946,7 +3946,7 @@ void TMB::EnableCLCTInputs(int CLCTInputs){
      unsigned value_to_write = (sndbuf[1]&0xff) | (sndbuf[0]&0xff)<<8;
      tmb_vme_new(VME_READ,dcfeb_inj_seq_trig_adr,value_to_write,rcvbuf,NOW);
      sndbuf[0] = (rcvbuf[0]&0xff);
-     sndbuf[1] = (rcvbuf[1]&0xfc) | CLCTInputs56 ; //why are the bit fields hardcoded?                                                                                                                                                                     
+     sndbuf[1] = (rcvbuf[1]&0xfc) | CLCTInputs56 ; //why are the bit fields hardcoded?
      value_to_write = (sndbuf[1]&0xff) | (sndbuf[0]&0xff)<<8;
      tmb_vme_new(VME_WRITE,dcfeb_inj_seq_trig_adr,value_to_write,rcvbuf,NOW);
    }
@@ -4018,7 +4018,7 @@ void TMB::TMBRawhits(int microseconds_between_data_reads){
     ::usleep(10000);
   }
   //
-  if (number_of_reads >= max_number_of_times) 
+  if (number_of_reads >= max_number_of_times)
     (*MyOutput_) << "TMB read " << std::dec << number_of_reads << " times with no data..." << std::endl;
   //
   return;
@@ -4063,7 +4063,7 @@ bool TMB::ReadTMBRawhits_(){
     //
     int rd_data = ReadRegister(dmb_wdcnt_adr);
     dmb_wordcount_   = rd_data & 0x0fff;
-    dmb_busy    = (rd_data>>14) & 0x1;  
+    dmb_busy    = (rd_data>>14) & 0x1;
     //
     //(*MyOutput_) << "Try to get TMB data through VME " << std::dec << number_of_tries << " times" << std::endl;
     //(*MyOutput_) << "DMB busy       = " << dmb_busy << std::endl;
@@ -4082,7 +4082,7 @@ bool TMB::ReadTMBRawhits_(){
     //Write RAM read address
     int address = (i & 0xFFFF);
     WriteRegister(dmb_ram_adr,address);
-    //    
+    //
     //Read RAM data
     int dmb_rdata = ReadRegister(dmb_rdata_adr);
     //
@@ -4124,7 +4124,7 @@ bool TMB::ReadTMBRawhits_(){
 }
 //
 void TMB::ALCTRawhits() {
-  //   
+  //
   bool read_ok = false;
   //
   int max_number_of_times = 10;  //prevent going into an infinite loop
@@ -4150,7 +4150,7 @@ void TMB::ALCTRawhits() {
     //    ::usleep(10000);
   }
   //
-  if (number_of_reads >= max_number_of_times) 
+  if (number_of_reads >= max_number_of_times)
     (*MyOutput_) << "TMB read ALCT " << std::dec << number_of_reads << " times with no data..." << std::endl;
   //
   return;
@@ -4207,21 +4207,21 @@ bool TMB::ReadALCTRawhits_() {
     //    if (debug_) (*MyOutput_) << "Register 0x3E -> Read=" << std::hex << data << std::endl;
     alct_rdata |= ( (GetReadAlctRawDataMostSignificantBits()&0x3) << 16 );
     //
-    (*MyOutput_) << "Adr=" << std::dec << std::setw(4) << i 
-		 << ", Data=0x" << std::hex 
-		 << ((alct_rdata>>16)&0xf) 
-		 << ((alct_rdata>>12)&0xf) 
-		 << ((alct_rdata>> 8)&0xf) 
-		 << ((alct_rdata>> 4)&0xf) 
+    (*MyOutput_) << "Adr=" << std::dec << std::setw(4) << i
+		 << ", Data=0x" << std::hex
+		 << ((alct_rdata>>16)&0xf)
+		 << ((alct_rdata>>12)&0xf)
+		 << ((alct_rdata>> 8)&0xf)
+		 << ((alct_rdata>> 4)&0xf)
 		 << ((alct_rdata>> 0)&0xf)
 		 << std::endl;
-    if (debug_) 
-      std::cout << "Adr=" << std::dec << std::setw(4) << i 
-		<< ", Data=" << std::hex 
-		<< ((alct_rdata>>16)&0xf) 
-		<< ((alct_rdata>>12)&0xf) 
-		<< ((alct_rdata>> 8)&0xf) 
-		<< ((alct_rdata>> 4)&0xf) 
+    if (debug_)
+      std::cout << "Adr=" << std::dec << std::setw(4) << i
+		<< ", Data=" << std::hex
+		<< ((alct_rdata>>16)&0xf)
+		<< ((alct_rdata>>12)&0xf)
+		<< ((alct_rdata>> 8)&0xf)
+		<< ((alct_rdata>> 4)&0xf)
 		<< ((alct_rdata>> 0)&0xf)
 		<< std::endl;
     //
@@ -4229,20 +4229,20 @@ bool TMB::ReadALCTRawhits_() {
   }
   //
   //  if ( alct_wdcnt > 0 ) {
-  //    
+  //
   //    printf("The size is %d\n",alct_data.size());
-  //	
+  //
   //    int CRC_end  = alct_data.size();
   //    int CRC_low  = (alct_data[CRC_end-4].to_ulong()) &0x7ff ;
   //    int CRC_high = (alct_data[CRC_end-3].to_ulong()) &0x7ff ;
   //    int CRCdata  = (CRC_high<<11) | CRC_low ;
-  //    
+  //
   //    int CRCcalc = TMBCRCcalc(alct_data) ;
-  //    
+  //
   //    printf(" CRC %x \n",CRCcalc);
   //    printf(" CRC in data stream %lx %lx %x \n",alct_data[CRC_end-4].to_ulong(),
   //	   alct_data[CRC_end-3].to_ulong(),CRCdata);
-  //	 
+  //
   //    if ( CRCcalc != CRCdata ) {
   //      printf("ALCT CRC doesn't agree \n");
   //    } else {
@@ -4301,8 +4301,8 @@ bool TMB::CheckAlctFIFOBusy(int number_of_checks_before_aborting) {
   int data = ReadRegister(alct_fifo_adr);
   if (debug_) std::cout << "CheckAlctFIFOBusy:  TMB register 0x3E = " << std::hex << data << std::endl;
   //
-  while ( GetReadAlctRawBusy() != 0 && 
-	  GetReadAlctRawDone() != 1 && 
+  while ( GetReadAlctRawBusy() != 0 &&
+	  GetReadAlctRawDone() != 1 &&
 	  number_of_checks < number_of_checks_before_aborting ){
     //
     if (debug_) std::cout << "TMB:  ALCT raw hits FIFO busy writing ALCT data... " << number_of_checks << " times" << std::endl;
@@ -4325,7 +4325,7 @@ bool TMB::CheckAlctFIFOBusy(int number_of_checks_before_aborting) {
 //
 void TMB::DecodeTMBRawHits_() {
   //
-  for (int word_count=0; word_count<dmb_wordcount_; word_count++) 
+  for (int word_count=0; word_count<dmb_wordcount_; word_count++)
     DecodeTMBRawHitWord_(word_count);
   //
   return;
@@ -4552,7 +4552,7 @@ void TMB::DecodeTMBRawHitWord_(int address) {
         //run3 DAQ format
 	h40_gem_csc_bend_enable_     = ExtractValueFromData(data , h40_gem_csc_bend_enable_lo_bit , h40_gem_csc_bend_enable_hi_bit);
     } else if (address == 41) {
-        //hmt 
+        //hmt
 	h41_run3_trig_df_    = ExtractValueFromData(data , h41_run3_trig_df_lo_bit     , h41_run3_trig_df_hi_bit);
 	h41_gem_enable_      = ExtractValueFromData(data , h41_gem_enable_lo_bit       , h41_gem_enable_hi_bit);
         h41_hmt_match_win_   = ExtractValueFromData(data , h41_hmt_match_win_lo_bit    , h41_hmt_match_win_hi_bit);
@@ -4692,7 +4692,7 @@ void TMB::PrintTMBRawHits() {
     (*MyOutput_) << " -> CLCT0 comparator code                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_clct0_cc_<<std::endl;
     (*MyOutput_) << " -> CLCT0 strip position 1/4 and 1/8 bits                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_clct0_key_bit10_<<std::endl;
     (*MyOutput_) << " -> HMT in-time hits counter,bit0                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_hmt_bit0_<<std::endl;
-  }else 
+  }else
     (*MyOutput_) << " -> CLCT pre-trigger counter                                = 0x" << std::hex << std::setfill('0') << std::setw(4) << h10_r_pretrig_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 11:" <<std::endl;
@@ -4726,7 +4726,7 @@ void TMB::PrintTMBRawHits() {
     (*MyOutput_) << " -> CLCT1 comparator code                                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_clct1_cc_<<std::endl;
     (*MyOutput_) << " -> CLCT1 strip position 1/4 and 1/8 bits                   = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_clct1_key_bit10_<<std::endl;
     (*MyOutput_) << " -> HMT in-time hits counter,bit1                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_hmt_bit1_<<std::endl;
-  }else 
+  }else
     (*MyOutput_) << " -> TMB trigger counter                                     = 0x" << std::hex << std::setfill('0') << std::setw(4) << h14_r_trig_counter_msbs_<<std::endl;
 
   (*MyOutput_) << "Header 15:" <<std::endl;
@@ -4773,7 +4773,7 @@ void TMB::PrintTMBRawHits() {
     (*MyOutput_) << " -> CLCT0 bend absolute value                               = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_clct0_bnd_value_<<std::endl;
     (*MyOutput_) << " -> CLCT0 bend direction,CCLUT                              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_clct0_bnd_lr_<<std::endl;
     (*MyOutput_) << " -> CLCT1 bend direction,CCLUT                              = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_clct1_bnd_lr_<<std::endl;
-  }else 
+  }else
     (*MyOutput_) << " -> CSC layers hit on layer trigger after drift             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h22_r_layers_hit_<<std::endl;
 
   (*MyOutput_) << "Header 23:" <<std::endl;
@@ -4820,7 +4820,7 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << " -> ALCT0 key wire group                                    = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct0_key_<<std::endl;
   if (run3_daq_enable_nogem){
     (*MyOutput_) << " -> CLCT1 bend absolute value, CCLUT                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_clct1_bnd_value_<<std::endl;
-  }else 
+  }else
     (*MyOutput_) << " -> ALCT active_feb_flag position in pretrig window         = 0x" << std::hex << std::setfill('0') << std::setw(4) << h28_r_alct_preClct_win_<<std::endl;
 
   (*MyOutput_) << "Header 29:" <<std::endl;
@@ -4835,7 +4835,7 @@ void TMB::PrintTMBRawHits() {
   (*MyOutput_) << "Header 30:" <<std::endl;
   if (run3_daq_enable_nogem){
     (*MyOutput_) << " -> HMT in-time hits counter[6:2]                           = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_hmt_bit6to2_<<std::endl;
-  }else 
+  }else
     (*MyOutput_) << " -> ALCT0/1 bxn                                             = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_r_alct_bxn_<<std::endl;
   (*MyOutput_) << " -> ALCT trigger path ECC error code                        = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_r_alct_ecc_err_<<std::endl;
   (*MyOutput_) << " -> CFEB[n] has at least 1 bad bit                          = 0x" << std::hex << std::setfill('0') << std::setw(4) << h30_cfeb_badbits_found_lsbs_<<std::endl;
@@ -5069,7 +5069,7 @@ int TMB::GetALCTWordCount(){
     std::cout << "..... aborting" << std::endl;
     return 0;
   }
-  //  
+  //
   ReadRegister(alct_fifo_adr);
   //
   return GetReadAlctRawWordCount();
@@ -5179,12 +5179,12 @@ void TMB::tmb_vme_new(char fcn, unsigned vme, unsigned short data, char *rcv, in
       OkTMBVmeWrite(vme)       &&    // Are you allowed to write to this register?
       fcn == VME_WRITE      ) {     // Are you performing a "write" command?
     //
-    //    std::cout << "CTL address, data = " << std::hex 
-    //    	      << vme                  << " " 
+    //    std::cout << "CTL address, data = " << std::hex
+    //    	      << vme                  << " "
     //    	      << (int)( (data>>12) & 0xf )
     //    	      << (int)( (data>> 8) & 0xf )
     //    	      << (int)( (data>> 4) & 0xf )
-    //    	      << (int)(  data      & 0xf ) 
+    //    	      << (int)(  data      & 0xf )
     //	      << std::endl;
     //
     tmb_write_vme_address_.push_back( vme );
@@ -5262,7 +5262,7 @@ int TMB::tmb_set_boot_reg(unsigned short int value) {
   //
   tmb_vme(VME_WRITE | VME_BOOT_REG, 0, sndbuf, rcvbuf, NOW );
   //
-  return 0;   
+  return 0;
 }
 //
 void TMB::UnjamFPGA() {
@@ -5301,51 +5301,51 @@ void TMB::UnjamFPGA() {
     }
     //
     data_word = chain_address | tms_up | tck_dn;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     data_word = chain_address | tms_up | tck_up;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     data_word = chain_address | tms_up | tck_dn;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     //
     data_word = chain_address | tms_up | tck_dn;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     data_word = chain_address | tms_up | tck_up;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     data_word = chain_address | tms_up | tck_dn;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     //
     data_word = chain_address | tms_up | tck_dn;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     data_word = chain_address | tms_up | tck_up;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     data_word = chain_address | tms_up | tck_dn;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     //
     data_word = chain_address | tms_up | tck_dn;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     data_word = chain_address | tms_up | tck_up;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     data_word = chain_address | tms_up | tck_dn;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     //
     data_word = chain_address | tms_up | tck_dn;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     data_word = chain_address | tms_up | tck_up;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     data_word = chain_address | tms_up | tck_dn;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     //
     data_word = chain_address | tms_dn | tck_dn;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     data_word = chain_address | tms_dn | tck_up;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     data_word = chain_address | tms_dn | tck_dn;
-    tmb_set_boot_reg(data_word);     
+    tmb_set_boot_reg(data_word);
     //
   }
   //
-  //give the JTAG chain back to the FPGA 
-  tmb_set_boot_reg(0);     
+  //give the JTAG chain back to the FPGA
+  tmb_set_boot_reg(0);
   //
   return;
 }
@@ -5383,52 +5383,52 @@ void TMB::UnjamFPGAMini() {
   int chain_address = tmb_mezz_chain;
   //
   data_word = chain_address | tms_up | tck_dn;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   data_word = chain_address | tms_up | tck_up;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   data_word = chain_address | tms_up | tck_dn;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   //
   data_word = chain_address | tms_up | tck_dn;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   data_word = chain_address | tms_up | tck_up;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   data_word = chain_address | tms_up | tck_dn;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   //
   data_word = chain_address | tms_up | tck_dn;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   data_word = chain_address | tms_up | tck_up;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   data_word = chain_address | tms_up | tck_dn;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   //
   data_word = chain_address | tms_up | tck_dn;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   data_word = chain_address | tms_up | tck_up;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   data_word = chain_address | tms_up | tck_dn;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   //
   data_word = chain_address | tms_up | tck_dn;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   data_word = chain_address | tms_up | tck_up;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   data_word = chain_address | tms_up | tck_dn;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   //
   data_word = chain_address | tms_dn | tck_dn;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   data_word = chain_address | tms_dn | tck_up;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   data_word = chain_address | tms_dn | tck_dn;
-  tmb_set_boot_reg(data_word);     
+  tmb_set_boot_reg(data_word);
   //
   // read TMB boot register
   tmb_get_boot_reg(&bootRegValue);
   std::cout << "Boot register value after unjam but before clearing it: 0x" << std::hex << bootRegValue << std::dec << std::endl;
-  //give the JTAG chain back to the FPGA 
-  tmb_set_boot_reg(0);     
+  //give the JTAG chain back to the FPGA
+  tmb_set_boot_reg(0);
   // read TMB boot register
   tmb_get_boot_reg(&bootRegValue);
   std::cout << "Boot register value after the unjam and after clearing it: 0x" << std::hex << bootRegValue << std::dec << std::endl;
@@ -5468,7 +5468,7 @@ int TMB::tmb_enable_alct_hard_reset(int flag_enable) {
   tmb_get_boot_reg(&value);
   if(flag_enable>0)
     { value |= TMB_ENABLE_ALCT_RESET;}
-  else 
+  else
     { value &= ~TMB_ENABLE_ALCT_RESET & 0xffff; }
   tmb_set_boot_reg(value);
   return 0;
@@ -5478,10 +5478,10 @@ int TMB::tmb_enable_vme_commands(int flag_enable) {
   //
   unsigned short int value = 0;
   tmb_get_boot_reg(&value);
-  if(flag_enable>0) 
+  if(flag_enable>0)
     { value |= TMB_ENABLE_VME;}
   else
-    { value &= ~TMB_ENABLE_VME & 0xffff;} 
+    { value &= ~TMB_ENABLE_VME & 0xffff;}
   tmb_set_boot_reg(value);
   return 0;
 }
@@ -5490,11 +5490,11 @@ std::ostream & operator<<(std::ostream & os, TMB & tmb) {
   //
   os << std::dec << "TMB: crate " << tmb.theCrate_
      << " slot " << tmb.theSlot << std::endl
-     << std::hex 
-     << "  cfeb delays (hex) " << tmb.cfeb0_tof_delay_ << " " 
-     << tmb.cfeb1_tof_delay_ << " " << tmb.cfeb2_tof_delay_ << " " 
+     << std::hex
+     << "  cfeb delays (hex) " << tmb.cfeb0_tof_delay_ << " "
+     << tmb.cfeb1_tof_delay_ << " " << tmb.cfeb2_tof_delay_ << " "
      << tmb.cfeb3_tof_delay_ << " " << tmb.cfeb4_tof_delay_ << std::endl
-     << " rx, tx clock delays " << tmb.alct_rx_clock_delay_ 
+     << " rx, tx clock delays " << tmb.alct_rx_clock_delay_
      << " " << tmb.alct_tx_clock_delay_ << std::endl
      << "l1a window size " << tmb.l1a_window_size_ << std::endl
      << "l1a delay " << tmb.l1adelay_ << std::endl
@@ -5577,7 +5577,7 @@ void TMB::disableAllClocks(){
   /// Disable all clocks to cfeb and alct. Should be used when updating the ALCT firmware
   //
   // Reading in broadcast mode does not work.  Comment the next few lines out...
-  //  tmb_vme(VME_READ, vme_step_adr,sndbuf,rcvbuf,NOW);  
+  //  tmb_vme(VME_READ, vme_step_adr,sndbuf,rcvbuf,NOW);
   //  sndbuf[0]=rcvbuf[0] & 0x1f;
   //  sndbuf[1]=rcvbuf[1] & 0xf8;
   sndbuf[0]= 0x18;
@@ -5589,7 +5589,7 @@ void TMB::enableAllClocks(){
   /// Enable all clocks to cfeb and alct. Should be used after updating the ALCT firmware to get the TMB back in default mode.
   //
   // Reading in broadcast mode does not work.  Comment the next few lines out...
-  //  tmb_vme(VME_READ, vme_step_adr,sndbuf,rcvbuf,NOW);   
+  //  tmb_vme(VME_READ, vme_step_adr,sndbuf,rcvbuf,NOW);
   //  sndbuf[0]=rcvbuf[0] | 0xe0;
   //  sndbuf[1]=rcvbuf[1] | 0x07;
   sndbuf[0] = 0x1f;
@@ -5630,7 +5630,7 @@ void TMB::TriggerTestInjectALCT(){
   //
   // Clear previous inject
   ClearALCTInjector();
-  //  
+  //
   // Fire ALCT injector
   FireALCTInjector();
   //
@@ -5691,13 +5691,13 @@ void TMB::TriggerTestInjectCLCT(){
   //
   // Clear previous CLCT inject
   ClearCLCTInjector();
-  //  
+  //
   // Fire CLCT injector
   FireCLCTInjector();
   //
   // Clear previous inject
   ClearCLCTInjector();
-  //  
+  //
   // Check scintillator veto is set
   tmb_vme(VME_READ, seqmod_adr, sndbuf,rcvbuf,NOW);
   int scint_veto = ((rcvbuf[0]&0xff)>>5&0x1);
@@ -5739,20 +5739,20 @@ int TMB::tmb_read_delays(int device) {
   //        = 12 = RPC 0 clock
   //        = 13 = RPC 1 clock
 
-  if (device==0) data = (ReadRegister(vme_ddd1_adr)>>12) & 0xf; 
-  if (device==1) data = (ReadRegister(vme_ddd2_adr)>> 0) & 0xf; 
-  if (device==2) data = (ReadRegister(vme_ddd2_adr)>> 4) & 0xf; 
-  if (device==3) data = (ReadRegister(vme_ddd2_adr)>> 8) & 0xf; 
-  if (device==4) data = (ReadRegister(vme_ddd2_adr)>>12) & 0xf; 
-  if (device==5) data = (ReadRegister(vme_ddd0_adr)>> 4) & 0xf; 
-  if (device==6) data = (ReadRegister(vme_ddd0_adr)>> 0) & 0xf; 
-  if (device==7) data = (ReadRegister(vme_ddd0_adr)>> 8) & 0xf; 
-  if (device==8) data = (ReadRegister(vme_ddd0_adr)>>12) & 0xf; 
-  if (device==9) data = (ReadRegister(vme_ddd1_adr)>> 0) & 0xf; 
-  if (device==10) data =(ReadRegister(vme_ddd1_adr)>> 4) & 0xf; 
-  if (device==11) data =(ReadRegister(vme_ddd1_adr)>> 8) & 0xf; 
-  if (device==12) data =(ReadRegister(rat_3d_delays_adr)>> 0) & 0xf; 
-  if (device==13) data =(ReadRegister(rat_3d_delays_adr)>> 4) & 0xf; 
+  if (device==0) data = (ReadRegister(vme_ddd1_adr)>>12) & 0xf;
+  if (device==1) data = (ReadRegister(vme_ddd2_adr)>> 0) & 0xf;
+  if (device==2) data = (ReadRegister(vme_ddd2_adr)>> 4) & 0xf;
+  if (device==3) data = (ReadRegister(vme_ddd2_adr)>> 8) & 0xf;
+  if (device==4) data = (ReadRegister(vme_ddd2_adr)>>12) & 0xf;
+  if (device==5) data = (ReadRegister(vme_ddd0_adr)>> 4) & 0xf;
+  if (device==6) data = (ReadRegister(vme_ddd0_adr)>> 0) & 0xf;
+  if (device==7) data = (ReadRegister(vme_ddd0_adr)>> 8) & 0xf;
+  if (device==8) data = (ReadRegister(vme_ddd0_adr)>>12) & 0xf;
+  if (device==9) data = (ReadRegister(vme_ddd1_adr)>> 0) & 0xf;
+  if (device==10) data =(ReadRegister(vme_ddd1_adr)>> 4) & 0xf;
+  if (device==11) data =(ReadRegister(vme_ddd1_adr)>> 8) & 0xf;
+  if (device==12) data =(ReadRegister(rat_3d_delays_adr)>> 0) & 0xf;
+  if (device==13) data =(ReadRegister(rat_3d_delays_adr)>> 4) & 0xf;
 
   return data;
 }
@@ -5779,43 +5779,43 @@ void TMB::new_clk_delays(unsigned short int time,int device)
   if ( device == 0 ) {
     SetCfeb0TOFDelay(time);
     WriteRegister(vme_ddd1_adr);
-  } 
+  }
   if ( device == 1 ) {
     SetCfeb1TOFDelay(time);
     WriteRegister(vme_ddd2_adr);
-  } 
+  }
   if ( device == 2 ) {
     SetCfeb2TOFDelay(time);
     WriteRegister(vme_ddd2_adr);
-  } 
+  }
   if ( device == 3 ) {
     SetCfeb3TOFDelay(time);
     WriteRegister(vme_ddd2_adr);
-  } 
+  }
   if ( device == 4 ) {
     SetCfeb4TOFDelay(time);
     WriteRegister(vme_ddd2_adr);
-  } 
+  }
   if ( device == 5 ) {
     SetAlctTOFDelay(time);
     WriteRegister(vme_ddd0_adr);
-  } 
+  }
   if ( device == 7 ) {
     SetDmbTxDelay(time);
     WriteRegister(vme_ddd0_adr);
-  } 
+  }
   if ( device == 8 ) {
     SetRatTmbDelay(time);
     WriteRegister(vme_ddd0_adr);
-  } 
+  }
   if ( device == 9 ) {
     SetTmb1Phase(time);
     WriteRegister(vme_ddd1_adr);
-  } 
+  }
   if ( device == 12 ) {
     SetRpc0RatDelay(time);
     WriteRegister(rat_3d_delays_adr);
-  } 
+  }
   if ( device == 1000 ) {
     SetCfeb0TOFDelay(time);
     WriteRegister(vme_ddd1_adr);
@@ -5825,7 +5825,7 @@ void TMB::new_clk_delays(unsigned short int time,int device)
     SetCfeb3TOFDelay(time);
     SetCfeb4TOFDelay(time);
     WriteRegister(vme_ddd2_adr);
-  } 
+  }
   //
   FireDDDStateMachine();
   //
@@ -5837,7 +5837,7 @@ void TMB::FireDDDStateMachine() {
   // The values for the DDD delay chips have already been set.  Fire the state machine
   // to set the values correctly.
   //
-  // Start and stop 3d3444 state machine 
+  // Start and stop 3d3444 state machine
   WriteRegister(vme_dddsm_adr,0x20);
   WriteRegister(vme_dddsm_adr,0x21);
   WriteRegister(vme_dddsm_adr,0x20);
@@ -5928,7 +5928,7 @@ void TMB::SetDistripHotChannelMask(int layer,long long int mask) {
     //
     SetDistripHotChannelMask(layer,channel,on_or_off);
   }
-  if (debug_) 
+  if (debug_)
     std::cout << std::endl;
   //
   return;
@@ -5936,7 +5936,7 @@ void TMB::SetDistripHotChannelMask(int layer,long long int mask) {
 //
 long long int TMB::GetDistripHotChannelMask(int layer) {
   // for the 5 cfeb hardware version:
-  // return value = 10-hex characters for the 40 distrips right->left LSB->MSB.  
+  // return value = 10-hex characters for the 40 distrips right->left LSB->MSB.
   // If channel 0 is off: return = 0xfffffffffe
   //
   // for the 7 cfeb hardware version;
@@ -6011,20 +6011,20 @@ long long int TMB::GetDistripHotChannelMask(int layer) {
 void TMB::WriteDistripHotChannelMasks(){
   //
   WriteRegister(hcm001_adr);
-  WriteRegister(hcm023_adr); 
-  WriteRegister(hcm045_adr); 
-  WriteRegister(hcm101_adr); 
-  WriteRegister(hcm123_adr); 
-  WriteRegister(hcm145_adr); 
-  WriteRegister(hcm201_adr); 
-  WriteRegister(hcm223_adr); 
-  WriteRegister(hcm245_adr); 
-  WriteRegister(hcm301_adr); 
-  WriteRegister(hcm323_adr); 
-  WriteRegister(hcm345_adr); 
-  WriteRegister(hcm401_adr); 
-  WriteRegister(hcm423_adr); 
-  WriteRegister(hcm445_adr); 
+  WriteRegister(hcm023_adr);
+  WriteRegister(hcm045_adr);
+  WriteRegister(hcm101_adr);
+  WriteRegister(hcm123_adr);
+  WriteRegister(hcm145_adr);
+  WriteRegister(hcm201_adr);
+  WriteRegister(hcm223_adr);
+  WriteRegister(hcm245_adr);
+  WriteRegister(hcm301_adr);
+  WriteRegister(hcm323_adr);
+  WriteRegister(hcm345_adr);
+  WriteRegister(hcm401_adr);
+  WriteRegister(hcm423_adr);
+  WriteRegister(hcm445_adr);
   if (hardware_version_ >= 2) {
     WriteRegister(hcm501_adr);
     WriteRegister(hcm523_adr);
@@ -6040,20 +6040,20 @@ void TMB::WriteDistripHotChannelMasks(){
 void TMB::ReadDistripHotChannelMasks(){
   //
   ReadRegister(hcm001_adr);
-  ReadRegister(hcm023_adr); 
-  ReadRegister(hcm045_adr); 
-  ReadRegister(hcm101_adr); 
-  ReadRegister(hcm123_adr); 
-  ReadRegister(hcm145_adr); 
-  ReadRegister(hcm201_adr); 
-  ReadRegister(hcm223_adr); 
-  ReadRegister(hcm245_adr); 
-  ReadRegister(hcm301_adr); 
-  ReadRegister(hcm323_adr); 
-  ReadRegister(hcm345_adr); 
-  ReadRegister(hcm401_adr); 
-  ReadRegister(hcm423_adr); 
-  ReadRegister(hcm445_adr); 
+  ReadRegister(hcm023_adr);
+  ReadRegister(hcm045_adr);
+  ReadRegister(hcm101_adr);
+  ReadRegister(hcm123_adr);
+  ReadRegister(hcm145_adr);
+  ReadRegister(hcm201_adr);
+  ReadRegister(hcm223_adr);
+  ReadRegister(hcm245_adr);
+  ReadRegister(hcm301_adr);
+  ReadRegister(hcm323_adr);
+  ReadRegister(hcm345_adr);
+  ReadRegister(hcm401_adr);
+  ReadRegister(hcm423_adr);
+  ReadRegister(hcm445_adr);
   if (hardware_version_ >= 2) {
     ReadRegister(hcm501_adr);
     ReadRegister(hcm523_adr);
@@ -6071,7 +6071,7 @@ void TMB::SetCFEBBadBitsReset(int cfeb_badbits_reset) {
   // set the reset bit for all 5 or 7 CFEB's..
   //.
   cfeb_badbits_reset_ = 0;
-  for (int cfeb=0; cfeb<5; cfeb++) 
+  for (int cfeb=0; cfeb<5; cfeb++)
     cfeb_badbits_reset_ |= (cfeb_badbits_reset & 0x1) << cfeb;
   if(hardware_version_ >= 2) {
     SetDCFEB56BadBitsReset(cfeb_badbits_reset);
@@ -6085,7 +6085,7 @@ int TMB::GetCFEBBadBitsReset() {
   // return a single value which has been set for all 5 or 7 CFEB's..
   //
   int return_value = 1;
-  for (int cfeb=0; cfeb<5; cfeb++) 
+  for (int cfeb=0; cfeb<5; cfeb++)
     return_value &= (cfeb_badbits_reset_ >> cfeb) & 0x1;
   if(hardware_version_ >= 2) {
     return_value &= GetDCFEB56BadBitsReset();
@@ -6099,7 +6099,7 @@ int TMB::GetReadCFEBBadBitsReset() {
   // return a single value which has been set for all 5 or 7 CFEB's..
   //
   int return_value = 1;
-  for (int cfeb=0; cfeb<5; cfeb++) 
+  for (int cfeb=0; cfeb<5; cfeb++)
     return_value &= (read_cfeb_badbits_reset_ >> cfeb) & 0x1;
   if(hardware_version_ >= 2) {
     return_value &= GetReadDCFEB56BadBitsReset();
@@ -6113,7 +6113,7 @@ void TMB::SetCFEBBadBitsBlock(int cfeb_badbits_block) {
   // set the block bit for all 5 or 7 CFEB's..
   //.
   cfeb_badbits_block_ = 0;
-  for (int cfeb=0; cfeb<5; cfeb++) 
+  for (int cfeb=0; cfeb<5; cfeb++)
     cfeb_badbits_block_ |= (cfeb_badbits_block & 0x1) << cfeb;
   if(hardware_version_ >= 2) {
     SetDCFEB56BadBitsBlock(cfeb_badbits_block);
@@ -6233,20 +6233,20 @@ int TMB::GetReadDCFEB56BadBitsBlock() {
 void TMB::ReadComparatorBadBits(){
   //
   ReadRegister(badbits001_adr);
-  ReadRegister(badbits023_adr); 
-  ReadRegister(badbits045_adr); 
-  ReadRegister(badbits101_adr); 
-  ReadRegister(badbits123_adr); 
-  ReadRegister(badbits145_adr); 
-  ReadRegister(badbits201_adr); 
-  ReadRegister(badbits223_adr); 
-  ReadRegister(badbits245_adr); 
-  ReadRegister(badbits301_adr); 
-  ReadRegister(badbits323_adr); 
-  ReadRegister(badbits345_adr); 
-  ReadRegister(badbits401_adr); 
-  ReadRegister(badbits423_adr); 
-  ReadRegister(badbits445_adr); 
+  ReadRegister(badbits023_adr);
+  ReadRegister(badbits045_adr);
+  ReadRegister(badbits101_adr);
+  ReadRegister(badbits123_adr);
+  ReadRegister(badbits145_adr);
+  ReadRegister(badbits201_adr);
+  ReadRegister(badbits223_adr);
+  ReadRegister(badbits245_adr);
+  ReadRegister(badbits301_adr);
+  ReadRegister(badbits323_adr);
+  ReadRegister(badbits345_adr);
+  ReadRegister(badbits401_adr);
+  ReadRegister(badbits423_adr);
+  ReadRegister(badbits445_adr);
   ReadRegister(badbits501_adr);
   ReadRegister(badbits523_adr);
   ReadRegister(badbits545_adr);
@@ -6304,11 +6304,11 @@ void TMB::ReadDcfebGtxRxRegisters(){
 }
 //
 void TMB::ReadGemGtxRxRegisters(){
-  static const unsigned long int raddrs[MAX_GEM_FIBERS_ME11] 
+  static const unsigned long int raddrs[MAX_GEM_FIBERS_ME11]
     = {gem_gtx_rx0_adr, gem_gtx_rx1_adr, gem_gtx_rx2_adr, gem_gtx_rx3_adr};
-  static const unsigned long int notintable_adrs[MAX_GEM_FIBERS_ME11] 
+  static const unsigned long int notintable_adrs[MAX_GEM_FIBERS_ME11]
     = {gem_gtx0_notintable_adr, gem_gtx1_notintable_adr, gem_gtx2_notintable_adr, gem_gtx3_notintable_adr};
-  static const unsigned long int disperr_adrs[MAX_GEM_FIBERS_ME11] 
+  static const unsigned long int disperr_adrs[MAX_GEM_FIBERS_ME11]
     = {gem_gtx0_disperr_adr, gem_gtx1_disperr_adr, gem_gtx2_disperr_adr, gem_gtx3_disperr_adr};
 
   for (int ia = 0; ia < GetNGemEnabledLinks(); ++ia){
@@ -6328,13 +6328,13 @@ std::bitset<64> TMB::dsnRead(int type) {
   std::bitset<64> dsn;
   //
   int offset;
-  offset = type*5; 
+  offset = type*5;
   //
   int wr_data, rd_data;
   //
   int initial_state=0;
   // ** need to specifically enable RAT to read back DSN **
-  if (type == 2) {  
+  if (type == 2) {
     initial_state = ReadRegister(vme_ratctrl_adr);  //initial RAT state
     //
     wr_data = initial_state & 0xfffd;    //0=sync_mode, 1=posneg, 2=loop_tmb, 3=free_tx0, 4=dsn enable
@@ -6344,7 +6344,7 @@ std::bitset<64> TMB::dsnRead(int type) {
   }
   //
   // init pulse >480usec
-  wr_data = 0x0005; 
+  wr_data = 0x0005;
   wr_data <<= offset; //send it to correct component
   rd_data = dsnIO(wr_data);
   //
@@ -6352,13 +6352,13 @@ std::bitset<64> TMB::dsnRead(int type) {
   for (int i=0; i<=7; i++) {
     int idata = (0x33>>i) & 0x1;
     wr_data = (idata<<1) | 0x1; //send "serial write pulse" with "serial SM start"
-    wr_data <<= offset; 
+    wr_data <<= offset;
     rd_data = dsnIO(wr_data);
   }
   //
   // Read 64 bits of ROM data = 0x3 64 times
   for (int i=0; i<=63; i++) {
-    wr_data = 0x0003; 
+    wr_data = 0x0003;
     wr_data <<= offset;
     rd_data = dsnIO(wr_data);
     //
@@ -6367,7 +6367,7 @@ std::bitset<64> TMB::dsnRead(int type) {
   }
   //
   // ** Return the RAT to its initial state **
-  if (type == 2) 
+  if (type == 2)
     WriteRegister(vme_ratctrl_adr,initial_state);
   //
   return dsn;
@@ -6397,8 +6397,8 @@ int TMB::dsnIO(int writeData){
     //
     if (nbusy%10 == 0) {
       (*MyOutput_) << "dsnIO: DSN state machine busy, nbusy = "
-                << nbusy << ", readData = " 
-		<< std::hex << readData << std::dec << std::endl;  
+                << nbusy << ", readData = "
+		<< std::hex << readData << std::dec << std::endl;
     }
     nbusy++;
     udelay(20);
@@ -6413,7 +6413,7 @@ int TMB::dsnIO(int writeData){
 ////////////////////////////////////////////////////////////////////////////
 // read on-board Voltages and temperatures
 ////////////////////////////////////////////////////////////////////////////
-void TMB::ADCvoltages() { 
+void TMB::ADCvoltages() {
   //
   // user can use this method and then the getters for the different
   // values (5.0V, 5.0 current, etc.) for the ADC readings...
@@ -6457,25 +6457,25 @@ void TMB::ADCvoltages(float * voltage){
     SetVoltageADCChipSelect(0);
     //
     // Clock in the address for a chip at the same time you clock out the data from the previous chip (d[11:8]=address)
-    int twelve_bit_address = 0x000 | (chip << 8);  
+    int twelve_bit_address = 0x000 | (chip << 8);
     //
     // ... for the 14th loop (to get the 13th chip's data), don't clock in "14," because this is the ADC power off command
-    if (chip==14) twelve_bit_address = 0; 
+    if (chip==14) twelve_bit_address = 0;
     //
     for (int iclk=0; iclk<12; iclk++){
       int data_in = (twelve_bit_address >> (11-iclk)) & 0x1; //clock in the chip address most-significant bit first
-      SetVoltageADCDataIn(data_in);                          
+      SetVoltageADCDataIn(data_in);
       //
-      SetVoltageADCSerialClock(0);   
+      SetVoltageADCSerialClock(0);
       WriteRegister(vme_adc_adr);
-      SetVoltageADCSerialClock(1);   
+      SetVoltageADCSerialClock(1);
       WriteRegister(vme_adc_adr);
       //
       ReadRegister(vme_adc_adr);     //the data (from the previous chip) has been clocked out.  Retrieve it.
       adc_data |= (GetReadVoltageADCDataOut() << (11-iclk));  // pack the data into a 12 bit ADC value
     }
     //
-    if (chip>0) 
+    if (chip>0)
       voltage[chip-1] = ((float) adc_data / 4095.)*4.095; //convert adc value to volts
     //
   }
@@ -6496,12 +6496,12 @@ void TMB::ADCvoltages(float * voltage){
   }
   voltage[9] /= 0.2;                      // 200mV/Amp if SH921 set 1-2, else comment out line
   //
-  v5p0_	    = voltage[0];	      
+  v5p0_	    = voltage[0];
   v3p3_	    = voltage[1];
   v1p5core_ = voltage[2];
   v1p5tt_   = voltage[3];
   v1p0_	    = voltage[4];
-  a5p0_	    = voltage[5];	      
+  a5p0_	    = voltage[5];
   a3p3_	    = voltage[6];
   a1p5core_ = voltage[7];
   a1p5tt_   = voltage[8];
@@ -6573,8 +6573,8 @@ int TMB::smb_io(int smb_adr, int cmd, int module) {
   //
   //    cmd = 0x00 = local temperature command
   //        = 0x01 = remote temperature command
-  //        = 0x05 = local tcrit command  
-  //        = 0x07 = remote tcrit command  
+  //        = 0x05 = local tcrit command
+  //        = 0x07 = remote tcrit command
   //
   //    module = 1 = TMB
   //           = 2 = RAT
@@ -6600,16 +6600,16 @@ int TMB::smb_io(int smb_adr, int cmd, int module) {
   sda_bit[5] = (smb_adr >> 2) & 1;               // A2
   sda_bit[6] = (smb_adr >> 1) & 1;               // A1
   sda_bit[7] = (smb_adr >> 0) & 1;               // A0
-  sda_bit[8] = 0;                                // 0 = write command register                           
+  sda_bit[8] = 0;                                // 0 = write command register
   sda_bit[9] = 1;                                // ACK
-  sda_bit[10]= (cmd     >> 7) & 1;               // C7 
-  sda_bit[11]= (cmd     >> 6) & 1;               // C6 
-  sda_bit[12]= (cmd     >> 5) & 1;               // C5 
-  sda_bit[13]= (cmd     >> 4) & 1;               // C4 
-  sda_bit[14]= (cmd     >> 3) & 1;               // C3 
-  sda_bit[15]= (cmd     >> 2) & 1;               // C2 
-  sda_bit[16]= (cmd     >> 1) & 1;               // C1 
-  sda_bit[17]= (cmd     >> 0) & 1;               // C0 
+  sda_bit[10]= (cmd     >> 7) & 1;               // C7
+  sda_bit[11]= (cmd     >> 6) & 1;               // C6
+  sda_bit[12]= (cmd     >> 5) & 1;               // C5
+  sda_bit[13]= (cmd     >> 4) & 1;               // C4
+  sda_bit[14]= (cmd     >> 3) & 1;               // C3
+  sda_bit[15]= (cmd     >> 2) & 1;               // C2
+  sda_bit[16]= (cmd     >> 1) & 1;               // C1
+  sda_bit[17]= (cmd     >> 0) & 1;               // C0
   sda_bit[18]= 1;                                // ACK
   sda_bit[19]= (smb_data>> 7) & 1;               // D7 write data register
   sda_bit[20]= (smb_data>> 6) & 1;               // D6 write data register
@@ -6673,7 +6673,7 @@ int TMB::smb_io(int smb_adr, int cmd, int module) {
   sda_bit[5] = (smb_adr >> 2) & 1;               // A2
   sda_bit[6] = (smb_adr >> 1) & 1;               // A1
   sda_bit[7] = (smb_adr >> 0) & 1;               // A0
-  sda_bit[8] = 1;                                // 1 = read data register                           
+  sda_bit[8] = 1;                                // 1 = read data register
   sda_bit[9] = 1;                                // ACK
   sda_bit[10]= 1;                                // D7 read from LM84, 1=z output from fpga
   sda_bit[11]= 1;                                // D6
@@ -6713,7 +6713,7 @@ int TMB::smb_io(int smb_adr, int cmd, int module) {
     //** Read Serial data from TMB VME interface **
     // (read on every cycle to keep clock symmetric)
     read_data = ReadRegister(adc_adr);
-    if (scl==1) 
+    if (scl==1)
       d[sda_clock] = read_data;
   }
   //
@@ -6729,7 +6729,7 @@ int TMB::smb_io(int smb_adr, int cmd, int module) {
       sda_value = (d[17-i]>>ishift) & 0x1;
       data |= sda_value<<i;          //d[7:0]
     } else {
-      data |= sda_value<<i;          //sign extend if bit 7 indicates negative value      
+      data |= sda_value<<i;          //sign extend if bit 7 indicates negative value
     }
   }
   //
@@ -6744,29 +6744,29 @@ int TMB::smb_io(int smb_adr, int cmd, int module) {
 void TMB::ClockOutPromProgram(int prom,
 			      int number_of_addresses) {
   //
-  clocked_out_prom_image_.clear();    
+  clocked_out_prom_image_.clear();
   //
   int enabledProm = prom;
   int disabledProm = (enabledProm + 1) % 2;
   //
-  (*MyOutput_) << "TMB:  Clock out 0x" << std::hex << number_of_addresses 
+  (*MyOutput_) << "TMB:  Clock out 0x" << std::hex << number_of_addresses
 	       << " addresses from user PROM " << enabledProm << "... " << std::endl;
   //
   int prom_clk[2];
   int prom_oe[2];
   int prom_nce[2];
   //
-  prom_clk[enabledProm]=0;    
+  prom_clk[enabledProm]=0;
   prom_oe[enabledProm] =1;     //enable this prom in vme register
   prom_nce[enabledProm]=0;
   //
-  prom_clk[disabledProm]=0;    
+  prom_clk[disabledProm]=0;
   prom_oe[disabledProm] =0;    //disable this prom in vme register
   prom_nce[disabledProm]=1;
   //
   int prom_src=1;
   //
-  int write_data = 
+  int write_data =
     (prom_src   <<14) |        //0=on-board led, 1=enabled PROM
     (prom_nce[1]<<13) |        //PROM 1 /chip_enable
     (prom_oe[1] <<12) |        //PROM 1 output enable
@@ -6782,14 +6782,14 @@ void TMB::ClockOutPromProgram(int prom,
     //
     clocked_out_prom_image_.push_back((int) (ReadRegister(vme_prom_adr) & 0xff));
     //    (*MyOutput_) << "VME address " << std::hex << vme_prom_adr
-    //    		 << ", read prom " << enabledProm 
-    //		 << ", address " << prom_adr 
-    //		 << ", data = " << clocked_out_prom_image_.at(prom_adr) 
+    //    		 << ", read prom " << enabledProm
+    //		 << ", address " << prom_adr
+    //		 << ", data = " << clocked_out_prom_image_.at(prom_adr)
     //		 << std::endl;
     //
     // ** Toggle the clock to advance the address **
     prom_clk[enabledProm]=1;
-    write_data = 
+    write_data =
       (prom_src   <<14) |        //0=on-board led, 1=enabled PROM
       (prom_nce[1]<<13) |        //PROM 1 /chip_enable
       (prom_oe[1] <<12) |        //PROM 1 output enable
@@ -6800,7 +6800,7 @@ void TMB::ClockOutPromProgram(int prom,
     WriteRegister(vme_prom_adr,write_data);
     //
     prom_clk[enabledProm]=0;
-    write_data = 
+    write_data =
       (prom_src   <<14) |        //0=on-board led, 1=enabled PROM
       (prom_nce[1]<<13) |        //PROM 1 /chip_enable
       (prom_oe[1] <<12) |        //PROM 1 output enable
@@ -6808,7 +6808,7 @@ void TMB::ClockOutPromProgram(int prom,
       (prom_nce[0]<<10) |        //PROM 0 /chip_enable
       (prom_oe[0] << 9) |        //PROM 0 output enable
       (prom_clk[0]<< 8);         //PROM 0 clock
-    WriteRegister(vme_prom_adr,write_data);  
+    WriteRegister(vme_prom_adr,write_data);
   }
   //
   // ** Turn PROMs off **
@@ -6818,7 +6818,7 @@ void TMB::ClockOutPromProgram(int prom,
   //
   prom_src=0;
   //
-  write_data = 
+  write_data =
     (prom_src   <<14) |        //0=on-board led, 1=enabled PROM
     (prom_nce[1]<<13) |        //PROM 1 /chip_enable
     (prom_oe[1] <<12) |        //PROM 1 output enable
@@ -6826,7 +6826,7 @@ void TMB::ClockOutPromProgram(int prom,
     (prom_nce[0]<<10) |        //PROM 0 /chip_enable
     (prom_oe[0] << 9) |        //PROM 0 output enable
     (prom_clk[0]<< 8);         //PROM 0 clock
-  
+
   WriteRegister(vme_prom_adr,write_data);
   //
   return;
@@ -6854,17 +6854,17 @@ bool TMB::OkTMBVmeWrite(unsigned vme) {
     //    std::cout << "register " << index << " to write to = " << TMBConfigurationRegister.at(index) << std::endl;
     //
     if ( (vme & 0xfff) == (TMBConfigurationRegister.at(index) & 0xfff)) {
-      ok_to_write_to_this_register = true;      
+      ok_to_write_to_this_register = true;
       break;
     }
     //
-  } 
+  }
   //
   return ok_to_write_to_this_register;
 }
 //
 //---------------------------------------------------------------------
-// The following would be better out of VMEController... 
+// The following would be better out of VMEController...
 // Leave them there now because EMUjtag uses "scan" to do its VME commands
 //
 void TMB::SetALCTOkVMEWriteAddress(bool address_ok) {
@@ -6887,21 +6887,21 @@ bool TMB::GetALCTFillVmeWriteVecs() {
   //
 }
 //
-std::vector<int> TMB::GetALCTVecVmeAddress() { 
+std::vector<int> TMB::GetALCTVecVmeAddress() {
   //
-  return theController->Get_VecVmeAddress(); 
-  //
-}
-//
-std::vector<int> TMB::GetALCTVecDataLsb() { 
-  //
-  return theController->Get_VecDataLsb(); 
+  return theController->Get_VecVmeAddress();
   //
 }
 //
-std::vector<int> TMB::GetALCTVecDataMsb() { 
+std::vector<int> TMB::GetALCTVecDataLsb() {
   //
-  return theController->Get_VecDataMsb(); 
+  return theController->Get_VecDataLsb();
+  //
+}
+//
+std::vector<int> TMB::GetALCTVecDataMsb() {
+  //
+  return theController->Get_VecDataMsb();
   //
 }
 //
@@ -6924,10 +6924,10 @@ void TMB::DumpAllRegisters() {
   for (int register_address=0; register_address <= OTMB_LARGEST_VME_ADDRESS; register_address+=2) {
     //
     int register_value = ReadRegister(register_address);
-    (*MyOutput_) << " " << std::hex  
-		 << ( (register_address >> 8) & 0xf ) 
-		 << ( (register_address >> 4) & 0xf ) 
-		 << ( (register_address >> 0) & 0xf ) 
+    (*MyOutput_) << " " << std::hex
+		 << ( (register_address >> 8) & 0xf )
+		 << ( (register_address >> 4) & 0xf )
+		 << ( (register_address >> 0) & 0xf )
 		 << "   " << std::hex
 		 << ( (register_value   >>12) & 0xf )
 		 << ( (register_value   >> 8) & 0xf )
@@ -6939,10 +6939,10 @@ void TMB::DumpAllRegisters() {
 	  for (int register_address=OTMB_GEM_VME_STARTADDRESS; register_address <= OTMB_GEM_VME_ENDADDRESS; register_address+=2) {
 	    //
 	    int register_value = ReadRegister(register_address);
-	    (*MyOutput_) << " " << std::hex  
-			 << ( (register_address >> 8) & 0xf ) 
-			 << ( (register_address >> 4) & 0xf ) 
-			 << ( (register_address >> 0) & 0xf ) 
+	    (*MyOutput_) << " " << std::hex
+			 << ( (register_address >> 8) & 0xf )
+			 << ( (register_address >> 4) & 0xf )
+			 << ( (register_address >> 0) & 0xf )
 			 << "   " << std::hex
 			 << ( (register_value   >>12) & 0xf )
 			 << ( (register_value   >> 8) & 0xf )
@@ -6974,19 +6974,19 @@ void TMB::ReadTMBConfiguration() {
     if (VMEregister != vme_usr_jtag_adr) {     // skip the user jtag register
       //
       //      (*MyOutput_) << "0x" << std::hex
-      //		   << ((VMEregister >> 4) & 0xf) 
+      //		   << ((VMEregister >> 4) & 0xf)
       //		   << ((VMEregister >> 0) & 0xf);
       //      (*MyOutput_) << "   ";
       //
-      //      int config_data = 
+      //      int config_data =
       ReadRegister(VMEregister);
       //
-      //      (*MyOutput_) << "0x" << std::hex  
-      //		   << ((config_data >>12) & 0xf) 
-      //		   << ((config_data >> 8) & 0xf) 
-      //		   << ((config_data >> 4) & 0xf) 
+      //      (*MyOutput_) << "0x" << std::hex
+      //		   << ((config_data >>12) & 0xf)
+      //		   << ((config_data >> 8) & 0xf)
+      //		   << ((config_data >> 4) & 0xf)
       //		   << ((config_data >> 0) & 0xf);
-      //      (*MyOutput_) << std::endl;		
+      //      (*MyOutput_) << std::endl;
     }
   }
   //
@@ -7034,7 +7034,7 @@ void TMB::ReadDDDStateMachine() {
 ////////////////////////////////////////////////////////////////////////////
 // TMB configuration register definitions and defaults
 ////////////////////////////////////////////////////////////////////////////
-void TMB::DefineTMBConfigurationRegisters_(){ 
+void TMB::DefineTMBConfigurationRegisters_(){
   //
   TMBConfigurationRegister.clear();
 
@@ -7042,16 +7042,16 @@ void TMB::DefineTMBConfigurationRegisters_(){
   // Registers used for TMB configuration....
   //
   // Enable/configure inputs and injectors:
-  TMBConfigurationRegister.push_back(vme_loopbk_adr);       //0x0e enable ALCT LVDS rx/tx 
-  TMBConfigurationRegister.push_back(alct_inj_adr  );       //0x32 mask ALCT 
+  TMBConfigurationRegister.push_back(vme_loopbk_adr);       //0x0e enable ALCT LVDS rx/tx
+  TMBConfigurationRegister.push_back(alct_inj_adr  );       //0x32 mask ALCT
   TMBConfigurationRegister.push_back(alct_stat_adr );       //0x38 TMB to ALCT data delay
-  TMBConfigurationRegister.push_back(cfeb_inj_adr  );       //0x42 enable CFEB inputs  
-  TMBConfigurationRegister.push_back(rpc_cfg_adr   );       //0xB6 enable RPC  
-  TMBConfigurationRegister.push_back(rpc_inj_adr   );       //0xBC mask RPC  
+  TMBConfigurationRegister.push_back(cfeb_inj_adr  );       //0x42 enable CFEB inputs
+  TMBConfigurationRegister.push_back(rpc_cfg_adr   );       //0xB6 enable RPC
+  TMBConfigurationRegister.push_back(rpc_inj_adr   );       //0xBC mask RPC
   //
   // trigger and signal delays:
-  TMBConfigurationRegister.push_back(seq_trig_dly0_adr);    //0x6A ALCT*CLCT pretrigger source delays  
-  TMBConfigurationRegister.push_back(rpc_raw_delay_adr);    //0xBA RPC Raw Hits delay  
+  TMBConfigurationRegister.push_back(seq_trig_dly0_adr);    //0x6A ALCT*CLCT pretrigger source delays
+  TMBConfigurationRegister.push_back(rpc_raw_delay_adr);    //0xBA RPC Raw Hits delay
   //
   // (CLCT) pretrigger configuration:
   TMBConfigurationRegister.push_back(seq_trig_en_adr   );   //0x68 sequencer trigger source enables
@@ -7063,11 +7063,11 @@ void TMB::DefineTMBConfigurationRegisters_(){
   TMBConfigurationRegister.push_back(layer_trg_mode_adr);   //0xF0 Layer-Trigger mode
   //
   // (CLCT) pattern finding configuration:
-  TMBConfigurationRegister.push_back(pattern_find_pretrg_adr);   //0xF4 CLCT pattern-finder operation 
-  TMBConfigurationRegister.push_back(clct_separation_adr    );   //0xF6 CLCT separation 
+  TMBConfigurationRegister.push_back(pattern_find_pretrg_adr);   //0xF4 CLCT pattern-finder operation
+  TMBConfigurationRegister.push_back(clct_separation_adr    );   //0xF6 CLCT separation
   //
   // TMB trigger configuration:
-  TMBConfigurationRegister.push_back(tmbtim_adr  );   //0xB2 ALCT*CLCT trigger coincidence timing, MPC tx delay 
+  TMBConfigurationRegister.push_back(tmbtim_adr  );   //0xB2 ALCT*CLCT trigger coincidence timing, MPC tx delay
   //add Run3 control for TMB FW, 2022
   TMBConfigurationRegister.push_back(run3_format_ctrl_adr); //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 data format
   if (hardware_version_>=2){
@@ -7079,13 +7079,13 @@ void TMB::DefineTMBConfigurationRegisters_(){
     TMBConfigurationRegister.push_back(hmt_thresh3_adr); //0X1B2 = ADR_HMT_THRESH3:  HMT thresh3
     //TMBConfigurationRegister.push_back(hmt_nhits_sig_adr); //0X1B4 = ADR_HMT_NHITS_SIG
     //TMBConfigurationRegister.push_back(hmt_nhits_bkg_adr); //0X1B6 = ADR_HMT_NHITS_BKG
-  
+
   }
   TMBConfigurationRegister.push_back(tmb_trig_adr);   //0x86 TMB trigger configuration/MPC accept, delays
   //
   // TMB/RPC readout:
   TMBConfigurationRegister.push_back(seq_fifo_adr );         //0x72 sequencer fifo configuration
-  TMBConfigurationRegister.push_back(rpc_tbins_adr);         //0xC4 RPC FIFO time bins    
+  TMBConfigurationRegister.push_back(rpc_tbins_adr);         //0xC4 RPC FIFO time bins
   TMBConfigurationRegister.push_back(non_trig_readout_adr);  //0xCC Readout of non-triggering data, ME1/1 firmware tags
   TMBConfigurationRegister.push_back(l1a_lookback_adr);      //0x100 L1A priority enable
   TMBConfigurationRegister.push_back(miniscope_adr);         //0x10C Miniscope Readout
@@ -7096,15 +7096,15 @@ void TMB::DefineTMBConfigurationRegisters_(){
   TMBConfigurationRegister.push_back(bx0_delay_adr );    //0xCA BX0 delay
   //
   // special modifiers:
-  TMBConfigurationRegister.push_back(ccb_trig_adr);         //0x2c configure request l1a from CCB  
-  TMBConfigurationRegister.push_back(alct_cfg_adr);         //0x30 configure ALCT   
+  TMBConfigurationRegister.push_back(ccb_trig_adr);         //0x2c configure request l1a from CCB
+  TMBConfigurationRegister.push_back(alct_cfg_adr);         //0x30 configure ALCT
   //
   // clock (communication) phases:
   TMBConfigurationRegister.push_back(vme_ddd0_adr        );  //0x16 phases: ALCT tof, ALCTtx, DMBtx, RAT/TMB
   TMBConfigurationRegister.push_back(vme_ddd1_adr        );  //0x18 phases: ALCTrx, CFEB tof, TMB1, CFEB0 tof
   TMBConfigurationRegister.push_back(vme_ddd2_adr        );  //0x1a phases: CFEB4 tof, CFEB3 tof, CFEB2 tof, CFEB1 tof
   TMBConfigurationRegister.push_back(vme_dddoe_adr       );  //0x1C clock output enable: CFEB4, CFEB3, CFEB2, CFEB1, CFEB0, DCC, MPC, TMB1, RPCtx, DMBtx, ALCTrx, ALCTtx
-  TMBConfigurationRegister.push_back(rat_3d_delays_adr   );  //0xE6 phases: RPC1/RAT, RPC0/RAT 
+  TMBConfigurationRegister.push_back(rat_3d_delays_adr   );  //0xE6 phases: RPC1/RAT, RPC0/RAT
   TMBConfigurationRegister.push_back(phaser_alct_rxd_adr );  //0x10E digital phase shifter: alct_rx
   TMBConfigurationRegister.push_back(phaser_alct_txd_adr );  //0x110 digital phase shifter: alct_tx
   TMBConfigurationRegister.push_back(phaser_cfeb0_rxd_adr);  //0x112 digital phase shifter: cfeb0_rx
@@ -7121,21 +7121,21 @@ void TMB::DefineTMBConfigurationRegisters_(){
   TMBConfigurationRegister.push_back(cfeb4_6_interstage_adr);//0x11E CFEB to TMB data delay: cfeb[4-6]
   //
   // hot channel masks:
-  TMBConfigurationRegister.push_back(hcm001_adr);  //0x4A distrip hot channel mask CFEB 0 layers 0,1 
-  TMBConfigurationRegister.push_back(hcm023_adr);  //0x4C distrip hot channel mask CFEB 0 layers 2,3 
-  TMBConfigurationRegister.push_back(hcm045_adr);  //0x4E distrip hot channel mask CFEB 0 layers 4,5 
-  TMBConfigurationRegister.push_back(hcm101_adr);  //0x50 distrip hot channel mask CFEB 1 layers 0,1 
-  TMBConfigurationRegister.push_back(hcm123_adr);  //0x52 distrip hot channel mask CFEB 1 layers 2,3 
-  TMBConfigurationRegister.push_back(hcm145_adr);  //0x54 distrip hot channel mask CFEB 1 layers 4,5 
-  TMBConfigurationRegister.push_back(hcm201_adr);  //0x56 distrip hot channel mask CFEB 2 layers 0,1 
-  TMBConfigurationRegister.push_back(hcm223_adr);  //0x58 distrip hot channel mask CFEB 2 layers 2,3 
-  TMBConfigurationRegister.push_back(hcm245_adr);  //0x5A distrip hot channel mask CFEB 2 layers 4,5 
-  TMBConfigurationRegister.push_back(hcm301_adr);  //0x5C distrip hot channel mask CFEB 3 layers 0,1 
-  TMBConfigurationRegister.push_back(hcm323_adr);  //0x5E distrip hot channel mask CFEB 3 layers 2,3 
-  TMBConfigurationRegister.push_back(hcm345_adr);  //0x60 distrip hot channel mask CFEB 3 layers 4,5 
-  TMBConfigurationRegister.push_back(hcm401_adr);  //0x62 distrip hot channel mask CFEB 4 layers 0,1 
-  TMBConfigurationRegister.push_back(hcm423_adr);  //0x64 distrip hot channel mask CFEB 4 layers 2,3 
-  TMBConfigurationRegister.push_back(hcm445_adr);  //0x66 distrip hot channel mask CFEB 4 layers 4,5 
+  TMBConfigurationRegister.push_back(hcm001_adr);  //0x4A distrip hot channel mask CFEB 0 layers 0,1
+  TMBConfigurationRegister.push_back(hcm023_adr);  //0x4C distrip hot channel mask CFEB 0 layers 2,3
+  TMBConfigurationRegister.push_back(hcm045_adr);  //0x4E distrip hot channel mask CFEB 0 layers 4,5
+  TMBConfigurationRegister.push_back(hcm101_adr);  //0x50 distrip hot channel mask CFEB 1 layers 0,1
+  TMBConfigurationRegister.push_back(hcm123_adr);  //0x52 distrip hot channel mask CFEB 1 layers 2,3
+  TMBConfigurationRegister.push_back(hcm145_adr);  //0x54 distrip hot channel mask CFEB 1 layers 4,5
+  TMBConfigurationRegister.push_back(hcm201_adr);  //0x56 distrip hot channel mask CFEB 2 layers 0,1
+  TMBConfigurationRegister.push_back(hcm223_adr);  //0x58 distrip hot channel mask CFEB 2 layers 2,3
+  TMBConfigurationRegister.push_back(hcm245_adr);  //0x5A distrip hot channel mask CFEB 2 layers 4,5
+  TMBConfigurationRegister.push_back(hcm301_adr);  //0x5C distrip hot channel mask CFEB 3 layers 0,1
+  TMBConfigurationRegister.push_back(hcm323_adr);  //0x5E distrip hot channel mask CFEB 3 layers 2,3
+  TMBConfigurationRegister.push_back(hcm345_adr);  //0x60 distrip hot channel mask CFEB 3 layers 4,5
+  TMBConfigurationRegister.push_back(hcm401_adr);  //0x62 distrip hot channel mask CFEB 4 layers 0,1
+  TMBConfigurationRegister.push_back(hcm423_adr);  //0x64 distrip hot channel mask CFEB 4 layers 2,3
+  TMBConfigurationRegister.push_back(hcm445_adr);  //0x66 distrip hot channel mask CFEB 4 layers 4,5
   //
   if(hardware_version_ >= 2) {
     //new CFEBs 5 and 6
@@ -7161,7 +7161,7 @@ void TMB::DefineTMBConfigurationRegisters_(){
   //TMBConfigurationRegister.push_back(dcfeb_gtx_rx4_adr) ;  //0x154 GTX link control and monitoring for DCFEB4
   //TMBConfigurationRegister.push_back(dcfeb_gtx_rx5_adr) ;  //0x156 GTX link control and monitoring for DCFEB5
   //TMBConfigurationRegister.push_back(dcfeb_gtx_rx6_adr) ;  //0x158 GTX link control and monitoring for DCFEB6
-  
+
   // Not put into xml file, but may want to enable scope for test runs...
   //  TMBConfigurationRegister.push_back(scp_ctrl_adr);         //0x98 scope control
   //
@@ -7170,7 +7170,7 @@ void TMB::DefineTMBConfigurationRegisters_(){
   TMBConfigurationRegister.push_back(gem_tbins_adr) ;       // 0x310 GEM Readout Address
   TMBConfigurationRegister.push_back(gem_cfg_adr) ;         // 0x312 GEM Config Address
   TMBConfigurationRegister.push_back(phaser_gemA_rxd_adr) ; // 0x308 GEM Config Address
-  if (HasGroupedGemRxValues() == 0) 
+  if (HasGroupedGemRxValues() == 0)
 	  TMBConfigurationRegister.push_back(phaser_gemB_rxd_adr) ; // 0x30A GEM Config Address
   TMBConfigurationRegister.push_back(gem_csc_match_window_adr) ; // 0x318 GEM-CSC match window(position) Address
   TMBConfigurationRegister.push_back(gem_copad_ctrl_adr) ; // 0x324 GEM copad control Address
@@ -7199,7 +7199,7 @@ void TMB::SetTMBRegisterDefaults() {
   //
   // Set the default write values to the configuration registers:
   //
-  trgmode_ = CLCT_trigger;  
+  trgmode_ = CLCT_trigger;
   //
   //-----------------------------------------------------------------
   //0X0E = ADR_LOOPBK:  Loop-Back Control Register
@@ -7208,14 +7208,14 @@ void TMB::SetTMBRegisterDefaults() {
   enable_alct_tx_ = enable_alct_tx_default;
   //
   //------------------------------------------------------------------
-  //0X14 = ADR_DDDSM:  3D3444 State Machine Control + DCM Lock Status  
+  //0X14 = ADR_DDDSM:  3D3444 State Machine Control + DCM Lock Status
   //------------------------------------------------------------------
-  ddd_state_machine_start_     = ddd_state_machine_start_default; 
-  ddd_state_machine_manual_    = ddd_state_machine_manual_default; 
-  ddd_state_machine_latch_     = ddd_state_machine_latch_default; 
-  ddd_state_machine_serial_in_ = ddd_state_machine_serial_in_default; 
-  ddd_state_machine_serial_out_= ddd_state_machine_serial_out_default; 
-  ddd_state_machine_autostart_ = ddd_state_machine_autostart_default; 
+  ddd_state_machine_start_     = ddd_state_machine_start_default;
+  ddd_state_machine_manual_    = ddd_state_machine_manual_default;
+  ddd_state_machine_latch_     = ddd_state_machine_latch_default;
+  ddd_state_machine_serial_in_ = ddd_state_machine_serial_in_default;
+  ddd_state_machine_serial_out_= ddd_state_machine_serial_out_default;
+  ddd_state_machine_autostart_ = ddd_state_machine_autostart_default;
   //
   //------------------------------------------------------------------
   //0X16 = ADR_DDD0:  3D3444 Chip 0 Delays, 1 step = 2ns
@@ -7227,7 +7227,7 @@ void TMB::SetTMBRegisterDefaults() {
   //------------------------------------------------------------------
   //0X18 = ADR_DDD1:  3D3444 Chip 1 Delays, 1 step = 2ns
   //------------------------------------------------------------------
-  tmb1_phase_          = tmb1_phase_default         ;  
+  tmb1_phase_          = tmb1_phase_default         ;
   cfeb_tof_delay_      = cfeb_tof_delay_default     ;
   cfeb0_tof_delay_     = cfeb0_tof_delay_default    ;
   //
@@ -7273,21 +7273,21 @@ void TMB::SetTMBRegisterDefaults() {
   alct_ext_trig_l1aen_    = alct_ext_trig_l1aen_default   ;
   clct_ext_trig_l1aen_    = clct_ext_trig_l1aen_default   ;
   request_l1a_            = request_l1a_default           ;
-  alct_ext_trig_vme_      = alct_ext_trig_vme_default     ;         
-  clct_ext_trig_vme_      = clct_ext_trig_vme_default     ;         
-  ext_trig_both_          = ext_trig_both_default         ;         
-  ccb_allow_bypass_       = ccb_allow_bypass_default      ;         
-  ignore_ccb_startstop_   = ignore_ccb_startstop_default  ;         
-  internal_l1a_delay_vme_ = internal_l1a_delay_vme_default;         
+  alct_ext_trig_vme_      = alct_ext_trig_vme_default     ;
+  clct_ext_trig_vme_      = clct_ext_trig_vme_default     ;
+  ext_trig_both_          = ext_trig_both_default         ;
+  ccb_allow_bypass_       = ccb_allow_bypass_default      ;
+  ignore_ccb_startstop_   = ignore_ccb_startstop_default  ;
+  internal_l1a_delay_vme_ = internal_l1a_delay_vme_default;
   //
   //------------------------------------------------------------------
   //0X30 = ADR_ALCT_CFG:  ALCT Configuration
   //------------------------------------------------------------------
-  cfg_alct_ext_trig_en_   = cfg_alct_ext_trig_en_default  ;  
+  cfg_alct_ext_trig_en_   = cfg_alct_ext_trig_en_default  ;
   cfg_alct_ext_inject_en_ = cfg_alct_ext_inject_en_default;
-  cfg_alct_ext_trig_      = cfg_alct_ext_trig_default     ;    
-  cfg_alct_ext_inject_    = cfg_alct_ext_inject_default   ;  
-  alct_seq_cmd_           = alct_seq_cmd_default          ;         
+  cfg_alct_ext_trig_      = cfg_alct_ext_trig_default     ;
+  cfg_alct_ext_inject_    = cfg_alct_ext_inject_default   ;
+  alct_seq_cmd_           = alct_seq_cmd_default          ;
   alct_clock_en_use_ccb_  = alct_clock_en_use_ccb_default ;
   alct_clock_en_use_vme_  = alct_clock_en_use_vme_default ;
   //
@@ -7336,14 +7336,14 @@ void TMB::SetTMBRegisterDefaults() {
   clct_pat_trig_en_   = clct_pat_trig_en_default  ;
   alct_pat_trig_en_   = alct_pat_trig_en_default  ;
   match_pat_trig_en_  = match_pat_trig_en_default ;
-  adb_ext_trig_en_    = adb_ext_trig_en_default   ;  
-  dmb_ext_trig_en_    = dmb_ext_trig_en_default   ;  
-  clct_ext_trig_en_   = clct_ext_trig_en_default  ; 
-  alct_ext_trig_en_   = alct_ext_trig_en_default  ; 
-  vme_ext_trig_       = vme_ext_trig_default      ;  
-  ext_trig_inject_    = ext_trig_inject_default   ;  
-  all_cfeb_active_    = all_cfeb_active_default   ;  
-  cfebs_enabled_      = cfebs_enabled_default     ;  
+  adb_ext_trig_en_    = adb_ext_trig_en_default   ;
+  dmb_ext_trig_en_    = dmb_ext_trig_en_default   ;
+  clct_ext_trig_en_   = clct_ext_trig_en_default  ;
+  alct_ext_trig_en_   = alct_ext_trig_en_default  ;
+  vme_ext_trig_       = vme_ext_trig_default      ;
+  ext_trig_inject_    = ext_trig_inject_default   ;
+  all_cfeb_active_    = all_cfeb_active_default   ;
+  cfebs_enabled_      = cfebs_enabled_default     ;
   cfeb_enable_source_ = cfeb_enable_source_default;
   //
   //------------------------------------------------------------------
@@ -7374,7 +7374,7 @@ void TMB::SetTMBRegisterDefaults() {
   //------------------------------------------------------------------
   triad_persist_    = triad_persist_default   ;
   hit_thresh_       = hit_thresh_default      ;
-  aff_thresh_       = aff_thresh_default      ; 
+  aff_thresh_       = aff_thresh_default      ;
   min_hits_pattern_ = min_hits_pattern_default;
   drift_delay_      = drift_delay_default     ;
   pretrigger_halt_  = pretrigger_halt_default ;
@@ -7464,7 +7464,7 @@ void TMB::SetTMBRegisterDefaults() {
   //------------------------------------------------------------------
   //0XBC = ADR_RPC_INJ:  RPC Injector Control
   //------------------------------------------------------------------
-  rpc_mask_all_  = rpc_mask_all_default ; 
+  rpc_mask_all_  = rpc_mask_all_default ;
   inj_mask_rat_  = inj_mask_rat_default ;
   inj_mask_rpc_  = inj_mask_rpc_default ;
   inj_delay_rat_ = inj_delay_rat_default;
@@ -7487,7 +7487,7 @@ void TMB::SetTMBRegisterDefaults() {
   bx0_vpf_test_    = bx0_vpf_test_default   ;
   //
   //-----------------------------------------------------------------------------
-  //0XCC = ADR_NON_TRIG_RO:  Non-Triggering Event Enables + ME1/1A(1B) reversal 
+  //0XCC = ADR_NON_TRIG_RO:  Non-Triggering Event Enables + ME1/1A(1B) reversal
   //-----------------------------------------------------------------------------
   tmb_allow_alct_nontrig_readout_   =  tmb_allow_alct_nontrig_readout_default   ;
   tmb_allow_clct_nontrig_readout_   =  tmb_allow_clct_nontrig_readout_default   ;
@@ -7523,32 +7523,32 @@ void TMB::SetTMBRegisterDefaults() {
   //---------------------------------------------------------------------
   //0XF0 = ADR_LAYER_TRIG:  Layer-Trigger Mode
   //---------------------------------------------------------------------
-  layer_trigger_en_  = layer_trigger_en_default ; 
+  layer_trigger_en_  = layer_trigger_en_default ;
   layer_trig_thresh_ = layer_trig_thresh_default;
   clct_throttle_     = clct_throttle_default;
   //
   //---------------------------------------------------------------------
   //0XF4 = ADR_TEMP0:  Pattern Finder Pretrigger
   //---------------------------------------------------------------------
-  clct_blanking_                    = clct_blanking_default                   ; 
-  clct_pattern_id_thresh_           = clct_pattern_id_thresh_default          ; 
-  clct_pattern_id_thresh_postdrift_ = clct_pattern_id_thresh_postdrift_default; 
+  clct_blanking_                    = clct_blanking_default                   ;
+  clct_pattern_id_thresh_           = clct_pattern_id_thresh_default          ;
+  clct_pattern_id_thresh_postdrift_ = clct_pattern_id_thresh_postdrift_default;
   adjacent_cfeb_distance_           = adjacent_cfeb_distance_default          ;
   //
   //---------------------------------------------------------------------
   //0XF6 = ADR_TEMP1:  CLCT separation
   //---------------------------------------------------------------------
-  clct_separation_src_              = clct_separation_src_default             ; 
-  clct_separation_ram_write_enable_ = clct_separation_ram_write_enable_default; 
-  clct_separation_ram_adr_          = clct_separation_ram_adr_default         ; 
-  min_clct_separation_              = min_clct_separation_default             ; 
+  clct_separation_src_              = clct_separation_src_default             ;
+  clct_separation_ram_write_enable_ = clct_separation_ram_write_enable_default;
+  clct_separation_ram_adr_          = clct_separation_ram_adr_default         ;
+  min_clct_separation_              = min_clct_separation_default             ;
   //
   //---------------------------------------------------------------------
   //0X100 = ADR_L1A_LOOKBACK:  L1A Lookback Distance
   //---------------------------------------------------------------------
   l1a_allow_notmb_lookback_ = l1a_allow_notmb_lookback_default;
-  inj_wrdata_msb_           = inj_wrdata_msb_default          ; 
-  l1a_priority_enable_      = l1a_priority_enable_default     ; 
+  inj_wrdata_msb_           = inj_wrdata_msb_default          ;
+  l1a_priority_enable_      = l1a_priority_enable_default     ;
   //
   //---------------------------------------------------------------------
   //0X104 = ADR_ALCT_SYNC_CTRL:  ALCT Sync Mode Control
@@ -7570,18 +7570,18 @@ void TMB::SetTMBRegisterDefaults() {
   //---------------------------------------------------------------------
   //0X10C = ADR_MINISCOPE:  Internal 16 Channel Digital Scope
   //---------------------------------------------------------------------
-  miniscope_enable_  = miniscope_enable_default ; 
-  mini_tbins_test_   = mini_tbins_test_default  ; 
-  mini_tbins_word_   = mini_tbins_word_default  ; 
-  fifo_tbins_mini_   = fifo_tbins_mini_default  ; 
-  fifo_pretrig_mini_ = fifo_pretrig_mini_default; 
+  miniscope_enable_  = miniscope_enable_default ;
+  mini_tbins_test_   = mini_tbins_test_default  ;
+  mini_tbins_word_   = mini_tbins_word_default  ;
+  fifo_tbins_mini_   = fifo_tbins_mini_default  ;
+  fifo_pretrig_mini_ = fifo_pretrig_mini_default;
   //
   //---------------------------------------------------------------------
-  //(0X10E,0X110,0X112,0X114,0X116,0X118,0X11A) = ADR_PHASER[0-6]:  
+  //(0X10E,0X110,0X112,0X114,0X116,0X118,0X11A) = ADR_PHASER[0-6]:
   // digital phase shifter for... alct_rx,alct_tx,cfeb[0-4]_rx
   //---------------------------------------------------------------------
   fire_phaser_                   = fire_phaser_default                  ;
-  reset_phase_                   = reset_phase_default                  ; 
+  reset_phase_                   = reset_phase_default                  ;
   //
   //--------------------------------------------------------------
   //[0X10E] = ADR_PHASER0:  values in the xml file for alct_rx
@@ -7626,7 +7626,7 @@ void TMB::SetTMBRegisterDefaults() {
   //--------------------------------------------------------------
   //[0X11A] = ADR_PHASER6:  values in the xml file for cfeb4_rx
   //--------------------------------------------------------------
-  if(GetHardwareVersion()>1 && (GetTMBFirmwareCompileType()==0xA || GetTMBFirmwareCompileType()==0xB)) 
+  if(GetHardwareVersion()>1 && (GetTMBFirmwareCompileType()==0xA || GetTMBFirmwareCompileType()==0xB))
      cfeb4_rx_clock_delay_ = cfeb0123_rx_clock_delay_default;
   else
      cfeb4_rx_clock_delay_ = HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rx_clock_delay_default : cfeb4_rx_clock_delay_default;
@@ -7641,7 +7641,7 @@ void TMB::SetTMBRegisterDefaults() {
   cfeb5_rx_posneg_      = HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rx_posneg_default : cfeb5_rx_posneg_default     ;
   cfeb456_rx_clock_delay_ = cfeb456_rx_clock_delay_default;
   cfeb456_rx_fine_delay_  = cfeb456_rx_fine_delay_default;
-  cfeb456_rx_posneg_ = cfeb456_rx_posneg_default; 
+  cfeb456_rx_posneg_ = cfeb456_rx_posneg_default;
   //
   //--------------------------------------------------------------
   //[0X16C] = ADR_PHASER8:  values in the xml file for cfeb6_rx or cfeb0123
@@ -7651,7 +7651,7 @@ void TMB::SetTMBRegisterDefaults() {
   cfeb6_rx_posneg_      = HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rx_posneg_default : cfeb6_rx_posneg_default     ;
   cfeb0123_rx_clock_delay_ = cfeb0123_rx_clock_delay_default;
   cfeb0123_rx_fine_delay_  = cfeb0123_rx_fine_delay_default;
-  cfeb0123_rx_posneg_ = cfeb0123_rx_posneg_default; 
+  cfeb0123_rx_posneg_ = cfeb0123_rx_posneg_default;
   //
   //--------------------------------------------------------------
   //[0X308] = ADR_PHASER9:  values in the xml file for GEMA or GEM A+B
@@ -7682,7 +7682,7 @@ void TMB::SetTMBRegisterDefaults() {
   //--------------------------------------------------------------
   // 0X11E = ADR_DELAY1_INT:  CFEB to TMB "interstage" delays
   //--------------------------------------------------------------
-  if(GetHardwareVersion()>1 && (GetTMBFirmwareCompileType()==0xA || GetTMBFirmwareCompileType()==0xB)) 
+  if(GetHardwareVersion()>1 && (GetTMBFirmwareCompileType()==0xA || GetTMBFirmwareCompileType()==0xB))
      cfeb4_rxd_int_delay_ = cfeb0123_rxd_int_delay_default;        // for OTMB with MEx/1
   else
      cfeb4_rxd_int_delay_ = HasGroupedME11ABCFEBRxValues() == 1 ? cfeb456_rxd_int_delay_default : cfeb4_rxd_int_delay_default;
@@ -7787,7 +7787,7 @@ void TMB::SetTMBRegisterDefaults() {
   //---------------------------------------------------------------------
   // 0X1B8 = ADR_ALGO2022_CTRL:  Controls parameters of 2022 winter upgrade trigger algorithm (Tao, 2022)
   //---------------------------------------------------------------------
-  
+
   clctaff_enable_            = clctaff_enable_default;
   clctaff_alct_match_        = clctaff_alct_match_default;
   pretrig_clct_match_enable_ = pretrig_clct_match_enable_default;
@@ -7826,7 +7826,7 @@ void TMB::SetTMBRegisterDefaults() {
   //-----------------------------------------------------------------------------
   // 0X318 ADR_GEM_CSC_MATCH_WINDOW
   //-----------------------------------------------------------------------------
-   
+
   gem_clct_deltahs_odd_       =  gem_clct_deltahs_odd_default;
   gem_clct_deltahs_even_      =  gem_clct_deltahs_even_default;
   gem_alct_deltawire_odd_     =  gem_alct_deltawire_odd_default;
@@ -7835,7 +7835,7 @@ void TMB::SetTMBRegisterDefaults() {
   ////-----------------------------------------------------------------------------
   //// 0X320 ADR_GEM_INJ_CTRL
   ////-----------------------------------------------------------------------------
-  // 
+  //
   //gem_inj_wen_       =  gem_inj_wen_default;
   //gem_inj_sel_       =  gem_inj_sel_default;
   //gem_inj_igem_      =  gem_inj_igem_default;
@@ -7845,13 +7845,13 @@ void TMB::SetTMBRegisterDefaults() {
   ////-----------------------------------------------------------------------------
   //// 0X322 ADR_GEM_INJ_DATA
   ////-----------------------------------------------------------------------------
-  // 
+  //
   //gem_inj_data_      =  gem_inj_data_default;
 
   //-----------------------------------------------------------------------------
   // 0X324 ADR_GEM_COPAD_CTRL
   //-----------------------------------------------------------------------------
-   
+
   gem_match_neighborRoll_      =  gem_match_neighborRoll_default;
   gem_match_neighborPad_       =  gem_match_neighborPad_default;
   gem_match_deltaPad_          =  gem_match_deltaPad_default;
@@ -7865,7 +7865,7 @@ void TMB::SetTMBRegisterDefaults() {
   gemB_bx0_delay_             = gemB_bx0_delay_default;
   gemB_bx0_enable_            = gemB_bx0_enable_default;
   gemB_bx0_match_             = gemB_bx0_match_default;
-   
+
   //-----------------------------------------------------------------------------
   // 0X328 ADR_GEMA_TRG_CTRL
   //-----------------------------------------------------------------------------
@@ -8000,7 +8000,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
   //
   if ( address == vme_loopbk_adr ) {
     //------------------------------------------------------------------
-    //0X0E = ADR_LOOPBK:  Loop-Back Control Register  
+    //0X0E = ADR_LOOPBK:  Loop-Back Control Register
     //------------------------------------------------------------------
     read_cfeb_oe_        = ExtractValueFromData(data,cfeb_oe_bitlo       ,cfeb_oe_bithi       );
     read_alct_loop_      = ExtractValueFromData(data,alct_loop_bitlo     ,alct_loop_bithi     );
@@ -8013,9 +8013,9 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_gtl_loop_       = ExtractValueFromData(data,gtl_loop_bitlo      ,gtl_loop_bithi      );
     read_gtl_oe_         = ExtractValueFromData(data,gtl_oe_bitlo        ,gtl_oe_bithi        );
     //
-  } else if ( address == vme_dddsm_adr ) {    
+  } else if ( address == vme_dddsm_adr ) {
     //------------------------------------------------------------------
-    //0X14 = ADR_DDDSM:  3D3444 State Machine Control + DCM Lock Status  
+    //0X14 = ADR_DDDSM:  3D3444 State Machine Control + DCM Lock Status
     //------------------------------------------------------------------
     read_ddd_state_machine_start_            = ExtractValueFromData(data,ddd_state_machine_start_bitlo     ,ddd_state_machine_start_bithi     );
     read_ddd_state_machine_manual_           = ExtractValueFromData(data,ddd_state_machine_manual_bitlo    ,ddd_state_machine_manual_bithi    );
@@ -8121,15 +8121,15 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //------------------------------------------------------------------
     //0X30 = ADR_ALCT_CFG:  ALCT Configuration
     //------------------------------------------------------------------
-    read_cfg_alct_ext_trig_en_   = ExtractValueFromData(data,cfg_alct_ext_trig_en_bitlo  ,cfg_alct_ext_trig_en_bithi  ); 
-    read_cfg_alct_ext_inject_en_ = ExtractValueFromData(data,cfg_alct_ext_inject_en_bitlo,cfg_alct_ext_inject_en_bithi); 
-    read_cfg_alct_ext_trig_      = ExtractValueFromData(data,cfg_alct_ext_trig_bitlo     ,cfg_alct_ext_trig_bithi     ); 
-    read_cfg_alct_ext_inject_    = ExtractValueFromData(data,cfg_alct_ext_inject_bitlo   ,cfg_alct_ext_inject_bithi   ); 
-    read_alct_seq_cmd_           = ExtractValueFromData(data,alct_seq_cmd_bitlo          ,alct_seq_cmd_bithi          ); 
-    read_alct_clock_en_use_ccb_  = ExtractValueFromData(data,alct_clock_en_use_ccb_bitlo ,alct_clock_en_use_ccb_bithi ); 
-    read_alct_clock_en_use_vme_  = ExtractValueFromData(data,alct_clock_en_use_vme_bitlo ,alct_clock_en_use_vme_bithi ); 
-    read_alct_muonic_            = ExtractValueFromData(data,alct_muonic_bitlo           ,alct_muonic_bithi           ); 
-    read_cfeb_muonic_            = ExtractValueFromData(data,cfeb_muonic_bitlo           ,cfeb_muonic_bithi           ); 
+    read_cfg_alct_ext_trig_en_   = ExtractValueFromData(data,cfg_alct_ext_trig_en_bitlo  ,cfg_alct_ext_trig_en_bithi  );
+    read_cfg_alct_ext_inject_en_ = ExtractValueFromData(data,cfg_alct_ext_inject_en_bitlo,cfg_alct_ext_inject_en_bithi);
+    read_cfg_alct_ext_trig_      = ExtractValueFromData(data,cfg_alct_ext_trig_bitlo     ,cfg_alct_ext_trig_bithi     );
+    read_cfg_alct_ext_inject_    = ExtractValueFromData(data,cfg_alct_ext_inject_bitlo   ,cfg_alct_ext_inject_bithi   );
+    read_alct_seq_cmd_           = ExtractValueFromData(data,alct_seq_cmd_bitlo          ,alct_seq_cmd_bithi          );
+    read_alct_clock_en_use_ccb_  = ExtractValueFromData(data,alct_clock_en_use_ccb_bitlo ,alct_clock_en_use_ccb_bithi );
+    read_alct_clock_en_use_vme_  = ExtractValueFromData(data,alct_clock_en_use_vme_bitlo ,alct_clock_en_use_vme_bithi );
+    read_alct_muonic_            = ExtractValueFromData(data,alct_muonic_bitlo           ,alct_muonic_bithi           );
+    read_cfeb_muonic_            = ExtractValueFromData(data,cfeb_muonic_bitlo           ,cfeb_muonic_bithi           );
     //
   } else if ( address == alct_inj_adr ) {
     //------------------------------------------------------------------
@@ -8145,7 +8145,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //0X38 = ADR_ALCT_STAT:  ALCT Sequencer Control/Status
     //------------------------------------------------------------------
     read_alct_cfg_done_       = ExtractValueFromData(data,alct_cfg_done_bitlo     ,alct_cfg_done_bithi     );
-    read_alct_ecc_en_         = ExtractValueFromData(data,alct_ecc_en_bitlo       ,alct_ecc_en_bithi       );    
+    read_alct_ecc_en_         = ExtractValueFromData(data,alct_ecc_en_bitlo       ,alct_ecc_en_bithi       );
     read_alct_ecc_err_blank_  = ExtractValueFromData(data,alct_ecc_err_blank_bitlo,alct_ecc_err_blank_bithi);
     read_alct_sync_ecc_err_   = ExtractValueFromData(data,alct_sync_ecc_err_bitlo ,alct_sync_ecc_err_bithi );
     read_alct_txdata_delay_   = ExtractValueFromData(data,alct_txdata_delay_bitlo ,alct_txdata_delay_bithi );
@@ -8230,7 +8230,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_all_cfeb_active_    = ExtractValueFromData(data,all_cfeb_active_bitlo   ,all_cfeb_active_bithi   );
     read_cfebs_enabled_      = ExtractValueFromData(data,cfebs_enabled_bitlo     ,cfebs_enabled_bithi     );
     read_cfeb_enable_source_ = ExtractValueFromData(data,cfeb_enable_source_bitlo,cfeb_enable_source_bithi);
-    //    
+    //
   } else if ( address == seq_trig_dly0_adr ) {
     //------------------------------------------------------------------
     //0X6A = ADR_SEQ_TRIG_DLY0:  Sequencer Trigger Source Delays
@@ -8291,7 +8291,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //------------------------------------------------------------------
     read_l1a_offset_ = ExtractValueFromData(data,l1a_offset_bitlo,l1a_offset_bithi);
     read_bxn_offset_ = ExtractValueFromData(data,bxn_offset_bitlo,bxn_offset_bithi);
-    //    
+    //
   } else if ( address == seq_clct0_adr ) {
     //------------------------------------------------------------------
     //0X78 = ADR_SEQ_CLCT0:  Sequencer Latched CLCT0
@@ -8300,7 +8300,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_CLCT0_nhit_         = ExtractValueFromData(data,CLCT0_nhit_bitlo        ,CLCT0_nhit_bithi        );
     read_CLCT0_pattern_      = ExtractValueFromData(data,CLCT0_pattern_bitlo     ,CLCT0_pattern_bithi     );
     read_CLCT0_keyHalfStrip_ = ExtractValueFromData(data,CLCT0_keyHalfStrip_bitlo,CLCT0_keyHalfStrip_bithi);
-    //    
+    //
   } else if ( address == seq_clct1_adr ) {
     //------------------------------------------------------------------
     //0X7A = ADR_SEQ_CLCT1:  Sequencer Latched CLCT1
@@ -8309,7 +8309,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_CLCT1_nhit_         = ExtractValueFromData(data,CLCT1_nhit_bitlo        ,CLCT1_nhit_bithi        );
     read_CLCT1_pattern_      = ExtractValueFromData(data,CLCT1_pattern_bitlo     ,CLCT1_pattern_bithi     );
     read_CLCT1_keyHalfStrip_ = ExtractValueFromData(data,CLCT1_keyHalfStrip_bitlo,CLCT1_keyHalfStrip_bithi);
-    //    
+    //
   } else if ( address == tmb_trig_adr ) {
     //------------------------------------------------------------------
     //0X86 = ADR_TMB_TRIG:  TMB Trigger configuration/MPC accept
@@ -8516,7 +8516,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //
   } else if ( address == alctfifo1_adr ) {
     //------------------------------------------------------------------
-    //0XA8 = ADR_ALCTFIFO1:  ALCT Raw Hits RAM control 
+    //0XA8 = ADR_ALCTFIFO1:  ALCT Raw Hits RAM control
     //------------------------------------------------------------------
     read_alct_raw_reset_        = ExtractValueFromData(data,alct_raw_reset_bitlo       ,alct_raw_reset_bithi       );
     read_alct_raw_read_address_ = ExtractValueFromData(data,alct_raw_read_address_bitlo,alct_raw_read_address_bithi);
@@ -8524,7 +8524,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //
   } else if ( address == alctfifo2_adr ) {
     //------------------------------------------------------------------
-    //0XAA = ADR_ALCTFIFO2:  ALCT Raw Hits RAM data 
+    //0XAA = ADR_ALCTFIFO2:  ALCT Raw Hits RAM data
     //------------------------------------------------------------------
     read_alct_raw_lsbs_ = ExtractValueFromData(data,alct_raw_lsbs_bitlo,alct_raw_lsbs_bithi);
     //
@@ -8705,13 +8705,13 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //------------------------------------------------------------------
     //0XBC = ADR_RPC_INJ:  RPC Injector Control
     //------------------------------------------------------------------
-    read_rpc_mask_all_  = ExtractValueFromData(data,rpc_mask_all_bitlo ,rpc_mask_all_bithi );  
-    read_inj_mask_rat_  = ExtractValueFromData(data,inj_mask_rat_bitlo ,inj_mask_rat_bithi );  
-    read_inj_mask_rpc_  = ExtractValueFromData(data,inj_mask_rpc_bitlo ,inj_mask_rpc_bithi );  
-    read_inj_delay_rat_ = ExtractValueFromData(data,inj_delay_rat_bitlo,inj_delay_rat_bithi); 
-    read_rpc_inj_sel_   = ExtractValueFromData(data,rpc_inj_sel_bitlo  ,rpc_inj_sel_bithi  );   
-    read_rpc_inj_wdata_ = ExtractValueFromData(data,rpc_inj_wdata_bitlo,rpc_inj_wdata_bithi); 
-    read_rpc_inj_rdata_ = ExtractValueFromData(data,rpc_inj_rdata_bitlo,rpc_inj_rdata_bithi); 
+    read_rpc_mask_all_  = ExtractValueFromData(data,rpc_mask_all_bitlo ,rpc_mask_all_bithi );
+    read_inj_mask_rat_  = ExtractValueFromData(data,inj_mask_rat_bitlo ,inj_mask_rat_bithi );
+    read_inj_mask_rpc_  = ExtractValueFromData(data,inj_mask_rpc_bitlo ,inj_mask_rpc_bithi );
+    read_inj_delay_rat_ = ExtractValueFromData(data,inj_delay_rat_bitlo,inj_delay_rat_bithi);
+    read_rpc_inj_sel_   = ExtractValueFromData(data,rpc_inj_sel_bitlo  ,rpc_inj_sel_bithi  );
+    read_rpc_inj_wdata_ = ExtractValueFromData(data,rpc_inj_wdata_bitlo,rpc_inj_wdata_bithi);
+    read_rpc_inj_rdata_ = ExtractValueFromData(data,rpc_inj_rdata_bitlo,rpc_inj_rdata_bithi);
     //
   } else if ( address == rpc_tbins_adr ) {
     //------------------------------------------------------------------
@@ -8733,7 +8733,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //
   } else if ( address == non_trig_readout_adr ) {
     //-----------------------------------------------------------------------------
-    //0XCC = ADR_NON_TRIG_RO:  Non-Triggering Event Enables + ME1/1A(1B) reversal 
+    //0XCC = ADR_NON_TRIG_RO:  Non-Triggering Event Enables + ME1/1A(1B) reversal
     //-----------------------------------------------------------------------------
     read_tmb_allow_alct_nontrig_readout_   = ExtractValueFromData(data,tmb_allow_alct_nontrig_readout_bitlo  ,tmb_allow_alct_nontrig_readout_bithi  );
     read_tmb_allow_clct_nontrig_readout_   = ExtractValueFromData(data,tmb_allow_clct_nontrig_readout_bitlo  ,tmb_allow_clct_nontrig_readout_bithi  );
@@ -8765,7 +8765,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_jtag_disable_write_to_adr10_    = ExtractValueFromData(data,jtag_disable_write_to_adr10_bitlo   ,jtag_disable_write_to_adr10_bithi   );
     read_jtag_state_machine_throttle_    = ExtractValueFromData(data,jtag_state_machine_throttle_bitlo   ,jtag_state_machine_throttle_bithi   );
     //
-  } else if ( address == jtag_sm_wdcnt_adr ) {    
+  } else if ( address == jtag_sm_wdcnt_adr ) {
     //------------------------------------------------------------------
     //0XD6 = ADR_JTAGSM1:  JTAG State Machine Word Count
     //------------------------------------------------------------------
@@ -8833,7 +8833,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_rpc0_rat_delay_ = ExtractValueFromData(data,rpc0_rat_delay_bitlo,rpc0_rat_delay_bithi);
     read_rpc1_rat_delay_ = ExtractValueFromData(data,rpc1_rat_delay_bitlo,rpc1_rat_delay_bithi);
     //
-  } else if ( address == tmb_stat_adr ) {    
+  } else if ( address == tmb_stat_adr ) {
     //---------------------------------------------------------------------
     //0XEA = ADR_BDSTATUS:  Board Status Summary (copy of raw-hits header)
     //---------------------------------------------------------------------
@@ -8853,7 +8853,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_jsm_wdcnt_ok_    = ExtractValueFromData(data,jsm_wdcnt_ok_bitlo   ,jsm_wdcnt_ok_bithi   );
     read_jsm_tck_fpga_ok_ = ExtractValueFromData(data,jsm_tck_fpga_ok_bitlo,jsm_tck_fpga_ok_bithi);
     //
-  } else if ( address == layer_trg_mode_adr ) {    
+  } else if ( address == layer_trg_mode_adr ) {
     //---------------------------------------------------------------------
     //0XF0 = ADR_LAYER_TRIG:  Layer-Trigger Mode
     //---------------------------------------------------------------------
@@ -8862,7 +8862,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_number_layers_hit_  = ExtractValueFromData(data,number_layers_hit_bitlo,number_layers_hit_bithi);
     read_clct_throttle_  = ExtractValueFromData(data,clct_throttle_bitlo,clct_throttle_bithi);
     //
-  } else if ( address == pattern_find_pretrg_adr ) {    
+  } else if ( address == pattern_find_pretrg_adr ) {
     //---------------------------------------------------------------------
     //0XF4 = ADR_TEMP0:  Pattern Finder Pretrigger
     //---------------------------------------------------------------------
@@ -8872,7 +8872,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_clct_pattern_id_thresh_postdrift_ = ExtractValueFromData(data,clct_pattern_id_thresh_postdrift_bitlo,clct_pattern_id_thresh_postdrift_bithi);
     read_adjacent_cfeb_distance_           = ExtractValueFromData(data,adjacent_cfeb_distance_bitlo          ,adjacent_cfeb_distance_bithi          );
     //
-  } else if ( address == clct_separation_adr ) {    
+  } else if ( address == clct_separation_adr ) {
     //---------------------------------------------------------------------
     //0XF6 = ADR_TEMP1:  CLCT separation
     //---------------------------------------------------------------------
@@ -8881,7 +8881,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_clct_separation_ram_adr_          = ExtractValueFromData(data,clct_separation_ram_adr_bitlo         ,clct_separation_ram_adr_bithi         );
     read_min_clct_separation_              = ExtractValueFromData(data,min_clct_separation_bitlo             ,min_clct_separation_bithi             );
     //
-  } else if ( address == clock_status_adr ) {    
+  } else if ( address == clock_status_adr ) {
     //---------------------------------------------------------------------
     //0XFC = ADR_CCB_STAT1:  CCB Status Register (cont. from 0x2E)
     //---------------------------------------------------------------------
@@ -8890,7 +8890,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_ccb_qpll_lock_never_  = ExtractValueFromData(data,ccb_qpll_lock_never_bitlo ,ccb_qpll_lock_never_bithi );
     read_ccb_qpll_lost_ever_   = ExtractValueFromData(data,ccb_qpll_lost_ever_bitlo  ,ccb_qpll_lost_ever_bithi  );
     //
-  } else if ( address == l1a_lookback_adr ) {    
+  } else if ( address == l1a_lookback_adr ) {
     //---------------------------------------------------------------------
     //0X100 = ADR_L1A_LOOKBACK:  L1A Lookback Distance
     //---------------------------------------------------------------------
@@ -8899,7 +8899,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_inj_rdata_msb_            = ExtractValueFromData(data,inj_rdata_msb_bitlo           ,inj_rdata_msb_bithi           );
     read_l1a_priority_enable_      = ExtractValueFromData(data,l1a_priority_enable_bitlo     ,l1a_priority_enable_bithi     );
     //
-  } else if ( address == alct_sync_ctrl_adr ) {    
+  } else if ( address == alct_sync_ctrl_adr ) {
     //---------------------------------------------------------------------
     //0X104 = ADR_ALCT_SYNC_CTRL:  ALCT Sync Mode Control
     //---------------------------------------------------------------------
@@ -8911,13 +8911,13 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_alct_sync_1st_error_latched_ = ExtractValueFromData(data,alct_sync_1st_error_latched_bitlo,alct_sync_1st_error_latched_bithi);
     read_alct_sync_2nd_error_latched_ = ExtractValueFromData(data,alct_sync_2nd_error_latched_bitlo,alct_sync_2nd_error_latched_bithi);
     //
-  } else if ( address == alct_sync_txdata_1st_adr ) {    
+  } else if ( address == alct_sync_txdata_1st_adr ) {
     //---------------------------------------------------------------------
     //0X106 = ADR_ALCT_SYNC_TXDATA_1ST:  ALCT Sync Mode Transmit Data 1st
     //---------------------------------------------------------------------
     read_alct_sync_txdata_1st_ = ExtractValueFromData(data,alct_sync_txdata_1st_bitlo,alct_sync_txdata_1st_bithi);
     //
-  } else if ( address == alct_sync_txdata_2nd_adr ) {    
+  } else if ( address == alct_sync_txdata_2nd_adr ) {
     //---------------------------------------------------------------------
     //0X108 = ADR_ALCT_SYNC_TXDATA_2ND:  ALCT Sync Mode Transmit Data 2nd
     //---------------------------------------------------------------------
@@ -8939,9 +8939,9 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
 	      address == phaser_cfeb1_rxd_adr ||
 	      address == phaser_cfeb2_rxd_adr ||
 	      address == phaser_cfeb3_rxd_adr ||
-	      address == phaser_cfeb4_rxd_adr || 
-	      address == phaser_cfeb5_rxd_adr || 
-	      address == phaser_cfeb6_rxd_adr || 
+	      address == phaser_cfeb4_rxd_adr ||
+	      address == phaser_cfeb5_rxd_adr ||
+	      address == phaser_cfeb6_rxd_adr ||
 	      address == phaser_cfeb456_rxd_adr ||
 	          address == phaser_cfeb0123_rxd_adr ||
 	          address == phaser_gemA_rxd_adr     ||
@@ -8949,7 +8949,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
 	          address == phaser_gem_rxd_adr
              ) {
     //---------------------------------------------------------------------
-    //(0X10E,0X110,0X112,0X114,0X116,0X118,0X11A) = ADR_PHASER[0-6]:  
+    //(0X10E,0X110,0X112,0X114,0X116,0X118,0X11A) = ADR_PHASER[0-6]:
     // digital phase shifter for... alct_rx,alct_tx,cfeb[0-4]_rx
     //---------------------------------------------------------------------
     read_fire_phaser_                   = ExtractValueFromData(data,fire_phaser_bitlo                  ,fire_phaser_bithi                  );
@@ -8958,9 +8958,9 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_digital_clock_manager_locked_  = ExtractValueFromData(data,digital_clock_manager_locked_bitlo ,digital_clock_manager_locked_bithi );
     read_phase_shifter_state_           = ExtractValueFromData(data,phase_shifter_state_bitlo          ,phase_shifter_state_bithi          );
     read_phaser_posneg_                 = ExtractValueFromData(data,phaser_posneg_bitlo                ,phaser_posneg_bithi                );
-    read_phase_value_within_quadrant_   = ExtractValueFromData(data,phase_value_within_quadrant_bitlo  ,phase_value_within_quadrant_bithi  ); 
-    read_quarter_cycle_quadrant_select_ = ExtractValueFromData(data,quarter_cycle_quadrant_select_bitlo,quarter_cycle_quadrant_select_bithi); 
-    read_half_cycle_quadrant_select_    = ExtractValueFromData(data,half_cycle_quadrant_select_bitlo   ,half_cycle_quadrant_select_bithi   ); 
+    read_phase_value_within_quadrant_   = ExtractValueFromData(data,phase_value_within_quadrant_bitlo  ,phase_value_within_quadrant_bithi  );
+    read_quarter_cycle_quadrant_select_ = ExtractValueFromData(data,quarter_cycle_quadrant_select_bitlo,quarter_cycle_quadrant_select_bithi);
+    read_half_cycle_quadrant_select_    = ExtractValueFromData(data,half_cycle_quadrant_select_bitlo   ,half_cycle_quadrant_select_bithi   );
     //
     ConvertVMERegisterValuesToDigitalPhases_(address);
     //
@@ -8968,7 +8968,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //---------------------------------------------------------------------
     // 0X11C = ADR_DELAY0_INT:  CFEB to TMB "interstage" delays
     //---------------------------------------------------------------------
-    read_cfeb0_rxd_int_delay_  = ExtractValueFromData(data,cfeb0_rxd_int_delay_bitlo,cfeb0_rxd_int_delay_bithi);    
+    read_cfeb0_rxd_int_delay_  = ExtractValueFromData(data,cfeb0_rxd_int_delay_bitlo,cfeb0_rxd_int_delay_bithi);
     read_cfeb1_rxd_int_delay_  = ExtractValueFromData(data,cfeb1_rxd_int_delay_bitlo,cfeb1_rxd_int_delay_bithi);
     read_cfeb2_rxd_int_delay_  = ExtractValueFromData(data,cfeb2_rxd_int_delay_bitlo,cfeb2_rxd_int_delay_bithi);
     read_cfeb3_rxd_int_delay_  = ExtractValueFromData(data,cfeb3_rxd_int_delay_bitlo,cfeb3_rxd_int_delay_bithi);
@@ -8977,14 +8977,14 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     //---------------------------------------------------------------------
     // 0X11E = ADR_DELAY1_INT:  CFEB to TMB "interstage" delays
     //---------------------------------------------------------------------
-    read_cfeb4_rxd_int_delay_  = ExtractValueFromData(data,cfeb4_rxd_int_delay_bitlo,cfeb4_rxd_int_delay_bithi);    
+    read_cfeb4_rxd_int_delay_  = ExtractValueFromData(data,cfeb4_rxd_int_delay_bitlo,cfeb4_rxd_int_delay_bithi);
     if (HasGroupedME11ABCFEBRxValues() == 0){//ungrouped ME11
-      read_cfeb5_rxd_int_delay_  = ExtractValueFromData(data,cfeb5_rxd_int_delay_bitlo,cfeb5_rxd_int_delay_bithi);    
-      read_cfeb6_rxd_int_delay_  = ExtractValueFromData(data,cfeb6_rxd_int_delay_bitlo,cfeb6_rxd_int_delay_bithi);    
+      read_cfeb5_rxd_int_delay_  = ExtractValueFromData(data,cfeb5_rxd_int_delay_bitlo,cfeb5_rxd_int_delay_bithi);
+      read_cfeb6_rxd_int_delay_  = ExtractValueFromData(data,cfeb6_rxd_int_delay_bitlo,cfeb6_rxd_int_delay_bithi);
     }
     if (HasGroupedME11ABCFEBRxValues() == 1) {
-      read_cfeb0123_rxd_int_delay_  = ExtractValueFromData(data,cfeb0123_rxd_int_delay_bitlo,cfeb0123_rxd_int_delay_bithi);    
-      read_cfeb456_rxd_int_delay_   = ExtractValueFromData(data,cfeb456_rxd_int_delay_bitlo,cfeb456_rxd_int_delay_bithi);    
+      read_cfeb0123_rxd_int_delay_  = ExtractValueFromData(data,cfeb0123_rxd_int_delay_bitlo,cfeb0123_rxd_int_delay_bithi);
+      read_cfeb456_rxd_int_delay_   = ExtractValueFromData(data,cfeb456_rxd_int_delay_bitlo,cfeb456_rxd_int_delay_bithi);
     }
     //
   } else if ( address == sync_err_control_adr ) {
@@ -9070,7 +9070,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     // 0X14C - 0X158 = ADR_V6_GTX_RX[CFEB]: GTX link control and monitoring
     //---------------------------------------------------------------------
     int inputNum = (address - dcfeb_gtx_rx0_adr) / 2;
-    
+
     read_gtx_rx_enable_[inputNum] = ExtractValueFromData(data,gtx_rx_enable_bitlo,gtx_rx_enable_bithi);
     read_gtx_rx_reset_[inputNum] = ExtractValueFromData(data,gtx_rx_reset_bitlo,gtx_rx_reset_bithi);
     read_gtx_rx_prbs_test_enable_[inputNum] = ExtractValueFromData(data,gtx_rx_prbs_test_enable_bitlo,gtx_rx_prbs_test_enable_bithi);
@@ -9080,12 +9080,12 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_gtx_rx_link_bad_[inputNum] = ExtractValueFromData(data,gtx_rx_link_bad_bitlo,gtx_rx_link_bad_bithi);
     read_gtx_rx_pol_swap_[inputNum] = ExtractValueFromData(data,gtx_rx_pol_swap_bitlo,gtx_rx_pol_swap_bithi);
     read_gtx_rx_error_count_[inputNum] = ExtractValueFromData(data,gtx_rx_error_count_bitlo,gtx_rx_error_count_bithi);
-    
-  } else if ( address == dcfeb_gtx0_notintable_adr || 
-              address == dcfeb_gtx1_notintable_adr || 
+
+  } else if ( address == dcfeb_gtx0_notintable_adr ||
+              address == dcfeb_gtx1_notintable_adr ||
               address == dcfeb_gtx2_notintable_adr ||
-              address == dcfeb_gtx3_notintable_adr || 
-              address == dcfeb_gtx4_notintable_adr || 
+              address == dcfeb_gtx3_notintable_adr ||
+              address == dcfeb_gtx4_notintable_adr ||
               address == dcfeb_gtx5_notintable_adr ||
               address == dcfeb_gtx6_notintable_adr ) {
     //---------------------------------------------------------------------
@@ -9094,11 +9094,11 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     int inputNum = (address - dcfeb_gtx0_notintable_adr) / 2;
     read_gtx_rx_notintable_count_[inputNum] = ExtractValueFromData(data,gtx_rx_notintable_count_bitlo,gtx_rx_notintable_count_bithi);
 
-  } else if ( address == dcfeb_gtx0_disperr_adr || 
-              address == dcfeb_gtx1_disperr_adr || 
+  } else if ( address == dcfeb_gtx0_disperr_adr ||
+              address == dcfeb_gtx1_disperr_adr ||
               address == dcfeb_gtx2_disperr_adr ||
-              address == dcfeb_gtx3_disperr_adr || 
-              address == dcfeb_gtx4_disperr_adr || 
+              address == dcfeb_gtx3_disperr_adr ||
+              address == dcfeb_gtx4_disperr_adr ||
               address == dcfeb_gtx5_disperr_adr ||
               address == dcfeb_gtx6_disperr_adr ) {
     //---------------------------------------------------------------------
@@ -9179,9 +9179,9 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_gem_gtx_rx_pol_swap_[inputNum] = ExtractValueFromData(data,gtx_rx_pol_swap_bitlo,gtx_rx_pol_swap_bithi);
     read_gem_gtx_rx_error_count_[inputNum] = ExtractValueFromData(data,gtx_rx_error_count_bitlo,gtx_rx_error_count_bithi);
 
-  } else if (address == gem_gtx0_notintable_adr || 
+  } else if (address == gem_gtx0_notintable_adr ||
              address == gem_gtx1_notintable_adr ||
-             address == gem_gtx2_notintable_adr || 
+             address == gem_gtx2_notintable_adr ||
              address == gem_gtx3_notintable_adr) {
     //---------------------------------------------------------------------
     // 0X370 - 0X376 = ADR_GEM_GTX[0-3]_NOTINTABLE_GEM: GTX link control and monitoring for GEM
@@ -9189,9 +9189,9 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     int inputNum = (address - gem_gtx0_notintable_adr) / 2;
     read_gem_gtx_rx_notintable_count_[inputNum] = ExtractValueFromData(data,gtx_rx_notintable_count_bitlo,gtx_rx_notintable_count_bithi);
 
-  } else if (address == gem_gtx0_disperr_adr || 
+  } else if (address == gem_gtx0_disperr_adr ||
              address == gem_gtx1_disperr_adr ||
-             address == gem_gtx2_disperr_adr || 
+             address == gem_gtx2_disperr_adr ||
              address == gem_gtx3_disperr_adr) {
     //---------------------------------------------------------------------
     // 0X378 - 0X37E = ADR_GEM_GTX[0-3]_DISPERR_GEM: GTX link control and monitoring for GEM
@@ -9313,15 +9313,15 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     // 0X33a,0x33c,0x33e for GEM hot vfat mask
     // Need to add GE2/1 hot VFAT mask
     //---------------------------------------------------------------------
-   
+
     for (int bit_in_register=0; bit_in_register<16; bit_in_register++) {
         if (address == gem_vfat_hcm0_adr || (address == gem_vfat_hcm1_adr && bit_in_register<8)){
 	   int vfat = (address - gem_vfat_hcm0_adr)*8 + bit_in_register;
-           read_gemA_hot_channel_mask_[vfat]  =  ExtractValueFromData (data , bit_in_register, bit_in_register); 
+           read_gemA_hot_channel_mask_[vfat]  =  ExtractValueFromData (data , bit_in_register, bit_in_register);
         }
 	else{ //GEMB part
            int vfat = (address - gem_vfat_hcm1_adr)*8 + bit_in_register - 8;
-           read_gemB_hot_channel_mask_[vfat]  =  ExtractValueFromData (data , bit_in_register, bit_in_register); 
+           read_gemB_hot_channel_mask_[vfat]  =  ExtractValueFromData (data , bit_in_register, bit_in_register);
         }
     }
   } else if ( address == gem_alignment0_adr || address == gem_alignment1_adr || address == gem_alignment2_adr || address == gem_alignment3_adr ) {
@@ -9332,7 +9332,7 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
     read_gem_xshift_sign_eta_[ieta]    = ExtractValueFromData (data ,  gem_xshift_sign_eta0_bitlo        ,  gem_xshift_sign_eta0_bithi);
     read_gem_xshift_value_eta_[ieta+1] = ExtractValueFromData (data , gem_xshift_value_eta1_bitlo        , gem_xshift_value_eta1_bithi);
     read_gem_xshift_sign_eta_[ieta+1]  = ExtractValueFromData (data ,  gem_xshift_sign_eta1_bitlo        ,  gem_xshift_sign_eta1_bithi);
-  } 
+  }
   //end of fill extra VME register
   //
   // combinations of bits which say which trgmode_ we are using....
@@ -9340,9 +9340,9 @@ void TMB::DecodeTMBRegister_(unsigned long int address, int data) {
   int read_CLCTtrigger_setting     = read_tmb_allow_clct_  & read_clct_pat_trig_en_;
   int read_ALCTCLCTtrigger_setting = read_tmb_allow_match_ & read_match_pat_trig_en_;
   //
-  if (read_CLCTtrigger_setting) 
+  if (read_CLCTtrigger_setting)
     read_trgmode_ = CLCT_trigger;
-  if (read_ALCTCLCTtrigger_setting) 
+  if (read_ALCTCLCTtrigger_setting)
     read_trgmode_ = ALCT_CLCT_coincidence_trigger;
   //
   return;
@@ -9393,7 +9393,7 @@ void TMB::PrintTMBConfiguration() {
 				       VMEregister != hcm501_adr && VMEregister != hcm523_adr && VMEregister != hcm545_adr &&
 				       VMEregister != hcm601_adr && VMEregister != hcm623_adr && VMEregister != hcm645_adr)) )
 	  || hardware_version_ < 2) &&
-        (!GetGemEnabled() || (GetGemEnabled() && VMEregister != gem_vfat_hcm0_adr  && VMEregister != gem_vfat_hcm1_adr && VMEregister != gem_vfat_hcm2_adr        
+        (!GetGemEnabled() || (GetGemEnabled() && VMEregister != gem_vfat_hcm0_adr  && VMEregister != gem_vfat_hcm1_adr && VMEregister != gem_vfat_hcm2_adr
          && !(VMEregister >= gem_alignment0_adr && VMEregister <= gem_alignment3_adr) ))
         )
       PrintTMBRegister(VMEregister);
@@ -9456,9 +9456,9 @@ void TMB::PrintComparatorBadBits() {
     //
     int char_counter = MAX_NUM_DISTRIPS/8 - 1;
     //
-    (*MyOutput_) << "Layer " << std::dec << layer << " -> ";    
+    (*MyOutput_) << "Layer " << std::dec << layer << " -> ";
     for (int layer_counter=MAX_NUM_DISTRIPS/8; layer_counter>0; layer_counter--) {
-      //      (*MyOutput_) << "char_counter " << std::dec << char_counter << " -> ";    
+      //      (*MyOutput_) << "char_counter " << std::dec << char_counter << " -> ";
       (*MyOutput_) << std::hex
           << ((badbits[char_counter] >> 4) & 0xf)
           << (badbits[char_counter] & 0xf) << " ";
@@ -9501,7 +9501,7 @@ void TMB::PrintGEMHotChannelMask() {
   (*MyOutput_) << "Plus sign (+) --> converted CSC coordinate + alignment correction\n" <<  std::dec;
   for (int ieta = 0;  ieta < MAX_ETAPARTIONS_PER_LAYER; ieta++)
 	(*MyOutput_) <<"Roll"<< MAX_ETAPARTIONS_PER_LAYER-ieta-1<<"="
-                << (read_gem_xshift_sign_eta_[ieta] == 1 ? "+":"-") 
+                << (read_gem_xshift_sign_eta_[ieta] == 1 ? "+":"-")
                 << read_gem_xshift_value_eta_[ieta] << (ieta == MAX_ETAPARTIONS_PER_LAYER-1 ? "" : ", ");
   (*MyOutput_) << std::endl;
   (*MyOutput_) << "-------------------------------------------------------" << std::endl;
@@ -9596,7 +9596,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //
   } else if ( address == vme_dddsm_adr ) {
     //------------------------------------------------------------------
-    //0X14 = ADR_DDDSM:  3D3444 State Machine Control + DCM Lock Status  
+    //0X14 = ADR_DDDSM:  3D3444 State Machine Control + DCM Lock Status
     //------------------------------------------------------------------
     (*MyOutput_) << " ->TMB DDD State Machine register:" << std::endl;
     (*MyOutput_) << "    start VME        = " << std::hex << read_ddd_state_machine_start_           << std::endl;
@@ -9616,7 +9616,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << "    clock DCC lock   = " << std::hex << read_ddd_state_machine_clock_dcc_lock_   << std::endl;
     (*MyOutput_) << "    clock RPC lock   = " << std::hex << read_ddd_state_machine_clock_rpc_lock_   << std::endl;
     //
-  } else if ( address == vme_ddd0_adr ) {    
+  } else if ( address == vme_ddd0_adr ) {
     //------------------------------------------------------------------
     //0X16 = ADR_DDD0:  3D3444 Chip 0 Delays, 1 step = 2ns
     //------------------------------------------------------------------
@@ -9625,7 +9625,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << "    DMB tx phase   = " << std::dec << read_dmb_tx_delay_        << std::endl;
     (*MyOutput_) << "    RAT-TMB phase  = " << std::dec << read_rat_tmb_delay_       << std::endl;
     //
-  } else if ( address == vme_ddd1_adr ) {    
+  } else if ( address == vme_ddd1_adr ) {
     //------------------------------------------------------------------
     //0X18 = ADR_DDD1:  3D3444 Chip 1 Delays, 1 step = 2ns
     //------------------------------------------------------------------
@@ -9634,7 +9634,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << "    CFEB TOF delay   = " << std::dec << read_cfeb_tof_delay_      << std::endl;
     (*MyOutput_) << "    CFEB0 TOF delay = " << std::dec << read_cfeb0_tof_delay_     << std::endl;
     //
-  } else if ( address == vme_ddd2_adr ) {    
+  } else if ( address == vme_ddd2_adr ) {
     //------------------------------------------------------------------
     //0X1A = ADR_DDD2:  3D3444 Chip 2 Delays, 1 step = 2ns
     //------------------------------------------------------------------
@@ -9675,13 +9675,13 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //0X2A =  ADR_CCB_CFG:  CCB Configuration
     //------------------------------------------------------------------
     (*MyOutput_) << " ->CCB configuration register:" << std::endl;
-    (*MyOutput_) << "    Ignore received CCB backplane inputs          = " << std::hex << read_ignore_ccb_rx_                 << std::endl;                
-    (*MyOutput_) << "    Disable transmitted CCB backplane outputs     = " << std::hex << read_disable_ccb_tx_                << std::endl;               
-    (*MyOutput_) << "    Enable internal L1A emulator                  = " << std::hex << read_enable_internal_l1a_           << std::endl;          
+    (*MyOutput_) << "    Ignore received CCB backplane inputs          = " << std::hex << read_ignore_ccb_rx_                 << std::endl;
+    (*MyOutput_) << "    Disable transmitted CCB backplane outputs     = " << std::hex << read_disable_ccb_tx_                << std::endl;
+    (*MyOutput_) << "    Enable internal L1A emulator                  = " << std::hex << read_enable_internal_l1a_           << std::endl;
     (*MyOutput_) << "    Enable ALCT or CLCT status to CCB front panel = " << std::hex << read_enable_alctclct_status_to_ccb_ << std::endl;
-    (*MyOutput_) << "    Enable ALCT status GTL outputs                = " << std::hex << read_enable_alct_status_to_ccb_     << std::endl;    
-    (*MyOutput_) << "    Enable CLCT status GTL outputs                = " << std::hex << read_enable_clct_status_to_ccb_     << std::endl;    
-    (*MyOutput_) << "    Fire CCB L1A oneshot                          = " << std::hex << read_fire_l1a_oneshot_              << std::endl;             
+    (*MyOutput_) << "    Enable ALCT status GTL outputs                = " << std::hex << read_enable_alct_status_to_ccb_     << std::endl;
+    (*MyOutput_) << "    Enable CLCT status GTL outputs                = " << std::hex << read_enable_clct_status_to_ccb_     << std::endl;
+    (*MyOutput_) << "    Fire CCB L1A oneshot                          = " << std::hex << read_fire_l1a_oneshot_              << std::endl;
     //
   } else if ( address == ccb_trig_adr ) {
     //------------------------------------------------------------------
@@ -9703,11 +9703,11 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //0X30 = ADR_ALCT_CFG:  ALCT Configuration
     //------------------------------------------------------------------
     (*MyOutput_) << " ->ALCT configuration register:" << std::endl;
-    (*MyOutput_) << "    Enable alct_ext_trig from CCB             = " << std::hex << read_cfg_alct_ext_trig_en_   << std::endl;  
+    (*MyOutput_) << "    Enable alct_ext_trig from CCB             = " << std::hex << read_cfg_alct_ext_trig_en_   << std::endl;
     (*MyOutput_) << "    Enable alct_ext_inject from CCB           = " << std::hex << read_cfg_alct_ext_inject_en_ << std::endl;
-    (*MyOutput_) << "    Assert alct_ext_trig                      = " << std::hex << read_cfg_alct_ext_trig_      << std::endl;    
-    (*MyOutput_) << "    Assert alct_ext_inject                    = " << std::hex << read_cfg_alct_ext_inject_    << std::endl;  
-    (*MyOutput_) << "    ALCT sequencer command                   =0x" << std::hex << read_alct_seq_cmd_           << std::endl;         
+    (*MyOutput_) << "    Assert alct_ext_trig                      = " << std::hex << read_cfg_alct_ext_trig_      << std::endl;
+    (*MyOutput_) << "    Assert alct_ext_inject                    = " << std::hex << read_cfg_alct_ext_inject_    << std::endl;
+    (*MyOutput_) << "    ALCT sequencer command                   =0x" << std::hex << read_alct_seq_cmd_           << std::endl;
     (*MyOutput_) << "    alct_clock_en_vme=ccb_clock40_enable      = " << std::hex << read_alct_clock_en_use_ccb_  << std::endl;
     (*MyOutput_) << "    set alct_clock_en scsi signal if above=0  = " << std::hex << read_alct_clock_en_use_vme_  << std::endl;
     (*MyOutput_) << "    ALCT has independent Time-Of-Flight delay = " << std::hex << read_alct_muonic_            << std::endl;
@@ -9764,7 +9764,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //
   } else if ( address == dcfeb_inj_seq_trig_adr ) {
     //------------------------------------------------------------------
-    //0X17A = ADR_V6_EXTEND: ADR_CFEB_INJ:  CFEB Injector Control; ADR_SEQ_TRIG_EN: 
+    //0X17A = ADR_V6_EXTEND: ADR_CFEB_INJ:  CFEB Injector Control; ADR_SEQ_TRIG_EN:
     //------------------------------------------------------------------
     (*MyOutput_) << " ->CFEB injector control register extension:" << std::endl;
     (*MyOutput_) << "    CFEB enable mask               = 0x" << std::hex << read_enableCLCTInputs_extend_  << std::endl;
@@ -9809,7 +9809,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << " ->Sequencer CLCT configuration register:" << std::endl;
     (*MyOutput_) << "    Triad 1-shot persistence                                  = 0x" << std::hex << read_triad_persist_    << std::endl;
     (*MyOutput_) << "    1/2-strip pretrigger thresh                               = "   << std::dec << read_hit_thresh_       << std::endl;
-    (*MyOutput_) << "    Minimum layers in pattern to send Active FEB Flag to DMB  = "   << std::dec << read_aff_thresh_       << std::endl; 
+    (*MyOutput_) << "    Minimum layers in pattern to send Active FEB Flag to DMB  = "   << std::dec << read_aff_thresh_       << std::endl;
     (*MyOutput_) << "    min pattern hits for valid pattern                        = "   << std::dec << read_min_hits_pattern_ << std::endl;
     (*MyOutput_) << "    drift delay                                               = "   << std::dec << read_drift_delay_      << std::endl;
     (*MyOutput_) << "    pretrigger then halt until unhalt                         = "   << std::hex << read_pretrigger_halt_  << std::endl;
@@ -9856,7 +9856,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << "    L1a Counter Preset value = " << std::dec << read_l1a_offset_ << std::endl;
     (*MyOutput_) << "    BXN offset at reset      = " << std::dec << read_bxn_offset_ << std::endl;
     //
-  } else if ( address == tmb_trig_adr ) {    
+  } else if ( address == tmb_trig_adr ) {
     //------------------------------------------------------------------
     //0X86 = ADR_TMB_TRIG:  TMB Trigger configuration/MPC accept
     //------------------------------------------------------------------
@@ -9872,7 +9872,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << "    blank MPC data and bx0 except when triggered = " << std::hex << read_mpc_idle_blank_      << std::endl;
     (*MyOutput_) << "    enable outputs to MPC                        = " << std::hex << read_mpc_output_enable_   << std::endl;
     //
-  } else if ( address == scp_ctrl_adr ) {    
+  } else if ( address == scp_ctrl_adr ) {
     //------------------------------------------------------------------
     //0X98 = ADR_SCP_CTRL:  Scope Control
     //------------------------------------------------------------------
@@ -9937,24 +9937,24 @@ void TMB::PrintTMBRegister(unsigned long int address) {
   //0X1AA = ADR_RUN3_FORMAT_CTRL:  run3 format control  (Tao, 2020)
   //------------------------------------------------------------------
       (*MyOutput_) << " ->Run3 format control:" << std::endl;
-      (*MyOutput_) << "    enable CCLUT                               = " << std::dec << read_cclut_enable_ << std::endl; 
-      (*MyOutput_) << "    enable Run3 Trigger Format                 = " << std::dec << read_run3_trig_dataformat_enable_ << std::endl; 
-      (*MyOutput_) << "    enable Run3 DAQ Format                     = " << std::dec << read_run3_daq_dataformat_enable_ << std::endl; 
-      (*MyOutput_) << "    enable Run3 ALCT Format                    = " << std::dec << read_run3_alct_dataformat_enable_ << std::endl; 
-      (*MyOutput_) << "    enable Run2 legacy revision code           = " << std::dec << read_run2_revcode_enable_ << std::endl; 
+      (*MyOutput_) << "    enable CCLUT                               = " << std::dec << read_cclut_enable_ << std::endl;
+      (*MyOutput_) << "    enable Run3 Trigger Format                 = " << std::dec << read_run3_trig_dataformat_enable_ << std::endl;
+      (*MyOutput_) << "    enable Run3 DAQ Format                     = " << std::dec << read_run3_daq_dataformat_enable_ << std::endl;
+      (*MyOutput_) << "    enable Run3 ALCT Format                    = " << std::dec << read_run3_alct_dataformat_enable_ << std::endl;
+      (*MyOutput_) << "    enable Run2 legacy revision code           = " << std::dec << read_run2_revcode_enable_ << std::endl;
   } else if ( address == hmt_ctrl_adr ) {
    //------------------------------------------------------------------
    //0X1AC = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger control:" << std::endl;
-      (*MyOutput_) << "    enable HMT                                 = " << std::dec << read_hmt_enable_ << std::endl; 
-      (*MyOutput_) << "    enable HMT in ME1a                         = " << std::dec << read_hmt_me1a_enable_ << std::endl; 
+      (*MyOutput_) << "    enable HMT                                 = " << std::dec << read_hmt_enable_ << std::endl;
+      (*MyOutput_) << "    enable HMT in ME1a                         = " << std::dec << read_hmt_me1a_enable_ << std::endl;
   } else if ( address == hmt_thresh1_adr ) {
    //------------------------------------------------------------------
    //0X1AE = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger loose thresh:" << std::endl;
-      (*MyOutput_) << "    HMT thresh1(loose)                         = " << std::dec << read_hmt_thresh1_ << std::endl; 
+      (*MyOutput_) << "    HMT thresh1(loose)                         = " << std::dec << read_hmt_thresh1_ << std::endl;
       (*MyOutput_) << "    Allow to readout cfeb by HMT               = " << std::hex << read_cfeb_allow_hmt_ro_ << std::endl;
       (*MyOutput_) << "    HMT thresh for active feb flag             = " << std::dec << read_hmt_aff_thresh_ << std::endl;
   } else if ( address == hmt_thresh2_adr ) {
@@ -9962,15 +9962,15 @@ void TMB::PrintTMBRegister(unsigned long int address) {
    //0X1B0 = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger median thresh:" << std::endl;
-      (*MyOutput_) << "    HMT thresh2(median)                        = " << std::dec << read_hmt_thresh2_ << std::endl; 
-      (*MyOutput_) << "    HMT delay for HMT-ACLT match               = " << std::dec << read_hmt_delay_ << std::endl; 
-      (*MyOutput_) << "    HMT window for HMT-ACLT match              = " << std::dec << read_hmt_alct_win_size_ << std::endl; 
+      (*MyOutput_) << "    HMT thresh2(median)                        = " << std::dec << read_hmt_thresh2_ << std::endl;
+      (*MyOutput_) << "    HMT delay for HMT-ACLT match               = " << std::dec << read_hmt_delay_ << std::endl;
+      (*MyOutput_) << "    HMT window for HMT-ACLT match              = " << std::dec << read_hmt_alct_win_size_ << std::endl;
   } else if ( address == hmt_thresh3_adr ) {
    //------------------------------------------------------------------
    //0X1B2 = ADR_HMT_CTRL:  HMT control  (Tao, 2020)
    //------------------------------------------------------------------
       (*MyOutput_) << " ->High Multiplicity Trigger tight thresh:" << std::endl;
-      (*MyOutput_) << "    HMT thresh3(tight)                         = " << std::dec << read_hmt_thresh3_ << std::endl; 
+      (*MyOutput_) << "    HMT thresh3(tight)                         = " << std::dec << read_hmt_thresh3_ << std::endl;
       (*MyOutput_) << "    Allow to trigger on anode HMT bits         = " << std::dec << read_hmt_allow_anode_ << std::endl;
       (*MyOutput_) << "    Allow to trigger on cathode HMT bits       = " << std::dec << read_hmt_allow_cathode_ << std::endl;
       (*MyOutput_) << "    Allow to trigger on matched HMT bits       = " << std::dec << read_hmt_allow_match_ << std::endl;
@@ -9983,9 +9983,9 @@ void TMB::PrintTMBRegister(unsigned long int address) {
   //  //0X1B8 = ADR_LCT_INJECTION:  LCT injection from configuration  (Tao, 2020)
   //  //------------------------------------------------------------------
   //    (*MyOutput_) << " ->LCT injection from configuration:" << std::endl;
-  //    (*MyOutput_) << "    injected lct halfstrip      = " << std::dec << read_lct_inj_hs_ << std::endl; 
-  //    (*MyOutput_) << "    injected lct wiregroup      = " << std::dec << read_lct_inj_wg_ << std::endl; 
-  //    (*MyOutput_) << "    injected lct enable         = " << std::dec << read_lct_inj_enable_ << std::endl; 
+  //    (*MyOutput_) << "    injected lct halfstrip      = " << std::dec << read_lct_inj_hs_ << std::endl;
+  //    (*MyOutput_) << "    injected lct wiregroup      = " << std::dec << read_lct_inj_wg_ << std::endl;
+  //    (*MyOutput_) << "    injected lct enable         = " << std::dec << read_lct_inj_enable_ << std::endl;
   } else if ( address == rpc_cfg_adr ) {
     //------------------------------------------------------------------
     //0XB6 = ADR_RPC_CFG:  RPC Configuration
@@ -10011,37 +10011,37 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //0XBC = ADR_RPC_INJ:  RPC Injector Control
     //------------------------------------------------------------------
     (*MyOutput_) << " ->RPC injector control register:" << std::endl;
-    (*MyOutput_) << "    Enable RPC inputs to RAT             = "   << std::hex << read_rpc_mask_all_  << std::endl; 
-    (*MyOutput_) << "    Enable RAT for injector fire         = "   << std::hex << read_inj_mask_rat_  << std::endl; 
-    (*MyOutput_) << "    Enable RPC inj RAM for injector fire = "   << std::hex << read_inj_mask_rpc_  << std::endl; 
-    (*MyOutput_) << "    CFEB/RPC injectors wait for RAT      = "   << std::dec << read_inj_delay_rat_ << std::endl; 
-    (*MyOutput_) << "    Enable injector RAM write            = "   << std::hex << read_rpc_inj_sel_   << std::endl; 
-    (*MyOutput_) << "    RPC injector write data MSBs         = 0x" << std::hex << read_rpc_inj_wdata_ << std::endl; 
-    (*MyOutput_) << "    RPC injector read data MSBs          = 0x" << std::hex << read_rpc_inj_rdata_ << std::endl; 
+    (*MyOutput_) << "    Enable RPC inputs to RAT             = "   << std::hex << read_rpc_mask_all_  << std::endl;
+    (*MyOutput_) << "    Enable RAT for injector fire         = "   << std::hex << read_inj_mask_rat_  << std::endl;
+    (*MyOutput_) << "    Enable RPC inj RAM for injector fire = "   << std::hex << read_inj_mask_rpc_  << std::endl;
+    (*MyOutput_) << "    CFEB/RPC injectors wait for RAT      = "   << std::dec << read_inj_delay_rat_ << std::endl;
+    (*MyOutput_) << "    Enable injector RAM write            = "   << std::hex << read_rpc_inj_sel_   << std::endl;
+    (*MyOutput_) << "    RPC injector write data MSBs         = 0x" << std::hex << read_rpc_inj_wdata_ << std::endl;
+    (*MyOutput_) << "    RPC injector read data MSBs          = 0x" << std::hex << read_rpc_inj_rdata_ << std::endl;
     //
   } else if ( address == rpc_tbins_adr ) {
     //------------------------------------------------------------------
     //0XC4 = ADR_RPC_TBINS:  RPC FIFO Time Bins
     //------------------------------------------------------------------
     (*MyOutput_) << " ->RPC FIFO time bins register:" << std::endl;
-    (*MyOutput_) << "    Number of RPC FIFO time bins to readout             = "   << std::dec << read_fifo_tbins_rpc_   << std::endl; 
-    (*MyOutput_) << "    Number of RPC FIFO time bins before pretrigger      = "   << std::dec << read_fifo_pretrig_rpc_ << std::endl; 
-    (*MyOutput_) << "    RPC time bins are independent (0 = copy CFEB tbins) = "   << std::dec << read_rpc_decouple_     << std::endl; 
+    (*MyOutput_) << "    Number of RPC FIFO time bins to readout             = "   << std::dec << read_fifo_tbins_rpc_   << std::endl;
+    (*MyOutput_) << "    Number of RPC FIFO time bins before pretrigger      = "   << std::dec << read_fifo_pretrig_rpc_ << std::endl;
+    (*MyOutput_) << "    RPC time bins are independent (0 = copy CFEB tbins) = "   << std::dec << read_rpc_decouple_     << std::endl;
     //
   } else if ( address == bx0_delay_adr ) {
     //------------------------------------------------------------------
     //0XCA = ADR_BX0_DELAY:  BX0 to MPC delays
     //------------------------------------------------------------------
     (*MyOutput_) << " ->BX0 to MPC delay register:" << std::endl;
-    (*MyOutput_) << "    ALCT BX0 delay to MPC transmitter           = "   << std::dec << read_alct_bx0_delay_  << std::endl; 
-    (*MyOutput_) << "    CLCT BX0 delay to MPC transmitter           = "   << std::dec << read_clct_bx0_delay_  << std::endl; 
-    (*MyOutput_) << "    Enable ALCT BX0 (0 = use CLCT BX0 for ALCT) = "   << std::dec << read_alct_bx0_enable_ << std::endl; 
-    (*MyOutput_) << "    CLCT_BX0=LCT0_VPF for BC0 alignment tests   = "   << std::dec << read_bx0_vpf_test_    << std::endl; 
-    (*MyOutput_) << "    ALCT_BC0 = CLCT_BC0                         = "   << std::dec << read_bx0_match_       << std::endl; 
+    (*MyOutput_) << "    ALCT BX0 delay to MPC transmitter           = "   << std::dec << read_alct_bx0_delay_  << std::endl;
+    (*MyOutput_) << "    CLCT BX0 delay to MPC transmitter           = "   << std::dec << read_clct_bx0_delay_  << std::endl;
+    (*MyOutput_) << "    Enable ALCT BX0 (0 = use CLCT BX0 for ALCT) = "   << std::dec << read_alct_bx0_enable_ << std::endl;
+    (*MyOutput_) << "    CLCT_BX0=LCT0_VPF for BC0 alignment tests   = "   << std::dec << read_bx0_vpf_test_    << std::endl;
+    (*MyOutput_) << "    ALCT_BC0 = CLCT_BC0                         = "   << std::dec << read_bx0_match_       << std::endl;
     //
   } else if ( address == non_trig_readout_adr ) {
     //-----------------------------------------------------------------------------
-    //0XCC = ADR_NON_TRIG_RO:  Non-Triggering Event Enables + ME1/1A(1B) reversal 
+    //0XCC = ADR_NON_TRIG_RO:  Non-Triggering Event Enables + ME1/1A(1B) reversal
     //-----------------------------------------------------------------------------
     (*MyOutput_) << " ->Non-triggering Event Enable + ME11A/B reversal register:" << std::endl;
     (*MyOutput_) << "    Allow ALCT-only non-triggering readout           =   " << std::hex << read_tmb_allow_alct_nontrig_readout_   << std::endl;
@@ -10169,43 +10169,43 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //0XF0 = ADR_LAYER_TRIG:  Layer-Trigger Mode
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->Layer-trigger mode register:" << std::endl;
-    (*MyOutput_) << "    Enable layer trigger mode = " << std::dec << read_layer_trigger_en_  << std::endl; 
-    (*MyOutput_) << "    Layer trigger threshold   = " << std::dec << read_layer_trig_thresh_ << std::endl; 
-    (*MyOutput_) << "    Number of layers hit      = " << std::dec << read_number_layers_hit_ << std::endl; 
-    (*MyOutput_) << "    CLCT throttle             = " << std::dec << read_clct_throttle_     << std::endl; 
+    (*MyOutput_) << "    Enable layer trigger mode = " << std::dec << read_layer_trigger_en_  << std::endl;
+    (*MyOutput_) << "    Layer trigger threshold   = " << std::dec << read_layer_trig_thresh_ << std::endl;
+    (*MyOutput_) << "    Number of layers hit      = " << std::dec << read_number_layers_hit_ << std::endl;
+    (*MyOutput_) << "    CLCT throttle             = " << std::dec << read_clct_throttle_     << std::endl;
     //
   } else if ( address == pattern_find_pretrg_adr ) {
     //---------------------------------------------------------------------
     //0XF4 = ADR_TEMP0:  Pattern Finder Pretrigger
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->CLCT Pattern Finder pretrigger configuration register:" << std::endl;
-    (*MyOutput_) << "    Blank CLCT output if no valid pattern flag                = " << std::dec << read_clct_blanking_                     << std::endl; 
-    (*MyOutput_) << "    Stagger CLCT layers                                       = " << std::dec << read_clct_stagger_                      << std::endl; 
-    (*MyOutput_) << "    Minimum pattern ID value for CLCT pretrig                 = " << std::dec << read_clct_pattern_id_thresh_            << std::endl; 
-    (*MyOutput_) << "    Minimum pattern ID value for CLCT pattern trigger         = " << std::dec << read_clct_pattern_id_thresh_postdrift_  << std::endl; 
-    (*MyOutput_) << "    Distance from key on CFEBn to CFEBn+1 to set AFF for n+1  = " << std::dec << read_adjacent_cfeb_distance_            << std::endl; 
+    (*MyOutput_) << "    Blank CLCT output if no valid pattern flag                = " << std::dec << read_clct_blanking_                     << std::endl;
+    (*MyOutput_) << "    Stagger CLCT layers                                       = " << std::dec << read_clct_stagger_                      << std::endl;
+    (*MyOutput_) << "    Minimum pattern ID value for CLCT pretrig                 = " << std::dec << read_clct_pattern_id_thresh_            << std::endl;
+    (*MyOutput_) << "    Minimum pattern ID value for CLCT pattern trigger         = " << std::dec << read_clct_pattern_id_thresh_postdrift_  << std::endl;
+    (*MyOutput_) << "    Distance from key on CFEBn to CFEBn+1 to set AFF for n+1  = " << std::dec << read_adjacent_cfeb_distance_            << std::endl;
     //
   } else if ( address == clct_separation_adr ) {
     //---------------------------------------------------------------------
     //0XF6 = ADR_TEMP1:  CLCT separation
     //---------------------------------------------------------------------
     (*MyOutput_) << " ->CLCT Separation register:" << std::endl;
-    (*MyOutput_) << "    CLCT separation source = VME      = " << std::dec << read_clct_separation_src_               << std::endl; 
-    (*MyOutput_) << "    CLCT separation RAM write enable  = " << std::dec << read_clct_separation_ram_write_enable_  << std::endl; 
-    (*MyOutput_) << "    CLCT separation RAM address       = " << std::dec << read_clct_separation_ram_adr_           << std::endl; 
-    (*MyOutput_) << "    Minimum 1/2-strip CLCT separation = " << std::dec << read_min_clct_separation_               << std::endl; 
+    (*MyOutput_) << "    CLCT separation source = VME      = " << std::dec << read_clct_separation_src_               << std::endl;
+    (*MyOutput_) << "    CLCT separation RAM write enable  = " << std::dec << read_clct_separation_ram_write_enable_  << std::endl;
+    (*MyOutput_) << "    CLCT separation RAM address       = " << std::dec << read_clct_separation_ram_adr_           << std::endl;
+    (*MyOutput_) << "    Minimum 1/2-strip CLCT separation = " << std::dec << read_min_clct_separation_               << std::endl;
     //
   } else if ( address == clock_status_adr ) {
     //---------------------------------------------------------------------
     //0XFC = ADR_CCB_STAT1:  CCB Status Register (cont. from 0x2E)
-    //--------------------------------------------------------------------- 
+    //---------------------------------------------------------------------
     (*MyOutput_) << " ->Clock status register:" << std::endl;
     (*MyOutput_) << "    TTCrx lock never achieved     = " << std::hex << read_ccb_ttcrx_lock_never_ << std::endl;
     (*MyOutput_) << "    TTCrx lock lost at least once = " << std::hex << read_ccb_ttcrx_lost_ever_  << std::endl;
     (*MyOutput_) << "    QPLL lock never achieved      = " << std::hex << read_ccb_qpll_lock_never_  << std::endl;
     (*MyOutput_) << "    QPLL lock lost at least once  = " << std::hex << read_ccb_qpll_lost_ever_   << std::endl;
     //
-  } else if ( address == l1a_lookback_adr ) {    
+  } else if ( address == l1a_lookback_adr ) {
     //---------------------------------------------------------------------
     //0X100 = ADR_L1A_LOOKBACK:  L1A Lookback Distance
     //---------------------------------------------------------------------
@@ -10343,12 +10343,12 @@ void TMB::PrintTMBRegister(unsigned long int address) {
       (*MyOutput_) << " ->CFEB0123 to TMB communication clock delay:" << std::endl;
       (*MyOutput_) << "    CFEB0123 rx clock delay, unit=1ns    = " << std::dec << read_cfeb0123_rx_clock_delay_ << std::endl;
       (*MyOutput_) << "    CFEB0123 rx fine delay, unit=0.1ns   = " << std::dec << read_cfeb0123_rx_fine_delay_ << std::endl;
-      (*MyOutput_) << "    CFEB0123 posneg    = " << std::dec << read_cfeb0123_rx_posneg_ << std::endl;	
+      (*MyOutput_) << "    CFEB0123 posneg    = " << std::dec << read_cfeb0123_rx_posneg_ << std::endl;
     } else {
       (*MyOutput_) << " ->CFEB6 to TMB communication clock delay:" << std::endl;
       (*MyOutput_) << "    CFEB6 rx clock delay    = " << std::dec << read_cfeb6_rx_clock_delay_ << std::endl;
       (*MyOutput_) << "    CFEB6 rx fine delay        = " << std::dec << read_cfeb6_rx_fine_delay_ << std::endl;
-      (*MyOutput_) << "    CFEB6 posneg    = " << std::dec << read_cfeb6_rx_posneg_ << std::endl;	
+      (*MyOutput_) << "    CFEB6 posneg    = " << std::dec << read_cfeb6_rx_posneg_ << std::endl;
     }
     //
   } else if ( address == phaser_gemA_rxd_adr ) {
@@ -10420,7 +10420,7 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     (*MyOutput_) << " ->Synchronization Error Control:" << std::endl;
     (*MyOutput_) << "   VME sync error reset = "                << read_sync_err_reset_ << std::endl;
     (*MyOutput_) << "   Enable sync error type:  BXN != offset at ttc_bx0 arrival    = " << read_clct_bx0_sync_err_enable_    << std::endl;
-    (*MyOutput_) << "   Enable sync error type:  Uncorrected ECC data from TMB->ALCT = " << read_alct_ecc_rx_sync_err_enable_ << std::endl; 
+    (*MyOutput_) << "   Enable sync error type:  Uncorrected ECC data from TMB->ALCT = " << read_alct_ecc_rx_sync_err_enable_ << std::endl;
     (*MyOutput_) << "   Enable sync error type:  Uncorrected ECC data from ALCT->TMB = " << read_alct_ecc_tx_sync_err_enable_ << std::endl;
     (*MyOutput_) << "   Enable sync error type:  alct_bx0 != clct_bx0                = " << read_bx0_match_sync_err_enable_   << std::endl;
     (*MyOutput_) << "   Enable sync error type:  clock lock lost                     = " << read_clock_lock_lost_sync_err_enable_ << std::endl;
@@ -10486,50 +10486,50 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     //---------------------------------------------------------------------
     // 0X14C - 0X158 = ADR_V6_GTX_RX[CFEB]: GTX link control and monitoring
     //---------------------------------------------------------------------
-    
+
     (*MyOutput_) << " ->GTX optical input control and monitoring:" << std::endl;
-    
+
     (*MyOutput_) << "    Input enable [DCFEBs 0-6]: \t\t[ ";
     for (int i=0; i < 7; i++) { (*MyOutput_) << read_gtx_rx_enable_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
-    
+
     (*MyOutput_) << "    Input reset [DCFEBs 0-6]: \t\t[ ";
     for (int i=0; i < 7; i++) { (*MyOutput_) << read_gtx_rx_reset_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
-    
+
     (*MyOutput_) << "    PRBS test enable [DCFEBs 0-6]: \t[ ";
     for (int i=0; i < 7; i++) { (*MyOutput_) << read_gtx_rx_prbs_test_enable_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
-    
+
     (*MyOutput_) << "    Input ready [DCFEBs 0-6]: \t\t[ ";
     for (int i=0; i < 7; i++) { (*MyOutput_) << read_gtx_rx_ready_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
-    
+
     (*MyOutput_) << "    Link good [DCFEBs 0-6]: \t\t[ ";
     for (int i=0; i < 7; i++) { (*MyOutput_) << read_gtx_rx_link_good_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
-    
+
     (*MyOutput_) << "    Link had errors [DCFEBs 0-6]: \t[ ";
     for (int i=0; i < 7; i++) { (*MyOutput_) << read_gtx_rx_link_had_error_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
-    
+
     (*MyOutput_) << "    Link unstable [DCFEBs 0-6]: \t[ ";
     for (int i=0; i < 7; i++) { (*MyOutput_) << read_gtx_rx_link_bad_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
-    
+
 //    (*MyOutput_) << "    GTX 4 and 5 have swapped rx board routes [DCFEBs 0-6]: \t\t[ ";
 //    for (int i=0; i < 7; i++) { (*MyOutput_) << read_gtx_rx_pol_swap_[i] << " "; }
 //    (*MyOutput_) << "]" << std::endl;
-    
+
     (*MyOutput_) << "    Link error count [DCFEBs 0-6]: \t[ ";
     for (int i=0; i < 7; i++) { (*MyOutput_) << read_gtx_rx_error_count_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
 
-  } else if ( address == dcfeb_gtx0_notintable_adr || 
-              address == dcfeb_gtx1_notintable_adr || 
+  } else if ( address == dcfeb_gtx0_notintable_adr ||
+              address == dcfeb_gtx1_notintable_adr ||
               address == dcfeb_gtx2_notintable_adr ||
-              address == dcfeb_gtx3_notintable_adr || 
-              address == dcfeb_gtx4_notintable_adr || 
+              address == dcfeb_gtx3_notintable_adr ||
+              address == dcfeb_gtx4_notintable_adr ||
               address == dcfeb_gtx5_notintable_adr ||
               address == dcfeb_gtx6_notintable_adr ) {
     //---------------------------------------------------------------------
@@ -10539,11 +10539,11 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     for (int i=0; i < 7; i++) { (*MyOutput_) << read_gtx_rx_notintable_count_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
 
-  } else if ( address == dcfeb_gtx0_disperr_adr || 
-              address == dcfeb_gtx1_disperr_adr || 
+  } else if ( address == dcfeb_gtx0_disperr_adr ||
+              address == dcfeb_gtx1_disperr_adr ||
               address == dcfeb_gtx2_disperr_adr ||
-              address == dcfeb_gtx3_disperr_adr || 
-              address == dcfeb_gtx4_disperr_adr || 
+              address == dcfeb_gtx3_disperr_adr ||
+              address == dcfeb_gtx4_disperr_adr ||
               address == dcfeb_gtx5_disperr_adr ||
               address == dcfeb_gtx6_disperr_adr ) {
     //---------------------------------------------------------------------
@@ -10611,9 +10611,9 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gem_gtx_rx_error_count_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
 
-  } else if (address == gem_gtx0_notintable_adr || 
+  } else if (address == gem_gtx0_notintable_adr ||
              address == gem_gtx1_notintable_adr ||
-             address == gem_gtx2_notintable_adr || 
+             address == gem_gtx2_notintable_adr ||
              address == gem_gtx3_notintable_adr) {
     //---------------------------------------------------------------------
     // 0X370 - 0X376 = ADR_GEM_GTX[0-3]_NOTINTABLE_GEM: GTX link control and monitoring for GEM
@@ -10624,9 +10624,9 @@ void TMB::PrintTMBRegister(unsigned long int address) {
     for (int i=0; i < NumOfGEMs; i++) { (*MyOutput_) << read_gem_gtx_rx_notintable_count_[i] << " "; }
     (*MyOutput_) << "]" << std::endl;
 
-  } else if (address == gem_gtx0_disperr_adr || 
+  } else if (address == gem_gtx0_disperr_adr ||
              address == gem_gtx1_disperr_adr ||
-             address == gem_gtx2_disperr_adr || 
+             address == gem_gtx2_disperr_adr ||
              address == gem_gtx3_disperr_adr) {
     //---------------------------------------------------------------------
     // 0X378 - 0X37E = ADR_GEM_GTX[0-3]_DISPERR_GEM: GTX link control and monitoring for GEM
@@ -10745,8 +10745,8 @@ void TMB::PrintTMBRegister(unsigned long int address) {
 void TMB::PrintFirmwareDate() {
   //
   (*MyOutput_) << "-> TMB Firmware date: " << std::dec
-	       << GetReadTmbFirmwareYear() << " . " 
-	       << GetReadTmbFirmwareMonth() << " . " 
+	       << GetReadTmbFirmwareYear() << " . "
+	       << GetReadTmbFirmwareMonth() << " . "
 	       << GetReadTmbFirmwareDay() << std::endl;
   (*MyOutput_) << "-> TMB Firmware type   : " << std::hex << GetReadTmbFirmwareType()    << std::endl;
   (*MyOutput_) << "-> TMB Firmware version: " << std::hex << GetReadTmbFirmwareVersion() << std::endl;
@@ -10756,9 +10756,9 @@ void TMB::PrintFirmwareDate() {
        if (run2_legacy_revcode)
 	  (*MyOutput_) << "-> TMB Firmware RevCode, Run2 legacy : 0x" << std::hex << GetReadTmbFirmwareRevcode() << std::endl;
        else
-	  (*MyOutput_) << "-> TMB Firmware RevCode(Run3): format_verison=0x" << std::hex << read_tmb_firmware_format_version_ 
+	  (*MyOutput_) << "-> TMB Firmware RevCode(Run3): format_verison=0x" << std::hex << read_tmb_firmware_format_version_
 		<<" major_version=0x" << read_tmb_firmware_major_version_<<" minor_version=0x"<< read_tmb_firmware_minor_version_ << std::endl;
-  } else 
+  } else
 	  (*MyOutput_) << "-> TMB Firmware RevCode: " << std::hex << GetReadTmbFirmwareRevcode() << std::endl;
 
   (*MyOutput_) << "... ... ...  " <<HasGroupedME11ABCFEBRxValues() <<  std::endl;
@@ -10797,9 +10797,9 @@ void TMB::Set_cfeb_enable_source(int value) {
   cfeb_enable_source_orig = value;
   // decode TMB VME register into the bit which the VME register expects
   if (value == 42) {
-    SetCfebEnableSource_(1);     
+    SetCfebEnableSource_(1);
   } else if (value == 68) {
-    SetCfebEnableSource_(0);     
+    SetCfebEnableSource_(0);
   }
   return;
 }
@@ -10811,14 +10811,14 @@ int TMB::FillTMBRegister(unsigned long int address) {
   //
   if ( address == vme_loopbk_adr ) {
     //------------------------------------------------------------------
-    //0X0E = ADR_LOOPBK:  Loop-Back Control Register  
+    //0X0E = ADR_LOOPBK:  Loop-Back Control Register
     //------------------------------------------------------------------
     InsertValueIntoDataWord(enable_alct_rx_,enable_alct_rx_bithi,enable_alct_rx_bitlo,&data_word);
     InsertValueIntoDataWord(enable_alct_tx_,enable_alct_tx_bithi,enable_alct_tx_bitlo,&data_word);
     //
-  } else if ( address == vme_dddsm_adr ) {    
+  } else if ( address == vme_dddsm_adr ) {
     //------------------------------------------------------------------
-    //0X14 = ADR_DDDSM:  3D3444 State Machine Control + DCM Lock Status  
+    //0X14 = ADR_DDDSM:  3D3444 State Machine Control + DCM Lock Status
     //------------------------------------------------------------------
     InsertValueIntoDataWord(ddd_state_machine_start_     ,ddd_state_machine_start_bithi     ,ddd_state_machine_start_bitlo     ,&data_word);
     InsertValueIntoDataWord(ddd_state_machine_manual_    ,ddd_state_machine_manual_bithi    ,ddd_state_machine_manual_bitlo    ,&data_word);
@@ -10832,7 +10832,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //0X16 = ADR_DDD0:  3D3444 Chip 0 Delays, 1 step = 2ns
     //------------------------------------------------------------------
     InsertValueIntoDataWord(alct_tof_delay_,alct_tof_delay_bithi,alct_tof_delay_bitlo,&data_word);
-    InsertValueIntoDataWord(dmb_tx_delay_  ,dmb_tx_delay_bithi  ,dmb_tx_delay_bitlo  ,&data_word); 
+    InsertValueIntoDataWord(dmb_tx_delay_  ,dmb_tx_delay_bithi  ,dmb_tx_delay_bitlo  ,&data_word);
     InsertValueIntoDataWord(rat_tmb_delay_ ,rat_tmb_delay_bithi ,rat_tmb_delay_bitlo ,&data_word);
     //
   } else if ( address == vme_ddd1_adr ) {
@@ -10854,7 +10854,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //
   } else if ( address == vme_dddoe_adr ) {
     //------------------------------------------------------------------
-    //0X1C = ADR_DDDOE:  3D3444 Delay Chip Output Enables 
+    //0X1C = ADR_DDDOE:  3D3444 Delay Chip Output Enables
     //------------------------------------------------------------------
       if (GetHardwareVersion() == 2) {
           data_word = 0xff7; // enable all clocks except the RPC clock (which otherwise causes problems in OTMB->ALCT communication for certain ALCT TOF delay settings)
@@ -10987,7 +10987,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     InsertValueIntoDataWord(all_cfeb_active_     ,all_cfeb_active_bithi   ,all_cfeb_active_bitlo   ,&data_word);
     InsertValueIntoDataWord((cfebs_enabled_&0x1f),cfebs_enabled_bithi     ,cfebs_enabled_bitlo     ,&data_word);
     InsertValueIntoDataWord(cfeb_enable_source_  ,cfeb_enable_source_bithi,cfeb_enable_source_bitlo,&data_word);
-    //    
+    //
   } else if ( address == seq_trig_dly0_adr ) {
     //------------------------------------------------------------------
     //0X6A = ADR_SEQ_TRIG_DLY0:  Sequencer Trigger Source Delays
@@ -11048,7 +11048,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //------------------------------------------------------------------
     InsertValueIntoDataWord(l1a_offset_,l1a_offset_bithi,l1a_offset_bitlo,&data_word);
     InsertValueIntoDataWord(bxn_offset_,bxn_offset_bithi,bxn_offset_bitlo,&data_word);
-    //    
+    //
   } else if ( address == tmb_trig_adr ) {
     //------------------------------------------------------------------
     //0X86 = ADR_TMB_TRIG:  TMB Trigger configuration/MPC accept
@@ -11106,14 +11106,14 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //---------------------------------------------------------------------
 /*
     std::cout << "Inserting values for register ADR_NEWALGO_CTRL at 0X198"
-    	      << "\n    use_dead_time_zone_         " << use_dead_time_zone_        
-    	      << "\n    dead_time_zone_size_        " << dead_time_zone_size_       
+    	      << "\n    use_dead_time_zone_         " << use_dead_time_zone_
+    	      << "\n    dead_time_zone_size_        " << dead_time_zone_size_
     	      << "\n    use_dynamic_dead_time_zone_ " << use_dynamic_dead_time_zone_
-    	      << "\n    clct_to_alct_               " << clct_to_alct_              
-    	      << "\n    drop_used_clcts_            " << drop_used_clcts_           
-    	      << "\n    cross_bx_algorithm_         " << cross_bx_algorithm_        
-    	      << "\n    clct_use_corrected_bx_      " << clct_use_corrected_bx_     
-    	      << "\n    chamber_num_parity_         " << chamber_num_parity_     
+    	      << "\n    clct_to_alct_               " << clct_to_alct_
+    	      << "\n    drop_used_clcts_            " << drop_used_clcts_
+    	      << "\n    cross_bx_algorithm_         " << cross_bx_algorithm_
+    	      << "\n    clct_use_corrected_bx_      " << clct_use_corrected_bx_
+    	      << "\n    chamber_num_parity_         " << chamber_num_parity_
     	      << std::endl;
 */
     InsertValueIntoDataWord(use_dead_time_zone_        ,use_dead_time_zone_bithi        ,use_dead_time_zone_bitlo        ,&data_word);
@@ -11145,8 +11145,8 @@ int TMB::FillTMBRegister(unsigned long int address) {
    //------------------------------------------------------------------
 /*
     std::cout << "Inserting values for register ADR_RUN3_FORMAT_CTRL at 0X1AA"
-    	      << "\n    run3_trig_dataformat_enable_         " << run3_trig_dataformat_enable_        
-    	      << "\n    run3_daq_dataformat_enable_         " << run3_daq_dataformat_enable_        
+    	      << "\n    run3_trig_dataformat_enable_         " << run3_trig_dataformat_enable_
+    	      << "\n    run3_daq_dataformat_enable_         " << run3_daq_dataformat_enable_
               << std::endl;
 */
     InsertValueIntoDataWord(run3_trig_dataformat_enable_,     run3_trig_dataformat_enable_bithi,     run3_trig_dataformat_enable_bitlo,   &data_word);
@@ -11159,8 +11159,8 @@ int TMB::FillTMBRegister(unsigned long int address) {
    //------------------------------------------------------------------
 /*
     std::cout << "Inserting values for register ADR_HMT_CTRL at 0X1AC"
-    	      << "\n    hmt_enable_         " << hmt_enable_        
-    	      << "\n    hmt_me1a_enable_         " << hmt_me1a_enable_        
+    	      << "\n    hmt_enable_         " << hmt_enable_
+    	      << "\n    hmt_me1a_enable_         " << hmt_me1a_enable_
               << std::endl;
 */
     InsertValueIntoDataWord(hmt_enable_,      hmt_enable_bithi,      hmt_enable_bitlo,      &data_word);
@@ -11221,20 +11221,20 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //------------------------------------------------------------------
     //0XBC = ADR_RPC_INJ:  RPC Injector Control
     //------------------------------------------------------------------
-    InsertValueIntoDataWord(rpc_mask_all_ ,rpc_mask_all_bithi ,rpc_mask_all_bitlo ,&data_word); 
-    InsertValueIntoDataWord(inj_mask_rat_ ,inj_mask_rat_bithi ,inj_mask_rat_bitlo ,&data_word); 
-    InsertValueIntoDataWord(inj_mask_rpc_ ,inj_mask_rpc_bithi ,inj_mask_rpc_bitlo ,&data_word); 
-    InsertValueIntoDataWord(inj_delay_rat_,inj_delay_rat_bithi,inj_delay_rat_bitlo,&data_word); 
-    InsertValueIntoDataWord(rpc_inj_sel_  ,rpc_inj_sel_bithi  ,rpc_inj_sel_bitlo  ,&data_word); 
-    InsertValueIntoDataWord(rpc_inj_wdata_,rpc_inj_wdata_bithi,rpc_inj_wdata_bitlo,&data_word); 
+    InsertValueIntoDataWord(rpc_mask_all_ ,rpc_mask_all_bithi ,rpc_mask_all_bitlo ,&data_word);
+    InsertValueIntoDataWord(inj_mask_rat_ ,inj_mask_rat_bithi ,inj_mask_rat_bitlo ,&data_word);
+    InsertValueIntoDataWord(inj_mask_rpc_ ,inj_mask_rpc_bithi ,inj_mask_rpc_bitlo ,&data_word);
+    InsertValueIntoDataWord(inj_delay_rat_,inj_delay_rat_bithi,inj_delay_rat_bitlo,&data_word);
+    InsertValueIntoDataWord(rpc_inj_sel_  ,rpc_inj_sel_bithi  ,rpc_inj_sel_bitlo  ,&data_word);
+    InsertValueIntoDataWord(rpc_inj_wdata_,rpc_inj_wdata_bithi,rpc_inj_wdata_bitlo,&data_word);
     //
   } else if ( address == rpc_tbins_adr ) {
     //------------------------------------------------------------------
     //0XC4 = ADR_RPC_TBINS:  RPC FIFO Time Bins
     //------------------------------------------------------------------
-    InsertValueIntoDataWord(fifo_tbins_rpc_  ,fifo_tbins_rpc_bithi  ,fifo_tbins_rpc_bitlo  ,&data_word); 
-    InsertValueIntoDataWord(fifo_pretrig_rpc_,fifo_pretrig_rpc_bithi,fifo_pretrig_rpc_bitlo,&data_word); 
-    InsertValueIntoDataWord(rpc_decouple_    ,rpc_decouple_bithi    ,rpc_decouple_bitlo    ,&data_word); 
+    InsertValueIntoDataWord(fifo_tbins_rpc_  ,fifo_tbins_rpc_bithi  ,fifo_tbins_rpc_bitlo  ,&data_word);
+    InsertValueIntoDataWord(fifo_pretrig_rpc_,fifo_pretrig_rpc_bithi,fifo_pretrig_rpc_bitlo,&data_word);
+    InsertValueIntoDataWord(rpc_decouple_    ,rpc_decouple_bithi    ,rpc_decouple_bitlo    ,&data_word);
     //
   } else if ( address == bx0_delay_adr ) {
     //------------------------------------------------------------------
@@ -11247,7 +11247,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //
   } else if ( address == non_trig_readout_adr ) {
     //-----------------------------------------------------------------------------
-    //0XCC = ADR_NON_TRIG_RO:  Non-Triggering Event Enables + ME1/1A(1B) reversal 
+    //0XCC = ADR_NON_TRIG_RO:  Non-Triggering Event Enables + ME1/1A(1B) reversal
     //-----------------------------------------------------------------------------
     InsertValueIntoDataWord(tmb_allow_alct_nontrig_readout_   ,tmb_allow_alct_nontrig_readout_bithi  ,tmb_allow_alct_nontrig_readout_bitlo  ,&data_word);
     InsertValueIntoDataWord(tmb_allow_clct_nontrig_readout_   ,tmb_allow_clct_nontrig_readout_bithi  ,tmb_allow_clct_nontrig_readout_bitlo  ,&data_word);
@@ -11286,9 +11286,9 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //---------------------------------------------------------------------
     //0XF0 = ADR_LAYER_TRIG:  Layer-Trigger Mode
     //---------------------------------------------------------------------
-    InsertValueIntoDataWord(layer_trigger_en_ ,layer_trigger_en_bithi ,layer_trigger_en_bitlo ,&data_word); 
-    InsertValueIntoDataWord(layer_trig_thresh_,layer_trig_thresh_bithi,layer_trig_thresh_bitlo,&data_word); 
-    InsertValueIntoDataWord(clct_throttle_    ,clct_throttle_bithi    ,clct_throttle_bitlo    ,&data_word); 
+    InsertValueIntoDataWord(layer_trigger_en_ ,layer_trigger_en_bithi ,layer_trigger_en_bitlo ,&data_word);
+    InsertValueIntoDataWord(layer_trig_thresh_,layer_trig_thresh_bithi,layer_trig_thresh_bitlo,&data_word);
+    InsertValueIntoDataWord(clct_throttle_    ,clct_throttle_bithi    ,clct_throttle_bitlo    ,&data_word);
     //
   } else if ( address == pattern_find_pretrg_adr ) {
     //---------------------------------------------------------------------
@@ -11308,7 +11308,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     InsertValueIntoDataWord(clct_separation_ram_adr_         ,clct_separation_ram_adr_bithi         ,clct_separation_ram_adr_bitlo         ,&data_word);
     InsertValueIntoDataWord(min_clct_separation_             ,min_clct_separation_bithi             ,min_clct_separation_bitlo             ,&data_word);
     //
-  } else if ( address == l1a_lookback_adr ) {    
+  } else if ( address == l1a_lookback_adr ) {
     //---------------------------------------------------------------------
     //0X100 = ADR_L1A_LOOKBACK:  L1A Lookback Distance
     //---------------------------------------------------------------------
@@ -11316,7 +11316,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     InsertValueIntoDataWord(inj_wrdata_msb_          ,inj_wrdata_msb_bithi          ,inj_wrdata_msb_bitlo          ,&data_word);
     InsertValueIntoDataWord(l1a_priority_enable_     ,l1a_priority_enable_bithi     ,l1a_priority_enable_bitlo     ,&data_word);
     //
-  } else if ( address == alct_sync_ctrl_adr ) {    
+  } else if ( address == alct_sync_ctrl_adr ) {
     //---------------------------------------------------------------------
     //0X104 = ADR_ALCT_SYNC_CTRL:  ALCT Sync Mode Control
     //---------------------------------------------------------------------
@@ -11324,13 +11324,13 @@ int TMB::FillTMBRegister(unsigned long int address) {
     InsertValueIntoDataWord(alct_sync_tx_random_   ,alct_sync_tx_random_bithi   ,alct_sync_tx_random_bitlo   ,&data_word);
     InsertValueIntoDataWord(alct_sync_clear_errors_,alct_sync_clear_errors_bithi,alct_sync_clear_errors_bitlo,&data_word);
     //
-  } else if ( address == alct_sync_txdata_1st_adr ) {    
+  } else if ( address == alct_sync_txdata_1st_adr ) {
     //---------------------------------------------------------------------
     //0X106 = ADR_ALCT_SYNC_TXDATA_1ST:  ALCT Sync Mode Transmit Data 1st
     //---------------------------------------------------------------------
     InsertValueIntoDataWord(alct_sync_txdata_1st_,alct_sync_txdata_1st_bithi,alct_sync_txdata_1st_bitlo,&data_word);
     //
-  } else if ( address == alct_sync_txdata_2nd_adr ) {    
+  } else if ( address == alct_sync_txdata_2nd_adr ) {
     //---------------------------------------------------------------------
     //0X108 = ADR_ALCT_SYNC_TXDATA_2ND:  ALCT Sync Mode Transmit Data 2nd
     //---------------------------------------------------------------------
@@ -11358,37 +11358,37 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //---------------------------------------------------------------------
     data_word = ConvertDigitalPhaseToVMERegisterValues_(alct_tx_clock_delay_,alct_tx_posneg_);
     //
-  } else if ( address == phaser_cfeb0_rxd_adr ) { 
+  } else if ( address == phaser_cfeb0_rxd_adr ) {
     //---------------------------------------------------------------------
     //0X112 = ADR_PHASER2: digital phase shifter for cfeb0
     //---------------------------------------------------------------------
     data_word = ConvertDigitalPhaseToVMERegisterValues_(cfeb0_rx_clock_delay_,cfeb0_rx_posneg_,cfeb0_rx_fine_delay_);
     //
-  } else if ( address == phaser_cfeb1_rxd_adr ) { 
+  } else if ( address == phaser_cfeb1_rxd_adr ) {
     //---------------------------------------------------------------------
     //0X114 = ADR_PHASER3: digital phase shifter for cfeb1
     //---------------------------------------------------------------------
     data_word = ConvertDigitalPhaseToVMERegisterValues_(cfeb1_rx_clock_delay_,cfeb1_rx_posneg_,cfeb1_rx_fine_delay_);
     //
-  } else if ( address == phaser_cfeb2_rxd_adr ) { 
+  } else if ( address == phaser_cfeb2_rxd_adr ) {
     //---------------------------------------------------------------------
     //0X116 = ADR_PHASER4: digital phase shifter for cfeb2
     //---------------------------------------------------------------------
     data_word = ConvertDigitalPhaseToVMERegisterValues_(cfeb2_rx_clock_delay_,cfeb2_rx_posneg_, cfeb2_rx_fine_delay_);
     //
-  } else if ( address == phaser_cfeb3_rxd_adr ) { 
+  } else if ( address == phaser_cfeb3_rxd_adr ) {
     //---------------------------------------------------------------------
     //0X118 = ADR_PHASER5: digital phase shifter for cfeb3
     //---------------------------------------------------------------------
     data_word = ConvertDigitalPhaseToVMERegisterValues_(cfeb3_rx_clock_delay_,cfeb3_rx_posneg_, cfeb3_rx_fine_delay_);
     //
-  } else if ( address == phaser_cfeb4_rxd_adr ) { 
+  } else if ( address == phaser_cfeb4_rxd_adr ) {
     //---------------------------------------------------------------------
     //0X11A = ADR_PHASER6: digital phase shifter for cfeb4
     //---------------------------------------------------------------------
     data_word = ConvertDigitalPhaseToVMERegisterValues_(cfeb4_rx_clock_delay_,cfeb4_rx_posneg_, cfeb4_rx_fine_delay_);
     //
-  } else if ( address == cfeb0_3_interstage_adr ) {    
+  } else if ( address == cfeb0_3_interstage_adr ) {
     //---------------------------------------------------------------------
     // 0X11C = ADR_DELAY0_INT:  CFEB to TMB "interstage" delays
     //---------------------------------------------------------------------
@@ -11399,7 +11399,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
       InsertValueIntoDataWord(cfeb3_rxd_int_delay_,cfeb3_rxd_int_delay_bithi,cfeb3_rxd_int_delay_bitlo,&data_word);
     }
     //
-  } else if ( address == cfeb4_6_interstage_adr ) {    
+  } else if ( address == cfeb4_6_interstage_adr ) {
     //---------------------------------------------------------------------
     // 0X11E = ADR_DELAY1_INT:  CFEB to TMB "interstage" delays
     //---------------------------------------------------------------------
@@ -11520,7 +11520,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //
   } else if ( address == dcfeb_inj_seq_trig_adr ) {
     //------------------------------------------------------------------
-    //0X17A = ADR_V6_EXTEND: ADR_CFEB_INJ:  CFEB Injector Control; ADR_SEQ_TRIG_EN: 
+    //0X17A = ADR_V6_EXTEND: ADR_CFEB_INJ:  CFEB Injector Control; ADR_SEQ_TRIG_EN:
     //------------------------------------------------------------------
     InsertValueIntoDataWord(((enableCLCTInputs_>>5)&0x3) ,enableCLCTInputs_extend_bithi ,enableCLCTInputs_extend_bitlo ,&data_word);
     InsertValueIntoDataWord(((cfeb_ram_sel_    >>5)&0x3) ,cfeb_ram_sel_extend_bithi     ,cfeb_ram_sel_extend_bitlo     ,&data_word);
@@ -11627,7 +11627,7 @@ int TMB::FillTMBRegister(unsigned long int address) {
     //---------------------------------------------------------------------
     // 0X33a,0x33c,0x33e for GEM hot vfat mask
     //---------------------------------------------------------------------
-   
+
     for (int bit_in_register=0; bit_in_register<16; bit_in_register++) {
         if (address == gem_vfat_hcm0_adr || (address == gem_vfat_hcm1_adr && bit_in_register<8)){
 	   int vfat = (address - gem_vfat_hcm0_adr)*8 + bit_in_register;
@@ -11674,9 +11674,9 @@ int TMB::ConvertDigitalPhaseToVMERegisterValues_(int digital_phase,int posneg, i
   InsertValueIntoDataWord(fire_phaser_                 ,fire_phaser_bithi                  ,fire_phaser_bitlo                  ,&data_word);
   InsertValueIntoDataWord(reset_phase_                 ,reset_phase_bithi                  ,reset_phase_bitlo                  ,&data_word);
   InsertValueIntoDataWord(posneg                       ,phaser_posneg_bithi                ,phaser_posneg_bitlo                ,&data_word);
-  InsertValueIntoDataWord(phase_value_within_quadrant  ,phase_value_within_quadrant_bithi  ,phase_value_within_quadrant_bitlo  ,&data_word); 
-  InsertValueIntoDataWord(quarter_cycle_quadrant_select,quarter_cycle_quadrant_select_bithi,quarter_cycle_quadrant_select_bitlo,&data_word); 
-  InsertValueIntoDataWord(half_cycle_quadrant_select   ,half_cycle_quadrant_select_bithi   ,half_cycle_quadrant_select_bitlo   ,&data_word); 
+  InsertValueIntoDataWord(phase_value_within_quadrant  ,phase_value_within_quadrant_bithi  ,phase_value_within_quadrant_bitlo  ,&data_word);
+  InsertValueIntoDataWord(quarter_cycle_quadrant_select,quarter_cycle_quadrant_select_bithi,quarter_cycle_quadrant_select_bitlo,&data_word);
+  InsertValueIntoDataWord(half_cycle_quadrant_select   ,half_cycle_quadrant_select_bithi   ,half_cycle_quadrant_select_bitlo   ,&data_word);
   //
   return data_word;
 }
@@ -11685,8 +11685,8 @@ void TMB::ConvertVMERegisterValuesToDigitalPhases_(unsigned long int vme_address
   //
   // conversion from VME register values to digital phase value:
   int posneg = read_phaser_posneg_;
-  int full_digital_phase  = 
-    ( read_phase_value_within_quadrant_   & 0x3f)        | 
+  int full_digital_phase  =
+    ( read_phase_value_within_quadrant_   & 0x3f)        |
     ((read_quarter_cycle_quadrant_select_ &  0x1) << 6 ) |
     ((read_half_cycle_quadrant_select_    &  0x1) << 7 ) ;
   //25.0/256.0
@@ -11694,10 +11694,10 @@ void TMB::ConvertVMERegisterValuesToDigitalPhases_(unsigned long int vme_address
   //
   float float_maximum_number_of_phase_delay_values = (float) maximum_number_of_phase_delay_values;
   //
-  //float float_read_digital_phase = ( (float) full_digital_phase * 
+  //float float_read_digital_phase = ( (float) full_digital_phase *
   //				     ( float_maximum_number_of_phase_delay_values / float_number_of_available_bins_per_clock_cycle  ) + 0.5);
   //	Tao: why 0.5 is added ?? should (full_digital_phase+0.5)*...???
-  float float_read_digital_phase = ( (float) full_digital_phase) * 
+  float float_read_digital_phase = ( (float) full_digital_phase) *
 				     ( float_maximum_number_of_phase_delay_values / float_number_of_available_bins_per_clock_cycle  );
   //
   int read_digital_phase = ( (int) (float_read_digital_phase+0.5) ) & 0xff; //phase delay, unit is 1 second
@@ -11713,31 +11713,31 @@ void TMB::ConvertVMERegisterValuesToDigitalPhases_(unsigned long int vme_address
     read_alct_tx_posneg_       = posneg       ;
     read_alct_tx_clock_delay_  = read_digital_phase;
     //
-  } else if ( vme_address == phaser_cfeb0_rxd_adr ) { 
+  } else if ( vme_address == phaser_cfeb0_rxd_adr ) {
     //
     read_cfeb0_rx_posneg_      = posneg       ;
     read_cfeb0_rx_clock_delay_ = read_digital_phase;
     read_cfeb0_rx_fine_delay_ = read_fine_phase;
     //
-  } else if ( vme_address == phaser_cfeb1_rxd_adr ) { 
+  } else if ( vme_address == phaser_cfeb1_rxd_adr ) {
     //
     read_cfeb1_rx_posneg_      = posneg       ;
     read_cfeb1_rx_clock_delay_ = read_digital_phase;
     read_cfeb1_rx_fine_delay_ = read_fine_phase;
     //
-  } else if ( vme_address == phaser_cfeb2_rxd_adr ) { 
+  } else if ( vme_address == phaser_cfeb2_rxd_adr ) {
     //
     read_cfeb2_rx_posneg_      = posneg       ;
     read_cfeb2_rx_clock_delay_ = read_digital_phase;
     read_cfeb2_rx_fine_delay_ = read_fine_phase;
     //
-  } else if ( vme_address == phaser_cfeb3_rxd_adr ) { 
+  } else if ( vme_address == phaser_cfeb3_rxd_adr ) {
     //
     read_cfeb3_rx_posneg_      = posneg       ;
     read_cfeb3_rx_clock_delay_ = read_digital_phase;
     read_cfeb3_rx_fine_delay_ = read_fine_phase;
     //
-  } else if ( vme_address == phaser_cfeb4_rxd_adr ) { 
+  } else if ( vme_address == phaser_cfeb4_rxd_adr ) {
     //
     read_cfeb4_rx_posneg_      = posneg       ;
     read_cfeb4_rx_clock_delay_ = read_digital_phase;
@@ -11745,12 +11745,12 @@ void TMB::ConvertVMERegisterValuesToDigitalPhases_(unsigned long int vme_address
     //
   } else if ( vme_address == phaser_cfeb456_rxd_adr ) {
     //
-    if(GetHardwareVersion()>1 && (GetTMBFirmwareCompileType()==0xC || GetTMBFirmwareCompileType()==0xD)) 
+    if(GetHardwareVersion()>1 && (GetTMBFirmwareCompileType()==0xC || GetTMBFirmwareCompileType()==0xD))
     {  // OTMB with ME1/1
        read_cfeb4_rx_posneg_      = posneg       ;
        read_cfeb4_rx_clock_delay_ = read_digital_phase;
        read_cfeb4_rx_fine_delay_ = read_fine_phase;
-    } 
+    }
     read_cfeb5_rx_posneg_      = posneg       ;
     read_cfeb5_rx_clock_delay_ = read_digital_phase;
     read_cfeb5_rx_fine_delay_ = read_fine_phase;
@@ -11775,12 +11775,12 @@ void TMB::ConvertVMERegisterValuesToDigitalPhases_(unsigned long int vme_address
     read_cfeb3_rx_posneg_      = posneg       ;
     read_cfeb3_rx_clock_delay_ = read_digital_phase;
     read_cfeb3_rx_fine_delay_  = read_fine_phase;
-    if(GetHardwareVersion()>1 && (GetTMBFirmwareCompileType()==0xA || GetTMBFirmwareCompileType()==0xB)) 
+    if(GetHardwareVersion()>1 && (GetTMBFirmwareCompileType()==0xA || GetTMBFirmwareCompileType()==0xB))
     {  // OTMB with MEx/1
        read_cfeb4_rx_posneg_      = posneg       ;
        read_cfeb4_rx_clock_delay_ = read_digital_phase;
        read_cfeb4_rx_fine_delay_ = read_fine_phase;
-    } 
+    }
     read_cfeb0123_rx_posneg_      = posneg       ;
     read_cfeb0123_rx_clock_delay_ = read_digital_phase;
     read_cfeb0123_rx_fine_delay_ = read_fine_phase;
@@ -11830,22 +11830,22 @@ void TMB::FirePhaser(long unsigned int vme_address) {
     number_of_reads++;
   }
   //
-  if (debug_) 
+  if (debug_)
     std::cout << "number of phaser reads while busy = " << number_of_reads << std::endl;
   //
-  if (number_of_reads >= max_number_of_reads) 
+  if (number_of_reads >= max_number_of_reads)
     std::cout << "Writing to phaser FAILED, number of reads = " << number_of_reads << std::endl;
   //
   return;
 }
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-// Check read values versus expected values 
+// Check read values versus expected values
 ////////////////////////////////////////////////////////////////////////////////////////
 void TMB::CheckTMBConfiguration() {
   //
   // Default number of times to read the configuration values:
-  this->CheckTMBConfiguration(2); 
+  this->CheckTMBConfiguration(2);
   //
   return;
 }
@@ -11878,15 +11878,15 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     ReadTMBConfiguration();    // fill the read values in the software
     //
     // Check if user has forced CFEB enable bits in register 0x68 to be copied from 0x42
-    // If yes => expected value of address 0x68 = write value of address 0x42 
-    // If no  => expected value of address 0x68 = write value of address 0x68 
+    // If yes => expected value of address 0x68 = write value of address 0x42
+    // If no  => expected value of address 0x68 = write value of address 0x68
     //
     int cfebs_enabled_expected;
     //
     if (GetCfebEnableSource() == 1) {
       cfebs_enabled_expected = enableCLCTInputs_;
     } else {
-      cfebs_enabled_expected = cfebs_enabled_; 
+      cfebs_enabled_expected = cfebs_enabled_;
     }
     //
     //-----------------------------------------------------------------
@@ -11904,7 +11904,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     //-----------------------------------------------------------------
     config_ok &= compareValues("TMB Boot register control JTAG chain (not in xml)",
 			       read_boot_control_jtag_chain_,
-			       boot_control_jtag_chain_expected, 
+			       boot_control_jtag_chain_expected,
 			       print_errors);
     //
     //-----------------------------------------------------------------
@@ -11960,7 +11960,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     //------------------------------------------------------------------
     config_ok &= compareValues("TMB Enable alct_ext_trig from CCB (not in xml)"           ,read_cfg_alct_ext_trig_en_  ,cfg_alct_ext_trig_en_  , print_errors);
     config_ok &= compareValues("TMB Enable alct_ext_inject from CCB (not in xml)"         ,read_cfg_alct_ext_inject_en_,cfg_alct_ext_inject_en_, print_errors);
-    config_ok &= compareValues("TMB Assert alct_ext_trig (not in xml)"                    ,read_cfg_alct_ext_trig_     ,cfg_alct_ext_trig_     , print_errors); 
+    config_ok &= compareValues("TMB Assert alct_ext_trig (not in xml)"                    ,read_cfg_alct_ext_trig_     ,cfg_alct_ext_trig_     , print_errors);
     config_ok &= compareValues("TMB Assert alct_ext_inject (not in xml)"	            ,read_cfg_alct_ext_inject_ ,cfg_alct_ext_inject_   , print_errors);
     config_ok &= compareValues("TMB ALCT sequencer command (not in xml)" 	            ,read_alct_seq_cmd_        ,alct_seq_cmd_          , print_errors);
     config_ok &= compareValues("TMB alct_clock_en_use_ccb"                                ,read_alct_clock_en_use_ccb_ ,alct_clock_en_use_ccb_ , print_errors);
@@ -11986,7 +11986,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     //------------------------------------------------------------------
     config_ok &= compareValues("TMB enableCLCTInputs_reg42(+17A)"                ,GetReadEnableCLCTInputs()     ,enableCLCTInputs_ , print_errors);
     config_ok &= compareValues("TMB Select CFEB n for RAM read/write (not in xml)"  ,GetReadSelectCLCTRAM()     ,cfeb_ram_sel_     , print_errors);
-    config_ok &= compareValues("TMB Enable CFEB n for injector trigger (not in xml)",GetReadEnableCLCTInject()  ,cfeb_inj_en_sel_  , print_errors); 
+    config_ok &= compareValues("TMB Enable CFEB n for injector trigger (not in xml)",GetReadEnableCLCTInject()  ,cfeb_inj_en_sel_  , print_errors);
     config_ok &= compareValues("TMB Start CLCT pattern injector (not in xml)"       ,read_start_pattern_inj_    ,start_pattern_inj_, print_errors);
     //
     //------------------------------------------------------------------
@@ -12159,17 +12159,17 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     //0XBC = ADR_RPC_INJ:  RPC Injector Control
     //------------------------------------------------------------------
     config_ok &= compareValues("TMB rpc_mask_all"                                     ,read_rpc_mask_all_ ,rpc_mask_all_ , print_errors);
-    config_ok &= compareValues("TMB Enable RAT for injector fire (not in xml)"        ,read_inj_mask_rat_ ,inj_mask_rat_ , print_errors); 
-    config_ok &= compareValues("TMB Enable RPC inj RAM for injector fire (not in xml)",read_inj_mask_rpc_ ,inj_mask_rpc_ , print_errors); 
-    config_ok &= compareValues("TMB CFEB/RPC injectors wait for RAT (not in xml)"     ,read_inj_delay_rat_,inj_delay_rat_, print_errors); 
-    config_ok &= compareValues("TMB Enable injector RAM write (not in xml)"           ,read_rpc_inj_sel_  ,rpc_inj_sel_  , print_errors); 
+    config_ok &= compareValues("TMB Enable RAT for injector fire (not in xml)"        ,read_inj_mask_rat_ ,inj_mask_rat_ , print_errors);
+    config_ok &= compareValues("TMB Enable RPC inj RAM for injector fire (not in xml)",read_inj_mask_rpc_ ,inj_mask_rpc_ , print_errors);
+    config_ok &= compareValues("TMB CFEB/RPC injectors wait for RAT (not in xml)"     ,read_inj_delay_rat_,inj_delay_rat_, print_errors);
+    config_ok &= compareValues("TMB Enable injector RAM write (not in xml)"           ,read_rpc_inj_sel_  ,rpc_inj_sel_  , print_errors);
     //
     //------------------------------------------------------------------
     //0XC4 = ADR_RPC_TBINS:  RPC FIFO Time Bins
     //------------------------------------------------------------------
     config_ok &= compareValues("TMB rpc_fifo_tbins"   ,read_fifo_tbins_rpc_  ,fifo_tbins_rpc_  , print_errors);
-    config_ok &= compareValues("TMB rpc_fifo_pretrig" ,read_fifo_pretrig_rpc_,fifo_pretrig_rpc_, print_errors); 
-    config_ok &= compareValues("TMB rpc_fifo_decouple",read_rpc_decouple_    ,rpc_decouple_    , print_errors); 
+    config_ok &= compareValues("TMB rpc_fifo_pretrig" ,read_fifo_pretrig_rpc_,fifo_pretrig_rpc_, print_errors);
+    config_ok &= compareValues("TMB rpc_fifo_decouple",read_rpc_decouple_    ,rpc_decouple_    , print_errors);
     //
     //------------------------------------------------------------------
     //0XCA = ADR_BX0_DELAY:  BX0 to MPC delays
@@ -12180,7 +12180,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     config_ok &= compareValues("TMB bx0_vpf_test (not in xml)",read_bx0_vpf_test_   ,bx0_vpf_test_   , print_errors);
     //
     //-----------------------------------------------------------------------------
-    //0XCC = ADR_NON_TRIG_RO:  Non-Triggering Event Enables + ME1/1A(1B) reversal 
+    //0XCC = ADR_NON_TRIG_RO:  Non-Triggering Event Enables + ME1/1A(1B) reversal
     //-----------------------------------------------------------------------------
     config_ok &= compareValues("TMB alct_readout_without_trig"   ,read_tmb_allow_alct_nontrig_readout_   ,tmb_allow_alct_nontrig_readout_    , print_errors);
     config_ok &= compareValues("TMB clct_readout_without_trig"   ,read_tmb_allow_clct_nontrig_readout_   ,tmb_allow_clct_nontrig_readout_    , print_errors);
@@ -12203,9 +12203,9 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     //---------------------------------------------------------------------
     //0XF0 = ADR_LAYER_TRIG:  Layer-Trigger Mode
     //---------------------------------------------------------------------
-    config_ok &= compareValues("TMB layer_trig_enable",read_layer_trigger_en_ ,layer_trigger_en_ , print_errors); 
-    config_ok &= compareValues("TMB layer_trig_thresh",read_layer_trig_thresh_,layer_trig_thresh_, print_errors); 
-    config_ok &= compareValues("TMB clct_throttle"    ,read_clct_throttle_    ,clct_throttle_    , print_errors); 
+    config_ok &= compareValues("TMB layer_trig_enable",read_layer_trigger_en_ ,layer_trigger_en_ , print_errors);
+    config_ok &= compareValues("TMB layer_trig_thresh",read_layer_trig_thresh_,layer_trig_thresh_, print_errors);
+    config_ok &= compareValues("TMB clct_throttle"    ,read_clct_throttle_    ,clct_throttle_    , print_errors);
     //
     //---------------------------------------------------------------------
     //0XF4 = ADR_TEMP0:  Pattern Finder Pretrigger
@@ -12240,48 +12240,48 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     //[0X10E] = ADR_PHASER0:  ALCT -> TMB communication
     //--------------------------------------------------------------
     config_ok &= compareValues("TMB alct_rx_clock_delay",read_alct_rx_clock_delay_,alct_rx_clock_delay_, print_errors);
-    // the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database 
+    // the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database
     config_ok &= compareValues("TMB alct_posneg"     ,read_alct_rx_posneg_     ,alct_rx_posneg_     , print_errors);
     //
     //--------------------------------------------------------------
     //[0X110] = ADR_PHASER1:  TMB -> ALCT communication
     //--------------------------------------------------------------
     config_ok &= compareValues("TMB alct_tx_clock_delay",read_alct_tx_clock_delay_,alct_tx_clock_delay_, print_errors);
-    config_ok &= compareValues("TMB alct_tx_posneg"     ,read_alct_tx_posneg_     ,alct_tx_posneg_     , print_errors); 
+    config_ok &= compareValues("TMB alct_tx_posneg"     ,read_alct_tx_posneg_     ,alct_tx_posneg_     , print_errors);
     //
     if (HasGroupedME11ABCFEBRxValues() <= 0){
       //--------------------------------------------------------------
       //[0X112] = ADR_PHASER2:  CFEB0 -> TMB communication
       //--------------------------------------------------------------
-      // the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database 
+      // the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database
       config_ok &= compareValues("TMB cfeb0delay"     ,read_cfeb0_rx_clock_delay_,cfeb0_rx_clock_delay_, print_errors);
       config_ok &= compareValues("TMB cfeb0_rx_posneg",read_cfeb0_rx_posneg_     ,cfeb0_rx_posneg_     , print_errors);
       //
       //--------------------------------------------------------------
       //[0X114] = ADR_PHASER3:  CFEB1 -> TMB communication
       //--------------------------------------------------------------
-      // the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database 
+      // the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database
       config_ok &= compareValues("TMB cfeb1delay"     ,read_cfeb1_rx_clock_delay_,cfeb1_rx_clock_delay_, print_errors);
       config_ok &= compareValues("TMB cfeb1_rx_posneg",read_cfeb1_rx_posneg_     ,cfeb1_rx_posneg_     , print_errors);
       //
       //--------------------------------------------------------------
       //[0X116] = ADR_PHASER4:  CFEB2 -> TMB communication
       //--------------------------------------------------------------
-      // the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database 
+      // the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database
       config_ok &= compareValues("TMB cfeb2delay"     ,read_cfeb2_rx_clock_delay_,cfeb2_rx_clock_delay_, print_errors);
       config_ok &= compareValues("TMB cfeb2_rx_posneg",read_cfeb2_rx_posneg_     ,cfeb2_rx_posneg_     , print_errors);
       //
       //--------------------------------------------------------------
       //[0X118] = ADR_PHASER5:  CFEB3 -> TMB communication
       //--------------------------------------------------------------
-      // the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database 
+      // the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database
       config_ok &= compareValues("TMB cfeb3delay"     ,read_cfeb3_rx_clock_delay_,cfeb3_rx_clock_delay_, print_errors);
       config_ok &= compareValues("TMB cfeb3_rx_posneg",read_cfeb3_rx_posneg_     ,cfeb3_rx_posneg_     , print_errors);
       //
       //--------------------------------------------------------------
       //[0X11A] = ADR_PHASER6:  CFEB4 -> TMB communication
       //--------------------------------------------------------------
-      // the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database 
+      // the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database
       config_ok &= compareValues("TMB cfeb4delay"     ,read_cfeb4_rx_clock_delay_,cfeb4_rx_clock_delay_, print_errors);
       config_ok &= compareValues("TMB cfeb4_rx_posneg",read_cfeb4_rx_posneg_     ,cfeb4_rx_posneg_     , print_errors);
       //
@@ -12289,14 +12289,14 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
 	//--------------------------------------------------------------
 	//[0X16A] = ADR_PHASER7:  CFEB5 -> TMB communication
 	//--------------------------------------------------------------
-	// the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database 
+	// the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database
 	config_ok &= compareValues("TMB cfeb5delay"     ,read_cfeb5_rx_clock_delay_,cfeb5_rx_clock_delay_, print_errors);
 	config_ok &= compareValues("TMB cfeb5_rx_posneg",read_cfeb5_rx_posneg_     ,cfeb5_rx_posneg_     , print_errors);
 	//
 	//--------------------------------------------------------------
 	//[0X16C] = ADR_PHASER8:  CFEB6 -> TMB communication
 	//--------------------------------------------------------------
-	// the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database 
+	// the lack of "rx" in the following label is legacy from the need for persistence of parameter names in the database
 	config_ok &= compareValues("TMB cfeb6delay"     ,read_cfeb6_rx_clock_delay_,cfeb6_rx_clock_delay_, print_errors);
 	config_ok &= compareValues("TMB cfeb6_rx_posneg",read_cfeb6_rx_posneg_     ,cfeb6_rx_posneg_     , print_errors);
       }
@@ -12346,7 +12346,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     // 0X122 = ADR_CFEB_BADBITS_CTRL:  CFEB badbits control/status
     //---------------------------------------------------------------------
     // Here check only the bit (ANDed between all five CFEB bits...)
-    config_ok &= compareValues("TMB cfeb_badbits_block",GetReadCFEBBadBitsBlock(),GetCFEBBadBitsBlock(),print_errors); 
+    config_ok &= compareValues("TMB cfeb_badbits_block",GetReadCFEBBadBitsBlock(),GetCFEBBadBitsBlock(),print_errors);
     //
     if (hardware_version_>=2)
     {
@@ -12359,7 +12359,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
       config_ok &= compareValues("TMB run2_revcode_enable",          read_run2_revcode_enable_,          run2_revcode_enable_, print_errors);
       //
       //---------------------------------------------------------------------
-      // 0X1AC = ADR_HMT_CTRL:  HMT control 
+      // 0X1AC = ADR_HMT_CTRL:  HMT control
       //---------------------------------------------------------------------
       config_ok &= compareValues("TMB hmt_enable",  read_hmt_enable_,  hmt_enable_, print_errors);
       if (Gethmt_enable())
@@ -12393,7 +12393,7 @@ void TMB::CheckTMBConfiguration(int max_number_of_reads) {
     if (hardware_version_>=2){//this configuration is already fused into 0x42 and 0x68 configs
       //      config_ok &= compareValues("TMB enableCLCTInputs_reg42 Extension"                 ,read_enableCLCTInputs_extend_       ,enableCLCTInputs_extend_     , print_errors);
       //      config_ok &= compareValues("TMB Select CFEB56 n for RAM read/write (not in xml)"  ,read_cfeb_ram_sel_extend_           ,cfeb_ram_sel_extend_         , print_errors);
-      //      config_ok &= compareValues("TMB Enable CFEB56 n for injector trigger (not in xml)",read_cfeb_inj_en_sel_extend_        ,cfeb_inj_en_sel_extend_      , print_errors); 
+      //      config_ok &= compareValues("TMB Enable CFEB56 n for injector trigger (not in xml)",read_cfeb_inj_en_sel_extend_        ,cfeb_inj_en_sel_extend_      , print_errors);
       //      config_ok &= compareValues("TMB enableCLCTInputs_reg68 Extension"                 ,read_cfebs_enabled_extend_          ,cfebs_enabled_extend_expected, print_errors);
       //      config_ok &= compareValues("TMB enableCLCTInputs_reg68 Extension Readback"        ,read_cfebs_enabled_extend_readback_ ,cfebs_enabled_extend_expected, print_errors);
     }
@@ -12561,15 +12561,15 @@ void TMB::CheckVMEStateMachine() {
   config_ok &= compareValues("VME state machine VME ready"              ,read_vme_state_machine_vme_ready_,vme_state_machine_vme_ready_expected);
   config_ok &= compareValues("VME state machine OK"                     ,read_vme_state_machine_ok_       ,vme_state_machine_ok_expected);
   config_ok &= compareValues("VME state machine path OK"                ,read_vme_state_machine_path_ok_  ,vme_state_machine_path_ok_expected);
-  config_ok &= compareValues("VME state machine missing header start"   ,read_vme_state_machine_error_missing_header_start_   
+  config_ok &= compareValues("VME state machine missing header start"   ,read_vme_state_machine_error_missing_header_start_
 			     ,vme_state_machine_error_missing_header_start_expected   );
-  config_ok &= compareValues("VME state machine missing header end"     ,read_vme_state_machine_error_missing_header_end_     
+  config_ok &= compareValues("VME state machine missing header end"     ,read_vme_state_machine_error_missing_header_end_
 			     ,vme_state_machine_error_missing_header_end_expected     );
   config_ok &= compareValues("VME state machine missing data end marker",read_vme_state_machine_error_missing_data_end_marker_
 			     ,vme_state_machine_error_missing_data_end_marker_expected);
-  config_ok &= compareValues("VME state machine missing trailer end"    ,read_vme_state_machine_error_missing_trailer_end_    
+  config_ok &= compareValues("VME state machine missing trailer end"    ,read_vme_state_machine_error_missing_trailer_end_
 			     ,vme_state_machine_error_missing_trailer_end_expected    );
-  config_ok &= compareValues("VME state machine word count overflow"    ,read_vme_state_machine_error_word_count_overflow_    
+  config_ok &= compareValues("VME state machine word count overflow"    ,read_vme_state_machine_error_word_count_overflow_
 			     ,vme_state_machine_error_word_count_overflow_expected    );
   //
   ReportCheck("VME state machine check",config_ok);
@@ -12633,7 +12633,7 @@ void TMB::CheckDDDStateMachine() {
 }
 //
 ////////////////////////////////////////////////////////////////////////////////////////
-// integer parsing routines 
+// integer parsing routines
 ////////////////////////////////////////////////////////////////////////////////////////
 void TMB::InsertValueIntoDataWord(int value, int hibit, int lobit, int * data_word) {
   //
@@ -12642,7 +12642,7 @@ void TMB::InsertValueIntoDataWord(int value, int hibit, int lobit, int * data_wo
   const int NUMBER_OF_BITS = 16;
   int data_vector[NUMBER_OF_BITS] = {};
   //
-  //  (*MyOutput_) << "Put " << value << " into " << (*data_word) 
+  //  (*MyOutput_) << "Put " << value << " into " << (*data_word)
   //	       << " from bits " << lobit << " to " << hibit << std::endl;
   //
   // fill vector of bits data_vector[] with what is in the address pointed at by data_word:
@@ -12652,7 +12652,7 @@ void TMB::InsertValueIntoDataWord(int value, int hibit, int lobit, int * data_wo
 	       LSBfirst );
   //
   //  (*MyOutput_) << "Before adding " << value << "..." << std::endl;
-  //  for (int i=0; i<NUMBER_OF_BITS; i++) 
+  //  for (int i=0; i<NUMBER_OF_BITS; i++)
   //    (*MyOutput_) << "data_vector[" << i << "] =" << data_vector[i] << std::endl;
   //
   // insert "value" into "data_vector" beginning at index "lobit" and finishing at vector "hibit"
@@ -12664,7 +12664,7 @@ void TMB::InsertValueIntoDataWord(int value, int hibit, int lobit, int * data_wo
 	      LSBfirst);
   //
   //  (*MyOutput_) << "After adding " << value << "..." << std::endl;
-  //  for (int i=0; i<NUMBER_OF_BITS; i++) 
+  //  for (int i=0; i<NUMBER_OF_BITS; i++)
   //    (*MyOutput_) << "data_vector[" << i << "] =" << data_vector[i] << std::endl;
   //
   // pack vector of bits into integer to be written to VME register:
@@ -12767,7 +12767,7 @@ int TMB::GetHotChannelLayerFromMap_(unsigned long int vme_address, int bit_in_re
     //
   } else if (vme_address == hcm645_adr || vme_address == badbits645_adr ) {
     return cfeb6_layer45_hotchannelmask_layer_map[bit_in_register];
-  } 
+  }
   return -999;
 }
 //
@@ -12836,11 +12836,11 @@ int TMB::GetHotChannelDistripFromMap_(unsigned long int vme_address, int bit_in_
   } else if (vme_address == hcm645_adr || vme_address == badbits645_adr ) {
     return cfeb6_layer45_hotchannelmask_distrip_map[bit_in_register];
     //
-  } 
+  }
   return -999;
 }
 //
-int TMB::DCSreadAll(char *data) 
+int TMB::DCSreadAll(char *data)
 {
   char out[2];
   unsigned short tt, tr; //SK: unused: , sysm[6];
@@ -12881,10 +12881,10 @@ else
   {   tr |= (tt & 1);
       tr <<= 1;
       tt >>= 1;
-  } 
+  }
   tr |= (tt & 1);
 }
-  
+
   memcpy(data, &tr, 2);
 
 /* disabled by Liu, Nov. 25, 2014
@@ -12899,7 +12899,7 @@ else
   }
   else return 2;
 */
-  // use the following as a temporary solution while OTMB SYSMON disabled 
+  // use the following as a temporary solution while OTMB SYSMON disabled
   int smb_adr = 0x2a;   // float, float state TMB LM84 chip address
   int command = 0x01;   // "remote" temperature read
   int TMB_T = 100*smb_io(smb_adr,command,1);
@@ -12907,7 +12907,7 @@ else
   return 4;
 }
 
-int TMB::DCSvoltages(char *databuf) 
+int TMB::DCSvoltages(char *databuf)
 {
   /* read TMB voltages and currents */
   const int total_chips=14;
@@ -12918,7 +12918,7 @@ int TMB::DCSvoltages(char *databuf)
   bool badtag;
 
   if(checkvme_fail()) return 0;
-     
+
   for(int chip=0; chip<= total_chips; chip++)
   {
      vchip = (chip==total_chips)?0:chip;
@@ -12957,7 +12957,7 @@ int TMB::DCSvoltages(char *databuf)
          data_out = data_out<<1;
          data_out |= ((ttbuf[12+chip*12+j]>>5) & 1);
          if(ttbuf[12+chip*12+j]==0xBAAD) badtag=true;
-         /* the first 12 words are extra ( same as chip=0 ) */ 
+         /* the first 12 words are extra ( same as chip=0 ) */
      }
      adc_out[chip]=(badtag?0:data_out);
   }
@@ -12985,18 +12985,18 @@ int TMB::DCSvoltages(char *databuf)
   return total_chips*2+extrabytes;
 }
 //
-bool TMB::checkvme_fail() 
+bool TMB::checkvme_fail()
 {  // return true:  TMB vme access failed
    //       false:  TMB vme access OK
 
    char data[2];
    int i=read_one(0x70000, data);
    if(data[1]&0x40)
-   {  
+   {
        i=read_one(0, data);
-       if((data[1]&0x3F)==slot())   // TMB register 0 contains slot number 
+       if((data[1]&0x3F)==slot())   // TMB register 0 contains slot number
           return false;
-       else 
+       else
           return true;
    }
    else return true;      // if VME ready bit 0, can't access VME
@@ -13023,11 +13023,11 @@ void TMB::program_virtex6(const char *mcsfile)
    bufin=(char *)malloc(16*1024*1024);
    if(bufin==NULL)  return;
    FILE *fin=fopen(mcsfile,"r");
-   if(fin==NULL ) 
-   { 
-      free(bufin);  
+   if(fin==NULL )
+   {
+      free(bufin);
       std::cout << "ERROR: Unable to open MCS file :" << mcsfile << std::endl;
-      return; 
+      return;
    }
    int mcssize=read_mcs(bufin, fin);
    fclose(fin);
@@ -13053,20 +13053,20 @@ void TMB::program_virtex6(const char *mcsfile)
 
      // getTheController()->Debug(2);
      getTheController()->SetUseDelay(true);
-  
+
      setup_jtag(ChainTmbMezz);
     //restore idle;
     RestoreIdle();
 
 //
-// The IEEE 1532 ISC (In-System-Configuration) procedure is used.       
+// The IEEE 1532 ISC (In-System-Configuration) procedure is used.
 // The bitstream doesn't need to be sent in one JTAG package.
 // It is different from Xilinx's Jtag procedure which uses CFG_IN.
 //
-   
+
      comd=VTX6_IDCODE;
      scan(0, (char *)&comd, 10, rcvbuf, 1);
-     scan(1, (char *)&ttt, 32, (char *)&tout, 1);     
+     scan(1, (char *)&ttt, 32, (char *)&tout, 1);
      udelay(50);
      std::cout << "FPGA IDCODE=" << std::hex << tout << std::dec << std::endl;
 
@@ -13079,10 +13079,10 @@ void TMB::program_virtex6(const char *mcsfile)
      comd=VTX6_JPROG;
      scan(0, (char *)&comd, 10, rcvbuf, 0);
 
-     comd=VTX6_ISC_NOOP; 
+     comd=VTX6_ISC_NOOP;
      scan(0, (char *)&comd, 10, rcvbuf, 0);
      udelay(10000);
-     comd=VTX6_ISC_ENABLE; 
+     comd=VTX6_ISC_ENABLE;
      tmp=0;
      scan(0, (char *)&comd, 10, rcvbuf, 0);
      scan(1, (char *)&tmp, 5, rcvbuf, 0);
@@ -13090,7 +13090,7 @@ void TMB::program_virtex6(const char *mcsfile)
      getTheController()->CycleIdle_jtag(128);
      udelay(100);
 
-     comd=VTX6_ISC_PROGRAM; 
+     comd=VTX6_ISC_PROGRAM;
      scan(0, (char *)&comd, 10, rcvbuf, 0);
      udelay(10000);
     for(int i=0; i<blocks-1; i++)
@@ -13103,12 +13103,12 @@ void TMB::program_virtex6(const char *mcsfile)
        {  pcnts++;
           if(pcnts<100) std::cout << "Sending " << pcnts <<"%..." << std::endl;
           j=0;
-       }   
+       }
     }
     std::cout << "Sending 100%..." << std::endl;
 //    getTheController()->Debug(2);
 
-    comd=VTX6_ISC_DISABLE; 
+    comd=VTX6_ISC_DISABLE;
     scan(0, (char *)&comd, 10, rcvbuf, 0);
     std::cout <<" Start sending clocks... " << std::endl;
     getTheController()->CycleIdle_jtag(128);
@@ -13126,8 +13126,8 @@ void TMB::program_virtex6(const char *mcsfile)
     RestoreIdle();
     comd=VTX6_BYPASS;
     scan(0, (char *)&comd, 10, rcvbuf, 0);
-    
-    std::cout << "FPGA configuration done!" << std::endl;             
+
+    std::cout << "FPGA configuration done!" << std::endl;
     free(bufin);
 //    tmb_set_boot_reg(0);
 //     getTheController()->SetUseDelay(false);
@@ -13150,12 +13150,12 @@ unsigned TMB::virtex6_readreg(int reg)
      new_scan(0, (char *)&comd, 10, rcvbuf, 0);
      unsigned ins=((reg&0x1F)<<13)+(1<<27)+(1<<29)+1;
      data[2]=shuffle32(ins);
-     new_scan(1, (char *)data, 6*32, rcvbuf, 0);     
+     new_scan(1, (char *)data, 6*32, rcvbuf, 0);
 
      comd=VTX6_CFG_OUT;
      new_scan(0, (char *)&comd, 10, rcvbuf, 0);
      data[0]=0;
-     new_scan(1, (char *)data, 32, rcvbuf, 1);     
+     new_scan(1, (char *)data, 32, rcvbuf, 1);
      rt = (unsigned *)rcvbuf;
      rtv=shuffle32(*rt);
 //     printf("return: %08X\n", rtv);
@@ -13163,7 +13163,7 @@ unsigned TMB::virtex6_readreg(int reg)
      new_scan(0, (char *)&comd, 10, rcvbuf, 0);
      tmb_set_boot_reg(0);
      return rtv;
-  } 
+  }
   else return 0;
 }
 
@@ -13182,7 +13182,7 @@ void TMB::virtex6_writereg(int reg, unsigned value)
      unsigned ins=((reg&0x1F)<<13)+(2<<27)+(1<<29)+1;
      data[2]=shuffle32(ins);
      data[3]=shuffle32(value);
-     new_scan(1, (char *)data, 6*32, rcvbuf, 0);     
+     new_scan(1, (char *)data, 6*32, rcvbuf, 0);
      comd=VTX6_BYPASS;
      new_scan(0, (char *)&comd, 10, rcvbuf, 0);
      tmb_set_boot_reg(0);
@@ -13207,12 +13207,12 @@ std::vector<float> TMB::virtex6_monitor()
 //     data=0x8483F00;
 //     scan(1,(char *)&data, 32, rcvbuf, 1);
      data=0x4000000;
-     scan(1, (char *)&data, 32, rcvbuf, 1);     
+     scan(1, (char *)&data, 32, rcvbuf, 1);
      for(unsigned i=0; i<3; i++)
      {
         data += 0x10000;
-        scan(1, (char *)&data, 32, (char *)&ibrd, 1);     
-//        std::cout << "S Channel: " << i << std::hex << " readout " << ibrd << std::endl;  
+        scan(1, (char *)&data, 32, (char *)&ibrd, 1);
+//        std::cout << "S Channel: " << i << std::hex << " readout " << ibrd << std::endl;
         udelay(100);
         adc = (ibrd>>6)&0x3FF;
         if(i==0)
@@ -13220,7 +13220,7 @@ std::vector<float> TMB::virtex6_monitor()
         else
           readf=adc*3.0/1024.0;
         readout.push_back(readf);
-//        std::cout << " result: " << std::dec<< readf << std::endl; 
+//        std::cout << " result: " << std::dec<< readf << std::endl;
      }
      comd=VTX6_BYPASS;
      scan(0, (char *)&comd, 10, rcvbuf, 0);
@@ -13254,8 +13254,8 @@ int TMB::virtex6_dna(void *dna)
      comd=VTX6_ISC_DNA;
      scan(0, (char *)&comd, 10, rcvbuf, 0);
      udelay(1000);
-     scan(1, (char *)data, 64, (char *)dna, 1);     
-     
+     scan(1, (char *)data, 64, (char *)dna, 1);
+
      // the last 7 bits must be the same as the signature's lowest 7 bits
      if((dout[7]>>1)==(data[0]&0x7F))
      {
@@ -13282,7 +13282,7 @@ int TMB::virtex6_dna(void *dna)
      UnjamFPGAMini();
      return rtv;
 }
-    
+
 int TMB::virtex6_sysmon(int chn)
 {
      float v;
@@ -13291,7 +13291,7 @@ int TMB::virtex6_sysmon(int chn)
      if(i&0x20)
      {
         i >>= 6;
-      
+
         if(chn==0) v=i*503.975/1024.0-273.15;
         else v=i*3.0/1024.0;
         return int(v*100);
@@ -14198,11 +14198,11 @@ void TMB::otmb_program_eprom(const char *mcsfile)
    if(bufin==NULL)  return;
    bzero(bufcmd, 128);
    FILE *fin=fopen(mcsfile,"r");
-   if(fin==NULL ) 
-   { 
-      free(bufin);  
+   if(fin==NULL )
+   {
+      free(bufin);
       std::cout << "ERROR: Unable to open MCS file :" << mcsfile << std::endl;
-      return; 
+      return;
    }
    int mcssize=read_mcs(bufin, fin);
    fclose(fin);
@@ -14223,7 +14223,7 @@ void TMB::otmb_program_eprom(const char *mcsfile)
 */
      int blocks=FIRMWARE_SIZE/1024;  // firmware size must be in units of 8192-bit units
      if (FIRMWARE_SIZE%1024)
-     {  
+     {
          for(int i=0; i<1024; i++) bufin[FIRMWARE_SIZE+i]=0xFF;  // pad the last block with 0xFF
          blocks++;
      }
@@ -14232,37 +14232,37 @@ void TMB::otmb_program_eprom(const char *mcsfile)
 
 //    getTheController()->Debug(2);
      getTheController()->SetUseDelay(true);
-  
+
     for(int i=0; i<blocks; i++)
     {
 //    if(i>50) getTheController()->Debug(0);
-       comd=VTX6_USR2; 
+       comd=VTX6_USR2;
        scan(0, (char *)&comd, 10, rcvbuf, 0);
        udelay(1000);
        scan(1, bufin+1024*i, 8192, rcvbuf, 0);
        udelay(100);
-       comd=VTX6_BYPASS; 
+       comd=VTX6_BYPASS;
        scan(0, (char *)&comd, 10, rcvbuf, 0);
        if(i==0)
        {
-          comd=VTX6_USR3; 
+          comd=VTX6_USR3;
           scan(0, (char *)&comd, 10, rcvbuf, 0);
           udelay(10000);
           bufcmd[0]=0x0E;
           scan(1, bufcmd, 1024, rcvbuf, 0);
-          comd=VTX6_BYPASS; 
+          comd=VTX6_BYPASS;
           scan(0, (char *)&comd, 10, rcvbuf, 0);
           udelay(200000);
        }
        udelay(200000);
-       comd=VTX6_USR3; 
+       comd=VTX6_USR3;
        scan(0, (char *)&comd, 10, rcvbuf, 0);
        udelay(10000);
        bufcmd[0]=0xA0;
        scan(1, bufcmd, 1024, rcvbuf, 0);
-       comd=VTX6_BYPASS; 
+       comd=VTX6_BYPASS;
        scan(0, (char *)&comd, 10, rcvbuf, 0);
-       comd=VTX6_BYPASS; 
+       comd=VTX6_BYPASS;
        scan(0, (char *)&comd, 10, rcvbuf, 0);
 
        j++;
@@ -14270,7 +14270,7 @@ void TMB::otmb_program_eprom(const char *mcsfile)
        {  pcnts++;
           if(pcnts<100) std::cout << "Sending " << pcnts <<"%..." << std::endl;
           j=0;
-       }   
+       }
     }
     std::cout << "Sending 100%..." << std::endl;
 //    getTheController()->Debug(2);
@@ -14297,27 +14297,27 @@ void TMB::new_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chain)
    //          ......
    //  +0x100  use bootstrap register instead of FPGA as JTAG source
    //          chain 1 always use bootstrap register
-           
+
    int achain=chain & 0xF;
    int jchain=achain;
    if(jchain>7 && jchain<12) jchain=7;  // all ALCT Mezs use jchain=7
    int chip=(chain >> 4) & 0xF;
    if(jchain<1 || jchain>7 || chip>5) return;
    bool useboot=false;
-   if( jchain==1 || ((chain>>8) & 0xF)==1) useboot=true;   
-   unsigned long TDI=0, TMS=1, TCK=2, TDO=15; 
-   int TIR[18]={ 0, 6,14,22,30, 0, 8, 0, 5,13, 0, 8, 0, 6,22, 0, 6,22}, 
+   if( jchain==1 || ((chain>>8) & 0xF)==1) useboot=true;
+   unsigned long TDI=0, TMS=1, TCK=2, TDO=15;
+   int TIR[18]={ 0, 6,14,22,30, 0, 8, 0, 5,13, 0, 8, 0, 6,22, 0, 6,22},
        HIR[18]={32,24,16, 8, 0, 8, 0,16, 8, 0, 8, 0,32,16, 0,20, 4, 0},
-       HDR[18]={ 4, 3, 2, 1, 0, 1, 0, 2, 1, 0, 1, 0, 2, 1, 0, 2, 1, 0}, 
-       TDR[18]={ 0, 1, 2, 3, 4, 0, 1, 0, 1, 2, 0, 1, 0, 1, 2, 0, 1, 2}; 
+       HDR[18]={ 4, 3, 2, 1, 0, 1, 0, 2, 1, 0, 1, 0, 2, 1, 0, 2, 1, 0},
+       TDR[18]={ 0, 1, 2, 3, 4, 0, 1, 0, 1, 2, 0, 1, 0, 1, 2, 0, 1, 2};
        //        -TMB----------UPROMs-ALCT0-ALCT 1--ALCT 2&3--ALCT 4-
    int chipshift[12]={0, 0, 5, 0, 0, 0, 0, 7, 9, 12, 12, 15};
    int shiftpos=chipshift[achain]+chip-1;
    unsigned short lowb=0,  highb=jchain;
    if(jchain>=4)
-   { 
-       lowb=jchain & 3;  
-       highb=0; 
+   {
+       lowb=jchain & 3;
+       highb=0;
    }
    else if(jchain==3) lowb=1;
    unsigned long vmeaddr = 0x10;
@@ -14336,9 +14336,9 @@ void TMB::new_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chain)
       add_headtail(buff, cnt, TDR[shiftpos], HDR[shiftpos]);
       ncnt += HDR[shiftpos]+TDR[shiftpos];
    }
-   else if (chip>0 && reg==0 && cnt>0) 
-   { 
-      add_headtail(buff, cnt, TIR[shiftpos], HIR[shiftpos]); 
+   else if (chip>0 && reg==0 && cnt>0)
+   {
+      add_headtail(buff, cnt, TIR[shiftpos], HIR[shiftpos]);
       ncnt += HIR[shiftpos]+TIR[shiftpos];
    }
    Jtag_Norm(handle, reg, buff, ncnt, rbuff, ird, NOW);
@@ -14351,7 +14351,7 @@ void TMB::new_scan(int reg, char *snd,int cnt,char *rcv,int ird, int chain)
 
 void TMB::new_RestoreIdle(int dev)
 {
-     new_scan(0, NULL, -1, NULL, NOW, dev); 
+     new_scan(0, NULL, -1, NULL, NOW, dev);
 }
 
 int TMB::read_user_prom(int chip, char *fn)
@@ -14374,8 +14374,8 @@ int TMB::read_user_prom(int chip, char *fn)
      int cmd=PROM_IDCODE;
      int data=0x0;
      unsigned int promid=0;
-     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
-     new_scan(1, (char *)&data, 32, (char *)&promid, READ_YES|NOW, dev); 
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev);
+     new_scan(1, (char *)&data, 32, (char *)&promid, READ_YES|NOW, dev);
      std::cout << "Read User Prom " << chip << ", IDCODE=" << std::hex  << promid << std::dec;
      if((promid&0xFFFF)==0x2093)
      {   // XC18V256
@@ -14393,26 +14393,26 @@ int TMB::read_user_prom(int chip, char *fn)
      }
      cmd=PROM_ENABLE;
      data=0x34;
-     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
-     new_scan(1, (char *)&data, 6, NULL, NOW, dev); 
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev);
+     new_scan(1, (char *)&data, 6, NULL, NOW, dev);
      udelay(100);
      for(int i=0; i<blocks; i++)
      {
          cmd=PROM_ADDRESS;
          data=i*addrblock;
-         new_scan(0, (char *)&cmd, 8,  NULL, NOW, dev); 
-         new_scan(1, (char *)&data, 16, NULL, NOW, dev); 
+         new_scan(0, (char *)&cmd, 8,  NULL, NOW, dev);
+         new_scan(1, (char *)&data, 16, NULL, NOW, dev);
          udelay(5);
          cmd=PROM_READ;
-         new_scan(0, (char *)&cmd, 8, NULL,NOW, dev); 
+         new_scan(0, (char *)&cmd, 8, NULL,NOW, dev);
          udelay(50);
-         new_scan(1, temp, blocksize,  fn+i*dataaddr, READ_YES|NOW, dev); 
+         new_scan(1, temp, blocksize,  fn+i*dataaddr, READ_YES|NOW, dev);
      }
      cmd=PROM_DISABLE;
-     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev);
      udelay(110000);
      cmd=PROM_BYPASS;
-     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev);
      return blocks*dataaddr;
 }
 
@@ -14459,27 +14459,27 @@ void TMB::erase_user_prom(int chip)
 
      int cmd=PROM_ENABLE;
      int data=0x34;
-     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
-     new_scan(1, (char *)&data, 6, NULL, NOW, dev); 
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev);
+     new_scan(1, (char *)&data, 6, NULL, NOW, dev);
      udelay(100);
          cmd=PROM_ADDRESS;
          data=1;
-         new_scan(0, (char *)&cmd, 8,  NULL, NOW, dev); 
-         new_scan(1, (char *)&data, 16, NULL, NOW, dev); 
+         new_scan(0, (char *)&cmd, 8,  NULL, NOW, dev);
+         new_scan(1, (char *)&data, 16, NULL, NOW, dev);
          udelay(5);
          cmd=PROM_ERASE;
-         new_scan(0, (char *)&cmd, 8, NULL,NOW, dev); 
+         new_scan(0, (char *)&cmd, 8, NULL,NOW, dev);
          ::sleep(15);
      cmd=PROM_DISABLE;
-     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev);
      udelay(110000);
      cmd=PROM_BYPASS;
-     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev); 
+     new_scan(0, (char *)&cmd, 8, NULL, NOW, dev);
      return;
 }
 
 void TMB::virtex6_recover()
-{    
+{
 // step 1: FPGA shutdown
      if(hardware_version_<=1) return;  // valid only for Virtex6 FPGA
 
@@ -14511,6 +14511,6 @@ void TMB::virtex6_recover()
 // step 3: FPGA reset
      tmb_hard_reset_tmb_fpga();
 }
-  
+
 } // namespace emu::pc
 } // namespace emu

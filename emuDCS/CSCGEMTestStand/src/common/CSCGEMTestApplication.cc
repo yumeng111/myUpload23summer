@@ -133,6 +133,9 @@ namespace emu {  namespace pc {
 
     xgi::bind(this, &CSCGEMTestApplication::HardReset, "HardReset");
     xgi::bind(this, &CSCGEMTestApplication::PrepareForTriggering, "PrepareForTriggering");
+    /*
+    xgi::bind(this, &CSCGEMTestApplication::GEMandCSCQuality, "GEMandCSCQuality");
+    */
 
     xgi::bind(this, &CSCGEMTestApplication::DOESWORK, "DOESWORK");
 
@@ -538,6 +541,13 @@ namespace emu {  namespace pc {
     *out << cgicc::input().set("type","submit").set("value","Set OTMB Type").set("name", "Get OTMB Type") << endl;
     *out << cgicc::br() << endl;
     *out << cgicc::form() << endl;
+/*
+    *out << cgicc::br() << endl;
+    *out << "Do you want to use the Quality of GEM+CSC match instead of CLCT only? " << endl;
+    *out << cgicc::form().set("method", "GET").set("action","/" + urn + "/GEMandCSCQuality") << endl;
+    *out << cgicc::input().set("type","submit").set("value","Use both GEM and CSC for Quality match").set("name", "Use both GEM and CSC for Quality match") << endl;
+    *out << cgicc::form() << endl;
+    *out << cgicc::br() << endl; */
 
 
     *out << cgicc::fieldset();
@@ -709,7 +719,7 @@ namespace emu {  namespace pc {
 
 
     *out << cgicc::br() << endl;
-    *out << "GEM: " << endl;
+    *out << "GEM Clusters: " << endl;
     *out << "bx\troll\tpad\tsize\tlayer\trealVfatID" << endl;
     for(unsigned int i=0; i < patternSet.GEMClusters.size(); i++){
       unsigned int clusterbits = patternSet.GEMClusters[i].info();
@@ -1157,6 +1167,10 @@ void CSCGEMTestApplication::RunStudy(xgi::Input * in, xgi::Output * out)
 
   int clct0_lsbs, clct1_lsbs, clct_msbs;
   int CLCT0_data_, CLCT1_data_;
+  /*Added for mpc frames for lct by Ange
+  int mpc0_frame0, mpc0_frame1, mpc1_frame0, mpc1_frame1;
+  int mpc0_frame0_data_, mpc0_frame1_data_, mpc1_frame0_data_, mpc1_frame1_data_;
+  */
   TMB * thisTMB = tmbVector[1];				/// THIS SHOULD BE EDITED IF USING DIFFERENT TMB SETTINGS !!!!!!!!
 
   GetNtrials_int = atoi(GetNtrials_char);
@@ -1166,6 +1180,18 @@ void CSCGEMTestApplication::RunStudy(xgi::Input * in, xgi::Output * out)
     clct0_lsbs = thisTMB->ReadRegister(seq_clct0_adr);
     clct1_lsbs = thisTMB->ReadRegister(seq_clct1_adr);
     clct_msbs  = thisTMB->ReadRegister(seq_clctm_adr);
+
+    /*Added for mpc frames for lct by Ange
+    mpc0_frame0 = thisTMB->ReadRegister(mpc0_frame0_adr); // 0x88
+    mpc0_frame1 = thisTMB->ReadRegister(mpc0_frame1_adr); // 0x8a
+    mpc1_frame0 = thisTMB->ReadRegister(mpc1_frame0_adr); // 0x8c
+    mpc1_frame1 = thisTMB->ReadRegister(mpc1_frame1_adr); // 0x8e
+
+    mpc0_frame0_data_ = (mpc0_frame0 & 0xffff);
+    mpc0_frame1_data_ = (mpc0_frame1 & 0xffff);
+    mpc1_frame0_data_ = (mpc1_frame0 & 0xffff);
+    mpc1_frame1_data_ = (mpc1_frame1 & 0xffff);
+    */
 
     CLCT0_data_ = ( (clct_msbs & 0xf) << 16 ) | (clct0_lsbs & 0xffff);
     CLCT1_data_ = ( (clct_msbs & 0xf) << 16 ) | (clct1_lsbs & 0xffff);
@@ -1213,6 +1239,7 @@ void CSCGEMTestApplication::RunStudy(xgi::Input * in, xgi::Output * out)
     if(!match){ patternSet.Results_l.push_back(thisTrial); }
 
     //thisTMB->ResetCounters();
+
   }
 
   std::cout << "Took this many TMB Dumps: " << GetNtrials_int << std::endl;
@@ -1231,7 +1258,13 @@ void CSCGEMTestApplication::RunStudyCCLUT(xgi::Input * in, xgi::Output * out)
 
   int clct0_lsbs, clct1_lsbs, clct_msbs;
   int CLCT0_data_, CLCT1_data_;
+  /*Added for mpc frames for lct by Ange
+  int mpc0_frame0, mpc0_frame1, mpc1_frame0, mpc1_frame1;
+  int mpc0_frame0_data_, mpc0_frame1_data_, mpc1_frame0_data_, mpc1_frame1_data_;
+  */
   //int clct0_xky_data_, clct1_xky_data_;
+
+
   int clct0_CC_data_, clct1_CC_data_;
   TMB * thisTMB = tmbVector[1];				/// THIS SHOULD BE EDITED IF USING DIFFERENT TMB SETTINGS !!!!!!!!
 
@@ -1252,6 +1285,18 @@ void CSCGEMTestApplication::RunStudyCCLUT(xgi::Input * in, xgi::Output * out)
     // https://twiki.cern.ch/twiki/bin/view/Main/GEMCSCOTMBFWDevelopementLS2
     //clct0_xky_data_ = thisTMB->ReadRegister(clct0_xky_adr);
     //clct1_xky_data_ = thisTMB->ReadRegister(clct1_xky_adr);
+
+    /*Added for mpc frames for lct by Ange
+    mpc0_frame0 = thisTMB->ReadRegister(mpc0_frame0_adr); // 0x88
+    mpc0_frame1 = thisTMB->ReadRegister(mpc0_frame1_adr); // 0x8a
+    mpc1_frame0 = thisTMB->ReadRegister(mpc1_frame0_adr); // 0x8c
+    mpc1_frame1 = thisTMB->ReadRegister(mpc1_frame1_adr); // 0x8e
+
+    mpc0_frame0_data_ = (mpc0_frame0 & 0xffff);
+    mpc0_frame1_data_ = (mpc0_frame1 & 0xffff);
+    mpc1_frame0_data_ = (mpc1_frame0 & 0xffff);
+    mpc1_frame1_data_ = (mpc1_frame1 & 0xffff);
+    */
 
     CLCT0_data_ = ( (clct_msbs & 0xf) << 16 ) | (clct0_lsbs & 0xffff);//32 bits
     CLCT1_data_ = ( (clct_msbs & 0xf) << 16 ) | (clct1_lsbs & 0xffff);
@@ -1310,8 +1355,7 @@ void CSCGEMTestApplication::RunStudyCCLUT(xgi::Input * in, xgi::Output * out)
     CLCT0_Counter = thisTMB->GetCounter(cw::tmb_counters[0]);//thisTMB->GetCounter(cw::tmb_counters[0]);
     CLCT1_Counter = thisTMB->GetCounter(cw::tmb_counters[1]);//thisTMB->GetCounter(cw::tmb_counters[1]);
 
-
-    //cw::TMBresponse thisTrial = cw::TMBresponse(CLCT0_data_, CLCT1_data_, 0);
+      //cw::TMBresponse thisTrial = cw::TMBresponse(CLCT0_data_, CLCT1_data_, 0);
     cw::TMBresponse_long thisTrial = cw::TMBresponse_long(CLCT0_nhit, CLCT0_pid, CLCT0_key, CLCT1_nhit, CLCT1_pid, CLCT1_key, clct0_inc, clct1_inc);
     bool match = false;
     for(int j=0; j < patternSet.Results_l.size(); j++){
@@ -2114,16 +2158,7 @@ void CSCGEMTestApplication::RunParamScanCCLUT(xgi::Input * in, xgi::Output * out
     }
 
   }while(cw::Increment_new(parameters[0], CombinationCounter));
-  /*
-  fout << "FINAL SCORE" << '\n';
-  std::vector<std::vector<std::string> > response_final;
-  cw::generate_response(Accuracy,Accuracy, Accuracy,1, Accuracy, Accuracy_1, All, response_final);
-  for (size_t i = 0; i < response_final.size(); i++) {
-  for (size_t j = 0; j < response_final[i].size(); j++) {
-  if (i == 0 || i == 4 || i == 5) fout << response_final[i][j];
-}
-if (i == 0 || i == 4 || i == 5)fout << endl;
-}*/
+
 
 fout << "Fail/All(nHit > 3) = " << Fail << "/" << All <<  std::endl;
 fout << "Expected Fail/All(nHit > 3) = " << Fail_Expexted << "/" << All <<  std::endl;
@@ -2163,6 +2198,9 @@ void CSCGEMTestApplication::ReadSimulatedFile(xgi::Input * in, xgi::Output * out
   cw::CCLUT ReadEvent;
   std::vector<cw::Hit> hits;
 
+  int gem_bx_num, gempad_num, gem_layer_num, gem_size_num, gem_roll_num;
+  std::vector<cw::Cluster> pads;
+
   TMB * thisTMB = tmbVector[1];
   thisTMB->ResetCounters();
   CLCT0_Counter = 0;
@@ -2194,9 +2232,51 @@ void CSCGEMTestApplication::ReadSimulatedFile(xgi::Input * in, xgi::Output * out
         hits.push_back(tmp_hit);
       }
     }
+    //added to parse through gem from injection file by Ange
+    while(word != "Run"  /*&& word != "CSC"*/ && SimulatedFile >> word){
+
+      if (word == "GEMCluster") { // This is supposed to check for the BX,layer,pad, size, roll when it comes after "GEMCluster"
+        SimulatedFile >> word;
+        if (word.find("layer1:") != std::string::npos || word.find("layer2:") != std::string::npos) {
+          gem_layer_num = (word.find("layer1:") != std::string::npos) ? 1 : 2;
+        } else {
+          std::cerr << "Could not parse GEM layer from word: " << word << std::endl;
+          continue;
+        }
+          SimulatedFile >> word;
+          if (word == "bx"){
+            SimulatedFile >> gem_bx_num;
+            SimulatedFile >> word;
+            if (word == "gemPad"){
+              SimulatedFile >> gempad_num;
+              SimulatedFile >> word;
+              if (word == "size"){
+                SimulatedFile >> gem_size_num;
+                SimulatedFile >> word;
+                if (word == "roll"){
+                  SimulatedFile >> gem_roll_num;
+                  SimulatedFile >> word;
+                  //if (word == "converted"){break;}
+                }
+              }
+            }
+          }
+        //}
+        std::cout << ".....................parse gem info......................" << std::endl;
+        std::cout << "bx = " << gem_bx_num << "; GEM Layer = " << gem_layer_num << "; gemPad = " << gempad_num <<"; Size = " << gem_size_num <<"; Roll = " << gem_roll_num << std::endl;
+        cw::Cluster tmp_cluster;
+        tmp_cluster.bx = gem_bx_num;
+        tmp_cluster.roll = gem_roll_num;
+        tmp_cluster.size = gem_size_num;
+        tmp_cluster.pad = gempad_num;
+        tmp_cluster.layer = gem_layer_num;
+        pads.push_back(tmp_cluster);
+      }
+    }//end of while for gem */
+
     std::cout << "Finished reading event" << '\n';
     cout << "Reading the results" << endl;
-    if (word == "CSC" || word == "GEMCluster") {
+    if (word == "CSC" /*|| word == "GEMCluster"*/) {
       cout << word << " ";
       while (word != "Run" && SimulatedFile >> word) {
         cout << word << " ";
@@ -2212,6 +2292,11 @@ void CSCGEMTestApplication::ReadSimulatedFile(xgi::Input * in, xgi::Output * out
   cw::CCLUT tmp_cclut;
   tmp_cclut.hits = hits;
   patternSet.LUT.push_back(tmp_cclut);
+
+  cw::Cluster tmp_cluster;
+  patternSet.GEMClusters = pads;
+  std::cout << "Added " << pads.size() << " GEM clusters for this event." << std::endl;
+
 
   this->Default(in,out);
   return;
@@ -2242,6 +2327,31 @@ void CSCGEMTestApplication::LoadSimulatedFileEvent(xgi::Input * in, xgi::Output 
   int clct0_xky_data_, clct1_xky_data_;
   int clct0_CC_data_, clct1_CC_data_;
 
+  int mpc0_frame0, mpc0_frame1, mpc1_frame0, mpc1_frame1;
+  int gem_csc_match_cluster00, gem_csc_match_cluster01, gem_csc_match_cluster10, gem_csc_match_cluster11;
+  int mpc0_frame0_data_, mpc0_frame1_data_, mpc1_frame0_data_, mpc1_frame1_data_;
+
+  /*
+  int gemA_cluster_[8];
+  int gemB_cluster_[8];
+  int gemA_overflow_;
+  int gemA_sync_;
+  int gemB_overflow_;
+  int gemB_sync_;
+  bool gemA_cluster_vpf_;
+  int gemA_cluster_pad_;
+  int gemA_cluster_pad2_;
+  int gemA_cluster_roll_;
+  int gemA_cluster_vfat_;
+  int gemA_cluster_size_;
+  bool gemB_cluster_vpf_;
+  int gemB_cluster_pad_;
+  int gemB_cluster_pad2_;
+  int gemB_cluster_roll_;
+  int gemB_cluster_vfat_;
+  int gemB_cluster_size_;
+  //*/
+
   cclut0_lsbs = thisTMB->ReadRegister(seq_clct0_adr);
   cclut1_lsbs = thisTMB->ReadRegister(seq_clct1_adr);
   cclut_msbs  = thisTMB->ReadRegister(seq_clctm_adr);
@@ -2249,6 +2359,42 @@ void CSCGEMTestApplication::LoadSimulatedFileEvent(xgi::Input * in, xgi::Output 
   clct1_xky_data_ = thisTMB->ReadRegister(clct1_bndxky_adr);
   clct0_CC_data_ = thisTMB->ReadRegister(clct0_cc_adr);
   clct1_CC_data_ = thisTMB->ReadRegister(clct1_cc_adr);
+
+  ///*Added for mpc frames for lct by Ange
+  mpc0_frame0 = thisTMB->ReadRegister(mpc0_frame0_adr); // 0x88
+  mpc0_frame1 = thisTMB->ReadRegister(mpc0_frame1_adr); // 0x8a
+  mpc1_frame0 = thisTMB->ReadRegister(mpc1_frame0_adr); // 0x8c
+  mpc1_frame1 = thisTMB->ReadRegister(mpc1_frame1_adr); // 0x8e
+  //for when gem is enabled from TMB.cc file
+  gem_csc_match_cluster00 = thisTMB->ReadRegister(gem_csc_match_cluster00_adr); //0x32E
+	gem_csc_match_cluster01 = thisTMB->ReadRegister(gem_csc_match_cluster01_adr); //0x330
+	gem_csc_match_cluster10 = thisTMB->ReadRegister(gem_csc_match_cluster10_adr); //0x332
+	gem_csc_match_cluster11 = thisTMB->ReadRegister(gem_csc_match_cluster11_adr); //0x334
+
+  mpc0_frame0_data_ = (mpc0_frame0 & 0xffff);
+  mpc0_frame1_data_ = (mpc0_frame1 & 0xffff);
+  mpc1_frame0_data_ = (mpc1_frame0 & 0xffff);
+  mpc1_frame1_data_ = (mpc1_frame1 & 0xffff);
+//this is hex
+  int LCT0_quality = thisTMB->ExtractValueFromData(mpc0_frame0_data_, mpc0_run3frame0_lct_first_quality_bitlo, mpc0_run3frame0_lct_first_quality_bithi);
+  int LCT1_quality = thisTMB->ExtractValueFromData(mpc1_frame0_data_, mpc1_run3frame0_lct_second_quality_bitlo, mpc1_run3frame0_lct_second_quality_bithi);
+//this is dec from TMB.cc file, so use double or int???
+  int Cluster0_iclst = thisTMB->ExtractValueFromData(gem_csc_match_cluster00, gem_csc_match_cluster0_iclst_bitlo, gem_csc_match_cluster0_iclst_bithi);
+  int Cluster0_roll = thisTMB->ExtractValueFromData(gem_csc_match_cluster00, gem_csc_match_cluster0_roll_bitlo, gem_csc_match_cluster0_roll_bithi);
+  int Cluster0_pad = thisTMB->ExtractValueFromData(gem_csc_match_cluster01, gem_csc_match_cluster0_pad_bitlo, gem_csc_match_cluster0_pad_bithi);
+  int Cluster0_bend = thisTMB->ExtractValueFromData(gem_csc_match_cluster01, gem_csc_match_cluster0_bend_bitlo, gem_csc_match_cluster0_bend_bithi);
+  int Cluster0_angle = thisTMB->ExtractValueFromData(gem_csc_match_cluster01, gem_csc_match_cluster0_angle_bitlo, gem_csc_match_cluster0_angle_bithi);
+  int Cluster0_cscxky = thisTMB->ExtractValueFromData(gem_csc_match_cluster00, gem_csc_match_cluster0_cscxky_bitlo, gem_csc_match_cluster0_cscxky_bithi);
+
+  int Cluster1_iclst = thisTMB->ExtractValueFromData(gem_csc_match_cluster10, gem_csc_match_cluster1_iclst_bitlo, gem_csc_match_cluster1_iclst_bithi);
+  int Cluster1_roll = thisTMB->ExtractValueFromData(gem_csc_match_cluster10, gem_csc_match_cluster1_roll_bitlo, gem_csc_match_cluster1_roll_bithi);
+  int Cluster1_pad = thisTMB->ExtractValueFromData(gem_csc_match_cluster11, gem_csc_match_cluster1_pad_bitlo, gem_csc_match_cluster1_pad_bithi);
+  int Cluster1_bend = thisTMB->ExtractValueFromData(gem_csc_match_cluster11, gem_csc_match_cluster1_bend_bitlo, gem_csc_match_cluster1_bend_bithi);
+  int Cluster1_angle = thisTMB->ExtractValueFromData(gem_csc_match_cluster11, gem_csc_match_cluster1_angle_bitlo, gem_csc_match_cluster1_angle_bithi);
+  int Cluster1_cscxky = thisTMB->ExtractValueFromData(gem_csc_match_cluster10, gem_csc_match_cluster1_cscxky_bitlo, gem_csc_match_cluster1_cscxky_bithi);
+
+
+
   // extract value from register value. bitlo means the lowest bit clct0_bndxky_adr
   int CLCT0_xky = thisTMB->ExtractValueFromData(clct0_xky_data_, clct0_xky_bitlo, clct0_xky_bithi);
   int CLCT1_xky = thisTMB->ExtractValueFromData(clct1_xky_data_, clct1_xky_bitlo, clct1_xky_bithi);
@@ -2289,6 +2435,17 @@ void CSCGEMTestApplication::LoadSimulatedFileEvent(xgi::Input * in, xgi::Output 
   std::cout << "Bending angle =  " << CLCT0_bnd << std::endl;
   std::cout << "LR bending = " << CLCT0_lr << std::endl << std::endl;
 
+
+  std::cout << std::endl << "LCT 0 and MPC 0 Decode:" << std::endl;
+  std::cout << "LCT Quality = " << LCT0_quality << std::endl;
+  std::cout << "Cluster0 iclst = " << Cluster0_iclst << std::endl;
+  std::cout << "Cluster0 roll = " << Cluster0_roll << std::endl;
+  std::cout << "Cluster0 pad = " << Cluster0_pad << std::endl;
+  std::cout << "Cluster0 bend = " << Cluster0_bend << std::endl;
+  std::cout << "Cluster0 angle(hs) = " << Cluster0_angle / 4.0 << std::endl;
+  std::cout << "Cluster0 cscxky(hs) = " << Cluster0_cscxky / 4.0 << std::endl;
+
+
   std::cout << std::endl << "CLCT 1 Decode:" << std::endl;
   std::cout << "Valid = " << CLCT1_valid << std::endl;
   std::cout << "N Hit = " << CLCT1_nhit << std::endl;
@@ -2302,6 +2459,17 @@ void CSCGEMTestApplication::LoadSimulatedFileEvent(xgi::Input * in, xgi::Output 
   std::cout << "LR bending = " << CLCT1_lr << std::endl << std::endl;
 
 
+  std::cout << std::endl << "LCT 1 and MPC 1 Decode:" << std::endl;
+  std::cout << "LCT Quality = " << LCT1_quality << std::endl;
+  std::cout << "Cluster1 iclst = " << Cluster1_iclst << std::endl;
+  std::cout << "Cluster1 roll = " << Cluster1_roll << std::endl;
+  std::cout << "Cluster1 pad = " << Cluster1_pad << std::endl;
+  std::cout << "Cluster1 bend = " << Cluster1_bend << std::endl;
+  std::cout << "Cluster1 angle(hs) = " << Cluster1_angle  << std::endl;
+  std::cout << "Cluster1 cscxky(hs) = " << Cluster1_cscxky / 4.0 << std::endl;
+
+
+
   // New Portion recently added:
   int trig_clct0_nhit = CLCT0_nhit;
   int trig_clct0_r2_pid = CLCT0_pid;
@@ -2312,6 +2480,12 @@ void CSCGEMTestApplication::LoadSimulatedFileEvent(xgi::Input * in, xgi::Output 
   int trig_clct0_bend = CLCT0_lr;
   int trig_clct0_slope = CLCT0_bnd;
 
+  int trig_lct0_quality = LCT0_quality;
+  int trig_lct0_bend = Cluster0_bend;
+  int trig_lct0_angle = Cluster0_angle;
+  int trig_lct0_cscxkyhs = Cluster0_cscxky / 4.0;
+
+
   int trig_clct1_nhit = CLCT1_nhit;
   int trig_clct1_r2_pid = CLCT1_pid;
   int trig_clct1_KeyQuartStrip = CLCT1_xky / 2;
@@ -2320,6 +2494,81 @@ void CSCGEMTestApplication::LoadSimulatedFileEvent(xgi::Input * in, xgi::Output 
   int trig_clct1_KeyEighthStrip = CLCT1_xky;
   int trig_clct1_bend = CLCT1_lr;
   int trig_clct1_slope = CLCT1_bnd;
+
+  int trig_lct1_quality = LCT1_quality;
+  int trig_lct1_bend = Cluster1_bend;
+  int trig_lct1_angle = Cluster1_angle;
+  int trig_lct1_cscxkyhs = Cluster1_cscxky / 4.0;
+
+
+
+   /*//gemA = gem layer 1, gemB = gem layer 2
+   //added for GEM by ANge
+  // Read GEM cluster registers
+  //int gemA_cluster_[8];
+  //int gemB_cluster_[8];
+  gemA_cluster_[0] = thisTMB->ReadRegister(gemA_cluster0_adr) & 0x3fff;
+  gemA_cluster_[1] = thisTMB->ReadRegister(gemA_cluster1_adr) & 0x3fff;
+  gemA_cluster_[2] = thisTMB->ReadRegister(gemA_cluster2_adr) & 0x3fff;
+  gemA_cluster_[3] = thisTMB->ReadRegister(gemA_cluster3_adr) & 0x3fff;
+  gemA_cluster_[4] = thisTMB->ReadRegister(gemA_cluster4_adr) & 0x3fff;
+  gemA_cluster_[5] = thisTMB->ReadRegister(gemA_cluster5_adr) & 0x3fff;
+  gemA_cluster_[6] = thisTMB->ReadRegister(gemA_cluster6_adr) & 0x3fff;
+  gemA_cluster_[7] = thisTMB->ReadRegister(gemA_cluster7_adr) & 0x3fff;
+
+  gemB_cluster_[0] = thisTMB->ReadRegister(gemB_cluster0_adr) & 0x3fff;
+  gemB_cluster_[1] = thisTMB->ReadRegister(gemB_cluster1_adr) & 0x3fff;
+  gemB_cluster_[2] = thisTMB->ReadRegister(gemB_cluster2_adr) & 0x3fff;
+  gemB_cluster_[3] = thisTMB->ReadRegister(gemB_cluster3_adr) & 0x3fff;
+  gemB_cluster_[4] = thisTMB->ReadRegister(gemB_cluster4_adr) & 0x3fff;
+  gemB_cluster_[5] = thisTMB->ReadRegister(gemB_cluster5_adr) & 0x3fff;
+  gemB_cluster_[6] = thisTMB->ReadRegister(gemB_cluster6_adr) & 0x3fff;
+  gemB_cluster_[7] = thisTMB->ReadRegister(gemB_cluster7_adr) & 0x3fff;
+   gemA_overflow_   = (thisTMB->ReadRegister(gemA_cluster0_adr) >> 14) & 0x1;
+   gemA_sync_       = (thisTMB->ReadRegister(gemA_cluster0_adr) >> 15) & 0x1;
+   gemB_overflow_   = (thisTMB->ReadRegister(gemB_cluster0_adr) >> 14) & 0x1;
+   gemB_sync_       = (thisTMB->ReadRegister(gemB_cluster0_adr) >> 15) & 0x1;
+  for (unsigned int icl = 0; icl<8; icl++){
+       gemA_cluster_vpf_          = (gemA_cluster_[icl] & 0xff) <= 191;// vpf = padnumber(0-191)
+       gemA_cluster_pad_          = (gemA_cluster_[icl] & 0x3f); //0-63, 6bits
+       gemA_cluster_pad2_         = (gemA_cluster_[icl] & 0xff); //0-191, 8bits, pad number within one roll
+       gemA_cluster_roll_         = ((gemA_cluster_[icl] >> 8) & 0x7);//0-7
+       gemA_cluster_vfat_         = 7-gemA_cluster_roll_ + ((gemA_cluster_[icl] & 0xd0) >> 3);//0-23
+       gemA_cluster_size_         = gemA_cluster_vpf_==1 ? ((gemA_cluster_[icl]>>11) & 0x7) + 1 : 0;//starting from 1 for display, 1-8
+
+       gemB_cluster_vpf_         = (gemB_cluster_[icl] & 0xff) <= 191;// vpf = padnumber(0-191)
+       gemB_cluster_pad_         = (gemB_cluster_[icl] & 0x3f); //0-63
+       gemB_cluster_pad2_        = (gemB_cluster_[icl] & 0xff); //0-191, 8bits, pad number within one roll
+       gemB_cluster_roll_        = ((gemB_cluster_[icl] >> 8) & 0x7);
+       gemB_cluster_vfat_        = 7-gemB_cluster_roll_ + ((gemB_cluster_[icl] & 0xd0) >> 3);
+       gemB_cluster_size_        = gemB_cluster_vpf_==1 ? ((gemB_cluster_[icl]>>11) & 0x7) + 1 : 0;
+
+      std::cout << std::endl << "GEM layer 1 Decode:" << std::endl;
+      std::cout << std::endl << "Cluster " << icl << ":" <<std::endl;
+      std::cout << "Valid = " << gemA_cluster_vpf_ << std::endl;
+      std::cout << "gemPad = " << gemA_cluster_pad2_ << std::endl;
+      std::cout << "roll = " << gemA_cluster_roll_ << std::endl;
+      std::cout << "size  = " << gemA_cluster_size_ << std::endl;
+
+      std::cout << std::endl << "GEM layer 2 Decode:" << std::endl;
+      std::cout << std::endl << "Cluster " << icl << ":" <<std::endl;
+      std::cout << "Valid = " << gemB_cluster_vpf_ << std::endl;
+      std::cout << "gemPad = " << gemB_cluster_pad2_<< std::endl;
+      std::cout << "roll = " << gemB_cluster_roll_ << std::endl;
+      std::cout << "size  = " << gemB_cluster_size_ << std::endl;
+
+      int trig_gemA_gempad = gemA_cluster_pad2_;
+      int trig_gemA_roll = gemA_cluster_roll_;
+      int trig_gemA_size = gemA_cluster_size_;
+
+      int trig_gemB_gempad = gemB_cluster_pad2_;
+      int trig_gemB_roll = gemB_cluster_roll_;
+      int trig_gemB_size = gemB_cluster_size_;
+    }
+
+
+  // */
+    //end of add
 
   std::ifstream SimulationFile;
   string word;
@@ -2333,6 +2582,12 @@ void CSCGEMTestApplication::LoadSimulatedFileEvent(xgi::Input * in, xgi::Output 
   int sim_clct0_KeyEighthStrip;
   int sim_clct0_bend;
   int sim_clct0_slope;
+  ///*
+  int sim_lct0_quality;
+  int sim_lct0_bend;
+  int sim_lct0_angle;
+  int sim_lct0_cscxkyhs;
+  //*/
 
   int sim_clct1_nhit;
   int sim_clct1_r2_pid;
@@ -2342,6 +2597,13 @@ void CSCGEMTestApplication::LoadSimulatedFileEvent(xgi::Input * in, xgi::Output 
   int sim_clct1_KeyEighthStrip;
   int sim_clct1_bend;
   int sim_clct1_slope;
+  ///*
+  int sim_lct1_quality;
+  int sim_lct1_bend;
+  int sim_lct1_angle;
+  int sim_lct1_cscxkyhs;
+  //*/
+
 
   bool comparison_0 = false;
   bool comparison0_slope = false;
@@ -2352,6 +2614,9 @@ void CSCGEMTestApplication::LoadSimulatedFileEvent(xgi::Input * in, xgi::Output 
 
   int higher_bx0 = 0;
   int higher_bx1 = 0;
+
+  int higher_lct_bx0 = 0;
+  int higher_lct_bx1 = 0;
 
   int passes_through_loop = 1;
 /*
@@ -2366,6 +2631,7 @@ void CSCGEMTestApplication::LoadSimulatedFileEvent(xgi::Input * in, xgi::Output 
       std::cout << "\nEvent #" << passes_through_loop;
       ++passes_through_loop;
     }
+
     if (word == "CSC") {
       SimulationFile >> word;
       if (word == "CLCT") {
@@ -2552,73 +2818,81 @@ void CSCGEMTestApplication::LoadSimulatedFileEvent(xgi::Input * in, xgi::Output 
           }
         }
       }
+      //here for lct.....
+
+      if (word == "LCT") {
+        SimulationFile >> word; // This word checks if it is looping through LCT 1 or 2
+        if (word == "#1:") {
+          std::cout << "\nLCT0 Information: " << std::endl;
+          while (SimulationFile >> word)  {
+            if (word == "BX") {
+                SimulatedFile >> equal_sign;
+                SimulatedFile >> word;
+                if (std::stoi(word) > higher_lct_bx0) {
+                  higher_lct_bx0 = std::stoi(word);
+                  continue;
+                }
+                else {break;}
+            }
+
+            if (word == "Quality") {
+                SimulationFile >> equal_sign;
+                SimulationFile >> sim_lct0_quality;
+              }
+
+            if (word == "Bend") {
+                SimulationFile >> equal_sign;
+                SimulationFile >> sim_lct0_bend;
+              }
+            if (word == "Slope") {
+                SimulationFile >> equal_sign;
+                SimulationFile >> sim_lct0_angle;
+              }
+            if (word == "KeyHalfStrip"){
+                SimulationFile >> equal_sign;
+                SimulationFile >> sim_lct0_cscxkyhs;
+              }
+
+          }
+        }
+        if (word == "#2:") {
+          std::cout << "\nLCT1 Information: " << std::endl;
+          while (SimulationFile >> word) {
+            if (word == "BX") {
+                SimulatedFile >> equal_sign;
+                SimulatedFile >> word;
+                if (std::stoi(word) > higher_lct_bx1) {
+                  higher_lct_bx1 = std::stoi(word);
+                  continue;
+                }
+                else {break;}
+            }
+
+            if (word == "Quality") {
+                SimulationFile >> equal_sign;
+                SimulationFile >> sim_lct1_quality;
+              }
+
+            if (word == "Bend") {
+                SimulationFile >> equal_sign;
+                SimulationFile >> sim_lct1_bend;
+              }
+            if (word == "Slope") {
+                SimulationFile >> equal_sign;
+                SimulationFile >> sim_lct1_angle;
+              }
+            if (word == "KeyHalfStrip"){
+                SimulationFile >> equal_sign;
+                SimulationFile >> sim_lct1_cscxkyhs;
+              }
+
+          }
+        }
+      }
+      //end of lct add
     }
-  }
-/*
-  if (sim_clct0_slope == trig_clct0_slope && sim_clct0_KeyHalfStrip == trig_clct0_KeyHalfStrip) {
-    std::cout << "\nSIMULATION CLCT0 RESULTS MATCH TRIGGER RESULTS" << std::endl << std::endl;
-  }
-  else if (sim_clct0_slope != trig_clct0_slope && sim_clct0_KeyHalfStrip == trig_clct0_KeyHalfStrip) {
-    std::cout << "\nSIMULATION CLCT0 KEY HALF STRIP MATCHES TRIGGER KEY HALF STRIP\nSIMULATION SLOPE DOES NOT MATCH TRIGGER SLOPE" << std::endl << std::endl;
-  }
-  else if (sim_clct0_KeyHalfStrip != trig_clct0_KeyHalfStrip && sim_clct0_slope == trig_clct0_slope) {
-    std::cout << "\nSIMULATION CLCT0 KEY HALF STRIP DOES NOT MATCH TRIGGER KEY HALF STRIP\nSIMULATION SLOPE MATCHES TRIGGER SLOPE" << std::endl << std::endl;
-  }
-  else {
-    std::cout << "\nSIMULATION CLCT0 RESULTS DOES NOT MATCH TRIGGER RESULTS" << std::endl << std::endl;
   }
 
-  if (trig_clct1_nhit != 0 && trig_clct1_cc_code != 0) {
-    if (sim_clct1_slope == trig_clct1_slope && sim_clct1_KeyHalfStrip == trig_clct1_KeyHalfStrip) {
-      std::cout << "SIMULATION CLCT1 RESULTS MATCH TRIGGER RESULTS" << std::endl << std::endl;
-    }
-    else if (sim_clct1_slope != trig_clct1_slope && sim_clct1_KeyHalfStrip == trig_clct1_KeyHalfStrip) {
-      std::cout << "SIMULATION CLCT1 KEY HALF STRIP MATCHES TRIGGER KEY HALF STRIP\nSIMULATION SLOPE DOES NOT MATCH TRIGGER SLOPE" << std::endl << std::endl;
-    }
-    else if (sim_clct1_KeyHalfStrip != trig_clct1_KeyHalfStrip && sim_clct1_slope == trig_clct1_slope) {
-      std::cout << "SIMULATION CLCT1 KEY HALF STRIP DOES NOT MATCH TRIGGER KEY HALF STRIP\nSIMULATION SLOPE MATCHES TRIGGER SLOPE" << std::endl << std::endl;
-    }
-    else {
-      std::cout << "SIMULATION CLCT1 RESULTS DOES NOT MATCH TRIGGER RESULTS" << std::endl << std::endl;
-    }
-  }
-*/
-
-/*
-  if (comparison_0 == false && comparison_1 == false) {
-    std::cout << "\nSIMULATION RESULTS DO NOT MATCH TRIGGER RESULTS" << std::endl;
-  }
-  else {
-    std::cout << "\nSIMULATION RESULTS MATCH TRIGGER RESULTS" << std::endl;
-  }
-*/
-/*
-  if (comparison0_slope == false || comparison0_khs == false) {
-    std::cout << "\nCLCT0 SIMULATION RESULTS DO NOT MATCH TRIGGER RESULTS" << std::endl;
-  }
-  else if (comparison0_slope == false && comparison0_khs == true) {
-    std::cout << "\nCLCT0 SLOPE SIMULATION RESULTS DO NOT MATCH TRIGGER RESTULTS" << std::endl;
-  }
-  else if (comparison0_slope == true && comparison0_khs == false) {
-    std::cout << "\nCLCT0 KEY HALF STRIP SIMULATION RESULTS DO NOT MATCH TRIGGER RESULTS" << std::endl;
-  }
-  else {
-    std::cout << "\nSIMULATION RESULTS MATCH TRIGGER RESULTS" << std::endl;
-  }
-
-  if (comparison1_slope == false || comparison1_khs == false) {
-    std::cout << "\nCLCT0 SIMULATION RESULTS DO NOT MATCH TRIGGER RESULTS" << std::endl;
-  }
-  else if (comparison1_slope == false && comparison1_khs == true) {
-    std::cout << "\nCLCT0 SLOPE SIMULATION RESULTS DO NOT MATCH TRIGGER RESTULTS" << std::endl;
-  }
-  else if (comparison1_slope == true && comparison1_khs == false) {
-    std::cout << "\nCLCT0 KEY HALF STRIP SIMULATION RESULTS DO NOT MATCH TRIGGER RESULTS" << std::endl;
-  }
-  else {
-    std::cout << "\nSIMULATION RESULTS MATCH TRIGGER RESULTS" << std::endl;
-  }
-  */
 
   this->Default(in,out);
   return;
@@ -2649,6 +2923,16 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
   std::vector<int> sim_clct1_KeyQuartStrip_vector;
   std::vector<int> sim_clct1_KeyEighthStrip_vector;
 
+  std::vector<int> sim_lct0_quality_vector;
+  std::vector<int> sim_lct0_bend_vector;
+  std::vector<int> sim_lct0_angle_vector;
+  std::vector<int> sim_lct0_cscxkyhs_vector;
+
+  std::vector<int> sim_lct1_quality_vector;
+  std::vector<int> sim_lct1_bend_vector;
+  std::vector<int> sim_lct1_angle_vector;
+  std::vector<int> sim_lct1_cscxkyhs_vector;
+
   std::vector<int> trig_clct0_valid_vector0;
   std::vector<int> trig_clct0_pid_vector0;
   std::vector<int> trig_clct0_nhit_vector0;
@@ -2667,6 +2951,18 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
   std::vector<int> trig_clct1_KeyHalfStrip_vector0;
   std::vector<int> trig_clct1_KeyQuartStrip_vector0;
   std::vector<int> trig_clct1_KeyEighthStrip_vector0;
+
+  std::vector<int> trig_lct0_quality_vector0;
+  std::vector<int> trig_lct0_bend_vector0;
+  std::vector<int> trig_lct0_angle_vector0;
+  std::vector<int> trig_lct0_cscxkyhs_vector0;
+
+  std::vector<int> trig_lct1_quality_vector0;
+  std::vector<int> trig_lct1_bend_vector0;
+  std::vector<int> trig_lct1_angle_vector0;
+  std::vector<int> trig_lct1_cscxkyhs_vector0;
+
+
 
   std::vector<int> event_id_vector;
 
@@ -2687,6 +2983,18 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
   std::vector<int> incorrect_trig_clct1_KeyQuartStrip_vector0;
   std::vector<int> incorrect_trig_clct1_KeyEighthStrip_vector0;
 
+  std::vector<int> incorrect_trig_lct0_quality_vector0;
+  std::vector<int> incorrect_trig_lct0_bend_vector0;
+  std::vector<int> incorrect_trig_lct0_angle_vector0;
+  std::vector<int> incorrect_trig_lct0_cscxkyhs_vector0;
+
+  std::vector<int> incorrect_trig_lct1_quality_vector0;
+  std::vector<int> incorrect_trig_lct1_bend_vector0;
+  std::vector<int> incorrect_trig_lct1_angle_vector0;
+  std::vector<int> incorrect_trig_lct1_cscxkyhs_vector0;
+
+
+
   std::vector<int> incorrect_sim_clct0_pid_vector0;
   std::vector<int> incorrect_sim_clct0_nhit_vector0;
   std::vector<int> incorrect_sim_clct0_cc_code_vector0;
@@ -2704,6 +3012,17 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
   std::vector<int> incorrect_sim_clct1_KeyQuartStrip_vector0;
   std::vector<int> incorrect_sim_clct1_KeyEighthStrip_vector0;
 
+  std::vector<int> incorrect_sim_lct0_quality_vector0;
+  std::vector<int> incorrect_sim_lct0_bend_vector0;
+  std::vector<int> incorrect_sim_lct0_angle_vector0;
+  std::vector<int> incorrect_sim_lct0_cscxkyhs_vector0;
+
+  std::vector<int> incorrect_sim_lct1_quality_vector0;
+  std::vector<int> incorrect_sim_lct1_bend_vector0;
+  std::vector<int> incorrect_sim_lct1_angle_vector0;
+  std::vector<int> incorrect_sim_lct1_cscxkyhs_vector0;
+
+
   std::vector<int> incorrect_event_ids;
 
   int mismatched_events=0;
@@ -2719,6 +3038,9 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
     cw::CCLUT ReadEvent;
     std::vector<cw::Hit> hits;
 
+    int gem_bx_num, gempad_num, gem_layer_num, gem_size_num, gem_roll_num;
+    std::vector<cw::Cluster> pads;
+
     TMB * thisTMB = tmbVector[1];
     thisTMB->ResetCounters();
     CLCT0_Counter = 0;
@@ -2733,6 +3055,12 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
     int sim_clct0_KeyEighthStrip;
     int sim_clct0_bend;
     int sim_clct0_slope;
+    ///*
+    int sim_lct0_quality;
+    int sim_lct0_bend;
+    int sim_lct0_angle;
+    int sim_lct0_cscxkyhs;
+    //*/
 
     int sim_clct1_nhit;
     int sim_clct1_r2_pid;
@@ -2742,11 +3070,21 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
     int sim_clct1_KeyEighthStrip;
     int sim_clct1_bend;
     int sim_clct1_slope;
+    ///*
+    int sim_lct1_quality;
+    int sim_lct1_bend;
+    int sim_lct1_angle;
+    int sim_lct1_cscxkyhs;
+    //*/
+
 
     int event_id = -1;
 
     int higher_bx0 = 0;
     int higher_bx1 = 0;
+
+    int higher_lct_bx0 = 0;
+    int higher_lct_bx1 = 0;
 
     int reading_clct0_first_time = 0;
     int reading_clct1_first_time = 0;
@@ -2785,7 +3123,6 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
         } // end of if (word == "Comparatordigi") loop
       } // end of while loop
 
-
       sim_clct0_nhit = 0;
       sim_clct0_r2_pid = 0;
       sim_clct0_KeyQuartStrip = 0;
@@ -2795,6 +3132,11 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       sim_clct0_bend = 0;
       sim_clct0_slope = 0;
 
+      sim_lct0_quality = 0;
+      sim_lct0_bend = 0;
+      sim_lct0_angle = 0;
+      sim_lct0_cscxkyhs = 0;
+
       sim_clct1_nhit = 0;
       sim_clct1_r2_pid = 0;
       sim_clct1_KeyQuartStrip = 0;
@@ -2803,19 +3145,26 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       sim_clct1_KeyEighthStrip = 0;
       sim_clct1_bend = 0;
       sim_clct1_slope = 0;
+
+      sim_lct1_quality = 0;
+      sim_lct1_bend = 0;
+      sim_lct1_angle = 0;
+      sim_lct1_cscxkyhs = 0;
+
       higher_bx0 = 0;
       higher_bx1 = 0;
+
+      higher_lct_bx0 = 0;
+      higher_lct_bx1 = 0;
+
 
       std::cout << "Simulated Event ID: " << event_id << std::endl;
       std::cout << "Finished reading event" << '\n';
       cout << "Reading the results" << endl;
       while (word != "Run" /* && word != "CSCChamber"*/ && SimulatedFile >> word) {
-        std::cout << word << " ";\
-        /* THE GEM TRIGGERING INFORMATION IS STILL NEEDED
-        if (word == "GEMCluster") {
-          SimulatedFile >> word
-        }
-        */
+        std::cout << word << " ";
+
+
         if (word == "CLCT") {
           SimulatedFile >> word;  // Checking for CLCT 1 or 2
           if (word == "#1:") {
@@ -3024,14 +3373,148 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
             }
             */
           }// end if (word == "#2:")
-          if (word == "Run" /*|| word == "CSCChamber"*/) {break;}
+          //if (word == "Run" /*|| word == "CSCChamber"*/) {break;}
         } // end if (word == "CLCT")
+        //Added for GEMCluster parsing by Ange
+        if (word == "GEMCluster") { // This is supposed to check for the BX,layer,pad, size, roll when it comes after "GEMCluster"
+
+          SimulatedFile >> word;
+          SimulatedFile >> word;
+          SimulatedFile >> word;
+          if (word.find("layer1:") != std::string::npos || word.find("layer2:") != std::string::npos) {
+            gem_layer_num = (word.find("layer1:") != std::string::npos) ? 0 : 1;
+          } else {
+            std::cerr << "Could not parse GEM layer from word: " << word << std::endl;
+            continue;
+          }
+            SimulatedFile >> word;
+            if (word == "bx"){
+              SimulatedFile >> gem_bx_num;
+              SimulatedFile >> word;
+              if (word == "gemPad"){
+                SimulatedFile >> gempad_num;
+                SimulatedFile >> word;
+                if (word == "size"){
+                  SimulatedFile >> gem_size_num;
+                  SimulatedFile >> word;
+                  if (word == "roll"){
+                    SimulatedFile >> gem_roll_num;
+
+                  }
+                }
+              }
+            }
+
+          std::cout << ".....................parse gem info......................" << std::endl;
+          std::cout << "bx = " << gem_bx_num << "; GEM Layer = " << gem_layer_num << "; gemPad = " << gempad_num <<"; Size = " << gem_size_num <<"; Roll = " << gem_roll_num << std::endl;
+          cw::Cluster tmp_cluster;
+          tmp_cluster.bx = gem_bx_num;
+          tmp_cluster.roll = gem_roll_num;
+          tmp_cluster.size = gem_size_num;
+          tmp_cluster.pad = gempad_num;
+          tmp_cluster.layer = gem_layer_num;
+          pads.push_back(tmp_cluster);
+        }//end of if word==GEMCluster
+        //add lct here
+        if (word == "LCT") {
+          SimulatedFile >> word; // This word checks if it is looping through LCT 1 or 2
+          if (word == "#1:") {
+
+            std::cout << word << " ";
+            while (SimulatedFile >> word)  {
+              if (word == "BX") {
+                  SimulatedFile >> equal_sign;
+                  SimulatedFile >> word;
+                  if (std::stoi(word) > higher_lct_bx0) {
+                    higher_lct_bx0 = std::stoi(word);
+                    continue;
+                  }
+                  else {break;}
+              }//*/
+
+              if (word == "Quality") {
+                  SimulatedFile >> equal_sign;
+                  std::cout << equal_sign << " ";
+                  SimulatedFile >> sim_lct0_quality;
+                  std::cout << sim_lct0_quality << " ";
+                }
+
+              if (word == "Bend") {
+                  SimulatedFile >> equal_sign;
+                  std::cout << equal_sign << " ";
+                  SimulatedFile >> sim_lct0_bend;
+                  std::cout << sim_lct0_bend << " ";
+                }
+              if (word == "Slope") {
+                  SimulatedFile >> equal_sign;
+                  std::cout << equal_sign << " ";
+                  SimulatedFile >> sim_lct0_angle;
+                  std::cout << sim_lct0_angle << " ";
+                }
+              if (word == "KeyHalfStrip"){
+                  SimulatedFile >> equal_sign;
+                  std::cout << equal_sign << " ";
+                  SimulatedFile >> sim_lct0_cscxkyhs;
+                  std::cout << sim_lct0_cscxkyhs << " ";
+                  break;
+                }
+
+            }
+          }
+          if (word == "#2:") {
+
+            std::cout << word << " ";
+            while (SimulatedFile >> word) {
+              if (word == "BX") {
+                  SimulatedFile >> equal_sign;
+                  SimulatedFile >> word;
+                  if (std::stoi(word) > higher_lct_bx1) {
+                    higher_lct_bx1 = std::stoi(word);
+                    continue;
+                  }
+                  else {break;}
+              }
+
+              if (word == "Quality") {
+                  SimulatedFile >> equal_sign;
+                  std::cout << equal_sign << " ";
+                  SimulatedFile >> sim_lct1_quality;
+                  std::cout << sim_lct1_quality << " ";
+                }
+
+              if (word == "Bend") {
+                  SimulatedFile >> equal_sign;
+                  std::cout << equal_sign << " ";
+                  SimulatedFile >> sim_lct1_bend;
+                  std::cout << sim_lct1_bend << " ";
+                }
+              if (word == "Slope") {
+                  SimulatedFile >> equal_sign;
+                  std::cout << equal_sign << " ";
+                  SimulatedFile >> sim_lct1_angle;
+                  std::cout << sim_lct1_angle << " ";
+                }
+              if (word == "KeyHalfStrip"){
+                  SimulatedFile >> equal_sign;
+                  std::cout << equal_sign << " ";
+                  SimulatedFile >> sim_lct1_cscxkyhs;
+                  std::cout << sim_lct1_cscxkyhs << " ";
+                  break;
+                }
+
+            }
+          }
+          if (word == "Run" /*|| word == "CSCChamber"*/) {break;}
+        }//end of lct word and add
+      //}//end of CSC word
+
       }// while loop
       std::cout << std::endl;
     }
     else {
       std::cout << "We are at the end of File!!  Total Event number: "<< event_number << '\n';
       break;
+
     }
 
     if (higher_bx0 > higher_bx1) {
@@ -3043,9 +3526,23 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       sim_clct1_KeyEighthStrip = 0;
       sim_clct1_bend = 0;
       sim_clct1_slope = 0;
+
     }
     else if (higher_bx0 < higher_bx1) {
       std::cout << "ERROR! first CLCT bx " <<higher_bx0 <<" second CLCT bx "<< higher_bx1 << std::endl;
+
+      exit(0);
+    }
+    if (higher_lct_bx0 > higher_lct_bx1) {
+
+      sim_lct1_quality = 0;
+      sim_lct1_bend = 0;
+      sim_lct1_angle = 0;
+      sim_lct1_cscxkyhs = 0;
+    }
+    else if (higher_lct_bx0 < higher_lct_bx1) {
+
+      std::cout << "ERROR! first LCT bx " <<higher_lct_bx0 <<" second LCT bx "<< higher_lct_bx1 << std::endl;
       exit(0);
     }
 
@@ -3067,6 +3564,11 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
     sim_clct0_KeyQuartStrip_vector.push_back(sim_clct0_KeyQuartStrip);
     sim_clct0_KeyEighthStrip_vector.push_back(sim_clct0_KeyEighthStrip);
 
+    sim_lct0_quality_vector.push_back(sim_lct0_quality);
+    sim_lct0_bend_vector.push_back(sim_lct0_bend);
+    sim_lct0_angle_vector.push_back(sim_lct0_angle);
+    sim_lct0_cscxkyhs_vector.push_back(sim_lct0_cscxkyhs);
+
     sim_clct1_pid_vector.push_back(sim_clct1_r2_pid);
     sim_clct1_nhit_vector.push_back(sim_clct1_nhit);
     sim_clct1_cc_code_vector.push_back(sim_clct1_cc_code);
@@ -3076,11 +3578,50 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
     sim_clct1_KeyQuartStrip_vector.push_back(sim_clct1_KeyQuartStrip);
     sim_clct1_KeyEighthStrip_vector.push_back(sim_clct1_KeyEighthStrip);
 
+    sim_lct1_quality_vector.push_back(sim_lct1_quality);
+    sim_lct1_bend_vector.push_back(sim_lct1_bend);
+    sim_lct1_angle_vector.push_back(sim_lct1_angle);
+    sim_lct1_cscxkyhs_vector.push_back(sim_lct1_cscxkyhs);
+
+
       int cclut0_lsbs, cclut1_lsbs, cclut_msbs;
       int CLCT0_data_, CLCT1_data_;
       int clct0_xky_data_, clct1_xky_data_;
       int clct0_CC_data_, clct1_CC_data_;
+
+      int mpc0_frame0, mpc0_frame1, mpc1_frame0, mpc1_frame1;
+      int gem_csc_match_cluster00, gem_csc_match_cluster01, gem_csc_match_cluster10, gem_csc_match_cluster11;
+      int mpc0_frame0_data_, mpc0_frame1_data_, mpc1_frame0_data_, mpc1_frame1_data_;
     //Tao we can add a loop here to do injection multiple times to get good result that matches with simulation
+      /*
+      int gemA_cluster_[8];
+      int gemB_cluster_[8];
+      int gemA_overflow_;
+      int gemA_sync_;
+      int gemB_overflow_;
+      int gemB_sync_;
+      bool gemA_cluster_vpf_;
+      int gemA_cluster_pad_;
+      int gemA_cluster_pad2_;
+      int gemA_cluster_roll_;
+      int gemA_cluster_vfat_;
+      int gemA_cluster_size_;
+      bool gemB_cluster_vpf_;
+      int gemB_cluster_pad_;
+      int gemB_cluster_pad2_;
+      int gemB_cluster_roll_;
+      int gemB_cluster_vfat_;
+      int gemB_cluster_size_;
+
+      int trig_gemA_gempad;
+      int trig_gemA_roll;
+      int trig_gemA_size;
+
+      int trig_gemB_gempad;
+      int trig_gemB_roll;
+      int trig_gemB_size;
+      //*/
+
     for (int i = 0; i < NInjections; ++i) {
       patternSet.Clear();
       patternSet.DeleteCurrentSet();
@@ -3091,8 +3632,12 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       tmp_cclut.hits = hits;
       patternSet.LUT.push_back(tmp_cclut);
 
+      cw::Cluster tmp_cluster;
+      patternSet.GEMClusters = pads;
+      std::cout << "Added " << pads.size() << " GEM clusters for this event." << std::endl;
+
       if(patternSet.WritePatterns_LUT()){
-        if( patternSet.LoadEmuBoard("", 1) ){
+        if( patternSet.LoadEmuBoard("", 0) ){
           cout << "Successfully Loaded to EmuBoard!\n";
         }
         else{
@@ -3109,6 +3654,17 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       clct1_xky_data_ = thisTMB->ReadRegister(clct1_bndxky_adr);
       clct0_CC_data_ = thisTMB->ReadRegister(clct0_cc_adr);
       clct1_CC_data_ = thisTMB->ReadRegister(clct1_cc_adr);
+
+      mpc0_frame0 = thisTMB->ReadRegister(mpc0_frame0_adr); // 0x88
+      mpc0_frame1 = thisTMB->ReadRegister(mpc0_frame1_adr); // 0x8a
+      mpc1_frame0 = thisTMB->ReadRegister(mpc1_frame0_adr); // 0x8c
+      mpc1_frame1 = thisTMB->ReadRegister(mpc1_frame1_adr); // 0x8e
+      //for when gem is enabled from TMB.cc file
+      gem_csc_match_cluster00 = (thisTMB->ReadRegister(gem_csc_match_cluster00_adr) & 0xffff); //0x32E
+    	gem_csc_match_cluster01 = (thisTMB->ReadRegister(gem_csc_match_cluster01_adr) & 0xffff); //0x330
+    	gem_csc_match_cluster10 = (thisTMB->ReadRegister(gem_csc_match_cluster10_adr) & 0xffff); //0x332
+    	gem_csc_match_cluster11 = (thisTMB->ReadRegister(gem_csc_match_cluster11_adr) & 0xffff); //0x334
+
       if (sim_clct0_nhit == 0) { // Making trigger results 0 if there were no CLCT0 simulated hits
         cclut0_lsbs = 0;
         cclut1_lsbs = 0;
@@ -3117,6 +3673,15 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
         clct1_xky_data_ = 0;
         clct0_CC_data_ = 0;
         clct1_CC_data_ = 0;
+
+        mpc0_frame0 = 0;
+        mpc0_frame1 = 0;
+        mpc1_frame0 = 0;
+        mpc1_frame1 = 0;
+        gem_csc_match_cluster00 = 0;
+        gem_csc_match_cluster01 = 0;
+        gem_csc_match_cluster10 = 0;
+        gem_csc_match_cluster11 = 0;
       }
 
       // extract value from register value. bitlo means the lowest bit clct0_bndxky_adr
@@ -3128,12 +3693,85 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       CLCT0_data_ = ( (cclut_msbs & 0xf) << 16 ) | (cclut0_lsbs & 0xffff);
       CLCT1_data_ = ( (cclut_msbs & 0xf) << 16 ) | (cclut1_lsbs & 0xffff);
 
+      mpc0_frame0_data_ = (mpc0_frame0 & 0xffff);
+      mpc0_frame1_data_ = (mpc0_frame1 & 0xffff);
+      mpc1_frame0_data_ = (mpc1_frame0 & 0xffff);
+      mpc1_frame1_data_ = (mpc1_frame1 & 0xffff);
+
       int CLCT0_CC_tmp = thisTMB->ExtractValueFromData(clct0_CC_data_, clct0_cc_bitlo, clct0_cc_bithi);
       int CLCT1_CC_tmp = thisTMB->ExtractValueFromData(clct1_CC_data_, clct1_cc_bitlo, clct1_cc_bithi);
       if ((CLCT0_CC_tmp == sim_clct0_cc_code && CLCT1_CC_tmp == sim_clct1_cc_code) || (CLCT0_CC_tmp == sim_clct1_cc_code && CLCT1_CC_tmp == sim_clct0_cc_code)){
           std::cout <<"Good Injection is found at "<< i <<" CLCT0_CC code, SIM "<< sim_clct0_cc_code <<" Trig "<< CLCT0_CC_tmp << std::endl;
           break;
       }
+//Added for GEM by Ange might be needed maybe,not sure
+      /* //gemA = gem layer 1, gemB = gem layer 2
+
+      //added for GEM by ANge
+     // Read GEM cluster registers
+
+     gemA_cluster_[0] = thisTMB->ReadRegister(gemA_cluster0_adr) & 0x3fff;
+     gemA_cluster_[1] = thisTMB->ReadRegister(gemA_cluster1_adr) & 0x3fff;
+     gemA_cluster_[2] = thisTMB->ReadRegister(gemA_cluster2_adr) & 0x3fff;
+     gemA_cluster_[3] = thisTMB->ReadRegister(gemA_cluster3_adr) & 0x3fff;
+     gemA_cluster_[4] = thisTMB->ReadRegister(gemA_cluster4_adr) & 0x3fff;
+     gemA_cluster_[5] = thisTMB->ReadRegister(gemA_cluster5_adr) & 0x3fff;
+     gemA_cluster_[6] = thisTMB->ReadRegister(gemA_cluster6_adr) & 0x3fff;
+     gemA_cluster_[7] = thisTMB->ReadRegister(gemA_cluster7_adr) & 0x3fff;
+
+     gemB_cluster_[0] = thisTMB->ReadRegister(gemB_cluster0_adr) & 0x3fff;
+     gemB_cluster_[1] = thisTMB->ReadRegister(gemB_cluster1_adr) & 0x3fff;
+     gemB_cluster_[2] = thisTMB->ReadRegister(gemB_cluster2_adr) & 0x3fff;
+     gemB_cluster_[3] = thisTMB->ReadRegister(gemB_cluster3_adr) & 0x3fff;
+     gemB_cluster_[4] = thisTMB->ReadRegister(gemB_cluster4_adr) & 0x3fff;
+     gemB_cluster_[5] = thisTMB->ReadRegister(gemB_cluster5_adr) & 0x3fff;
+     gemB_cluster_[6] = thisTMB->ReadRegister(gemB_cluster6_adr) & 0x3fff;
+     gemB_cluster_[7] = thisTMB->ReadRegister(gemB_cluster7_adr) & 0x3fff;
+     gemA_overflow_   = (thisTMB->ReadRegister(gemA_cluster0_adr) >> 14) & 0x1;
+     gemA_sync_       = (thisTMB->ReadRegister(gemA_cluster0_adr) >> 15) & 0x1;
+     gemB_overflow_   = (thisTMB->ReadRegister(gemB_cluster0_adr) >> 14) & 0x1;
+     gemB_sync_       = (thisTMB->ReadRegister(gemB_cluster0_adr) >> 15) & 0x1;
+     for (unsigned int icl = 0; icl<8; icl++){
+       gemA_cluster_vpf_          = (gemA_cluster_[icl] & 0xff) <= 191;// vpf = padnumber(0-191)
+       gemA_cluster_pad_          = (gemA_cluster_[icl] & 0x3f); //0-63, 6bits
+       gemA_cluster_pad2_         = (gemA_cluster_[icl] & 0xff); //0-191, 8bits, pad number within one roll
+       gemA_cluster_roll_         = ((gemA_cluster_[icl] >> 8) & 0x7);//0-7
+       gemA_cluster_vfat_         = 7-gemA_cluster_roll_ + ((gemA_cluster_[icl] & 0xd0) >> 3);//0-23
+       gemA_cluster_size_         = gemA_cluster_vpf_==1 ? ((gemA_cluster_[icl]>>11) & 0x7) + 1 : 0;//starting from 1 for display, 1-8
+
+       gemB_cluster_vpf_         = (gemB_cluster_[icl] & 0xff) <= 191;// vpf = padnumber(0-191)
+       gemB_cluster_pad_         = (gemB_cluster_[icl] & 0x3f); //0-63
+       gemB_cluster_pad2_        = (gemB_cluster_[icl] & 0xff); //0-191, 8bits, pad number within one roll
+       gemB_cluster_roll_        = ((gemB_cluster_[icl] >> 8) & 0x7);
+       gemB_cluster_vfat_        = 7-gemB_cluster_roll_ + ((gemB_cluster_[icl] & 0xd0) >> 3);
+       gemB_cluster_size_        = gemB_cluster_vpf_==1 ? ((gemB_cluster_[icl]>>11) & 0x7) + 1 : 0;
+
+       std::cout << std::endl << "GEM layer 1 Decode:" << std::endl;
+       std::cout << std::endl << "Cluster " << icl << ":" <<std::endl;
+       std::cout << "Valid = " << gemA_cluster_vpf_ << std::endl;
+       std::cout << "gemPad = " << gemA_cluster_pad2_ << std::endl;
+       std::cout << "roll = " << gemA_cluster_roll_ << std::endl;
+       std::cout << "size  = " << gemA_cluster_size_ << std::endl;
+
+       std::cout << std::endl << "GEM layer 2 Decode:" << std::endl;
+       std::cout << std::endl << "Cluster " << icl << ":" <<std::endl;
+       std::cout << "Valid = " << gemB_cluster_vpf_ << std::endl;
+       std::cout << "gemPad = " << gemB_cluster_pad2_<< std::endl;
+       std::cout << "roll = " << gemB_cluster_roll_ << std::endl;
+       std::cout << "size  = " << gemB_cluster_size_ << std::endl;
+
+       int trig_gemA_gempad = gemA_cluster_pad2_;
+       int trig_gemA_roll = gemA_cluster_roll_;
+       int trig_gemA_size = gemA_cluster_size_;
+
+       int trig_gemB_gempad = gemB_cluster_pad2_;
+       int trig_gemB_roll = gemB_cluster_roll_;
+       int trig_gemB_size = gemB_cluster_size_;
+      }//end of for loop for gem
+
+     // */
+       //end of add
+
       }//end of Ninjection
 
       int CLCT0_xky  = thisTMB->ExtractValueFromData(clct0_xky_data_, clct0_xky_bitlo, clct0_xky_bithi);
@@ -3154,7 +3792,7 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       int CLCT1_pid  = thisTMB->ExtractValueFromData(CLCT1_data_, CLCT1_pattern_bitlo, CLCT1_pattern_bithi);
       int CLCT1_key  = thisTMB->ExtractValueFromData(CLCT1_data_, CLCT1_keyHalfStrip_bitlo, CLCT1_keyHalfStrip_bithi);
       int CLCT1_CC   = thisTMB->ExtractValueFromData(clct1_CC_data_, clct1_cc_bitlo, clct1_cc_bithi);
-      //CLCTs swapping would be considered as bad event now, 20240724, Tao
+      /*//CLCTs swapping would be considered as bad event now, 20240724, Tao
       //if (CLCT0_CC != sim_clct0_cc_code && (CLCT0_CC == sim_clct1_cc_code || CLCT1_CC == sim_clct0_cc_code)){
       //  //Swapped two CLCTs from OTMB, Tao
       //  CLCT0_xky  = thisTMB->ExtractValueFromData(clct1_xky_data_, clct0_xky_bitlo, clct0_xky_bithi);
@@ -3175,7 +3813,25 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       //  CLCT1_pid  = thisTMB->ExtractValueFromData(CLCT0_data_, CLCT1_pattern_bitlo, CLCT1_pattern_bithi);
       //  CLCT1_key  = thisTMB->ExtractValueFromData(CLCT0_data_, CLCT1_keyHalfStrip_bitlo, CLCT1_keyHalfStrip_bithi);
       //  CLCT1_CC   = thisTMB->ExtractValueFromData(clct0_CC_data_, clct1_cc_bitlo, clct1_cc_bithi);
-      //}
+      *///}
+//lct and match add
+      int LCT0_quality = thisTMB->ExtractValueFromData(mpc0_frame0_data_, mpc0_run3frame0_lct_first_quality_bitlo, mpc0_run3frame0_lct_first_quality_bithi);
+      int LCT1_quality = thisTMB->ExtractValueFromData(mpc1_frame0_data_, mpc1_run3frame0_lct_second_quality_bitlo, mpc1_run3frame0_lct_second_quality_bithi);
+    //this is dec from TMB.cc file, so use double or int???
+      int Cluster0_iclst = thisTMB->ExtractValueFromData(gem_csc_match_cluster00, gem_csc_match_cluster0_iclst_bitlo, gem_csc_match_cluster0_iclst_bithi);
+      int Cluster0_roll = thisTMB->ExtractValueFromData(gem_csc_match_cluster00, gem_csc_match_cluster0_roll_bitlo, gem_csc_match_cluster0_roll_bithi);
+      int Cluster0_pad = thisTMB->ExtractValueFromData(gem_csc_match_cluster01, gem_csc_match_cluster0_pad_bitlo, gem_csc_match_cluster0_pad_bithi);
+      int Cluster0_bend = thisTMB->ExtractValueFromData(gem_csc_match_cluster01, gem_csc_match_cluster0_bend_bitlo, gem_csc_match_cluster0_bend_bithi);
+      int Cluster0_angle = thisTMB->ExtractValueFromData(gem_csc_match_cluster01, gem_csc_match_cluster0_angle_bitlo, gem_csc_match_cluster0_angle_bithi);
+      int Cluster0_cscxky = thisTMB->ExtractValueFromData(gem_csc_match_cluster00, gem_csc_match_cluster0_cscxky_bitlo, gem_csc_match_cluster0_cscxky_bithi);
+
+      int Cluster1_iclst = thisTMB->ExtractValueFromData(gem_csc_match_cluster10, gem_csc_match_cluster1_iclst_bitlo, gem_csc_match_cluster1_iclst_bithi);
+      int Cluster1_roll = thisTMB->ExtractValueFromData(gem_csc_match_cluster10, gem_csc_match_cluster1_roll_bitlo, gem_csc_match_cluster1_roll_bithi);
+      int Cluster1_pad = thisTMB->ExtractValueFromData(gem_csc_match_cluster11, gem_csc_match_cluster1_pad_bitlo, gem_csc_match_cluster1_pad_bithi);
+      int Cluster1_bend = thisTMB->ExtractValueFromData(gem_csc_match_cluster11, gem_csc_match_cluster1_bend_bitlo, gem_csc_match_cluster1_bend_bithi);
+      int Cluster1_angle = thisTMB->ExtractValueFromData(gem_csc_match_cluster11, gem_csc_match_cluster1_angle_bitlo, gem_csc_match_cluster1_angle_bithi);
+      int Cluster1_cscxky = thisTMB->ExtractValueFromData(gem_csc_match_cluster10, gem_csc_match_cluster1_cscxky_bitlo, gem_csc_match_cluster1_cscxky_bithi);
+
 
       int trig_clct0_valid = CLCT0_valid;
       int trig_clct0_nhit = CLCT0_nhit;
@@ -3187,6 +3843,11 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       int trig_clct0_bend = CLCT0_lr;
       int trig_clct0_slope = CLCT0_bnd;
 
+      int trig_lct0_quality = LCT0_quality;
+      int trig_lct0_bend = Cluster0_bend;
+      int trig_lct0_angle = Cluster0_angle/4.0;
+      int trig_lct0_cscxkyhs = Cluster0_cscxky / 4.0;
+
       int trig_clct1_valid = CLCT1_valid;
       int trig_clct1_nhit = CLCT1_nhit;
       int trig_clct1_r2_pid = CLCT1_valid > 0 ? CLCT1_pid : 0;
@@ -3196,6 +3857,11 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       int trig_clct1_KeyEighthStrip = CLCT1_xky;
       int trig_clct1_bend = CLCT1_lr;
       int trig_clct1_slope = CLCT1_bnd;
+
+      int trig_lct1_quality = LCT1_quality;
+      int trig_lct1_bend = Cluster1_bend;
+      int trig_lct1_angle = Cluster1_angle/4.0;
+      int trig_lct1_cscxkyhs = Cluster1_cscxky / 4.0;
 
       trig_clct0_valid_vector0.push_back(trig_clct0_valid);
       trig_clct0_pid_vector0.push_back(trig_clct0_r2_pid);
@@ -3207,6 +3873,11 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       trig_clct0_KeyQuartStrip_vector0.push_back(trig_clct0_KeyQuartStrip);
       trig_clct0_KeyEighthStrip_vector0.push_back(trig_clct0_KeyEighthStrip);
 
+      trig_lct0_quality_vector0.push_back(trig_lct0_quality);
+      trig_lct0_bend_vector0.push_back(trig_lct0_bend);
+      trig_lct0_angle_vector0.push_back(trig_lct0_angle);
+      trig_lct0_cscxkyhs_vector0.push_back(trig_lct0_cscxkyhs);
+
       trig_clct1_valid_vector0.push_back(trig_clct1_valid);
       trig_clct1_pid_vector0.push_back(trig_clct1_r2_pid);
       trig_clct1_nhit_vector0.push_back(trig_clct1_nhit);
@@ -3217,6 +3888,12 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       trig_clct1_KeyQuartStrip_vector0.push_back(trig_clct1_KeyQuartStrip);
       trig_clct1_KeyEighthStrip_vector0.push_back(trig_clct1_KeyEighthStrip);
 
+      trig_lct1_quality_vector0.push_back(trig_lct1_quality);
+      trig_lct1_bend_vector0.push_back(trig_lct1_bend);
+      trig_lct1_angle_vector0.push_back(trig_lct1_angle);
+      trig_lct1_cscxkyhs_vector0.push_back(trig_lct1_cscxkyhs);
+
+
       std::cout << "CLCT0 RESULTS: " << std::endl;
       std::cout << "RUN-2 PATTERN ID SIMULATION VS TRIGGER " << sim_clct0_r2_pid << " vs " << trig_clct0_r2_pid << std::endl;
       std::cout << "QUALITY SIMULATION VS TRIGGER " << sim_clct0_nhit << " vs " <<trig_clct0_nhit << std::endl;
@@ -3226,6 +3903,13 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       std::cout << "KEY HALFSTRIP SIMULATION VS TRIGGER " << sim_clct0_KeyHalfStrip << " vs " << trig_clct0_KeyHalfStrip << std::endl;
       std::cout << "KEY QUARTER STRIP SIMULATION VS TRIGGER " << sim_clct0_KeyQuartStrip << " vs " << trig_clct0_KeyQuartStrip << std::endl;
       std::cout << "KEY EIGHTH STRIP SIMULATION VS TRIGGER " << sim_clct0_KeyEighthStrip << " vs " << trig_clct0_KeyEighthStrip << std::endl;
+
+      std::cout << "................................................................................ " << std::endl;
+      std::cout << "LCT0 RESULTS: " << std::endl;
+      std::cout << "LCT QUALITY SIMULATION VS TRIGGER " << sim_lct0_quality << " vs " <<trig_lct0_quality << std::endl;
+      std::cout << "MATCH BEND SIMULATION VS TRIGGER " << sim_lct0_bend << " vs " << trig_lct0_bend << std::endl;
+      std::cout << "MATCH ANGLE SIMULATION VS TRIGGER " << sim_lct0_angle << " vs " <<  trig_lct0_angle << std::endl;
+      std::cout << "MATCH CSC HALFSTRIP SIMULATION VS TRIGGER " << sim_lct0_cscxkyhs << " vs " << trig_lct0_cscxkyhs << std::endl;
 
 /* Needs boolean condition
       std::cout << "CLCT0 RESULTS: " << std::endl;
@@ -3276,8 +3960,9 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       std::vector<int> incorrect_sim_clct1_KeyQuartStrip_vector0;
       std::vector<int> incorrect_sim_clct1_KeyEighthStrip_vector0;
 */
-
-      if (sim_clct1_r2_pid != trig_clct1_r2_pid || sim_clct1_nhit != trig_clct1_nhit || sim_clct1_cc_code != trig_clct1_cc_code ||sim_clct1_bend != trig_clct1_bend||sim_clct1_slope != trig_clct1_slope||sim_clct1_KeyHalfStrip != trig_clct1_KeyHalfStrip||sim_clct1_KeyQuartStrip != trig_clct1_KeyQuartStrip||sim_clct1_KeyEighthStrip != trig_clct1_KeyEighthStrip || sim_clct0_r2_pid != trig_clct0_r2_pid || sim_clct0_nhit != trig_clct0_nhit || sim_clct0_cc_code != trig_clct0_cc_code ||sim_clct0_bend != trig_clct0_bend||sim_clct0_slope != trig_clct0_slope||sim_clct0_KeyHalfStrip != trig_clct0_KeyHalfStrip||sim_clct0_KeyQuartStrip != trig_clct0_KeyQuartStrip||sim_clct0_KeyEighthStrip != trig_clct0_KeyEighthStrip) {
+//modified for GEM by Ange
+      if (sim_clct1_r2_pid != trig_clct1_r2_pid || sim_clct1_nhit != trig_clct1_nhit || sim_clct1_cc_code != trig_clct1_cc_code ||sim_clct1_bend != trig_clct1_bend||sim_clct1_slope != trig_clct1_slope||sim_clct1_KeyHalfStrip != trig_clct1_KeyHalfStrip||sim_clct1_KeyQuartStrip != trig_clct1_KeyQuartStrip||sim_clct1_KeyEighthStrip != trig_clct1_KeyEighthStrip || sim_clct0_r2_pid != trig_clct0_r2_pid || sim_clct0_nhit != trig_clct0_nhit || sim_clct0_cc_code != trig_clct0_cc_code ||sim_clct0_bend != trig_clct0_bend||sim_clct0_slope != trig_clct0_slope||sim_clct0_KeyHalfStrip != trig_clct0_KeyHalfStrip||sim_clct0_KeyQuartStrip != trig_clct0_KeyQuartStrip||sim_clct0_KeyEighthStrip != trig_clct0_KeyEighthStrip/*||sim_gem_gempad != trig_gem_gempad||sim_gem_size != trig_gem_size||sim_gem_roll != trig_gem_roll*/) {
+//end of mod
         incorrect_trig_clct0_pid_vector0.push_back(trig_clct0_r2_pid);
         incorrect_sim_clct0_pid_vector0.push_back(sim_clct0_r2_pid);
 
@@ -3318,6 +4003,7 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
         incorrect_sim_clct1_KeyQuartStrip_vector0.push_back(sim_clct1_KeyQuartStrip);
         incorrect_trig_clct1_KeyEighthStrip_vector0.push_back(trig_clct1_KeyEighthStrip);
         incorrect_sim_clct1_KeyEighthStrip_vector0.push_back(sim_clct1_KeyEighthStrip);
+
 
         incorrect_event_ids.push_back(event_id);
         mismatched_events++;
@@ -3397,6 +4083,7 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
     sim_clct1_KeyHalfStrip = 0;
     sim_clct1_KeyQuartStrip = 0;
     sim_clct1_KeyEighthStrip = 0;
+
 
     std::cout << "The Last Read Event ID: " << event_id << std::endl;
     //event_id = 0;
@@ -3525,6 +4212,7 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       SimulationArraysFile <<", " << sim_clct1_KeyEighthStrip_vector.at(i);
     }
     SimulationArraysFile << "]" << std::endl;
+
     std::cout <<"file opened, step4"<< std::endl;
 
     SimulationArraysFile.close();
@@ -3537,7 +4225,9 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
     if (SimulationCSVFile.is_open()) {
       SimulationCSVFile << "sim_clct0_pid,sim_clct0_nhit,sim_clct0_cc_code,sim_clct0_bend,sim_clct0_slope,sim_clct0_KeyHalfStrip,sim_clct0_KeyQuartStrip,sim_clct0_KeyEighthStrip,sim_clct1_pid,sim_clct1_nhit,sim_clct1_cc_code,sim_clct1_bend,sim_clct1_slope,sim_clct1_KeyHalfStrip,sim_clct1_KeyQuartStrip,sim_clct1_KeyEighthStrip\n";
       for (int i = 0; i < event_number; ++i) {
+
         SimulationCSVFile << sim_clct0_pid_vector.at(i) << "," << sim_clct0_nhit_vector.at(i) << "," << sim_clct0_cc_code_vector.at(i) << "," << sim_clct0_bend_vector.at(i) << "," << sim_clct0_slope_vector.at(i) << "," << sim_clct0_KeyHalfStrip_vector.at(i) << "," << sim_clct0_KeyQuartStrip_vector.at(i) << "," << sim_clct0_KeyEighthStrip_vector.at(i) << "," << sim_clct1_pid_vector.at(i) << "," << sim_clct1_nhit_vector.at(i) << "," << sim_clct1_cc_code_vector.at(i) << "," << sim_clct1_bend_vector.at(i) << "," << sim_clct1_slope_vector.at(i) << "," << sim_clct1_KeyHalfStrip_vector.at(i) << "," << sim_clct1_KeyQuartStrip_vector.at(i) << "," << sim_clct1_KeyEighthStrip_vector.at(i) << std::endl;
+
       }
       SimulationCSVFile.close();
     }
@@ -3561,7 +4251,7 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
     if (TriggerArraysFile.is_open()) {
       // Trigger CLCT0
       TriggerArraysFile << "trig_clct0_valid = [";
-      TriggerArraysFile << trig_clct0_pid_vector0.at(0);
+      TriggerArraysFile << trig_clct0_valid_vector0.at(0);
       for(int i = 1; i < event_number; ++i) {
         TriggerArraysFile << ", " << trig_clct0_valid_vector0.at(i);
       }
@@ -3617,7 +4307,7 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
 
       // Trigger CLCT1
       TriggerArraysFile << "trig_clct1_valid = [";
-      TriggerArraysFile << trig_clct0_pid_vector0.at(0);
+      TriggerArraysFile << trig_clct1_valid_vector0.at(0);
       for(int i = 1; i < event_number; ++i) {
         TriggerArraysFile << ", " << trig_clct1_valid_vector0.at(i);
       }
@@ -3671,6 +4361,7 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       }
       TriggerArraysFile << "]" << std::endl;
 
+
       TriggerArraysFile.close();
     }
     else {std::cout << "Unable to open trigger results file" << std::endl;}
@@ -3678,9 +4369,12 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
     ofstream TriggerCSVFile0;
     TriggerCSVFile0.open(trigger_results_file_csv0);
     if (TriggerCSVFile0.is_open()) {
+
       TriggerCSVFile0 << "trig_clct0_valid,trig_clct0_pid,trig_clct0_nhit,trig_clct0_cc_code,trig_clct0_bend,trig_clct0_slope,trig_clct0_KeyHalfStrip,trig_clct0_KeyQuartStrip,trig_clct0_KeyEighthStrip,trig_clct1_valid,trig_clct1_pid,trig_clct1_nhit,trig_clct1_cc_code,trig_clct1_bend,trig_clct1_slope,trig_clct1_KeyHalfStrip,trig_clct1_KeyQuartStrip,trig_clct1_KeyEighthStrip\n";
+
       for (int i = 0; i < event_number; ++i) {
-        TriggerCSVFile0 << trig_clct0_valid_vector0.at(i) << "," << trig_clct0_pid_vector0.at(i) << "," << trig_clct0_nhit_vector0.at(i) << "," << trig_clct0_cc_code_vector0.at(i) << "," << trig_clct0_bend_vector0.at(i) << "," << trig_clct0_slope_vector0.at(i) << "," << trig_clct0_KeyHalfStrip_vector0.at(i) << "," << trig_clct0_KeyQuartStrip_vector0.at(i) << "," << trig_clct0_KeyEighthStrip_vector0.at(i) << "," << trig_clct1_valid_vector0.at(i) << "," << trig_clct1_pid_vector0.at(i) << "," << trig_clct1_nhit_vector0.at(i) << "," << trig_clct1_cc_code_vector0.at(i) << "," << trig_clct1_bend_vector0.at(i) << "," << trig_clct1_slope_vector0.at(i) << "," << trig_clct1_KeyHalfStrip_vector0.at(i) << "," << trig_clct1_KeyQuartStrip_vector0.at(i) << "," << trig_clct1_KeyEighthStrip_vector0.at(i) << std::endl;
+        TriggerCSVFile0 << trig_clct0_valid_vector0.at(i) << "," << trig_clct0_pid_vector0.at(i) << "," << trig_clct0_nhit_vector0.at(i) << "," << trig_clct0_cc_code_vector0.at(i) << "," << trig_clct0_bend_vector0.at(i) << "," << trig_clct0_slope_vector0.at(i) << "," << trig_clct0_KeyHalfStrip_vector0.at(i) << "," << trig_clct0_KeyQuartStrip_vector0.at(i) << "," << trig_clct0_KeyEighthStrip_vector0.at(i) << "," << trig_clct1_valid_vector0.at(i) << "," << trig_clct1_pid_vector0.at(i) << "," << trig_clct1_nhit_vector0.at(i) << "," << trig_clct1_cc_code_vector0.at(i) << "," << trig_clct1_bend_vector0.at(i) << "," << trig_clct1_slope_vector0.at(i) << "," << trig_clct1_KeyHalfStrip_vector0.at(i) << "," << trig_clct1_KeyQuartStrip_vector0.at(i) << "," << trig_clct1_KeyEighthStrip_vector0.at(i) <<  std::endl;
+
       }
       TriggerCSVFile0.close();
     }
@@ -3714,6 +4408,7 @@ void CSCGEMTestApplication::AutomaticCheckingFile(xgi::Input * in, xgi::Output *
       Incorrect_events << "KEY HALFSTRIP SIMULATION VS TRIGGER " << incorrect_sim_clct1_KeyHalfStrip_vector0.at(i) << " vs " << incorrect_trig_clct1_KeyHalfStrip_vector0.at(i) << std::endl;
       Incorrect_events << "KEY QUARTER STRIP SIMULATION VS TRIGGER " << incorrect_sim_clct1_KeyQuartStrip_vector0.at(i) << " vs " << incorrect_trig_clct1_KeyQuartStrip_vector0.at(i) << std::endl;
       Incorrect_events << "KEY EIGHTH STRIP SIMULATION VS TRIGGER " << incorrect_sim_clct1_KeyEighthStrip_vector0.at(i) << " vs " << incorrect_trig_clct1_KeyEighthStrip_vector0.at(i) << std::endl << std::endl;
+
     }
     Incorrect_events.close();
   }

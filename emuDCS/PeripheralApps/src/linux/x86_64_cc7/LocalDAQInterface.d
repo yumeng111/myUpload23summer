@@ -1,7 +1,7 @@
-/home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/emuDCS/PeripheralApps/src/linux/x86_64_cc7/LocalDAQInterface.o /home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/emuDCS/PeripheralApps/src/linux/x86_64_cc7/LocalDAQInterface.d :  \
- /home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/emuDCS/PeripheralApps/src/common/LocalDAQInterface.cc \
- /home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/emuDCS/PeripheralApps/include/emu/pc/LocalDAQInterface.h \
- /home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/soap/include/emu/soap/Messenger.h \
+/home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/emuDCS/PeripheralApps/src/linux/x86_64_cc7/LocalDAQInterface.o /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/emuDCS/PeripheralApps/src/linux/x86_64_cc7/LocalDAQInterface.d :  \
+ /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/emuDCS/PeripheralApps/src/common/LocalDAQInterface.cc \
+ /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/emuDCS/PeripheralApps/include/emu/pc/LocalDAQInterface.h \
+ /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/soap/include/emu/soap/Messenger.h \
  /opt/xdaq/include/xdaq/Application.h \
  /opt/xdaq/include/xdaq/ApplicationStub.h \
  /opt/xdaq/include/xdata/InfoSpace.h /opt/xdaq/include/toolbox/BSem.h \
@@ -289,19 +289,19 @@
  /opt/xdaq/include/cgicc/HTTPCookie.h \
  /opt/xdaq/include/cgicc/MStreamable.h /opt/xdaq/include/xoap/Method.h \
  /opt/xdaq/include/xcept/tools.h \
- /home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/soap/include/emu/soap/Attachment.h \
- /home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/soap/include/emu/soap/Parameters.h \
- /home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/soap/include/emu/soap/QualifiedName.h \
- /home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/soap/include/emu/soap/Attributes.h \
- /home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/base/include/emu/utils/String.h \
- /home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/base/include/emu/utils/String.i \
+ /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/soap/include/emu/soap/Attachment.h \
+ /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/soap/include/emu/soap/Parameters.h \
+ /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/soap/include/emu/soap/QualifiedName.h \
+ /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/soap/include/emu/soap/Attributes.h \
+ /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/base/include/emu/utils/String.h \
+ /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/base/include/emu/utils/String.i \
  /opt/xdaq/include/xdata/Integer64.h /opt/xdaq/include/xdata/Integer64.i \
  /opt/xdaq/include/xdata/UnsignedInteger32.h \
  /opt/xdaq/include/xdata/UnsignedInteger32.i
 :
-/home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/emuDCS/PeripheralApps/src/common/LocalDAQInterface.cc:
-/home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/emuDCS/PeripheralApps/include/emu/pc/LocalDAQInterface.h:
-/home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/soap/include/emu/soap/Messenger.h:
+/home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/emuDCS/PeripheralApps/src/common/LocalDAQInterface.cc:
+/home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/emuDCS/PeripheralApps/include/emu/pc/LocalDAQInterface.h:
+/home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/soap/include/emu/soap/Messenger.h:
 /opt/xdaq/include/xdaq/Application.h:
 /opt/xdaq/include/xdaq/ApplicationStub.h:
 /opt/xdaq/include/xdata/InfoSpace.h:
@@ -616,12 +616,12 @@
 /opt/xdaq/include/cgicc/MStreamable.h:
 /opt/xdaq/include/xoap/Method.h:
 /opt/xdaq/include/xcept/tools.h:
-/home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/soap/include/emu/soap/Attachment.h:
-/home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/soap/include/emu/soap/Parameters.h:
-/home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/soap/include/emu/soap/QualifiedName.h:
-/home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/soap/include/emu/soap/Attributes.h:
-/home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/base/include/emu/utils/String.h:
-/home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/base/include/emu/utils/String.i:
+/home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/soap/include/emu/soap/Attachment.h:
+/home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/soap/include/emu/soap/Parameters.h:
+/home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/soap/include/emu/soap/QualifiedName.h:
+/home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/soap/include/emu/soap/Attributes.h:
+/home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/base/include/emu/utils/String.h:
+/home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/base/include/emu/utils/String.i:
 /opt/xdaq/include/xdata/Integer64.h:
 /opt/xdaq/include/xdata/Integer64.i:
 /opt/xdaq/include/xdata/UnsignedInteger32.h:

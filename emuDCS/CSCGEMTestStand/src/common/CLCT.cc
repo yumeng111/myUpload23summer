@@ -729,6 +729,9 @@ bool compareCluster(Cluster c1, Cluster c2)
 			{
 				int bx=0;
 				unsigned int icluster = 0;
+
+				Cluster empty_pad (bx,7,255,7,layer) ; //added to make empty clusters with 1s in pattern files
+
 				for(unsigned int i=0; i < in_pads.size(); i++){
 					if (bx == in_pads[i].bx) icluster++;
 	 				else {
@@ -738,7 +741,13 @@ bool compareCluster(Cluster c1, Cluster c2)
 					bool fiber0 = icluster <4  && gem_fiber == 0;
 					bool fiber1 = icluster >=4 && gem_fiber == 1;
 					if(in_pads[i].layer == layer && (fiber0 || fiber1)) pads.push_back(in_pads[i]);
+
 				}
+				/*while (icluster < 4) {
+					pads.push_back(empty_pad);
+					icluster++;
+				}*/
+
 	                 }
 			//std::sort(pads.begin(), pads.end(), compareCluster);	// sort by Bx
 
@@ -787,7 +796,7 @@ bool WritePat(std::string & prefix, std::vector<CLCT>& clcts)
 		if (clcts.size() == 0) tmbtype = 'c';//default case
 		else tmbtype = clcts[0].COMPILE_TYPE - 0xa + 'a';
 
-                int ncfebs = tmbtype == 'a' ? CSCConstants::NUM_DCFEBS_NONME11  : CSCConstants::NUM_DCFEBS_ME11; 
+                int ncfebs = tmbtype == 'a' ? CSCConstants::NUM_DCFEBS_NONME11  : CSCConstants::NUM_DCFEBS_ME11;
 		for (int i = 0; i < ncfebs; i++)
 		{
 			std::stringstream ss;
@@ -2034,7 +2043,7 @@ bool WritePat(std::string & prefix, std::vector<CCLUT>& ccluts)
 		if (ccluts.size() == 0) tmbtype = 'c';//default case
 		else tmbtype = ccluts[0].COMPILE_TYPE - 0xa + 'a';
                 std::cout <<"tmb type from cclut[0].type " << ccluts[0].COMPILE_TYPE <<" tmbtype "<< tmbtype << std::endl;
-                int ncfebs = tmbtype == 'a' ? CSCConstants::NUM_DCFEBS_NONME11  : CSCConstants::NUM_DCFEBS_ME11; 
+                int ncfebs = tmbtype == 'a' ? CSCConstants::NUM_DCFEBS_NONME11  : CSCConstants::NUM_DCFEBS_ME11;
 		for (int i = 0; i < ncfebs; i++)
 		{
 			std::stringstream ss;

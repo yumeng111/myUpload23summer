@@ -1,6 +1,6 @@
-/home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/emuDCS/PeripheralApps/src/linux/x86_64_cc7/EmuCompareMcsFiles.o /home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/emuDCS/PeripheralApps/src/linux/x86_64_cc7/EmuCompareMcsFiles.d :  \
- /home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/emuDCS/PeripheralApps/src/common/EmuCompareMcsFiles.cc \
- /home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/emuDCS/PeripheralApps/include/emu/pc/EmuCompareMcsFiles.h \
+/home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/emuDCS/PeripheralApps/src/linux/x86_64_cc7/EmuCompareMcsFiles.o /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/emuDCS/PeripheralApps/src/linux/x86_64_cc7/EmuCompareMcsFiles.d :  \
+ /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/emuDCS/PeripheralApps/src/common/EmuCompareMcsFiles.cc \
+ /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/emuDCS/PeripheralApps/include/emu/pc/EmuCompareMcsFiles.h \
  /opt/xdaq/include/xgi/Utils.h /opt/xdaq/include/cgicc/Cgicc.h \
  /opt/xdaq/include/cgicc/CgiDefs.h /opt/xdaq/include/cgicc/FormEntry.h \
  /opt/xdaq/include/cgicc/CgiUtils.h /opt/xdaq/include/cgicc/FormFile.h \
@@ -312,8 +312,8 @@
  /opt/xdaq/include/xdata/AbstractTable.h \
  /opt/xdaq/include/xdata/AbstractVector.h
 :
-/home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/emuDCS/PeripheralApps/src/common/EmuCompareMcsFiles.cc:
-/home/cscdev/EMULIB_V15_Master_mod_by_changeip/emu/emuDCS/PeripheralApps/include/emu/pc/EmuCompareMcsFiles.h:
+/home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/emuDCS/PeripheralApps/src/common/EmuCompareMcsFiles.cc:
+/home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/emuDCS/PeripheralApps/include/emu/pc/EmuCompareMcsFiles.h:
 /opt/xdaq/include/xgi/Utils.h:
 /opt/xdaq/include/cgicc/Cgicc.h:
 /opt/xdaq/include/cgicc/CgiDefs.h:

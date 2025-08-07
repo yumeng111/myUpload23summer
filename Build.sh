@@ -56,9 +56,33 @@ xdaq.exe -h 10.119.64.4 -p 20016 -e /home/cscdev/EMULIB_V15_Master_mod_by_Yumeng
 #Set=framework make -j 8 clean
 
 
+# for Emulib15
+cd /home/cscdev/EMULIB_V15_Master_mod_by_Ange/emu/
+export set BUILD_HOME=/home/cscdev/EMULIB_V15_Master_mod_by_Ange
+source ~cscdev/setup_emulib_env.sh
+Set=framework make -j 8 install >& make-install-framework.log
+grep error: make-install-framework.log
+#### ME11 test configuratoion (modified by Ange)
+xdaq.exe -h 10.119.64.4 -p 20016 -e /home/cscdev/EMULIB_V15_Master_mod_by_Ange/xml/default.profile_cc7_noXMAS  -c /home/cscdev/EMULIB_V15_Master_mod_by_Ange/xml/tamu_test2019_GEM.xml
+####ME21 test configuration
+xdaq.exe -h 10.119.64.4 -p 20016 -e /home/cscdev/EMULIB_V15_Master_mod_by_Ange/xml/default.profile_cc7_noXMAS  -c /home/cscdev/EMULIB_V15_Master_mod_by_Ange/xml/tamu_test2021_MEX1_SLHCon.xml
+#xdaq.exe -h 10.119.64.4 -p 20016 -e /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/xml/default.profile_cc7_noXMAS  -c /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/xml/tamu_test2019_GEM.xml
 
-
-
+# for Emulib15
+cd /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/emu/
+export set BUILD_HOME=/home/cscdev/EMULIB_V15_Master_mod_by_changeip_all
+source ~cscdev/setup_emulib_env.sh
+Set=framework make -j 8 install >& make-install-framework.log
+grep error: make-install-framework.log
+#### ME11 test configuratoion (modified by Ange)
+#xdaq.exe -h 10.119.64.4 -p 20016 -e /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/xml/default.profile_cc7_noXMAS  -c /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/xml/tamu_test2019_GEM.xml
+####ME21 test configuration
+xdaq.exe -h 10.119.64.4 -p 20016 -e /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/xml/default.profile_cc7_noXMAS  -c /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/xml/tamu_test2021_MEX1_SLHCon.xml
+#xdaq.exe -h 10.119.64.4 -p 20016 -e /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/xml/default.profile_cc7_noXMAS  -c /home/cscdev/EMULIB_V15_Master_mod_by_changeip_all/xml/tamu_test2019_GEM.xml
+#xdaq.exe -h 165.91.180.30 -p 20016 -e $BUILD_HOME/xml/default.profile_cc7_noXMAS  -c $BUILD_HOME/xml/tamu_test2019_GEM.xml
+#Set=framework make -j 8 clean
+#grep -r  "165.91.180.30" ~/EMULIB_V15_Master_mod_by_changeip
+#find ~/EMULIB_V15_Master_mod_by_changeip -type f -exec sed -i 's/165.91.180.30/10.119.64.4/g' {} +
 
 
 cd /home/cscdev/EMULIB_V14_GEM_forSasha/emu/
